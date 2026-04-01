@@ -10,9 +10,6 @@
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
   --bg:#0b0f0b;
-  --blue:#0d2b8a;
-  --blue-mid:#1035a8;
-  --blue-light:#1a44c4;
   --marathon:#2b4fd4;
   --gold:#c8a951;
   --white:#f4f2ee;
@@ -49,18 +46,13 @@ section{padding:128px 0}
 .hero-micro{margin-top:22px;font-size:10px;letter-spacing:0.2em;color:var(--faint);text-transform:uppercase;font-family:'Lato',sans-serif;opacity:0;animation:fadeUp 0.4s ease forwards 1.02s}
 
 /* BUTTONS */
-.btn{display:inline-block;font-family:'Lato',sans-serif;font-weight:400;font-size:11px;letter-spacing:0.24em;text-transform:uppercase;text-decoration:none;cursor:pointer;transition:letter-spacing 0.4s ease,filter 0.4s ease,background 0.3s ease,border-color 0.3s ease;line-height:1}
+.btn{display:inline-block;font-family:'Lato',sans-serif;font-weight:400;font-size:11px;letter-spacing:0.24em;text-transform:uppercase;text-decoration:none;cursor:pointer;transition:letter-spacing 0.4s ease,filter 0.4s ease,border-color 0.3s ease;line-height:1}
 .btn-p{color:#0b0f0b;background:var(--marathon);padding:18px 48px;border:1px solid var(--marathon)}
 .btn-p:hover{filter:brightness(1.14);letter-spacing:0.3em}
 .btn-g{color:var(--marathon);background:transparent;padding:18px 44px;border:1px solid rgba(43,79,212,0.3)}
 .btn-g:hover{border-color:rgba(43,79,212,0.6);letter-spacing:0.3em}
 .btn-t{display:inline-block;font-family:'Lato',sans-serif;font-weight:300;font-size:11px;letter-spacing:0.24em;text-transform:uppercase;text-decoration:none;cursor:pointer;color:var(--muted);border-bottom:1px solid transparent;transition:color 0.3s,border-color 0.3s;padding:4px 0}
 .btn-t:hover{color:var(--gold);border-bottom-color:rgba(200,169,81,0.4)}
-
-/* MARATHON STRIP */
-.marathon-strip{background:var(--marathon);padding:18px 52px;display:flex;align-items:center;gap:16px}
-.marathon-strip-mark{font-size:11px;letter-spacing:0.28em;color:var(--white);text-transform:uppercase;font-family:'Lato',sans-serif;font-weight:700}
-.marathon-strip-text{font-size:11px;letter-spacing:0.2em;color:rgba(244,242,238,0.72);text-transform:uppercase;font-family:'Lato',sans-serif}
 
 /* INTERRUPTION */
 #interruption{padding:108px 0;background:linear-gradient(135deg,#0b0f0b 0%,#0d1520 100%)}
@@ -90,23 +82,39 @@ section{padding:128px 0}
 .seq li:first-child{border-top:1px solid var(--line-soft)}
 .seq-n{font-family:'Cormorant Garamond',serif;font-size:13px;color:var(--marathon);min-width:22px}
 
-/* PHASES */
+/* PHASES — with expand */
 #phases{padding:128px 0}
 .phases-sub{font-size:15px;color:var(--muted);margin-bottom:68px;max-width:400px;line-height:1.8}
 .phase-list{list-style:none}
-.phase-list li{border-bottom:1px solid var(--line-soft)}
-.phase-list li:first-child{border-top:1px solid var(--line-soft)}
-.phase-row{display:grid;grid-template-columns:160px 1fr 48px;gap:0 52px;align-items:center;padding:52px 0;text-decoration:none;color:inherit;transition:background 0.2s;width:100%}
+.phase-item{border-bottom:1px solid var(--line-soft)}
+.phase-item:first-child{border-top:1px solid var(--line-soft)}
+
+.phase-row{display:grid;grid-template-columns:160px 1fr 48px;gap:0 52px;align-items:center;padding:48px 0;cursor:pointer;width:100%;background:none;border:none;color:inherit;text-align:left;transition:background 0.2s}
 .phase-row:hover{background:rgba(43,79,212,0.05)}
+.phase-item.open .phase-row{background:rgba(43,79,212,0.06);padding-bottom:24px}
+
 .phase-num{font-size:42px;font-family:'Cormorant Garamond',serif;font-weight:300;color:var(--marathon);line-height:1;margin-bottom:8px}
 .phase-tag{font-size:10px;letter-spacing:0.28em;color:var(--muted);text-transform:uppercase;font-family:'Lato',sans-serif}
 .phase-access{font-size:10px;letter-spacing:0.2em;color:var(--gold);text-transform:uppercase;font-family:'Lato',sans-serif;margin-top:8px}
-.phase-title{font-family:'Cormorant Garamond',serif;font-size:clamp(22px,2.8vw,34px);font-weight:300;line-height:1.2;margin-bottom:12px;color:var(--white);transition:color 0.3s}
-.phase-desc{font-size:14px;color:var(--muted);line-height:1.78;max-width:440px}
-.phase-arrow{font-size:18px;color:var(--faint);transition:color 0.3s;text-align:right}
+
+.phase-title{font-family:'Cormorant Garamond',serif;font-size:clamp(20px,2.6vw,32px);font-weight:300;line-height:1.2;margin-bottom:8px;color:var(--white);transition:color 0.3s}
+.phase-hover{font-size:13px;color:var(--marathon);font-style:italic;font-family:'Cormorant Garamond',serif;opacity:0;transform:translateY(4px);transition:opacity 0.3s ease,transform 0.3s ease}
+.phase-row:hover .phase-hover{opacity:1;transform:translateY(0)}
+.phase-item.open .phase-hover{opacity:0}
+
+.phase-arrow{font-size:16px;color:var(--faint);transition:color 0.3s,transform 0.3s;text-align:right}
 .phase-row:hover .phase-title{color:var(--marathon)}
 .phase-row:hover .phase-arrow{color:var(--marathon)}
-.phases-note{margin-top:52px;font-size:15px;color:var(--muted);max-width:420px;line-height:1.82}
+.phase-item.open .phase-arrow{transform:rotate(90deg);color:var(--marathon)}
+
+/* EXPANDED PANEL */
+.phase-panel{max-height:0;overflow:hidden;transition:max-height 0.5s ease,opacity 0.4s ease;opacity:0}
+.phase-item.open .phase-panel{max-height:600px;opacity:1}
+.phase-panel-inner{padding:0 0 48px 212px}
+.phase-panel-body{font-size:15px;color:var(--muted);line-height:1.88;max-width:480px;margin-bottom:28px}
+.phase-panel-body p{margin-bottom:14px}
+.phase-panel-body p:last-child{margin-bottom:0}
+.phase-micro{font-size:11px;letter-spacing:0.18em;color:rgba(43,79,212,0.6);text-transform:uppercase;font-family:'Lato',sans-serif;margin-bottom:24px;font-style:italic}
 
 /* GAP */
 #gap{padding:128px 0;background:linear-gradient(135deg,#0b0f0b 0%,#0b1520 100%)}
@@ -158,17 +166,16 @@ section{padding:128px 0}
 .site-footer{padding:44px 52px;border-top:1px solid rgba(43,79,212,0.2);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;background:var(--bg)}
 .footer-logo{font-size:11px;letter-spacing:0.3em;color:var(--gold);text-transform:uppercase;font-family:'Lato',sans-serif;font-weight:400}
 .footer-seq{font-size:10px;color:var(--faint);letter-spacing:0.12em;font-family:'Lato',sans-serif}
-.footer-mark{font-size:10px;color:rgba(43,79,212,0.5);letter-spacing:0.18em;font-family:'Lato',sans-serif;text-transform:uppercase}
 
 @media(max-width:680px){
   .wrap,.wrap-wide{padding:0 28px}
   section{padding:88px 0}
   .rule,.rule-soft{margin:0 28px}
-  .marathon-strip{padding:18px 28px}
   .what-grid,.for-grid{grid-template-columns:1fr;gap:52px}
   .ladder-grid{grid-template-columns:1fr 1fr}
-  .phase-row{grid-template-columns:1fr;gap:14px;padding:40px 0}
+  .phase-row{grid-template-columns:1fr;gap:12px;padding:36px 0}
   .phase-arrow{display:none}
+  .phase-panel-inner{padding:0 0 40px 0}
   .site-footer{padding:32px 28px}
   .hero-cta{flex-direction:column;align-items:flex-start}
   .proof-artifact{flex-direction:column;align-items:flex-start}
@@ -180,12 +187,6 @@ section{padding:128px 0}
 </head>
 <body>
 
-<!-- MARATHON STRIP -->
-<div class="marathon-strip">
-  <span class="marathon-strip-mark">Marathon</span>
-  <span class="marathon-strip-text">The system is the store. The work is the product.</span>
-</div>
-
 <!-- 01 HERO -->
 <section id="hero">
   <div class="wrap">
@@ -193,16 +194,18 @@ section{padding:128px 0}
       <span>Capture</span><span class="arr">&#8594;</span><span>Monetize</span><span class="arr">&#8594;</span><span>Structure</span><span class="arr">&#8594;</span><span>Automation</span><span class="arr">&#8594;</span><span>Sovereignty</span>
     </div>
     <div class="hero-lbl">Stephuary &middot; System</div>
-    <h1 class="hero-h1">You have things<br>that should<br><em>already exist.</em><br>They don&rsquo;t.</h1>
+    <h1 class="hero-h1">You&rsquo;ve already gotten<br>further than you think.<br><em>That&rsquo;s not the problem.</em></h1>
     <div class="hero-body">
-      <p>You&rsquo;ve started things you haven&rsquo;t finished.<br>You&rsquo;ve lost the thread halfway through and moved on to the next one.<br>You&rsquo;ve watched someone else launch what you were sitting on and wondered what happened.</p>
-      <p>You&rsquo;re not unfocused. You&rsquo;re not behind.<br>You just don&rsquo;t have a clear enough path from idea to done that you can actually follow.</p>
-      <p>That&rsquo;s what this is.</p>
+      <p>You&rsquo;ve started things that made sense at the time. You could see what they were becoming.</p>
+      <p>Then somewhere in the middle, it stopped holding.</p>
+      <p>Not enough to call it wrong. Not enough to move it forward.<br>So it stayed open. And you moved on to the next one.</p>
+      <p>It&rsquo;s not confusion. It&rsquo;s not lack of discipline.<br>It&rsquo;s the point where something needs structure and there isn&rsquo;t one.</p>
+      <p>This is a system for that point.<br>From the first version of an idea to something that actually holds.</p>
     </div>
     <p class="hero-proof">The system is public. Access is what changes.</p>
     <div class="hero-cta">
       <a href="#module" class="btn btn-p">Begin with Capture</a>
-      <a href="#ladder" class="btn btn-g">See the Full System</a>
+      <a href="#ladder" class="btn btn-g">See the System</a>
     </div>
     <p class="hero-micro">Start free. Unlock as you go.</p>
   </div>
@@ -228,7 +231,7 @@ section{padding:128px 0}
         <div class="ladder-badge">Start Here</div>
         <div class="ladder-tier">Phase 01</div>
         <div class="ladder-title">Capture</div>
-        <div class="ladder-desc">Get the idea out of your head and into something you can work with. Most things are lost here.</div>
+        <div class="ladder-desc">Get the idea out of your head and into working form. Most things are lost before they ever become clear enough to build.</div>
         <div class="ladder-price">Free</div>
       </div>
       <div class="ladder-card">
@@ -285,49 +288,152 @@ section{padding:128px 0}
 
 <div class="rule"></div>
 
-<!-- 05 PHASES -->
+<!-- 05 PHASES — expandable -->
 <section id="phases">
   <div class="wrap-wide">
     <div class="lbl fu">Phase by Phase</div>
-    <p class="phases-sub fu" style="transition-delay:.08s">Each phase removes a specific place where people get stuck.</p>
-    <ul class="phase-list">
-      <li class="fu" style="transition-delay:.1s">
-        <a class="phase-row" href="#module">
-          <div><div class="phase-num">01</div><div class="phase-tag">Capture</div><div class="phase-access">Free</div></div>
-          <div><div class="phase-title">Get the idea out of your head and into something you can work with.</div><p class="phase-desc">Most things are lost here. This phase ends that.</p></div>
+    <p class="phases-sub fu" style="transition-delay:.08s">Each phase removes a specific place where people get stuck. Click any phase to go deeper.</p>
+
+    <ul class="phase-list fu" style="transition-delay:.14s">
+
+      <!-- Phase 01 -->
+      <li class="phase-item">
+        <button class="phase-row" onclick="togglePhase(this)">
+          <div>
+            <div class="phase-num">01</div>
+            <div class="phase-tag">Capture</div>
+            <div class="phase-access">Free</div>
+          </div>
+          <div>
+            <div class="phase-title">Get the idea out of your head and into working form.</div>
+            <div class="phase-hover">This is where scattered becomes usable.</div>
+          </div>
           <div class="phase-arrow">&#8594;</div>
-        </a>
+        </button>
+        <div class="phase-panel">
+          <div class="phase-panel-inner">
+            <div class="phase-micro">Most things are lost before they ever become clear enough to build.</div>
+            <div class="phase-panel-body">
+              <p>This phase turns fragments into material. Notes, instincts, unfinished thoughts, loose concepts, and half-formed ideas become something visible enough to move.</p>
+              <p>What usually breaks here: the idea exists but stays formless. It never becomes a document, a structure, or a decision. It just recycles.</p>
+              <p>After this phase: you have something you can actually work with.</p>
+            </div>
+            <a href="#module" class="btn btn-p">Begin with Capture</a>
+          </div>
+        </div>
       </li>
-      <li class="fu" style="transition-delay:.18s">
-        <a class="phase-row" href="#ladder">
-          <div><div class="phase-num">02</div><div class="phase-tag">Monetize</div><div class="phase-access">Archive</div></div>
-          <div><div class="phase-title">Turn it into something someone can actually pay for.</div><p class="phase-desc">Clarity before offer. Offer before price.</p></div>
+
+      <!-- Phase 02 -->
+      <li class="phase-item">
+        <button class="phase-row" onclick="togglePhase(this)">
+          <div>
+            <div class="phase-num">02</div>
+            <div class="phase-tag">Monetize</div>
+            <div class="phase-access">Archive</div>
+          </div>
+          <div>
+            <div class="phase-title">Turn the work into something someone can understand, want, and pay for.</div>
+            <div class="phase-hover">Clarity before price. Structure before selling.</div>
+          </div>
           <div class="phase-arrow">&#8594;</div>
-        </a>
+        </button>
+        <div class="phase-panel">
+          <div class="phase-panel-inner">
+            <div class="phase-micro">A lot of people don&rsquo;t have an offer problem. They have a translation problem.</div>
+            <div class="phase-panel-body">
+              <p>This phase identifies the actual offer. Not the vague version. The real version. What it is, who it serves, what changes because of it, and why it deserves a price.</p>
+              <p>What usually breaks here: the work has value but no legible form. People sense it but can&rsquo;t act on it.</p>
+              <p>After this phase: the offer exists. It can be communicated, positioned, and priced.</p>
+            </div>
+            <a href="#ladder" class="btn btn-p">Unlock Monetize</a>
+          </div>
+        </div>
       </li>
-      <li class="fu" style="transition-delay:.26s">
-        <a class="phase-row" href="#ladder">
-          <div><div class="phase-num">03</div><div class="phase-tag">Structure</div><div class="phase-access">Archive</div></div>
-          <div><div class="phase-title">Organize it so it holds and makes sense outside of you.</div><p class="phase-desc">Thinking becomes valuable when it&rsquo;s ordered and repeatable.</p></div>
+
+      <!-- Phase 03 -->
+      <li class="phase-item">
+        <button class="phase-row" onclick="togglePhase(this)">
+          <div>
+            <div class="phase-num">03</div>
+            <div class="phase-tag">Structure</div>
+            <div class="phase-access">Archive</div>
+          </div>
+          <div>
+            <div class="phase-title">Organize the work so it holds outside of you.</div>
+            <div class="phase-hover">What matters needs somewhere to live.</div>
+          </div>
           <div class="phase-arrow">&#8594;</div>
-        </a>
+        </button>
+        <div class="phase-panel">
+          <div class="phase-panel-inner">
+            <div class="phase-micro">Ideas stay fragile when they depend entirely on memory, mood, or momentum.</div>
+            <div class="phase-panel-body">
+              <p>This phase gives the work shape. Sequence, systems, containers, categories, order. It stops living as potential and starts functioning like architecture.</p>
+              <p>What usually breaks here: the work exists in pieces that only make sense to you. No one else can enter it. You can&rsquo;t step away without losing it.</p>
+              <p>After this phase: the work has form. It can be built, repeated, shared, or expanded.</p>
+            </div>
+            <a href="#ladder" class="btn btn-p">Build the Structure</a>
+          </div>
+        </div>
       </li>
-      <li class="fu" style="transition-delay:.34s">
-        <a class="phase-row" href="#ladder">
-          <div><div class="phase-num">04</div><div class="phase-tag">Automation</div><div class="phase-access">Archive</div></div>
-          <div><div class="phase-title">Remove the parts that don&rsquo;t need your constant attention.</div><p class="phase-desc">What works shouldn&rsquo;t stay manual.</p></div>
+
+      <!-- Phase 04 -->
+      <li class="phase-item">
+        <button class="phase-row" onclick="togglePhase(this)">
+          <div>
+            <div class="phase-num">04</div>
+            <div class="phase-tag">Automation</div>
+            <div class="phase-access">Archive</div>
+          </div>
+          <div>
+            <div class="phase-title">Remove the parts that should not require your constant attention.</div>
+            <div class="phase-hover">If it works twice, it needs a system.</div>
+          </div>
           <div class="phase-arrow">&#8594;</div>
-        </a>
+        </button>
+        <div class="phase-panel">
+          <div class="phase-panel-inner">
+            <div class="phase-micro">Once something works, it should not stay manual forever.</div>
+            <div class="phase-panel-body">
+              <p>This phase reduces drag. It identifies what can be standardized, delegated, templated, or automated so your energy stays on the parts that actually need you.</p>
+              <p>What usually breaks here: everything still runs through you. The work scales in output but not in time.</p>
+              <p>After this phase: the work starts behaving like infrastructure. It continues without requiring a restart every time.</p>
+            </div>
+            <a href="#ladder" class="btn btn-p">Systemize What Works</a>
+          </div>
+        </div>
       </li>
-      <li class="fu" style="transition-delay:.42s">
-        <a class="phase-row" href="#ladder">
-          <div><div class="phase-num">05</div><div class="phase-tag">Sovereignty</div><div class="phase-access">Archive</div></div>
-          <div><div class="phase-title">Make it independent, stable, and yours.</div><p class="phase-desc">Output increases. Control becomes the priority.</p></div>
+
+      <!-- Phase 05 -->
+      <li class="phase-item">
+        <button class="phase-row" onclick="togglePhase(this)">
+          <div>
+            <div class="phase-num">05</div>
+            <div class="phase-tag">Sovereignty</div>
+            <div class="phase-access">Archive</div>
+          </div>
+          <div>
+            <div class="phase-title">Make the system independent, durable, and yours.</div>
+            <div class="phase-hover">Independent is a build decision.</div>
+          </div>
           <div class="phase-arrow">&#8594;</div>
-        </a>
+        </button>
+        <div class="phase-panel">
+          <div class="phase-panel-inner">
+            <div class="phase-micro">Control is part of the build.</div>
+            <div class="phase-panel-body">
+              <p>This phase is about ownership. Fewer dependencies. Better leverage. More stability. The goal is not just output &mdash; it is a structure you can trust.</p>
+              <p>What usually breaks here: the work exists but runs on borrowed platforms, fragile attention, or conditions you don&rsquo;t control.</p>
+              <p>After this phase: the system holds on its own. You decide what scales and what stays yours.</p>
+            </div>
+            <a href="#ladder" class="btn btn-p">Move Toward Sovereignty</a>
+          </div>
+        </div>
       </li>
+
     </ul>
-    <p class="phases-note fu" style="transition-delay:.5s">Each phase picks up where the last one left off.<br><br>You don&rsquo;t have to start at the beginning if you know exactly where you&rsquo;re stuck.<br>If you don&rsquo;t &mdash; start at the beginning.</p>
+
+    <p class="phases-note fu" style="transition-delay:.5s;margin-top:52px">Each phase picks up where the last one left off.<br><br>You don&rsquo;t have to start at the beginning if you know exactly where you&rsquo;re stuck.<br>If you don&rsquo;t &mdash; start at the beginning.</p>
   </div>
 </section>
 
@@ -386,7 +492,7 @@ section{padding:128px 0}
         <div class="proof-artifact-title">Stephuary System Repository</div>
         <div class="proof-artifact-desc">The frameworks, structures, and logic behind the system &mdash; documented as it&rsquo;s built.</div>
       </div>
-      <a href="https://github.com/stephuary" target="_blank" rel="noopener" class="btn btn-g" style="white-space:nowrap">View the Build &#8594;</a>
+      <a href="https://github.com/stephuary/Stephuary" target="_blank" rel="noopener" class="btn btn-g" style="white-space:nowrap">View the Build &#8594;</a>
     </div>
   </div>
 </section>
@@ -432,7 +538,6 @@ section{padding:128px 0}
 <div class="site-footer">
   <div class="footer-logo">Stephuary</div>
   <div class="footer-seq">Capture &#8594; Monetize &#8594; Structure &#8594; Automation &#8594; Sovereignty</div>
-  <div class="footer-mark">Marathon</div>
 </div>
 
 <script>
@@ -444,6 +549,20 @@ section{padding:128px 0}
   },{threshold:0.08,rootMargin:'0px 0px -20px 0px'});
   document.querySelectorAll('.fu').forEach(function(el){io.observe(el)});
 })();
+
+function togglePhase(btn){
+  var item = btn.parentElement;
+  var isOpen = item.classList.contains('open');
+  document.querySelectorAll('.phase-item.open').forEach(function(el){
+    el.classList.remove('open');
+  });
+  if(!isOpen){
+    item.classList.add('open');
+    setTimeout(function(){
+      item.scrollIntoView({behavior:'smooth',block:'nearest'});
+    },100);
+  }
+}
 </script>
 </body>
 </html>
