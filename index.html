@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stephuary — System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Lato:wght@300;400&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0a0a08;
+  --gold:#c4a35a;
+  --gold-dim:rgba(196,163,90,0.28);
+  --text:#f5f0e8;
+  --muted:rgba(245,240,232,0.44);
+  --faint:rgba(245,240,232,0.14);
+  --line:rgba(196,163,90,0.16);
+  --line-soft:rgba(245,240,232,0.07);
+}
+html{scroll-behavior:smooth}
+body{background:#0a0a08;color:#f5f0e8;font-family:'Lato',sans-serif;font-weight:300;font-size:15px;line-height:1.78;overflow-x:hidden}
+.wrap{max-width:860px;margin:0 auto;padding:0 48px}
+.wrap-wide{max-width:1060px;margin:0 auto;padding:0 48px}
+section{padding:120px 0}
+.rule{height:1px;background:rgba(196,163,90,0.16);margin:0 48px}
+.rule-soft{height:1px;background:rgba(245,240,232,0.07);margin:0 48px}
+.label{font-size:9px;letter-spacing:0.34em;color:#c4a35a;text-transform:uppercase;margin-bottom:48px;font-weight:300;font-family:'Lato',sans-serif}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.fu{opacity:0;transform:translateY(14px);transition:opacity 0.75s ease,transform 0.75s ease}
+.fu.on{opacity:1;transform:translateY(0)}
+
+/* HERO */
+#hero{min-height:100vh;display:flex;align-items:center;padding:120px 0 100px}
+.hero-sys{display:flex;gap:12px;align-items:center;font-size:9px;letter-spacing:0.22em;color:rgba(245,240,232,0.14);text-transform:uppercase;margin-bottom:80px;flex-wrap:wrap;font-family:'Lato',sans-serif;opacity:0;animation:fadeUp 0.5s ease forwards 0.1s}
+.hero-label{font-size:9px;letter-spacing:0.32em;color:#c4a35a;text-transform:uppercase;margin-bottom:36px;font-family:'Lato',sans-serif;opacity:0;animation:fadeUp 0.4s ease forwards 0.2s}
+.hero-h1{font-family:'Cormorant Garamond',serif;font-weight:300;font-size:clamp(42px,6vw,84px);line-height:1.07;letter-spacing:-0.016em;max-width:680px;margin-bottom:32px;color:#f5f0e8;opacity:0;animation:fadeUp 0.6s ease forwards 0.3s}
+.hero-body{max-width:460px;opacity:0;animation:fadeUp 0.6s ease forwards 0.5s}
+.hero-body p{font-size:14px;color:rgba(245,240,232,0.44);line-height:1.9;margin-bottom:14px}
+.hero-body p:last-child{margin-bottom:0}
+.hero-proof{margin-top:28px;font-size:13px;color:rgba(245,240,232,0.44);font-style:italic;font-family:'Cormorant Garamond',serif;opacity:0;animation:fadeUp 0.4s ease forwards 0.7s}
+.hero-cta{margin-top:48px;display:flex;align-items:center;gap:18px;flex-wrap:wrap;opacity:0;animation:fadeUp 0.5s ease forwards 0.86s}
+.hero-micro{margin-top:20px;font-size:9px;letter-spacing:0.18em;color:rgba(245,240,232,0.14);text-transform:uppercase;font-family:'Lato',sans-serif;opacity:0;animation:fadeUp 0.4s ease forwards 1.02s}
+
+/* BUTTONS */
+.btn{display:inline-block;font-family:'Lato',sans-serif;font-weight:300;font-size:10px;letter-spacing:0.26em;text-transform:uppercase;text-decoration:none;cursor:pointer;transition:letter-spacing 0.4s ease,filter 0.4s ease,border-color 0.4s ease;line-height:1}
+.btn-p{color:#0a0a08;background:#c4a35a;padding:15px 44px;border:1px solid #c4a35a}
+.btn-p:hover{filter:brightness(1.08);letter-spacing:0.32em}
+.btn-g{color:#c4a35a;background:transparent;padding:15px 40px;border:1px solid rgba(196,163,90,0.16)}
+.btn-g:hover{border-color:rgba(196,163,90,0.28);letter-spacing:0.32em}
+.btn-t{display:inline-block;font-family:'Lato',sans-serif;font-weight:300;font-size:10px;letter-spacing:0.26em;text-transform:uppercase;text-decoration:none;cursor:pointer;color:rgba(245,240,232,0.44);border-bottom:1px solid transparent;transition:color 0.3s,border-color 0.3s;padding:15px 0}
+.btn-t:hover{color:#c4a35a;border-bottom-color:rgba(196,163,90,0.28)}
+
+/* INTERRUPTION */
+#interruption{padding:100px 0}
+.int-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-size:clamp(26px,4vw,52px);line-height:1.22;max-width:580px;color:#f5f0e8}
+
+/* WHAT */
+.what-grid{display:grid;grid-template-columns:1fr 1fr;gap:72px;align-items:start}
+.what-h2{font-family:'Cormorant Garamond',serif;font-size:clamp(30px,3.8vw,52px);font-weight:300;line-height:1.14;margin-bottom:28px;color:#f5f0e8}
+.what-body p{font-size:14px;color:rgba(245,240,232,0.44);line-height:1.9;margin-bottom:14px}
+.what-body p:last-child{margin-bottom:0}
+.seq{list-style:none;margin-top:40px}
+.seq li{padding:15px 0;border-bottom:1px solid rgba(245,240,232,0.07);font-size:13px;display:flex;gap:18px;align-items:center;color:rgba(245,240,232,0.44)}
+.seq li:first-child{border-top:1px solid rgba(245,240,232,0.07)}
+.seq-n{font-family:'Cormorant Garamond',serif;font-size:11px;color:#c4a35a;min-width:18px}
+
+/* PHASES */
+.phases-sub{font-size:13px;color:rgba(245,240,232,0.44);margin-bottom:64px;max-width:360px;line-height:1.78}
+.phase-list{list-style:none}
+.phase-row{display:grid;grid-template-columns:140px 1fr 40px;gap:0 48px;align-items:center;padding:48px 0;border-bottom:1px solid rgba(245,240,232,0.07);text-decoration:none;color:inherit}
+.phase-row:first-child{border-top:1px solid rgba(245,240,232,0.07)}
+.phase-num{font-size:36px;font-family:'Cormorant Garamond',serif;font-weight:300;color:#c4a35a;line-height:1;margin-bottom:6px}
+.phase-tag{font-size:9px;letter-spacing:0.26em;color:rgba(245,240,232,0.44);text-transform:uppercase;font-family:'Lato',sans-serif}
+.phase-title{font-family:'Cormorant Garamond',serif;font-size:clamp(20px,2.6vw,30px);font-weight:300;line-height:1.2;margin-bottom:10px;color:#f5f0e8;transition:color 0.3s}
+.phase-desc{font-size:13px;color:rgba(245,240,232,0.44);line-height:1.75;max-width:420px}
+.phase-arrow{font-size:16px;color:rgba(245,240,232,0.14);transition:color 0.3s;text-align:right}
+.phase-row:hover .phase-title{color:#c4a35a}
+.phase-row:hover .phase-arrow{color:#c4a35a}
+.phases-note{margin-top:48px;font-size:13px;color:rgba(245,240,232,0.44);max-width:400px;line-height:1.78}
+
+/* ACCESS */
+.access-h2{font-family:'Cormorant Garamond',serif;font-size:clamp(26px,3.6vw,48px);font-weight:300;line-height:1.18;margin-bottom:28px;color:#f5f0e8}
+.access-body p{font-size:14px;color:rgba(245,240,232,0.44);line-height:1.9;margin-bottom:14px;max-width:380px}
+.access-body p:last-child{margin-bottom:0}
+.access-sec{margin-top:32px;font-size:13px;color:rgba(245,240,232,0.14);font-style:italic;font-family:'Cormorant Garamond',serif}
+
+/* GAP */
+.gap-stmt{font-family:'Cormorant Garamond',serif;font-size:clamp(24px,3.6vw,46px);font-weight:300;line-height:1.22;max-width:580px;color:#f5f0e8}
+
+/* FOR */
+.for-grid{display:grid;grid-template-columns:1fr 1fr;gap:72px}
+.for-lbl{font-size:9px;letter-spacing:0.3em;text-transform:uppercase;margin-bottom:28px;font-family:'Lato',sans-serif}
+.for-col .for-lbl{color:#c4a35a}
+.not-col .for-lbl{color:rgba(245,240,232,0.44)}
+.for-items{list-style:none}
+.for-items li{padding:15px 0;border-bottom:1px solid rgba(245,240,232,0.07);font-size:13px;line-height:1.65}
+.for-items li:first-child{border-top:1px solid rgba(245,240,232,0.07)}
+.for-col .for-items li{color:#f5f0e8}
+.not-col .for-items li{color:rgba(245,240,232,0.44)}
+
+/* PROOF */
+.proof-h2{font-family:'Cormorant Garamond',serif;font-size:clamp(24px,3.4vw,44px);font-weight:300;line-height:1.2;margin-bottom:28px;color:#f5f0e8}
+.proof-body p{font-size:14px;color:rgba(245,240,232,0.44);line-height:1.9;margin-bottom:14px;max-width:400px}
+.proof-body p:last-child{margin-bottom:0}
+.proof-ctas{margin-top:40px;display:flex;gap:18px;flex-wrap:wrap;align-items:center}
+
+/* MODULE */
+.mod-box{border:1px solid rgba(245,240,232,0.07);padding:48px;max-width:520px}
+.mod-tag{font-size:9px;letter-spacing:0.28em;color:#c4a35a;text-transform:uppercase;margin-bottom:18px;font-family:'Lato',sans-serif}
+.mod-title{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:300;margin-bottom:16px;color:#f5f0e8}
+.mod-copy{font-size:13px;color:rgba(245,240,232,0.44);line-height:1.78}
+.mod-cta{margin-top:28px}
+
+/* PRINCIPLE */
+#principle{padding:120px 0;text-align:center}
+.principle-text{font-family:'Cormorant Garamond',serif;font-size:clamp(28px,4.2vw,56px);font-weight:300;line-height:1.18;max-width:540px;margin:0 auto;color:#f5f0e8}
+
+/* FINAL */
+#final{padding:140px 0 100px;text-align:center}
+.final-h2{font-family:'Cormorant Garamond',serif;font-size:clamp(32px,4.8vw,64px);font-weight:300;line-height:1.1;margin-bottom:24px;color:#f5f0e8}
+.final-body{font-size:14px;color:rgba(245,240,232,0.44);max-width:320px;margin:0 auto 48px;line-height:1.9}
+.final-ctas{display:flex;flex-direction:column;align-items:center;gap:14px}
+
+/* FOOTER */
+.site-footer{padding:40px 48px;border-top:1px solid rgba(196,163,90,0.16);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px}
+.footer-logo{font-size:10px;letter-spacing:0.28em;color:#c4a35a;text-transform:uppercase;font-family:'Lato',sans-serif}
+.footer-seq{font-size:10px;color:rgba(245,240,232,0.14);letter-spacing:0.1em;font-family:'Lato',sans-serif}
+
+@media(max-width:680px){
+  .wrap,.wrap-wide{padding:0 24px}
+  section{padding:80px 0}
+  .rule,.rule-soft{margin:0 24px}
+  .what-grid,.for-grid{grid-template-columns:1fr;gap:48px}
+  .phase-row{grid-template-columns:1fr;gap:12px;padding:36px 0}
+  .phase-arrow{display:none}
+  .proof-ctas{flex-direction:column;align-items:flex-start}
+  .site-footer{padding:28px 24px}
+  .hero-cta{flex-direction:column;align-items:flex-start}
+}
+</style>
+</head>
+<body>
+
+<!-- 01 HERO -->
+<section id="hero">
+  <div class="wrap">
+    <div class="hero-sys">
+      <span>Capture</span><span>→</span><span>Monetize</span><span>→</span><span>Structure</span><span>→</span><span>Automation</span><span>→</span><span>Sovereignty</span>
+    </div>
+    <div class="hero-label">Stephuary · System</div>
+    <h1 class="hero-h1">You've already had the idea.<br>That's not where you're stuck.</h1>
+    <div class="hero-body">
+      <p>You've started things you haven't finished.<br>You've lost the thread halfway through and moved on to the next one.<br>You've watched someone else launch what you were sitting on and wondered what happened.</p>
+      <p>You're not unfocused. You're not behind.<br>You just don't have a clear enough path from idea to done that you can actually follow.</p>
+      <p>That's what this is.</p>
+    </div>
+    <p class="hero-proof">The system is public. Access is what changes.</p>
+    <div class="hero-cta">
+      <a href="#phases" class="btn btn-p">Enter the System</a>
+      <a href="#module" class="btn btn-g">Start with Capture — it's free</a>
+    </div>
+    <p class="hero-micro">Phase 01 is free. The rest opens as you go.</p>
+  </div>
+</section>
+
+<div class="rule"></div>
+
+<!-- 02 INTERRUPTION -->
+<section id="interruption">
+  <div class="wrap">
+    <p class="int-text fu">This isn't about motivation.<br>It's about finishing what you already started.</p>
+  </div>
+</section>
+
+<div class="rule"></div>
+
+<!-- 03 WHAT THIS IS -->
+<section id="what">
+  <div class="wrap">
+    <div class="label fu">What This Is</div>
+    <div class="what-grid">
+      <div>
+        <h2 class="what-h2 fu">It's self-guided.<br>It works wherever you are.</h2>
+        <div class="what-body fu" style="transition-delay:.1s">
+          <p>This isn't a webinar. It's not coaching. There's no pitch.</p>
+          <p>It's a complete sequence — from the half-formed idea in your notes app to something structured and out in the world.</p>
+          <p>You put in what you want to get out. That's the deal.</p>
+          <p>Most of the time people spend stuck isn't about missing information. It's wrong order, wrong system, wrong timing. This is what actually worked.</p>
+          <p>This is for people who haven't given up, but can't see the next move.</p>
+        </div>
+      </div>
+      <div class="fu" style="transition-delay:.18s;padding-top:8px">
+        <ul class="seq">
+          <li><span class="seq-n">01</span>Capture</li>
+          <li><span class="seq-n">02</span>Monetize</li>
+          <li><span class="seq-n">03</span>Structure</li>
+          <li><span class="seq-n">04</span>Automation</li>
+          <li><span class="seq-n">05</span>Sovereignty</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="rule"></div>
+
+<!-- 04 THE SYSTEM -->
+<section id="phases">
+  <div class="wrap-wide">
+    <div class="label fu">The System</div>
+    <p class="phases-sub fu" style="transition-delay:.08s">Each phase removes a specific place where people get stuck.</p>
+    <ul class="phase-list">
+      <a class="phase-row fu" href="#module" style="transition-delay:.1s">
+        <div><div class="phase-num">01</div><div class="phase-tag">Capture</div></div>
+        <div><div class="phase-title">Get the idea out of your head and into something you can work with.</div><p class="phase-desc">Most things are lost here. This phase ends that.</p></div>
+        <div class="phase-arrow">→</div>
+      </a>
+      <a class="phase-row fu" href="#" style="transition-delay:.18s">
+        <div><div class="phase-num">02</div><div class="phase-tag">Monetize</div></div>
+        <div><div class="phase-title">Turn it into something someone can actually pay for.</div><p class="phase-desc">Clarity before offer. Offer before price.</p></div>
+        <div class="phase-arrow">→</div>
+      </a>
+      <a class="phase-row fu" href="#" style="transition-delay:.26s">
+        <div><div class="phase-num">03</div><div class="phase-tag">Structure</div></div>
+        <div><div class="phase-title">Organize it so it holds and makes sense outside of you.</div><p class="phase-desc">Thinking becomes valuable when it's ordered and repeatable.</p></div>
+        <div class="phase-arrow">→</div>
+      </a>
+      <a class="phase-row fu" href="#" style="transition-delay:.34s">
+        <div><div class="phase-num">04</div><div class="phase-tag">Automation</div></div>
+        <div><div class="phase-title">Remove the parts that don't need your constant attention.</div><p class="phase-desc">What works shouldn't stay manual.</p></div>
+        <div class="phase-arrow">→</div>
+      </a>
+      <a class="phase-row fu" href="#" style="transition-delay:.42s">
+        <div><div class="phase-num">05</div><div class="phase-tag">Sovereignty</div></div>
+        <div><div class="phase-title">Make it independent, stable, and yours.</div><p class="phase-desc">Output increases. Control becomes the priority.</p></div>
+        <div class="phase-arrow">→</div>
+      </a>
+    </ul>
+    <p class="phases-note fu" style="transition-delay:.5s">Each phase picks up where the last one left off.<br><br>You don't have to start at the beginning if you know exactly where you're stuck.<br>If you don't — start at the beginning.</p>
+  </div>
+</section>
+
+<div class="rule"></div>
+
+<!-- 05 ACCESS -->
+<section id="access">
+  <div class="wrap">
+    <div class="label fu">Access</div>
+    <h2 class="access-h2 fu">Start free.<br>Unlock the rest as you go.</h2>
+    <div class="access-body fu" style="transition-delay:.1s">
+      <p>Phase 01 is free.</p>
+      <p>The rest of the system opens as you move through.</p>
+      <p>You don't need everything at once.<br>You need the next step.</p>
+    </div>
+    <p class="access-sec fu" style="transition-delay:.2s">The archive holds everything behind the system.</p>
+  </div>
+</section>
+
+<div class="rule"></div>
+
+<!-- 06 THE GAP -->
+<section id="gap">
+  <div class="wrap">
+    <div class="label fu">The Gap</div>
+    <p class="gap-stmt fu" style="transition-delay:.1s">You're not stuck because you don't have ideas.<br>You're stuck because you can't see the next step clearly enough to take it.</p>
+  </div>
+</section>
+
+<div class="rule"></div>
+
+<!-- 07 FOR / NOT FOR -->
+<section id="for">
+  <div class="wrap">
+    <div class="for-grid">
+      <div class="for-col">
+        <div class="for-lbl fu">For</div>
+        <ul class="for-items">
+          <li class="fu" style="transition-delay:.08s">You've got half-finished things and you're ready to actually complete something</li>
+          <li class="fu" style="transition-delay:.16s">You're overwhelmed but you haven't given up</li>
+          <li class="fu" style="transition-delay:.24s">You want the real path, not the highlight reel version of someone else's</li>
+          <li class="fu" style="transition-delay:.32s">You're building something independent and you need it to hold up under pressure</li>
+        </ul>
+      </div>
+      <div class="not-col">
+        <div class="for-lbl fu" style="transition-delay:.1s">Not for</div>
+        <ul class="for-items">
+          <li class="fu" style="transition-delay:.18s">You want someone to do it for you</li>
+          <li class="fu" style="transition-delay:.26s">You're looking for a shortcut that skips the work</li>
+          <li class="fu" style="transition-delay:.34s">You want motivation without execution</li>
+          <li class="fu" style="transition-delay:.42s">You've learned how to sit in potential and call it progress</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="rule"></div>
+
+<!-- 08 PROOF -->
+<section id="proof">
+  <div class="wrap">
+    <div class="label fu">Built in Real Time</div>
+    <h2 class="proof-h2 fu">This system isn't theoretical.</h2>
+    <div class="proof-body fu" style="transition-delay:.1s">
+      <p>It's being used to build real outputs — writing, systems, sites, and frameworks.</p>
+      <p>You're not looking at a finished product.<br>You're looking at something actively being used.</p>
+    </div>
+    <div class="proof-ctas fu" style="transition-delay:.2s">
+      <a href="#" class="btn btn-g">View the Build</a>
+      <a href="#" class="btn-t">Explore the Work →</a>
+    </div>
+  </div>
+</section>
+
+<div class="rule-soft"></div>
+
+<!-- 09 MODULE PLACEHOLDER -->
+<section id="module" style="padding:80px 0">
+  <div class="wrap">
+    <div class="mod-box fu">
+      <div class="mod-tag">Phase 01 · Capture</div>
+      <div class="mod-title">Session not released yet.</div>
+      <p class="mod-copy">You can start with the system below.</p>
+      <div class="mod-cta">
+        <a href="#phases" class="btn btn-p">Enter the System</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="rule"></div>
+
+<!-- 10 PRINCIPLE -->
+<section id="principle">
+  <div class="wrap">
+    <p class="principle-text fu">You don't need another idea.<br>You need to finish the one<br>you already have.</p>
+  </div>
+</section>
+
+<div class="rule"></div>
+
+<!-- 11 FINAL -->
+<section id="final">
+  <div class="wrap">
+    <h2 class="final-h2 fu">This moment is unusually favorable.<br>It won't require this little forever.</h2>
+    <p class="final-body fu" style="transition-delay:.2s">Everything in this system came from doing it wrong first.<br><br>17 years of figuring out what actually works and what order it goes in.<br><br>If you're ready to stop starting over, this is where you begin.</p>
+    <div class="final-ctas fu" style="transition-delay:.4s">
+      <a href="#phases" class="btn btn-p">Enter the System</a>
+      <a href="#module" class="btn btn-g">Start with Capture</a>
+      <a href="#access" class="btn-t">Access The Archive — $7</a>
+    </div>
+  </div>
+</section>
+
+<div class="site-footer">
+  <div class="footer-logo">Stephuary</div>
+  <div class="footer-seq">Capture → Monetize → Structure → Automation → Sovereignty</div>
+</div>
+
+<script>
+(function(){
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(e.isIntersecting){e.target.classList.add('on');io.unobserve(e.target)}
+    });
+  },{threshold:0.08,rootMargin:'0px 0px -20px 0px'});
+  document.querySelectorAll('.fu').forEach(function(el){io.observe(el)});
+})();
+</script>
+</body>
+</html>
