@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Phase 02 — Monetize · Stephuary</title>
+  <meta name="description" content="Turn what you have into something someone can pay for. Phase 02 of the Stephuary system." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=Lato:wght@300;400&display=swap" rel="stylesheet" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:          #0a0a08;
+      --surface:     #111110;
+      --border:      #2a2a26;
+      --border-dim:  #1c1c19;
+      --gold:        #c4a35a;
+      --gold-dim:    #8a6f3a;
+      --selected-bg: rgba(196,163,90,0.09);
+      --text:        #f5f0e8;
+      --text-dim:    #7a7870;
+      --text-mid:    #c8c0b0;
+      --serif:       'Cormorant Garamond', Georgia, serif;
+      --sans:        'Lato', system-ui, sans-serif;
+      --radius:      2px;
+      --trans:       200ms ease;
+    }
+
+    html {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      font-weight: 300;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 0 20px 100px;
+    }
+
+    /* ── Shared nav ───────────────────────────────────── */
+    .top-nav {
+      width: 100%;
+      max-width: 580px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 28px 0 0;
+      margin-bottom: 0;
+    }
+
+    .nav-brand {
+      font-size: 10px;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      text-decoration: none;
+      transition: color var(--trans);
+    }
+
+    .nav-brand:hover { color: var(--text-mid); }
+
+    .nav-phase {
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold);
+    }
+
+    /* ── Locked screen ────────────────────────────────── */
+    #locked {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      text-align: center;
+      max-width: 480px;
+      width: 100%;
+      padding: 60px 0;
+      gap: 0;
+    }
+
+    .locked-phase {
+      font-size: 10px;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 48px;
+    }
+
+    .locked-headline {
+      font-family: var(--serif);
+      font-size: clamp(32px, 6vw, 52px);
+      font-weight: 300;
+      line-height: 1.15;
+      margin-bottom: 28px;
+    }
+
+    .locked-headline em {
+      font-style: italic;
+      color: var(--text-mid);
+    }
+
+    .locked-body {
+      font-size: 13px;
+      color: var(--text-dim);
+      letter-spacing: 0.04em;
+      line-height: 1.8;
+      margin-bottom: 52px;
+    }
+
+    .locked-price {
+      font-family: var(--serif);
+      font-size: 13px;
+      color: var(--text-dim);
+      margin-top: 16px;
+      letter-spacing: 0.04em;
+    }
+
+    /* ── Buttons ──────────────────────────────────────── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--sans);
+      font-weight: 300;
+      font-size: 11px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      padding: 14px 36px;
+      border: 1px solid var(--gold);
+      background: transparent;
+      color: var(--gold);
+      cursor: pointer;
+      transition: background var(--trans), color var(--trans);
+      border-radius: var(--radius);
+      min-height: 48px;
+      text-decoration: none;
+    }
+
+    .btn:hover { background: var(--gold); color: var(--bg); }
+
+    .btn-solid {
+      background: var(--gold);
+      color: var(--bg);
+      border-color: var(--gold);
+    }
+
+    .btn-solid:hover { background: #d4b36a; border-color: #d4b36a; }
+
+    .btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      border-color: #383832;
+      color: #383832;
+      background: transparent;
+    }
+
+    .btn-ghost {
+      border-color: var(--border-dim);
+      color: var(--text-dim);
+      font-size: 10px;
+      padding: 12px 22px;
+    }
+
+    .btn-ghost:hover {
+      border-color: var(--border);
+      color: var(--text-mid);
+      background: transparent;
+    }
+
+    /* ── Flow wrapper ─────────────────────────────────── */
+    #flow {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      max-width: 580px;
+      min-height: 100vh;
+      padding-top: 52px;
+    }
+
+    /* ── Progress ─────────────────────────────────────── */
+    .progress-bar-wrap {
+      width: 100%;
+      margin-bottom: 56px;
+    }
+
+    .progress-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .progress-label {
+      font-size: 10px;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+    }
+
+    .progress-count {
+      font-family: var(--serif);
+      font-size: 13px;
+      color: var(--gold);
+    }
+
+    .progress-track {
+      width: 100%;
+      height: 2px;
+      background: var(--border-dim);
+      border-radius: 1px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: var(--gold);
+      border-radius: 1px;
+      transition: width 450ms cubic-bezier(0.4,0,0.2,1);
+    }
+
+    /* ── Step ─────────────────────────────────────────── */
+    .step {
+      display: none;
+      flex-direction: column;
+      width: 100%;
+      animation: stepIn 280ms ease forwards;
+    }
+
+    .step.active { display: flex; }
+
+    @keyframes stepIn {
+      from { opacity: 0; transform: translateY(14px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .step-header { margin-bottom: 44px; }
+
+    .step-instruction {
+      font-family: var(--serif);
+      font-size: clamp(26px, 5vw, 40px);
+      font-weight: 300;
+      line-height: 1.15;
+      margin-bottom: 12px;
+    }
+
+    .step-directive {
+      font-size: 13px;
+      font-weight: 300;
+      color: var(--text-mid);
+      line-height: 1.7;
+    }
+
+    .step-micro {
+      font-size: 11px;
+      color: var(--text-dim);
+      letter-spacing: 0.04em;
+      margin-top: 8px;
+      line-height: 1.7;
+    }
+
+    /* ── Input ────────────────────────────────────────── */
+    .input-single {
+      border-bottom: 1px solid var(--border);
+      transition: border-color var(--trans);
+      margin-bottom: 4px;
+    }
+
+    .input-single:focus-within { border-bottom-color: var(--gold); }
+
+    .text-input {
+      background: transparent;
+      border: none;
+      color: var(--text);
+      font-family: var(--sans);
+      font-weight: 300;
+      font-size: 15px;
+      padding: 14px 0;
+      width: 100%;
+      outline: none;
+      border-radius: 0;
+      -webkit-appearance: none;
+    }
+
+    .text-input::placeholder { color: #383832; font-style: italic; }
+    .text-input:focus::placeholder { color: #4a4a44; }
+
+    .input-helper {
+      font-size: 11px;
+      color: var(--text-dim);
+      letter-spacing: 0.04em;
+      margin-top: 10px;
+    }
+
+    /* ── Nav row ──────────────────────────────────────── */
+    .nav-row {
+      display: flex;
+      gap: 12px;
+      margin-top: 48px;
+      align-items: center;
+    }
+
+    /* ── Summary ──────────────────────────────────────── */
+    #summary {
+      display: none;
+      flex-direction: column;
+      width: 100%;
+      max-width: 580px;
+      padding-top: 52px;
+      animation: stepIn 400ms ease forwards;
+    }
+
+    .summary-phase-tag {
+      font-size: 10px;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 20px;
+    }
+
+    .summary-title {
+      font-family: var(--serif);
+      font-size: clamp(30px, 5vw, 48px);
+      font-weight: 300;
+      line-height: 1.1;
+      margin-bottom: 12px;
+    }
+
+    .summary-sub {
+      font-size: 13px;
+      color: var(--text-dim);
+      letter-spacing: 0.04em;
+      margin-bottom: 44px;
+    }
+
+    /* Offer statement card */
+    .offer-card {
+      border: 1px solid var(--border);
+      border-top: 2px solid var(--gold);
+      margin-bottom: 44px;
+    }
+
+    .offer-section {
+      padding: 20px 28px;
+      border-bottom: 1px solid var(--border-dim);
+    }
+
+    .offer-section:last-child { border-bottom: none; }
+
+    .offer-label {
+      font-size: 10px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin-bottom: 6px;
+    }
+
+    .offer-value {
+      font-family: var(--serif);
+      font-size: 19px;
+      font-weight: 300;
+      color: var(--text);
+      line-height: 1.4;
+    }
+
+    .what-next { margin-bottom: 40px; }
+
+    .what-next-label {
+      font-size: 10px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 14px;
+    }
+
+    .what-next-body {
+      font-size: 14px;
+      font-weight: 300;
+      color: var(--text-mid);
+      line-height: 1.8;
+    }
+
+    .action-primary {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+
+    .copy-confirm {
+      font-size: 11px;
+      color: var(--gold);
+      letter-spacing: 0.1em;
+      margin-bottom: 28px;
+      min-height: 18px;
+      opacity: 0;
+      transition: opacity 300ms ease;
+    }
+
+    .copy-confirm.visible { opacity: 1; }
+
+    .action-secondary {
+      padding-top: 24px;
+      border-top: 1px solid var(--border-dim);
+    }
+
+    /* ── Responsive ───────────────────────────────────── */
+    @media (max-width: 480px) {
+      body { padding: 0 16px 80px; }
+      .step-instruction { font-size: 24px; }
+      .offer-card { margin-left: -16px; margin-right: -16px; border-left: none; border-right: none; }
+      .offer-section { padding: 16px 16px; }
+      .offer-statement-wrap { padding: 24px 16px; margin-left: -16px; margin-right: -16px; border-left: none; border-right: none; }
+      .nav-row { flex-direction: column-reverse; align-items: stretch; }
+      .nav-row .btn { justify-content: center; }
+      .action-primary { flex-direction: column; }
+      .action-primary .btn { justify-content: center; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══ LOCKED ═════════════════════════════════════════ -->
+<div id="locked">
+  <p class="locked-phase">Phase 02 — Monetize</p>
+  <h1 class="locked-headline">
+    You have something.<br>
+    <em>That does not mean<br>it can be sold.</em>
+  </h1>
+  <p class="locked-body">Most ideas stay abstract.</p>
+
+  <!--
+    STRIPE PLACEHOLDER
+    Replace href with your Stripe Payment Link for phase-02-monetize ($7)
+    After payment, Stripe should redirect to: /monetize/enter
+    or use localStorage flag on return to unlock the flow below.
+  -->
+  <a href="#stripe-placeholder-phase-02" class="btn btn-solid" onclick="unlock(event)">
+    Unlock Phase 02
+  </a>
+  <p class="locked-price">$7 &middot; One-time access</p>
+</div>
+
+<!-- ══ FLOW ═══════════════════════════════════════════ -->
+<div id="flow">
+  <div class="top-nav">
+    <a href="https://www.stephuary.com" class="nav-brand">Stephuary</a>
+    <span class="nav-phase">Phase 02 — Monetize</span>
+  </div>
+
+  <div style="width:100%;max-width:580px;">
+    <div class="progress-bar-wrap" style="margin-top:40px;">
+      <div class="progress-meta">
+        <span class="progress-label">Monetize</span>
+        <span class="progress-count" id="progressCount">Step 1 of 5</span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill" id="progressFill" style="width:20%"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 01 -->
+  <div class="step active" id="step-1">
+    <div class="step-header">
+      <div class="step-instruction">What are they paying for.</div>
+      <div class="step-directive">Name the thing. Not the category — the specific thing.</div>
+    </div>
+    <div class="input-single">
+      <input class="text-input" type="text" id="paying" placeholder="a 90-minute session that produces a clear offer" oninput="checkText('paying','continue-1')" maxlength="160" />
+    </div>
+    <div class="input-helper">Be as specific as you can in one line.</div>
+    <div class="nav-row">
+      <button class="btn" id="continue-1" disabled onclick="goTo(2)">Continue</button>
+    </div>
+  </div>
+
+  <!-- Step 02 -->
+  <div class="step" id="step-2">
+    <div class="step-header">
+      <div class="step-instruction">What problem does it solve.</div>
+      <div class="step-directive">The real problem. Not the surface one.</div>
+    </div>
+    <div class="input-single">
+      <input class="text-input" type="text" id="problem" placeholder="they have something valuable but can't explain it clearly" oninput="checkText('problem','continue-2')" maxlength="160" />
+    </div>
+    <div class="input-helper">Start with "they" if it helps.</div>
+    <div class="nav-row">
+      <button class="btn btn-ghost" onclick="goTo(1)">Back</button>
+      <button class="btn" id="continue-2" disabled onclick="goTo(3)">Continue</button>
+    </div>
+  </div>
+
+  <!-- Step 03 -->
+  <div class="step" id="step-3">
+    <div class="step-header">
+      <div class="step-instruction">What is the outcome.</div>
+      <div class="step-directive">What does someone have after this that they didn't have before.</div>
+    </div>
+    <div class="input-single">
+      <input class="text-input" type="text" id="outcome" placeholder="a positioned offer they can price and pitch" oninput="checkText('outcome','continue-3')" maxlength="160" />
+    </div>
+    <div class="input-helper">Name the result, not the process.</div>
+    <div class="nav-row">
+      <button class="btn btn-ghost" onclick="goTo(2)">Back</button>
+      <button class="btn" id="continue-3" disabled onclick="goTo(4)">Continue</button>
+    </div>
+  </div>
+
+  <!-- Step 04 -->
+  <div class="step" id="step-4">
+    <div class="step-header">
+      <div class="step-instruction">What format is it delivered in.</div>
+      <div class="step-directive">How does someone actually receive this.</div>
+    </div>
+    <div class="input-single">
+      <input class="text-input" type="text" id="format" placeholder="a live session, a document, a recorded walkthrough" oninput="checkText('format','continue-4')" maxlength="160" />
+    </div>
+    <div class="input-helper">Be concrete. Format affects price.</div>
+    <div class="nav-row">
+      <button class="btn btn-ghost" onclick="goTo(3)">Back</button>
+      <button class="btn" id="continue-4" disabled onclick="goTo(5)">Continue</button>
+    </div>
+  </div>
+
+  <!-- Step 05 -->
+  <div class="step" id="step-5">
+    <div class="step-header">
+      <div class="step-instruction">What makes it worth paying for.</div>
+      <div class="step-directive">Not why you think it's good. Why someone else would pay.</div>
+    </div>
+    <div class="input-single">
+      <input class="text-input" type="text" id="worth" placeholder="it removes the back-and-forth of figuring out pricing alone" oninput="checkText('worth','continue-5')" maxlength="160" />
+    </div>
+    <div class="input-helper">The honest answer is usually the right one.</div>
+    <div class="nav-row">
+      <button class="btn btn-ghost" onclick="goTo(4)">Back</button>
+      <button class="btn btn-solid" id="continue-5" disabled onclick="showSummary()">Complete Monetize</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ SUMMARY ════════════════════════════════════════ -->
+<div id="summary">
+  <div class="top-nav">
+    <a href="https://www.stephuary.com" class="nav-brand">Stephuary</a>
+    <span class="nav-phase">Phase 02 — Monetize</span>
+  </div>
+
+  <div style="width:100%;max-width:580px;margin-top:52px;">
+    <p class="summary-phase-tag">Phase 02 — Monetize</p>
+    <h2 class="summary-title">Offer statement structured.</h2>
+    <p class="summary-sub">You now have something that can be priced and communicated.</p>
+
+    <!-- Raw inputs -->
+    <div class="offer-card">
+      <div class="offer-section">
+        <div class="offer-label">What they're paying for</div>
+        <div class="offer-value" id="s-paying">—</div>
+      </div>
+      <div class="offer-section">
+        <div class="offer-label">Problem it solves</div>
+        <div class="offer-value" id="s-problem">—</div>
+      </div>
+      <div class="offer-section">
+        <div class="offer-label">Outcome</div>
+        <div class="offer-value" id="s-outcome">—</div>
+      </div>
+      <div class="offer-section">
+        <div class="offer-label">Format</div>
+        <div class="offer-value" id="s-format">—</div>
+      </div>
+      <div class="offer-section">
+        <div class="offer-label">Worth paying for because</div>
+        <div class="offer-value" id="s-worth">—</div>
+      </div>
+    </div>
+
+    <div class="what-next">
+      <p class="what-next-label">What happens next</p>
+      <p class="what-next-body">Phase 03 takes this offer and gives it structure — so it holds outside of you and can be delivered, repeated, and expanded.</p>
+    </div>
+
+    <div class="action-primary">
+      <button class="btn btn-solid" onclick="copyMonetize()">Copy my Offer</button>
+      <!--
+        STRIPE PLACEHOLDER
+        Replace href with your Stripe Payment Link for phase-03-structure ($17)
+        After payment, Stripe should redirect to: /structure/enter
+      -->
+      <a href="#stripe-placeholder-phase-03" class="btn">Continue to Phase 03 →</a>
+    </div>
+    <p class="copy-confirm" id="copyConfirm">Copied to clipboard.</p>
+
+    <div class="action-secondary">
+      <button class="btn btn-ghost" onclick="restart()">Start again</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  /* ── State ──────────────────────────────────────────── */
+  const state = {
+    paying: '', problem: '', outcome: '', format: '', worth: ''
+  };
+
+  const TOTAL = 5;
+  let currentStep = 1;
+
+  /* ── Unlock (dev shortcut — replace with Stripe redirect check) ── */
+  function unlock(e) {
+    e.preventDefault();
+    // PRODUCTION: remove this function and instead check for
+    // a Stripe session_id param on /monetize/enter or a localStorage flag
+    // set after successful payment redirect.
+    document.getElementById('locked').style.display = 'none';
+    document.getElementById('flow').style.display = 'flex';
+    updateProgress(1);
+    setTimeout(() => document.getElementById('paying').focus(), 60);
+  }
+
+  /* ── Check for unlock on /monetize/enter ─────────────── */
+  // PRODUCTION: on /monetize/enter page load, validate Stripe session here.
+  // If valid, skip locked screen directly to flow:
+  // const params = new URLSearchParams(window.location.search);
+  // if (params.get('session_id')) { unlock as above }
+
+  /* ── Navigation ─────────────────────────────────────── */
+  function goTo(n) {
+    document.getElementById('step-' + currentStep).classList.remove('active');
+    currentStep = n;
+    document.getElementById('step-' + n).classList.add('active');
+    updateProgress(n);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    setTimeout(() => {
+      const inp = document.querySelector('#step-' + n + ' .text-input');
+      if (inp) inp.focus();
+    }, 60);
+  }
+
+  function updateProgress(n) {
+    document.getElementById('progressCount').textContent = 'Step ' + n + ' of ' + TOTAL;
+    document.getElementById('progressFill').style.width = ((n / TOTAL) * 100) + '%';
+  }
+
+  /* ── Validation ─────────────────────────────────────── */
+  function checkText(inputId, btnId) {
+    const val = document.getElementById(inputId).value.trim();
+    document.getElementById(btnId).disabled = val.length === 0;
+    state[inputId] = val;
+  }
+
+  /* ── Summary ─────────────────────────────────────────── */
+  function showSummary() {
+    ['paying','problem','outcome','format','worth'].forEach(k => {
+      state[k] = document.getElementById(k).value.trim();
+    });
+
+    document.getElementById('flow').style.display = 'none';
+    const sum = document.getElementById('summary');
+    sum.style.display = 'flex';
+
+    document.getElementById('s-paying').textContent  = state.paying;
+    document.getElementById('s-problem').textContent = state.problem;
+    document.getElementById('s-outcome').textContent = state.outcome;
+    document.getElementById('s-format').textContent  = state.format;
+    document.getElementById('s-worth').textContent   = state.worth;
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  /* ── Copy ────────────────────────────────────────────── */
+  function copyMonetize() {
+    const text = [
+      'Phase 02 — Monetize',
+      '',
+      'What they\'re paying for: ' + state.paying,
+      'Problem it solves: '        + state.problem,
+      'Outcome: '                  + state.outcome,
+      'Format: '                   + state.format,
+      'Worth paying for because: ' + state.worth
+    ].join('\n');
+
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(flash);
+    } else {
+      const ta = Object.assign(document.createElement('textarea'), { value: text });
+      ta.style.cssText = 'position:fixed;opacity:0;';
+      document.body.appendChild(ta);
+      ta.focus(); ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      flash();
+    }
+  }
+
+  function flash() {
+    const el = document.getElementById('copyConfirm');
+    el.classList.add('visible');
+    setTimeout(() => el.classList.remove('visible'), 2800);
+  }
+
+  /* ── Restart ─────────────────────────────────────────── */
+  function restart() {
+    Object.keys(state).forEach(k => state[k] = '');
+    ['paying','problem','outcome','format','worth'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.value = '';
+    });
+    for (let i = 1; i <= 5; i++) {
+      const b = document.getElementById('continue-' + i);
+      if (b) b.disabled = true;
+    }
+    document.getElementById('summary').style.display = 'none';
+    currentStep = 1;
+    document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+    document.getElementById('step-1').classList.add('active');
+    document.getElementById('flow').style.display = 'flex';
+    updateProgress(1);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    setTimeout(() => document.getElementById('paying').focus(), 60);
+  }
+
+  /* ── Enter key advance ───────────────────────────────── */
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Enter' && document.activeElement.tagName !== 'BUTTON') {
+      const btn = document.getElementById('continue-' + currentStep);
+      if (btn && !btn.disabled) btn.click();
+    }
+  });
+</script>
+</body>
+</html>
