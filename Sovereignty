@@ -1,0 +1,921 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Phase 05 — Sovereignty · Stephuary</title>
+  <meta name="description" content="Make sure it holds under change. Phase 05 of the Stephuary system." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=Lato:wght@300;400&display=swap" rel="stylesheet" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:         #0a0a08;
+      --border:     #2a2a26;
+      --border-dim: #1c1c19;
+      --gold:       #c4a35a;
+      --text:       #f5f0e8;
+      --text-dim:   #7a7870;
+      --text-mid:   #c8c0b0;
+      --serif:      'Cormorant Garamond', Georgia, serif;
+      --sans:       'Lato', system-ui, sans-serif;
+      --radius:     2px;
+      --trans:      200ms ease;
+    }
+
+    html {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      font-weight: 300;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 0 20px 100px;
+    }
+
+    /* ── Nav ──────────────────────────────────────────── */
+    .top-nav {
+      width: 100%;
+      max-width: 580px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 28px 0 0;
+    }
+
+    .nav-brand {
+      font-size: 10px;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      text-decoration: none;
+      transition: color var(--trans);
+    }
+
+    .nav-brand:hover { color: var(--text-mid); }
+
+    .nav-phase {
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold);
+    }
+
+    /* ── Locked ───────────────────────────────────────── */
+    #locked {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      text-align: center;
+      max-width: 480px;
+      width: 100%;
+      padding: 60px 0;
+    }
+
+    .locked-phase {
+      font-size: 10px;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 48px;
+    }
+
+    .locked-headline {
+      font-family: var(--serif);
+      font-size: clamp(32px, 6vw, 52px);
+      font-weight: 300;
+      line-height: 1.15;
+      margin-bottom: 28px;
+    }
+
+    .locked-headline em {
+      font-style: italic;
+      color: var(--text-mid);
+    }
+
+    .locked-body {
+      font-size: 13px;
+      color: var(--text-dim);
+      letter-spacing: 0.04em;
+      line-height: 1.8;
+      margin-bottom: 52px;
+    }
+
+    .locked-price {
+      font-family: var(--serif);
+      font-size: 13px;
+      color: var(--text-dim);
+      margin-top: 16px;
+      letter-spacing: 0.04em;
+    }
+
+    /* ── Buttons ──────────────────────────────────────── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--sans);
+      font-weight: 300;
+      font-size: 11px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      padding: 14px 36px;
+      border: 1px solid var(--gold);
+      background: transparent;
+      color: var(--gold);
+      cursor: pointer;
+      transition: background var(--trans), color var(--trans), border-color var(--trans);
+      border-radius: var(--radius);
+      min-height: 48px;
+      text-decoration: none;
+    }
+
+    .btn:hover:not(:disabled) { background: var(--gold); color: var(--bg); }
+
+    .btn-solid { background: var(--gold); color: var(--bg); border-color: var(--gold); }
+    .btn-solid:hover:not(:disabled) { background: #d4b36a; border-color: #d4b36a; }
+
+    .btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      border-color: #383832;
+      color: #383832;
+      background: transparent;
+    }
+
+    .btn-ghost {
+      border-color: var(--border-dim);
+      color: var(--text-dim);
+      font-size: 10px;
+      padding: 12px 22px;
+    }
+
+    .btn-ghost:hover:not(:disabled) {
+      border-color: var(--border);
+      color: var(--text-mid);
+      background: transparent;
+    }
+
+    /* ── Flow ─────────────────────────────────────────── */
+    #flow {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      max-width: 580px;
+      min-height: 100vh;
+      padding-top: 52px;
+    }
+
+    /* ── Progress ─────────────────────────────────────── */
+    .progress-bar-wrap { width: 100%; margin-bottom: 56px; }
+
+    .progress-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .progress-label {
+      font-size: 10px;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+    }
+
+    .progress-count {
+      font-family: var(--serif);
+      font-size: 13px;
+      color: var(--gold);
+    }
+
+    .progress-track { width: 100%; height: 2px; background: var(--border-dim); border-radius: 1px; }
+    .progress-fill  { height: 100%; background: var(--gold); border-radius: 1px; transition: width 450ms cubic-bezier(0.4,0,0.2,1); }
+
+    /* ── Steps ────────────────────────────────────────── */
+    .step { display: none; flex-direction: column; width: 100%; animation: stepIn 280ms ease forwards; }
+    .step.active { display: flex; }
+
+    @keyframes stepIn {
+      from { opacity: 0; transform: translateY(14px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .step-header { margin-bottom: 44px; }
+
+    .step-instruction {
+      font-family: var(--serif);
+      font-size: clamp(26px, 5vw, 40px);
+      font-weight: 300;
+      line-height: 1.15;
+      margin-bottom: 12px;
+    }
+
+    .step-directive {
+      font-size: 13px;
+      font-weight: 300;
+      color: var(--text-mid);
+      line-height: 1.7;
+    }
+
+    .step-micro {
+      font-size: 11px;
+      color: var(--text-dim);
+      letter-spacing: 0.04em;
+      margin-top: 8px;
+      line-height: 1.7;
+    }
+
+    /* ── Input ────────────────────────────────────────── */
+    .input-single {
+      border-bottom: 1px solid var(--border);
+      transition: border-color var(--trans);
+      margin-bottom: 4px;
+    }
+
+    .input-single:focus-within { border-bottom-color: var(--gold); }
+
+    .text-input {
+      background: transparent;
+      border: none;
+      color: var(--text);
+      font-family: var(--sans);
+      font-weight: 300;
+      font-size: 15px;
+      padding: 14px 0;
+      width: 100%;
+      outline: none;
+      border-radius: 0;
+      -webkit-appearance: none;
+    }
+
+    .text-input::placeholder { color: #383832; font-style: italic; }
+    .text-input:focus::placeholder { color: #4a4a44; }
+
+    .input-helper {
+      font-size: 11px;
+      color: var(--text-dim);
+      letter-spacing: 0.04em;
+      margin-top: 10px;
+    }
+
+    /* ── Nav row ──────────────────────────────────────── */
+    .nav-row {
+      display: flex;
+      gap: 12px;
+      margin-top: 48px;
+      align-items: center;
+    }
+
+    /* ── Summary ──────────────────────────────────────── */
+    #summary {
+      display: none;
+      flex-direction: column;
+      width: 100%;
+      max-width: 580px;
+      padding-top: 52px;
+      animation: stepIn 400ms ease forwards;
+    }
+
+    .summary-phase-tag {
+      font-size: 10px;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 20px;
+    }
+
+    .summary-title {
+      font-family: var(--serif);
+      font-size: clamp(30px, 5vw, 48px);
+      font-weight: 300;
+      line-height: 1.1;
+      margin-bottom: 12px;
+    }
+
+    .summary-sub {
+      font-size: 13px;
+      color: var(--text-dim);
+      letter-spacing: 0.04em;
+      margin-bottom: 44px;
+    }
+
+    /* Raw inputs card */
+    .data-card {
+      border: 1px solid var(--border);
+      border-top: 2px solid var(--gold);
+      margin-bottom: 36px;
+    }
+
+    .data-row {
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      gap: 16px;
+      padding: 16px 24px;
+      border-bottom: 1px solid var(--border-dim);
+      align-items: start;
+    }
+
+    .data-row:last-child { border-bottom: none; }
+
+    .data-label {
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      padding-top: 3px;
+      line-height: 1.5;
+    }
+
+    .data-value {
+      font-family: var(--serif);
+      font-size: 17px;
+      font-weight: 300;
+      color: var(--text);
+      line-height: 1.45;
+    }
+
+    /* Sovereignty map */
+    .map-wrap {
+      border: 1px solid var(--border);
+      padding: 28px;
+      margin-bottom: 44px;
+    }
+
+    .map-label {
+      font-size: 10px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 24px;
+    }
+
+    .map-columns {
+      display: grid;
+      grid-template-columns: 1fr 1px 1fr;
+      gap: 24px;
+    }
+
+    .map-divider {
+      background: var(--border-dim);
+      width: 1px;
+      align-self: stretch;
+    }
+
+    .map-col-label {
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin-bottom: 16px;
+    }
+
+    .map-col-items { display: flex; flex-direction: column; gap: 10px; }
+
+    .map-item {
+      font-family: var(--serif);
+      font-size: 16px;
+      font-weight: 300;
+      color: var(--text-mid);
+      line-height: 1.4;
+      font-style: italic;
+      padding-left: 12px;
+      border-left: 1px solid var(--border);
+    }
+
+    .map-item.owned {
+      color: var(--text);
+      border-left-color: var(--gold);
+    }
+
+    .map-statement {
+      margin-top: 24px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border-dim);
+      font-family: var(--serif);
+      font-size: 17px;
+      font-weight: 300;
+      font-style: italic;
+      color: var(--text-mid);
+      line-height: 1.6;
+    }
+
+    .what-next { margin-bottom: 40px; }
+
+    .what-next-label {
+      font-size: 10px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 14px;
+    }
+
+    .what-next-body {
+      font-size: 14px;
+      font-weight: 300;
+      color: var(--text-mid);
+      line-height: 1.8;
+    }
+
+    /* Return to system — final phase complete state */
+    .system-complete {
+      border: 1px solid var(--border);
+      padding: 32px 28px;
+      margin-bottom: 36px;
+      text-align: center;
+    }
+
+    .system-complete-label {
+      font-size: 10px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 16px;
+    }
+
+    .system-complete-text {
+      font-family: var(--serif);
+      font-size: clamp(20px, 3.5vw, 28px);
+      font-weight: 300;
+      line-height: 1.4;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+
+    .system-complete-sub {
+      font-size: 13px;
+      color: var(--text-dim);
+      line-height: 1.7;
+      margin-bottom: 28px;
+    }
+
+    .action-primary { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 8px; }
+
+    .copy-confirm {
+      font-size: 11px;
+      color: var(--gold);
+      letter-spacing: 0.1em;
+      margin-bottom: 28px;
+      min-height: 18px;
+      opacity: 0;
+      transition: opacity 300ms ease;
+    }
+
+    .copy-confirm.visible { opacity: 1; }
+
+    .action-secondary {
+      padding-top: 24px;
+      border-top: 1px solid var(--border-dim);
+    }
+
+    /* ── Responsive ───────────────────────────────────── */
+    @media (max-width: 480px) {
+      body { padding: 0 16px 80px; }
+      .step-instruction { font-size: 24px; }
+      .data-card { margin-left: -16px; margin-right: -16px; border-left: none; border-right: none; }
+      .data-row { grid-template-columns: 1fr; gap: 4px; padding: 14px 16px; }
+      .map-wrap { padding: 20px 16px; margin-left: -16px; margin-right: -16px; border-left: none; border-right: none; }
+      .map-columns { grid-template-columns: 1fr; }
+      .map-divider { display: none; }
+      .system-complete { padding: 24px 16px; }
+      .nav-row { flex-direction: column-reverse; align-items: stretch; }
+      .nav-row .btn { justify-content: center; }
+      .action-primary { flex-direction: column; }
+      .action-primary .btn { justify-content: center; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══ LOCKED ═════════════════════════════════════════ -->
+<div id="locked">
+  <p class="locked-phase">Phase 05 — Sovereignty</p>
+  <h1 class="locked-headline">
+    You have something that runs.<br>
+    <em>That does not mean<br>it survives.</em>
+  </h1>
+  <p class="locked-body">What runs on borrowed platforms,<br>fragile attention, or conditions you don't control<br>is not yet yours.</p>
+
+  <!--
+    STRIPE PLACEHOLDER
+    Replace href with your Stripe Payment Link for phase-05-sovereignty ($47)
+    After payment, redirect to: /sovereignty/enter
+  -->
+  <a href="#stripe-placeholder-phase-05" class="btn btn-solid" onclick="unlock(event)">
+    Unlock Phase 05
+  </a>
+  <p class="locked-price">$47 &middot; One-time access</p>
+</div>
+
+<!-- ══ FLOW ═══════════════════════════════════════════ -->
+<div id="flow">
+  <div class="top-nav">
+    <a href="https://www.stephuary.com" class="nav-brand">Stephuary</a>
+    <span class="nav-phase">Phase 05 — Sovereignty</span>
+  </div>
+
+  <div style="width:100%;max-width:580px;">
+    <div class="progress-bar-wrap" style="margin-top:40px;">
+      <div class="progress-meta">
+        <span class="progress-label">Sovereignty</span>
+        <span class="progress-count" id="progressCount">Step 1 of 9</span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill" id="progressFill" style="width:11.1%"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 01 -->
+  <div class="step active" id="step-1">
+    <div class="step-header">
+      <div class="step-instruction">What must you own.</div>
+      <div class="step-directive">What parts of this work cannot belong to a platform, a tool, or someone else.</div>
+      <div class="step-micro">The audience, the IP, the system, the relationship — what is actually yours.</div>
+    </div>
+    <div class="input-single">
+      <input class="text-input" type="text" id="own" placeholder="the framework, the client relationships, the writing" oninput="checkText('own','c1')" maxlength="200" />
+    </div>
+    <div class="input-helper">Separate with commas if more than one.</div>
+    <div class="nav-row">
+      <button class="btn" id="c1" disabled onclick="goTo(2)">Continue</button>
+    </div>
+  </div>
+
+  <!-- Step 02 -->
+  <div class="step" id="step-2">
+    <div class="step-header">
+      <div class="step-instruction">What does it depend on.</div>
+      <div class="step-directive">Name every external thing this system needs to function.</div>
+      <div class="step-micro">Platforms, tools, people, permissions, third-party access.</div>
+    </div>
+    <div class="input-single">
+      <input class="text-input" type="text" id="depends" placeholder="Stripe, a specific platform, one referral source" oninput="checkText('depends','c2')" maxlength="200" />
+    </div>
+    <div class="input-helper">Dependencies are risks. Name them honestly.</div>
+    <div class="nav-row">
+      <button class="btn btn-ghost" onclick="goTo(1)">Back</button>
+      <button class="btn" id="c2" disabled onclick="goTo(3)">Continue</button>
+    </div>
+  </div>
+
+  <!-- Step 03 -->
+  <div class="step" id="step-3">
+    <div class="step-header">
+      <div class="step-instruction">What breaks first.</div>
+      <div class="step-directive">If something fails, what is the first thing that stops working.</div>
+      <div class="step-micro">This is usually the most fragile dependency.</div>
+    </div>
+    <div class="input-single">
+      <input class="text-input" type="text" id="breaks" placeholder="the payment processor, the single client, the social platform" oninput="checkText('breaks','c3')" maxlength="160" />
+    </div>
+    <div class="input-helper">One thing. The one you already know.</div>
+    <div class="nav-row">
+      <button class="btn btn-ghost" onclick="goTo(2)">Back</button>
+      <button class="btn" id="c3" disabled onclick="goTo(4)">Continue</button>
+    </div>
+  </div>
+
+  <!-- Step 04 -->
+  <div class="step" id="step-4">
+    <div class="step-header">
+      <div class="step-instruction">What is the asset.</div>
+      <div class="step-directive">What has been built that has value independent of any platform or tool.</div>
+      <div class="step-micro">An audience you own, a document, a system, a body of work.</div>
+    </div>
+    <div class="input-single">
+      <input class="text-input" type="text" id="asset" placeholder="the email list, the framework document, the course content" oninput="checkText('asset','c4')" maxlength="200" />
+    </div>
+    <div class="input-helper">If the platform disappeared tomorrow, what would you still have.</div>
+    <div class="nav-row">
+      <button class="btn btn-ghost" onclick="goTo(3)">Back</button>
+      <button class="btn" id="c4" disabled onclick="goTo(5)">Continue</button>
+    </div>
+  </div>
+
+  <!-- Step 05 -->
+  <div class="step" id="step-5">
+    <div class="step-header">
+      <div class="step-instruction">What needs protection.</div>
+      <div class="step-directive">What is valuable enough that losing it would be material.</div>
+    </div>
+    <div class="input-single">
+      <input class="text-input" type="text" id="protect" placeholder="client data, the framework IP, the audience relationship" oninput="checkText('protect','c5')" maxlength="200" />
+    </div>
+    <div class="input-helper">Protection means contracts, backups, or redundancy. Name what needs it.</div>
+    <div class="nav-row">
+      <button class="btn btn-ghost" onclick="goTo(4)">Back</button>
+      <button class="btn" id="c5" disabled onclick="goTo(6)">Continue</button>
+    </div>
+  </div>
+
+  <!-- Step 06 -->
+  <div class="step" id="step-6">
+    <div class="step-header">
+      <div class="step-instruction">What needs backup.</div>
+      <div class="step-directive">What would cause a disruption if it disappeared today.</div>
+      <div class="step-micro">Not everything. The things with no redundancy.</div>
+    </div>
+    <div class="input-single">
+      <input class="text-input" type="text" id="backup" placeholder="the contact list, the process docs, the working files" oninput="checkText('backup','c6')" maxlength="200" />
+    </div>
+    <div class="input-helper">These need a second location, a second format, or a second person who knows them.</div>
+    <div class="nav-row">
+      <button class="btn btn-ghost" onclick="goTo(5)">Back</button>
+      <button class="btn" id="c6" disabled onclick="goTo(7)">Continue</button>
+    </div>
+  </div>
+
+  <!-- Step 07 -->
+  <div class="step" id="step-7">
+    <div class="step-header">
+      <div class="step-instruction">What increases independence.</div>
+      <div class="step-directive">What would reduce your dependence on any single platform, person, or condition.</div>
+    </div>
+    <div class="input-single">
+      <input class="text-input" type="text" id="independence" placeholder="a second revenue channel, owning the domain, a direct email list" oninput="checkText('independence','c7')" maxlength="200" />
+    </div>
+    <div class="input-helper">Independence is built incrementally. Name one move.</div>
+    <div class="nav-row">
+      <button class="btn btn-ghost" onclick="goTo(6)">Back</button>
+      <button class="btn" id="c7" disabled onclick="goTo(8)">Continue</button>
+    </div>
+  </div>
+
+  <!-- Step 08 -->
+  <div class="step" id="step-8">
+    <div class="step-header">
+      <div class="step-instruction">What creates durability.</div>
+      <div class="step-directive">What would make this system continue to hold under pressure, change, or absence.</div>
+    </div>
+    <div class="input-single">
+      <input class="text-input" type="text" id="durable" placeholder="documented processes, recurring revenue, a second operator" oninput="checkText('durable','c8')" maxlength="200" />
+    </div>
+    <div class="input-helper">Durability means it runs without requiring everything to stay the same.</div>
+    <div class="nav-row">
+      <button class="btn btn-ghost" onclick="goTo(7)">Back</button>
+      <button class="btn" id="c8" disabled onclick="goTo(9)">Continue</button>
+    </div>
+  </div>
+
+  <!-- Step 09 -->
+  <div class="step" id="step-9">
+    <div class="step-header">
+      <div class="step-instruction">Sovereignty statement.</div>
+      <div class="step-directive">Complete the sentence.</div>
+      <div class="step-micro">This system is mine because ______.</div>
+    </div>
+    <div class="input-single">
+      <input class="text-input" type="text" id="statement" placeholder="I own the content, the list, and the process" oninput="checkText('statement','c9')" maxlength="200" />
+    </div>
+    <div class="input-helper">Write what is actually true, not aspirational.</div>
+    <div class="nav-row">
+      <button class="btn btn-ghost" onclick="goTo(8)">Back</button>
+      <button class="btn btn-solid" id="c9" disabled onclick="showSummary()">Complete Sovereignty</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ SUMMARY ════════════════════════════════════════ -->
+<div id="summary">
+  <div class="top-nav">
+    <a href="https://www.stephuary.com" class="nav-brand">Stephuary</a>
+    <span class="nav-phase">Phase 05 — Sovereignty</span>
+  </div>
+
+  <div style="width:100%;max-width:580px;margin-top:52px;">
+    <p class="summary-phase-tag">Phase 05 — Sovereignty</p>
+    <h2 class="summary-title">Sovereignty map.</h2>
+    <p class="summary-sub">What you own. What you've secured. What holds.</p>
+
+    <!-- Raw inputs -->
+    <div class="data-card">
+      <div class="data-row">
+        <span class="data-label">What you own</span>
+        <span class="data-value" id="s-own">—</span>
+      </div>
+      <div class="data-row">
+        <span class="data-label">Dependencies</span>
+        <span class="data-value" id="s-depends">—</span>
+      </div>
+      <div class="data-row">
+        <span class="data-label">Breaks first</span>
+        <span class="data-value" id="s-breaks">—</span>
+      </div>
+      <div class="data-row">
+        <span class="data-label">The asset</span>
+        <span class="data-value" id="s-asset">—</span>
+      </div>
+      <div class="data-row">
+        <span class="data-label">Needs protection</span>
+        <span class="data-value" id="s-protect">—</span>
+      </div>
+    </div>
+
+    <!-- Sovereignty map — two columns -->
+    <div class="map-wrap">
+      <div class="map-label">Sovereignty map</div>
+      <div class="map-columns">
+        <div class="map-col">
+          <div class="map-col-label">Owned and secured</div>
+          <div class="map-col-items" id="map-owned"></div>
+        </div>
+        <div class="map-divider"></div>
+        <div class="map-col">
+          <div class="map-col-label">Build toward</div>
+          <div class="map-col-items" id="map-build"></div>
+        </div>
+      </div>
+      <div class="map-statement" id="map-statement">—</div>
+    </div>
+
+    <!-- System complete state -->
+    <div class="system-complete">
+      <div class="system-complete-label">System complete</div>
+      <div class="system-complete-text">
+        Capture → Monetize → Structure → Automation → Sovereignty
+      </div>
+      <div class="system-complete-sub">
+        You have moved through the full sequence.<br>
+        What you built here is yours.
+      </div>
+      <a href="https://www.stephuary.com" class="btn btn-solid">Return to Stephuary</a>
+    </div>
+
+    <div class="action-primary">
+      <button class="btn" onclick="copySovereignty()">Copy my Sovereignty Map</button>
+    </div>
+    <p class="copy-confirm" id="copyConfirm">Copied to clipboard.</p>
+
+    <div class="action-secondary">
+      <button class="btn btn-ghost" onclick="restart()">Start again</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const state = {
+    own: '', depends: '', breaks: '', asset: '', protect: '',
+    backup: '', independence: '', durable: '', statement: ''
+  };
+
+  const TOTAL = 9;
+  let currentStep = 1;
+
+  function unlock(e) {
+    e.preventDefault();
+    // PRODUCTION: validate Stripe session_id on /sovereignty/enter
+    document.getElementById('locked').style.display = 'none';
+    document.getElementById('flow').style.display = 'flex';
+    updateProgress(1);
+    setTimeout(() => document.getElementById('own').focus(), 60);
+  }
+
+  function goTo(n) {
+    document.getElementById('step-' + currentStep).classList.remove('active');
+    currentStep = n;
+    document.getElementById('step-' + n).classList.add('active');
+    updateProgress(n);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    setTimeout(() => {
+      const inp = document.querySelector('#step-' + n + ' .text-input');
+      if (inp) inp.focus();
+    }, 60);
+  }
+
+  function updateProgress(n) {
+    document.getElementById('progressCount').textContent = 'Step ' + n + ' of ' + TOTAL;
+    document.getElementById('progressFill').style.width = ((n / TOTAL) * 100) + '%';
+  }
+
+  function checkText(inputId, btnId) {
+    const val = document.getElementById(inputId).value.trim();
+    document.getElementById(btnId).disabled = val.length === 0;
+    state[inputId] = val;
+  }
+
+  function showSummary() {
+    const keys = ['own','depends','breaks','asset','protect','backup','independence','durable','statement'];
+    keys.forEach(k => { state[k] = document.getElementById(k).value.trim(); });
+
+    document.getElementById('flow').style.display = 'none';
+    document.getElementById('summary').style.display = 'flex';
+
+    // Raw inputs
+    document.getElementById('s-own').textContent     = state.own;
+    document.getElementById('s-depends').textContent = state.depends;
+    document.getElementById('s-breaks').textContent  = state.breaks;
+    document.getElementById('s-asset').textContent   = state.asset;
+    document.getElementById('s-protect').textContent = state.protect;
+
+    // Owned and secured column — own + asset + protect
+    const ownedItems = [...splitCSV(state.own), ...splitCSV(state.asset), ...splitCSV(state.protect)];
+    const ownedCol = document.getElementById('map-owned');
+    ownedCol.innerHTML = '';
+    ownedItems.forEach(item => {
+      const d = document.createElement('div');
+      d.className = 'map-item owned';
+      d.textContent = item;
+      ownedCol.appendChild(d);
+    });
+
+    // Build toward column — independence + durable
+    const buildItems = [...splitCSV(state.independence), ...splitCSV(state.durable)];
+    const buildCol = document.getElementById('map-build');
+    buildCol.innerHTML = '';
+    buildItems.forEach(item => {
+      const d = document.createElement('div');
+      d.className = 'map-item';
+      d.textContent = item;
+      buildCol.appendChild(d);
+    });
+
+    // Sovereignty statement
+    document.getElementById('map-statement').textContent =
+      'This system is mine because ' + state.statement + '.';
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function splitCSV(str) {
+    return str.split(',').map(s => s.trim()).filter(Boolean);
+  }
+
+  function copySovereignty() {
+    const text = [
+      'Phase 05 — Sovereignty',
+      '',
+      'What I own: '             + state.own,
+      'Dependencies: '           + state.depends,
+      'What breaks first: '      + state.breaks,
+      'The asset: '              + state.asset,
+      'Needs protection: '       + state.protect,
+      'Needs backup: '           + state.backup,
+      'Increases independence: ' + state.independence,
+      'Creates durability: '     + state.durable,
+      '',
+      'Sovereignty statement:',
+      'This system is mine because ' + state.statement + '.'
+    ].join('\n');
+
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(flash);
+    } else {
+      const ta = Object.assign(document.createElement('textarea'), { value: text });
+      ta.style.cssText = 'position:fixed;opacity:0;';
+      document.body.appendChild(ta);
+      ta.focus(); ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      flash();
+    }
+  }
+
+  function flash() {
+    const el = document.getElementById('copyConfirm');
+    el.classList.add('visible');
+    setTimeout(() => el.classList.remove('visible'), 2800);
+  }
+
+  function restart() {
+    Object.keys(state).forEach(k => state[k] = '');
+    Object.keys(state).forEach(id => {
+      const el = document.getElementById(id);
+      if (el && el.tagName === 'INPUT') el.value = '';
+    });
+    for (let i = 1; i <= 9; i++) {
+      const b = document.getElementById('c' + i);
+      if (b) b.disabled = true;
+    }
+    document.getElementById('summary').style.display = 'none';
+    currentStep = 1;
+    document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+    document.getElementById('step-1').classList.add('active');
+    document.getElementById('flow').style.display = 'flex';
+    updateProgress(1);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    setTimeout(() => document.getElementById('own').focus(), 60);
+  }
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Enter' && document.activeElement.tagName !== 'BUTTON') {
+      const btn = document.getElementById('c' + currentStep);
+      if (btn && !btn.disabled) btn.click();
+    }
+  });
+</script>
+</body>
+</html>
