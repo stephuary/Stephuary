@@ -3,953 +3,553 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Phase 01 — Capture · Stephuary</title>
-  <meta name="description" content="Phase 01 of the Stephuary system. Turn scattered thinking into a structured first output." />
+  <title>Capture - Stephuary</title>
+  <meta name="description" content="Capture your idea in one clear sentence and move to the next step." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Lato:wght@300;400&display=swap" rel="stylesheet" />
-
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500&family=Lato:wght@300;400&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg:          #0a0a08;
-      --surface:     #111110;
-      --border:      #2a2a26;
-      --border-dim:  #1c1c19;
-      --gold:        #c4a35a;
-      --gold-dim:    #8a6f3a;
-      --selected-bg: rgba(196,163,90,0.09);
-      --text:        #f5f0e8;
-      --text-dim:    #7a7870;
-      --text-mid:    #c8c0b0;
-      --serif:       'Cormorant Garamond', Georgia, serif;
-      --sans:        'Lato', system-ui, sans-serif;
-      --radius:      2px;
-      --trans:       200ms ease;
+      --bg-0: #0a0a08;
+      --bg-1: #12120f;
+      --bg-2: #171713;
+      --line: rgba(196, 163, 90, 0.22);
+      --line-soft: rgba(196, 163, 90, 0.12);
+      --gold: #c4a35a;
+      --text: #f5f0e8;
+      --text-dim: #c9c2b3;
+      --text-soft: #9f998d;
+      --green: #2f563f;
+      --green-hover: #3a6a4f;
+      --serif: "Cormorant Garamond", Georgia, serif;
+      --sans: "Lato", system-ui, sans-serif;
+      --radius: 2px;
     }
 
-    html {
-      background: var(--bg);
+    html, body {
+      background: var(--bg-0);
       color: var(--text);
       font-family: var(--sans);
       font-weight: 300;
-      -webkit-font-smoothing: antialiased;
+      min-height: 100%;
     }
 
     body {
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 0 20px 100px;
+      padding: 26px 24px 72px;
     }
 
-    /* ── Landing ─────────────────────────────────────── */
-    #landing {
+    .page {
+      max-width: 1180px;
+      margin: 0 auto;
       display: flex;
       flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      text-align: center;
-      max-width: 520px;
-      width: 100%;
-      padding: 60px 0;
+      gap: 26px;
     }
 
-    .landing-phase {
-      font-size: 10px;
-      letter-spacing: 0.28em;
+    .top-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 22px;
+      align-items: start;
+    }
+
+    .panel {
+      border: 1px solid var(--line-soft);
+      background: linear-gradient(180deg, var(--bg-1), var(--bg-2));
+      border-radius: var(--radius);
+      padding: 24px;
+    }
+
+    .label {
+      display: inline-block;
+      font-size: 11px;
+      letter-spacing: 0.14em;
       text-transform: uppercase;
       color: var(--gold);
-      margin-bottom: 40px;
+      margin-bottom: 12px;
     }
 
-    .landing-title {
+    h1 {
       font-family: var(--serif);
-      font-size: clamp(40px, 7vw, 64px);
-      font-weight: 300;
-      line-height: 1.1;
+      font-size: clamp(40px, 5.8vw, 64px);
+      font-weight: 400;
+      line-height: 1.04;
+      margin-bottom: 12px;
+    }
+
+    .subhead {
+      font-size: 18px;
+      color: var(--text-dim);
+      line-height: 1.45;
+      max-width: 48ch;
       margin-bottom: 20px;
     }
 
-    .landing-title em {
-      font-style: italic;
-      color: var(--text-mid);
+    .row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
     }
 
-    .landing-instruction {
-      font-size: 13px;
-      color: var(--text-dim);
-      letter-spacing: 0.06em;
-      margin-bottom: 52px;
-      line-height: 1.8;
-    }
-
-    /* ── Buttons ─────────────────────────────────────── */
-    .btn {
+    .btn, .link-btn {
+      border: 1px solid var(--line);
+      color: var(--text);
+      background: transparent;
+      text-decoration: none;
+      padding: 12px 16px;
+      min-height: 46px;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      font-family: var(--sans);
-      font-weight: 300;
-      font-size: 11px;
-      letter-spacing: 0.22em;
-      text-transform: uppercase;
-      padding: 14px 36px;
-      border: 1px solid var(--gold);
-      background: transparent;
-      color: var(--gold);
-      cursor: pointer;
-      transition: background var(--trans), color var(--trans), border-color var(--trans);
       border-radius: var(--radius);
-      min-height: 48px;
-      text-decoration: none;
+      cursor: pointer;
+      transition: background 160ms ease, border-color 160ms ease, color 160ms ease, transform 120ms ease;
     }
 
-    .btn:hover:not(:disabled) {
-      background: var(--gold);
-      color: var(--bg);
-    }
-
-    /* FIX 5: 40% opacity — visible, not absent */
-    .btn:disabled {
-      opacity: 0.4;
-      cursor: not-allowed;
-      border-color: #383832;
-      color: #383832;
-      background: transparent;
-    }
-
-    .btn-ghost {
-      border-color: var(--border-dim);
-      color: var(--text-dim);
-      font-size: 10px;
-      padding: 12px 22px;
-    }
-
-    .btn-ghost:hover:not(:disabled) {
-      border-color: var(--border);
-      color: var(--text-mid);
-      background: transparent;
-    }
-
-    /* FIX 9: terminal action — gold filled */
-    .btn-terminal {
-      background: var(--gold);
-      color: var(--bg);
+    .btn:hover, .link-btn:hover {
       border-color: var(--gold);
+      color: var(--text);
     }
 
-    .btn-terminal:hover:not(:disabled) {
-      background: #d4b36a;
-      border-color: #d4b36a;
-      color: var(--bg);
+    .btn:active, .link-btn:active {
+      transform: translateY(1px);
     }
 
-    .btn-terminal:disabled {
-      opacity: 0.35;
-      cursor: not-allowed;
-      background: transparent;
-      color: #383832;
-      border-color: #383832;
+    .btn-primary {
+      border-color: var(--green);
+      background: var(--green);
+      color: #eff2ec;
     }
 
-    .btn-start {
-      background: var(--gold);
-      color: var(--bg);
-      border-color: var(--gold);
-      font-size: 12px;
-      padding: 16px 52px;
+    .btn-primary:hover {
+      border-color: var(--green-hover);
+      background: var(--green-hover);
+      color: #f6f8f4;
     }
 
-    .btn-start:hover {
-      background: #d4b36a;
-      border-color: #d4b36a;
-      color: var(--bg);
-    }
-
-    /* ── Flow ────────────────────────────────────────── */
-    #flow {
-      display: none;
-      flex-direction: column;
-      align-items: center;
-      width: 100%;
-      max-width: 580px;
-      min-height: 100vh;
-      padding-top: 52px;
-    }
-
-    /* ── Progress ────────────────────────────────────── */
-    .progress-bar-wrap {
-      width: 100%;
-      margin-bottom: 56px;
-    }
-
-    .progress-meta {
+    .stack {
       display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 12px;
+      flex-direction: column;
+      gap: 20px;
     }
 
-    .progress-label {
-      font-size: 10px;
-      letter-spacing: 0.25em;
-      text-transform: uppercase;
-      color: var(--text-dim);
-    }
-
-    .progress-count {
+    .title {
       font-family: var(--serif);
+      font-size: clamp(30px, 4vw, 42px);
+      font-weight: 400;
+      line-height: 1.06;
+    }
+
+    .instruction {
+      font-size: 18px;
+      color: var(--text-dim);
+      line-height: 1.45;
+      margin-top: 4px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .field label {
       font-size: 13px;
-      color: var(--gold);
-    }
-
-    /* FIX 6: 2px track */
-    .progress-track {
-      width: 100%;
-      height: 2px;
-      background: var(--border-dim);
-      border-radius: 1px;
-    }
-
-    .progress-fill {
-      height: 100%;
-      background: var(--gold);
-      border-radius: 1px;
-      transition: width 450ms cubic-bezier(0.4,0,0.2,1);
-    }
-
-    /* ── Step ────────────────────────────────────────── */
-    .step {
-      display: none;
-      flex-direction: column;
-      width: 100%;
-      animation: stepIn 280ms ease forwards;
-    }
-
-    .step.active { display: flex; }
-
-    @keyframes stepIn {
-      from { opacity: 0; transform: translateY(14px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-
-    .step-header { margin-bottom: 44px; }
-
-    .step-instruction {
-      font-family: var(--serif);
-      font-size: clamp(28px, 5vw, 42px);
-      font-weight: 300;
-      line-height: 1.15;
-      margin-bottom: 14px;
-    }
-
-    .step-directive {
-      font-size: 14px;
-      font-weight: 300;
-      color: var(--text-mid);
-      line-height: 1.7;
-    }
-
-    .step-micro {
-      font-size: 11px;
-      color: var(--text-dim);
-      letter-spacing: 0.04em;
-      margin-top: 8px;
-      line-height: 1.7;
-    }
-
-    /* ── Inputs ──────────────────────────────────────── */
-    .input-stack {
-      display: flex;
-      flex-direction: column;
-      margin-bottom: 12px;
-    }
-
-    /* FIX 4: numbered rows with micro-prompt placeholders */
-    .input-row {
-      display: grid;
-      grid-template-columns: 20px 1fr;
-      gap: 16px;
-      align-items: center;
-      border-bottom: 1px solid var(--border-dim);
-    }
-
-    .input-row:first-child { border-top: 1px solid var(--border-dim); }
-
-    .input-num {
-      font-family: var(--serif);
-      font-size: 12px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
       color: var(--text-dim);
     }
 
-    .text-input {
-      background: transparent;
-      border: none;
+    .field input {
+      width: 100%;
+      border: 1px solid var(--line-soft);
+      background: rgba(10, 10, 8, 0.7);
       color: var(--text);
-      font-family: var(--sans);
-      font-weight: 300;
-      font-size: 14px;
-      padding: 14px 0;
-      width: 100%;
-      outline: none;
-      border-radius: 0;
-      -webkit-appearance: none;
-    }
-
-    .text-input::placeholder { color: #383832; font-style: italic; }
-    .text-input:focus::placeholder { color: #4a4a44; }
-
-    .input-single {
-      border-bottom: 1px solid var(--border);
-      transition: border-color var(--trans);
-      margin-bottom: 4px;
-    }
-
-    .input-single:focus-within { border-bottom-color: var(--gold); }
-
-    .input-helper {
-      font-size: 11px;
-      color: var(--text-dim);
-      letter-spacing: 0.04em;
-      margin-top: 10px;
-    }
-
-    /* ── Options ─────────────────────────────────────── */
-    .option-list {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      margin-bottom: 12px;
-    }
-
-    /* FIX 1 + 2: lifted border, stronger selected bg */
-    .option-item {
-      display: flex;
-      align-items: center;
-      padding: 16px 20px;
-      border: 1px solid var(--border);
-      cursor: pointer;
-      transition: border-color var(--trans), background var(--trans), color var(--trans);
+      padding: 14px 14px;
+      font-size: 18px;
       border-radius: var(--radius);
-      font-size: 14px;
-      font-weight: 300;
-      color: var(--text-mid);
-      letter-spacing: 0.015em;
-      user-select: none;
-      -webkit-tap-highlight-color: transparent;
-      line-height: 1.4;
+      outline: none;
+      transition: border-color 150ms ease, background 150ms ease;
     }
 
-    .option-item:hover {
-      border-color: var(--gold-dim);
-      color: var(--text);
-    }
-
-    .option-item.selected {
+    .field input:focus {
       border-color: var(--gold);
-      color: var(--text);
-      background: var(--selected-bg);
+      background: rgba(10, 10, 8, 0.9);
     }
 
-    .option-item.selected::after {
-      content: '';
+    .field input::placeholder {
+      color: var(--text-soft);
+    }
+
+    .clean-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .status {
+      font-size: 12px;
+      color: var(--text-soft);
+      min-height: 18px;
+    }
+
+    #clean-btn.is-working {
+      background: #20392b;
+      border-color: #20392b;
+      color: #e7efe8;
+    }
+
+    #output-card {
+      display: none;
+      border: 1px solid var(--line);
+      background: rgba(196, 163, 90, 0.06);
+      border-radius: var(--radius);
+      padding: 18px;
+      margin-top: 2px;
+    }
+
+    #output-card.visible {
       display: block;
+      animation: fadeIn 180ms ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .output-label {
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 10px;
+    }
+
+    .output-idea {
+      font-family: var(--serif);
+      font-size: clamp(25px, 3vw, 32px);
+      line-height: 1.2;
+      margin-bottom: 16px;
+    }
+
+    .output-next {
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-dim);
+      margin-bottom: 12px;
+    }
+
+    .next-item {
+      border: 1px solid var(--line-soft);
+      background: rgba(18, 18, 15, 0.6);
+      border-radius: var(--radius);
+      padding: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .next-item p {
+      font-size: 16px;
+      line-height: 1.35;
+      color: var(--text);
+      max-width: 34ch;
+    }
+
+    .section-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 22px;
+    }
+
+    .panel h2 {
+      font-family: var(--serif);
+      font-weight: 400;
+      font-size: clamp(27px, 3.5vw, 36px);
+      line-height: 1.08;
+      margin-bottom: 12px;
+    }
+
+    .panel ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .panel li {
+      font-size: 17px;
+      line-height: 1.35;
+      color: var(--text-dim);
+      padding-left: 14px;
+      position: relative;
+    }
+
+    .panel li::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 9px;
       width: 5px;
       height: 5px;
-      border-radius: 50%;
       background: var(--gold);
-      margin-left: auto;
-      flex-shrink: 0;
+      border-radius: 50%;
     }
 
-    /* ── Examples ────────────────────────────────────── */
-    .examples {
-      border-left: 1px solid var(--border-dim);
-      padding-left: 16px;
-      margin-top: 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-
-    .example-item {
-      font-size: 12px;
-      color: var(--text-dim);
-      font-style: italic;
-    }
-
-    /* ── Nav Row ─────────────────────────────────────── */
-    .nav-row {
-      display: flex;
-      gap: 12px;
-      margin-top: 48px;
-      align-items: center;
-    }
-
-    /* ── Summary ─────────────────────────────────────── */
-    #summary {
-      display: none;
-      flex-direction: column;
-      width: 100%;
-      max-width: 580px;
-      padding-top: 52px;
-      animation: stepIn 400ms ease forwards;
-    }
-
-    .summary-phase-tag {
-      font-size: 10px;
-      letter-spacing: 0.28em;
-      text-transform: uppercase;
-      color: var(--gold);
-      margin-bottom: 22px;
-    }
-
-    .summary-title {
-      font-family: var(--serif);
-      font-size: clamp(32px, 6vw, 52px);
-      font-weight: 300;
-      line-height: 1.1;
-      margin-bottom: 12px;
-    }
-
-    .summary-sub {
-      font-size: 13px;
-      color: var(--text-dim);
-      letter-spacing: 0.04em;
-      margin-bottom: 44px;
-    }
-
-    /* FIX 8: gold top border anchors the card visually */
-    .summary-card {
-      border: 1px solid var(--border);
-      border-top: 2px solid var(--gold);
-      margin-bottom: 44px;
-    }
-
-    .summary-row {
-      display: flex;
-      flex-direction: column;
-      gap: 5px;
-      padding: 18px 28px;
-      border-bottom: 1px solid var(--border-dim);
-    }
-
-    .summary-row:last-child { border-bottom: none; }
-
-    .summary-row-label {
-      font-size: 10px;
-      letter-spacing: 0.22em;
-      text-transform: uppercase;
+    .panel p {
+      font-size: 17px;
+      line-height: 1.45;
       color: var(--text-dim);
     }
 
-    .summary-row-value {
-      font-family: var(--serif);
-      font-size: 19px;
-      font-weight: 300;
+    details {
+      border: 1px solid var(--line-soft);
+      border-radius: var(--radius);
+      background: rgba(18, 18, 15, 0.5);
+      padding: 14px;
+    }
+
+    summary {
+      cursor: pointer;
       color: var(--text);
-      line-height: 1.4;
+      font-size: 16px;
+      list-style: none;
     }
 
-    .what-next { margin-bottom: 44px; }
+    summary::-webkit-details-marker { display: none; }
 
-    .what-next-label {
-      font-size: 10px;
-      letter-spacing: 0.22em;
-      text-transform: uppercase;
-      color: var(--gold);
-      margin-bottom: 14px;
+    details ul {
+      margin-top: 12px;
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
     }
 
-    .what-next-body {
-      font-size: 14px;
-      font-weight: 300;
-      color: var(--text-mid);
-      line-height: 1.8;
+    details li {
+      font-size: 16px;
+      color: var(--text-dim);
+      line-height: 1.35;
+      padding-left: 12px;
+      position: relative;
     }
 
-    /* FIX 10: restart separated below primary actions */
-    .action-primary {
+    details li::before {
+      content: "";
+      width: 4px;
+      height: 4px;
+      background: var(--gold);
+      border-radius: 50%;
+      position: absolute;
+      left: 0;
+      top: 10px;
+    }
+
+    .exit {
       display: flex;
       flex-wrap: wrap;
-      gap: 12px;
-      margin-bottom: 8px;
+      gap: 10px;
+      padding-top: 4px;
     }
 
-    .copy-confirm {
-      font-size: 11px;
-      color: var(--gold);
-      letter-spacing: 0.1em;
-      margin-bottom: 28px;
-      min-height: 18px;
-      opacity: 0;
-      transition: opacity 300ms ease;
+    @media (max-width: 980px) {
+      .top-grid, .section-grid {
+        grid-template-columns: 1fr;
+      }
     }
 
-    .copy-confirm.visible { opacity: 1; }
-
-    .action-secondary {
-      padding-top: 24px;
-      border-top: 1px solid var(--border-dim);
-    }
-
-    /* ── Responsive ──────────────────────────────────── */
-    @media (max-width: 480px) {
-      body { padding: 0 16px 80px; }
-      .step-instruction { font-size: 26px; }
-      .summary-card { border-left: none; border-right: none; border-radius: 0; margin-left: -16px; margin-right: -16px; }
-      .summary-row { padding: 16px 16px; }
-      .nav-row { flex-direction: column-reverse; align-items: stretch; }
-      .nav-row .btn { justify-content: center; }
-      .action-primary { flex-direction: column; }
-      .action-primary .btn { justify-content: center; }
+    @media (max-width: 700px) {
+      body { padding: 18px 14px 58px; }
+      .panel { padding: 18px; }
+      .field input { font-size: 16px; }
+      .subhead, .instruction, .panel p, .panel li, .next-item p, summary, details li { font-size: 16px; }
+      .btn, .link-btn { width: 100%; }
+      .next-item { flex-direction: column; align-items: stretch; }
     }
   </style>
 </head>
 <body>
-
-<!-- ══ LANDING ═══════════════════════════════════════════ -->
-<section id="landing">
-  <p class="landing-phase">Phase 01 — Capture</p>
-  <!-- FIX 3: single headline, no duplicate subtext -->
-  <h1 class="landing-title">Scattered<br><em>becomes usable.</em></h1>
-  <p class="landing-instruction">Move through it once.<br>Do not overthink it.</p>
-  <button class="btn btn-start" onclick="startFlow()">Begin</button>
-</section>
-
-<!-- ══ FLOW ══════════════════════════════════════════════ -->
-<div id="flow">
-
-  <div class="progress-bar-wrap">
-    <div class="progress-meta">
-      <span class="progress-label">Capture</span>
-      <span class="progress-count" id="progressCount">Step 1 of 9</span>
-    </div>
-    <!-- FIX 6: 2px track -->
-    <div class="progress-track">
-      <div class="progress-fill" id="progressFill" style="width:11.1%"></div>
-    </div>
-  </div>
-
-  <!-- Step 01 -->
-  <div class="step active" id="step-1">
-    <div class="step-header">
-      <div class="step-instruction">List what exists.</div>
-      <div class="step-directive">Write 5 things that already exist.</div>
-      <div class="step-micro">Notes, fragments, drafts, half-started work, voice memos, repeated ideas.</div>
-    </div>
-    <!-- FIX 4: micro-prompt placeholders -->
-    <div class="input-stack">
-      <div class="input-row">
-        <span class="input-num">1</span>
-        <input class="text-input" type="text" id="item1" placeholder="a half-written draft" oninput="checkStep1()" maxlength="120" />
+  <main class="page">
+    <section class="top-grid">
+      <div class="panel">
+        <span class="label">Capture</span>
+        <h1>Get the idea out of your head.</h1>
+        <p class="subhead">If your idea is unclear, scattered, or keeps changing, this turns it into one clear direction you can act on.</p>
+        <div class="row">
+          <a href="#do-this" class="btn btn-primary" id="start-btn">Start</a>
+          <a href="/system" class="link-btn">Go back to System</a>
+        </div>
       </div>
-      <div class="input-row">
-        <span class="input-num">2</span>
-        <input class="text-input" type="text" id="item2" placeholder="the idea you keep coming back to" oninput="checkStep1()" maxlength="120" />
+
+      <div class="panel stack" id="do-this">
+        <span class="label">Do this</span>
+        <div>
+          <h2 class="title">Write one sentence.</h2>
+        </div>
+
+        <div class="field">
+          <label for="idea-input">What are you trying to do?</label>
+          <input id="idea-input" type="text" placeholder="I help ___ do ___ so they can ___" maxlength="160" />
+        </div>
+
+        <div class="field">
+          <label for="audience-input">Who is this for?</label>
+          <input id="audience-input" type="text" placeholder="People who..." maxlength="140" />
+        </div>
+
+        <div class="field">
+          <label for="result-input">What is the result?</label>
+          <input id="result-input" type="text" placeholder="So they can..." maxlength="140" />
+        </div>
+
+        <div class="clean-row">
+          <button class="btn btn-primary" id="clean-btn" type="button">Clean it up</button>
+          <span class="status" id="status-text" aria-live="polite"></span>
+        </div>
+
+        <div id="output-card" aria-live="polite">
+          <p class="output-label">YOUR IDEA</p>
+          <p class="output-idea" id="idea-output">I help ... for ... so they can ...</p>
+
+          <p class="output-next">NEXT STEP</p>
+          <p class="instruction" style="margin: 0 0 10px 0;">Pick one:</p>
+          <div class="next-item">
+            <p>Turn this into something people can buy</p>
+            <a class="link-btn" href="/monetize">Go to Money</a>
+          </div>
+          <div class="next-item">
+            <p>Turn this into something you can execute</p>
+            <a class="link-btn" href="/structure">Go to Execution</a>
+          </div>
+        </div>
       </div>
-      <div class="input-row">
-        <span class="input-num">3</span>
-        <input class="text-input" type="text" id="item3" placeholder="something explained out loud but never written" oninput="checkStep1()" maxlength="120" />
+    </section>
+
+    <section class="section-grid">
+      <div class="panel">
+        <span class="label">Fix this if</span>
+        <ul>
+          <li>You have too many ideas</li>
+          <li>You cannot explain what you do</li>
+          <li>Your direction keeps changing</li>
+          <li>You start but stall early</li>
+          <li>You are thinking more than doing</li>
+        </ul>
       </div>
-      <div class="input-row">
-        <span class="input-num">4</span>
-        <input class="text-input" type="text" id="item4" placeholder="a voice memo you haven't listened to" oninput="checkStep1()" maxlength="120" />
+
+      <div class="panel">
+        <span class="label">Result</span>
+        <h2>You leave with:</h2>
+        <ul>
+          <li>One clear idea</li>
+          <li>One clear direction</li>
+          <li>One next step</li>
+        </ul>
+        <p style="margin-top:12px;">Not five options. Not "maybe this."</p>
       </div>
-      <div class="input-row">
-        <span class="input-num">5</span>
-        <input class="text-input" type="text" id="item5" placeholder="the thing sitting in your notes app" oninput="checkStep1()" maxlength="120" />
+    </section>
+
+    <section class="section-grid">
+      <div class="panel">
+        <span class="label">Important</span>
+        <p>If you cannot say it clearly, you cannot build it.</p>
+        <p style="margin-top:10px;">Do not move forward until this is simple.</p>
       </div>
-    </div>
-    <div class="input-helper">Keep each entry short.</div>
-    <div class="nav-row">
-      <!-- FIX 5: 40% opacity disabled state -->
-      <button class="btn" id="continue-1" disabled onclick="goTo(2)">Continue</button>
-    </div>
-  </div>
 
-  <!-- Step 02 -->
-  <div class="step" id="step-2">
-    <div class="step-header">
-      <div class="step-instruction">Select the one.</div>
-      <div class="step-directive">Choose the item you want to work with now.</div>
-      <div class="step-micro">Not the best one. The one you are moving forward today.</div>
-    </div>
-    <!-- FIX 7: truncation applied in JS -->
-    <div class="option-list" id="optionList2"></div>
-    <div class="nav-row">
-      <button class="btn btn-ghost" onclick="goTo(1)">Back</button>
-      <button class="btn" id="continue-2" disabled onclick="goTo(3)">This is the one</button>
-    </div>
-  </div>
+      <div class="panel">
+        <span class="label">If this still feels unclear</span>
+        <details>
+          <summary>You can refine it further</summary>
+          <ul>
+            <li>narrow who it is for</li>
+            <li>simplify what you do</li>
+            <li>remove extra words</li>
+          </ul>
+        </details>
+      </div>
+    </section>
 
-  <!-- Step 03 -->
-  <div class="step" id="step-3">
-    <div class="step-header">
-      <div class="step-instruction">What is it.</div>
-      <div class="step-directive">Choose one.</div>
-      <div class="step-micro">Do not combine.</div>
-    </div>
-    <div class="option-list">
-      <div class="option-item" onclick="selectOption(this,'type')" data-value="Product">Product</div>
-      <div class="option-item" onclick="selectOption(this,'type')" data-value="Service">Service</div>
-      <div class="option-item" onclick="selectOption(this,'type')" data-value="System">System</div>
-      <div class="option-item" onclick="selectOption(this,'type')" data-value="Content">Content</div>
-      <div class="option-item" onclick="selectOption(this,'type')" data-value="Concept">Concept</div>
-    </div>
-    <div class="nav-row">
-      <button class="btn btn-ghost" onclick="goTo(2)">Back</button>
-      <button class="btn" id="continue-3" disabled onclick="goTo(4)">Continue</button>
-    </div>
-  </div>
+    <section class="exit">
+      <a href="/monetize" class="btn btn-primary">Go to Money</a>
+      <a href="/system" class="link-btn">Back to System</a>
+    </section>
+  </main>
 
-  <!-- Step 04 -->
-  <div class="step" id="step-4">
-    <div class="step-header">
-      <div class="step-instruction">What does it become.</div>
-      <div class="step-directive">Complete the sentence.</div>
-    </div>
-    <div class="step-micro" style="margin-bottom:20px;">When this is done, it is a ______.</div>
-    <div class="input-single">
-      <input class="text-input" type="text" id="output" placeholder="a working website" oninput="checkTextStep('output','continue-4')" maxlength="120" />
-    </div>
-    <div class="input-helper">Make it concrete. Something visible. Something real.</div>
-    <div class="examples">
-      <span class="example-item">a paid offer</span>
-      <span class="example-item">a working website</span>
-      <span class="example-item">a 5-page document</span>
-      <span class="example-item">a live event</span>
-    </div>
-    <div class="nav-row">
-      <button class="btn btn-ghost" onclick="goTo(3)">Back</button>
-      <button class="btn" id="continue-4" disabled onclick="goTo(5)">Continue</button>
-    </div>
-  </div>
+  <script>
+    (function () {
+      var startBtn = document.getElementById("start-btn");
+      var ideaInput = document.getElementById("idea-input");
+      var audienceInput = document.getElementById("audience-input");
+      var resultInput = document.getElementById("result-input");
+      var cleanBtn = document.getElementById("clean-btn");
+      var statusText = document.getElementById("status-text");
+      var outputCard = document.getElementById("output-card");
+      var ideaOutput = document.getElementById("idea-output");
 
-  <!-- Step 05 -->
-  <div class="step" id="step-5">
-    <div class="step-header">
-      <div class="step-instruction">Where is it now.</div>
-      <div class="step-directive">Choose the closest.</div>
-    </div>
-    <div class="option-list">
-      <div class="option-item" onclick="selectOption(this,'currentState')" data-value="Not started">Not started</div>
-      <div class="option-item" onclick="selectOption(this,'currentState')" data-value="Started but scattered">Started but scattered</div>
-      <div class="option-item" onclick="selectOption(this,'currentState')" data-value="Partially built">Partially built</div>
-      <div class="option-item" onclick="selectOption(this,'currentState')" data-value="Built but unclear">Built but unclear</div>
-      <div class="option-item" onclick="selectOption(this,'currentState')" data-value="Nearly done but not usable">Nearly done but not usable</div>
-    </div>
-    <div class="nav-row">
-      <button class="btn btn-ghost" onclick="goTo(4)">Back</button>
-      <button class="btn" id="continue-5" disabled onclick="goTo(6)">Continue</button>
-    </div>
-  </div>
+      function normalize(value, starters) {
+        var text = (value || "").trim();
+        starters.forEach(function (s) {
+          var re = new RegExp("^" + s + "\\s*", "i");
+          text = text.replace(re, "");
+        });
+        text = text.replace(/^[.,:;\\-\\s]+/, "");
+        text = text.replace(/[.\\s]+$/, "");
+        return text;
+      }
 
-  <!-- Step 06 -->
-  <div class="step" id="step-6">
-    <div class="step-header">
-      <div class="step-instruction">Where does it break.</div>
-      <div class="step-directive">Choose the exact point.</div>
-      <div class="step-micro">Choose the closest one. Do not overthink it.</div>
-    </div>
-    <div class="option-list">
-      <div class="option-item" onclick="selectOption(this,'breakPoint')" data-value="I can't structure it">I can't structure it</div>
-      <div class="option-item" onclick="selectOption(this,'breakPoint')" data-value="I can't explain it">I can't explain it</div>
-      <div class="option-item" onclick="selectOption(this,'breakPoint')" data-value="I can't finish it">I can't finish it</div>
-      <div class="option-item" onclick="selectOption(this,'breakPoint')" data-value="I can't turn it into something usable">I can't turn it into something usable</div>
-      <div class="option-item" onclick="selectOption(this,'breakPoint')" data-value="I can't move it forward">I can't move it forward</div>
-    </div>
-    <div class="nav-row">
-      <button class="btn btn-ghost" onclick="goTo(5)">Back</button>
-      <button class="btn" id="continue-6" disabled onclick="goTo(7)">Continue</button>
-    </div>
-  </div>
+      function buildLine() {
+        var first = normalize(ideaInput.value, ["i help"]);
+        var second = normalize(audienceInput.value, ["people who", "for"]);
+        var third = normalize(resultInput.value, ["so they can", "to"]);
 
-  <!-- Step 07 -->
-  <div class="step" id="step-7">
-    <div class="step-header">
-      <div class="step-instruction">What is missing.</div>
-      <div class="step-directive">Choose one.</div>
-    </div>
-    <div class="option-list">
-      <div class="option-item" onclick="selectOption(this,'missing')" data-value="Structure">Structure</div>
-      <div class="option-item" onclick="selectOption(this,'missing')" data-value="Sequence">Sequence</div>
-      <div class="option-item" onclick="selectOption(this,'missing')" data-value="Clarity">Clarity</div>
-      <div class="option-item" onclick="selectOption(this,'missing')" data-value="System">System</div>
-      <div class="option-item" onclick="selectOption(this,'missing')" data-value="Decision">Decision</div>
-    </div>
-    <div class="nav-row">
-      <button class="btn btn-ghost" onclick="goTo(6)">Back</button>
-      <button class="btn" id="continue-7" disabled onclick="goTo(8)">Continue</button>
-    </div>
-  </div>
+        if (!first || !second || !third) {
+          return "";
+        }
+        return "I help " + first + " for " + second + " so they can " + third + ".";
+      }
 
-  <!-- Step 08 -->
-  <div class="step" id="step-8">
-    <div class="step-header">
-      <div class="step-instruction">What is the next move.</div>
-      <div class="step-directive">One action. Under 60 minutes.</div>
-    </div>
-    <div class="input-single">
-      <input class="text-input" type="text" id="nextMove" placeholder="outline the sections" oninput="checkTextStep('nextMove','continue-8')" maxlength="160" />
-    </div>
-    <div class="input-helper">Start with a verb.</div>
-    <div class="examples">
-      <span class="example-item">outline the sections</span>
-      <span class="example-item">write version one</span>
-      <span class="example-item">define the offer</span>
-      <span class="example-item">organize the notes</span>
-    </div>
-    <div class="nav-row">
-      <button class="btn btn-ghost" onclick="goTo(7)">Back</button>
-      <button class="btn" id="continue-8" disabled onclick="goTo(9)">Continue</button>
-    </div>
-  </div>
+      if (startBtn) {
+        startBtn.addEventListener("click", function (e) {
+          e.preventDefault();
+          var target = document.getElementById("do-this");
+          if (target) {
+            target.scrollIntoView({ behavior: "smooth", block: "start" });
+          }
+          setTimeout(function () { ideaInput.focus(); }, 120);
+        });
+      }
 
-  <!-- Step 09 -->
-  <div class="step" id="step-9">
-    <div class="step-header">
-      <div class="step-instruction">Direction of value.</div>
-      <div class="step-directive">Complete the sentence.</div>
-      <div class="step-micro">Write the first answer that is actually true.</div>
-    </div>
-    <div class="step-micro" style="margin-bottom:20px;margin-top:12px;">Someone would pay for this if it helped them ______.</div>
-    <div class="input-single">
-      <input class="text-input" type="text" id="value" placeholder="solve a problem they can't ignore" oninput="checkTextStep('value','continue-9')" maxlength="200" />
-    </div>
-    <div class="nav-row">
-      <button class="btn btn-ghost" onclick="goTo(8)">Back</button>
-      <!-- FIX 9: gold filled terminal action -->
-      <button class="btn btn-terminal" id="continue-9" disabled onclick="showSummary()">Complete Capture</button>
-    </div>
-  </div>
+      cleanBtn.addEventListener("click", function () {
+        var line = buildLine();
+        if (!line) {
+          statusText.textContent = "Fill all three fields.";
+          outputCard.classList.remove("visible");
+          return;
+        }
 
-</div>
+        statusText.textContent = "Cleaned.";
+        cleanBtn.classList.add("is-working");
+        cleanBtn.textContent = "Cleaning...";
 
-<!-- ══ SUMMARY ════════════════════════════════════════════ -->
-<div id="summary">
-  <p class="summary-phase-tag">Phase 01 — Capture</p>
-  <h2 class="summary-title">Capture complete.</h2>
-  <p class="summary-sub">You now have something usable.</p>
-
-  <!-- FIX 8: gold top border -->
-  <div class="summary-card">
-    <div class="summary-row">
-      <span class="summary-row-label">Selected item</span>
-      <span class="summary-row-value" id="s-selected">—</span>
-    </div>
-    <div class="summary-row">
-      <span class="summary-row-label">Type</span>
-      <span class="summary-row-value" id="s-type">—</span>
-    </div>
-    <div class="summary-row">
-      <span class="summary-row-label">Output</span>
-      <span class="summary-row-value" id="s-output">—</span>
-    </div>
-    <div class="summary-row">
-      <span class="summary-row-label">Current state</span>
-      <span class="summary-row-value" id="s-state">—</span>
-    </div>
-    <div class="summary-row">
-      <span class="summary-row-label">Break point</span>
-      <span class="summary-row-value" id="s-break">—</span>
-    </div>
-    <div class="summary-row">
-      <span class="summary-row-label">Missing piece</span>
-      <span class="summary-row-value" id="s-missing">—</span>
-    </div>
-    <div class="summary-row">
-      <span class="summary-row-label">Next move</span>
-      <span class="summary-row-value" id="s-nextmove">—</span>
-    </div>
-    <div class="summary-row">
-      <span class="summary-row-label">Value direction</span>
-      <span class="summary-row-value" id="s-value">—</span>
-    </div>
-  </div>
-
-  <div class="what-next">
-    <p class="what-next-label">What happens next</p>
-    <p class="what-next-body">Phase 02 takes this and turns it into something positioned, useful, and buyable.</p>
-  </div>
-
-  <!-- FIX 10: restart separated below primary actions -->
-  <div class="action-primary">
-    <a href="/archive#checkout" class="btn btn-terminal">Unlock Access</a>
-    <button class="btn" onclick="copyCapture()">Copy my Capture</button>
-  </div>
-  <p class="copy-confirm" id="copyConfirm">Copied to clipboard.</p>
-
-  <div class="action-secondary">
-    <button class="btn btn-ghost" onclick="restart()">Start again</button>
-  </div>
-</div>
-
-<script>
-  const state = {
-    items: ['','','','',''],
-    selected: '', type: '', output: '',
-    currentState: '', breakPoint: '', missing: '',
-    nextMove: '', value: ''
-  };
-
-  const TOTAL = 9;
-  let currentStep = 1;
-
-  function startFlow() {
-    document.getElementById('landing').style.display = 'none';
-    document.getElementById('flow').style.display = 'flex';
-    updateProgress(1);
-    setTimeout(() => document.getElementById('item1').focus(), 60);
-  }
-
-  function goTo(n) {
-    document.getElementById('step-' + currentStep).classList.remove('active');
-    currentStep = n;
-    const target = document.getElementById('step-' + n);
-    target.classList.add('active');
-    updateProgress(n);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-    if (n === 2) populateStep2();
-    restoreSelections(n);
-    const inputs = target.querySelectorAll('.text-input');
-    if (inputs.length) setTimeout(() => inputs[0].focus(), 60);
-  }
-
-  function updateProgress(n) {
-    document.getElementById('progressCount').textContent = 'Step ' + n + ' of ' + TOTAL;
-    document.getElementById('progressFill').style.width = ((n / TOTAL) * 100) + '%';
-  }
-
-  function checkStep1() {
-    state.items = [1,2,3,4,5].map(i => document.getElementById('item' + i).value.trim());
-    document.getElementById('continue-1').disabled = !state.items.every(v => v.length > 0);
-  }
-
-  function populateStep2() {
-    const list = document.getElementById('optionList2');
-    list.innerHTML = '';
-    state.items.forEach(item => {
-      const el = document.createElement('div');
-      el.className = 'option-item' + (state.selected === item ? ' selected' : '');
-      // FIX 7: truncate long entries
-      el.textContent = item.length > 72 ? item.slice(0, 70) + '…' : item;
-      el.dataset.value = item;
-      el.onclick = function() { selectOption(this, 'selected'); };
-      list.appendChild(el);
-    });
-    document.getElementById('continue-2').disabled = !state.selected;
-  }
-
-  function selectOption(el, key) {
-    el.closest('.option-list').querySelectorAll('.option-item').forEach(o => o.classList.remove('selected'));
-    el.classList.add('selected');
-    state[key] = el.dataset.value;
-    const map = { selected: 2, type: 3, currentState: 5, breakPoint: 6, missing: 7 };
-    const step = map[key];
-    if (step) document.getElementById('continue-' + step).disabled = false;
-  }
-
-  function restoreSelections(n) {
-    const keyMap = { 3: 'type', 5: 'currentState', 6: 'breakPoint', 7: 'missing' };
-    const key = keyMap[n];
-    if (!key) return;
-    document.getElementById('step-' + n).querySelectorAll('.option-item').forEach(o => {
-      o.classList.toggle('selected', o.dataset.value === state[key]);
-    });
-    if (state[key]) document.getElementById('continue-' + n).disabled = false;
-  }
-
-  function checkTextStep(inputId, btnId) {
-    const val = document.getElementById(inputId).value.trim();
-    document.getElementById(btnId).disabled = val.length === 0;
-    const keyMap = { output: 'output', nextMove: 'nextMove', value: 'value' };
-    if (keyMap[inputId]) state[keyMap[inputId]] = val;
-  }
-
-  function showSummary() {
-    state.output   = document.getElementById('output').value.trim();
-    state.nextMove = document.getElementById('nextMove').value.trim();
-    state.value    = document.getElementById('value').value.trim();
-
-    document.getElementById('flow').style.display = 'none';
-    document.getElementById('summary').style.display = 'flex';
-
-    document.getElementById('s-selected').textContent = state.selected;
-    document.getElementById('s-type').textContent     = state.type;
-    document.getElementById('s-output').textContent   = state.output;
-    document.getElementById('s-state').textContent    = state.currentState;
-    document.getElementById('s-break').textContent    = state.breakPoint;
-    document.getElementById('s-missing').textContent  = state.missing;
-    document.getElementById('s-nextmove').textContent = state.nextMove;
-    document.getElementById('s-value').textContent    = state.value;
-    try { localStorage.setItem('capture_complete', 'true'); } catch (e) {}
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
-
-  function copyCapture() {
-    const text = [
-      'Phase 01 — Capture', '',
-      'Selected item: '   + state.selected,
-      'Type: '            + state.type,
-      'Output: '          + state.output,
-      'Current state: '   + state.currentState,
-      'Break point: '     + state.breakPoint,
-      'Missing piece: '   + state.missing,
-      'Next move: '       + state.nextMove,
-      'Value direction: ' + state.value
-    ].join('\n');
-
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(text).then(flash);
-    } else {
-      const ta = Object.assign(document.createElement('textarea'), { value: text });
-      ta.style.cssText = 'position:fixed;opacity:0;';
-      document.body.appendChild(ta);
-      ta.focus(); ta.select();
-      document.execCommand('copy');
-      document.body.removeChild(ta);
-      flash();
-    }
-  }
-
-  function flash() {
-    const el = document.getElementById('copyConfirm');
-    el.classList.add('visible');
-    setTimeout(() => el.classList.remove('visible'), 2800);
-  }
-
-  function restart() {
-    Object.keys(state).forEach(k => { state[k] = k === 'items' ? ['','','','',''] : ''; });
-    ['item1','item2','item3','item4','item5','output','nextMove','value'].forEach(id => {
-      const el = document.getElementById(id);
-      if (el) el.value = '';
-    });
-    document.querySelectorAll('.option-item').forEach(o => o.classList.remove('selected'));
-    for (let i = 1; i <= 9; i++) {
-      const b = document.getElementById('continue-' + i);
-      if (b) b.disabled = true;
-    }
-    document.getElementById('summary').style.display = 'none';
-    currentStep = 1;
-    document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
-    document.getElementById('step-1').classList.add('active');
-    document.getElementById('flow').style.display = 'flex';
-    updateProgress(1);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-    setTimeout(() => document.getElementById('item1').focus(), 60);
-  }
-
-  document.addEventListener('keydown', e => {
-    if (e.key === 'Enter' && document.activeElement.tagName !== 'BUTTON') {
-      const btn = document.getElementById('continue-' + currentStep);
-      if (btn && !btn.disabled) btn.click();
-    }
-  });
-</script>
+        setTimeout(function () {
+          ideaOutput.textContent = line;
+          outputCard.classList.add("visible");
+          cleanBtn.classList.remove("is-working");
+          cleanBtn.textContent = "Clean it up";
+          outputCard.scrollIntoView({ behavior: "smooth", block: "nearest" });
+        }, 140);
+      });
+    }());
+  </script>
 </body>
 </html>
