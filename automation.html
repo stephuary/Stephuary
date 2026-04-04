@@ -1,876 +1,464 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Phase 04 — Automation · Stephuary</title>
-  <meta name="description" content="Remove what should not require you every time. Phase 04 of the Stephuary system." />
-
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=Lato:wght@300;400&display=swap" rel="stylesheet" />
-
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    :root {
-      --bg:         #0a0a08;
-      --border:     #2a2a26;
-      --border-dim: #1c1c19;
-      --gold:       #c4a35a;
-      --text:       #f5f0e8;
-      --text-dim:   #7a7870;
-      --text-mid:   #c8c0b0;
-      --serif:      'Cormorant Garamond', Georgia, serif;
-      --sans:       'Lato', system-ui, sans-serif;
-      --radius:     2px;
-      --trans:      200ms ease;
-    }
-
-    html {
-      background: var(--bg);
-      color: var(--text);
-      font-family: var(--sans);
-      font-weight: 300;
-      -webkit-font-smoothing: antialiased;
-    }
-
-    body {
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 0 20px 100px;
-    }
-
-    /* ── Nav ──────────────────────────────────────────── */
-    .top-nav {
-      width: 100%;
-      max-width: 580px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 28px 0 0;
-    }
-
-    .nav-brand {
-      font-size: 10px;
-      letter-spacing: 0.25em;
-      text-transform: uppercase;
-      color: var(--text-dim);
-      text-decoration: none;
-      transition: color var(--trans);
-    }
-
-    .nav-brand:hover { color: var(--text-mid); }
-
-    .nav-phase {
-      font-size: 10px;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--gold);
-    }
-
-    /* ── Locked ───────────────────────────────────────── */
-    #locked {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      text-align: center;
-      max-width: 480px;
-      width: 100%;
-      padding: 60px 0;
-    }
-
-    .locked-phase {
-      font-size: 10px;
-      letter-spacing: 0.28em;
-      text-transform: uppercase;
-      color: var(--gold);
-      margin-bottom: 48px;
-    }
-
-    .locked-headline {
-      font-family: var(--serif);
-      font-size: clamp(32px, 6vw, 52px);
-      font-weight: 300;
-      line-height: 1.15;
-      margin-bottom: 28px;
-    }
-
-    .locked-headline em {
-      font-style: italic;
-      color: var(--text-mid);
-    }
-
-    .locked-body {
-      font-size: 13px;
-      color: var(--text-dim);
-      letter-spacing: 0.04em;
-      line-height: 1.8;
-      margin-bottom: 52px;
-    }
-
-    .locked-price {
-      font-family: var(--serif);
-      font-size: 13px;
-      color: var(--text-dim);
-      margin-top: 16px;
-      letter-spacing: 0.04em;
-    }
-
-    /* ── Buttons ──────────────────────────────────────── */
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      font-family: var(--sans);
-      font-weight: 300;
-      font-size: 11px;
-      letter-spacing: 0.22em;
-      text-transform: uppercase;
-      padding: 14px 36px;
-      border: 1px solid var(--gold);
-      background: transparent;
-      color: var(--gold);
-      cursor: pointer;
-      transition: background var(--trans), color var(--trans), border-color var(--trans);
-      border-radius: var(--radius);
-      min-height: 48px;
-      text-decoration: none;
-    }
-
-    .btn:hover:not(:disabled) { background: var(--gold); color: var(--bg); }
-
-    .btn-solid { background: var(--gold); color: var(--bg); border-color: var(--gold); }
-    .btn-solid:hover:not(:disabled) { background: #d4b36a; border-color: #d4b36a; }
-
-    .btn:disabled {
-      opacity: 0.4;
-      cursor: not-allowed;
-      border-color: #383832;
-      color: #383832;
-      background: transparent;
-    }
-
-    .btn-ghost {
-      border-color: var(--border-dim);
-      color: var(--text-dim);
-      font-size: 10px;
-      padding: 12px 22px;
-    }
-
-    .btn-ghost:hover:not(:disabled) {
-      border-color: var(--border);
-      color: var(--text-mid);
-      background: transparent;
-    }
-
-    /* ── Flow ─────────────────────────────────────────── */
-    #flow {
-      display: none;
-      flex-direction: column;
-      align-items: center;
-      width: 100%;
-      max-width: 580px;
-      min-height: 100vh;
-      padding-top: 52px;
-    }
-
-    /* ── Progress ─────────────────────────────────────── */
-    .progress-bar-wrap { width: 100%; margin-bottom: 56px; }
-
-    .progress-meta {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 12px;
-    }
-
-    .progress-label {
-      font-size: 10px;
-      letter-spacing: 0.25em;
-      text-transform: uppercase;
-      color: var(--text-dim);
-    }
-
-    .progress-count {
-      font-family: var(--serif);
-      font-size: 13px;
-      color: var(--gold);
-    }
-
-    .progress-track { width: 100%; height: 2px; background: var(--border-dim); border-radius: 1px; }
-    .progress-fill  { height: 100%; background: var(--gold); border-radius: 1px; transition: width 450ms cubic-bezier(0.4,0,0.2,1); }
-
-    /* ── Steps ────────────────────────────────────────── */
-    .step { display: none; flex-direction: column; width: 100%; animation: stepIn 280ms ease forwards; }
-    .step.active { display: flex; }
-
-    @keyframes stepIn {
-      from { opacity: 0; transform: translateY(14px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-
-    .step-header { margin-bottom: 44px; }
-
-    .step-instruction {
-      font-family: var(--serif);
-      font-size: clamp(26px, 5vw, 40px);
-      font-weight: 300;
-      line-height: 1.15;
-      margin-bottom: 12px;
-    }
-
-    .step-directive {
-      font-size: 13px;
-      font-weight: 300;
-      color: var(--text-mid);
-      line-height: 1.7;
-    }
-
-    .step-micro {
-      font-size: 11px;
-      color: var(--text-dim);
-      letter-spacing: 0.04em;
-      margin-top: 8px;
-      line-height: 1.7;
-    }
-
-    /* ── Input ────────────────────────────────────────── */
-    .input-single {
-      border-bottom: 1px solid var(--border);
-      transition: border-color var(--trans);
-      margin-bottom: 4px;
-    }
-
-    .input-single:focus-within { border-bottom-color: var(--gold); }
-
-    .text-input {
-      background: transparent;
-      border: none;
-      color: var(--text);
-      font-family: var(--sans);
-      font-weight: 300;
-      font-size: 15px;
-      padding: 14px 0;
-      width: 100%;
-      outline: none;
-      border-radius: 0;
-      -webkit-appearance: none;
-    }
-
-    .text-input::placeholder { color: #383832; font-style: italic; }
-    .text-input:focus::placeholder { color: #4a4a44; }
-
-    .input-helper {
-      font-size: 11px;
-      color: var(--text-dim);
-      letter-spacing: 0.04em;
-      margin-top: 10px;
-    }
-
-    /* ── Nav row ──────────────────────────────────────── */
-    .nav-row {
-      display: flex;
-      gap: 12px;
-      margin-top: 48px;
-      align-items: center;
-    }
-
-    /* ── Summary ──────────────────────────────────────── */
-    #summary {
-      display: none;
-      flex-direction: column;
-      width: 100%;
-      max-width: 580px;
-      padding-top: 52px;
-      animation: stepIn 400ms ease forwards;
-    }
-
-    .summary-phase-tag {
-      font-size: 10px;
-      letter-spacing: 0.28em;
-      text-transform: uppercase;
-      color: var(--gold);
-      margin-bottom: 20px;
-    }
-
-    .summary-title {
-      font-family: var(--serif);
-      font-size: clamp(30px, 5vw, 48px);
-      font-weight: 300;
-      line-height: 1.1;
-      margin-bottom: 12px;
-    }
-
-    .summary-sub {
-      font-size: 13px;
-      color: var(--text-dim);
-      letter-spacing: 0.04em;
-      margin-bottom: 44px;
-    }
-
-    /* Raw inputs card */
-    .data-card {
-      border: 1px solid var(--border);
-      border-top: 2px solid var(--gold);
-      margin-bottom: 36px;
-    }
-
-    .data-row {
-      display: grid;
-      grid-template-columns: 1fr 2fr;
-      gap: 16px;
-      padding: 16px 24px;
-      border-bottom: 1px solid var(--border-dim);
-      align-items: start;
-    }
-
-    .data-row:last-child { border-bottom: none; }
-
-    .data-label {
-      font-size: 10px;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      color: var(--text-dim);
-      padding-top: 3px;
-      line-height: 1.5;
-    }
-
-    .data-value {
-      font-family: var(--serif);
-      font-size: 17px;
-      font-weight: 300;
-      color: var(--text);
-      line-height: 1.45;
-    }
-
-    /* Automation map */
-    .map-wrap {
-      border: 1px solid var(--border);
-      padding: 28px;
-      margin-bottom: 44px;
-    }
-
-    .map-label {
-      font-size: 10px;
-      letter-spacing: 0.22em;
-      text-transform: uppercase;
-      color: var(--gold);
-      margin-bottom: 24px;
-    }
-
-    .map-columns {
-      display: grid;
-      grid-template-columns: 1fr 1px 1fr;
-      gap: 24px;
-    }
-
-    .map-divider {
-      background: var(--border-dim);
-      width: 1px;
-      align-self: stretch;
-    }
-
-    .map-col-label {
-      font-size: 10px;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      color: var(--text-dim);
-      margin-bottom: 16px;
-    }
-
-    .map-col-items { display: flex; flex-direction: column; gap: 10px; }
-
-    .map-item {
-      font-family: var(--serif);
-      font-size: 16px;
-      font-weight: 300;
-      color: var(--text-mid);
-      line-height: 1.4;
-      font-style: italic;
-      padding-left: 12px;
-      border-left: 1px solid var(--border);
-    }
-
-    .map-item.keep {
-      color: var(--text);
-      border-left-color: var(--gold);
-    }
-
-    .map-statement {
-      margin-top: 24px;
-      padding-top: 20px;
-      border-top: 1px solid var(--border-dim);
-      font-family: var(--serif);
-      font-size: 17px;
-      font-weight: 300;
-      font-style: italic;
-      color: var(--text-mid);
-      line-height: 1.6;
-    }
-
-    .what-next { margin-bottom: 40px; }
-
-    .what-next-label {
-      font-size: 10px;
-      letter-spacing: 0.22em;
-      text-transform: uppercase;
-      color: var(--gold);
-      margin-bottom: 14px;
-    }
-
-    .what-next-body {
-      font-size: 14px;
-      font-weight: 300;
-      color: var(--text-mid);
-      line-height: 1.8;
-    }
-
-    .action-primary { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 8px; }
-
-    .copy-confirm {
-      font-size: 11px;
-      color: var(--gold);
-      letter-spacing: 0.1em;
-      margin-bottom: 28px;
-      min-height: 18px;
-      opacity: 0;
-      transition: opacity 300ms ease;
-    }
-
-    .copy-confirm.visible { opacity: 1; }
-
-    .action-secondary {
-      padding-top: 24px;
-      border-top: 1px solid var(--border-dim);
-    }
-
-    /* ── Responsive ───────────────────────────────────── */
-    @media (max-width: 480px) {
-      body { padding: 0 16px 80px; }
-      .step-instruction { font-size: 24px; }
-      .data-card { margin-left: -16px; margin-right: -16px; border-left: none; border-right: none; }
-      .data-row { grid-template-columns: 1fr; gap: 4px; padding: 14px 16px; }
-      .map-wrap { padding: 20px 16px; margin-left: -16px; margin-right: -16px; border-left: none; border-right: none; }
-      .map-columns { grid-template-columns: 1fr; }
-      .map-divider { display: none; }
-      .nav-row { flex-direction: column-reverse; align-items: stretch; }
-      .nav-row .btn { justify-content: center; }
-      .action-primary { flex-direction: column; }
-      .action-primary .btn { justify-content: center; }
-    }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Repeat - Stephuary</title>
+<meta name="description" content="Stop doing the same work again. Turn repeated tasks into something faster and easier." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500&family=Lato:wght@300;400&display=swap" rel="stylesheet" />
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --bg-0:#0a0a08;
+  --bg-1:#12120f;
+  --bg-2:#171713;
+  --line:rgba(196,163,90,0.22);
+  --line-soft:rgba(196,163,90,0.12);
+  --gold:#c4a35a;
+  --gold-hover:#d4b36a;
+  --text:#f4ede0;
+  --text-dim:#cbc3b4;
+  --text-soft:#a09889;
+  --green:#2f563f;
+  --green-hover:#3a6a4f;
+  --serif:"Cormorant Garamond",Georgia,serif;
+  --sans:"Lato",system-ui,sans-serif;
+  --radius:2px;
+}
+
+html,body{
+  background:var(--bg-0);
+  color:var(--text);
+  font-family:var(--sans);
+  font-weight:300;
+  font-size:18px;
+  line-height:1.6;
+  min-height:100%;
+}
+
+body{padding:28px 24px 80px}
+a{color:inherit}
+
+.page{
+  max-width:680px;
+  margin:0 auto;
+  display:flex;
+  flex-direction:column;
+  gap:56px;
+}
+
+.label{
+  display:inline-block;
+  font-size:11px;
+  letter-spacing:0.14em;
+  text-transform:uppercase;
+  color:var(--gold);
+  margin-bottom:14px;
+}
+
+h1{
+  font-family:var(--serif);
+  font-weight:500;
+  font-size:clamp(40px,6vw,58px);
+  line-height:1.06;
+  margin-bottom:14px;
+}
+
+h2{
+  font-family:var(--serif);
+  font-weight:500;
+  font-size:clamp(28px,4vw,36px);
+  line-height:1.1;
+  margin-bottom:12px;
+}
+
+p{color:var(--text-dim);max-width:52ch}
+
+.subhead{
+  font-size:18px;
+  color:var(--text-dim);
+  line-height:1.5;
+  margin-bottom:20px;
+  max-width:48ch;
+}
+
+.btn{
+  text-decoration:none;
+  min-height:48px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding:14px 20px;
+  border-radius:var(--radius);
+  border:1px solid var(--line);
+  font-size:12px;
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  color:var(--text);
+  background:transparent;
+  cursor:pointer;
+  transition:background 140ms ease,border-color 140ms ease,color 140ms ease,transform 100ms ease;
+}
+.btn:hover{border-color:var(--gold);color:var(--text)}
+.btn:active{transform:scale(0.97)}
+
+.btn-primary{
+  background:var(--green);
+  border-color:var(--green);
+  color:#f0f4ef;
+}
+.btn-primary:hover{
+  background:var(--green-hover);
+  border-color:var(--green-hover);
+  color:#f5f8f4;
+}
+
+.btn-gold{
+  background:var(--gold);
+  border-color:var(--gold);
+  color:var(--bg-0);
+  font-weight:400;
+}
+.btn-gold:hover{
+  background:var(--gold-hover);
+  border-color:var(--gold-hover);
+}
+
+.link-btn{
+  text-decoration:none;
+  font-size:12px;
+  letter-spacing:0.08em;
+  text-transform:uppercase;
+  color:var(--text-soft);
+  border-bottom:1px solid transparent;
+  transition:color 140ms ease,border-color 140ms ease;
+}
+.link-btn:hover{color:var(--text);border-bottom-color:var(--line-soft)}
+
+.row{display:flex;flex-wrap:wrap;gap:12px}
+
+.panel{
+  border:1px solid var(--line-soft);
+  background:linear-gradient(180deg,var(--bg-1),var(--bg-2));
+  border-radius:var(--radius);
+  padding:28px 24px;
+}
+
+.list{
+  list-style:none;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  margin-top:10px;
+}
+.list li{
+  color:var(--text-dim);
+  font-size:18px;
+  line-height:1.5;
+  padding-left:14px;
+  position:relative;
+}
+.list li::before{
+  content:"";
+  width:5px;
+  height:5px;
+  border-radius:50%;
+  background:var(--gold);
+  position:absolute;
+  top:11px;
+  left:0;
+}
+
+.field{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  margin-bottom:12px;
+}
+.field-label{
+  font-size:16px;
+  color:var(--text);
+  font-weight:400;
+}
+.field input{
+  background:transparent;
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  color:var(--text);
+  font-family:var(--sans);
+  font-weight:300;
+  font-size:18px;
+  padding:14px 16px;
+  width:100%;
+  outline:none;
+  transition:border-color 140ms ease;
+}
+.field input:focus{border-color:var(--gold)}
+.field input::placeholder{color:var(--text-soft);font-style:italic}
+
+.quick-picks{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin-bottom:20px;
+}
+.quick-pick{
+  background:transparent;
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  color:var(--text-dim);
+  font-family:var(--sans);
+  font-size:14px;
+  padding:8px 14px;
+  cursor:pointer;
+  transition:border-color 140ms ease,color 140ms ease,background 140ms ease;
+}
+.quick-pick:hover{
+  border-color:var(--gold);
+  color:var(--text);
+  background:rgba(196,163,90,0.06);
+}
+.quick-pick:active{transform:scale(0.97)}
+
+.output-card{
+  border:2px solid var(--gold);
+  background:rgba(196,163,90,0.06);
+  border-radius:var(--radius);
+  padding:28px 24px;
+}
+.output-label{
+  display:block;
+  font-size:11px;
+  letter-spacing:0.14em;
+  text-transform:uppercase;
+  color:var(--gold);
+  margin-bottom:14px;
+}
+
+.step-row{
+  display:flex;
+  align-items:flex-start;
+  gap:14px;
+  padding:14px 0;
+  border-bottom:1px solid var(--line-soft);
+}
+.step-row:last-child{border-bottom:none}
+.step-num{
+  font-family:var(--serif);
+  font-size:14px;
+  color:var(--gold);
+  min-width:20px;
+  padding-top:2px;
+}
+.step-text{
+  font-size:18px;
+  color:var(--text);
+  line-height:1.5;
+}
+
+.dynamic-line{
+  font-family:var(--serif);
+  font-size:clamp(20px,2.8vw,26px);
+  font-weight:400;
+  line-height:1.35;
+  color:var(--text);
+  margin-top:18px;
+}
+
+.hint{
+  font-size:15px;
+  color:var(--text-soft);
+  margin-top:16px;
+}
+
+.hidden{display:none}
+
+.foot{
+  border-top:1px solid var(--line-soft);
+  padding-top:20px;
+  display:flex;
+  flex-wrap:wrap;
+  gap:12px;
+}
+.foot a{
+  font-size:12px;
+  letter-spacing:0.08em;
+  text-transform:uppercase;
+  color:var(--text-soft);
+  text-decoration:none;
+  transition:color 140ms ease;
+}
+.foot a:hover{color:var(--text)}
+
+@media (max-width:900px){
+  html,body{font-size:16px}
+  body{padding:22px 18px 64px}
+  .page{gap:42px}
+  .panel{padding:22px 18px}
+  .field input{font-size:16px;padding:12px 14px}
+  .output-card{padding:22px 18px}
+  .btn{width:100%}
+  .quick-pick{font-size:13px;padding:7px 12px}
+}
+</style>
 </head>
 <body>
+<main class="page">
 
-<!-- ══ LOCKED ═════════════════════════════════════════ -->
-<div id="locked">
-  <p class="locked-phase">Phase 04 — Automation</p>
-  <h1 class="locked-headline">
-    You have something that holds.<br>
-    <em>That does not mean<br>it runs efficiently.</em>
-  </h1>
-  <p class="locked-body">If it depends on you, it doesn't scale.</p>
+  <!-- HERO -->
+  <section>
+    <span class="label">Repeat</span>
+    <h1>Stop doing the same work again.</h1>
+    <p class="subhead">If you repeat tasks every day or every week, this turns them into something faster and easier.</p>
+    <div class="row">
+      <button class="btn btn-gold" id="hero-start" type="button">Start</button>
+      <a href="/system" class="link-btn">Back to System</a>
+    </div>
+  </section>
 
-  <!-- After Archive purchase, redirect unlocks this flow (e.g. /automation/enter or localStorage). -->
-  <a href="/archive#checkout" class="btn btn-solid">
-    Unlock Access
-  </a>
-  <p class="locked-price">Access to this phase is included in Archive.</p>
-</div>
+  <!-- FIX THIS IF -->
+  <section class="panel">
+    <h2>Fix this if</h2>
+    <ul class="list">
+      <li>You repeat the same tasks every day</li>
+      <li>You rewrite the same things</li>
+      <li>You start from scratch too often</li>
+      <li>Work takes longer than it should</li>
+      <li>Everything depends on you doing it again</li>
+    </ul>
+  </section>
 
-<!-- ══ FLOW ═══════════════════════════════════════════ -->
-<div id="flow">
-  <div class="top-nav">
-    <a href="https://www.stephuary.com" class="nav-brand">Stephuary</a>
-    <span class="nav-phase">Phase 04 — Automation</span>
-  </div>
+  <!-- RESULT -->
+  <section class="panel">
+    <h2>Result</h2>
+    <p>You leave with:</p>
+    <ul class="list">
+      <li>One repeatable version of your task</li>
+      <li>Less effort each time</li>
+      <li>More consistency</li>
+    </ul>
+  </section>
 
-  <div style="width:100%;max-width:580px;">
-    <div class="progress-bar-wrap" style="margin-top:40px;">
-      <div class="progress-meta">
-        <span class="progress-label">Automation</span>
-        <span class="progress-count" id="progressCount">Step 1 of 9</span>
-      </div>
-      <div class="progress-track">
-        <div class="progress-fill" id="progressFill" style="width:11.1%"></div>
-      </div>
-    </div>
-  </div>
+  <!-- MAKE IT REPEATABLE -->
+  <section class="panel" id="tool-section">
+    <h2>Make it repeatable</h2>
+    <p style="margin-bottom:16px;">Type something you do often.</p>
 
-  <!-- Step 01 -->
-  <div class="step active" id="step-1">
-    <div class="step-header">
-      <div class="step-instruction">What repeats.</div>
-      <div class="step-directive">Name what happens more than once in the delivery of this.</div>
-      <div class="step-micro">If you've done it twice, you've done it enough times to name it.</div>
-    </div>
-    <div class="input-single">
-      <input class="text-input" type="text" id="repeats" placeholder="intake questions, scheduling, follow-up messages" oninput="checkText('repeats','c1')" maxlength="200" />
-    </div>
-    <div class="input-helper">Separate with commas if more than one.</div>
-    <div class="nav-row">
-      <button class="btn" id="c1" disabled onclick="goTo(2)">Continue</button>
-    </div>
-  </div>
-
-  <!-- Step 02 -->
-  <div class="step" id="step-2">
-    <div class="step-header">
-      <div class="step-instruction">What slows this down.</div>
-      <div class="step-directive">The real friction point. Not the annoying part — the part that costs time.</div>
-    </div>
-    <div class="input-single">
-      <input class="text-input" type="text" id="slows" placeholder="waiting on client responses before anything can move" oninput="checkText('slows','c2')" maxlength="160" />
-    </div>
-    <div class="input-helper">One thing. The main one.</div>
-    <div class="nav-row">
-      <button class="btn btn-ghost" onclick="goTo(1)">Back</button>
-      <button class="btn" id="c2" disabled onclick="goTo(3)">Continue</button>
-    </div>
-  </div>
-
-  <!-- Step 03 -->
-  <div class="step" id="step-3">
-    <div class="step-header">
-      <div class="step-instruction">What decisions repeat.</div>
-      <div class="step-directive">What do you find yourself deciding again each time this runs.</div>
-      <div class="step-micro">Repeated decisions are systems waiting to exist.</div>
-    </div>
-    <div class="input-single">
-      <input class="text-input" type="text" id="decisions" placeholder="what to include, how to price the add-on, when to follow up" oninput="checkText('decisions','c3')" maxlength="200" />
-    </div>
-    <div class="input-helper">Separate with commas if more than one.</div>
-    <div class="nav-row">
-      <button class="btn btn-ghost" onclick="goTo(2)">Back</button>
-      <button class="btn" id="c3" disabled onclick="goTo(4)">Continue</button>
-    </div>
-  </div>
-
-  <!-- Step 04 -->
-  <div class="step" id="step-4">
-    <div class="step-header">
-      <div class="step-instruction">What should be fixed.</div>
-      <div class="step-directive">What should have one answer — not a new answer every time.</div>
-    </div>
-    <div class="input-single">
-      <input class="text-input" type="text" id="fixed" placeholder="the intake form, the pricing tiers, the follow-up sequence" oninput="checkText('fixed','c4')" maxlength="200" />
-    </div>
-    <div class="input-helper">These become templates, defaults, or documented rules.</div>
-    <div class="nav-row">
-      <button class="btn btn-ghost" onclick="goTo(3)">Back</button>
-      <button class="btn" id="c4" disabled onclick="goTo(5)">Continue</button>
-    </div>
-  </div>
-
-  <!-- Step 05 -->
-  <div class="step" id="step-5">
-    <div class="step-header">
-      <div class="step-instruction">What can be reused.</div>
-      <div class="step-directive">What already exists that could be used again without rebuilding.</div>
-    </div>
-    <div class="input-single">
-      <input class="text-input" type="text" id="reused" placeholder="the proposal template, the onboarding doc, the scope language" oninput="checkText('reused','c5')" maxlength="200" />
-    </div>
-    <div class="input-helper">If you built it once, it is an asset. Name it.</div>
-    <div class="nav-row">
-      <button class="btn btn-ghost" onclick="goTo(4)">Back</button>
-      <button class="btn" id="c5" disabled onclick="goTo(6)">Continue</button>
-    </div>
-  </div>
-
-  <!-- Step 06 -->
-  <div class="step" id="step-6">
-    <div class="step-header">
-      <div class="step-instruction">What can be automated.</div>
-      <div class="step-directive">What does not require judgment and could run without you.</div>
-      <div class="step-micro">Scheduling, reminders, delivery, receipts, confirmations.</div>
-    </div>
-    <div class="input-single">
-      <input class="text-input" type="text" id="automated" placeholder="booking confirmations, payment receipts, reminder emails" oninput="checkText('automated','c6')" maxlength="200" />
-    </div>
-    <div class="input-helper">If a tool can do it reliably, it should.</div>
-    <div class="nav-row">
-      <button class="btn btn-ghost" onclick="goTo(5)">Back</button>
-      <button class="btn" id="c6" disabled onclick="goTo(7)">Continue</button>
-    </div>
-  </div>
-
-  <!-- Step 07 -->
-  <div class="step" id="step-7">
-    <div class="step-header">
-      <div class="step-instruction">What stays manual.</div>
-      <div class="step-directive">What requires your judgment and should not be automated.</div>
-      <div class="step-micro">Not everything should be removed. Some things are the work.</div>
-    </div>
-    <div class="input-single">
-      <input class="text-input" type="text" id="manual" placeholder="the actual session, the written assessment, the final review" oninput="checkText('manual','c7')" maxlength="200" />
-    </div>
-    <div class="input-helper">These are your irreplaceable contributions. Own them.</div>
-    <div class="nav-row">
-      <button class="btn btn-ghost" onclick="goTo(6)">Back</button>
-      <button class="btn" id="c7" disabled onclick="goTo(8)">Continue</button>
-    </div>
-  </div>
-
-  <!-- Step 08 -->
-  <div class="step" id="step-8">
-    <div class="step-header">
-      <div class="step-instruction">What can be removed.</div>
-      <div class="step-directive">What exists in your current process that adds no value.</div>
-      <div class="step-micro">If it does not move the work forward, it is drag.</div>
-    </div>
-    <div class="input-single">
-      <input class="text-input" type="text" id="removed" placeholder="back-and-forth scheduling, redundant check-ins, status updates" oninput="checkText('removed','c8')" maxlength="200" />
-    </div>
-    <div class="input-helper">Removal is as valuable as automation.</div>
-    <div class="nav-row">
-      <button class="btn btn-ghost" onclick="goTo(7)">Back</button>
-      <button class="btn" id="c8" disabled onclick="goTo(9)">Continue</button>
-    </div>
-  </div>
-
-  <!-- Step 09 -->
-  <div class="step" id="step-9">
-    <div class="step-header">
-      <div class="step-instruction">System statement.</div>
-      <div class="step-directive">Complete the sentence.</div>
-      <div class="step-micro">When this system runs correctly, I only need to ______.</div>
-    </div>
-    <div class="input-single">
-      <input class="text-input" type="text" id="statement" placeholder="show up for the session and deliver the document" oninput="checkText('statement','c9')" maxlength="200" />
-    </div>
-    <div class="input-helper">This is the goal. Write what it actually looks like.</div>
-    <div class="nav-row">
-      <button class="btn btn-ghost" onclick="goTo(8)">Back</button>
-      <button class="btn btn-solid" id="c9" disabled onclick="showSummary()">Complete Automation</button>
-    </div>
-  </div>
-</div>
-
-<!-- ══ SUMMARY ════════════════════════════════════════ -->
-<div id="summary">
-  <div class="top-nav">
-    <a href="https://www.stephuary.com" class="nav-brand">Stephuary</a>
-    <span class="nav-phase">Phase 04 — Automation</span>
-  </div>
-
-  <div style="width:100%;max-width:580px;margin-top:52px;">
-    <p class="summary-phase-tag">Phase 04 — Automation</p>
-    <h2 class="summary-title">Automation map.</h2>
-    <p class="summary-sub">What requires you. What does not. The line between them.</p>
-
-    <!-- Raw inputs -->
-    <div class="data-card">
-      <div class="data-row">
-        <span class="data-label">What repeats</span>
-        <span class="data-value" id="s-repeats">—</span>
-      </div>
-      <div class="data-row">
-        <span class="data-label">What slows it</span>
-        <span class="data-value" id="s-slows">—</span>
-      </div>
-      <div class="data-row">
-        <span class="data-label">Repeated decisions</span>
-        <span class="data-value" id="s-decisions">—</span>
-      </div>
-      <div class="data-row">
-        <span class="data-label">What to fix</span>
-        <span class="data-value" id="s-fixed">—</span>
-      </div>
-      <div class="data-row">
-        <span class="data-label">What to reuse</span>
-        <span class="data-value" id="s-reused">—</span>
-      </div>
+    <div class="field">
+      <label class="field-label" for="f-task">What do you keep doing?</label>
+      <input id="f-task" type="text" placeholder="Writing emails, onboarding clients, posting content" maxlength="160" />
     </div>
 
-    <!-- Automation map — two columns -->
-    <div class="map-wrap">
-      <div class="map-label">Automation map</div>
-      <div class="map-columns">
-        <div class="map-col">
-          <div class="map-col-label">Automate or remove</div>
-          <div class="map-col-items" id="map-automate"></div>
-        </div>
-        <div class="map-divider"></div>
-        <div class="map-col">
-          <div class="map-col-label">Keep manual</div>
-          <div class="map-col-items" id="map-manual"></div>
-        </div>
-      </div>
-      <div class="map-statement" id="map-statement">—</div>
+    <div class="quick-picks" id="quick-picks">
+      <button class="quick-pick" type="button" data-value="Writing emails">Emails</button>
+      <button class="quick-pick" type="button" data-value="Onboarding clients">Client work</button>
+      <button class="quick-pick" type="button" data-value="Posting content">Content</button>
+      <button class="quick-pick" type="button" data-value="Scheduling meetings">Scheduling</button>
     </div>
 
-    <div class="what-next">
-      <p class="what-next-label">What happens next</p>
-      <p class="what-next-body">Phase 05 takes what now runs and makes sure it survives — under pressure, under change, and without you present.</p>
+    <button class="btn btn-primary" id="build-btn" type="button">Simplify it</button>
+  </section>
+
+  <!-- OUTPUT (hidden until click) -->
+  <section id="output-section" class="hidden">
+    <div class="output-card">
+      <span class="output-label">Use this instead</span>
+      <div id="output-steps"></div>
+      <p class="dynamic-line" id="output-dynamic"></p>
     </div>
 
-    <div class="action-primary">
-      <a href="/archive#checkout" class="btn btn-solid">Unlock Access</a>
-      <button class="btn" onclick="copyAutomation()">Copy my Automation Map</button>
-    </div>
-    <p class="copy-confirm" id="copyConfirm">Copied to clipboard.</p>
+    <p class="hint">If you do it more than once, save it. Do not start over.</p>
 
-    <div class="action-secondary">
-      <button class="btn btn-ghost" onclick="restart()">Start again</button>
+    <div class="row" style="margin-top:24px;">
+      <a href="/sovereignty" class="btn btn-primary">Go to Life</a>
+      <a href="/structure" class="btn">Back to Execution</a>
     </div>
-  </div>
-</div>
+  </section>
+
+  <!-- IMPORTANT -->
+  <section class="panel">
+    <h2>Important</h2>
+    <p>If you do it more than once, save it.</p>
+    <p style="margin-top:8px;">Do not start over.</p>
+  </section>
+
+  <!-- FOOTER NAV -->
+  <footer class="foot">
+    <a href="/system">System</a>
+    <a href="/capture">Capture</a>
+    <a href="/monetize">Monetize</a>
+    <a href="/structure">Structure</a>
+    <a href="/sovereignty">Sovereignty</a>
+    <a href="/private-access">Private Access</a>
+  </footer>
+
+</main>
 
 <script>
-  const state = {
-    repeats: '', slows: '', decisions: '', fixed: '',
-    reused: '', automated: '', manual: '', removed: '', statement: ''
-  };
+(function(){
+  'use strict';
 
-  const TOTAL = 9;
-  let currentStep = 1;
+  var startBtn = document.getElementById('hero-start');
+  var buildBtn = document.getElementById('build-btn');
+  var outputSection = document.getElementById('output-section');
+  var outputSteps = document.getElementById('output-steps');
+  var outputDynamic = document.getElementById('output-dynamic');
+  var toolSection = document.getElementById('tool-section');
+  var taskInput = document.getElementById('f-task');
+  var quickPicks = document.getElementById('quick-picks');
 
-  function unlock(e) {
-    e.preventDefault();
-    // PRODUCTION: validate Stripe session_id on /automation/enter
-    document.getElementById('locked').style.display = 'none';
-    document.getElementById('flow').style.display = 'flex';
-    updateProgress(1);
-    setTimeout(() => document.getElementById('repeats').focus(), 60);
-  }
+  startBtn.addEventListener('click', function(){
+    toolSection.scrollIntoView({behavior:'smooth', block:'start'});
+    setTimeout(function(){ taskInput.focus(); }, 340);
+  });
 
-  function goTo(n) {
-    document.getElementById('step-' + currentStep).classList.remove('active');
-    currentStep = n;
-    document.getElementById('step-' + n).classList.add('active');
-    updateProgress(n);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-    setTimeout(() => {
-      const inp = document.querySelector('#step-' + n + ' .text-input');
-      if (inp) inp.focus();
+  quickPicks.addEventListener('click', function(e){
+    var btn = e.target.closest('.quick-pick');
+    if(!btn) return;
+    taskInput.value = btn.getAttribute('data-value');
+    taskInput.focus();
+  });
+
+  buildBtn.addEventListener('click', function(){
+    var task = taskInput.value.trim();
+    if(!task){
+      buildBtn.textContent = 'Type what you keep doing';
+      setTimeout(function(){ buildBtn.textContent = 'Simplify it'; }, 1600);
+      return;
+    }
+
+    var steps = [
+      'Write it once',
+      'Save it',
+      'Reuse it',
+      'Adjust only what changes'
+    ];
+
+    outputSteps.innerHTML = '';
+    for(var i = 0; i < steps.length; i++){
+      var row = document.createElement('div');
+      row.className = 'step-row';
+      row.innerHTML = '<span class="step-num">' + (i + 1) + '</span><span class="step-text">' + steps[i] + '</span>';
+      outputSteps.appendChild(row);
+    }
+
+    outputDynamic.textContent = 'Turn "' + task + '" into a saved version you reuse.';
+
+    outputSection.classList.remove('hidden');
+    setTimeout(function(){
+      outputSection.scrollIntoView({behavior:'smooth', block:'start'});
     }, 60);
-  }
+  });
 
-  function updateProgress(n) {
-    document.getElementById('progressCount').textContent = 'Step ' + n + ' of ' + TOTAL;
-    document.getElementById('progressFill').style.width = ((n / TOTAL) * 100) + '%';
-  }
-
-  function checkText(inputId, btnId) {
-    const val = document.getElementById(inputId).value.trim();
-    document.getElementById(btnId).disabled = val.length === 0;
-    state[inputId] = val;
-  }
-
-  function showSummary() {
-    const keys = ['repeats','slows','decisions','fixed','reused','automated','manual','removed','statement'];
-    keys.forEach(k => { state[k] = document.getElementById(k).value.trim(); });
-
-    document.getElementById('flow').style.display = 'none';
-    document.getElementById('summary').style.display = 'flex';
-
-    // Raw inputs
-    document.getElementById('s-repeats').textContent   = state.repeats;
-    document.getElementById('s-slows').textContent     = state.slows;
-    document.getElementById('s-decisions').textContent = state.decisions;
-    document.getElementById('s-fixed').textContent     = state.fixed;
-    document.getElementById('s-reused').textContent    = state.reused;
-
-    // Automate column — automated + removed
-    const autoItems = [...splitCSV(state.automated), ...splitCSV(state.removed)];
-    const autoCol = document.getElementById('map-automate');
-    autoCol.innerHTML = '';
-    autoItems.forEach(item => {
-      const d = document.createElement('div');
-      d.className = 'map-item';
-      d.textContent = item;
-      autoCol.appendChild(d);
-    });
-
-    // Manual column — stays manual
-    const manualCol = document.getElementById('map-manual');
-    manualCol.innerHTML = '';
-    splitCSV(state.manual).forEach(item => {
-      const d = document.createElement('div');
-      d.className = 'map-item keep';
-      d.textContent = item;
-      manualCol.appendChild(d);
-    });
-
-    // System statement
-    document.getElementById('map-statement').textContent =
-      'When this runs correctly, I only need to ' + state.statement + '.';
-
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
-
-  function splitCSV(str) {
-    return str.split(',').map(s => s.trim()).filter(Boolean);
-  }
-
-  function copyAutomation() {
-    const text = [
-      'Phase 04 — Automation',
-      '',
-      'What repeats: '           + state.repeats,
-      'What slows it: '          + state.slows,
-      'Repeated decisions: '     + state.decisions,
-      'What to fix: '            + state.fixed,
-      'What to reuse: '          + state.reused,
-      'What to automate: '       + state.automated,
-      'What stays manual: '      + state.manual,
-      'What to remove: '         + state.removed,
-      '',
-      'System statement:',
-      'When this runs correctly, I only need to ' + state.statement + '.'
-    ].join('\n');
-
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(text).then(flash);
-    } else {
-      const ta = Object.assign(document.createElement('textarea'), { value: text });
-      ta.style.cssText = 'position:fixed;opacity:0;';
-      document.body.appendChild(ta);
-      ta.focus(); ta.select();
-      document.execCommand('copy');
-      document.body.removeChild(ta);
-      flash();
-    }
-  }
-
-  function flash() {
-    const el = document.getElementById('copyConfirm');
-    el.classList.add('visible');
-    setTimeout(() => el.classList.remove('visible'), 2800);
-  }
-
-  function restart() {
-    Object.keys(state).forEach(k => state[k] = '');
-    Object.keys(state).forEach(id => {
-      const el = document.getElementById(id);
-      if (el && el.tagName === 'INPUT') el.value = '';
-    });
-    for (let i = 1; i <= 9; i++) {
-      const b = document.getElementById('c' + i);
-      if (b) b.disabled = true;
-    }
-    document.getElementById('summary').style.display = 'none';
-    currentStep = 1;
-    document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
-    document.getElementById('step-1').classList.add('active');
-    document.getElementById('flow').style.display = 'flex';
-    updateProgress(1);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-    setTimeout(() => document.getElementById('repeats').focus(), 60);
-  }
-
-  document.addEventListener('keydown', e => {
-    if (e.key === 'Enter' && document.activeElement.tagName !== 'BUTTON') {
-      const btn = document.getElementById('c' + currentStep);
-      if (btn && !btn.disabled) btn.click();
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'Enter' && document.activeElement === taskInput){
+      buildBtn.click();
     }
   });
+}());
 </script>
 </body>
 </html>
