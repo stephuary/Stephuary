@@ -298,14 +298,15 @@ a{text-decoration:none}
 .fragment{
   position:absolute;
   z-index:20;
-  padding:13px 22px;
+  padding:14px 22px;
   border:1px solid var(--frag-border);
   background:var(--frag-bg);
   backdrop-filter:blur(2px);
-  border-radius:2px;
+  border-radius:10px;
   cursor:pointer;
   user-select:none;
   opacity:0;
+  min-height:48px;
   animation:subtleFloat 3s ease-in-out infinite;
   transition:border-color .16s,background .16s,box-shadow .16s,transform .16s,opacity .2s;
 }
@@ -313,6 +314,7 @@ a{text-decoration:none}
   border-color:var(--gold-soft);
   background:rgba(196,163,90,0.12);
   box-shadow:0 0 18px rgba(196,163,90,0.1);
+  transform:scale(1.02);
 }
 .fragment.clicking{
   border-color:var(--gold);
@@ -332,9 +334,18 @@ a{text-decoration:none}
 .fragment-text{
   font-size:16px;
   letter-spacing:.01em;
-  line-height:1.5;
+  line-height:1.4;
   color:rgba(244,237,224,0.92);
   white-space:nowrap;
+}
+.zone-group-label{
+  position:absolute;
+  z-index:6;
+  font-size:10px;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  color:var(--gold-soft);
+  pointer-events:none;
 }
 
 /* Zones */
@@ -1225,10 +1236,43 @@ a{text-decoration:none}
   #site-header{padding:22px 24px}
   #entry-overlay{padding:32px 22px}
   .entry-headline{font-size:clamp(28px,8vw,42px)}
-  .fragment{padding:10px 14px}
-  .fragment-text{font-size:14px;white-space:normal}
-  .zone-name{font-size:20px}
-  .zone-truth{font-size:14px}
+  #game-field{
+    position:relative;
+    overflow-y:auto;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    padding:80px 18px 100px;
+    gap:0;
+  }
+  #game-field::before,#game-field::after{display:none}
+  #anchor-fragment{display:none}
+  .zone{
+    position:relative!important;
+    left:auto!important;top:auto!important;
+    width:100%!important;height:auto!important;
+    max-width:420px;
+    border:none;
+    background:none;
+    padding:0;
+    margin-bottom:6px;
+  }
+  .zone-label{text-align:left;margin-bottom:8px}
+  .zone-name{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold-soft);margin-bottom:4px;opacity:1!important}
+  .zone-truth{display:none}
+  .zone-micro{display:none}
+  .fragment{
+    position:relative!important;
+    left:auto!important;top:auto!important;
+    width:100%;
+    max-width:420px;
+    padding:16px 18px;
+    margin-bottom:10px;
+    border-radius:10px;
+    animation:none;
+    opacity:1!important;
+  }
+  .fragment-text{font-size:16px;white-space:normal;line-height:1.4}
   #instruction{bottom:28px;width:calc(100% - 34px)}
   #instruction p{font-size:13px;white-space:normal}
   #ambient-signal{display:none}
@@ -1287,8 +1331,8 @@ a{text-decoration:none}
   </div>
 
   <div id="instruction" aria-live="polite">
-    <p>Click what matches your situation.</p>
-    <span class="instruction-live">You will see your result instantly.</span>
+    <p>Tap what matches your situation.</p>
+    <span class="instruction-live">Choose 2-3 that feel accurate.</span>
   </div>
 
   <div id="ambient-signal" aria-live="polite" aria-atomic="true">
@@ -1484,7 +1528,7 @@ a{text-decoration:none}
 (function(){
   'use strict';
 
-  var INSTRUCTION_START = "Click what matches your situation.";
+  var INSTRUCTION_START = "Tap what matches your situation.";
   var INSTRUCTION_MID = "Keep going.";
   var INSTRUCTION_END = "That's enough.";
 
@@ -1704,60 +1748,79 @@ a{text-decoration:none}
 
   function buildGame(){
     var field = document.getElementById('game-field');
-    var placement = [
-      {x:41,y:27},{x:51,y:25},{x:59,y:31},
-      {x:44,y:38},{x:53,y:36},{x:61,y:42},
-      {x:39,y:50},{x:49,y:48},{x:58,y:55},
-      {x:43,y:61},{x:52,y:60},{x:61,y:66}
-    ];
-    var placementMobile = [
-      {x:40,y:24},{x:60,y:24},{x:38,y:33},
-      {x:60,y:34},{x:40,y:43},{x:60,y:43},
-      {x:38,y:53},{x:60,y:53},{x:40,y:63},
-      {x:60,y:63},{x:40,y:73},{x:60,y:73}
+
+    var desktopGrid = [
+      {x:8,y:10},{x:28,y:8},{x:48,y:12},
+      {x:8,y:30},{x:28,y:28},{x:48,y:32},
+      {x:8,y:52},{x:28,y:50},{x:48,y:54},
+      {x:8,y:72},{x:28,y:70},{x:48,y:74}
     ];
 
-    zones.forEach(function(z){
-      var p = state.isMobile ? z.pos.m : z.pos.d;
-      var el = document.createElement('div');
-      el.className = 'zone';
-      el.id = 'zone-' + z.id;
-      el.style.cssText = 'left:' + p.l + ';top:' + p.t + ';width:' + p.w + ';height:' + p.h;
-      el.innerHTML = '<div class="zone-label"><div class="zone-name">' + z.name + '</div><div class="zone-truth">' + z.truth + '</div><div class="zone-micro" data-base="' + z.micro + '">' + z.micro + ' (0)</div></div>';
-      field.appendChild(el);
-    });
+    var zoneFrags = {};
+    fragments.forEach(function(f){ if(!zoneFrags[f.zone]){zoneFrags[f.zone]=[];} zoneFrags[f.zone].push(f); });
 
-    fragments.forEach(function(frag,idx){
-      var el = document.createElement('div');
-      el.className = 'fragment';
-      el.id = 'frag-' + frag.id;
-      el.setAttribute('role','button');
-      el.setAttribute('tabindex','0');
-      el.setAttribute('aria-label',frag.text);
-      el.innerHTML = '<span class="fragment-text">' + frag.text + '</span>';
-      var pos = state.isMobile ? placementMobile[idx] : placement[idx];
-      el.style.left = pos.x + '%';
-      el.style.top = pos.y + '%';
+    if(state.isMobile){
+      zones.forEach(function(z){
+        var zoneEl = document.createElement('div');
+        zoneEl.className = 'zone revealed active';
+        zoneEl.id = 'zone-' + z.id;
+        zoneEl.innerHTML = '<div class="zone-label"><div class="zone-name">' + z.micro + '</div><div class="zone-truth">' + z.truth + '</div><div class="zone-micro" data-base="' + z.micro + '">' + z.micro + ' (0)</div></div>';
+        field.appendChild(zoneEl);
 
-      setTimeout(function(){ el.style.opacity = '1'; }, 130 + idx * 34);
+        var frags = zoneFrags[z.id] || [];
+        frags.forEach(function(frag,idx){
+          var el = createFragmentEl(frag, idx);
+          el.style.opacity = '1';
+          field.appendChild(el);
+        });
+      });
+    } else {
+      zones.forEach(function(z){
+        var p = z.pos.d;
+        var el = document.createElement('div');
+        el.className = 'zone';
+        el.id = 'zone-' + z.id;
+        el.style.cssText = 'left:' + p.l + ';top:' + p.t + ';width:' + p.w + ';height:' + p.h;
+        el.innerHTML = '<div class="zone-label"><div class="zone-name">' + z.name + '</div><div class="zone-truth">' + z.truth + '</div><div class="zone-micro" data-base="' + z.micro + '">' + z.micro + ' (0)</div></div>';
+        field.appendChild(el);
+      });
 
-      el.addEventListener('click',function(){ handleClick(frag); });
-      el.addEventListener('keydown',function(e){
-        if(e.key === 'Enter' || e.key === ' '){
-          e.preventDefault();
-          handleClick(frag);
-        }
+      fragments.forEach(function(frag,idx){
+        var el = createFragmentEl(frag, idx);
+        var pos = desktopGrid[idx];
+        el.style.left = pos.x + '%';
+        el.style.top = pos.y + '%';
+        setTimeout(function(){ el.style.opacity = '1'; }, 130 + idx * 34);
+        field.appendChild(el);
       });
-      el.addEventListener('mouseenter',function(){
-        if(cursorRing){ cursorRing.classList.add('hover'); }
-      });
-      el.addEventListener('mouseleave',function(){
-        if(cursorRing){ cursorRing.classList.remove('hover'); }
-      });
-      field.appendChild(el);
-    });
+    }
 
     updateRemainingCounter();
+  }
+
+  function createFragmentEl(frag, idx){
+    var el = document.createElement('div');
+    el.className = 'fragment';
+    el.id = 'frag-' + frag.id;
+    el.setAttribute('role','button');
+    el.setAttribute('tabindex','0');
+    el.setAttribute('aria-label',frag.text);
+    el.innerHTML = '<span class="fragment-text">' + frag.text + '</span>';
+
+    el.addEventListener('click',function(){ handleClick(frag); });
+    el.addEventListener('keydown',function(e){
+      if(e.key === 'Enter' || e.key === ' '){
+        e.preventDefault();
+        handleClick(frag);
+      }
+    });
+    el.addEventListener('mouseenter',function(){
+      if(cursorRing){ cursorRing.classList.add('hover'); }
+    });
+    el.addEventListener('mouseleave',function(){
+      if(cursorRing){ cursorRing.classList.remove('hover'); }
+    });
+    return el;
   }
 
   function updateRemainingCounter(){
