@@ -49,6 +49,10 @@ body{
   background:var(--bg-0);
   color:var(--text);
   overflow:hidden;
+  cursor:auto;
+}
+
+body.cursor-enhanced{
   cursor:none;
 }
 
@@ -70,6 +74,7 @@ a{text-decoration:none}
   z-index:9999;
   pointer-events:none;
   transition:width .16s,height .16s,background .16s;
+  display:none;
 }
 #cursor.active{width:8px;height:8px;background:var(--terra)}
 #cursor-ring{
@@ -82,6 +87,7 @@ a{text-decoration:none}
   z-index:9998;
   pointer-events:none;
   transition:width .2s,height .2s,border-color .2s;
+  display:none;
 }
 #cursor-ring.hover{
   width:52px;
@@ -167,7 +173,7 @@ a{text-decoration:none}
   letter-spacing:.14em;
   text-transform:uppercase;
   font-weight:500;
-  cursor:none;
+  cursor:pointer;
   transition:background .2s ease;
 }
 .entry-start-btn:hover{background:var(--text)}
@@ -241,7 +247,7 @@ a{text-decoration:none}
   font-size:11px;
   letter-spacing:.1em;
   text-transform:uppercase;
-  cursor:none;
+  cursor:pointer;
   opacity:0;
   animation:fadeIn .8s ease forwards .9s;
   border-bottom:1px solid transparent;
@@ -297,7 +303,7 @@ a{text-decoration:none}
   background:var(--frag-bg);
   backdrop-filter:blur(2px);
   border-radius:2px;
-  cursor:none;
+  cursor:pointer;
   user-select:none;
   opacity:0;
   animation:subtleFloat 3s ease-in-out infinite;
@@ -1357,6 +1363,18 @@ a{text-decoration:none}
   var ringX = 0;
   var ringY = 0;
 
+  var customCursorEnabled = false;
+
+  function enableCustomCursor(){
+    if(customCursorEnabled){ return; }
+    if(state.isMobile){ return; }
+    if(!cursor || !cursorRing){ return; }
+    customCursorEnabled = true;
+    document.body.classList.add('cursor-enhanced');
+    cursor.style.display = 'block';
+    cursorRing.style.display = 'block';
+  }
+
   function normalizeRecommendation(startValue){
     var value = (startValue || '').toLowerCase();
     if(value.indexOf('capture') > -1){ return 'capture'; }
@@ -1439,21 +1457,37 @@ a{text-decoration:none}
     systemMenu.initialized = true;
   }
 
-  if(!state.isMobile){
+  if(!state.isMobile && cursor && cursorRing){
+    mouseX = window.innerWidth / 2;
+    mouseY = window.innerHeight / 2;
+    ringX = mouseX;
+    ringY = mouseY;
+
     document.addEventListener('mousemove',function(e){
+      if(!customCursorEnabled){ enableCustomCursor(); }
       mouseX = e.clientX;
       mouseY = e.clientY;
       cursor.style.left = mouseX + 'px';
       cursor.style.top = mouseY + 'px';
     });
     (function animateRing(){
-      ringX += (mouseX - ringX) * 0.12;
-      ringY += (mouseY - ringY) * 0.12;
-      cursorRing.style.left = ringX + 'px';
-      cursorRing.style.top = ringY + 'px';
+      if(customCursorEnabled){
+        ringX += (mouseX - ringX) * 0.12;
+        ringY += (mouseY - ringY) * 0.12;
+        cursorRing.style.left = ringX + 'px';
+        cursorRing.style.top = ringY + 'px';
+      }
       requestAnimationFrame(animateRing);
     }());
+  } else {
+    document.body.classList.remove('cursor-enhanced');
   }
+
+  window.addEventListener('error',function(){
+    document.body.classList.remove('cursor-enhanced');
+    if(cursor){ cursor.style.display = 'none'; }
+    if(cursorRing){ cursorRing.style.display = 'none'; }
+  });
 
   var overlay = document.getElementById('entry-overlay');
   var overlayStart = document.getElementById('overlay-start-btn');
@@ -1897,11 +1931,29 @@ a{text-decoration:none}
     e.preventDefault();
   });
 
-  window.addEventListener('load',function(){
-    initSystemMenu();
-    updateInstruction(INSTRUCTION_START);
-    buildGame();
-  });
+  function safeInit(){
+    try{
+      initSystemMenu();
+      updateInstruction(INSTRUCTION_START);
+      buildGame();
+      document.documentElement.classList.remove('init-failed');
+    }catch(err){
+      document.documentElement.classList.add('init-failed');
+      try{ console.error('Stephuary init failed:', err); }catch(_e){}
+    }
+  }
+
+  if(document.readyState === 'complete'){
+    safeInit();
+  } else {
+    window.addEventListener('load',safeInit,{once:true});
+    /* Fallback for environments where load can be delayed or blocked. */
+    window.setTimeout(function(){
+      if(!document.querySelector('.zone')){
+        safeInit();
+      }
+    },1400);
+  }
 }());
 </script>
 </body>
