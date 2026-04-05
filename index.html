@@ -99,23 +99,23 @@ a{text-decoration:none}
 #anchor-fragment p{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:clamp(20px,2.5vw,32px);line-height:1.45;color:rgba(244,237,224,0.14)}
 
 @keyframes subtleFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
-.fragment{position:absolute;z-index:20;padding:12px 18px;border:1px solid var(--frag-border);background:var(--frag-bg);backdrop-filter:blur(2px);border-radius:2px;cursor:pointer;user-select:none;opacity:0;animation:subtleFloat 3s ease-in-out infinite;transition:border-color .16s,background .16s,box-shadow .16s,transform .16s,opacity .2s;max-width:240px}
-.fragment:hover{border-color:var(--gold-soft);background:rgba(196,163,90,0.12);box-shadow:0 0 18px rgba(196,163,90,0.1)}
-.fragment.clicking{border-color:var(--gold);background:rgba(196,163,90,0.2);box-shadow:0 0 26px rgba(196,163,90,0.22);transform:scale(1.05);animation:none}
-.fragment.placed{opacity:.22;transform:scale(.9);border-color:rgba(196,163,90,0.2);background:rgba(196,163,90,0.06);pointer-events:none;animation:none}
-.fragment-text{font-size:15px;letter-spacing:.01em;line-height:1.46;color:rgba(244,237,224,0.92);white-space:normal;max-width:220px;display:block}
+.fragment{position:absolute;z-index:20;padding:11px 16px;border:1px solid var(--frag-border);background:var(--frag-bg);backdrop-filter:blur(3px);border-radius:1px;cursor:pointer;user-select:none;opacity:0;animation:subtleFloat 3s ease-in-out infinite;transition:border-color .16s,background .16s,box-shadow .16s,transform .16s,opacity .2s;max-width:200px}
+.fragment:hover{border-color:var(--gold-soft);background:rgba(196,163,90,0.1);box-shadow:0 0 16px rgba(196,163,90,0.08)}
+.fragment.clicking{border-color:var(--gold);background:rgba(196,163,90,0.18);box-shadow:0 0 22px rgba(196,163,90,0.2);transform:scale(1.04);animation:none}
+.fragment.placed{opacity:.18;transform:scale(.88);border-color:rgba(196,163,90,0.15);background:rgba(196,163,90,0.04);pointer-events:none;animation:none}
+.fragment-text{font-size:14px;letter-spacing:.01em;line-height:1.44;color:rgba(244,237,224,0.88);white-space:normal;max-width:200px;display:block;font-weight:300}
 
-.zone{position:absolute;z-index:5;border:1px dashed rgba(196,163,90,0.06);background:rgba(196,163,90,0.01);border-radius:2px;padding:18px 14px;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;transition:border-color .3s,background .3s,box-shadow .25s,transform .25s}
+.zone{position:absolute;z-index:5;border:1px dashed rgba(196,163,90,0.06);background:rgba(196,163,90,0.01);border-radius:2px;padding:16px 14px;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;transition:border-color .3s,background .3s,box-shadow .25s,transform .25s}
 .zone.active{border-color:rgba(196,163,90,0.22);background:rgba(196,163,90,0.03)}
 .zone.intensity1{border-color:rgba(196,163,90,0.32);background:rgba(196,163,90,0.05)}
 .zone.intensity2{border-color:rgba(196,163,90,0.48);background:rgba(196,163,90,0.08);box-shadow:inset 0 0 28px rgba(196,163,90,0.05)}
 .zone.intensity3{border-color:rgba(196,163,90,0.64);background:rgba(196,163,90,0.12);box-shadow:inset 0 0 42px rgba(196,163,90,0.08)}
 .zone.dominant{border-color:rgba(184,92,56,0.86)!important;box-shadow:0 0 24px rgba(184,92,56,0.2),inset 0 0 52px rgba(184,92,56,0.12)!important;transform:scale(1.02)}
 .zone.just-received{background:rgba(196,163,90,0.18)!important;border-color:rgba(196,163,90,0.72)!important}
-.zone-label{text-align:center;pointer-events:none}
-.zone-name{font-family:'Cormorant Garamond',serif;font-size:clamp(22px,2.4vw,34px);line-height:1;font-weight:300;color:var(--text);margin-bottom:8px;opacity:.24;transition:opacity .35s}
-.zone-truth{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;line-height:1.5;color:var(--text-2);opacity:0;margin-bottom:8px;transition:opacity .35s}
-.zone-micro{font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--gold-soft);font-weight:400}
+.zone-label{text-align:center;pointer-events:none;position:relative;z-index:6}
+.zone-name{font-family:'Cormorant Garamond',serif;font-size:clamp(18px,1.8vw,26px);line-height:1;font-weight:300;color:var(--text);margin-bottom:6px;opacity:.18;transition:opacity .35s}
+.zone-truth{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:13px;line-height:1.5;color:var(--text-2);opacity:0;margin-bottom:6px;transition:opacity .35s}
+.zone-micro{font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold-soft);font-weight:400}
 .zone.revealed .zone-name{opacity:1}
 .zone.revealed .zone-truth{opacity:1}
 .zone.dominant .zone-micro{color:rgba(184,92,56,0.95)}
@@ -951,24 +951,26 @@ a{text-decoration:none}
   function buildGame(){
     var field = document.getElementById('game-field');
     var placement = [
-      // business (top-left zone: 4–32% x, 8–48% y) — keep cards well inside
-      {x:5,  y:11}, {x:7,  y:24}, {x:5,  y:36},
-      // self (top-right zone: 68–96% x, 8–48% y) — anchor left edge of card to zone start
-      {x:69, y:11}, {x:71, y:25}, {x:69, y:37},
-      // home (bottom-left zone: 4–32% x, 54–92% y)
-      {x:5,  y:57}, {x:7,  y:69}, {x:5,  y:80},
-      // space (bottom-right zone: 68–96% x, 54–92% y)
-      {x:69, y:57}, {x:71, y:70}, {x:69, y:81}
+      // business (zone: left:4%, top:8%, w:28%, h:40%)
+      // cards start at y:20 to clear the zone label, spaced 12% apart
+      {x:6,  y:20}, {x:8,  y:30}, {x:6,  y:40},
+      // self (zone: left:68%, top:8%, w:28%, h:40%)
+      {x:70, y:20}, {x:72, y:30}, {x:70, y:40},
+      // home (zone: left:4%, top:54%, h:40%)
+      // cards start at y:64 to clear zone label, spaced 11% apart
+      {x:6,  y:64}, {x:8,  y:74}, {x:6,  y:83},
+      // space (zone: left:68%, top:54%, h:40%)
+      {x:70, y:64}, {x:72, y:74}, {x:70, y:83}
     ];
     var placementMobile = [
-      // business top-left
-      {x:3,  y:9},  {x:5,  y:20}, {x:3,  y:30},
-      // self top-right
-      {x:53, y:9},  {x:55, y:21}, {x:53, y:31},
-      // home bottom-left
-      {x:3,  y:55}, {x:5,  y:66}, {x:3,  y:76},
-      // space bottom-right
-      {x:53, y:55}, {x:55, y:67}, {x:53, y:78}
+      // business top-left (zone: 2–48%, 4–45%)
+      {x:3,  y:12}, {x:5,  y:23}, {x:3,  y:33},
+      // self top-right (zone: 52–98%, 4–45%)
+      {x:53, y:12}, {x:55, y:23}, {x:53, y:33},
+      // home bottom-left (zone: 2–48%, 53–94%)
+      {x:3,  y:60}, {x:5,  y:71}, {x:3,  y:81},
+      // space bottom-right (zone: 52–98%, 53–94%)
+      {x:53, y:60}, {x:55, y:71}, {x:53, y:81}
     ];
 
     zones.forEach(function(z){
