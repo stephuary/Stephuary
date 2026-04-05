@@ -246,93 +246,29 @@ a{text-decoration:none}
 .diag-zone.leading .diag-zone-name{color:var(--terra);}
 .diag-zone.leading .diag-zone-count-num{color:var(--terra);}
 
-/* Explain stack — Option 2+3: asymmetric, declarative, numbered */
-.explain-stack{padding:48px 48px 0;position:relative;z-index:1;max-width:860px}
-.explain-block{
-  border-top:1px solid var(--line-soft);
-  position:relative;
-}
-.explain-block:last-child{border-bottom:1px solid var(--line-soft);}
-
-/* Hover fill bar */
-.explain-block::after{
-  content:'';position:absolute;inset:0;
-  background:rgba(196,163,90,0.03);
-  transform:scaleX(0);transform-origin:left;
-  transition:transform 0.4s cubic-bezier(.16,1,.3,1);
-  pointer-events:none;z-index:0;
-}
-.explain-block:hover::after{transform:scaleX(1);}
-
-.explain-toggle{
-  width:100%;display:grid;
-  grid-template-columns:48px 1fr 200px auto;
-  gap:0 24px;align-items:start;
-  background:none;border:none;color:inherit;cursor:pointer;
-  padding:26px 0;text-align:left;
-  position:relative;z-index:1;
-}
-.explain-num{
-  font-family:'Cormorant Garamond',serif;
-  font-size:clamp(32px,3vw,44px);
-  line-height:1;color:var(--gold-soft);
-  font-weight:300;letter-spacing:-.02em;
-  transition:color .25s;padding-top:2px;
-}
-.explain-block.open .explain-num{color:var(--gold);}
-.explain-main{display:flex;flex-direction:column;gap:5px;}
-.explain-category{
+/* Scroll reveal prose blocks */
+.reveal-stack{padding:48px 48px 0;position:relative;z-index:1;max-width:860px}
+.reveal-block{padding:42px 0;border-top:1px solid var(--line-soft);}
+.reveal-block:last-child{border-bottom:1px solid var(--line-soft);}
+.reveal-category{
+  display:block;margin-bottom:14px;
   font-size:9px;letter-spacing:.22em;text-transform:uppercase;
-  color:var(--terra);font-weight:500;opacity:.8;
+  color:var(--terra);font-weight:500;
+  opacity:0;transform:translateY(10px);
 }
-.explain-toggle h2{
+.reveal-headline{
   font-family:'Cormorant Garamond',serif;font-weight:300;
-  font-size:clamp(20px,2vw,26px);
+  font-size:clamp(26px,2.8vw,38px);
   line-height:1.08;color:var(--text);
-  font-style:normal;margin:0;
-  transition:color .2s;
+  margin-bottom:20px;letter-spacing:-.01em;
+  opacity:0;transform:translateY(14px);
 }
-.explain-block:hover .explain-toggle h2{color:var(--text);}
-.explain-block.open .explain-toggle h2{color:var(--text);}
-.explain-teaser{
-  font-family:'Cormorant Garamond',serif;font-style:italic;
-  font-size:14px;color:var(--text-3);line-height:1.55;
-  padding-top:4px;
-  transition:opacity .2s;
+.reveal-body{
+  font-size:16px;color:var(--text-3);line-height:1.76;
+  max-width:620px;margin-bottom:10px;
+  opacity:0;transform:translateY(10px);
 }
-.explain-block.open .explain-teaser{opacity:0.4;}
-.explain-indicator{
-  font-size:11px;letter-spacing:.1em;text-transform:uppercase;
-  color:var(--gold-soft);flex-shrink:0;padding-top:6px;
-  transition:color .2s;font-weight:400;
-  position:relative;z-index:1;
-}
-.explain-block.open .explain-indicator{color:var(--gold);}
-.explain-indicator .ind-open{display:inline;}
-.explain-indicator .ind-close{display:none;}
-.explain-block.open .explain-indicator .ind-open{display:none;}
-.explain-block.open .explain-indicator .ind-close{display:inline;}
-
-/* Left gold border on open */
-.explain-body-wrap{
-  max-height:0;overflow:hidden;
-  transition:max-height 0.38s cubic-bezier(.16,1,.3,1),opacity .28s ease;
-  opacity:0;
-  padding-left:72px;
-  border-left:0px solid var(--gold);
-  transition:max-height 0.38s cubic-bezier(.16,1,.3,1),opacity .28s ease,border-left-width 0.01s,border-left-color .3s;
-}
-.explain-block.open .explain-body-wrap{
-  max-height:500px;opacity:1;
-  border-left:2px solid rgba(196,163,90,0.4);
-  margin-left:0;
-}
-.explain-body{padding:0 0 26px;}
-.explain-body p{font-size:15px;color:var(--text-3);line-height:1.72;margin-bottom:10px;}
-.explain-body p:last-child{margin-bottom:0;}
-.explain-body ul{list-style:none;margin:6px 0 14px;display:grid;gap:6px;}
-.explain-body li{font-size:15px;color:var(--text-3);line-height:1.6;padding-left:18px;position:relative;}
-.explain-body li::before{content:'—';position:absolute;left:0;color:var(--gold);opacity:.4;font-size:12px;top:3px;}
+.reveal-body:last-child{margin-bottom:0;}
 
 #scroll-cue{display:flex;justify-content:center;padding:28px 0 0;opacity:.8}
 
@@ -356,36 +292,37 @@ a{text-decoration:none}
 .rule-divider{margin:48px 0;padding:0 48px}
 .rule-divider::before{content:'';display:block;height:1px;background:var(--line-soft)}
 
-/* System section */
+/* Phase menu — flat scroll-reveal rows */
 #menu-section{padding:0 48px 72px;position:relative;z-index:1}
-.menu-label{display:block;margin-bottom:16px;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--terra);font-weight:500}
-.menu-intro{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:20px;line-height:1.58;color:var(--text-2);max-width:720px;margin-bottom:12px}
-.menu-command{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--text);margin-bottom:12px}
-.phase-headline{font-size:15px;color:var(--text-2);line-height:1.6;max-width:720px;margin-bottom:8px}
-.phase-subline{font-size:14px;color:var(--text-3);line-height:1.62;max-width:720px;margin:0 0 22px}
+.menu-label{display:block;margin-bottom:16px;font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--terra);font-weight:500;opacity:0;transform:translateY(10px);}
+.menu-intro{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:20px;line-height:1.58;color:var(--text-2);max-width:720px;margin-bottom:12px;opacity:0;transform:translateY(10px);}
+.menu-command{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--text);margin-bottom:12px;opacity:0;transform:translateY(10px);}
+.phase-headline{font-size:15px;color:var(--text-2);line-height:1.6;max-width:720px;margin-bottom:8px;opacity:0;transform:translateY(10px);}
+.phase-subline{font-size:14px;color:var(--text-3);line-height:1.62;max-width:720px;margin:0 0 22px;opacity:0;transform:translateY(10px);}
 .menu-courses{max-width:800px}
-.menu-course{border-bottom:1px solid var(--line-soft);opacity:0;transform:translateY(12px);}
+.menu-course{
+  border-bottom:1px solid var(--line-soft);
+  opacity:0;transform:translateY(14px);
+}
 .menu-course:first-child{border-top:1px solid var(--line-soft)}
-.menu-course-toggle{width:100%;display:grid;grid-template-columns:100px 1fr auto;gap:0 20px;align-items:flex-start;text-align:left;background:none;border:none;color:inherit;cursor:pointer;padding:30px 0;transition:background .2s}
-.menu-course-toggle:hover{background:rgba(196,163,90,0.03)}
-.menu-course.open .menu-course-toggle{background:rgba(196,163,90,0.04);padding-bottom:20px}
-.menu-courses.has-recommendation .menu-course:not(.recommended){opacity:.55}
-.menu-course.recommended{border-top:1px solid rgba(184,92,56,0.7);border-bottom:1px solid rgba(184,92,56,0.7);box-shadow:inset 0 0 0 1px rgba(184,92,56,0.25),0 10px 24px rgba(0,0,0,0.2)}
-.menu-course.recommended .menu-course-toggle{background:rgba(184,92,56,0.14)}
-.menu-course.recommended .course-indicator{color:var(--terra)}
+.menu-course.recommended{
+  border-top:1px solid rgba(184,92,56,0.5);
+  border-bottom:1px solid rgba(184,92,56,0.5);
+  background:rgba(184,92,56,0.06);
+}
+.menu-course-row{
+  display:grid;grid-template-columns:100px 1fr;
+  gap:0 20px;padding:28px 0;
+}
 .course-num{font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);font-weight:500;padding-top:8px;opacity:.7}
 .course-name{font-family:'Cormorant Garamond',serif;font-size:clamp(36px,4.5vw,60px);line-height:.95;color:var(--text);margin-bottom:8px;letter-spacing:-.015em;font-weight:300;}
-.course-desc{font-size:14px;color:var(--text-3);line-height:1.56;letter-spacing:.01em}
-.course-indicator{font-size:22px;line-height:1;color:var(--gold-soft);padding-top:6px;transition:transform .2s,color .2s}
-.menu-course.open .course-indicator{color:var(--gold);transform:rotate(45deg)}
-.menu-course-panel{max-height:0;overflow:hidden;transition:max-height .32s ease,opacity .25s ease,padding .25s ease;opacity:0;padding:0 0 0 120px}
-.menu-course.open .menu-course-panel{max-height:170px;opacity:1;padding:0 0 18px 120px}
-.menu-panel-text{font-size:15px;line-height:1.62;color:var(--text-2);margin-bottom:8px}
-.menu-panel-foot{font-size:14px;line-height:1.6;color:var(--text-3);margin-top:8px}
-.menu-panel-cta{display:inline-block;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);border-bottom:1px solid var(--gold-faint);padding-bottom:2px}
+.course-desc{font-size:14px;color:var(--text-2);line-height:1.56;letter-spacing:.01em;margin-bottom:10px;}
+.course-detail{font-size:13px;color:var(--text-3);line-height:1.6;margin-bottom:14px;font-family:'Cormorant Garamond',serif;font-style:italic;}
+.menu-panel-cta{display:inline-block;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);border-bottom:1px solid var(--gold-faint);padding-bottom:2px;}
 .menu-panel-cta:hover{color:var(--text);border-bottom-color:rgba(244,237,224,0.28)}
 .menu-course.recommended .menu-panel-cta{color:var(--text);border-bottom-color:rgba(184,92,56,0.58);font-weight:500}
-.modules-note{padding:18px 0 18px 120px;border-bottom:1px solid var(--line-soft);opacity:0;}
+.menu-course.recommended .course-name{color:var(--text);}
+.modules-note{padding:18px 0 18px 120px;border-bottom:1px solid var(--line-soft);opacity:0;transform:translateY(10px);}
 .modules-note p{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;color:var(--text-3)}
 
 /* System entry — NO card box, raw section */
@@ -445,36 +382,26 @@ a{text-decoration:none}
   #diagnosis-results-wrap{padding:28px 20px 0}
   #diagnosis-results{grid-template-columns:1fr 1fr}
   .diag-zone-count-num{font-size:clamp(40px,8vw,56px)}
-  .explain-stack{padding:32px 20px 0;max-width:100%}
-  .explain-toggle{grid-template-columns:36px 1fr auto;gap:0 14px;}
-  .explain-teaser{display:none;}
-  .explain-toggle h2{font-size:18px;}
-  .explain-num{font-size:28px;}
-  .explain-body-wrap{padding-left:48px;}
+  .reveal-stack{padding:28px 20px 0;}
+  .reveal-headline{font-size:clamp(22px,6vw,30px);}
   .rule-divider{margin:36px 0;padding:0 20px}
   #menu-section{padding:0 20px 52px}
-  .menu-course-toggle{grid-template-columns:80px 1fr auto;gap:0 10px;padding:22px 0}
+  .menu-course-row{grid-template-columns:72px 1fr;gap:0 10px;padding:20px 0;}
   .course-name{font-size:clamp(30px,8vw,44px)}
-  .menu-course-panel,.menu-course.open .menu-course-panel,.modules-note{padding-left:88px}
+  .modules-note{padding-left:80px}
   #system-entry-section{padding:0 20px 64px}
   .entry-price{font-size:clamp(56px,13vw,80px)}
-  .explain-stack{padding:28px 20px 0}
-  .explain-toggle h2{font-size:17px}
   #philosophy{padding:24px 20px}
   #res-footer{padding:32px 20px;flex-direction:column;align-items:flex-start}
   .btn-diag-primary,.btn-primary{width:100%;text-align:center;display:block;padding:16px 20px}
 }
 @media (max-width:560px){
-  .menu-course-toggle{grid-template-columns:1fr auto;gap:6px 0}
-  .course-num{grid-column:1/2}
-  .course-main{grid-column:1/2}
-  .course-indicator{grid-column:2/3;grid-row:1/3;align-self:start}
-  .menu-course-panel,.menu-course.open .menu-course-panel,.modules-note{padding-left:0}
+  .menu-course-row{grid-template-columns:1fr;}
+  .course-num{display:block;margin-bottom:6px;}
+  .modules-note{padding-left:0}
   #diagnosis-results{grid-template-columns:1fr}
   .result-card{padding:20px 16px 12px}
   .diag-blocks{grid-template-columns:1fr}
-  .explain-toggle{grid-template-columns:28px 1fr auto;}
-  .explain-body-wrap{padding-left:36px;}
 }
 </style>
 </head>
@@ -558,107 +485,32 @@ a{text-decoration:none}
     </div>
   </div>
 
-  <section class="explain-stack" aria-label="Diagnosis translation">
+  <section class="reveal-stack" aria-label="Diagnosis translation">
 
-    <div class="explain-block">
-      <button class="explain-toggle" aria-expanded="false">
-        <span class="explain-num">01</span>
-        <div class="explain-main">
-          <span class="explain-category">Diagnosis</span>
-          <h2>This is a system map.</h2>
-        </div>
-        <span class="explain-teaser">Operational diagnosis, not personality.</span>
-        <span class="explain-indicator" aria-hidden="true">
-          <span class="ind-open">Read</span>
-          <span class="ind-close">Close</span>
-        </span>
-      </button>
-      <div class="explain-body-wrap">
-        <div class="explain-body">
-          <p>You just mapped where your system is breaking.</p>
-          <p>This is not a personality result. It is an operational diagnosis.</p>
-          <ul>
-            <li>Work &rarr; people are not buying</li>
-            <li>Execution &rarr; things are not finishing</li>
-            <li>Daily &rarr; nothing repeats</li>
-            <li>Environment &rarr; your setup is slowing you down</li>
-          </ul>
-          <p>You do not fix everything at once. You fix the first constraint.</p>
-        </div>
-      </div>
+    <div class="reveal-block">
+      <span class="reveal-category">Diagnosis</span>
+      <h2 class="reveal-headline">This is a system map.</h2>
+      <p class="reveal-body">You just mapped where your system is breaking.</p>
+      <p class="reveal-body">This is not a personality result. It is an operational diagnosis. Each signal shows where momentum is being lost — work, execution, daily rhythm, or environment. You do not fix everything at once. You fix the first constraint.</p>
     </div>
 
-    <div class="explain-block">
-      <button class="explain-toggle" aria-expanded="false">
-        <span class="explain-num">02</span>
-        <div class="explain-main">
-          <span class="explain-category">Outcome</span>
-          <h2>You already have what you need.</h2>
-        </div>
-        <span class="explain-teaser">Structure, not more information.</span>
-        <span class="explain-indicator" aria-hidden="true">
-          <span class="ind-open">Read</span>
-          <span class="ind-close">Close</span>
-        </span>
-      </button>
-      <div class="explain-body-wrap">
-        <div class="explain-body">
-          <p>You do not need more information. You need:</p>
-          <ul>
-            <li>a working offer</li>
-            <li>a structure that holds</li>
-            <li>a system that runs without restarting</li>
-            <li>output that builds</li>
-          </ul>
-          <p>Each phase fixes one of these.</p>
-        </div>
-      </div>
+    <div class="reveal-block">
+      <span class="reveal-category">Outcome</span>
+      <h2 class="reveal-headline">You already have what you need.</h2>
+      <p class="reveal-body">You do not need more information. You need a working offer. A structure that holds. A system that runs without restarting. Output that builds.</p>
+      <p class="reveal-body">Each phase fixes one of these. Nothing else.</p>
     </div>
 
-    <div class="explain-block">
-      <button class="explain-toggle" aria-expanded="false">
-        <span class="explain-num">03</span>
-        <div class="explain-main">
-          <span class="explain-category">The Product</span>
-          <h2>Five phases. One private dashboard.</h2>
-        </div>
-        <span class="explain-teaser">Step-by-step. Fix in order.</span>
-        <span class="explain-indicator" aria-hidden="true">
-          <span class="ind-open">Read</span>
-          <span class="ind-close">Close</span>
-        </span>
-      </button>
-      <div class="explain-body-wrap">
-        <div class="explain-body">
-          <p>A step-by-step operating structure. It shows you exactly what to fix, in what order, so your work starts working.</p>
-          <p>You enter a private dashboard with all five phases. Start with your result. Fix it immediately.</p>
-        </div>
-      </div>
+    <div class="reveal-block">
+      <span class="reveal-category">The Product</span>
+      <h2 class="reveal-headline">Five phases. One private dashboard.</h2>
+      <p class="reveal-body">A step-by-step operating structure. It shows you exactly what to fix, in what order, so your work starts working. You enter a private dashboard with all five phases. Start with your result. Fix it immediately.</p>
     </div>
 
-    <div class="explain-block">
-      <button class="explain-toggle" aria-expanded="false">
-        <span class="explain-num">04</span>
-        <div class="explain-main">
-          <span class="explain-category">After Entry</span>
-          <h2>The work begins immediately.</h2>
-        </div>
-        <span class="explain-teaser">Phases unlock. No waiting.</span>
-        <span class="explain-indicator" aria-hidden="true">
-          <span class="ind-open">Read</span>
-          <span class="ind-close">Close</span>
-        </span>
-      </button>
-      <div class="explain-body-wrap">
-        <div class="explain-body">
-          <ul>
-            <li>You unlock all five phases</li>
-            <li>Each phase shows you exactly what to fix</li>
-            <li>You get step-by-step execution and tools</li>
-            <li>You move from idea to working system</li>
-          </ul>
-        </div>
-      </div>
+    <div class="reveal-block">
+      <span class="reveal-category">After Entry</span>
+      <h2 class="reveal-headline">The work begins immediately.</h2>
+      <p class="reveal-body">You unlock all five phases. Each phase shows you exactly what to fix. You get step-by-step execution and tools. You move from idea to working system.</p>
     </div>
 
   </section>
@@ -680,78 +532,58 @@ a{text-decoration:none}
 
     <div class="menu-courses" role="list">
       <div class="menu-course" role="listitem" data-system="capture">
-        <button class="menu-course-toggle" type="button" aria-expanded="false">
+        <div class="menu-course-row">
           <span class="course-num">Phase 01</span>
           <div class="course-main">
             <div class="course-name">Capture</div>
             <div class="course-desc">Get the idea out of your head and into something usable.</div>
+            <p class="course-detail">Clarity, framing, and direction. Built from the original work.</p>
+            <a class="menu-panel-cta" href="/capture">Go to Capture</a>
           </div>
-          <span class="course-indicator" aria-hidden="true">+</span>
-        </button>
-        <div class="menu-course-panel">
-          <p class="menu-panel-text">Includes: Clarity, framing, and direction.</p>
-          <a class="menu-panel-cta" href="/capture">Go to Capture</a>
-          <p class="menu-panel-foot">Built from the original work. Structured for use.</p>
         </div>
       </div>
       <div class="menu-course" role="listitem" data-system="monetize">
-        <button class="menu-course-toggle" type="button" aria-expanded="false">
+        <div class="menu-course-row">
           <span class="course-num">Phase 02</span>
           <div class="course-main">
             <div class="course-name">Monetize</div>
             <div class="course-desc">Turn what you have into something people pay for.</div>
+            <p class="course-detail">Offer design, pricing, and conversion. Built from the original work.</p>
+            <a class="menu-panel-cta" href="/monetize">Go to Monetize</a>
           </div>
-          <span class="course-indicator" aria-hidden="true">+</span>
-        </button>
-        <div class="menu-course-panel">
-          <p class="menu-panel-text">Includes: Offer design, pricing, and conversion.</p>
-          <a class="menu-panel-cta" href="/monetize">Go to Monetize</a>
-          <p class="menu-panel-foot">Built from the original work. Structured for use.</p>
         </div>
       </div>
       <div class="menu-course" role="listitem" data-system="structure">
-        <button class="menu-course-toggle" type="button" aria-expanded="false">
+        <div class="menu-course-row">
           <span class="course-num">Phase 03</span>
           <div class="course-main">
             <div class="course-name">Structure</div>
             <div class="course-desc">Finish what you start. Every time.</div>
+            <p class="course-detail">Workflows, execution systems, and output structure. Built from the original work.</p>
+            <a class="menu-panel-cta" href="/structure">Go to Structure</a>
           </div>
-          <span class="course-indicator" aria-hidden="true">+</span>
-        </button>
-        <div class="menu-course-panel">
-          <p class="menu-panel-text">Includes: Workflows, execution systems, and output structure.</p>
-          <a class="menu-panel-cta" href="/structure">Go to Structure</a>
-          <p class="menu-panel-foot">Built from the original work. Structured for use.</p>
         </div>
       </div>
       <div class="menu-course" role="listitem" data-system="automation">
-        <button class="menu-course-toggle" type="button" aria-expanded="false">
+        <div class="menu-course-row">
           <span class="course-num">Phase 04</span>
           <div class="course-main">
             <div class="course-name">Automation</div>
             <div class="course-desc">Stop doing the same work twice.</div>
+            <p class="course-detail">Templates, repeatable processes, and tools. Built from the original work.</p>
+            <a class="menu-panel-cta" href="/automation">Go to Automation</a>
           </div>
-          <span class="course-indicator" aria-hidden="true">+</span>
-        </button>
-        <div class="menu-course-panel">
-          <p class="menu-panel-text">Includes: Templates, repeatable processes, and tools.</p>
-          <a class="menu-panel-cta" href="/automation">Go to Automation</a>
-          <p class="menu-panel-foot">Built from the original work. Structured for use.</p>
         </div>
       </div>
       <div class="menu-course" role="listitem" data-system="sovereign">
-        <button class="menu-course-toggle" type="button" aria-expanded="false">
+        <div class="menu-course-row">
           <span class="course-num">Phase 05</span>
           <div class="course-main">
             <div class="course-name">Sovereignty</div>
             <div class="course-desc">Build a life that holds under pressure.</div>
+            <p class="course-detail">Personal systems, environment, and stability. Built from the original work.</p>
+            <a class="menu-panel-cta" href="/sovereignty">Go to Sovereignty</a>
           </div>
-          <span class="course-indicator" aria-hidden="true">+</span>
-        </button>
-        <div class="menu-course-panel">
-          <p class="menu-panel-text">Includes: Personal systems, environment, and stability.</p>
-          <a class="menu-panel-cta" href="/sovereignty">Go to Sovereignty</a>
-          <p class="menu-panel-foot">Built from the original work. Structured for use.</p>
         </div>
       </div>
       <div class="modules-note" role="note">
@@ -921,8 +753,7 @@ a{text-decoration:none}
     systemMenu.rows.forEach(function(row){
       var key = row.getAttribute('data-system');
       if(key) systemMenu.byKey[key] = row;
-      var btn = row.querySelector('.menu-course-toggle');
-      if(btn) btn.addEventListener('click', function(){ toggleSystemRow(row); });
+      // No toggle — flat layout, scroll reveals all
     });
     systemMenu.initialized = true;
   }
@@ -1397,51 +1228,121 @@ a{text-decoration:none}
           });
         }, 1.6);
 
-        // Menu phase rows via ScrollTrigger
+        // ---- FULL PAGE SCROLL REVEAL — every element line by line ----
         setTimeout(function(){
-          document.querySelectorAll('.menu-course, .modules-note').forEach(function(el){
-            ScrollTrigger.create({
-              trigger: el,
-              start: 'top 88%',
-              onEnter: function(){
-                gsap.to(el, {opacity:1, y:0, duration:0.55, ease:'power3.out'});
-              },
-              once: true
-            });
-          });
 
-          // Entry section elements via ScrollTrigger
-          var entryEls = [
-            '.entry-section-label',
-            '.entry-description',
-            '.entry-price',
-            '.entry-price-note',
-            '.entry-divider',
-            '.cta-row',
-            '.entry-note',
-            '.private-signal',
-            '.founder-signal'
-          ];
-          entryEls.forEach(function(sel, i){
-            var el = document.querySelector(sel);
-            if(!el){ return; }
-            gsap.set(el, {y:16});
+          function revealEl(el, delay){
+            delay = delay || 0;
             ScrollTrigger.create({
               trigger: el,
               start: 'top 90%',
+              once: true,
               onEnter: function(){
-                gsap.to(el, {opacity:1, y:0, duration:0.6, ease:'power3.out', delay: i * 0.06});
-              },
-              once: true
+                gsap.to(el, {opacity:1, y:0, duration:0.62, ease:'power3.out', delay:delay});
+              }
+            });
+          }
+
+          function revealEls(selector, staggerDelay){
+            staggerDelay = staggerDelay || 0.07;
+            document.querySelectorAll(selector).forEach(function(el, i){
+              revealEl(el, i * staggerDelay);
+            });
+          }
+
+          // Diagnosis banner elements (already animated in on load, skip)
+
+          // Reveal-stack prose blocks — category, headline, each paragraph individually
+          document.querySelectorAll('.reveal-block').forEach(function(block){
+            var children = block.querySelectorAll('.reveal-category, .reveal-headline, .reveal-body');
+            children.forEach(function(child, i){
+              ScrollTrigger.create({
+                trigger: child,
+                start: 'top 91%',
+                once: true,
+                onEnter: function(){
+                  gsap.to(child, {opacity:1, y:0, duration:0.6, ease:'power3.out', delay: i * 0.08});
+                }
+              });
             });
           });
-        }, 300);
 
-        // Open recommended system row
-        setTimeout(function(){
+          // Rule divider
+          document.querySelectorAll('.rule-divider').forEach(function(el){
+            gsap.set(el, {opacity:0});
+            ScrollTrigger.create({
+              trigger: el, start:'top 92%', once:true,
+              onEnter: function(){ gsap.to(el, {opacity:1, duration:0.5, ease:'power2.out'}); }
+            });
+          });
+
+          // Menu section header elements
+          ['.menu-label','.phase-headline','.phase-subline','.menu-intro','.menu-command'].forEach(function(sel, i){
+            var el = document.querySelector(sel);
+            if(!el) return;
+            ScrollTrigger.create({
+              trigger: el, start:'top 91%', once:true,
+              onEnter: function(){ gsap.to(el, {opacity:1, y:0, duration:0.55, ease:'power3.out', delay: i*0.07}); }
+            });
+          });
+
+          // Phase rows — each row then its inner elements stagger
+          document.querySelectorAll('.menu-course').forEach(function(row, i){
+            ScrollTrigger.create({
+              trigger: row, start:'top 88%', once:true,
+              onEnter: function(){
+                gsap.to(row, {opacity:1, y:0, duration:0.6, ease:'power3.out'});
+                // Inner elements stagger after row appears
+                var inner = row.querySelectorAll('.course-num, .course-name, .course-desc, .course-detail, .menu-panel-cta');
+                gsap.fromTo(inner,
+                  {opacity:0, y:8},
+                  {opacity:1, y:0, duration:0.45, stagger:0.06, ease:'power2.out', delay:0.15}
+                );
+              }
+            });
+          });
+
+          // Modules note
+          var modNote = document.querySelector('.modules-note');
+          if(modNote) revealEl(modNote);
+
+          // System entry section — every child element
+          var entryChildren = document.querySelectorAll(
+            '.entry-section-label, .entry-description, .entry-price, .entry-price-note, .entry-divider, .cta-row, .entry-note, .private-signal, .founder-signal'
+          );
+          entryChildren.forEach(function(el, i){
+            gsap.set(el, {y:16});
+            ScrollTrigger.create({
+              trigger: el, start:'top 91%', once:true,
+              onEnter: function(){ gsap.to(el, {opacity:1, y:0, duration:0.6, ease:'power3.out', delay: i*0.07}); }
+            });
+          });
+
+          // Philosophy
+          var philEls = document.querySelectorAll('.phil-rule, .phil-quote, .phil-wordmark');
+          philEls.forEach(function(el, i){
+            gsap.set(el, {opacity:0, y:10});
+            ScrollTrigger.create({
+              trigger: el, start:'top 91%', once:true,
+              onEnter: function(){ gsap.to(el, {opacity:1, y:0, duration:0.6, ease:'power3.out', delay: i*0.1}); }
+            });
+          });
+
+          // Footer elements
+          var footerEls = document.querySelectorAll('.footer-left > *, .footer-links a');
+          footerEls.forEach(function(el, i){
+            gsap.set(el, {opacity:0, y:8});
+            ScrollTrigger.create({
+              trigger: el, start:'top 96%', once:true,
+              onEnter: function(){ gsap.to(el, {opacity:1, y:0, duration:0.5, ease:'power2.out', delay: i*0.05}); }
+            });
+          });
+
+          // Recommended phase highlight
           var headEl = document.getElementById('diagnosis-heading');
-          openRecommendedSystem(headEl ? headEl.textContent : '', false);
-        }, 220);
+          setRecommendedRow(normalizeRecommendation(headEl ? headEl.textContent : ''));
+
+        }, 300);
 
         // CTA click handler
         var diagBtn = document.getElementById('diag-cta-btn');
@@ -1473,24 +1374,7 @@ a{text-decoration:none}
 
   document.getElementById('game-field').addEventListener('contextmenu', function(e){ e.preventDefault(); });
 
-  // Explain accordions — new structure with explain-body-wrap
-  document.querySelectorAll('.explain-toggle').forEach(function(btn){
-    btn.addEventListener('click', function(){
-      var block = btn.closest('.explain-block');
-      var isOpen = block.classList.contains('open');
-      document.querySelectorAll('.explain-block').forEach(function(b){
-        b.classList.remove('open');
-        b.querySelector('.explain-toggle').setAttribute('aria-expanded','false');
-      });
-      if(!isOpen){
-        block.classList.add('open');
-        btn.setAttribute('aria-expanded','true');
-        // Animate number gold on open
-        var num = block.querySelector('.explain-num');
-        if(num) gsap.to(num, {color:'var(--gold)', duration:0.3, ease:'power2.out'});
-      }
-    });
-  });
+  // No accordion toggles — page is full scroll reveal
 
   function safeInit(){
     try{
