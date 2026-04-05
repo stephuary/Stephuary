@@ -201,22 +201,138 @@ a{text-decoration:none}
 .btn-diag-primary.entering,.btn-primary.entering{pointer-events:none;opacity:.9}
 
 /* Results grid */
+/* Signal breakdown — dramatic reveal */
 #diagnosis-results-wrap{padding:36px 48px 0;position:relative;z-index:1;opacity:0;}
-.diagnosis-friction-line{display:block;margin-bottom:12px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-3);}
-.result-card{border:1px solid var(--line);background:rgba(20,22,17,0.9);padding:28px 28px 16px;}
-.result-card-head{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;margin-bottom:20px;}
-.result-card-title{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);font-weight:500}
-.result-card-meta{font-size:11px;color:var(--text-3);text-transform:uppercase;letter-spacing:.06em}
+.diagnosis-friction-line{display:block;margin-bottom:14px;font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--text-3);font-weight:500;}
+.result-card{border:1px solid var(--line);background:rgba(20,22,17,0.9);padding:28px 28px 20px;}
+.result-card-head{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;margin-bottom:22px;}
+.result-card-title{font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);font-weight:500}
+.result-card-meta{font-size:9px;color:var(--text-3);text-transform:uppercase;letter-spacing:.12em}
 #diagnosis-results{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line-soft);}
-.diag-zone{background:var(--bg-2);padding:28px 22px;transition:background .3s}
-.diag-zone.leading{border-top:2px solid var(--terra);background:rgba(184,92,56,0.04)}
-.diag-zone-name{font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--text-3);margin-bottom:14px;font-weight:500}
-.diag-zone-count{display:flex;align-items:baseline;gap:8px;margin-bottom:6px}
-.diag-zone-count-num{font-family:'Cormorant Garamond',serif;font-size:clamp(44px,5vw,68px);line-height:.88;color:var(--text);letter-spacing:-.02em;font-weight:300;}
-.diag-zone-count-note{font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-3)}
-.diag-zone-label{font-size:13px;color:var(--text-3);line-height:1.5;margin-top:4px}
-.diag-zone.leading .diag-zone-name{color:var(--terra);opacity:.9}
-.diag-zone.leading .diag-zone-count-num{color:var(--terra)}
+
+/* Zone blocks */
+.diag-zone{
+  background:var(--bg-2);padding:26px 20px 22px;
+  transition:background .4s;
+  opacity:0;transform:translateY(10px);
+  position:relative;overflow:hidden;
+}
+/* Terra border draw — starts at 0 width, animates in JS */
+.diag-zone::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:var(--terra);transform:scaleX(0);transform-origin:left;
+  transition:transform 0s;
+}
+.diag-zone.leading{background:rgba(184,92,56,0.05);}
+.diag-zone.leading::before{transform:scaleX(1);transition:transform 0.6s cubic-bezier(.16,1,.3,1);}
+
+.diag-zone-name{
+  font-size:9px;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--text-3);margin-bottom:18px;font-weight:500;
+  opacity:0;
+}
+.diag-zone-count{display:flex;align-items:baseline;gap:8px;margin-bottom:8px}
+.diag-zone-count-num{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(48px,5.5vw,76px);
+  line-height:.88;color:var(--text);
+  letter-spacing:-.02em;font-weight:300;
+  opacity:0;display:block;
+}
+.diag-zone-count-note{font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-3);opacity:0;}
+.diag-zone-label{font-size:13px;color:var(--text-3);line-height:1.5;margin-top:6px;opacity:0;}
+
+/* Leading zone — number hits terra after count-up */
+.diag-zone.leading .diag-zone-name{color:var(--terra);}
+.diag-zone.leading .diag-zone-count-num{color:var(--terra);}
+
+/* Explain stack — Option 2+3: asymmetric, declarative, numbered */
+.explain-stack{padding:48px 48px 0;position:relative;z-index:1;max-width:860px}
+.explain-block{
+  border-top:1px solid var(--line-soft);
+  position:relative;
+}
+.explain-block:last-child{border-bottom:1px solid var(--line-soft);}
+
+/* Hover fill bar */
+.explain-block::after{
+  content:'';position:absolute;inset:0;
+  background:rgba(196,163,90,0.03);
+  transform:scaleX(0);transform-origin:left;
+  transition:transform 0.4s cubic-bezier(.16,1,.3,1);
+  pointer-events:none;z-index:0;
+}
+.explain-block:hover::after{transform:scaleX(1);}
+
+.explain-toggle{
+  width:100%;display:grid;
+  grid-template-columns:48px 1fr 200px auto;
+  gap:0 24px;align-items:start;
+  background:none;border:none;color:inherit;cursor:pointer;
+  padding:26px 0;text-align:left;
+  position:relative;z-index:1;
+}
+.explain-num{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(32px,3vw,44px);
+  line-height:1;color:var(--gold-soft);
+  font-weight:300;letter-spacing:-.02em;
+  transition:color .25s;padding-top:2px;
+}
+.explain-block.open .explain-num{color:var(--gold);}
+.explain-main{display:flex;flex-direction:column;gap:5px;}
+.explain-category{
+  font-size:9px;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--terra);font-weight:500;opacity:.8;
+}
+.explain-toggle h2{
+  font-family:'Cormorant Garamond',serif;font-weight:300;
+  font-size:clamp(20px,2vw,26px);
+  line-height:1.08;color:var(--text);
+  font-style:normal;margin:0;
+  transition:color .2s;
+}
+.explain-block:hover .explain-toggle h2{color:var(--text);}
+.explain-block.open .explain-toggle h2{color:var(--text);}
+.explain-teaser{
+  font-family:'Cormorant Garamond',serif;font-style:italic;
+  font-size:14px;color:var(--text-3);line-height:1.55;
+  padding-top:4px;
+  transition:opacity .2s;
+}
+.explain-block.open .explain-teaser{opacity:0.4;}
+.explain-indicator{
+  font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--gold-soft);flex-shrink:0;padding-top:6px;
+  transition:color .2s;font-weight:400;
+  position:relative;z-index:1;
+}
+.explain-block.open .explain-indicator{color:var(--gold);}
+.explain-indicator .ind-open{display:inline;}
+.explain-indicator .ind-close{display:none;}
+.explain-block.open .explain-indicator .ind-open{display:none;}
+.explain-block.open .explain-indicator .ind-close{display:inline;}
+
+/* Left gold border on open */
+.explain-body-wrap{
+  max-height:0;overflow:hidden;
+  transition:max-height 0.38s cubic-bezier(.16,1,.3,1),opacity .28s ease;
+  opacity:0;
+  padding-left:72px;
+  border-left:0px solid var(--gold);
+  transition:max-height 0.38s cubic-bezier(.16,1,.3,1),opacity .28s ease,border-left-width 0.01s,border-left-color .3s;
+}
+.explain-block.open .explain-body-wrap{
+  max-height:500px;opacity:1;
+  border-left:2px solid rgba(196,163,90,0.4);
+  margin-left:0;
+}
+.explain-body{padding:0 0 26px;}
+.explain-body p{font-size:15px;color:var(--text-3);line-height:1.72;margin-bottom:10px;}
+.explain-body p:last-child{margin-bottom:0;}
+.explain-body ul{list-style:none;margin:6px 0 14px;display:grid;gap:6px;}
+.explain-body li{font-size:15px;color:var(--text-3);line-height:1.6;padding-left:18px;position:relative;}
+.explain-body li::before{content:'—';position:absolute;left:0;color:var(--gold);opacity:.4;font-size:12px;top:3px;}
 
 #scroll-cue{display:flex;justify-content:center;padding:28px 0 0;opacity:.8}
 
@@ -328,7 +444,13 @@ a{text-decoration:none}
   #diagnosis-cta{padding:22px 20px 24px}
   #diagnosis-results-wrap{padding:28px 20px 0}
   #diagnosis-results{grid-template-columns:1fr 1fr}
-  .diag-zone-count-num{font-size:clamp(36px,7vw,50px)}
+  .diag-zone-count-num{font-size:clamp(40px,8vw,56px)}
+  .explain-stack{padding:32px 20px 0;max-width:100%}
+  .explain-toggle{grid-template-columns:36px 1fr auto;gap:0 14px;}
+  .explain-teaser{display:none;}
+  .explain-toggle h2{font-size:18px;}
+  .explain-num{font-size:28px;}
+  .explain-body-wrap{padding-left:48px;}
   .rule-divider{margin:36px 0;padding:0 20px}
   #menu-section{padding:0 20px 52px}
   .menu-course-toggle{grid-template-columns:80px 1fr auto;gap:0 10px;padding:22px 0}
@@ -351,6 +473,8 @@ a{text-decoration:none}
   #diagnosis-results{grid-template-columns:1fr}
   .result-card{padding:20px 16px 12px}
   .diag-blocks{grid-template-columns:1fr}
+  .explain-toggle{grid-template-columns:28px 1fr auto;}
+  .explain-body-wrap{padding-left:36px;}
 }
 </style>
 </head>
@@ -435,63 +559,108 @@ a{text-decoration:none}
   </div>
 
   <section class="explain-stack" aria-label="Diagnosis translation">
+
     <div class="explain-block">
       <button class="explain-toggle" aria-expanded="false">
-        <h2>What this means</h2>
-        <span class="explain-indicator" aria-hidden="true">+</span>
+        <span class="explain-num">01</span>
+        <div class="explain-main">
+          <span class="explain-category">Diagnosis</span>
+          <h2>This is a system map.</h2>
+        </div>
+        <span class="explain-teaser">Operational diagnosis, not personality.</span>
+        <span class="explain-indicator" aria-hidden="true">
+          <span class="ind-open">Read</span>
+          <span class="ind-close">Close</span>
+        </span>
       </button>
-      <div class="explain-body">
-        <p>You just mapped where your system is breaking.</p>
-        <p>This is not a personality result. It is an operational diagnosis.</p>
-        <ul>
-          <li>Work &rarr; people are not buying</li>
-          <li>Execution &rarr; things are not finishing</li>
-          <li>Daily &rarr; nothing repeats</li>
-          <li>Environment &rarr; your setup is slowing you down</li>
-        </ul>
-        <p>You do not fix everything at once. You fix the first constraint.</p>
+      <div class="explain-body-wrap">
+        <div class="explain-body">
+          <p>You just mapped where your system is breaking.</p>
+          <p>This is not a personality result. It is an operational diagnosis.</p>
+          <ul>
+            <li>Work &rarr; people are not buying</li>
+            <li>Execution &rarr; things are not finishing</li>
+            <li>Daily &rarr; nothing repeats</li>
+            <li>Environment &rarr; your setup is slowing you down</li>
+          </ul>
+          <p>You do not fix everything at once. You fix the first constraint.</p>
+        </div>
       </div>
     </div>
+
     <div class="explain-block">
       <button class="explain-toggle" aria-expanded="false">
-        <h2>What you get</h2>
-        <span class="explain-indicator" aria-hidden="true">+</span>
+        <span class="explain-num">02</span>
+        <div class="explain-main">
+          <span class="explain-category">Outcome</span>
+          <h2>You already have what you need.</h2>
+        </div>
+        <span class="explain-teaser">Structure, not more information.</span>
+        <span class="explain-indicator" aria-hidden="true">
+          <span class="ind-open">Read</span>
+          <span class="ind-close">Close</span>
+        </span>
       </button>
-      <div class="explain-body">
-        <p>You do not need more information. You need:</p>
-        <ul>
-          <li>a working offer</li>
-          <li>a structure that holds</li>
-          <li>a system that runs without restarting</li>
-          <li>output that builds</li>
-        </ul>
-        <p>Each phase fixes one of these.</p>
+      <div class="explain-body-wrap">
+        <div class="explain-body">
+          <p>You do not need more information. You need:</p>
+          <ul>
+            <li>a working offer</li>
+            <li>a structure that holds</li>
+            <li>a system that runs without restarting</li>
+            <li>output that builds</li>
+          </ul>
+          <p>Each phase fixes one of these.</p>
+        </div>
       </div>
     </div>
+
     <div class="explain-block">
       <button class="explain-toggle" aria-expanded="false">
-        <h2>What The System is</h2>
-        <span class="explain-indicator" aria-hidden="true">+</span>
+        <span class="explain-num">03</span>
+        <div class="explain-main">
+          <span class="explain-category">The Product</span>
+          <h2>Five phases. One private dashboard.</h2>
+        </div>
+        <span class="explain-teaser">Step-by-step. Fix in order.</span>
+        <span class="explain-indicator" aria-hidden="true">
+          <span class="ind-open">Read</span>
+          <span class="ind-close">Close</span>
+        </span>
       </button>
-      <div class="explain-body">
-        <p>A step-by-step operating structure. It shows you exactly what to fix, in what order, so your work starts working.</p>
-        <p>You enter a private dashboard with all five phases. Start with your result. Fix it immediately.</p>
+      <div class="explain-body-wrap">
+        <div class="explain-body">
+          <p>A step-by-step operating structure. It shows you exactly what to fix, in what order, so your work starts working.</p>
+          <p>You enter a private dashboard with all five phases. Start with your result. Fix it immediately.</p>
+        </div>
       </div>
     </div>
+
     <div class="explain-block">
       <button class="explain-toggle" aria-expanded="false">
-        <h2>What happens after you enter</h2>
-        <span class="explain-indicator" aria-hidden="true">+</span>
+        <span class="explain-num">04</span>
+        <div class="explain-main">
+          <span class="explain-category">After Entry</span>
+          <h2>The work begins immediately.</h2>
+        </div>
+        <span class="explain-teaser">Phases unlock. No waiting.</span>
+        <span class="explain-indicator" aria-hidden="true">
+          <span class="ind-open">Read</span>
+          <span class="ind-close">Close</span>
+        </span>
       </button>
-      <div class="explain-body">
-        <ul>
-          <li>You unlock all five phases</li>
-          <li>Each phase shows you exactly what to fix</li>
-          <li>You get step-by-step execution and tools</li>
-          <li>You move from idea to working system</li>
-        </ul>
+      <div class="explain-body-wrap">
+        <div class="explain-body">
+          <ul>
+            <li>You unlock all five phases</li>
+            <li>Each phase shows you exactly what to fix</li>
+            <li>You get step-by-step execution and tools</li>
+            <li>You move from idea to working system</li>
+          </ul>
+        </div>
       </div>
     </div>
+
   </section>
 
   <div id="scroll-cue" aria-hidden="true">
@@ -1158,20 +1327,75 @@ a{text-decoration:none}
           {opacity:1, y:0, duration:0.6, ease:'power3.out'}, 1.55
         );
 
-        // Count-up numbers
+        // Count-up with A+B dramatic reveal — blocks build left to right, leading number slams
         tl.add(function(){
-          document.querySelectorAll('.diag-zone-count-num').forEach(function(el){
-            var target = parseInt(el.getAttribute('data-target'), 10) || 0;
-            gsap.to({val:0}, {
-              val: target,
-              duration: 0.9,
-              ease: 'power2.out',
-              onUpdate: function(){
-                el.textContent = Math.round(this.targets()[0].val);
-              }
-            });
+          var zoneEls = document.querySelectorAll('.diag-zone');
+          var leadingEl = document.querySelector('.diag-zone.leading');
+
+          zoneEls.forEach(function(zone, i){
+            var isLeading = zone.classList.contains('leading');
+            var delay = i * 0.18;
+            var numEl = zone.querySelector('.diag-zone-count-num');
+            var nameEl = zone.querySelector('.diag-zone-name');
+            var noteEl = zone.querySelector('.diag-zone-count-note');
+            var labelEl = zone.querySelector('.diag-zone-label');
+            var target = parseInt(numEl ? numEl.getAttribute('data-target') : '0', 10) || 0;
+
+            // Block slides up
+            gsap.to(zone, {opacity:1, y:0, duration:0.55, ease:'power3.out', delay:delay});
+
+            // Name fades in first
+            gsap.to(nameEl, {opacity:1, duration:0.4, ease:'power2.out', delay:delay + 0.1});
+
+            // Label fades in
+            gsap.to(labelEl, {opacity:1, duration:0.4, ease:'power2.out', delay:delay + 0.15});
+
+            // Note fades in
+            gsap.to(noteEl, {opacity:1, duration:0.35, ease:'power2.out', delay:delay + 0.2});
+
+            if(isLeading){
+              // Leading: pause, then slam with overshoot
+              gsap.set(numEl, {opacity:1, scale:0.7, y:12});
+              gsap.to(numEl, {
+                scale:1.08, y:0,
+                duration:0.5, ease:'back.out(2.2)',
+                delay: delay + 0.35,
+                onStart: function(){
+                  // Terra border draw
+                  gsap.to(zone, {duration:0.01, onComplete:function(){
+                    zone.style.transition = 'none';
+                    var before = window.getComputedStyle(zone, '::before');
+                  }});
+                }
+              });
+              gsap.to(numEl, {scale:1.0, duration:0.3, ease:'power2.inOut', delay: delay + 0.85});
+
+              // Count up after slam settles
+              gsap.to({val:0}, {
+                val: target,
+                duration: 0.7,
+                ease: 'power2.out',
+                delay: delay + 0.4,
+                onUpdate: function(){
+                  numEl.textContent = Math.round(this.targets()[0].val);
+                }
+              });
+
+            } else {
+              // Non-leading: soft count up
+              gsap.to(numEl, {opacity:1, y:0, duration:0.45, ease:'power3.out', delay:delay + 0.25});
+              gsap.to({val:0}, {
+                val: target,
+                duration: 0.6,
+                ease: 'power1.out',
+                delay: delay + 0.3,
+                onUpdate: function(){
+                  numEl.textContent = Math.round(this.targets()[0].val);
+                }
+              });
+            }
           });
-        }, 1.7);
+        }, 1.6);
 
         // Menu phase rows via ScrollTrigger
         setTimeout(function(){
@@ -1249,7 +1473,7 @@ a{text-decoration:none}
 
   document.getElementById('game-field').addEventListener('contextmenu', function(e){ e.preventDefault(); });
 
-  // Explain accordions
+  // Explain accordions — new structure with explain-body-wrap
   document.querySelectorAll('.explain-toggle').forEach(function(btn){
     btn.addEventListener('click', function(){
       var block = btn.closest('.explain-block');
@@ -1258,7 +1482,13 @@ a{text-decoration:none}
         b.classList.remove('open');
         b.querySelector('.explain-toggle').setAttribute('aria-expanded','false');
       });
-      if(!isOpen){ block.classList.add('open'); btn.setAttribute('aria-expanded','true'); }
+      if(!isOpen){
+        block.classList.add('open');
+        btn.setAttribute('aria-expanded','true');
+        // Animate number gold on open
+        var num = block.querySelector('.explain-num');
+        if(num) gsap.to(num, {color:'var(--gold)', duration:0.3, ease:'power2.out'});
+      }
     });
   });
 
