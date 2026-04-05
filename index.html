@@ -99,11 +99,11 @@ a{text-decoration:none}
 #anchor-fragment p{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:clamp(20px,2.5vw,32px);line-height:1.45;color:rgba(244,237,224,0.14)}
 
 @keyframes subtleFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
-.fragment{position:absolute;z-index:20;padding:13px 22px;border:1px solid var(--frag-border);background:var(--frag-bg);backdrop-filter:blur(2px);border-radius:2px;cursor:pointer;user-select:none;opacity:0;animation:subtleFloat 3s ease-in-out infinite;transition:border-color .16s,background .16s,box-shadow .16s,transform .16s,opacity .2s}
+.fragment{position:absolute;z-index:20;padding:12px 18px;border:1px solid var(--frag-border);background:var(--frag-bg);backdrop-filter:blur(2px);border-radius:2px;cursor:pointer;user-select:none;opacity:0;animation:subtleFloat 3s ease-in-out infinite;transition:border-color .16s,background .16s,box-shadow .16s,transform .16s,opacity .2s;max-width:240px}
 .fragment:hover{border-color:var(--gold-soft);background:rgba(196,163,90,0.12);box-shadow:0 0 18px rgba(196,163,90,0.1)}
 .fragment.clicking{border-color:var(--gold);background:rgba(196,163,90,0.2);box-shadow:0 0 26px rgba(196,163,90,0.22);transform:scale(1.05);animation:none}
 .fragment.placed{opacity:.22;transform:scale(.9);border-color:rgba(196,163,90,0.2);background:rgba(196,163,90,0.06);pointer-events:none;animation:none}
-.fragment-text{font-size:16px;letter-spacing:.01em;line-height:1.5;color:rgba(244,237,224,0.92);white-space:nowrap}
+.fragment-text{font-size:15px;letter-spacing:.01em;line-height:1.46;color:rgba(244,237,224,0.92);white-space:normal;max-width:220px;display:block}
 
 .zone{position:absolute;z-index:5;border:1px dashed rgba(196,163,90,0.06);background:rgba(196,163,90,0.01);border-radius:2px;padding:18px 14px;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;transition:border-color .3s,background .3s,box-shadow .25s,transform .25s}
 .zone.active{border-color:rgba(196,163,90,0.22);background:rgba(196,163,90,0.03)}
@@ -507,7 +507,7 @@ a{text-decoration:none}
     <p>I have everything I need<br>except the structure.</p>
   </div>
   <div id="instruction" aria-live="polite">
-    <p>Select what&rsquo;s happening. Your result updates as you go.</p>
+    <p>Pick what fits.</p>
   </div>
   <div id="ambient-signal" aria-live="polite" aria-atomic="true">
     <p id="ambient-text">Updating</p>
@@ -773,7 +773,7 @@ a{text-decoration:none}
 (function(){
   'use strict';
 
-  var INSTRUCTION_START = "Click what's true.";
+  var INSTRUCTION_START = "Pick what fits.";
   var INSTRUCTION_MID = "Keep going.";
   var INSTRUCTION_END = "That's enough.";
 
@@ -782,18 +782,18 @@ a{text-decoration:none}
   var MIN_SELECTIONS_FOR_PAUSE_RESOLVE = 3;
 
   var fragments = [
-    {id:'b1',text:'The offer keeps changing.',zone:'business'},
-    {id:'b2',text:"Clients come. They don't come back.",zone:'business'},
-    {id:'b3',text:'I built something. Nobody bought it.',zone:'business'},
-    {id:'s1',text:"I start things. I don't finish them.",zone:'self'},
-    {id:'s2',text:"I know what to do. I'm not doing it.",zone:'self'},
-    {id:'s3',text:'I keep restarting.',zone:'self'},
-    {id:'h1',text:'The day runs me.',zone:'home'},
-    {id:'h2',text:'I reset every Monday.',zone:'home'},
-    {id:'h3',text:"I'm tired before I start.",zone:'home'},
-    {id:'sp1',text:"I'm in the wrong place.",zone:'space'},
-    {id:'sp2',text:'This environment drains me.',zone:'space'},
-    {id:'sp3',text:'I need a different setup.',zone:'space'}
+    {id:'b1',text:"I don't know what to charge.",zone:'business'},
+    {id:'b2',text:"I have an audience. Nobody's buying.",zone:'business'},
+    {id:'b3',text:"I built something. Nobody bought it.",zone:'business'},
+    {id:'s1',text:"I've been working on this for months.",zone:'self'},
+    {id:'s2',text:"I keep restarting.",zone:'self'},
+    {id:'s3',text:"I'm productive. Nothing is shipping.",zone:'self'},
+    {id:'h1',text:"I reset every Monday.",zone:'home'},
+    {id:'h2',text:"I'm consistent. Nothing is accumulating.",zone:'home'},
+    {id:'h3',text:"I have time. I don't have momentum.",zone:'home'},
+    {id:'sp1',text:"I work everywhere. Nothing gets finished.",zone:'space'},
+    {id:'sp2',text:"My setup works against me.",zone:'space'},
+    {id:'sp3',text:"I can't think clearly where I am.",zone:'space'}
   ];
 
   var zones = [
@@ -951,24 +951,24 @@ a{text-decoration:none}
   function buildGame(){
     var field = document.getElementById('game-field');
     var placement = [
-      // business (top-left zone: 4–32% x, 8–48% y)
-      {x:6,  y:13}, {x:15, y:24}, {x:8,  y:36},
-      // self (top-right zone: 68–96% x, 8–48% y)
-      {x:70, y:13}, {x:79, y:25}, {x:72, y:37},
+      // business (top-left zone: 4–32% x, 8–48% y) — keep cards well inside
+      {x:5,  y:11}, {x:7,  y:24}, {x:5,  y:36},
+      // self (top-right zone: 68–96% x, 8–48% y) — anchor left edge of card to zone start
+      {x:69, y:11}, {x:71, y:25}, {x:69, y:37},
       // home (bottom-left zone: 4–32% x, 54–92% y)
-      {x:6,  y:58}, {x:16, y:69}, {x:7,  y:80},
+      {x:5,  y:57}, {x:7,  y:69}, {x:5,  y:80},
       // space (bottom-right zone: 68–96% x, 54–92% y)
-      {x:70, y:58}, {x:80, y:70}, {x:72, y:81}
+      {x:69, y:57}, {x:71, y:70}, {x:69, y:81}
     ];
     var placementMobile = [
-      // business (top-left: 2–48% x, 4–45% y)
-      {x:4,  y:10}, {x:22, y:19}, {x:6,  y:29},
-      // self (top-right: 52–96% x, 4–45% y)
-      {x:55, y:10}, {x:72, y:21}, {x:57, y:31},
-      // home (bottom-left: 2–48% x, 53–95% y)
-      {x:4,  y:57}, {x:20, y:67}, {x:5,  y:77},
-      // space (bottom-right: 52–96% x, 53–95% y)
-      {x:55, y:57}, {x:73, y:69}, {x:57, y:79}
+      // business top-left
+      {x:3,  y:9},  {x:5,  y:20}, {x:3,  y:30},
+      // self top-right
+      {x:53, y:9},  {x:55, y:21}, {x:53, y:31},
+      // home bottom-left
+      {x:3,  y:55}, {x:5,  y:66}, {x:3,  y:76},
+      // space bottom-right
+      {x:53, y:55}, {x:55, y:67}, {x:53, y:78}
     ];
 
     zones.forEach(function(z){
