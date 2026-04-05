@@ -4,264 +4,70 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Life - Stephuary</title>
-<meta name="description" content="Fix what keeps getting in the way. Change one thing that makes everything easier." />
+<meta name="description" content="Fix what is getting in the way. Routine, space, time, energy." />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500&family=Lato:wght@300;400&display=swap" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 
 :root{
-  --bg-0:#0a0a08;
-  --bg-1:#12120f;
-  --bg-2:#171713;
-  --line:rgba(196,163,90,0.22);
-  --line-soft:rgba(196,163,90,0.12);
-  --gold:#c4a35a;
-  --gold-hover:#d4b36a;
+  --bg:#0a0a08;
+  --card:#111110;
+  --card-hover:#181814;
+  --border:rgba(196,163,90,0.12);
+  --border-hover:rgba(196,163,90,0.28);
   --text:#f5f0e8;
-  --text-dim:#cbc3b4;
-  --text-soft:#a09889;
+  --text-2:#cbc3b4;
+  --text-3:#a09889;
+  --gold:#c4a35a;
   --green:#2f563f;
   --green-hover:#3a6a4f;
+  --radius:10px;
+  --max:640px;
   --serif:"Cormorant Garamond",Georgia,serif;
   --sans:"Lato",system-ui,sans-serif;
-  --radius:2px;
 }
 
 html,body{
-  background:var(--bg-0);
+  background:var(--bg);
   color:var(--text);
   font-family:var(--sans);
-  font-weight:300;
   font-size:18px;
-  line-height:1.6;
+  line-height:1.5;
+  font-weight:300;
+  -webkit-font-smoothing:antialiased;
   min-height:100%;
 }
 
-body{padding:28px 24px 80px}
-a{color:inherit}
+a{color:inherit;text-decoration:none}
 
 .page{
-  max-width:680px;
+  max-width:var(--max);
   margin:0 auto;
+  padding:0 24px 96px;
   display:flex;
   flex-direction:column;
   gap:56px;
 }
 
-.label{
-  display:inline-block;
-  font-size:11px;
-  letter-spacing:0.14em;
-  text-transform:uppercase;
-  color:var(--gold);
-  margin-bottom:14px;
-}
-
-h1{
-  font-family:var(--serif);
-  font-weight:500;
-  font-size:clamp(40px,6vw,58px);
-  line-height:1.06;
-  margin-bottom:14px;
-}
-
-h2{
-  font-family:var(--serif);
-  font-weight:500;
-  font-size:clamp(28px,4vw,36px);
-  line-height:1.1;
-  margin-bottom:12px;
-}
-
-p{color:var(--text-dim);max-width:52ch}
-
-.subhead{
-  font-size:18px;
-  color:var(--text-dim);
-  line-height:1.5;
-  margin-bottom:20px;
-  max-width:48ch;
-}
-
-.btn{
-  text-decoration:none;
-  min-height:48px;
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  padding:14px 20px;
-  border-radius:var(--radius);
-  border:1px solid var(--line);
-  font-size:12px;
-  letter-spacing:0.1em;
-  text-transform:uppercase;
-  color:var(--text);
-  background:transparent;
-  cursor:pointer;
-  transition:background 140ms ease,border-color 140ms ease,color 140ms ease,transform 100ms ease;
-}
-.btn:hover{border-color:var(--gold);color:var(--text)}
-.btn:active{transform:scale(0.97)}
-
-.btn-primary{
-  background:var(--green);
-  border-color:var(--green);
-  color:#f5f0e8;
-}
-.btn-primary:hover{
-  background:var(--green-hover);
-  border-color:var(--green-hover);
-  color:#f5f0e8;
-}
-
-.btn-gold{
-  background:var(--gold);
-  border-color:var(--gold);
-  color:var(--bg-0);
-  font-weight:400;
-}
-.btn-gold:hover{
-  background:var(--gold-hover);
-  border-color:var(--gold-hover);
-}
-
-.link-btn{
-  text-decoration:none;
-  font-size:12px;
-  letter-spacing:0.08em;
-  text-transform:uppercase;
-  color:var(--text-soft);
-  border-bottom:1px solid transparent;
-  transition:color 140ms ease,border-color 140ms ease;
-}
-.link-btn:hover{color:var(--text);border-bottom-color:var(--line-soft)}
-
-.row{display:flex;flex-wrap:wrap;gap:12px}
-
-.panel{
-  border:1px solid var(--line-soft);
-  background:linear-gradient(180deg,var(--bg-1),var(--bg-2));
-  border-radius:var(--radius);
-  padding:28px 24px;
-}
-
-.list{
-  list-style:none;
-  display:flex;
-  flex-direction:column;
-  gap:8px;
-  margin-top:10px;
-}
-.list li{
-  color:var(--text-dim);
-  font-size:18px;
-  line-height:1.5;
-  padding-left:14px;
-  position:relative;
-}
-.list li::before{
-  content:"";
-  width:5px;
-  height:5px;
-  border-radius:50%;
-  background:var(--gold);
-  position:absolute;
-  top:11px;
-  left:0;
-}
-
-.option-grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:10px;
-  margin-bottom:20px;
-}
-.option-btn{
-  background:transparent;
-  border:1px solid var(--line);
-  border-radius:var(--radius);
-  color:var(--text-dim);
-  font-family:var(--sans);
-  font-size:16px;
-  font-weight:300;
-  padding:16px;
-  cursor:pointer;
-  text-align:center;
-  transition:border-color 140ms ease,color 140ms ease,background 140ms ease,transform 100ms ease;
-}
-.option-btn:hover{
-  border-color:var(--gold);
-  color:var(--text);
-  background:rgba(196,163,90,0.06);
-}
-.option-btn:active{transform:scale(0.97)}
-.option-btn.selected{
-  border-color:var(--gold);
-  color:var(--text);
-  background:rgba(196,163,90,0.1);
-}
-
-.output-card{
-  border:2px solid var(--gold);
-  background:rgba(196,163,90,0.06);
-  border-radius:var(--radius);
-  padding:28px 24px;
-}
-.output-label{
-  display:block;
-  font-size:11px;
-  letter-spacing:0.14em;
-  text-transform:uppercase;
-  color:var(--gold);
-  margin-bottom:14px;
-}
-
-.step-row{
-  display:flex;
-  align-items:flex-start;
-  gap:14px;
-  padding:14px 0;
-  border-bottom:1px solid var(--line-soft);
-}
-.step-row:last-child{border-bottom:none}
-.step-num{
-  font-family:var(--serif);
-  font-size:14px;
-  color:var(--gold);
-  min-width:20px;
-  padding-top:2px;
-}
-.step-text{
-  font-size:18px;
-  color:var(--text);
-  line-height:1.5;
-}
-
-.hint{
-  font-size:15px;
-  color:var(--text-soft);
-  margin-top:16px;
-}
-
-.hidden{display:none}
-
 .global-nav{
+  padding:28px 0 0;
   display:flex;
   justify-content:space-between;
   align-items:center;
-  padding:16px 0;
-  margin-bottom:24px;
-  border-bottom:1px solid var(--line-soft);
+  border-bottom:1px solid var(--border);
+  padding-bottom:16px;
+  margin-bottom:0;
 }
 .nav-logo{
   font-size:11px;
+  font-weight:400;
   letter-spacing:0.24em;
   text-transform:uppercase;
   color:var(--gold);
   text-decoration:none;
-  font-weight:400;
 }
 .nav-links{
   display:flex;
@@ -272,24 +78,229 @@ p{color:var(--text-dim);max-width:52ch}
   font-size:11px;
   letter-spacing:0.06em;
   text-transform:uppercase;
-  color:var(--text-soft);
+  color:var(--text-3);
   text-decoration:none;
   opacity:0.7;
   transition:opacity 140ms ease,color 140ms ease;
 }
-.nav-links a:hover{
-  opacity:1;
+.nav-links a:hover{opacity:1;color:var(--gold)}
+
+.hero{padding-top:16px}
+
+.label{
+  display:block;
+  font-size:11px;
+  font-weight:400;
+  letter-spacing:0.2em;
+  text-transform:uppercase;
   color:var(--gold);
-}
-@media (max-width:600px){
-  .nav-links{gap:10px}
-  .nav-links a{font-size:10px}
+  margin-bottom:16px;
 }
 
+h1{
+  font-family:var(--serif);
+  font-size:48px;
+  font-weight:500;
+  line-height:1.08;
+  letter-spacing:-0.02em;
+  color:var(--text);
+  margin-bottom:16px;
+}
+
+.subhead{
+  font-size:18px;
+  color:var(--text-2);
+  line-height:1.6;
+  max-width:44ch;
+}
+
+.panel{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:28px 24px;
+}
+
+h2{
+  font-family:var(--serif);
+  font-size:22px;
+  font-weight:500;
+  color:var(--text);
+  line-height:1.2;
+  margin-bottom:14px;
+}
+
+.panel-intro{
+  font-size:17px;
+  color:var(--text-2);
+  line-height:1.6;
+  margin-bottom:18px;
+}
+
+.list{
+  list-style:none;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+.list li{
+  font-size:17px;
+  color:var(--text-2);
+  line-height:1.5;
+  padding-left:16px;
+  position:relative;
+}
+.list li::before{
+  content:"";
+  width:4px;
+  height:4px;
+  border-radius:50%;
+  background:var(--gold);
+  position:absolute;
+  top:10px;
+  left:0;
+}
+
+.section-label{
+  display:block;
+  font-size:11px;
+  font-weight:400;
+  letter-spacing:0.2em;
+  text-transform:uppercase;
+  color:var(--text-2);
+  margin-bottom:20px;
+}
+
+.option-grid{
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+
+.option-card{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:20px 22px;
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  cursor:pointer;
+  text-decoration:none;
+  transition:background 0.15s,border-color 0.15s,transform 0.15s;
+  gap:16px;
+}
+.option-card:hover{
+  background:var(--card-hover);
+  border-color:var(--border-hover);
+  transform:scale(1.02);
+}
+.option-card:active{transform:scale(0.98)}
+
+.option-left{
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+  flex:1;
+  min-width:0;
+}
+
+.option-category{
+  font-size:11px;
+  font-weight:400;
+  letter-spacing:0.14em;
+  text-transform:uppercase;
+  color:var(--gold);
+}
+
+.option-title{
+  font-size:17px;
+  font-weight:400;
+  color:var(--text);
+  line-height:1.3;
+}
+
+.option-fix{
+  font-size:14px;
+  color:var(--text-2);
+  margin-top:2px;
+}
+
+.option-cta{
+  font-size:14px;
+  font-weight:400;
+  color:var(--text-2);
+  white-space:nowrap;
+  flex-shrink:0;
+  transition:color 0.15s;
+}
+.option-card:hover .option-cta{color:var(--text)}
+
+.steps{
+  display:flex;
+  flex-direction:column;
+}
+.step{
+  display:flex;
+  align-items:flex-start;
+  gap:20px;
+  padding:18px 0;
+  border-bottom:1px solid var(--border);
+}
+.step:first-child{border-top:1px solid var(--border)}
+.step-num{
+  font-size:13px;
+  font-weight:400;
+  color:var(--gold);
+  min-width:22px;
+  padding-top:2px;
+  opacity:0.8;
+}
+.step-text{
+  font-size:17px;
+  color:var(--text-2);
+  line-height:1.5;
+}
+
+.next-section{display:flex;flex-direction:column;gap:12px}
+
+.btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:48px;
+  padding:13px 24px;
+  border-radius:8px;
+  font-size:14px;
+  font-weight:400;
+  letter-spacing:0.04em;
+  cursor:pointer;
+  border:none;
+  font-family:inherit;
+  transition:opacity 0.15s,transform 0.12s,background 0.15s,border-color 0.15s;
+  white-space:nowrap;
+  text-decoration:none;
+}
+.btn:active{transform:scale(0.97)}
+
+.btn-primary{
+  background:var(--green);
+  color:var(--text);
+}
+.btn-primary:hover{background:var(--green-hover)}
+
+.btn-ghost{
+  background:transparent;
+  color:var(--text-2);
+  border:1px solid var(--border);
+}
+.btn-ghost:hover{color:var(--text);border-color:var(--border-hover)}
+
+.row{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+
 .global-foot{
-  border-top:1px solid var(--line-soft);
+  border-top:1px solid var(--border);
   padding-top:22px;
-  margin-top:20px;
   display:flex;
   justify-content:space-between;
   align-items:flex-start;
@@ -297,133 +308,146 @@ p{color:var(--text-dim);max-width:52ch}
   gap:14px;
 }
 .foot-left{display:flex;flex-direction:column;gap:4px}
-.foot-brand{
-  font-size:11px;
-  letter-spacing:0.2em;
-  text-transform:uppercase;
-  color:var(--gold);
-}
-.foot-line{
-  font-size:13px;
-  color:var(--text-soft);
-}
-.foot-right{
-  display:flex;
-  flex-wrap:wrap;
-  gap:14px;
-}
+.foot-brand{font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold)}
+.foot-line{font-size:13px;color:var(--text-3)}
+.foot-right{display:flex;flex-wrap:wrap;gap:14px}
 .foot-right a{
   font-size:11px;
   letter-spacing:0.06em;
   text-transform:uppercase;
-  color:var(--text-soft);
+  color:var(--text-3);
   text-decoration:none;
   transition:color 140ms ease;
 }
 .foot-right a:hover{color:var(--text)}
 
-@media (max-width:900px){
+@media (max-width:640px){
   html,body{font-size:16px}
-  body{padding:22px 18px 64px}
-  .page{gap:42px}
+  .page{gap:44px;padding-bottom:72px}
+  h1{font-size:32px}
+  h2{font-size:20px}
+  .subhead{font-size:16px}
   .panel{padding:22px 18px}
-  .output-card{padding:22px 18px}
-  .option-grid{grid-template-columns:1fr 1fr}
-  .option-btn{font-size:15px;padding:14px}
+  .option-card{padding:18px 18px}
+  .option-title{font-size:16px}
   .btn{width:100%}
-}
-
-@media (max-width:400px){
-  .option-grid{grid-template-columns:1fr}
+  .row{flex-direction:column;align-items:stretch}
+  .nav-links{gap:10px}
+  .nav-links a{font-size:10px}
 }
 </style>
 </head>
 <body>
-<main class="page">
-<nav class="global-nav">
-  <a href="/" class="nav-logo">Stephuary</a>
-  <div class="nav-links">
-    <a href="/system">System</a>
-    <a href="/capture">Capture</a>
-    <a href="/monetize">Monetize</a>
-    <a href="/structure">Structure</a>
-    <a href="/automation">Automation</a>
-    <a href="/sovereignty">Life</a>
-  </div>
-</nav>
+<div class="page">
 
-  <!-- HERO -->
-  <section>
+  <nav class="global-nav">
+    <a href="/" class="nav-logo">Stephuary</a>
+    <div class="nav-links">
+      <a href="/system">System</a>
+      <a href="/capture">Capture</a>
+      <a href="/monetize">Monetize</a>
+      <a href="/structure">Structure</a>
+      <a href="/automation">Automation</a>
+      <a href="/sovereignty">Life</a>
+    </div>
+  </nav>
+
+  <section class="hero">
     <span class="label">Life</span>
-    <h1>Fix what keeps getting in the way.</h1>
-    <p class="subhead">If your routine, space, or habits keep disrupting your work, this helps you change one thing that makes everything easier.</p>
-    <div class="row">
-      <button class="btn btn-gold" id="hero-start" type="button">Start</button>
-      <a href="/system" class="link-btn">Back to System</a>
-    </div>
+    <h1>Fix what is getting in the way.</h1>
+    <p class="subhead">If your routine, space, or time keeps disrupting your work, this shows you what to change so things actually move.</p>
   </section>
 
-  <!-- FIX THIS IF -->
   <section class="panel">
-    <h2>Fix this if</h2>
+    <h2>This is the problem</h2>
+    <p class="panel-intro">If your work is not consistent, it is usually not the work.</p>
+    <p style="font-size:15px;color:var(--text-2);margin-bottom:14px;">It is one of these:</p>
     <ul class="list">
-      <li>You feel off before you even start</li>
-      <li>Your routine is inconsistent</li>
+      <li>Your routine is unstable</li>
       <li>Your space is distracting</li>
-      <li>You lose momentum during the day</li>
-      <li>You reset every week</li>
+      <li>Your time is fragmented</li>
+      <li>Your energy drops during the day</li>
     </ul>
   </section>
 
-  <!-- RESULT -->
   <section class="panel">
-    <h2>Result</h2>
-    <p>You leave with:</p>
-    <ul class="list">
-      <li>One change to your routine, space, or habits</li>
-      <li>Less friction during the day</li>
-      <li>More consistency</li>
+    <h2>What this fixes</h2>
+    <ul class="list" style="margin-top:4px;">
+      <li>You stop restarting every week</li>
+      <li>You work in a consistent way</li>
+      <li>Your environment supports the work</li>
+      <li>You move without friction</li>
     </ul>
   </section>
 
-  <!-- IDENTIFY THE PROBLEM -->
-  <section class="panel" id="tool-section">
-    <h2>What is getting in the way?</h2>
-    <p style="margin-bottom:16px;">Pick one.</p>
-
-    <div class="option-grid" id="options">
-      <button class="option-btn" type="button" data-key="routine">My routine</button>
-      <button class="option-btn" type="button" data-key="space">My space</button>
-      <button class="option-btn" type="button" data-key="habits">My habits</button>
-      <button class="option-btn" type="button" data-key="time">My time</button>
+  <section>
+    <span class="section-label">Choose one</span>
+    <div class="option-grid" id="option-grid">
+      <a href="/sovereignty/routine" class="option-card">
+        <div class="option-left">
+          <span class="option-category">Routine</span>
+          <div class="option-title">You do not start at the same time or in the same way</div>
+          <div class="option-fix">Build consistency</div>
+        </div>
+        <span class="option-cta">Fix routine</span>
+      </a>
+      <a href="/sovereignty/space" class="option-card">
+        <div class="option-left">
+          <span class="option-category">Space</span>
+          <div class="option-title">Your environment pulls your attention</div>
+          <div class="option-fix">Remove distractions</div>
+        </div>
+        <span class="option-cta">Fix space</span>
+      </a>
+      <a href="/sovereignty/time" class="option-card">
+        <div class="option-left">
+          <span class="option-category">Time</span>
+          <div class="option-title">Your day is scattered</div>
+          <div class="option-fix">Control your time</div>
+        </div>
+        <span class="option-cta">Fix time</span>
+      </a>
+      <a href="/sovereignty/energy" class="option-card">
+        <div class="option-left">
+          <span class="option-category">Energy</span>
+          <div class="option-title">You lose momentum during the day</div>
+          <div class="option-fix">Stabilize output</div>
+        </div>
+        <span class="option-cta">Fix energy</span>
+      </a>
     </div>
-
-    <button class="btn btn-primary" id="fix-btn" type="button">Fix this</button>
   </section>
 
-  <!-- OUTPUT (hidden until click) -->
-  <section id="output-section" class="hidden">
-    <div class="output-card">
-      <span class="output-label" id="output-title">Fix your routine</span>
-      <div id="output-steps"></div>
+  <section>
+    <span class="section-label">How it works</span>
+    <div class="steps">
+      <div class="step">
+        <span class="step-num">1</span>
+        <span class="step-text">Identify what is breaking your flow</span>
+      </div>
+      <div class="step">
+        <span class="step-num">2</span>
+        <span class="step-text">Fix one thing</span>
+      </div>
+      <div class="step">
+        <span class="step-num">3</span>
+        <span class="step-text">Keep it consistent</span>
+      </div>
+      <div class="step">
+        <span class="step-num">4</span>
+        <span class="step-text">Let everything else improve</span>
+      </div>
     </div>
+  </section>
 
-    <p class="hint">Change one thing. Do not try to fix everything at once.</p>
-
-    <div class="row" style="margin-top:24px;">
+  <section class="next-section">
+    <span class="section-label">Next</span>
+    <div class="row">
       <a href="/system" class="btn btn-primary">Back to System</a>
-      <a href="/capture" class="btn">Start again</a>
+      <a href="/capture" class="btn btn-ghost">Start again</a>
     </div>
   </section>
 
-  <!-- IMPORTANT -->
-  <section class="panel">
-    <h2>Important</h2>
-    <p>Change one thing.</p>
-    <p style="margin-top:8px;">Do not try to fix everything at once.</p>
-  </section>
-
-  <!-- FOOTER NAV -->
   <footer class="global-foot">
     <div class="foot-left">
       <span class="foot-brand">Stephuary</span>
@@ -437,96 +461,21 @@ p{color:var(--text-dim);max-width:52ch}
     </div>
   </footer>
 
-</main>
+</div>
 
 <script>
 (function(){
-  'use strict';
-
-  var startBtn = document.getElementById('hero-start');
-  var fixBtn = document.getElementById('fix-btn');
-  var outputSection = document.getElementById('output-section');
-  var outputSteps = document.getElementById('output-steps');
-  var outputTitle = document.getElementById('output-title');
-  var toolSection = document.getElementById('tool-section');
-  var optionBtns = document.querySelectorAll('.option-btn');
-
-  var selected = '';
-
-  var answers = {
-    routine: {
-      title: 'Fix your routine',
-      steps: [
-        'Start at the same time each day',
-        'Do one task first',
-        'Do not change it daily'
-      ]
-    },
-    space: {
-      title: 'Fix your space',
-      steps: [
-        'Remove distractions',
-        'Keep only what you need',
-        'Use the same place each time'
-      ]
-    },
-    habits: {
-      title: 'Fix your habits',
-      steps: [
-        'Pick one habit',
-        'Do it daily',
-        'Do not add more'
-      ]
-    },
-    time: {
-      title: 'Fix your time',
-      steps: [
-        'Block one time period',
-        'Use it for one task',
-        'Do not switch'
-      ]
-    }
-  };
-
-  startBtn.addEventListener('click', function(){
-    toolSection.scrollIntoView({behavior:'smooth', block:'start'});
-  });
-
-  for(var i = 0; i < optionBtns.length; i++){
-    optionBtns[i].addEventListener('click', function(){
-      for(var j = 0; j < optionBtns.length; j++){
-        optionBtns[j].classList.remove('selected');
-      }
-      this.classList.add('selected');
-      selected = this.getAttribute('data-key');
-    });
+  if(typeof gsap === 'undefined') return;
+  var tl = gsap.timeline({delay:0.2});
+  tl.from('.global-nav, h1, .subhead', {opacity:0, y:-12, duration:0.4, ease:'power2.out', stagger:0.06});
+  var cards = document.querySelectorAll('.option-card');
+  if(cards.length){
+    tl.from(cards, {opacity:0, y:32, scale:0.98, duration:0.45, ease:'power3.out', stagger:0.08}, '-=0.1');
   }
-
-  fixBtn.addEventListener('click', function(){
-    if(!selected){
-      fixBtn.textContent = 'Pick one first';
-      setTimeout(function(){ fixBtn.textContent = 'Fix this'; }, 1600);
-      return;
-    }
-
-    var data = answers[selected];
-    if(!data) return;
-
-    outputTitle.textContent = data.title;
-    outputSteps.innerHTML = '';
-
-    for(var i = 0; i < data.steps.length; i++){
-      var row = document.createElement('div');
-      row.className = 'step-row';
-      row.innerHTML = '<span class="step-num">' + (i + 1) + '</span><span class="step-text">' + data.steps[i] + '</span>';
-      outputSteps.appendChild(row);
-    }
-
-    outputSection.classList.remove('hidden');
-    setTimeout(function(){
-      outputSection.scrollIntoView({behavior:'smooth', block:'start'});
-    }, 60);
-  });
+  var panels = document.querySelectorAll('.panel');
+  if(panels.length){
+    gsap.from(panels, {opacity:0, y:20, duration:0.45, ease:'power2.out', stagger:0.07, delay:0.4});
+  }
 }());
 </script>
 </body>
