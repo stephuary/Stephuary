@@ -333,14 +333,21 @@ a{text-decoration:none}
 
 #scroll-cue{display:flex;justify-content:center;padding:38px 0 0;opacity:.8}
 
-.explain-stack{padding:72px 58px 0;position:relative;z-index:1;display:grid;gap:0;max-width:920px}
-.explain-block{border-top:1px solid var(--line-soft);padding:52px 0;display:grid;grid-template-columns:190px 1fr;gap:0 64px;align-items:start}
-.explain-block h2{font-family:'Cormorant Garamond',serif;font-weight:300;font-size:clamp(26px,2.8vw,36px);line-height:1.08;color:var(--text-2);font-style:italic;margin:0}
-.explain-block p{font-size:16px;color:var(--text-2);line-height:1.74;margin-bottom:10px}
-.explain-block p:last-child{margin-bottom:0}
-.explain-block ul{list-style:none;margin:6px 0 12px;display:grid;gap:6px}
-.explain-block li{font-family:'Cormorant Garamond',serif;font-size:clamp(18px,1.9vw,22px);color:var(--text-2);line-height:1.48;font-weight:300;padding-left:20px;position:relative}
-.explain-block li::before{content:'—';position:absolute;left:0;color:var(--gold);opacity:.45;font-size:13px;top:4px}
+.explain-stack{padding:56px 58px 0;position:relative;z-index:1;max-width:760px}
+.explain-block{border-top:1px solid var(--line-soft)}
+.explain-block:last-child{border-bottom:1px solid var(--line-soft)}
+.explain-toggle{width:100%;display:flex;justify-content:space-between;align-items:center;background:none;border:none;color:inherit;cursor:pointer;padding:22px 0;text-align:left;gap:24px;transition:opacity .2s}
+.explain-toggle:hover{opacity:.8}
+.explain-toggle h2{font-family:'Cormorant Garamond',serif;font-weight:300;font-size:clamp(18px,1.8vw,22px);line-height:1.1;color:var(--text-2);font-style:italic;margin:0}
+.explain-indicator{font-size:18px;color:var(--gold-soft);flex-shrink:0;transition:transform .22s,color .2s;line-height:1}
+.explain-block.open .explain-indicator{transform:rotate(45deg);color:var(--gold)}
+.explain-body{max-height:0;overflow:hidden;transition:max-height .32s ease,opacity .25s ease;opacity:0}
+.explain-block.open .explain-body{max-height:400px;opacity:1}
+.explain-body p{font-size:15px;color:var(--text-3);line-height:1.72;margin-bottom:8px;padding-bottom:2px}
+.explain-body p:last-child{margin-bottom:22px}
+.explain-body ul{list-style:none;margin:4px 0 18px;display:grid;gap:4px}
+.explain-body li{font-size:15px;color:var(--text-3);line-height:1.6;padding-left:16px;position:relative}
+.explain-body li::before{content:'—';position:absolute;left:0;color:var(--gold);opacity:.4;font-size:12px;top:3px}
 .diag-cta-sec{display:block;margin-top:10px;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--text-3)}
 .diag-cta-sec a{color:var(--gold);border-bottom:1px solid var(--gold-faint)}
 .diag-cta-sec a:hover{color:var(--text);border-bottom-color:rgba(244,237,224,0.28)}
@@ -462,9 +469,8 @@ a{text-decoration:none}
   #system-entry-section{padding:0 24px 76px}
   .archive-card{padding:36px 28px}
   .archive-price{font-size:clamp(64px,14vw,88px)}
-  .explain-stack{padding:40px 24px 0}
-  .explain-block{grid-template-columns:1fr;gap:20px;padding:40px 0}
-  .explain-block h2{font-size:clamp(22px,6vw,30px)}
+  .explain-stack{padding:36px 24px 0}
+  .explain-toggle h2{font-size:18px}
   #philosophy{padding:68px 24px}
   #res-footer{padding:38px 24px;flex-direction:column;align-items:flex-start}
   .btn-diag-primary,.btn-primary{width:100%;text-align:center;display:block;padding:18px 24px}
@@ -553,7 +559,6 @@ a{text-decoration:none}
   <!-- CTA -->
   <div id="diagnosis-cta">
     <a href="/structure" class="btn-diag-primary" id="diag-cta-btn">Fix execution &rarr;</a>
-    <span class="diag-cta-secondary">Or enter the full system: <a href="/systems">Enter the System &mdash; $27</a></span>
   </div>
 
   <!-- RESULTS GRID -->
@@ -570,46 +575,63 @@ a{text-decoration:none}
 
   <section class="explain-stack" aria-label="Diagnosis translation">
     <div class="explain-block" id="what-this-means">
-      <h2>What this means</h2>
-      <p>You just mapped where your system is breaking.</p>
-      <p>This is not a personality result. It is an operational diagnosis.</p>
-      <p>Each signal shows where momentum is being lost:</p>
-      <ul>
-        <li>Work &rarr; people are not buying</li>
-        <li>Execution &rarr; things are not finishing</li>
-        <li>Daily &rarr; nothing repeats</li>
-        <li>Environment &rarr; your setup is slowing you down</li>
-      </ul>
-      <p>You do not fix everything at once. You fix the first constraint.</p>
-      <p>That is where The System starts.</p>
+      <button class="explain-toggle" aria-expanded="false" aria-controls="explain-body-1">
+        <h2>What this means</h2>
+        <span class="explain-indicator" aria-hidden="true">+</span>
+      </button>
+      <div class="explain-body" id="explain-body-1">
+        <p>You just mapped where your system is breaking.</p>
+        <p>This is not a personality result. It is an operational diagnosis.</p>
+        <p>Each signal shows where momentum is being lost:</p>
+        <ul>
+          <li>Work &rarr; people are not buying</li>
+          <li>Execution &rarr; things are not finishing</li>
+          <li>Daily &rarr; nothing repeats</li>
+          <li>Environment &rarr; your setup is slowing you down</li>
+        </ul>
+        <p>You do not fix everything at once. You fix the first constraint.</p>
+        <p>That is where The System starts.</p>
+      </div>
     </div>
     <div class="explain-block" id="what-you-get">
-      <h2>What you get</h2>
-      <p>You do not need more information.</p>
-      <p>You need:</p>
-      <ul>
-        <li>a working offer</li>
-        <li>a structure that holds</li>
-        <li>a system that runs without restarting</li>
-        <li>output that compounds</li>
-      </ul>
-      <p>Each phase fixes one of these.</p>
+      <button class="explain-toggle" aria-expanded="false" aria-controls="explain-body-2">
+        <h2>What you get</h2>
+        <span class="explain-indicator" aria-hidden="true">+</span>
+      </button>
+      <div class="explain-body" id="explain-body-2">
+        <p>You do not need more information. You need:</p>
+        <ul>
+          <li>a working offer</li>
+          <li>a structure that holds</li>
+          <li>a system that runs without restarting</li>
+          <li>output that builds</li>
+        </ul>
+        <p>Each phase fixes one of these.</p>
+      </div>
     </div>
     <div class="explain-block" id="product-definition">
-      <h2>Enter the System</h2>
-      <p>The System is a step-by-step operating structure.</p>
-      <p>It shows you exactly what to fix, in what order, so your work starts working.</p>
-      <p>You&rsquo;ll enter a private dashboard with all five phases.</p>
-      <p>Start with your result. Fix it immediately.</p>
+      <button class="explain-toggle" aria-expanded="false" aria-controls="explain-body-3">
+        <h2>What The System is</h2>
+        <span class="explain-indicator" aria-hidden="true">+</span>
+      </button>
+      <div class="explain-body" id="explain-body-3">
+        <p>A step-by-step operating structure. It shows you exactly what to fix, in what order, so your work starts working.</p>
+        <p>You enter a private dashboard with all five phases. Start with your result. Fix it immediately.</p>
+      </div>
     </div>
     <div class="explain-block" id="after-enter">
-      <h2>What happens after you enter</h2>
-      <ul>
-        <li>You unlock all five phases</li>
-        <li>Each phase shows you exactly what to fix</li>
-        <li>You get step-by-step execution and tools</li>
-        <li>You move from idea to working system</li>
-      </ul>
+      <button class="explain-toggle" aria-expanded="false" aria-controls="explain-body-4">
+        <h2>What happens after you enter</h2>
+        <span class="explain-indicator" aria-hidden="true">+</span>
+      </button>
+      <div class="explain-body" id="explain-body-4">
+        <ul>
+          <li>You unlock all five phases</li>
+          <li>Each phase shows you exactly what to fix</li>
+          <li>You get step-by-step execution and tools</li>
+          <li>You move from idea to working system</li>
+        </ul>
+      </div>
     </div>
   </section>
 
@@ -709,14 +731,8 @@ a{text-decoration:none}
         </div>
       </div>
 
-      <div class="archive-note" role="note">
-        <p>Enter the System &rarr; <a href="/systems">Enter the System &mdash; $27</a></p>
-      </div>
       <div class="modules-note" role="note">
         <p>Collections expand the work. The System gets it working first.</p>
-      </div>
-      <div class="books-note" role="note">
-        <p>The Thinking Behind the System: these ideas were originally developed as books. The System turns them into something you can actually use.</p>
       </div>
     </div>
   </section>
@@ -729,8 +745,8 @@ a{text-decoration:none}
       <span class="archive-price-note">The core product. Five phases. One private dashboard.</span>
       <div class="archive-divider"></div>
       <div class="cta-row">
-        <a href="/systems" class="btn-primary" id="system-cta-btn">Enter the System &mdash; $27</a>
-        <a href="/" class="btn-ghost-link">Take the 30-second diagnostic</a>
+        <a href="/systems" class="btn-primary" id="system-cta-btn">Enter the System &rarr;</a>
+        <a href="/" class="btn-ghost-link">Take the diagnostic again</a>
       </div>
       <div class="archive-card-note">
         <p>The System is already mapped. You just need to enter it.</p>
@@ -1391,6 +1407,19 @@ a{text-decoration:none}
       try{ console.error('Stephuary init failed:', err); }catch(_e){}
     }
   }
+
+  // Explain block accordions
+  document.querySelectorAll('.explain-toggle').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var block = btn.closest('.explain-block');
+      var isOpen = block.classList.contains('open');
+      document.querySelectorAll('.explain-block').forEach(function(b){ b.classList.remove('open'); b.querySelector('.explain-toggle').setAttribute('aria-expanded','false'); });
+      if(!isOpen){
+        block.classList.add('open');
+        btn.setAttribute('aria-expanded','true');
+      }
+    });
+  });
 
   if(document.readyState === 'complete'){
     safeInit();
