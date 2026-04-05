@@ -8,6 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500&family=Lato:wght@300;400&display=swap" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 
@@ -524,6 +525,19 @@ p{color:var(--text-dim);max-width:52ch}
     setTimeout(function(){
       outputSection.scrollIntoView({behavior:'smooth', block:'start'});
     }, 60);
+
+    if(typeof gsap !== 'undefined'){
+      var header = outputSection.querySelector('.output-label');
+      if(header){
+        gsap.fromTo(header, {opacity:0, y:20}, {opacity:1, y:0, duration:0.4, ease:'power2.out'});
+      }
+      var rows = outputSteps.querySelectorAll('.step-row');
+      gsap.fromTo(rows, {opacity:0, y:32, scale:0.97}, {opacity:1, y:0, scale:1, duration:0.45, ease:'power2.out', stagger:0.09, delay:0.2});
+      var dynLine = document.getElementById('output-dynamic');
+      if(dynLine){
+        gsap.fromTo(dynLine, {opacity:0, y:12}, {opacity:1, y:0, duration:0.4, ease:'power2.out', delay:0.5});
+      }
+    }
   });
 
   document.addEventListener('keydown', function(e){

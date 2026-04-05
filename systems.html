@@ -8,6 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500&family=Lato:wght@300;400&display=swap" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -509,5 +510,30 @@
       <a href="https://github.com/stephuary/Stephuary" target="_blank" rel="noopener">GitHub</a>
     </footer>
   </main>
+<script>
+(function(){
+  if(typeof gsap === 'undefined') return;
+
+  var tl = gsap.timeline({delay:0.3});
+
+  tl.from('.top-nav, h1', {
+    opacity:0, y:-16, duration:0.4, ease:'power2.out', stagger:0.08
+  });
+
+  var cards = document.querySelectorAll('.fix-card');
+  if(cards.length){
+    tl.from(cards, {
+      opacity:0, y:36, scale:0.98, duration:0.5, ease:'power3.out', stagger:0.1
+    }, '-=0.1');
+  }
+
+  var sections = document.querySelectorAll('.section');
+  if(sections.length){
+    gsap.from(sections, {
+      opacity:0, y:24, duration:0.5, ease:'power2.out', stagger:0.08, delay:0.5
+    });
+  }
+}());
+</script>
 </body>
 </html>

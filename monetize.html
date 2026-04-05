@@ -8,6 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500&family=Lato:wght@300;400&display=swap" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 
@@ -540,6 +541,21 @@ p{
     setTimeout(function(){
       outputSection.scrollIntoView({behavior:'smooth', block:'start'});
     }, 60);
+
+    if(typeof gsap !== 'undefined'){
+      var card = outputSection.querySelector('.output-card');
+      if(card){
+        gsap.fromTo(card, {opacity:0, y:48}, {opacity:1, y:0, duration:0.55, ease:'power3.out'});
+      }
+      var checkItems = outputSection.querySelectorAll('.check-list li, .check-hint');
+      if(checkItems.length){
+        gsap.fromTo(checkItems, {opacity:0, y:16}, {opacity:1, y:0, duration:0.4, ease:'power2.out', stagger:0.07, delay:0.45});
+      }
+      var actionBtns = outputSection.querySelectorAll('.row .btn');
+      if(actionBtns.length){
+        gsap.fromTo(actionBtns, {opacity:0, y:12}, {opacity:1, y:0, duration:0.35, ease:'power2.out', stagger:0.06, delay:0.7});
+      }
+    }
   });
 
   document.addEventListener('keydown', function(e){

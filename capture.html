@@ -8,6 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500&family=Lato:wght@300;400&display=swap" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -641,10 +642,27 @@
         cleanBtn.textContent = "Cleaning...";
 
         setTimeout(function () {
-          ideaOutput.textContent = line;
           outputCard.classList.add("visible");
           cleanBtn.classList.remove("is-working");
           cleanBtn.textContent = "Clean it up";
+
+          if(typeof gsap !== 'undefined'){
+            gsap.fromTo(outputCard, {opacity:0, y:24}, {opacity:1, y:0, duration:0.45, ease:'power2.out', onComplete:function(){
+              var words = line.split(' ');
+              ideaOutput.innerHTML = words.map(function(w){
+                return '<span style="display:inline-block;opacity:0;transform:translateY(8px)">' + w + '&nbsp;</span>';
+              }).join('');
+              gsap.to(ideaOutput.querySelectorAll('span'), {opacity:1, y:0, duration:0.3, ease:'power1.out', stagger:0.03});
+
+              var nextItems = outputCard.querySelectorAll('.next-item .link-btn');
+              if(nextItems.length){
+                gsap.fromTo(nextItems, {opacity:0, scale:0.9}, {opacity:1, scale:1, duration:0.25, ease:'power2.out', stagger:0.08, delay:0.2});
+              }
+            }});
+          } else {
+            ideaOutput.textContent = line;
+          }
+
           outputCard.scrollIntoView({ behavior: "smooth", block: "nearest" });
         }, 140);
       });
