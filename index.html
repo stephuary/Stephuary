@@ -11,6 +11,8 @@
 <meta property="og:url" content="https://www.stephuary.com">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Lato:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -36,30 +38,13 @@
   --frag-border:rgba(244,237,224,0.18);
 }
 
-html,body{
-  width:100%;
-  height:100%;
-  -webkit-font-smoothing:antialiased;
-  -moz-osx-font-smoothing:grayscale;
-}
-
-body{
-  font-family:'Lato',sans-serif;
-  font-weight:300;
-  font-size:16px;
-  line-height:1.72;
-  background:var(--bg-0);
-  color:var(--text);
-  overflow:hidden;
-  cursor:auto;
-}
-
+html,body{width:100%;height:100%;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;}
+body{font-family:'Lato',sans-serif;font-weight:300;font-size:16px;line-height:1.72;background:var(--bg-0);color:var(--text);overflow:hidden;cursor:auto;}
 body.cursor-enhanced{cursor:none}
-body.resolved{overflow:auto;cursor:auto}
-
+body.resolved{overflow:auto;cursor:auto;}
 a{text-decoration:none}
 
-/* Custom cursor */
+/* Cursor */
 #cursor{position:fixed;width:12px;height:12px;border-radius:50%;background:var(--gold);transform:translate(-50%,-50%);z-index:9999;pointer-events:none;transition:width .16s,height .16s,background .16s;display:none}
 #cursor.active{width:8px;height:8px;background:var(--terra)}
 #cursor-ring{position:fixed;width:36px;height:36px;border-radius:50%;border:1px solid rgba(196,163,90,0.34);transform:translate(-50%,-50%);z-index:9998;pointer-events:none;transition:width .2s,height .2s,border-color .2s;display:none}
@@ -69,96 +54,68 @@ a{text-decoration:none}
 #entry-overlay{position:fixed;inset:0;z-index:5000;background:var(--bg-0);display:flex;align-items:center;justify-content:center;padding:56px}
 #entry-overlay::before{content:'';position:absolute;inset:0;pointer-events:none;opacity:.7;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.045'/%3E%3C/svg%3E")}
 #entry-overlay::after{content:'';position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at center,transparent 28%,rgba(9,9,7,0.9) 100%)}
-.entry-inner{max-width:560px;text-align:center;position:relative;z-index:1;animation:fadeUp .8s cubic-bezier(.16,1,.3,1) forwards}
-.entry-wordmark{display:block;margin-bottom:42px;font-size:12px;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);font-weight:500}
-.entry-headline{font-family:'Cormorant Garamond',serif;font-size:clamp(34px,4.4vw,54px);line-height:1.14;letter-spacing:-.01em;color:var(--text);margin-bottom:20px;font-weight:300}
-.entry-sub{font-size:15px;color:var(--text-2);line-height:1.62;margin-bottom:8px}
-.entry-support{display:block;margin-bottom:42px;font-size:11px;letter-spacing:.14em;color:var(--gold-soft);text-transform:uppercase}
-.entry-start-btn{display:block;margin:0 auto 18px;width:100%;max-width:280px;background:var(--gold);color:var(--bg-0);border:none;padding:18px 0;font-size:12px;letter-spacing:.14em;text-transform:uppercase;font-weight:500;cursor:pointer;transition:background .2s ease}
+.entry-inner{max-width:560px;text-align:center;position:relative;z-index:1;}
+.entry-wordmark{display:block;margin-bottom:42px;font-size:12px;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);font-weight:500;opacity:0}
+.entry-headline{font-family:'Cormorant Garamond',serif;font-size:clamp(34px,4.4vw,54px);line-height:1.14;letter-spacing:-.01em;color:var(--text);margin-bottom:20px;font-weight:300;opacity:0}
+.entry-sub{font-size:15px;color:var(--text-2);line-height:1.62;margin-bottom:8px;opacity:0}
+.entry-support{display:block;margin-bottom:42px;font-size:11px;letter-spacing:.14em;color:var(--gold-soft);text-transform:uppercase;opacity:0}
+.entry-start-btn{display:block;margin:0 auto 18px;width:100%;max-width:280px;background:var(--gold);color:var(--bg-0);border:none;padding:18px 0;font-size:12px;letter-spacing:.14em;text-transform:uppercase;font-weight:500;cursor:pointer;transition:background .2s ease;opacity:0}
 .entry-start-btn:hover{background:var(--text)}
-.entry-skip-link{display:inline-block;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-3);border-bottom:1px solid rgba(179,167,145,0.5);padding-bottom:2px;transition:color .2s,border-color .2s}
+.entry-skip-link{display:inline-block;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-3);border-bottom:1px solid rgba(179,167,145,0.5);padding-bottom:2px;transition:color .2s,border-color .2s;opacity:0}
 .entry-skip-link:hover{color:var(--gold);border-bottom-color:var(--gold-faint)}
 
 /* Game field */
-#game-field{position:fixed;inset:0;overflow:hidden;background:linear-gradient(180deg,var(--bg-0),var(--bg-1) 38%,var(--bg-2) 100%);transition:opacity .75s cubic-bezier(.16,1,.3,1)}
-#game-field.fading{opacity:0;pointer-events:none}
+#game-field{position:fixed;inset:0;overflow:hidden;background:linear-gradient(180deg,var(--bg-0),var(--bg-1) 38%,var(--bg-2) 100%);}
 #game-field::before{content:'';position:absolute;inset:0;pointer-events:none;opacity:.58;z-index:1;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E")}
 #game-field::after{content:'';position:absolute;inset:0;pointer-events:none;z-index:1;background:radial-gradient(ellipse at center,transparent 24%,rgba(9,9,7,0.74) 100%)}
 
 /* Header */
 #site-header{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;justify-content:space-between;align-items:center;padding:30px 50px}
-.logo{color:var(--gold);font-size:12px;font-weight:500;letter-spacing:.32em;text-transform:uppercase;opacity:0;animation:fadeIn .8s ease forwards .5s}
-#skip-btn{background:none;border:none;color:var(--text-2);font-size:11px;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;opacity:0;animation:fadeIn .8s ease forwards .9s;border-bottom:1px solid transparent;padding-bottom:2px;transition:color .2s,border-color .2s}
+.logo{color:var(--gold);font-size:12px;font-weight:500;letter-spacing:.32em;text-transform:uppercase;opacity:0}
+#skip-btn{background:none;border:none;color:var(--text-2);font-size:11px;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;opacity:0;border-bottom:1px solid transparent;padding-bottom:2px;transition:color .2s,border-color .2s}
 #skip-btn:hover{color:var(--gold);border-bottom-color:var(--gold-faint)}
 
 #remaining-counter{position:fixed;left:50%;top:30px;transform:translateX(-50%);z-index:100;opacity:0;transition:opacity .3s ease}
 #remaining-counter.visible{opacity:1}
 #remaining-counter span{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-2)}
 
-/* Anchor text — centered, not obscured by cards */
+/* Anchor center text */
 #anchor-fragment{
-  position:absolute;
-  left:50%;
-  top:50%;
+  position:absolute;left:50%;top:50%;
   transform:translate(-50%,-50%);
-  z-index:10;
-  text-align:center;
-  pointer-events:none;
-  opacity:0;
-  animation:anchorReveal 1.4s cubic-bezier(.16,1,.3,1) forwards .8s;
-  width:220px;
+  z-index:10;text-align:center;pointer-events:none;
+  opacity:0;width:220px;
 }
 #anchor-fragment p{
-  font-family:'Cormorant Garamond',serif;
-  font-style:italic;
-  font-size:clamp(18px,2vw,26px);
-  line-height:1.45;
+  font-family:'Cormorant Garamond',serif;font-style:italic;
+  font-size:clamp(18px,2vw,26px);line-height:1.45;
   color:rgba(244,237,224,0.22);
 }
 
-@keyframes subtleFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
-
-/* FRAGMENTS — tighter, no center bleed */
+/* Fragments */
 .fragment{
-  position:absolute;
-  z-index:20;
+  position:absolute;z-index:20;
   padding:10px 14px;
   border:1px solid var(--frag-border);
   background:var(--frag-bg);
   backdrop-filter:blur(3px);
-  border-radius:1px;
-  cursor:pointer;
-  user-select:none;
+  border-radius:1px;cursor:pointer;user-select:none;
   opacity:0;
-  animation:subtleFloat 3s ease-in-out infinite;
-  transition:border-color .16s,background .16s,box-shadow .16s,transform .16s,opacity .2s;
+  transition:border-color .16s,background .16s,box-shadow .16s;
   max-width:190px;
 }
 .fragment:hover{border-color:var(--gold-soft);background:rgba(196,163,90,0.1);box-shadow:0 0 16px rgba(196,163,90,0.08)}
-.fragment.clicking{border-color:var(--gold);background:rgba(196,163,90,0.18);box-shadow:0 0 22px rgba(196,163,90,0.2);transform:scale(1.04);animation:none}
-.fragment.placed{opacity:.15;transform:scale(.88);border-color:rgba(196,163,90,0.12);background:rgba(196,163,90,0.03);pointer-events:none;animation:none}
-.fragment-text{
-  font-size:15px;
-  letter-spacing:.005em;
-  line-height:1.38;
-  color:rgba(244,237,224,0.9);
-  white-space:normal;
-  display:block;
-  font-weight:300;
-}
+.fragment.clicking{border-color:var(--gold);background:rgba(196,163,90,0.18);box-shadow:0 0 22px rgba(196,163,90,0.2);}
+.fragment.placed{opacity:.15 !important;border-color:rgba(196,163,90,0.12);background:rgba(196,163,90,0.03);pointer-events:none;}
+.fragment-text{font-size:15px;letter-spacing:.005em;line-height:1.38;color:rgba(244,237,224,0.9);white-space:normal;display:block;font-weight:300;}
 
-/* ZONES — tighter columns, no dead center */
+/* Zones */
 .zone{
-  position:absolute;
-  z-index:5;
+  position:absolute;z-index:5;
   border:1px dashed rgba(196,163,90,0.08);
   background:rgba(196,163,90,0.01);
-  border-radius:2px;
-  padding:14px 12px;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:flex-start;
+  border-radius:2px;padding:14px 12px;
+  display:flex;flex-direction:column;align-items:center;justify-content:flex-start;
   transition:border-color .3s,background .3s,box-shadow .25s,transform .25s;
 }
 .zone.active{border-color:rgba(196,163,90,0.22);background:rgba(196,163,90,0.03)}
@@ -168,35 +125,16 @@ a{text-decoration:none}
 .zone.dominant{border-color:rgba(184,92,56,0.86)!important;box-shadow:0 0 24px rgba(184,92,56,0.2),inset 0 0 52px rgba(184,92,56,0.12)!important;transform:scale(1.015)}
 .zone.just-received{background:rgba(196,163,90,0.18)!important;border-color:rgba(196,163,90,0.72)!important}
 .zone-label{text-align:center;pointer-events:none;position:relative;z-index:6}
-.zone-name{
-  font-family:'Cormorant Garamond',serif;
-  font-size:clamp(22px,2.2vw,30px);
-  line-height:1;
-  font-weight:300;
-  color:var(--text);
-  margin-bottom:4px;
-  opacity:.55; /* was .18 — now readable */
-  transition:opacity .35s;
-}
-.zone-truth{
-  font-family:'Cormorant Garamond',serif;
-  font-style:italic;
-  font-size:13px;
-  line-height:1.4;
-  color:var(--text-2);
-  opacity:0;
-  margin-bottom:4px;
-  transition:opacity .35s;
-}
+.zone-name{font-family:'Cormorant Garamond',serif;font-size:clamp(22px,2.2vw,30px);line-height:1;font-weight:300;color:var(--text);margin-bottom:4px;opacity:0;transition:opacity .35s;}
+.zone-truth{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:13px;line-height:1.4;color:var(--text-2);opacity:0;margin-bottom:4px;transition:opacity .35s;}
 .zone-micro{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold-soft);font-weight:400}
 .zone.revealed .zone-name{opacity:1}
 .zone.revealed .zone-truth{opacity:1}
 .zone.dominant .zone-micro{color:rgba(184,92,56,0.95)}
 
-#instruction{position:fixed;left:50%;bottom:36px;transform:translateX(-50%);z-index:100;text-align:center;opacity:0;animation:fadeIn .7s ease forwards 1.6s}
+#instruction{position:fixed;left:50%;bottom:36px;transform:translateX(-50%);z-index:100;text-align:center;opacity:0}
 #instruction p{font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-2);white-space:nowrap}
-#instruction .instruction-live{display:block;margin-top:8px;font-size:11px;letter-spacing:.04em;text-transform:none;color:var(--gold)}
-#ambient-signal{position:fixed;right:34px;bottom:28px;z-index:100;opacity:0;animation:fadeIn .7s ease forwards 1.9s}
+#ambient-signal{position:fixed;right:34px;bottom:28px;z-index:100;opacity:0}
 #ambient-signal p{font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--text-3)}
 #ambient-signal p.active{color:var(--gold-soft)}
 
@@ -211,198 +149,70 @@ a{text-decoration:none}
 .res-nav-link,.res-nav-restart{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-2);background:none;border:none;cursor:pointer}
 .res-nav-link:hover,.res-nav-restart:hover{color:var(--gold)}
 
-@keyframes diagReveal{
-  from{opacity:0;transform:translateY(10px)}
-  to{opacity:1;transform:translateY(0)}
-}
-
-/* DIAGNOSIS BANNER — tighter padding */
-#diagnosis-banner{
-  padding:48px 48px 0;
-  position:relative;
-  z-index:1;
-  opacity:0;
-  animation:diagReveal 0.55s cubic-bezier(.16,1,.3,1) forwards 0.12s;
-}
+/* Diagnosis banner */
+#diagnosis-banner{padding:52px 48px 0;position:relative;z-index:1;opacity:0;}
 
 .diag-phase-label{
-  display:inline-flex;
-  align-items:center;
-  gap:10px;
-  font-size:9px;
-  letter-spacing:.26em;
-  text-transform:uppercase;
-  color:var(--terra);
-  font-weight:500;
-  margin-bottom:28px;
+  display:inline-flex;align-items:center;gap:10px;
+  font-size:9px;letter-spacing:.26em;text-transform:uppercase;
+  color:var(--terra);font-weight:500;margin-bottom:28px;opacity:0;
 }
-.diag-phase-label::before{
-  content:'';
-  display:block;
-  width:28px;
-  height:1px;
-  background:var(--terra);
-  opacity:.6;
-}
+.diag-phase-label::before{content:'';display:block;width:28px;height:1px;background:var(--terra);opacity:.6;}
 
 .diag-headline{
   font-family:'Cormorant Garamond',serif;
   font-size:clamp(48px,6vw,86px);
-  line-height:.96;
-  letter-spacing:-.024em;
-  color:var(--text);
-  max-width:860px;
-  margin-bottom:36px;
-  font-weight:300;
+  line-height:.96;letter-spacing:-.024em;
+  color:var(--text);max-width:860px;
+  margin-bottom:36px;font-weight:300;opacity:0;
 }
 
 .diag-blocks{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:1px;
-  background:var(--line-soft);
-  border:1px solid var(--line-soft);
-  max-width:860px;
-  margin-bottom:0;
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:1px;background:var(--line-soft);
+  border:1px solid var(--line-soft);max-width:860px;
 }
 
-.diag-block{
-  background:var(--bg-1);
-  padding:26px 28px;
-}
+.diag-block{background:var(--bg-1);padding:26px 28px;opacity:0;}
+.diag-block-label{display:block;font-size:9px;letter-spacing:.24em;text-transform:uppercase;color:var(--gold);margin-bottom:10px;font-weight:500;opacity:0.65;}
+.diag-block-text{font-family:'Cormorant Garamond',serif;font-size:clamp(17px,1.8vw,21px);color:var(--text-2);line-height:1.46;font-weight:300;}
 
-.diag-block-label{
-  display:block;
-  font-size:9px;
-  letter-spacing:.24em;
-  text-transform:uppercase;
-  color:var(--gold);
-  margin-bottom:10px;
-  font-weight:500;
-  opacity:0.65;
-}
-
-.diag-block-text{
-  font-family:'Cormorant Garamond',serif;
-  font-size:clamp(17px,1.8vw,21px);
-  color:var(--text-2);
-  line-height:1.46;
-  font-weight:300;
-}
-
-.diag-block.start-block{
-  background:rgba(43,79,212,0.06);
-  border-left:3px solid rgba(43,79,212,0.5);
-}
-.diag-block.start-block .diag-block-label{
-  color:rgba(110,148,255,0.9);
-}
-.diag-block.start-block .diag-block-text{
-  font-family:'Cormorant Garamond',serif;
-  font-size:clamp(18px,2vw,25px);
-  color:var(--text);
-  font-weight:300;
-}
+.diag-block.start-block{background:rgba(43,79,212,0.06);border-left:3px solid rgba(43,79,212,0.5);}
+.diag-block.start-block .diag-block-label{color:rgba(110,148,255,0.9);}
+.diag-block.start-block .diag-block-text{font-family:'Cormorant Garamond',serif;font-size:clamp(18px,2vw,25px);color:var(--text);font-weight:300;}
 
 .diag-anchor-line{
-  display:block;
-  padding:16px 28px;
-  background:var(--bg-2);
-  border:1px solid var(--line-soft);
-  border-top:none;
+  display:block;padding:16px 28px;
+  background:var(--bg-2);border:1px solid var(--line-soft);border-top:none;
   max-width:860px;
-  font-size:clamp(13px,1.1vw,15px);
-  letter-spacing:.06em;
-  color:var(--text-3);
-  font-style:italic;
-  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(13px,1.1vw,15px);letter-spacing:.06em;
+  color:var(--text-3);font-style:italic;font-family:'Cormorant Garamond',serif;
+  opacity:0;
 }
 
-/* CTA strip — tighter */
-#diagnosis-cta{
-  padding:28px 48px 28px;
-  border-bottom:1px solid var(--line-soft);
-  position:relative;
-  z-index:1;
-  background:rgba(15,16,13,0.84);
-}
-
+/* CTA */
+#diagnosis-cta{padding:28px 48px;border-bottom:1px solid var(--line-soft);position:relative;z-index:1;background:rgba(15,16,13,0.84);opacity:0;}
 .btn-diag-primary,.btn-primary{
-  display:inline-block;
-  font-size:11px;
-  letter-spacing:.12em;
-  text-transform:uppercase;
-  font-weight:500;
-  color:#fff;
-  background:var(--blue);
-  border:1px solid var(--blue);
-  padding:16px 48px;
-  transition:background .2s,border-color .2s;
-  cursor:pointer;
+  display:inline-block;font-size:11px;letter-spacing:.12em;text-transform:uppercase;
+  font-weight:500;color:#fff;background:var(--blue);border:1px solid var(--blue);
+  padding:16px 48px;transition:background .2s,border-color .2s;cursor:pointer;
 }
-.btn-diag-primary:hover,.btn-primary:hover{
-  background:var(--blue-hover,#3560e8);
-  border-color:var(--blue-hover,#3560e8);
-}
+.btn-diag-primary:hover,.btn-primary:hover{background:var(--blue-hover,#3560e8);border-color:var(--blue-hover,#3560e8);}
 .btn-diag-primary.entering,.btn-primary.entering{pointer-events:none;opacity:.9}
 
-.diag-cta-secondary{
-  display:block;
-  margin-top:10px;
-  font-size:11px;
-  letter-spacing:.06em;
-  text-transform:uppercase;
-  color:var(--text-3);
-}
-.diag-cta-secondary a{color:var(--gold);border-bottom:1px solid var(--gold-faint)}
-.diag-cta-secondary a:hover{color:var(--text);border-bottom-color:rgba(244,237,224,0.28)}
-
-/* Results grid — tighter */
-#diagnosis-results-wrap{
-  padding:36px 48px 0;
-  position:relative;
-  z-index:1;
-}
-.diagnosis-friction-line{
-  display:block;
-  margin-bottom:12px;
-  font-size:11px;
-  letter-spacing:.1em;
-  text-transform:uppercase;
-  color:var(--text-3);
-}
-.result-card{
-  border:1px solid var(--line);
-  background:rgba(20,22,17,0.9);
-  padding:28px 28px 16px;
-}
-.result-card-head{
-  display:flex;
-  justify-content:space-between;
-  align-items:flex-start;
-  gap:20px;
-  margin-bottom:20px;
-}
+/* Results grid */
+#diagnosis-results-wrap{padding:36px 48px 0;position:relative;z-index:1;opacity:0;}
+.diagnosis-friction-line{display:block;margin-bottom:12px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-3);}
+.result-card{border:1px solid var(--line);background:rgba(20,22,17,0.9);padding:28px 28px 16px;}
+.result-card-head{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;margin-bottom:20px;}
 .result-card-title{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);font-weight:500}
 .result-card-meta{font-size:11px;color:var(--text-3);text-transform:uppercase;letter-spacing:.06em}
-#diagnosis-results{
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:1px;
-  background:var(--line-soft);
-}
+#diagnosis-results{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line-soft);}
 .diag-zone{background:var(--bg-2);padding:28px 22px;transition:background .3s}
 .diag-zone.leading{border-top:2px solid var(--terra);background:rgba(184,92,56,0.04)}
 .diag-zone-name{font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--text-3);margin-bottom:14px;font-weight:500}
 .diag-zone-count{display:flex;align-items:baseline;gap:8px;margin-bottom:6px}
-.diag-zone-count-num{
-  font-family:'Cormorant Garamond',serif;
-  font-size:clamp(44px,5vw,68px);
-  line-height:.88;
-  color:var(--text);
-  letter-spacing:-.02em;
-  font-weight:300;
-}
+.diag-zone-count-num{font-family:'Cormorant Garamond',serif;font-size:clamp(44px,5vw,68px);line-height:.88;color:var(--text);letter-spacing:-.02em;font-weight:300;}
 .diag-zone-count-note{font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-3)}
 .diag-zone-label{font-size:13px;color:var(--text-3);line-height:1.5;margin-top:4px}
 .diag-zone.leading .diag-zone-name{color:var(--terra);opacity:.9}
@@ -410,7 +220,7 @@ a{text-decoration:none}
 
 #scroll-cue{display:flex;justify-content:center;padding:28px 0 0;opacity:.8}
 
-/* Explain stack — tighter */
+/* Explain */
 .explain-stack{padding:36px 48px 0;position:relative;z-index:1;max-width:720px}
 .explain-block{border-top:1px solid var(--line-soft)}
 .explain-block:last-child{border-bottom:1px solid var(--line-soft)}
@@ -438,66 +248,47 @@ a{text-decoration:none}
 .phase-headline{font-size:15px;color:var(--text-2);line-height:1.6;max-width:720px;margin-bottom:8px}
 .phase-subline{font-size:14px;color:var(--text-3);line-height:1.62;max-width:720px;margin:0 0 22px}
 .menu-courses{max-width:800px}
-.menu-course{border-bottom:1px solid var(--line-soft);opacity:0;transform:translateY(9px);transition:opacity .5s,transform .5s}
+.menu-course{border-bottom:1px solid var(--line-soft);opacity:0;transform:translateY(12px);}
 .menu-course:first-child{border-top:1px solid var(--line-soft)}
-.menu-course.visible{opacity:1;transform:translateY(0)}
 .menu-course-toggle{width:100%;display:grid;grid-template-columns:100px 1fr auto;gap:0 20px;align-items:flex-start;text-align:left;background:none;border:none;color:inherit;cursor:pointer;padding:30px 0;transition:background .2s}
 .menu-course-toggle:hover{background:rgba(196,163,90,0.03)}
 .menu-course.open .menu-course-toggle{background:rgba(196,163,90,0.04);padding-bottom:20px}
-.menu-courses.has-recommendation .menu-course.visible:not(.recommended){opacity:.55}
+.menu-courses.has-recommendation .menu-course:not(.recommended){opacity:.55}
 .menu-course.recommended{border-top:1px solid rgba(184,92,56,0.7);border-bottom:1px solid rgba(184,92,56,0.7);box-shadow:inset 0 0 0 1px rgba(184,92,56,0.25),0 10px 24px rgba(0,0,0,0.2)}
 .menu-course.recommended .menu-course-toggle{background:rgba(184,92,56,0.14)}
 .menu-course.recommended .course-indicator{color:var(--terra)}
 .course-num{font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);font-weight:500;padding-top:8px;opacity:.7}
-.course-name{
-  font-family:'Cormorant Garamond',serif;
-  font-size:clamp(36px,4.5vw,60px);
-  line-height:.95;
-  color:var(--text);
-  margin-bottom:8px;
-  letter-spacing:-.015em;
-  font-weight:300;
-}
+.course-name{font-family:'Cormorant Garamond',serif;font-size:clamp(36px,4.5vw,60px);line-height:.95;color:var(--text);margin-bottom:8px;letter-spacing:-.015em;font-weight:300;}
 .course-desc{font-size:14px;color:var(--text-3);line-height:1.56;letter-spacing:.01em}
 .course-indicator{font-size:22px;line-height:1;color:var(--gold-soft);padding-top:6px;transition:transform .2s,color .2s}
 .menu-course.open .course-indicator{color:var(--gold);transform:rotate(45deg)}
 .menu-course-panel{max-height:0;overflow:hidden;transition:max-height .32s ease,opacity .25s ease,padding .25s ease;opacity:0;padding:0 0 0 120px}
 .menu-course.open .menu-course-panel{max-height:170px;opacity:1;padding:0 0 18px 120px}
 .menu-panel-text{font-size:15px;line-height:1.62;color:var(--text-2);margin-bottom:8px}
-.menu-panel-built{font-size:14px;line-height:1.6;color:var(--text-3);margin-bottom:10px}
 .menu-panel-foot{font-size:14px;line-height:1.6;color:var(--text-3);margin-top:8px}
 .menu-panel-cta{display:inline-block;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);border-bottom:1px solid var(--gold-faint);padding-bottom:2px}
 .menu-panel-cta:hover{color:var(--text);border-bottom-color:rgba(244,237,224,0.28)}
 .menu-course.recommended .menu-panel-cta{color:var(--text);border-bottom-color:rgba(184,92,56,0.58);font-weight:500}
-.archive-note,.modules-note,.books-note{padding:18px 0 18px 120px;border-bottom:1px solid var(--line-soft);opacity:0;transform:translateY(9px);transition:opacity .5s,transform .5s}
-.archive-note.visible,.modules-note.visible,.books-note.visible{opacity:1;transform:translateY(0)}
-.archive-note p{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;color:var(--text-2);line-height:1.68}
-.archive-note a{color:var(--gold);border-bottom:1px solid var(--gold-faint)}
+.modules-note{padding:18px 0 18px 120px;border-bottom:1px solid var(--line-soft);opacity:0;}
 .modules-note p{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;color:var(--text-3)}
-.modules-note a{color:var(--gold);border-bottom:1px solid var(--gold-faint)}
-.books-note p{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;color:var(--text-2);line-height:1.68}
-.books-note a{color:var(--gold);border-bottom:1px solid var(--gold-faint)}
 
-/* System entry */
+/* System entry — NO card box, raw section */
 #system-entry-section{padding:0 48px 88px;position:relative;z-index:1}
-.archive-card{max-width:800px;border:1px solid var(--line);border-left:3px solid var(--green-2);background:rgba(19,21,16,0.95);padding:48px 44px;opacity:0;transform:translateY(12px);transition:opacity .65s,transform .65s;position:relative;overflow:hidden}
-.archive-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,var(--green-2),rgba(39,72,46,0.2) 60%,transparent);opacity:.8}
-.archive-card.visible{opacity:1;transform:translateY(0)}
-.archive-card-label{display:block;margin-bottom:22px;font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:var(--terra);font-weight:500}
-.archive-description{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:clamp(19px,2.1vw,26px);line-height:1.5;color:var(--text-2);max-width:520px;margin-bottom:30px;font-weight:300}
-.archive-price{font-family:'Cormorant Garamond',serif;font-size:clamp(68px,8.5vw,110px);line-height:.88;color:var(--gold);margin-bottom:6px;letter-spacing:-.02em;font-weight:300}
-.archive-price-note{display:block;margin-bottom:28px;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;color:var(--text-3)}
-.archive-divider{height:1px;background:var(--line-soft);margin-bottom:26px}
-.cta-row{display:flex;gap:24px;align-items:center;flex-wrap:wrap}
+.entry-section-label{display:block;margin-bottom:22px;font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:var(--terra);font-weight:500;opacity:0;}
+.entry-description{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:clamp(19px,2.1vw,26px);line-height:1.5;color:var(--text-2);max-width:520px;margin-bottom:24px;font-weight:300;opacity:0;}
+.entry-price{font-family:'Cormorant Garamond',serif;font-size:clamp(68px,8.5vw,110px);line-height:.88;color:var(--gold);margin-bottom:6px;letter-spacing:-.02em;font-weight:300;opacity:0;}
+.entry-price-note{display:block;margin-bottom:32px;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;color:var(--text-3);opacity:0;}
+.entry-divider{height:1px;background:var(--line-soft);max-width:520px;margin-bottom:28px;opacity:0;}
+.cta-row{display:flex;gap:24px;align-items:center;flex-wrap:wrap;opacity:0;}
 .btn-ghost-link{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-2);border-bottom:1px solid rgba(214,202,180,0.5);padding-bottom:2px}
 .btn-ghost-link:hover{color:var(--gold);border-bottom-color:var(--gold-faint)}
-.archive-card-note{margin-top:24px;padding-top:20px;border-top:1px solid var(--line-soft)}
-.archive-card-note p{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;line-height:1.72;color:var(--text-3)}
-.private-signal{padding:34px 0 0;max-width:720px}
+.entry-note{margin-top:28px;opacity:0;}
+.entry-note p{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;line-height:1.72;color:var(--text-3)}
+.private-signal{padding:34px 0 0;max-width:720px;opacity:0;}
 .private-signal p{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:16px;line-height:1.68;color:var(--text-2);margin-bottom:10px}
 .private-signal a{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-2);border-bottom:1px solid rgba(214,202,180,0.5);padding-bottom:2px}
 .private-signal a:hover{color:var(--gold);border-bottom-color:var(--gold-faint)}
-.founder-signal{padding:18px 0 0;max-width:720px}
+.founder-signal{padding:18px 0 0;max-width:720px;opacity:0;}
 .founder-signal p{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;line-height:1.72;color:var(--text-3)}
 
 /* Philosophy + footer */
@@ -514,11 +305,6 @@ a{text-decoration:none}
 .footer-links{display:flex;gap:24px;flex-wrap:wrap}
 .footer-links a{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-2)}
 .footer-links a:hover{color:var(--gold)}
-
-/* Animations */
-@keyframes fadeIn{from{opacity:0}to{opacity:1}}
-@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-@keyframes anchorReveal{from{opacity:0;transform:translate(-50%,-50%) scale(.94)}to{opacity:1;transform:translate(-50%,-50%) scale(1)}}
 
 /* Mobile */
 @media (max-width:900px){
@@ -547,10 +333,9 @@ a{text-decoration:none}
   #menu-section{padding:0 20px 52px}
   .menu-course-toggle{grid-template-columns:80px 1fr auto;gap:0 10px;padding:22px 0}
   .course-name{font-size:clamp(30px,8vw,44px)}
-  .menu-course-panel,.menu-course.open .menu-course-panel,.archive-note,.modules-note,.books-note{padding-left:88px}
+  .menu-course-panel,.menu-course.open .menu-course-panel,.modules-note{padding-left:88px}
   #system-entry-section{padding:0 20px 64px}
-  .archive-card{padding:32px 24px}
-  .archive-price{font-size:clamp(56px,13vw,80px)}
+  .entry-price{font-size:clamp(56px,13vw,80px)}
   .explain-stack{padding:28px 20px 0}
   .explain-toggle h2{font-size:17px}
   #philosophy{padding:56px 20px}
@@ -559,10 +344,10 @@ a{text-decoration:none}
 }
 @media (max-width:560px){
   .menu-course-toggle{grid-template-columns:1fr auto;gap:6px 0}
-  .course-num{grid-column:1 / 2}
-  .course-main{grid-column:1 / 2}
-  .course-indicator{grid-column:2 / 3;grid-row:1 / 3;align-self:start}
-  .menu-course-panel,.menu-course.open .menu-course-panel,.archive-note,.modules-note,.books-note{padding-left:0}
+  .course-num{grid-column:1/2}
+  .course-main{grid-column:1/2}
+  .course-indicator{grid-column:2/3;grid-row:1/3;align-self:start}
+  .menu-course-panel,.menu-course.open .menu-course-panel,.modules-note{padding-left:0}
   #diagnosis-results{grid-template-columns:1fr}
   .result-card{padding:20px 16px 12px}
   .diag-blocks{grid-template-columns:1fr}
@@ -618,15 +403,15 @@ a{text-decoration:none}
     <span class="diag-phase-label" id="diagnosis-label">Execution Friction</span>
     <h1 class="diag-headline" id="diagnosis-heading">Start with: Structure</h1>
     <div class="diag-blocks">
-      <div class="diag-block">
+      <div class="diag-block" id="diag-block-problem">
         <span class="diag-block-label">Problem</span>
         <div class="diag-block-text" id="diag-problem">You start things but do not finish them.</div>
       </div>
-      <div class="diag-block">
+      <div class="diag-block" id="diag-block-means">
         <span class="diag-block-label">What this means</span>
         <div class="diag-block-text" id="diag-means">There is no clear breakdown of steps or timeline, so work stalls before completion.</div>
       </div>
-      <div class="diag-block start-block" style="grid-column:1/-1">
+      <div class="diag-block start-block" id="diag-block-start" style="grid-column:1/-1">
         <span class="diag-block-label">Start here</span>
         <div class="diag-block-text" id="diag-start">Turn what you are doing into steps you can complete.</div>
       </div>
@@ -650,15 +435,14 @@ a{text-decoration:none}
   </div>
 
   <section class="explain-stack" aria-label="Diagnosis translation">
-    <div class="explain-block" id="what-this-means">
-      <button class="explain-toggle" aria-expanded="false" aria-controls="explain-body-1">
+    <div class="explain-block">
+      <button class="explain-toggle" aria-expanded="false">
         <h2>What this means</h2>
         <span class="explain-indicator" aria-hidden="true">+</span>
       </button>
-      <div class="explain-body" id="explain-body-1">
+      <div class="explain-body">
         <p>You just mapped where your system is breaking.</p>
         <p>This is not a personality result. It is an operational diagnosis.</p>
-        <p>Each signal shows where momentum is being lost:</p>
         <ul>
           <li>Work &rarr; people are not buying</li>
           <li>Execution &rarr; things are not finishing</li>
@@ -668,12 +452,12 @@ a{text-decoration:none}
         <p>You do not fix everything at once. You fix the first constraint.</p>
       </div>
     </div>
-    <div class="explain-block" id="what-you-get">
-      <button class="explain-toggle" aria-expanded="false" aria-controls="explain-body-2">
+    <div class="explain-block">
+      <button class="explain-toggle" aria-expanded="false">
         <h2>What you get</h2>
         <span class="explain-indicator" aria-hidden="true">+</span>
       </button>
-      <div class="explain-body" id="explain-body-2">
+      <div class="explain-body">
         <p>You do not need more information. You need:</p>
         <ul>
           <li>a working offer</li>
@@ -684,22 +468,22 @@ a{text-decoration:none}
         <p>Each phase fixes one of these.</p>
       </div>
     </div>
-    <div class="explain-block" id="product-definition">
-      <button class="explain-toggle" aria-expanded="false" aria-controls="explain-body-3">
+    <div class="explain-block">
+      <button class="explain-toggle" aria-expanded="false">
         <h2>What The System is</h2>
         <span class="explain-indicator" aria-hidden="true">+</span>
       </button>
-      <div class="explain-body" id="explain-body-3">
+      <div class="explain-body">
         <p>A step-by-step operating structure. It shows you exactly what to fix, in what order, so your work starts working.</p>
         <p>You enter a private dashboard with all five phases. Start with your result. Fix it immediately.</p>
       </div>
     </div>
-    <div class="explain-block" id="after-enter">
-      <button class="explain-toggle" aria-expanded="false" aria-controls="explain-body-4">
+    <div class="explain-block">
+      <button class="explain-toggle" aria-expanded="false">
         <h2>What happens after you enter</h2>
         <span class="explain-indicator" aria-hidden="true">+</span>
       </button>
-      <div class="explain-body" id="explain-body-4">
+      <div class="explain-body">
         <ul>
           <li>You unlock all five phases</li>
           <li>Each phase shows you exactly what to fix</li>
@@ -726,8 +510,8 @@ a{text-decoration:none}
     <p class="menu-command">Don&rsquo;t explore. Start here.</p>
 
     <div class="menu-courses" role="list">
-      <div class="menu-course" role="listitem" data-system="capture" style="transition-delay:0ms">
-        <button class="menu-course-toggle" type="button" aria-expanded="false" aria-controls="panel-capture">
+      <div class="menu-course" role="listitem" data-system="capture">
+        <button class="menu-course-toggle" type="button" aria-expanded="false">
           <span class="course-num">Phase 01</span>
           <div class="course-main">
             <div class="course-name">Capture</div>
@@ -735,15 +519,14 @@ a{text-decoration:none}
           </div>
           <span class="course-indicator" aria-hidden="true">+</span>
         </button>
-        <div class="menu-course-panel" id="panel-capture">
+        <div class="menu-course-panel">
           <p class="menu-panel-text">Includes: Clarity, framing, and direction.</p>
           <a class="menu-panel-cta" href="/capture">Go to Capture</a>
           <p class="menu-panel-foot">Built from the original work. Structured for use.</p>
         </div>
       </div>
-
-      <div class="menu-course" role="listitem" data-system="monetize" style="transition-delay:80ms">
-        <button class="menu-course-toggle" type="button" aria-expanded="false" aria-controls="panel-monetize">
+      <div class="menu-course" role="listitem" data-system="monetize">
+        <button class="menu-course-toggle" type="button" aria-expanded="false">
           <span class="course-num">Phase 02</span>
           <div class="course-main">
             <div class="course-name">Monetize</div>
@@ -751,15 +534,14 @@ a{text-decoration:none}
           </div>
           <span class="course-indicator" aria-hidden="true">+</span>
         </button>
-        <div class="menu-course-panel" id="panel-monetize">
+        <div class="menu-course-panel">
           <p class="menu-panel-text">Includes: Offer design, pricing, and conversion.</p>
           <a class="menu-panel-cta" href="/monetize">Go to Monetize</a>
           <p class="menu-panel-foot">Built from the original work. Structured for use.</p>
         </div>
       </div>
-
-      <div class="menu-course" role="listitem" data-system="structure" style="transition-delay:160ms">
-        <button class="menu-course-toggle" type="button" aria-expanded="false" aria-controls="panel-structure">
+      <div class="menu-course" role="listitem" data-system="structure">
+        <button class="menu-course-toggle" type="button" aria-expanded="false">
           <span class="course-num">Phase 03</span>
           <div class="course-main">
             <div class="course-name">Structure</div>
@@ -767,15 +549,14 @@ a{text-decoration:none}
           </div>
           <span class="course-indicator" aria-hidden="true">+</span>
         </button>
-        <div class="menu-course-panel" id="panel-structure">
+        <div class="menu-course-panel">
           <p class="menu-panel-text">Includes: Workflows, execution systems, and output structure.</p>
           <a class="menu-panel-cta" href="/structure">Go to Structure</a>
           <p class="menu-panel-foot">Built from the original work. Structured for use.</p>
         </div>
       </div>
-
-      <div class="menu-course" role="listitem" data-system="automation" style="transition-delay:240ms">
-        <button class="menu-course-toggle" type="button" aria-expanded="false" aria-controls="panel-automation">
+      <div class="menu-course" role="listitem" data-system="automation">
+        <button class="menu-course-toggle" type="button" aria-expanded="false">
           <span class="course-num">Phase 04</span>
           <div class="course-main">
             <div class="course-name">Automation</div>
@@ -783,15 +564,14 @@ a{text-decoration:none}
           </div>
           <span class="course-indicator" aria-hidden="true">+</span>
         </button>
-        <div class="menu-course-panel" id="panel-automation">
+        <div class="menu-course-panel">
           <p class="menu-panel-text">Includes: Templates, repeatable processes, and tools.</p>
           <a class="menu-panel-cta" href="/automation">Go to Automation</a>
           <p class="menu-panel-foot">Built from the original work. Structured for use.</p>
         </div>
       </div>
-
-      <div class="menu-course" role="listitem" data-system="sovereign" style="transition-delay:320ms">
-        <button class="menu-course-toggle" type="button" aria-expanded="false" aria-controls="panel-sovereign">
+      <div class="menu-course" role="listitem" data-system="sovereign">
+        <button class="menu-course-toggle" type="button" aria-expanded="false">
           <span class="course-num">Phase 05</span>
           <div class="course-main">
             <div class="course-name">Sovereignty</div>
@@ -799,33 +579,31 @@ a{text-decoration:none}
           </div>
           <span class="course-indicator" aria-hidden="true">+</span>
         </button>
-        <div class="menu-course-panel" id="panel-sovereign">
+        <div class="menu-course-panel">
           <p class="menu-panel-text">Includes: Personal systems, environment, and stability.</p>
           <a class="menu-panel-cta" href="/sovereignty">Go to Sovereignty</a>
           <p class="menu-panel-foot">Built from the original work. Structured for use.</p>
         </div>
       </div>
-
       <div class="modules-note" role="note">
         <p>Collections expand the work. The System gets it working first.</p>
       </div>
     </div>
   </section>
 
-  <section id="system-entry-section" aria-labelledby="archive-heading">
-    <div class="archive-card">
-      <span class="archive-card-label" id="archive-heading">Enter the System</span>
-      <p class="archive-description">Everything you need to fix this, structured and ready.</p>
-      <div class="archive-price">$27</div>
-      <span class="archive-price-note">The core product. Five phases. One private dashboard.</span>
-      <div class="archive-divider"></div>
-      <div class="cta-row">
-        <a href="/systems" class="btn-primary" id="system-cta-btn">Enter the System &rarr;</a>
-        <a href="/" class="btn-ghost-link">Take the diagnostic again</a>
-      </div>
-      <div class="archive-card-note">
-        <p>The System is already mapped. You just need to enter it.</p>
-      </div>
+  <!-- System entry — no card box -->
+  <section id="system-entry-section" aria-labelledby="entry-section-label">
+    <span class="entry-section-label" id="entry-section-label">Enter the System</span>
+    <p class="entry-description">Everything you need to fix this, structured and ready.</p>
+    <div class="entry-price">$27</div>
+    <span class="entry-price-note">The core product. Five phases. One private dashboard.</span>
+    <div class="entry-divider"></div>
+    <div class="cta-row">
+      <a href="/systems" class="btn-primary" id="system-cta-btn">Enter the System &rarr;</a>
+      <a href="/" class="btn-ghost-link">Take the diagnostic again</a>
+    </div>
+    <div class="entry-note">
+      <p>The System is already mapped. You just need to enter it.</p>
     </div>
     <div class="private-signal">
       <p>Not everything is self-serve. Some systems are built with you.</p>
@@ -864,9 +642,7 @@ a{text-decoration:none}
 (function(){
   'use strict';
 
-  var INSTRUCTION_START = "Pick what fits.";
-  var INSTRUCTION_MID = "Keep going.";
-  var INSTRUCTION_END = "That's enough.";
+  gsap.registerPlugin(ScrollTrigger);
 
   var MAX_SELECTIONS = 6;
   var AUTO_RESOLVE_DELAY = 2700;
@@ -887,9 +663,6 @@ a{text-decoration:none}
     {id:'sp3',text:"I can't think clearly where I am.",zone:'space'}
   ];
 
-  // Zones: use 4 tight quadrants that leave center clear
-  // Left col: 3%–33%, Right col: 67%–97%
-  // Top half: 10%–50%, Bottom half: 52%–92%
   var zones = [
     {id:'business',name:'Business',micro:'Work',truth:"The money isn't steady.",
       pos:{d:{l:'3%',t:'10%',w:'30%',h:'40%'},m:{l:'2%',t:'5%',w:'46%',h:'39%'}}},
@@ -912,8 +685,7 @@ a{text-decoration:none}
     pauseResolveTimer: null
   };
 
-  var systemMenu = { initialized: false, rows: [], byKey: {} };
-
+  var systemMenu = {initialized:false,rows:[],byKey:{}};
   var cursor = document.getElementById('cursor');
   var cursorRing = document.getElementById('cursor-ring');
   var mouseX = 0, mouseY = 0, ringX = 0, ringY = 0;
@@ -927,42 +699,37 @@ a{text-decoration:none}
     cursorRing.style.display = 'block';
   }
 
-  function normalizeRecommendation(startValue){
-    var value = (startValue || '').toLowerCase();
-    if(value.indexOf('capture') > -1){ return 'capture'; }
-    if(value.indexOf('monetize') > -1){ return 'monetize'; }
-    if(value.indexOf('structure') > -1){ return 'structure'; }
-    if(value.indexOf('automation') > -1){ return 'automation'; }
-    if(value.indexOf('sovereign') > -1){ return 'sovereign'; }
+  function normalizeRecommendation(v){
+    v = (v||'').toLowerCase();
+    if(v.indexOf('capture')>-1) return 'capture';
+    if(v.indexOf('monetize')>-1) return 'monetize';
+    if(v.indexOf('structure')>-1) return 'structure';
+    if(v.indexOf('automation')>-1) return 'automation';
+    if(v.indexOf('sovereign')>-1) return 'sovereign';
     return '';
   }
 
-  function setSystemRowOpen(row, shouldOpen){
+  function setSystemRowOpen(row, open){
     if(!row){ return; }
     systemMenu.rows.forEach(function(item){
       var btn = item.querySelector('.menu-course-toggle');
       var isCurrent = item === row;
-      if(isCurrent && shouldOpen){
-        item.classList.add('open');
-        if(btn){ btn.setAttribute('aria-expanded','true'); }
-      } else {
-        item.classList.remove('open');
-        if(btn){ btn.setAttribute('aria-expanded','false'); }
-      }
+      if(isCurrent && open){ item.classList.add('open'); if(btn) btn.setAttribute('aria-expanded','true'); }
+      else { item.classList.remove('open'); if(btn) btn.setAttribute('aria-expanded','false'); }
     });
   }
 
   function toggleSystemRow(row){
     if(!row){ return; }
-    var isOpen = row.classList.contains('open');
-    setSystemRowOpen(row, !isOpen);
+    setSystemRowOpen(row, !row.classList.contains('open'));
   }
 
   function setRecommendedRow(key){
     systemMenu.rows.forEach(function(item){ item.classList.remove('recommended'); });
     if(key && systemMenu.byKey[key]){
       systemMenu.byKey[key].classList.add('recommended');
-      document.querySelector('.menu-courses') && document.querySelector('.menu-courses').classList.add('has-recommendation');
+      var mc = document.querySelector('.menu-courses');
+      if(mc) mc.classList.add('has-recommendation');
     }
   }
 
@@ -974,7 +741,7 @@ a{text-decoration:none}
     if(!targetRow){ return; }
     if(shouldScroll !== false){
       var section = document.getElementById('menu-section');
-      if(section){ section.scrollIntoView({behavior:'smooth',block:'start'}); }
+      if(section) section.scrollIntoView({behavior:'smooth',block:'start'});
     }
     setTimeout(function(){ setSystemRowOpen(targetRow, true); }, shouldScroll === false ? 80 : 220);
   }
@@ -984,49 +751,47 @@ a{text-decoration:none}
     systemMenu.rows = Array.prototype.slice.call(document.querySelectorAll('.menu-course[data-system]'));
     systemMenu.rows.forEach(function(row){
       var key = row.getAttribute('data-system');
-      if(key){ systemMenu.byKey[key] = row; }
+      if(key) systemMenu.byKey[key] = row;
       var btn = row.querySelector('.menu-course-toggle');
-      if(btn){ btn.addEventListener('click', function(){ toggleSystemRow(row); }); }
+      if(btn) btn.addEventListener('click', function(){ toggleSystemRow(row); });
     });
     systemMenu.initialized = true;
   }
 
+  // Cursor
   if(!state.isMobile && cursor && cursorRing){
-    mouseX = window.innerWidth / 2;
-    mouseY = window.innerHeight / 2;
+    mouseX = window.innerWidth/2; mouseY = window.innerHeight/2;
     ringX = mouseX; ringY = mouseY;
     document.addEventListener('mousemove', function(e){
-      if(!customCursorEnabled){ enableCustomCursor(); }
+      if(!customCursorEnabled) enableCustomCursor();
       mouseX = e.clientX; mouseY = e.clientY;
-      cursor.style.left = mouseX + 'px';
-      cursor.style.top = mouseY + 'px';
+      cursor.style.left = mouseX+'px'; cursor.style.top = mouseY+'px';
     });
     (function animateRing(){
       if(customCursorEnabled){
         ringX += (mouseX - ringX) * 0.12;
         ringY += (mouseY - ringY) * 0.12;
-        cursorRing.style.left = ringX + 'px';
-        cursorRing.style.top = ringY + 'px';
+        cursorRing.style.left = ringX+'px'; cursorRing.style.top = ringY+'px';
       }
       requestAnimationFrame(animateRing);
     }());
   }
 
-  window.addEventListener('error', function(){
-    document.body.classList.remove('cursor-enhanced');
-    if(cursor){ cursor.style.display = 'none'; }
-    if(cursorRing){ cursorRing.style.display = 'none'; }
-  });
-
+  // Entry overlay — GSAP reveal
   var overlay = document.getElementById('entry-overlay');
   var overlayStart = document.getElementById('overlay-start-btn');
   var overlaySkip = document.getElementById('overlay-skip-link');
 
+  gsap.timeline({delay:0.2})
+    .to('.entry-wordmark', {opacity:1, y:0, duration:0.6, ease:'power3.out'}, 0)
+    .to('.entry-headline', {opacity:1, y:0, duration:0.7, ease:'power3.out'}, 0.18)
+    .to('.entry-sub',      {opacity:1, y:0, duration:0.6, ease:'power3.out'}, 0.32)
+    .to('.entry-support',  {opacity:1, duration:0.5, ease:'power2.out'}, 0.44)
+    .to('.entry-start-btn',{opacity:1, duration:0.5, ease:'power2.out'}, 0.52)
+    .to('.entry-skip-link',{opacity:1, duration:0.4, ease:'power2.out'}, 0.60);
+
   function dismissOverlay(){
-    overlay.style.transition = 'opacity .45s ease';
-    overlay.style.opacity = '0';
-    overlay.style.pointerEvents = 'none';
-    setTimeout(function(){ overlay.style.display = 'none'; }, 460);
+    gsap.to(overlay, {opacity:0, duration:0.45, ease:'power2.in', onComplete:function(){ overlay.style.display='none'; }});
   }
 
   overlay.addEventListener('click', function(e){
@@ -1037,7 +802,7 @@ a{text-decoration:none}
   overlaySkip.addEventListener('click', function(e){
     e.stopPropagation();
     dismissOverlay();
-    triggerResolution(true);
+    triggerResolution(false);
   });
 
   function updateInstruction(text){
@@ -1046,20 +811,14 @@ a{text-decoration:none}
     wrap.querySelector('p').textContent = text;
   }
 
+  // ---- BUILD GAME ----
   function buildGame(){
     var field = document.getElementById('game-field');
 
-    // Placement: cards stay inside their zone columns (x: 4-31% left, 68-95% right)
-    // and avoid y:44-56% center strip where anchor text lives
-    // Top zones use y: 14-42%, Bottom zones use y: 56-88%
     var placement = [
-      // business (left col, top half)
       {x:5,  y:16}, {x:14, y:26}, {x:6,  y:36},
-      // self (right col, top half)
       {x:74, y:16}, {x:68, y:27}, {x:72, y:37},
-      // home (left col, bottom half)
       {x:13, y:58}, {x:5,  y:68}, {x:10, y:78},
-      // space (right col, bottom half)
       {x:68, y:58}, {x:77, y:68}, {x:69, y:78}
     ];
     var placementMobile = [
@@ -1069,17 +828,22 @@ a{text-decoration:none}
       {x:51, y:58}, {x:60, y:68}, {x:52, y:77}
     ];
 
+    // Build zones
     zones.forEach(function(z){
       var p = state.isMobile ? z.pos.m : z.pos.d;
       var el = document.createElement('div');
       el.className = 'zone';
       el.id = 'zone-' + z.id;
-      el.style.cssText = 'left:' + p.l + ';top:' + p.t + ';width:' + p.w + ';height:' + p.h;
-      el.innerHTML = '<div class="zone-label"><div class="zone-name">' + z.name + '</div><div class="zone-truth">' + z.truth + '</div><div class="zone-micro" data-base="' + z.micro + '">' + z.micro + ' (0)</div></div>';
+      el.style.cssText = 'left:'+p.l+';top:'+p.t+';width:'+p.w+';height:'+p.h;
+      el.innerHTML = '<div class="zone-label"><div class="zone-name">'+z.name+'</div><div class="zone-truth">'+z.truth+'</div><div class="zone-micro" data-base="'+z.micro+'">'+z.micro+' (0)</div></div>';
       field.appendChild(el);
     });
 
-    var floatDelays = [0, 0.4, 0.8, 1.2, 0.2, 0.6, 1.0, 0.3, 0.7, 1.1, 0.5, 0.9];
+    // Zone names fade in with GSAP stagger
+    gsap.to('.zone-name', {opacity:0.55, duration:0.8, stagger:0.12, ease:'power2.out', delay:1.0});
+
+    // Build fragments with GSAP stagger entrance
+    var fragEls = [];
     fragments.forEach(function(frag, idx){
       var el = document.createElement('div');
       el.className = 'fragment';
@@ -1087,20 +851,44 @@ a{text-decoration:none}
       el.setAttribute('role','button');
       el.setAttribute('tabindex','0');
       el.setAttribute('aria-label', frag.text);
-      el.innerHTML = '<span class="fragment-text">' + frag.text + '</span>';
+      el.innerHTML = '<span class="fragment-text">'+frag.text+'</span>';
       var pos = state.isMobile ? placementMobile[idx] : placement[idx];
       el.style.left = pos.x + '%';
-      el.style.top = pos.y + '%';
-      el.style.animationDelay = floatDelays[idx] + 's';
-      setTimeout(function(){ el.style.opacity = '1'; }, 160 + idx * 42);
+      el.style.top  = pos.y + '%';
       el.addEventListener('click', function(){ handleClick(frag); });
-      el.addEventListener('keydown', function(e){
-        if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); handleClick(frag); }
-      });
-      el.addEventListener('mouseenter', function(){ if(cursorRing){ cursorRing.classList.add('hover'); } });
-      el.addEventListener('mouseleave', function(){ if(cursorRing){ cursorRing.classList.remove('hover'); } });
+      el.addEventListener('keydown', function(e){ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); handleClick(frag); }});
+      el.addEventListener('mouseenter', function(){ if(cursorRing) cursorRing.classList.add('hover'); });
+      el.addEventListener('mouseleave', function(){ if(cursorRing) cursorRing.classList.remove('hover'); });
       field.appendChild(el);
+      fragEls.push(el);
     });
+
+    // GSAP staggered card entrance — y settle from below
+    gsap.fromTo(fragEls,
+      {opacity:0, y:18},
+      {opacity:1, y:0, duration:0.65, stagger:{amount:0.9, from:'random'}, ease:'power3.out', delay:0.9}
+    );
+
+    // Floating animation via GSAP (replaces CSS keyframes)
+    fragEls.forEach(function(el, i){
+      gsap.to(el, {
+        y: '+=5',
+        duration: 2.8 + (i % 4) * 0.3,
+        ease: 'sine.inOut',
+        yoyo: true,
+        repeat: -1,
+        delay: (i * 0.22) % 2.0
+      });
+    });
+
+    // Anchor text
+    gsap.to('#anchor-fragment', {opacity:1, duration:1.2, ease:'power2.out', delay:1.4});
+
+    // Header + instruction
+    gsap.to('.logo', {opacity:1, duration:0.7, ease:'power2.out', delay:0.5});
+    gsap.to('#skip-btn', {opacity:1, duration:0.7, ease:'power2.out', delay:0.9});
+    gsap.to('#instruction', {opacity:1, duration:0.7, ease:'power2.out', delay:1.6});
+    gsap.to('#ambient-signal', {opacity:1, duration:0.7, ease:'power2.out', delay:1.9});
 
     updateRemainingCounter();
   }
@@ -1109,7 +897,7 @@ a{text-decoration:none}
     var remaining = MAX_SELECTIONS - state.totalPlaced;
     var wrap = document.getElementById('remaining-counter');
     var text = document.getElementById('remaining-text');
-    if(!wrap || !text){ return; }
+    if(!wrap||!text){ return; }
     if(state.hasInteracted && state.gameActive){
       text.textContent = remaining + ' left';
       wrap.classList.add('visible');
@@ -1137,7 +925,7 @@ a{text-decoration:none}
     if(state.totalPlaced < MIN_SELECTIONS_FOR_PAUSE_RESOLVE || !state.gameActive){ return; }
     state.pauseResolveTimer = setTimeout(function(){
       if(!state.gameActive){ return; }
-      updateInstruction(INSTRUCTION_END);
+      updateInstruction("That's enough.");
       triggerResolution(false);
     }, AUTO_RESOLVE_DELAY);
   }
@@ -1148,26 +936,27 @@ a{text-decoration:none}
     if(!el || state.placedFragments[frag.id]){ return; }
     if(!state.hasInteracted){
       state.hasInteracted = true;
-      updateInstruction(INSTRUCTION_MID);
+      updateInstruction("Keep going.");
       zones.forEach(function(z){
         var zoneEl = document.getElementById('zone-' + z.id);
-        if(zoneEl){ zoneEl.classList.add('active'); }
+        if(zoneEl) zoneEl.classList.add('active');
       });
     }
-    if(cursor){ cursor.classList.add('active'); }
-    setTimeout(function(){ if(cursor){ cursor.classList.remove('active'); } }, 180);
-    el.classList.add('clicking');
-    setTimeout(function(){
+    if(cursor) cursor.classList.add('active');
+    setTimeout(function(){ if(cursor) cursor.classList.remove('active'); }, 180);
+
+    // Click pulse
+    gsap.to(el, {scale:1.04, duration:0.08, ease:'power2.out', onComplete:function(){
       placeFragment(frag.id, frag.zone);
       if(state.totalPlaced >= MAX_SELECTIONS){
-        updateInstruction(INSTRUCTION_END);
+        updateInstruction("That's enough.");
         triggerResolution(false);
         return;
       }
-      if(state.totalPlaced >= MAX_SELECTIONS - 1){ updateInstruction(INSTRUCTION_END); }
-      else { updateInstruction(INSTRUCTION_MID); }
+      if(state.totalPlaced >= MAX_SELECTIONS - 1){ updateInstruction("That's enough."); }
+      else { updateInstruction("Keep going."); }
       schedulePauseResolve();
-    }, 80);
+    }});
   }
 
   function placeFragment(fragId, zoneId){
@@ -1176,14 +965,31 @@ a{text-decoration:none}
     state.placedFragments[fragId] = zoneId;
     state.zoneCounts[zoneId] += 1;
     state.totalPlaced += 1;
-    el.classList.remove('clicking');
+
+    // Kill floating tween, fade out with GSAP
+    gsap.killTweensOf(el);
+    gsap.to(el, {opacity:0.15, scale:0.88, duration:0.3, ease:'power2.in'});
     el.classList.add('placed');
+
     var zoneEl = document.getElementById('zone-' + zoneId);
     if(zoneEl){
-      if(!state.zoneRevealed[zoneId]){ state.zoneRevealed[zoneId] = true; zoneEl.classList.add('revealed'); }
-      zoneEl.classList.add('just-received');
-      setTimeout(function(){ zoneEl.classList.remove('just-received'); }, 280);
+      if(!state.zoneRevealed[zoneId]){
+        state.zoneRevealed[zoneId] = true;
+        zoneEl.classList.add('revealed');
+        // Animate zone label in
+        gsap.fromTo(zoneEl.querySelector('.zone-name'),
+          {opacity:0, y:6},
+          {opacity:1, y:0, duration:0.5, ease:'power3.out'}
+        );
+        gsap.fromTo(zoneEl.querySelector('.zone-truth'),
+          {opacity:0, y:4},
+          {opacity:1, y:0, duration:0.5, ease:'power3.out', delay:0.1}
+        );
+      }
+      // Flash
+      gsap.fromTo(zoneEl, {background:'rgba(196,163,90,0.18)'}, {background:'rgba(196,163,90,0.03)', duration:0.5, ease:'power2.out'});
     }
+
     updateZoneVisuals();
     updateRemainingCounter();
     updateAmbientSignal();
@@ -1193,10 +999,7 @@ a{text-decoration:none}
     var order = {business:0,self:1,home:2,space:3};
     return Object.keys(state.zoneCounts)
       .map(function(id){ return {id:id, count:state.zoneCounts[id]}; })
-      .sort(function(a,b){
-        if(b.count !== a.count){ return b.count - a.count; }
-        return order[a.id] - order[b.id];
-      });
+      .sort(function(a,b){ return b.count!==a.count ? b.count-a.count : order[a.id]-order[b.id]; });
   }
 
   function updateZoneVisuals(){
@@ -1207,294 +1010,272 @@ a{text-decoration:none}
       if(!zoneEl){ return; }
       var count = state.zoneCounts[z.id];
       zoneEl.classList.remove('intensity1','intensity2','intensity3','dominant');
-      if(count >= 4){ zoneEl.classList.add('intensity3'); }
-      else if(count >= 2){ zoneEl.classList.add('intensity2'); }
-      else if(count >= 1){ zoneEl.classList.add('intensity1'); }
+      if(count >= 4) zoneEl.classList.add('intensity3');
+      else if(count >= 2) zoneEl.classList.add('intensity2');
+      else if(count >= 1) zoneEl.classList.add('intensity1');
       var micro = zoneEl.querySelector('.zone-micro');
-      if(micro){
-        var base = micro.getAttribute('data-base') || '';
-        micro.textContent = base + ' (' + count + ')';
-      }
+      if(micro) micro.textContent = (micro.getAttribute('data-base')||'') + ' (' + count + ')';
     });
     if(top[0].count > 0 && leadBy >= 2){
       var dominant = document.getElementById('zone-' + top[0].id);
-      if(dominant){ dominant.classList.add('dominant'); }
+      if(dominant) dominant.classList.add('dominant');
     }
   }
 
+  // ---- RESULT MAP ----
   var resultMap = {
-    'Revenue Friction': {
-      phase: 'Monetize',
-      headline: 'Start with: Monetize',
-      problem: 'People are not buying what you have.',
-      means: 'Either the offer is unclear, priced wrong, or not positioned in a way that makes someone act.',
-      start: 'Fix the offer before doing anything else.',
-      cta: 'Fix the offer',
-      href: '/monetize'
-    },
-    'Execution Friction': {
-      phase: 'Structure',
-      headline: 'Start with: Structure',
-      problem: 'You start things but do not finish them.',
-      means: 'There is no clear breakdown of steps or timeline, so work stalls before completion.',
-      start: 'Turn what you are doing into steps you can complete.',
-      cta: 'Fix execution',
-      href: '/structure'
-    },
-    'Routine Friction': {
-      phase: 'Automation',
-      headline: 'Start with: Automation',
-      problem: 'You are repeating work or relying on willpower to stay consistent.',
-      means: 'Without systems, everything resets and nothing compounds.',
-      start: 'Remove repetition and make the work automatic.',
-      cta: 'Fix the system',
-      href: '/automation'
-    },
-    'Environment Friction': {
-      phase: 'Sovereignty',
-      headline: 'Start with: Life',
-      problem: 'Your setup is slowing you down.',
-      means: 'Your space, schedule, or energy is interfering with output.',
-      start: 'Fix your environment so the work becomes easier.',
-      cta: 'Fix your setup',
-      href: '/sovereignty'
-    },
-    'Execution Gap': {
-      phase: 'Monetize',
-      headline: 'Start with: Monetize',
-      problem: 'The work exists. People are not buying it.',
-      means: 'The offer is not clear enough or the follow-through is breaking before a sale happens.',
-      start: 'Get the offer legible before fixing anything else.',
-      cta: 'Fix the offer',
-      href: '/monetize'
-    },
-    'Consistency Collapse': {
-      phase: 'Structure',
-      headline: 'Start with: Structure',
-      problem: 'You know what to do but it is not getting done consistently.',
-      means: 'The system is not holding long enough for anything to compound.',
-      start: 'Build the structure that keeps the work moving without willpower.',
-      cta: 'Fix execution',
-      href: '/structure'
-    },
-    'Environment Drag': {
-      phase: 'Sovereignty',
-      headline: 'Start with: Life',
-      problem: 'Your setup is costing output before you even start.',
-      means: 'The space, schedule, or energy conditions are creating friction the work has to fight through.',
-      start: 'Fix the environment first. The work gets easier immediately.',
-      cta: 'Fix your setup',
-      href: '/sovereignty'
-    },
-    'Structural Misalignment': {
-      phase: 'Structure',
-      headline: 'Start with: Structure',
-      problem: 'The build and the environment are working against each other.',
-      means: 'You are trying to execute inside conditions that were not designed for this kind of work.',
-      start: 'Create the structure that lets the work hold regardless of conditions.',
-      cta: 'Fix execution',
-      href: '/structure'
-    },
-    'Capacity Leak': {
-      phase: 'Structure',
-      headline: 'Start with: Structure',
-      problem: 'The ambition is real. The day cannot hold it.',
-      means: 'What you are trying to build requires more protected time and capacity than your current setup allows.',
-      start: 'Restructure the day so the work has room to actually happen.',
-      cta: 'Fix execution',
-      href: '/structure'
-    },
-    'Friction Loop': {
-      phase: 'Automation',
-      headline: 'Start with: Automation',
-      problem: 'You are rebuilding the same things over and over.',
-      means: 'Without repeatable systems, effort resets every time and momentum cannot build.',
-      start: 'Stop restarting. Document what works and make it the default.',
-      cta: 'Fix the system',
-      href: '/automation'
-    }
+    'Revenue Friction':{phase:'Monetize',headline:'Start with: Monetize',problem:'People are not buying what you have.',means:'Either the offer is unclear, priced wrong, or not positioned in a way that makes someone act.',start:'Fix the offer before doing anything else.',cta:'Fix the offer',href:'/monetize'},
+    'Execution Friction':{phase:'Structure',headline:'Start with: Structure',problem:'You start things but do not finish them.',means:'There is no clear breakdown of steps or timeline, so work stalls before completion.',start:'Turn what you are doing into steps you can complete.',cta:'Fix execution',href:'/structure'},
+    'Routine Friction':{phase:'Automation',headline:'Start with: Automation',problem:'You are repeating work or relying on willpower to stay consistent.',means:'Without systems, everything resets and nothing compounds.',start:'Remove repetition and make the work automatic.',cta:'Fix the system',href:'/automation'},
+    'Environment Friction':{phase:'Sovereignty',headline:'Start with: Life',problem:'Your setup is slowing you down.',means:'Your space, schedule, or energy is interfering with output.',start:'Fix your environment so the work becomes easier.',cta:'Fix your setup',href:'/sovereignty'},
+    'Execution Gap':{phase:'Monetize',headline:'Start with: Monetize',problem:'The work exists. People are not buying it.',means:'The offer is not clear enough or the follow-through is breaking before a sale happens.',start:'Get the offer legible before fixing anything else.',cta:'Fix the offer',href:'/monetize'},
+    'Consistency Collapse':{phase:'Structure',headline:'Start with: Structure',problem:'You know what to do but it is not getting done consistently.',means:'The system is not holding long enough for anything to compound.',start:'Build the structure that keeps the work moving without willpower.',cta:'Fix execution',href:'/structure'},
+    'Environment Drag':{phase:'Sovereignty',headline:'Start with: Life',problem:'Your setup is costing output before you even start.',means:'The space, schedule, or energy conditions are creating friction the work has to fight through.',start:'Fix the environment first. The work gets easier immediately.',cta:'Fix your setup',href:'/sovereignty'},
+    'Structural Misalignment':{phase:'Structure',headline:'Start with: Structure',problem:'The build and the environment are working against each other.',means:'You are trying to execute inside conditions that were not designed for this kind of work.',start:'Create the structure that lets the work hold regardless of conditions.',cta:'Fix execution',href:'/structure'},
+    'Capacity Leak':{phase:'Structure',headline:'Start with: Structure',problem:'The ambition is real. The day cannot hold it.',means:'What you are trying to build requires more protected time and capacity than your current setup allows.',start:'Restructure the day so the work has room to actually happen.',cta:'Fix execution',href:'/structure'},
+    'Friction Loop':{phase:'Automation',headline:'Start with: Automation',problem:'You are rebuilding the same things over and over.',means:'Without repeatable systems, effort resets every time and momentum cannot build.',start:'Stop restarting. Document what works and make it the default.',cta:'Fix the system',href:'/automation'}
   };
 
   function resolveResult(){
     var top = getTopZones();
-    var first = top[0];
-    var second = top[1];
+    var first = top[0], second = top[1];
     var clearlySingle = first.count > 0 && (first.count - second.count) >= 2;
-
-    var clusterMap = {
-      'business+self':'Execution Gap',
-      'home+self':'Consistency Collapse',
-      'home+space':'Environment Drag',
-      'business+space':'Structural Misalignment',
-      'business+home':'Capacity Leak',
-      'self+space':'Friction Loop'
-    };
-    var singleMap = {
-      business:'Revenue Friction',
-      self:'Execution Friction',
-      home:'Routine Friction',
-      space:'Environment Friction'
-    };
-
-    var label;
-    if(clearlySingle){
-      label = singleMap[first.id];
-    } else {
-      var pair = [first.id, second.id].sort().join('+');
-      label = clusterMap[pair] || singleMap[first.id];
-    }
-    return { label: label, data: resultMap[label], top: top };
+    var clusterMap = {'business+self':'Execution Gap','home+self':'Consistency Collapse','home+space':'Environment Drag','business+space':'Structural Misalignment','business+home':'Capacity Leak','self+space':'Friction Loop'};
+    var singleMap = {business:'Revenue Friction',self:'Execution Friction',home:'Routine Friction',space:'Environment Friction'};
+    var label = clearlySingle ? singleMap[first.id] : (clusterMap[[first.id,second.id].sort().join('+')] || singleMap[first.id]);
+    return {label:label, data:resultMap[label], top:top};
   }
 
   function buildDiagnosis(){
     var resolved = resolveResult();
     var d = resolved.data;
-
     var labelEl = document.getElementById('diagnosis-label');
     var headEl = document.getElementById('diagnosis-heading');
     var problemEl = document.getElementById('diag-problem');
     var meansEl = document.getElementById('diag-means');
     var startEl = document.getElementById('diag-start');
     var ctaBtn = document.getElementById('diag-cta-btn');
-
-    if(labelEl){ labelEl.textContent = resolved.label; }
-    if(headEl){ headEl.textContent = d.headline; }
-    if(problemEl){ problemEl.textContent = d.problem; }
-    if(meansEl){ meansEl.textContent = d.means; }
-    if(startEl){ startEl.textContent = d.start; }
-    if(ctaBtn){
-      ctaBtn.setAttribute('href', d.href);
-      ctaBtn.setAttribute('data-target-href', d.href);
-      ctaBtn.textContent = d.cta + ' \u2192';
-    }
-
+    if(labelEl) labelEl.textContent = resolved.label;
+    if(headEl) headEl.textContent = d.headline;
+    if(problemEl) problemEl.textContent = d.problem;
+    if(meansEl) meansEl.textContent = d.means;
+    if(startEl) startEl.textContent = d.start;
+    if(ctaBtn){ ctaBtn.setAttribute('href',d.href); ctaBtn.setAttribute('data-target-href',d.href); ctaBtn.textContent = d.cta + ' \u2192'; }
     setRecommendedRow(normalizeRecommendation(d.phase));
 
-    var zoneNames = {business:'Work', self:'Execution', home:'Daily', space:'Environment'};
-    var zoneSupport = {
-      business:'People are not buying',
-      self:'Work is not getting completed',
-      home:'Nothing is repeating consistently',
-      space:'Your setup is slowing output'
-    };
-
+    var zoneNames = {business:'Work',self:'Execution',home:'Daily',space:'Environment'};
+    var zoneSupport = {business:'People are not buying',self:'Work is not getting completed',home:'Nothing is repeating consistently',space:'Your setup is slowing output'};
     var top = resolved.top;
-    var topCount = top[0].count;
-    var secondCount = top[1].count;
-    var leadingId = topCount > secondCount ? top[0].id : null;
-
+    var leadingId = top[0].count > top[1].count ? top[0].id : null;
     var wrap = document.getElementById('diagnosis-results');
     if(!wrap){ return; }
     wrap.innerHTML = '';
-
     ['business','self','home','space'].forEach(function(zoneId){
       var div = document.createElement('div');
-      var cls = 'diag-zone';
-      if(leadingId === zoneId){ cls += ' leading'; }
-      div.className = cls;
-      div.innerHTML =
-        '<div class="diag-zone-name">' + zoneNames[zoneId] + '</div>' +
-        '<div class="diag-zone-count"><span class="diag-zone-count-num">' + state.zoneCounts[zoneId] + '</span><span class="diag-zone-count-note">signals</span></div>' +
-        '<div class="diag-zone-label">' + zoneSupport[zoneId] + '</div>';
+      div.className = 'diag-zone' + (leadingId===zoneId?' leading':'');
+      // Start count at 0 for animation
+      div.innerHTML = '<div class="diag-zone-name">'+zoneNames[zoneId]+'</div><div class="diag-zone-count"><span class="diag-zone-count-num" data-target="'+state.zoneCounts[zoneId]+'">0</span><span class="diag-zone-count-note">signals</span></div><div class="diag-zone-label">'+zoneSupport[zoneId]+'</div>';
       wrap.appendChild(div);
     });
   }
 
+  // ---- RESOLUTION TRANSITION — GSAP choreography ----
   function triggerResolution(skipToArchive){
     if(!state.gameActive){ return; }
     state.gameActive = false;
     clearTimeout(state.pauseResolveTimer);
-    updateInstruction(INSTRUCTION_END);
-
+    updateInstruction("That's enough.");
     buildDiagnosis();
 
     var field = document.getElementById('game-field');
     var resolution = document.getElementById('resolution');
+    var header = document.getElementById('site-header');
 
-    field.classList.add('fading');
-    document.body.classList.add('resolved');
+    // Game field exit: scale down + fade
+    gsap.to(field, {
+      opacity: 0,
+      scale: 0.97,
+      duration: 0.7,
+      ease: 'power2.in',
+      onComplete: function(){
+        field.style.display = 'none';
+        header.style.display = 'none';
+        document.body.classList.add('resolved');
+        resolution.classList.add('visible');
 
-    setTimeout(function(){
-      field.style.display = 'none';
-      document.getElementById('site-header').style.display = 'none';
-      resolution.classList.add('visible');
+        // Reset scroll position to top — no auto-scroll
+        window.scrollTo(0, 0);
 
-      document.querySelectorAll('.menu-course,.archive-note,.modules-note').forEach(function(el, idx){
-        setTimeout(function(){ el.classList.add('visible'); }, idx * 58);
-      });
-      setTimeout(function(){
-        var card = document.querySelector('.archive-card');
-        if(card){ card.classList.add('visible'); }
-      }, 480);
+        // Staggered reveal of diagnosis sections
+        var tl = gsap.timeline({delay: 0.1});
 
-      setTimeout(function(){
-        var nextValue = document.getElementById('diagnosis-heading');
-        openRecommendedSystem(nextValue ? nextValue.textContent : '', false);
-      }, 220);
+        // Banner container
+        tl.to('#diagnosis-banner', {opacity:1, duration:0.01}, 0);
 
-      setTimeout(function(){
-        var banner = document.getElementById('diagnosis-banner');
-        if(banner){ banner.scrollIntoView({behavior:'smooth', block:'start'}); }
-      }, 100);
+        // Phase label
+        tl.fromTo('.diag-phase-label',
+          {opacity:0, x:-12},
+          {opacity:1, x:0, duration:0.5, ease:'power3.out'}, 0.05
+        );
 
-      var diagBtn = document.getElementById('diag-cta-btn');
-      if(diagBtn){
-        diagBtn.addEventListener('click', function(e){
-          e.preventDefault();
-          if(diagBtn.classList.contains('entering')){ return; }
-          diagBtn.classList.add('entering');
-          var orig = diagBtn.textContent;
-          diagBtn.textContent = 'Opening...';
-          var target = diagBtn.getAttribute('data-target-href') || diagBtn.getAttribute('href') || '/structure';
-          setTimeout(function(){ window.location.href = target; }, 320);
-        });
-      }
+        // Big headline
+        tl.fromTo('.diag-headline',
+          {opacity:0, y:22},
+          {opacity:1, y:0, duration:1.0, ease:'power4.out'}, 0.2
+        );
 
-      if(skipToArchive){
+        // Problem + means blocks
+        tl.fromTo('#diag-block-problem',
+          {opacity:0, y:14},
+          {opacity:1, y:0, duration:0.65, ease:'power3.out'}, 0.7
+        );
+        tl.fromTo('#diag-block-means',
+          {opacity:0, y:14},
+          {opacity:1, y:0, duration:0.65, ease:'power3.out'}, 0.82
+        );
+
+        // Start here block
+        tl.fromTo('#diag-block-start',
+          {opacity:0, y:14},
+          {opacity:1, y:0, duration:0.7, ease:'power3.out'}, 1.0
+        );
+
+        // Anchor line
+        tl.fromTo('.diag-anchor-line',
+          {opacity:0},
+          {opacity:1, duration:0.5, ease:'power2.out'}, 1.2
+        );
+
+        // CTA
+        tl.fromTo('#diagnosis-cta',
+          {opacity:0, y:8},
+          {opacity:1, y:0, duration:0.5, ease:'power3.out'}, 1.35
+        );
+
+        // Results grid
+        tl.fromTo('#diagnosis-results-wrap',
+          {opacity:0, y:10},
+          {opacity:1, y:0, duration:0.6, ease:'power3.out'}, 1.55
+        );
+
+        // Count-up numbers
+        tl.add(function(){
+          document.querySelectorAll('.diag-zone-count-num').forEach(function(el){
+            var target = parseInt(el.getAttribute('data-target'), 10) || 0;
+            gsap.to({val:0}, {
+              val: target,
+              duration: 0.9,
+              ease: 'power2.out',
+              onUpdate: function(){
+                el.textContent = Math.round(this.targets()[0].val);
+              }
+            });
+          });
+        }, 1.7);
+
+        // Menu phase rows via ScrollTrigger
         setTimeout(function(){
-          var arch = document.getElementById('system-entry-section');
-          if(arch){ arch.scrollIntoView({behavior:'smooth'}); }
-        }, 620);
+          document.querySelectorAll('.menu-course, .modules-note').forEach(function(el){
+            ScrollTrigger.create({
+              trigger: el,
+              start: 'top 88%',
+              onEnter: function(){
+                gsap.to(el, {opacity:1, y:0, duration:0.55, ease:'power3.out'});
+              },
+              once: true
+            });
+          });
+
+          // Entry section elements via ScrollTrigger
+          var entryEls = [
+            '.entry-section-label',
+            '.entry-description',
+            '.entry-price',
+            '.entry-price-note',
+            '.entry-divider',
+            '.cta-row',
+            '.entry-note',
+            '.private-signal',
+            '.founder-signal'
+          ];
+          entryEls.forEach(function(sel, i){
+            var el = document.querySelector(sel);
+            if(!el){ return; }
+            gsap.set(el, {y:16});
+            ScrollTrigger.create({
+              trigger: el,
+              start: 'top 90%',
+              onEnter: function(){
+                gsap.to(el, {opacity:1, y:0, duration:0.6, ease:'power3.out', delay: i * 0.06});
+              },
+              once: true
+            });
+          });
+        }, 300);
+
+        // Open recommended system row
+        setTimeout(function(){
+          var headEl = document.getElementById('diagnosis-heading');
+          openRecommendedSystem(headEl ? headEl.textContent : '', false);
+        }, 220);
+
+        // CTA click handler
+        var diagBtn = document.getElementById('diag-cta-btn');
+        if(diagBtn){
+          diagBtn.addEventListener('click', function(e){
+            e.preventDefault();
+            if(diagBtn.classList.contains('entering')){ return; }
+            diagBtn.classList.add('entering');
+            diagBtn.textContent = 'Opening...';
+            var target = diagBtn.getAttribute('data-target-href') || diagBtn.getAttribute('href') || '/structure';
+            setTimeout(function(){ window.location.href = target; }, 320);
+          });
+        }
+
+        if(skipToArchive){
+          setTimeout(function(){
+            var arch = document.getElementById('system-entry-section');
+            if(arch) arch.scrollIntoView({behavior:'smooth'});
+          }, 500);
+        }
       }
-    }, 760);
+    });
   }
 
   document.getElementById('skip-btn').addEventListener('click', function(e){
     e.preventDefault();
-    triggerResolution(true);
+    triggerResolution(false);
   });
 
   document.getElementById('game-field').addEventListener('contextmenu', function(e){ e.preventDefault(); });
 
-  function safeInit(){
-    try{
-      initSystemMenu();
-      updateInstruction(INSTRUCTION_START);
-      buildGame();
-    }catch(err){
-      try{ console.error('Stephuary init failed:', err); }catch(_e){}
-    }
-  }
-
+  // Explain accordions
   document.querySelectorAll('.explain-toggle').forEach(function(btn){
     btn.addEventListener('click', function(){
       var block = btn.closest('.explain-block');
       var isOpen = block.classList.contains('open');
-      document.querySelectorAll('.explain-block').forEach(function(b){ b.classList.remove('open'); b.querySelector('.explain-toggle').setAttribute('aria-expanded','false'); });
-      if(!isOpen){
-        block.classList.add('open');
-        btn.setAttribute('aria-expanded','true');
-      }
+      document.querySelectorAll('.explain-block').forEach(function(b){
+        b.classList.remove('open');
+        b.querySelector('.explain-toggle').setAttribute('aria-expanded','false');
+      });
+      if(!isOpen){ block.classList.add('open'); btn.setAttribute('aria-expanded','true'); }
     });
   });
 
-  if(document.readyState === 'complete'){
-    safeInit();
-  } else {
+  function safeInit(){
+    try{
+      initSystemMenu();
+      updateInstruction("Pick what fits.");
+      buildGame();
+    }catch(err){
+      try{ console.error('Stephuary init failed:', err); }catch(_){}
+    }
+  }
+
+  if(document.readyState === 'complete'){ safeInit(); }
+  else {
     window.addEventListener('load', safeInit, {once:true});
-    window.setTimeout(function(){
-      if(!document.querySelector('.zone')){ safeInit(); }
-    }, 1400);
+    window.setTimeout(function(){ if(!document.querySelector('.zone')) safeInit(); }, 1400);
   }
 }());
 </script>
