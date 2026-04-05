@@ -11,6 +11,7 @@
 <meta property="og:url" content="https://www.stephuary.com">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Lato:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -835,8 +836,7 @@ a{text-decoration:none}
 .menu-course{
   border-bottom:1px solid var(--line-soft);
   opacity:0;
-  transform:translateY(9px);
-  transition:opacity .5s,transform .5s;
+  transform:translateY(12px);
 }
 .menu-course:first-child{border-top:1px solid var(--line-soft)}
 .menu-course.visible{opacity:1;transform:translateY(0)}
@@ -1036,7 +1036,6 @@ a{text-decoration:none}
   padding:46px 44px;
   opacity:0;
   transform:translateY(12px);
-  transition:opacity .65s,transform .65s;
 }
 .archive-card.visible{opacity:1;transform:translateY(0)}
 .archive-card-label{
@@ -2105,6 +2104,99 @@ a{text-decoration:none}
     });
   }
 
+  function runResolutionAnimations(){
+    if(typeof gsap === 'undefined'){ return; }
+
+    var tl = gsap.timeline();
+
+    /* ANIMATION 2: Phase label fade in (leads) */
+    var labelEl = document.getElementById('diagnosis-label');
+    if(labelEl){
+      gsap.set(labelEl, {opacity:0, y:8});
+      tl.to(labelEl, {opacity:1, y:0, duration:0.4, ease:'power2.out'}, 0);
+    }
+
+    /* ANIMATION 1: Headline word-by-word reveal */
+    var headingEl = document.getElementById('diagnosis-heading');
+    if(headingEl){
+      var rawText = headingEl.textContent;
+      var words = rawText.split(/\s+/);
+      headingEl.innerHTML = words.map(function(w){
+        return '<span style="display:inline-block;opacity:0;transform:translateY(14px)">' + w + '&nbsp;</span>';
+      }).join('');
+      tl.to(headingEl.querySelectorAll('span'), {
+        opacity:1, y:0, duration:0.55, stagger:0.07, ease:'power3.out'
+      }, 0.15);
+    }
+
+    /* ANIMATION 3: Result blocks stagger */
+    var blocks = document.querySelectorAll('#diagnosis-body, #diagnosis-cta, .explain-card');
+    if(blocks.length){
+      gsap.set(blocks, {opacity:0, y:16});
+      tl.to(blocks, {
+        opacity:1, y:0, duration:0.5, stagger:0.1, ease:'power2.out'
+      }, 0.5);
+    }
+
+    /* ANIMATION 4: Anchor/next line slide up */
+    var anchorLine = document.querySelector('.diagnosis-next');
+    if(anchorLine){
+      gsap.set(anchorLine, {opacity:0, y:10});
+      tl.to(anchorLine, {opacity:1, y:0, duration:0.4, ease:'power2.out'}, 0.85);
+    }
+
+    /* ANIMATION 5: CTA button entrance with overshoot */
+    var ctaBtn = document.getElementById('diag-cta-btn');
+    if(ctaBtn){
+      gsap.set(ctaBtn, {opacity:0, scale:0.94});
+      tl.to(ctaBtn, {opacity:1, scale:1, duration:0.5, ease:'back.out(1.4)'}, 1.0);
+    }
+
+    /* ANIMATION 6: Signal count-up in breakdown grid */
+    var countNums = document.querySelectorAll('.diag-zone-count-num');
+    if(countNums.length){
+      countNums.forEach(function(el){
+        var finalVal = parseInt(el.textContent, 10) || 0;
+        el._finalVal = finalVal;
+        el.textContent = '0';
+      });
+      tl.to(countNums, {
+        textContent: function(i){ return countNums[i]._finalVal; },
+        duration:0.8,
+        stagger:0.08,
+        ease:'power2.out',
+        snap:{textContent:1}
+      }, 0.7);
+    }
+
+    /* Result card fade */
+    var resultCard = document.querySelector('.result-card');
+    if(resultCard){
+      gsap.set(resultCard, {opacity:0, y:12});
+      tl.to(resultCard, {opacity:1, y:0, duration:0.5, ease:'power2.out'}, 0.6);
+    }
+
+    /* ANIMATION 7: Menu courses stagger */
+    var courses = document.querySelectorAll('.menu-course');
+    if(courses.length){
+      tl.to(courses, {
+        opacity:1, y:0, duration:0.45, stagger:0.06, ease:'power2.out',
+        onComplete: function(){
+          courses.forEach(function(c){ c.classList.add('visible'); });
+        }
+      }, 1.2);
+    }
+
+    /* Archive card */
+    var archiveCard = document.querySelector('.archive-card');
+    if(archiveCard){
+      tl.to(archiveCard, {
+        opacity:1, y:0, duration:0.5, ease:'power2.out',
+        onComplete: function(){ archiveCard.classList.add('visible'); }
+      }, 1.5);
+    }
+  }
+
   function triggerResolution(skipToSystem){
     if(!state.gameActive){ return; }
     state.gameActive = false;
@@ -2124,13 +2216,7 @@ a{text-decoration:none}
       document.getElementById('site-header').style.display = 'none';
       resolution.classList.add('visible');
 
-      document.querySelectorAll('.menu-course,.archive-note,.modules-note').forEach(function(el,idx){
-        setTimeout(function(){ el.classList.add('visible'); }, idx * 58);
-      });
-      setTimeout(function(){
-        var card = document.querySelector('.archive-card');
-        if(card){ card.classList.add('visible'); }
-      },480);
+      runResolutionAnimations();
 
       setTimeout(function(){
         var nextValue = document.getElementById('diagnosis-next-value');
