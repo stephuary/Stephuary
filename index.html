@@ -96,7 +96,7 @@ a{text-decoration:none}
 #remaining-counter span{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-2)}
 
 #anchor-fragment{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:10;text-align:center;pointer-events:none;opacity:0;animation:anchorReveal 1.4s cubic-bezier(.16,1,.3,1) forwards .8s}
-#anchor-fragment p{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:clamp(20px,2.5vw,32px);line-height:1.45;color:rgba(244,237,224,0.14)}
+#anchor-fragment p{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:clamp(16px,1.8vw,24px);line-height:1.5;color:rgba(244,237,224,0.08)}
 
 @keyframes subtleFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
 .fragment{position:absolute;z-index:20;padding:11px 16px;border:1px solid var(--frag-border);background:var(--frag-bg);backdrop-filter:blur(3px);border-radius:1px;cursor:pointer;user-select:none;opacity:0;animation:subtleFloat 3s ease-in-out infinite;transition:border-color .16s,background .16s,box-shadow .16s,transform .16s,opacity .2s;max-width:200px}
@@ -797,10 +797,10 @@ a{text-decoration:none}
   ];
 
   var zones = [
-    {id:'business',name:'Business',micro:'Work',truth:"The money isn't steady.",pos:{d:{l:'4%',t:'8%',w:'28%',h:'40%'},m:{l:'2%',t:'4%',w:'46%',h:'41%'}}},
-    {id:'self',name:'Self',micro:'Execution',truth:'You keep restarting.',pos:{d:{l:'68%',t:'8%',w:'28%',h:'40%'},m:{l:'52%',t:'4%',w:'46%',h:'41%'}}},
-    {id:'home',name:'Home',micro:'Daily',truth:'The day runs you.',pos:{d:{l:'4%',t:'54%',w:'28%',h:'40%'},m:{l:'2%',t:'53%',w:'46%',h:'41%'}}},
-    {id:'space',name:'Space',micro:'Environment',truth:'The place is costing you.',pos:{d:{l:'68%',t:'54%',w:'28%',h:'40%'},m:{l:'52%',t:'53%',w:'46%',h:'41%'}}}
+    {id:'business',name:'Business',micro:'Work',truth:"The money isn't steady.",pos:{d:{l:'4%',t:'8%',w:'28%',h:'42%'},m:{l:'2%',t:'4%',w:'46%',h:'41%'}}},
+    {id:'self',name:'Self',micro:'Execution',truth:'You keep restarting.',pos:{d:{l:'68%',t:'8%',w:'28%',h:'42%'},m:{l:'52%',t:'4%',w:'46%',h:'41%'}}},
+    {id:'home',name:'Home',micro:'Daily',truth:'The day runs you.',pos:{d:{l:'4%',t:'54%',w:'28%',h:'44%'},m:{l:'2%',t:'53%',w:'46%',h:'41%'}}},
+    {id:'space',name:'Space',micro:'Environment',truth:'The place is costing you.',pos:{d:{l:'68%',t:'54%',w:'28%',h:'44%'},m:{l:'52%',t:'53%',w:'46%',h:'41%'}}}
   ];
 
   var state = {
@@ -952,25 +952,25 @@ a{text-decoration:none}
     var field = document.getElementById('game-field');
     var placement = [
       // business (zone: left:4%, top:8%, w:28%, h:40%)
-      // cards start at y:20 to clear the zone label, spaced 12% apart
-      {x:6,  y:20}, {x:8,  y:30}, {x:6,  y:40},
+      // zone label sits at ~8-14%, cards start at 17% with real x-scatter
+      {x:5,  y:17}, {x:14, y:27}, {x:6,  y:38},
       // self (zone: left:68%, top:8%, w:28%, h:40%)
-      {x:70, y:20}, {x:72, y:30}, {x:70, y:40},
+      {x:76, y:17}, {x:69, y:28}, {x:74, y:38},
       // home (zone: left:4%, top:54%, h:40%)
-      // cards start at y:64 to clear zone label, spaced 11% apart
-      {x:6,  y:64}, {x:8,  y:74}, {x:6,  y:83},
+      // zone label at ~54-60%, cards from 63%
+      {x:13, y:63}, {x:5,  y:73}, {x:10, y:82},
       // space (zone: left:68%, top:54%, h:40%)
-      {x:70, y:64}, {x:72, y:74}, {x:70, y:83}
+      {x:69, y:63}, {x:78, y:73}, {x:70, y:82}
     ];
     var placementMobile = [
-      // business top-left (zone: 2–48%, 4–45%)
-      {x:3,  y:12}, {x:5,  y:23}, {x:3,  y:33},
-      // self top-right (zone: 52–98%, 4–45%)
-      {x:53, y:12}, {x:55, y:23}, {x:53, y:33},
-      // home bottom-left (zone: 2–48%, 53–94%)
-      {x:3,  y:60}, {x:5,  y:71}, {x:3,  y:81},
-      // space bottom-right (zone: 52–98%, 53–94%)
-      {x:53, y:60}, {x:55, y:71}, {x:53, y:81}
+      // business top-left
+      {x:3,  y:11}, {x:12, y:22}, {x:4,  y:32},
+      // self top-right
+      {x:57, y:11}, {x:52, y:22}, {x:56, y:32},
+      // home bottom-left
+      {x:10, y:60}, {x:3,  y:70}, {x:8,  y:79},
+      // space bottom-right
+      {x:52, y:60}, {x:61, y:70}, {x:53, y:79}
     ];
 
     zones.forEach(function(z){
@@ -983,6 +983,7 @@ a{text-decoration:none}
       field.appendChild(el);
     });
 
+    var floatDelays = [0, 0.4, 0.8, 1.2, 0.2, 0.6, 1.0, 0.3, 0.7, 1.1, 0.5, 0.9];
     fragments.forEach(function(frag, idx){
       var el = document.createElement('div');
       el.className = 'fragment';
@@ -994,7 +995,8 @@ a{text-decoration:none}
       var pos = state.isMobile ? placementMobile[idx] : placement[idx];
       el.style.left = pos.x + '%';
       el.style.top = pos.y + '%';
-      setTimeout(function(){ el.style.opacity = '1'; }, 130 + idx * 34);
+      el.style.animationDelay = floatDelays[idx] + 's';
+      setTimeout(function(){ el.style.opacity = '1'; }, 160 + idx * 42);
       el.addEventListener('click', function(){ handleClick(frag); });
       el.addEventListener('keydown', function(e){
         if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); handleClick(frag); }
