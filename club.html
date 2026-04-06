@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>.5% Club — Private Intelligence Layer</title>
+<meta name="description" content="A private intelligence layer. Not a course. Not a feed.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Lato:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0a0a08;--bg-1:#0f100d;--bg-2:#141611;--bg-3:#1a1c16;
+  --text:#f5f0e8;--text-2:rgba(245,240,232,0.72);--text-3:rgba(245,240,232,0.42);
+  --gold:#c4a35a;--gold-soft:rgba(196,163,90,0.35);--gold-faint:rgba(196,163,90,0.12);--gold-dim:rgba(196,163,90,0.06);
+  --border:rgba(196,163,90,0.18);--border-soft:rgba(245,240,232,0.08);
+}
+html{scroll-behavior:smooth}
+body{font-family:'Lato',sans-serif;font-weight:300;background:var(--bg);color:var(--text);font-size:16px;line-height:1.72;-webkit-font-smoothing:antialiased;overflow-x:hidden;}
+a{text-decoration:none;color:inherit}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:9998;opacity:.36;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");}
+
+nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;justify-content:space-between;align-items:center;padding:22px 52px;background:rgba(10,10,8,0.94);backdrop-filter:blur(12px);border-bottom:1px solid var(--border-soft);}
+.nav-mark{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:300;color:var(--gold);letter-spacing:-.02em;}
+.nav-back{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-3);transition:color .2s;display:flex;align-items:center;gap:8px;}
+.nav-back::before{content:'←'}
+.nav-back:hover{color:var(--gold)}
+
+/* HERO */
+#hero{min-height:100vh;display:flex;flex-direction:column;justify-content:flex-end;padding:140px 52px 96px;border-bottom:1px solid var(--border-soft);position:relative;}
+#hero::before{content:'';position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at 80% 20%,rgba(196,163,90,0.03) 0%,transparent 55%);}
+.hero-mark{position:absolute;top:50%;left:52px;transform:translateY(-50%);font-family:'Cormorant Garamond',serif;font-size:clamp(120px,20vw,240px);line-height:1;font-weight:300;color:var(--gold-dim);letter-spacing:-.04em;pointer-events:none;user-select:none;opacity:0;animation:markReveal 1.8s cubic-bezier(.16,1,.3,1) forwards;}
+@keyframes markReveal{from{opacity:0;transform:translateY(-48%) scale(.94)}to{opacity:1;transform:translateY(-50%) scale(1)}}
+.hero-content{position:relative;z-index:1}
+.hero-eyebrow{font-size:9px;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);font-weight:500;margin-bottom:32px;opacity:0;animation:fadeUp .7s cubic-bezier(.16,1,.3,1) forwards .3s;}
+.hero-headline{font-family:'Cormorant Garamond',serif;font-size:clamp(44px,6.5vw,92px);line-height:.98;letter-spacing:-.025em;font-weight:300;color:var(--text);max-width:760px;margin-bottom:32px;opacity:0;animation:fadeUp .8s cubic-bezier(.16,1,.3,1) forwards .45s;}
+.hero-headline em{font-style:italic;color:var(--text-2)}
+.hero-sub{font-size:18px;color:var(--text-2);line-height:1.6;max-width:440px;margin-bottom:48px;font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:300;opacity:0;animation:fadeUp .7s cubic-bezier(.16,1,.3,1) forwards .6s;}
+.hero-ctas{display:flex;gap:20px;align-items:center;flex-wrap:wrap;opacity:0;animation:fadeUp .6s cubic-bezier(.16,1,.3,1) forwards .75s;}
+.btn-gold-outline{display:inline-block;font-size:10px;letter-spacing:.16em;text-transform:uppercase;font-weight:500;color:var(--gold);border:1px solid var(--border);padding:16px 44px;transition:background .25s,color .25s,border-color .25s;cursor:pointer;}
+.btn-gold-outline:hover{background:var(--gold);color:var(--bg);border-color:var(--gold)}
+.hero-secondary{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-3);border-bottom:1px solid rgba(245,240,232,0.2);padding-bottom:2px;transition:color .2s;cursor:pointer;}
+.hero-secondary:hover{color:var(--text-2)}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+
+/* SECTIONS */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:start;}
+.section-pad{padding:96px 52px;border-bottom:1px solid var(--border-soft);}
+.section-eyebrow{font-size:9px;letter-spacing:.28em;text-transform:uppercase;color:var(--gold);font-weight:500;margin-bottom:28px;display:flex;align-items:center;gap:10px;}
+.section-eyebrow::before{content:'';width:20px;height:1px;background:var(--gold);opacity:.5}
+.section-headline{font-family:'Cormorant Garamond',serif;font-size:clamp(32px,3.5vw,48px);line-height:1.08;font-weight:300;color:var(--text);letter-spacing:-.015em;}
+
+/* WHAT */
+.what-body{font-size:15px;color:var(--text-2);line-height:1.78;margin-bottom:28px;}
+.plain-list{list-style:none;display:grid;gap:12px;margin-bottom:32px;}
+.plain-list li{font-size:14px;color:var(--text-3);padding-left:18px;position:relative;line-height:1.55;}
+.plain-list li::before{content:'';position:absolute;left:0;top:8px;width:5px;height:1px;background:var(--gold);opacity:.5;}
+.italic-close{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:18px;color:var(--text-2);line-height:1.55;padding-top:20px;border-top:1px solid var(--border-soft);}
+
+/* INSIDE GRID */
+.inside-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border-soft);max-width:900px;margin-top:56px;}
+.inside-item{background:var(--bg-1);padding:32px 28px;}
+.inside-num{font-family:'Cormorant Garamond',serif;font-size:36px;font-weight:300;color:var(--gold-soft);line-height:1;margin-bottom:16px;letter-spacing:-.02em;}
+.inside-title{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--text);font-weight:400;margin-bottom:8px;}
+.inside-body{font-size:13px;color:var(--text-3);line-height:1.6;}
+.inside-closing{margin-top:36px;max-width:540px;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:16px;color:var(--text-3);line-height:1.65;}
+
+/* NOT THIS */
+.ruled-list{list-style:none;display:grid;gap:0;margin-bottom:32px;}
+.ruled-list li{font-size:clamp(16px,1.8vw,20px);color:var(--text-3);padding:18px 0;border-bottom:1px solid var(--border-soft);font-family:'Cormorant Garamond',serif;font-style:italic;line-height:1.4;}
+.ruled-list li:first-child{border-top:1px solid var(--border-soft);}
+
+/* DROP PREVIEW */
+.drop-card{max-width:680px;border:1px solid var(--border);background:var(--bg-1);padding:40px;position:relative;overflow:hidden;margin-top:48px;}
+.drop-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,var(--gold),rgba(196,163,90,0.2) 60%,transparent);}
+.drop-theme-label{font-size:9px;letter-spacing:.24em;text-transform:uppercase;color:var(--gold);font-weight:500;margin-bottom:12px;}
+.drop-title{font-family:'Cormorant Garamond',serif;font-size:clamp(36px,4vw,52px);font-weight:300;color:var(--text);line-height:1;letter-spacing:-.02em;margin-bottom:8px;}
+.drop-date{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--text-3);margin-bottom:28px;}
+.drop-lines{display:grid;gap:10px;margin-bottom:36px;}
+.drop-line{font-size:14px;color:var(--text-2);padding-left:16px;position:relative;line-height:1.5;}
+.drop-line::before{content:'';position:absolute;left:0;top:8px;width:4px;height:1px;background:var(--gold);opacity:.4;}
+.drop-cta-btn{display:inline-block;font-size:10px;letter-spacing:.14em;text-transform:uppercase;font-weight:500;color:var(--gold);border:1px solid var(--border);padding:13px 32px;transition:background .25s,color .25s;cursor:pointer;}
+.drop-cta-btn:hover{background:var(--gold);color:var(--bg)}
+.drop-locked{margin-top:16px;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:13px;color:var(--text-3);}
+
+/* ENV BLOCKS */
+.env-blocks{display:grid;gap:32px;}
+.env-label{font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);font-weight:500;margin-bottom:10px;}
+.env-body{font-size:15px;color:var(--text-2);line-height:1.72;}
+
+/* WHO */
+.who-list{list-style:none;max-width:640px;display:grid;gap:0;margin-top:48px;}
+.who-item{padding:22px 0;border-bottom:1px solid var(--border-soft);font-family:'Cormorant Garamond',serif;font-size:clamp(20px,2.2vw,28px);font-weight:300;color:var(--text-2);line-height:1.3;display:flex;align-items:baseline;gap:16px;}
+.who-item:first-child{border-top:1px solid var(--border-soft)}
+.who-num{font-size:10px;letter-spacing:.12em;color:var(--gold-soft);font-family:'Lato',sans-serif;flex-shrink:0;padding-top:4px;}
+
+/* PRICE */
+.price-amount{font-family:'Cormorant Garamond',serif;font-size:clamp(80px,12vw,140px);line-height:.88;font-weight:300;color:var(--gold);letter-spacing:-.03em;margin-bottom:8px;}
+.price-note{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:16px;color:var(--text-3);margin-bottom:36px;}
+.price-body{font-size:15px;color:var(--text-2);line-height:1.72;max-width:400px;margin-bottom:16px;}
+.price-body-2{font-size:14px;color:var(--text-3);line-height:1.65;max-width:400px;margin-bottom:36px;}
+.btn-gold-solid{display:inline-block;font-size:10px;letter-spacing:.18em;text-transform:uppercase;font-weight:500;color:var(--bg);background:var(--gold);border:1px solid var(--gold);padding:18px 52px;transition:background .25s,color .25s,border-color .25s;cursor:pointer;}
+.btn-gold-solid:hover{background:var(--text);border-color:var(--text);color:var(--bg)}
+.bundle-note{margin-top:20px;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:14px;color:var(--text-3);}
+.bundle-note a{color:var(--gold);border-bottom:1px solid rgba(196,163,90,0.3);transition:color .2s;}
+.bundle-note a:hover{color:var(--text)}
+.price-right{display:grid;gap:20px;}
+.conn-item{padding:24px 28px;border:1px solid var(--border-soft);background:var(--bg-1);}
+.conn-item-label{font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);font-weight:500;margin-bottom:8px;}
+.conn-item-text{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:300;color:var(--text-2);line-height:1.3;}
+.conn-item.featured{border:1px solid rgba(196,163,90,0.35);background:rgba(196,163,90,0.05);}
+
+/* FINAL */
+#final{padding:120px 52px;text-align:center;position:relative;}
+#final::before{content:'';position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at center,rgba(196,163,90,0.04) 0%,transparent 65%);}
+.final-headline{font-family:'Cormorant Garamond',serif;font-size:clamp(36px,5vw,68px);line-height:1.04;font-weight:300;color:var(--text);letter-spacing:-.02em;max-width:640px;margin:0 auto 40px;}
+
+footer{padding:40px 52px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:20px;background:var(--bg-3);border-top:1px solid var(--border-soft);}
+.footer-mark{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:300;color:var(--gold);}
+.footer-links{display:flex;gap:24px;flex-wrap:wrap}
+.footer-link{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-3);transition:color .2s;}
+.footer-link:hover{color:var(--gold)}
+
+.mobile-sticky{display:none;position:fixed;bottom:0;left:0;right:0;z-index:200;padding:14px 20px;background:rgba(10,10,8,0.97);border-top:1px solid var(--border);backdrop-filter:blur(12px);}
+.mobile-sticky a{display:block;text-align:center;background:var(--gold);color:var(--bg);font-size:10px;letter-spacing:.16em;text-transform:uppercase;font-weight:500;padding:15px;}
+
+.reveal{opacity:0;transform:translateY(18px);transition:opacity .7s cubic-bezier(.16,1,.3,1),transform .7s cubic-bezier(.16,1,.3,1)}
+.reveal.visible{opacity:1;transform:translateY(0)}
+.reveal-d1{transition-delay:.1s}.reveal-d2{transition-delay:.2s}.reveal-d3{transition-delay:.3s}
+
+@media(max-width:900px){
+  nav{padding:18px 20px}
+  #hero{padding:110px 20px 72px;min-height:auto}
+  .hero-mark{font-size:clamp(80px,28vw,140px);left:20px}
+  .section-pad{padding:64px 20px}
+  .two-col{grid-template-columns:1fr;gap:36px}
+  .inside-grid{grid-template-columns:1fr;max-width:100%}
+  .drop-card{padding:28px 20px}
+  #final{padding:80px 20px}
+  footer{padding:32px 20px;flex-direction:column;align-items:flex-start}
+  .mobile-sticky{display:block}
+  body{padding-bottom:64px}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-mark">.5%</div>
+  <a href="/homepage.html" class="nav-back">Stephuary</a>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-mark" aria-hidden="true">.5%</div>
+  <div class="hero-content">
+    <div class="hero-eyebrow">Private access</div>
+    <h1 class="hero-headline">Most people are<br>informed. Very few<br>are <em>composed.</em></h1>
+    <p class="hero-sub">This is where that difference is built.</p>
+    <div class="hero-ctas">
+      <a href="#price" class="btn-gold-outline">Request Access</a>
+      <a href="#inside" class="hero-secondary">View what's inside</a>
+    </div>
+  </div>
+</section>
+
+<!-- WHAT THIS IS -->
+<section class="section-pad">
+  <div class="two-col">
+    <div>
+      <div class="section-eyebrow reveal">What this is</div>
+      <h2 class="section-headline reveal reveal-d1">A private layer inside Stephuary.</h2>
+    </div>
+    <div>
+      <p class="what-body reveal">Built around how people at the top actually operate. Not theory. Not motivation. The actual patterns behind decision quality, composure under pressure, and the way environments shape how you move.</p>
+      <ul class="plain-list reveal reveal-d1">
+        <li>Decision patterns</li>
+        <li>Cultural intelligence</li>
+        <li>Lived experience, operator-level</li>
+        <li>Environments that shape how people move</li>
+      </ul>
+      <div class="italic-close reveal reveal-d2">This is not content. It is curation.</div>
+    </div>
+  </div>
+</section>
+
+<!-- INSIDE -->
+<section class="section-pad" id="inside">
+  <div class="section-eyebrow reveal">Inside</div>
+  <h2 class="section-headline reveal reveal-d1">What you get access to.</h2>
+  <div class="inside-grid">
+    <div class="inside-item reveal">
+      <div class="inside-num">01</div>
+      <div class="inside-title">Intelligence Drops</div>
+      <div class="inside-body">Monthly intelligence releases. Five briefs, one protocol, a curated resource stack. Nothing published until it is ready.</div>
+    </div>
+    <div class="inside-item reveal reveal-d1">
+      <div class="inside-num">02</div>
+      <div class="inside-title">Cultural Recommendations</div>
+      <div class="inside-body">Hotels, film, music, place. Selected from the operator side of the desk, not review sites.</div>
+    </div>
+    <div class="inside-item reveal reveal-d2">
+      <div class="inside-num">03</div>
+      <div class="inside-title">Frameworks</div>
+      <div class="inside-body">Decision architecture used in real environments. The Pre-Decision System. Protected bandwidth. CEI framework applied.</div>
+    </div>
+    <div class="inside-item reveal">
+      <div class="inside-num">04</div>
+      <div class="inside-title">Access Callouts</div>
+      <div class="inside-body">Events, openings, windows. The ones worth attending and how to get in. Updated when relevant, not on a content calendar.</div>
+    </div>
+    <div class="inside-item reveal reveal-d1">
+      <div class="inside-num">05</div>
+      <div class="inside-title">Member Space</div>
+      <div class="inside-body">Private. Signal-only. Where members share observations and exchange access intel. Curated, not moderated.</div>
+    </div>
+    <div class="inside-item reveal reveal-d2">
+      <div class="inside-num">06</div>
+      <div class="inside-title">Operator Insight</div>
+      <div class="inside-body">Direct access to 20+ years of hospitality operations across 19+ countries. Ask. Get an actual answer.</div>
+    </div>
+  </div>
+  <p class="inside-closing reveal">Everything is selected. Nothing is random.</p>
+</section>
+
+<!-- NOT THIS -->
+<section class="section-pad">
+  <div class="two-col">
+    <div>
+      <div class="section-eyebrow reveal">Not this</div>
+      <h2 class="section-headline reveal reveal-d1">What this is not.</h2>
+    </div>
+    <div>
+      <ul class="ruled-list reveal">
+        <li>Not a content feed</li>
+        <li>Not a productivity system</li>
+        <li>Not a chat group</li>
+        <li>Not daily noise</li>
+      </ul>
+      <p class="italic-close reveal reveal-d1">If you are looking for volume, this is not for you.</p>
+    </div>
+  </div>
+</section>
+
+<!-- DROP PREVIEW -->
+<section class="section-pad">
+  <div class="section-eyebrow reveal">Current drop</div>
+  <div class="drop-card reveal reveal-d1">
+    <div class="drop-theme-label">April 2026 · Vol. 01 · Theme</div>
+    <div class="drop-title">Foundation</div>
+    <div class="drop-date">Released April 2026</div>
+    <div class="drop-lines">
+      <div class="drop-line">Five intelligence briefs</div>
+      <div class="drop-line">One protocol card</div>
+      <div class="drop-line">Curated resource stack</div>
+      <div class="drop-line">Operator-level hospitality recommendations</div>
+    </div>
+    <a href="#price" class="drop-cta-btn">Get Access to Read</a>
+    <p class="drop-locked">Members read this in full. Join below.</p>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="section-pad">
+  <div class="two-col">
+    <div>
+      <div class="section-eyebrow reveal">How this works</div>
+      <h2 class="section-headline reveal reveal-d1">Built to be used over time.</h2>
+    </div>
+    <div class="env-blocks">
+      <div class="reveal">
+        <div class="env-label">Drops</div>
+        <div class="env-body">New material releases in drops. Each one is self-contained. You read when you are ready.</div>
+      </div>
+      <div class="reveal reveal-d1">
+        <div class="env-label">Pressure</div>
+        <div class="env-body">No expectation to keep up. No pressure to consume everything. Return when you need something.</div>
+      </div>
+      <div class="reveal reveal-d2">
+        <div class="env-label">Access</div>
+        <div class="env-body">One payment. Everything that exists now and everything added after. No subscriptions. No tiers inside the tier.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHO -->
+<section class="section-pad">
+  <div class="section-eyebrow reveal">Who this is for</div>
+  <h2 class="section-headline reveal reveal-d1">This is for you if</h2>
+  <ul class="who-list">
+    <li class="who-item reveal"><span class="who-num">01</span>You notice details most people miss</li>
+    <li class="who-item reveal reveal-d1"><span class="who-num">02</span>You care how things feel, not just what they are</li>
+    <li class="who-item reveal reveal-d2"><span class="who-num">03</span>You want better judgment, not more information</li>
+    <li class="who-item reveal reveal-d3"><span class="who-num">04</span>You move between environments and want to read them clearly</li>
+  </ul>
+</section>
+
+<!-- PRICE -->
+<section class="section-pad" id="price">
+  <div class="two-col" style="align-items:center">
+    <div>
+      <div class="section-eyebrow reveal">Access</div>
+      <div class="price-amount reveal reveal-d1">$97</div>
+      <p class="price-note reveal reveal-d1">One time. Lifetime access.</p>
+      <p class="price-body reveal reveal-d2">This is not a subscription. Pay once. Everything that exists now, and everything added going forward.</p>
+      <p class="price-body-2 reveal reveal-d2">Access is ongoing. The archive grows. Your access never expires.</p>
+      <a href="https://gumroad.com/stephuary" class="btn-gold-solid reveal reveal-d3" target="_blank" rel="noopener">Join .5% Club</a>
+      <p class="bundle-note reveal reveal-d3">Want the Stephuary System too? <a href="https://gumroad.com/stephuary" target="_blank" rel="noopener">Full Access is $127</a> and includes both.</p>
+    </div>
+    <div class="price-right">
+      <div class="conn-item reveal">
+        <div class="conn-item-label">Stephuary System · $39</div>
+        <div class="conn-item-text">Clarity, execution steps, revenue paths. Fix what's breaking.</div>
+      </div>
+      <div class="conn-item reveal reveal-d1">
+        <div class="conn-item-label">.5% Club · $97</div>
+        <div class="conn-item-text">Private intelligence layer. Decision architecture. Cultural access.</div>
+      </div>
+      <div class="conn-item featured reveal reveal-d2">
+        <div class="conn-item-label">Full Access · $127</div>
+        <div class="conn-item-text">Both. One payment. Everything.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHERE THIS FITS -->
+<section class="section-pad">
+  <div class="two-col">
+    <div>
+      <div class="section-eyebrow reveal">Where this fits</div>
+      <h2 class="section-headline reveal reveal-d1">Stephuary gives you structure. .5% Club gives you context.</h2>
+      <p class="what-body reveal reveal-d2" style="margin-top:20px">One tells you what to do. The other shapes how you see. Most people need both.</p>
+    </div>
+    <div style="display:flex;align-items:center">
+      <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:clamp(20px,2.4vw,30px);color:var(--text-2);line-height:1.55;" class="reveal">
+        Start with clarity.<br>Stay for the context.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FINAL -->
+<section id="final">
+  <h2 class="final-headline reveal">You don't need more input. You need better signals.</h2>
+  <a href="https://gumroad.com/stephuary" class="btn-gold-solid reveal reveal-d1" target="_blank" rel="noopener">Join .5% Club</a>
+</section>
+
+<footer>
+  <div class="footer-mark">.5%</div>
+  <nav class="footer-links">
+    <a href="/homepage.html" class="footer-link">Stephuary</a>
+    <a href="/index.html" class="footer-link">Run Analysis</a>
+    <a href="https://gumroad.com/stephuary" class="footer-link" target="_blank" rel="noopener">Full Access</a>
+    <a href="https://grownspaghetti.substack.com" class="footer-link" target="_blank" rel="noopener">Substack</a>
+    <a href="https://onlysometimesclub.com" class="footer-link" target="_blank" rel="noopener">Only Sometimes Club</a>
+  </nav>
+</footer>
+
+<div class="mobile-sticky">
+  <a href="#price">Join .5% Club — $97</a>
+</div>
+
+<script>
+var observer = new IntersectionObserver(function(entries){
+  entries.forEach(function(e){ if(e.isIntersecting) e.target.classList.add('visible'); });
+},{threshold:0.1});
+document.querySelectorAll('.reveal').forEach(function(el){ observer.observe(el); });
+</script>
+</body>
+</html>
