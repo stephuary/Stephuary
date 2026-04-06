@@ -9,9 +9,6 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Mono:wght@300;400&family=Lato:wght@300;400&display=swap" rel="stylesheet"/>
 <style>
-/* ============================================================
-   RESET + TOKENS
-   ============================================================ */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 
 :root{
@@ -19,33 +16,23 @@
   --bg-1:      #0e0e0c;
   --bg-2:      #141412;
   --bg-3:      #1a1a17;
-
   --gold:      #c4a35a;
   --gold-hi:   #d4b46a;
   --gold-lo:   rgba(196,163,90,0.18);
   --gold-f:    rgba(196,163,90,0.06);
   --gold-line: rgba(196,163,90,0.2);
-
   --blue:      #2b4fd4;
   --blue-hi:   #3560e8;
-
   --text:      #f4ede0;
   --text-2:    #cbc3b4;
   --text-3:    #a09889;
   --text-4:    #6e6558;
   --text-5:    #4a4540;
-
   --line:      rgba(244,237,224,0.08);
   --line-2:    rgba(244,237,224,0.05);
-  --line-3:    rgba(244,237,224,0.03);
-
   --terra:     #b85c38;
   --terra-lo:  rgba(184,92,56,0.09);
   --terra-line:rgba(184,92,56,0.32);
-
-  --green-lo:  rgba(74,140,101,0.1);
-  --green-hi:  #6ab884;
-
   --serif: "Cormorant Garamond", Georgia, serif;
   --mono:  "DM Mono", monospace;
   --sans:  "Lato", system-ui, sans-serif;
@@ -65,19 +52,14 @@ html,body{
 
 a{color:inherit;text-decoration:none}
 
-/* grain */
 body::after{
-  content:"";
-  position:fixed;inset:0;
-  pointer-events:none;z-index:100;
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:100;
   opacity:0.022;
   background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   background-size:200px 200px;
 }
 
-/* ============================================================
-   LAYOUT
-   ============================================================ */
+/* LAYOUT */
 .page{max-width:720px;margin:0 auto;padding:0 24px 120px}
 
 .top-nav{
@@ -96,9 +78,7 @@ body::after{
 }
 .nav-link:hover{color:var(--text-4)}
 
-/* ============================================================
-   TYPE
-   ============================================================ */
+/* TYPE */
 .overline{
   font-size:10px;letter-spacing:0.2em;text-transform:uppercase;
   color:var(--gold);font-weight:400;display:block;margin-bottom:14px;
@@ -116,99 +96,69 @@ h1{
 }
 h1 em{font-style:italic;color:var(--text-3)}
 
-h2{
-  font-family:var(--serif);font-weight:300;
-  font-size:clamp(28px,5vw,44px);
-  line-height:1.06;letter-spacing:-0.015em;margin-bottom:16px;
-}
-
 p{color:var(--text-2);max-width:56ch}
 
-/* ============================================================
-   STATES
-   ============================================================ */
+/* STATES */
 .state{display:none}
 .state.active{display:block}
 
-/* ============================================================
-   STATE 1 — ENTRY REVEAL
-   ============================================================ */
+/* ENTRY REVEAL */
 @keyframes fadeUp{
   from{opacity:0;transform:translateY(8px)}
   to{opacity:1;transform:translateY(0)}
 }
+.e-1{opacity:0;animation:fadeUp 0.85s cubic-bezier(0.16,1,0.3,1) 0.08s forwards}
+.e-2{opacity:0;animation:fadeUp 0.7s cubic-bezier(0.16,1,0.3,1) 0.55s forwards}
+.e-3{opacity:0;animation:fadeUp 0.65s cubic-bezier(0.16,1,0.3,1) 1.0s forwards}
+.e-4{opacity:0;animation:fadeUp 0.55s cubic-bezier(0.16,1,0.3,1) 1.3s forwards}
+.e-5{opacity:0;animation:fadeUp 0.5s cubic-bezier(0.16,1,0.3,1) 1.6s forwards}
 
-.e-headline{opacity:0;animation:fadeUp 0.85s cubic-bezier(0.16,1,0.3,1) 0.08s forwards}
-.e-tension{opacity:0;animation:fadeUp 0.7s cubic-bezier(0.16,1,0.3,1) 0.55s forwards}
-.e-field{opacity:0;animation:fadeUp 0.65s cubic-bezier(0.16,1,0.3,1) 1.0s forwards}
-.e-action{opacity:0;animation:fadeUp 0.55s cubic-bezier(0.16,1,0.3,1) 1.3s forwards}
-.e-memory{opacity:0;animation:fadeUp 0.5s cubic-bezier(0.16,1,0.3,1) 1.6s forwards}
-
-/* ghost textarea */
+/* GHOST FIELD */
 .ghost-field{
-  width:100%;
-  background:transparent;
-  border:none;
+  width:100%;background:transparent;border:none;
   border-bottom:1px solid rgba(244,237,224,0.1);
-  color:var(--text);
-  font-family:var(--serif);
-  font-weight:300;
+  color:var(--text);font-family:var(--serif);font-weight:300;
   font-size:clamp(24px,4.5vw,34px);
-  padding:20px 0 16px;
-  outline:none;
-  resize:none;
-  line-height:1.4;
-  letter-spacing:-0.01em;
-  transition:border-color 400ms ease;
-  min-height:72px;
-  display:block;
+  padding:20px 0 16px;outline:none;resize:none;
+  line-height:1.4;letter-spacing:-0.01em;
+  transition:border-color 400ms ease;min-height:72px;display:block;
 }
 .ghost-field:focus{border-bottom-color:rgba(196,163,90,0.32)}
-.ghost-field::placeholder{color:rgba(160,152,137,0.45);font-style:italic}
+.ghost-field::placeholder{color:rgba(160,152,137,0.42);font-style:italic}
 
 .field-note{
-  font-size:12px;color:var(--text-5);
-  letter-spacing:0.05em;margin-top:14px;
-  font-style:italic;display:block;
+  font-size:12px;color:var(--text-5);letter-spacing:0.05em;
+  margin-top:14px;font-style:italic;display:block;
 }
 
-/* entry CTA */
+/* ENTRY CTA */
 .entry-cta{
   display:inline-flex;align-items:center;gap:14px;
   background:transparent;border:none;cursor:pointer;
-  font-family:var(--serif);
-  font-size:clamp(18px,3vw,22px);
-  font-weight:300;font-style:italic;
-  color:var(--text-4);padding:0;
+  font-family:var(--serif);font-size:clamp(18px,3vw,22px);
+  font-weight:300;font-style:italic;color:var(--text-4);padding:0;
   transition:color 220ms ease;
 }
 .entry-cta:hover{color:var(--text-2)}
 .entry-cta:active{opacity:0.6}
 .entry-arrow{
   font-style:normal;font-family:var(--sans);font-size:13px;
-  color:var(--gold);opacity:0.4;
-  transition:opacity 220ms,transform 220ms;
+  color:var(--gold);opacity:0.4;transition:opacity 220ms,transform 220ms;
 }
 .entry-cta:hover .entry-arrow{opacity:0.9;transform:translateX(5px)}
 
-/* prior run */
-.prior-run{
-  margin-top:64px;padding-top:28px;
-  border-top:1px solid var(--line-2);
-}
+/* PRIOR RUN */
+.prior-run{margin-top:64px;padding-top:28px;border-top:1px solid var(--line-2)}
 .prior-card{
   border:1px solid var(--line-2);background:var(--bg-1);
-  border-radius:var(--r);padding:20px 20px;
-  position:relative;overflow:hidden;
+  border-radius:var(--r);padding:20px;position:relative;overflow:hidden;
 }
 .prior-card::before{
   content:"";position:absolute;top:0;left:0;
   width:2px;height:100%;background:var(--gold);opacity:0.3;
 }
 
-/* ============================================================
-   LOADING
-   ============================================================ */
+/* LOADING */
 #loading-state{
   padding:100px 0;display:none;
   flex-direction:column;align-items:flex-start;gap:28px;
@@ -216,10 +166,9 @@ p{color:var(--text-2);max-width:56ch}
 #loading-state.active{display:flex}
 
 .load-text{
-  font-family:var(--serif);
-  font-size:clamp(28px,5vw,44px);
-  font-weight:300;color:var(--text-4);
-  font-style:italic;letter-spacing:-0.01em;line-height:1.15;
+  font-family:var(--serif);font-size:clamp(26px,4.5vw,40px);
+  font-weight:300;color:var(--text-4);font-style:italic;
+  letter-spacing:-0.01em;line-height:1.2;
 }
 .load-bar-track{
   width:100%;max-width:280px;height:1px;
@@ -228,33 +177,26 @@ p{color:var(--text-2);max-width:56ch}
 .load-bar-fill{
   height:100%;width:0%;
   background:linear-gradient(90deg,var(--gold),var(--gold-hi));
-  border-radius:1px;
-  transition:width 2.4s cubic-bezier(0.25,1,0.5,1);
+  border-radius:1px;transition:width 2.4s cubic-bezier(0.25,1,0.5,1);
 }
 .load-step{
   font-size:11px;letter-spacing:0.16em;text-transform:uppercase;
   color:var(--text-5);min-height:16px;
 }
 
-/* ============================================================
-   SHARED RESULT COMPONENTS
-   ============================================================ */
-
-/* section rhythm */
+/* SECTION RHYTHM */
 .rs{margin-bottom:52px}
-.rs + .rs{border-top:1px solid var(--line-2);padding-top:52px}
+.rs+.rs{border-top:1px solid var(--line-2);padding-top:52px}
 
-/* issue display */
+/* ISSUE HEADLINE */
 .issue-hl{
-  font-family:var(--serif);
-  font-size:clamp(30px,5.5vw,50px);
-  line-height:1.06;font-weight:300;
-  letter-spacing:-0.015em;
-  margin-bottom:20px;color:var(--text);
+  font-family:var(--serif);font-size:clamp(28px,5vw,46px);
+  line-height:1.08;font-weight:300;letter-spacing:-0.015em;
+  margin-bottom:0;color:var(--text);
 }
 .issue-hl em{font-style:italic;color:var(--terra)}
 
-/* tag */
+/* TAG */
 .tag{
   display:inline-flex;align-items:center;gap:8px;
   padding:5px 12px;border-radius:1px;
@@ -264,39 +206,45 @@ p{color:var(--text-2);max-width:56ch}
 .tag-issue{background:var(--terra-lo);color:var(--terra);border:1px solid var(--terra-line)}
 .tag-dot{width:5px;height:5px;border-radius:50%;background:currentColor}
 
-/* cost / impact rows */
-.line-list{
-  list-style:none;display:flex;flex-direction:column;gap:0;
-  border-top:1px solid var(--line-2);
+/* BODY TEXT BLOCKS */
+.body-short{
+  font-size:17px;color:var(--text-2);line-height:1.65;max-width:48ch;
 }
-.line-list li{
+.body-short+.body-short{margin-top:10px}
+
+/* BULLET LIST */
+.b-list{
+  list-style:none;display:flex;flex-direction:column;gap:0;
+  border-top:1px solid var(--line-2);margin-top:4px;
+}
+.b-list li{
   display:flex;align-items:flex-start;gap:16px;
-  padding:14px 0;border-bottom:1px solid var(--line-2);
+  padding:13px 0;border-bottom:1px solid var(--line-2);
   font-size:16px;color:var(--text-2);line-height:1.5;
 }
-.line-list li::before{
+.b-list li::before{
   content:"";width:4px;height:4px;border-radius:50%;
   background:var(--terra);flex-shrink:0;margin-top:9px;
 }
+.b-list.neutral li::before{background:var(--text-5)}
 
-/* why / pricing panel */
+/* INSET PANEL */
 .inset{
   background:var(--bg-1);border:1px solid var(--line);
   border-radius:var(--r);padding:22px 20px;
 }
 .inset p{font-size:16px;color:var(--text-2);line-height:1.65;max-width:none}
-.inset p+p{margin-top:12px}
+.inset p+p{margin-top:10px}
 
-/* ignore / aside */
+/* ASIDE */
 .aside{
-  padding:15px 18px;
-  background:rgba(255,255,255,0.02);
+  padding:14px 18px;background:rgba(255,255,255,0.02);
   border-left:2px solid rgba(244,237,224,0.08);
   border-radius:0 var(--r) var(--r) 0;
 }
 .aside p{font-size:15px;color:var(--text-4);font-style:italic;font-family:var(--serif);max-width:none}
 
-/* gold fix card */
+/* FIX CARD */
 .fix-card{
   border:1px solid var(--gold-line);
   background:linear-gradient(155deg,rgba(196,163,90,0.055),var(--bg-1));
@@ -308,130 +256,102 @@ p{color:var(--text-2);max-width:56ch}
   background:linear-gradient(90deg,transparent,var(--gold),transparent);opacity:0.45;
 }
 
-/* money cells */
+/* MONEY GRID */
 .money-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
-.money-cell{
-  padding:16px 14px;border:1px solid var(--line);
-  border-radius:var(--r);background:var(--bg-1);
-}
-.money-cell-label{font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--text-5);margin-bottom:8px;display:block}
-.money-cell-val{font-family:var(--serif);font-size:18px;color:var(--text);line-height:1.2;margin-bottom:5px}
+.money-cell{padding:16px 14px;border:1px solid var(--line);border-radius:var(--r);background:var(--bg-1)}
+.money-cell-label{font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--text-5);margin-bottom:6px;display:block}
+.money-cell-val{font-family:var(--serif);font-size:16px;color:var(--text);line-height:1.3;margin-bottom:5px}
 .money-cell-note{font-size:13px;color:var(--text-4);line-height:1.45}
 
-/* offer rows */
+/* OFFER FORMULA */
+.formula-block{
+  background:var(--bg-1);border:1px solid var(--gold-line);
+  border-radius:var(--r);padding:20px;margin-bottom:14px;
+}
+.formula-text{
+  font-family:var(--serif);font-size:17px;color:var(--text-2);
+  line-height:1.55;font-style:italic;max-width:none;
+}
+.formula-text strong{color:var(--text);font-style:normal;font-weight:400}
+
+/* OFFER ROWS */
 .offer-grid{display:flex;flex-direction:column;gap:0}
 .offer-row{
-  display:grid;grid-template-columns:80px 1fr auto;
-  gap:12px 22px;align-items:center;
-  padding:13px 0;border-bottom:1px solid var(--line-2);
+  display:grid;grid-template-columns:70px 1fr auto;
+  gap:10px 20px;align-items:center;
+  padding:12px 0;border-bottom:1px solid var(--line-2);
 }
 .offer-row:first-child{border-top:1px solid var(--line-2)}
 .offer-tier{font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--text-5)}
-.offer-name{font-size:16px;color:var(--text)}
-.offer-price{font-family:var(--serif);font-size:20px;color:var(--gold);white-space:nowrap}
+.offer-name{font-size:15px;color:var(--text-2)}
+.offer-price{font-family:var(--serif);font-size:19px;color:var(--gold);white-space:nowrap}
 
-/* outreach */
-.outreach-list{list-style:none;display:flex;flex-direction:column;gap:0}
-.outreach-item{
-  display:flex;align-items:flex-start;gap:18px;
+/* PRICE LIST */
+.price-list{list-style:none;display:flex;flex-direction:column;gap:0}
+.price-row{
+  display:flex;align-items:center;justify-content:space-between;
   padding:12px 0;border-bottom:1px solid var(--line-2);
 }
-.outreach-item:first-child{border-top:1px solid var(--line-2)}
-.outreach-n{font-family:var(--mono);font-size:11px;color:var(--gold);opacity:0.6;min-width:18px;padding-top:3px}
-.outreach-t{font-size:15px;color:var(--text-2);line-height:1.55}
+.price-row:first-child{border-top:1px solid var(--line-2)}
+.price-tier{font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--text-5)}
+.price-val{font-family:var(--serif);font-size:20px;color:var(--gold)}
 
-/* steps */
-.steps-list{list-style:none;display:flex;flex-direction:column;gap:0}
-.step-item{
-  display:grid;grid-template-columns:30px 1fr;
-  gap:14px;padding:15px 0;border-bottom:1px solid var(--line-2);
+/* OUTREACH MESSAGES */
+.msg-list{display:flex;flex-direction:column;gap:10px}
+.msg-item{padding:14px 16px;background:var(--bg-1);border:1px solid var(--line);border-radius:var(--r)}
+.msg-label{font-size:9px;letter-spacing:0.16em;text-transform:uppercase;color:var(--text-5);display:block;margin-bottom:6px}
+.msg-text{font-size:15px;color:var(--text-2);line-height:1.55;font-family:var(--serif);font-style:italic}
+
+/* STEPS */
+.do-list{list-style:none;display:flex;flex-direction:column;gap:0}
+.do-item{
+  display:grid;grid-template-columns:28px 1fr;
+  gap:14px;padding:14px 0;border-bottom:1px solid var(--line-2);
 }
-.step-item:first-child{border-top:1px solid var(--line-2)}
-.step-n{font-family:var(--serif);font-size:26px;font-weight:300;color:var(--gold);opacity:0.35;line-height:1.1}
-.step-title{font-size:15px;font-weight:400;color:var(--text);margin-bottom:4px}
-.step-desc{font-size:14px;color:var(--text-4);line-height:1.55;max-width:none}
+.do-item:first-child{border-top:1px solid var(--line-2)}
+.do-n{font-family:var(--serif);font-size:24px;font-weight:300;color:var(--gold);opacity:0.33;line-height:1.1}
+.do-text{font-size:15px;color:var(--text-2);line-height:1.55;padding-top:3px}
 
-/* rule */
+/* RULE */
 .rule-block{border-top:1px solid var(--gold-line);padding-top:22px}
-.rule-text{font-family:var(--serif);font-size:clamp(19px,2.8vw,26px);font-weight:300;color:var(--text-3);line-height:1.4;font-style:italic}
+.rule-text{
+  font-family:var(--serif);font-size:clamp(18px,2.8vw,25px);
+  font-weight:300;color:var(--text-3);line-height:1.4;font-style:italic;
+}
 
-/* ============================================================
-   STATE 2 — FREE RESULT CONTINUITY LINE
-   ============================================================ */
-/* thin gold top accent connecting to "what was just submitted" */
-.result-head-accent{
+/* CONTINUITY ACCENT */
+.accent-line{
   display:block;height:1px;
   background:linear-gradient(90deg,var(--gold),transparent);
-  opacity:0.25;margin-bottom:44px;
-  width:40%;
+  opacity:0.22;margin-bottom:44px;width:40%;
 }
 
-/* ============================================================
-   LOCK GATE
-   ============================================================ */
+/* LOCK GATE */
 .lock-gate{position:relative;margin-top:8px}
-.lock-blur{filter:blur(5px);pointer-events:none;user-select:none;opacity:0.38}
+.lock-blur{filter:blur(5px);pointer-events:none;user-select:none;opacity:0.36}
 .lock-panel{
   position:absolute;inset:0;
   display:flex;flex-direction:column;align-items:center;justify-content:center;
   gap:18px;
-  background:linear-gradient(to bottom,transparent 0%,var(--bg) 48%);
+  background:linear-gradient(to bottom,transparent 0%,var(--bg) 46%);
   z-index:2;padding:40px 24px;
 }
 .lock-hint{
   font-size:10px;letter-spacing:0.18em;text-transform:uppercase;
   color:var(--text-5);text-align:center;
 }
-.lock-list{
-  list-style:none;display:flex;flex-direction:column;
-  gap:7px;text-align:center;
-}
+.lock-list{list-style:none;display:flex;flex-direction:column;gap:7px;text-align:center}
 .lock-list li{font-size:15px;color:var(--text-4)}
+.lock-convert{
+  font-family:var(--serif);font-size:17px;font-style:italic;
+  color:var(--text-3);text-align:center;line-height:1.5;max-width:28ch;
+}
 .lock-cta-wrap{width:100%;max-width:380px}
 
-/* ============================================================
-   BUTTONS
-   ============================================================ */
-.btn{
-  display:inline-flex;align-items:center;justify-content:center;
-  min-height:52px;padding:15px 28px;
-  border-radius:var(--r);border:1px solid var(--line);
-  font-size:11px;letter-spacing:0.16em;text-transform:uppercase;
-  color:var(--text);background:transparent;cursor:pointer;
-  font-family:var(--sans);font-weight:400;
-  transition:all 140ms ease;white-space:nowrap;width:100%;
-}
-.btn:active{transform:scale(0.97)}
-
-.btn-primary{background:var(--blue);border-color:var(--blue);color:#fff}
-.btn-primary:hover{background:var(--blue-hi);border-color:var(--blue-hi)}
-
-.btn-ghost{border:1px solid var(--line);color:var(--text-4)}
-.btn-ghost:hover{border-color:var(--gold-line);color:var(--text-2)}
-
-/* soft rerun link style */
-.rerun-link{
-  display:inline-flex;align-items:center;gap:10px;
-  background:transparent;border:none;cursor:pointer;
-  font-family:var(--serif);font-size:17px;font-weight:300;font-style:italic;
-  color:var(--text-5);padding:0;
-  transition:color 200ms;
-}
-.rerun-link:hover{color:var(--text-3)}
-.rerun-link-arrow{
-  font-style:normal;font-family:var(--sans);font-size:12px;
-  color:var(--gold);opacity:0.35;
-  transition:opacity 200ms,transform 200ms;
-}
-.rerun-link:hover .rerun-link-arrow{opacity:0.7;transform:translateX(4px)}
-
-/* ============================================================
-   STATE 3 — MEMORY
-   ============================================================ */
+/* MEMORY */
 .mem-card{
   border:1px solid var(--line);background:var(--bg-1);
-  border-radius:var(--r);padding:22px 20px;
-  position:relative;overflow:hidden;
+  border-radius:var(--r);padding:22px 20px;position:relative;overflow:hidden;
 }
 .mem-card::before{
   content:"";position:absolute;top:0;left:0;
@@ -446,32 +366,67 @@ p{color:var(--text-2);max-width:56ch}
 .mem-interp{font-size:15px;color:var(--text-2);line-height:1.6;border-top:1px solid var(--line-2);padding-top:14px;max-width:none}
 .mem-next{font-size:14px;color:var(--text-4);margin-top:10px;font-style:italic;font-family:var(--serif);max-width:none}
 
-/* ============================================================
-   PROGRESSIVE REVEAL
-   ============================================================ */
+/* PAID INTRO */
+.paid-intro{
+  margin-bottom:52px;
+}
+.paid-intro-eyebrow{
+  font-size:10px;letter-spacing:0.2em;text-transform:uppercase;
+  color:var(--text-5);display:block;margin-bottom:14px;
+}
+.paid-intro-lead{
+  font-family:var(--serif);font-size:clamp(20px,3vw,26px);
+  font-weight:300;color:var(--text-3);font-style:italic;
+  line-height:1.4;
+}
+
+/* BUTTONS */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;
+  min-height:52px;padding:15px 28px;
+  border-radius:var(--r);border:1px solid var(--line);
+  font-size:11px;letter-spacing:0.16em;text-transform:uppercase;
+  color:var(--text);background:transparent;cursor:pointer;
+  font-family:var(--sans);font-weight:400;
+  transition:all 140ms ease;white-space:nowrap;width:100%;
+}
+.btn:active{transform:scale(0.97)}
+.btn-primary{background:var(--blue);border-color:var(--blue);color:#fff}
+.btn-primary:hover{background:var(--blue-hi);border-color:var(--blue-hi)}
+.btn-ghost{border:1px solid var(--line);color:var(--text-4)}
+.btn-ghost:hover{border-color:var(--gold-line);color:var(--text-2)}
+
+.rerun-link{
+  display:inline-flex;align-items:center;gap:10px;
+  background:transparent;border:none;cursor:pointer;
+  font-family:var(--serif);font-size:17px;font-weight:300;font-style:italic;
+  color:var(--text-5);padding:0;transition:color 200ms;
+}
+.rerun-link:hover{color:var(--text-3)}
+.rerun-arrow{
+  font-style:normal;font-family:var(--sans);font-size:12px;
+  color:var(--gold);opacity:0.35;transition:opacity 200ms,transform 200ms;
+}
+.rerun-link:hover .rerun-arrow{opacity:0.7;transform:translateX(4px)}
+
+/* PROGRESSIVE */
 @keyframes revealUp{
   from{opacity:0;transform:translateY(12px)}
   to{opacity:1;transform:translateY(0)}
 }
 .rv{opacity:0;animation:revealUp 0.5s ease forwards}
-.rv1{animation-delay:0.04s}
-.rv2{animation-delay:0.14s}
-.rv3{animation-delay:0.26s}
-.rv4{animation-delay:0.42s}
+.rv1{animation-delay:0.04s}.rv2{animation-delay:0.14s}
+.rv3{animation-delay:0.26s}.rv4{animation-delay:0.42s}
 
 .pb{opacity:0;transform:translateY(10px);transition:opacity 0.45s ease,transform 0.45s ease}
 .pb.shown{opacity:1;transform:translateY(0)}
 
-/* ============================================================
-   MISC
-   ============================================================ */
+/* MISC */
 .sep{height:1px;background:var(--line-2);margin:52px 0}
 .mb8{margin-bottom:8px}.mb12{margin-bottom:12px}.mb16{margin-bottom:16px}
-.mb20{margin-bottom:20px}.mb24{margin-bottom:24px}.mb32{margin-bottom:32px}
-.mb40{margin-bottom:40px}
+.mb20{margin-bottom:20px}.mb24{margin-bottom:24px}.mb40{margin-bottom:40px}
 .hidden{display:none!important}
 
-/* footer */
 .foot{
   border-top:1px solid var(--line-2);padding-top:22px;
   display:flex;flex-wrap:wrap;gap:10px 16px;margin-top:80px;
@@ -479,9 +434,7 @@ p{color:var(--text-2);max-width:56ch}
 .foot a{font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-5);transition:color 140ms}
 .foot a:hover{color:var(--text-4)}
 
-/* ============================================================
-   RESPONSIVE
-   ============================================================ */
+/* RESPONSIVE */
 @media(max-width:640px){
   .money-grid{grid-template-columns:1fr}
   .offer-row{grid-template-columns:60px 1fr;gap:8px 10px}
@@ -497,33 +450,32 @@ p{color:var(--text-2);max-width:56ch}
 <body>
 <div class="page">
 
-  <!-- NAV — identical across all three states -->
   <div class="top-nav">
     <span class="nav-logo">Stephuary</span>
     <a href="/system" class="nav-link">System</a>
   </div>
 
-  <!-- ══════════════════════════════════════════════════
-       STATE 1 — ENTRY THRESHOLD
-       ══════════════════════════════════════════════════ -->
+  <!-- ════════════════════════════════════════════
+       STATE 1 — INPUT
+       ════════════════════════════════════════════ -->
   <div id="state-input" class="state active">
 
-    <div class="e-headline" style="margin-bottom:48px;">
+    <div class="e-1" style="margin-bottom:48px;">
       <span class="overline" style="margin-bottom:22px;">Diagnostic</span>
-      <h1>Find what's<br><em>costing you</em></h1>
+      <h1>Find what's<br>costing you</h1>
     </div>
 
-    <div class="e-tension" style="margin-bottom:42px;">
-      <p style="font-family:var(--serif);font-size:clamp(18px,3vw,22px);font-weight:300;color:var(--text-4);font-style:italic;line-height:1.4;max-width:30ch;">
-        You already know where it's breaking.<br>Start there.
+    <div class="e-2" style="margin-bottom:44px;">
+      <p style="font-family:var(--serif);font-size:clamp(18px,3vw,22px);font-weight:300;color:var(--text-4);font-style:italic;line-height:1.4;max-width:28ch;">
+        You already know where it's breaking.<br>Say it.
       </p>
     </div>
 
-    <div class="e-field" style="margin-bottom:38px;">
+    <div class="e-3" style="margin-bottom:38px;">
       <textarea
         id="analysis-input"
         class="ghost-field"
-        placeholder="Say what feels off."
+        placeholder="What's not working?"
         rows="3"
         spellcheck="false"
         autocomplete="off"
@@ -531,15 +483,14 @@ p{color:var(--text-2);max-width:56ch}
       <span class="field-note">You don't need to explain everything.</span>
     </div>
 
-    <div class="e-action" style="margin-top:4px;">
+    <div class="e-4">
       <button class="entry-cta" id="run-btn" type="button">
         Show me
         <span class="entry-arrow">&#8594;</span>
       </button>
     </div>
 
-    <!-- prior run -->
-    <div id="memory-preview" class="prior-run e-memory hidden">
+    <div id="memory-preview" class="prior-run e-5 hidden">
       <span class="overline-dim" style="margin-bottom:16px;">Last run</span>
       <div class="prior-card" id="memory-preview-card"></div>
       <p style="font-size:12px;color:var(--text-5);margin-top:12px;font-style:italic;">A new analysis replaces this.</p>
@@ -547,71 +498,68 @@ p{color:var(--text-2);max-width:56ch}
 
   </div>
 
-  <!-- ══════════════════════════════════════════════════
+  <!-- ════════════════════════════════════════════
        LOADING
-       ══════════════════════════════════════════════════ -->
+       ════════════════════════════════════════════ -->
   <div id="loading-state" class="state">
-    <p class="load-text">Finding<br>what matters.</p>
+    <p class="load-text">Analyzing what<br>actually matters.</p>
     <div class="load-bar-track">
       <div class="load-bar-fill" id="loading-bar"></div>
     </div>
     <p class="load-step" id="loading-detail"></p>
   </div>
 
-  <!-- ══════════════════════════════════════════════════
+  <!-- ════════════════════════════════════════════
        STATE 2 — FREE RESULT
-       ══════════════════════════════════════════════════ -->
+       ════════════════════════════════════════════ -->
   <div id="state-free" class="state">
 
-    <!-- continuity accent: signals the flow is continuing, not starting over -->
-    <span class="result-head-accent"></span>
+    <span class="accent-line"></span>
 
-    <!-- 01 — PRIMARY ISSUE -->
+    <!-- A — PRIMARY ISSUE -->
     <div class="rs rv rv1">
       <span class="overline">This is what's actually wrong</span>
-      <div class="tag tag-issue mb16"><span class="tag-dot"></span><span id="fr-tag"></span></div>
-      <div class="issue-hl mb20" id="fr-headline"></div>
-      <div class="inset">
-        <p id="fr-why-1"></p>
-        <p id="fr-why-2"></p>
-      </div>
+      <div class="issue-hl" id="fr-headline"></div>
     </div>
 
-    <!-- 02 — WHAT IT IS COSTING -->
+    <!-- B — WHY IT MATTERS -->
     <div class="rs rv rv2">
-      <span class="overline-dim mb12">What this is costing</span>
-      <ul class="line-list" id="fr-costs"></ul>
+      <span class="overline-dim mb12">Why it matters</span>
+      <p class="body-short" id="fr-why-1"></p>
+      <p class="body-short" id="fr-why-2"></p>
     </div>
 
-    <!-- 03 — LOCK GATE -->
+    <!-- C — WHAT THIS IS COSTING -->
     <div class="rs rv rv3">
-      <span class="overline-dim mb12">Full analysis</span>
+      <span class="overline-dim mb12">What this is costing</span>
+      <ul class="b-list" id="fr-costs"></ul>
+    </div>
+
+    <!-- D — LOCKED TRANSITION -->
+    <div class="rs rv rv4">
+      <span class="overline-dim mb12">What to do next</span>
       <div class="lock-gate">
-        <!-- blurred preview -->
         <div class="lock-blur">
-          <div class="rs" style="margin-bottom:0;">
-            <p style="margin-bottom:12px;font-size:15px;color:var(--text-4);">Fix this first</p>
-            <div style="height:11px;width:78%;background:var(--bg-3);border-radius:1px;margin-bottom:7px;"></div>
-            <div style="height:11px;width:55%;background:var(--bg-3);border-radius:1px;margin-bottom:22px;"></div>
-            <p style="margin-bottom:12px;font-size:15px;color:var(--text-4);">Your best offer</p>
-            <div style="height:11px;width:88%;background:var(--bg-3);border-radius:1px;margin-bottom:7px;"></div>
-            <div style="height:11px;width:50%;background:var(--bg-3);border-radius:1px;margin-bottom:22px;"></div>
-            <p style="margin-bottom:12px;font-size:15px;color:var(--text-4);">Pricing strategy</p>
-            <div style="height:11px;width:70%;background:var(--bg-3);border-radius:1px;margin-bottom:7px;"></div>
-            <div style="height:11px;width:40%;background:var(--bg-3);border-radius:1px;"></div>
-          </div>
-        </div>
-        <!-- gate -->
-        <div class="lock-panel">
-          <p class="lock-hint">What the full analysis includes</p>
-          <ul class="lock-list">
-            <li>What to fix first</li>
-            <li>What to ignore</li>
-            <li>Your best offer</li>
-            <li>Pricing strategy</li>
-            <li>Outreach sequence</li>
-            <li>Next steps today</li>
+          <ul class="b-list neutral" style="margin-top:0;border-top:none;">
+            <li>what to fix first</li>
+            <li>what to ignore</li>
+            <li>your best offer</li>
+            <li>how to price it</li>
+            <li>how to say it</li>
+            <li>next 3 steps</li>
           </ul>
+        </div>
+        <div class="lock-panel">
+          <p class="lock-hint">Included in the full analysis</p>
+          <ul class="lock-list">
+            <li>what to fix first</li>
+            <li>what to ignore</li>
+            <li>your best offer</li>
+            <li>how to price it</li>
+            <li>how to say it</li>
+            <li>next 3 steps</li>
+          </ul>
+          <p class="lock-convert">You don't need more information.<br>You need the right decision.</p>
           <div class="lock-cta-wrap">
             <button class="btn btn-primary" id="unlock-btn" type="button" style="margin-bottom:12px;">
               See exactly what to do &rarr; Enter the System ($39)
@@ -624,32 +572,31 @@ p{color:var(--text-2);max-width:56ch}
       </div>
     </div>
 
-    <!-- rerun -->
-    <div class="rv rv4" style="margin-top:44px;">
+    <div style="margin-top:44px;">
       <button class="rerun-link" id="rerun-btn-free" type="button">
-        Run again <span class="rerun-link-arrow">&#8594;</span>
+        Run again <span class="rerun-arrow">&#8594;</span>
       </button>
     </div>
 
-  </div><!-- /state-free -->
+  </div>
 
-  <!-- ══════════════════════════════════════════════════
-       STATE 3 — FULL PAID ANALYSIS
-       ══════════════════════════════════════════════════ -->
+  <!-- ════════════════════════════════════════════
+       STATE 3 — FULL PAID
+       ════════════════════════════════════════════ -->
   <div id="state-paid" class="state">
 
-    <!-- memory comparison -->
+    <!-- memory -->
     <div id="memory-compare" class="pb mb40 hidden">
-      <span class="overline">Compared to your last run</span>
+      <span class="overline">What changed</span>
       <div class="mem-card">
         <div class="mem-delta">
           <div class="mem-box">
-            <span class="mem-box-label">Previous issue</span>
+            <span class="mem-box-label">Before</span>
             <p class="mem-prev-val" id="mem-prev-issue"></p>
           </div>
           <div class="mem-arrow">&#8594;</div>
           <div class="mem-box">
-            <span class="mem-box-label">Current issue</span>
+            <span class="mem-box-label">Now</span>
             <p class="mem-curr-val" id="mem-curr-issue"></p>
           </div>
         </div>
@@ -659,39 +606,50 @@ p{color:var(--text-2);max-width:56ch}
       <div class="sep"></div>
     </div>
 
-    <!-- continuity accent — same as free result, signals same system -->
-    <span class="result-head-accent pb"></span>
+    <!-- baseline memory (first run) -->
+    <div id="memory-baseline" class="pb mb40 hidden">
+      <div class="aside">
+        <p>This is your baseline.</p>
+        <p style="margin-top:8px;">Run this again after making changes.</p>
+      </div>
+      <div class="sep"></div>
+    </div>
 
-    <!-- 01 — WHAT ACTUALLY MATTERS -->
+    <span class="accent-line pb"></span>
+
+    <!-- intro -->
+    <div class="paid-intro pb">
+      <span class="paid-intro-eyebrow">Analysis complete</span>
+      <p class="paid-intro-lead">This is what actually matters.</p>
+    </div>
+
+    <!-- 1 — WHAT ACTUALLY MATTERS -->
     <div class="pb rs">
       <span class="overline">What actually matters</span>
-      <div class="tag tag-issue mb12"><span class="tag-dot"></span><span id="paid-tag"></span></div>
-      <div class="issue-hl mb20" id="paid-headline"></div>
-      <div class="tag tag-issue" style="opacity:0.6;font-size:9px;"><span class="tag-dot"></span><span id="paid-weak"></span></div>
+      <div class="issue-hl mb16" id="paid-headline"></div>
+      <p style="font-size:13px;letter-spacing:0.08em;color:var(--text-5);font-style:italic;" id="paid-weak"></p>
     </div>
 
-    <!-- 02 — WHY -->
+    <!-- 2 — WHY THIS IS THE PROBLEM -->
     <div class="pb rs">
       <span class="overline-dim mb16">Why this is the problem</span>
-      <div class="inset">
-        <p id="paid-why-1"></p>
-        <p id="paid-why-2" style="margin-top:12px;"></p>
-      </div>
+      <p class="body-short" id="paid-why-1"></p>
+      <p class="body-short" id="paid-why-2" style="margin-top:10px;"></p>
     </div>
 
-    <!-- 03 — IGNORE -->
+    <!-- 3 — IGNORE -->
     <div class="pb rs">
       <span class="overline-dim mb16">Ignore this for now</span>
-      <div class="aside"><p id="paid-ignore"></p></div>
+      <ul class="b-list neutral" id="paid-ignore-list"></ul>
     </div>
 
-    <!-- 04 — IMPACT -->
+    <!-- 4 — IMPACT -->
     <div class="pb rs">
       <span class="overline-dim mb16">This is the impact</span>
-      <ul class="line-list" id="paid-impact"></ul>
+      <ul class="b-list" id="paid-impact"></ul>
     </div>
 
-    <!-- 05 — FIX THIS FIRST -->
+    <!-- 5 — FIX THIS FIRST -->
     <div class="pb rs">
       <span class="overline mb16">Fix this first</span>
       <div class="fix-card">
@@ -699,35 +657,37 @@ p{color:var(--text-2);max-width:56ch}
       </div>
     </div>
 
-    <!-- 06 — REVENUE PATH -->
+    <!-- 6 — HOW THIS TURNS INTO MONEY -->
     <div class="pb rs">
       <span class="overline-dim mb16">How this turns into money</span>
       <div class="money-grid" id="paid-money"></div>
     </div>
 
-    <!-- 07 — OFFER BUILDER -->
+    <!-- 7 — WHAT YOU SHOULD SELL -->
     <div class="pb rs">
-      <span class="overline-dim mb16">Offer builder</span>
-      <p class="mb16" id="paid-offer-intro" style="font-size:15px;color:var(--text-4);max-width:none;"></p>
+      <span class="overline-dim mb16">This is what you should sell</span>
+      <div class="formula-block">
+        <p class="formula-text">I help <strong>[who]</strong> get <strong>[result]</strong> through <strong>[delivery]</strong> in <strong>[timeframe]</strong> for <strong>[$]</strong>.</p>
+      </div>
       <div class="offer-grid" id="paid-offers"></div>
     </div>
 
-    <!-- 08 — PRICING -->
+    <!-- 8 — PRICE IT -->
     <div class="pb rs">
-      <span class="overline-dim mb16">Pricing</span>
-      <div class="inset"><p id="paid-pricing" style="max-width:none;"></p></div>
+      <span class="overline-dim mb16">Price it like this</span>
+      <ul class="price-list" id="paid-pricing-list"></ul>
     </div>
 
-    <!-- 09 — OUTREACH -->
+    <!-- 9 — START CONVERSATIONS -->
     <div class="pb rs">
-      <span class="overline-dim mb16">Outreach</span>
-      <ul class="outreach-list" id="paid-outreach"></ul>
+      <span class="overline-dim mb16">Start conversations</span>
+      <div class="msg-list" id="paid-outreach"></div>
     </div>
 
-    <!-- 10 — NEXT STEPS -->
+    <!-- 10 — DO THIS NOW -->
     <div class="pb rs">
-      <span class="overline mb16">Next steps</span>
-      <ol class="steps-list" id="paid-steps"></ol>
+      <span class="overline mb16">Do this now</span>
+      <ol class="do-list" id="paid-steps"></ol>
     </div>
 
     <!-- 11 — ONE RULE -->
@@ -738,13 +698,13 @@ p{color:var(--text-2);max-width:56ch}
       </div>
     </div>
 
-    <!-- FINAL CTA — connects to next system layer -->
+    <!-- FINAL CTA -->
     <div class="pb" style="margin-top:48px;display:flex;flex-direction:column;gap:16px;">
       <button class="btn btn-primary" onclick="window.location.href='/monetize'">
         Build and test this &rarr; Go to Monetize
       </button>
       <button class="rerun-link" id="rerun-btn-paid" type="button">
-        Run again <span class="rerun-link-arrow">&#8594;</span>
+        Run again <span class="rerun-arrow">&#8594;</span>
       </button>
     </div>
 
@@ -758,113 +718,187 @@ p{color:var(--text-2);max-width:56ch}
       <a href="/sovereignty">Sovereignty</a>
     </footer>
 
-  </div><!-- /state-paid -->
+  </div>
 
-</div><!-- /page -->
-
+</div>
 <script>
-/* ============================================================
-   ANALYSIS DATA
-   ============================================================ */
+/* ════════════════════════════════════════════════
+   DATA
+   ════════════════════════════════════════════════ */
 var A = {
   offer:{
     tag:"Offer clarity",
-    headline:"Your offer is not clear enough to buy.",
-    weak:"Weak area: offer definition",
-    why1:"People do not buy confusing offers. They move on. If someone reads your description and cannot immediately understand the result they get and who it is for, they leave.",
-    why2:"This is not a design problem or a pricing problem. The offer itself is undefined.",
-    costs:["Every visitor who leaves without contacting you is a decision you forced them to make","Unclear offers attract the wrong clients and repel the right ones","You are spending time on everything except the one thing that closes clients"],
-    impact:["You are losing clients before a conversation starts","The wrong people reach out and the right people do not","Every month without a clear offer is revenue that does not exist"],
-    ignore:"Do not touch your website design, social presence, or content strategy until the offer is defined. Those are distribution. This is the product.",
-    fix:"Write one sentence: who you help, what they get, and what changes for them. That sentence is the offer. Everything else is built on top of it. Do not move to the next step until you can say it without thinking.",
-    money:[{label:"Immediate",val:"$1k–$3k",note:"First client with a clear offer, closed in days not months"},{label:"Short-term",val:"$3k–$6k/mo",note:"2–3 clients at a defined rate with a repeatable close"},{label:"Scaled",val:"$8k–$15k/mo",note:"Offer productized, referrals compounding, no custom scoping"}],
-    offerIntro:"Based on what you described, here is what your offer structure should look like:",
-    offers:[{tier:"Entry",name:"Clarity Session",price:"$500–$800"},{tier:"Core",name:"Strategy Package",price:"$2k–$3.5k"},{tier:"Premium",name:"Retained Advisory",price:"$5k–$8k/mo"}],
-    pricing:"Underpricing is the most common mistake after a vague offer. Price the outcome, not the time. A $3k offer that delivers $30k in clarity is not expensive. Start with a mid-tier price and do not discount. If people push back on price, the offer is still unclear.",
-    outreach:["Identify 20 specific people who need this outcome today","Write a 3-sentence message: what you do, what result they get, and what you want them to do next","Send 10 messages today. Not tomorrow. Today.","Follow up once at day 5 if no reply. One follow-up only.","Track replies and closes. If reply rate is below 10%, change who you are reaching."],
-    steps:[{t:"Write the offer sentence",d:"Who + what they get + what changes. One sentence. No qualifiers."},{t:"Set the price",d:"Start at your mid-tier number. Write it down. Commit to it before sending anything."},{t:"Send to 10 people today",d:"Not a broadcast. Specific people you already know need this."}],
-    rule:"Do not add complexity until you have one clear offer that closes consistently."
+    headline:"Your offer isn't clear enough to buy.",
+    weak:"Clarity is the constraint.",
+    why1:"People don't evaluate vague offers.",
+    why2:"They either understand it immediately or they move on.",
+    costs:["attention with no conversion","conversations that don't close","time spent fixing the wrong things"],
+    ignore:["your website design","your content frequency","your automation setup"],
+    impact:["you're getting interest without commitment","you're spending time without revenue","you're adjusting everything except the core issue"],
+    fix:"Define the exact result you deliver in one sentence.",
+    money:[
+      {label:"Immediate",val:"Clear offer",note:"faster yes or no"},
+      {label:"Short-term",val:"Better conversations",note:"higher close rate"},
+      {label:"Scaled",val:"Repeatable offer",note:"consistent revenue"}
+    ],
+    offers:[
+      {tier:"Entry",name:"One session, one question answered"},
+      {tier:"Core",name:"Defined scope, delivered in a week"},
+      {tier:"Premium",name:"Ongoing, recurring, retained"}
+    ],
+    pricing:[
+      {tier:"Entry",val:"$500–$800"},
+      {tier:"Core",val:"$2k–$3.5k"},
+      {tier:"Premium",val:"$5k–$8k/mo"}
+    ],
+    outreach:[
+      {label:"Direct",text:"I help [who] get [result]. Does that fit what you're working on right now?"},
+      {label:"Observation",text:"I noticed [specific thing]. Most people in your position are dealing with [problem]. That's exactly what I fix."},
+      {label:"Offer",text:"I have capacity for one more client this month. Here's what I do and what it costs: [one sentence]. Want to talk?"}
+    ],
+    steps:["Write the offer in one sentence","Send it to 10 people","Track who understands it immediately"],
+    rule:"Do not change the system while you're running it."
   },
   audience:{
     tag:"Audience definition",
-    headline:"You are not reaching the people who will pay.",
-    weak:"Weak area: target audience",
-    why1:"Reaching the wrong people is more expensive than reaching no one. It burns time, generates bad leads, and makes you believe the offer does not work when the problem is targeting.",
-    why2:"The right people exist. You have not identified them specifically enough to find them.",
-    costs:["Conversations that go nowhere take the same time as conversations that close","Marketing to a broad audience produces generic messaging that persuades nobody","You are measuring wrong results and drawing wrong conclusions"],
-    impact:["Revenue is inconsistent because buyers are inconsistent","You cannot improve what you cannot identify","The path to referrals does not exist without a specific audience"],
-    ignore:"Do not build new content, redesign anything, or launch new offers until you can name exactly who you are selling to. Specificity comes before distribution.",
-    fix:"Name three specific companies or three specific people who would pay for what you offer today. Not a demographic. Not a persona. Actual names or actual types with enough detail to find them on LinkedIn in under five minutes.",
-    money:[{label:"Immediate",val:"$1.5k–$4k",note:"Direct outreach to the three specific targets you just named"},{label:"Short-term",val:"$5k–$10k/mo",note:"Clear audience means referrals start working"},{label:"Scaled",val:"$12k–$20k/mo",note:"Niche authority drives inbound without constant outreach"}],
-    offerIntro:"Structured for the audience type you described:",
-    offers:[{tier:"Entry",name:"Audit or Assessment",price:"$750–$1.2k"},{tier:"Core",name:"Focused Engagement",price:"$3k–$5k"},{tier:"Premium",name:"Ongoing Partnership",price:"$6k–$10k/mo"}],
-    pricing:"Specific audiences pay more than broad ones. The more precisely you describe who you work with, the easier it is to justify a premium. Niche positioning is a pricing lever, not a limitation.",
-    outreach:["Build a list of 30 specific people who match your audience exactly","Write a message that references their specific situation, not a category","Send 15 messages per day, 5 days per week","Respond to every reply within 4 hours","Measure reply rate weekly. Below 8% means the targeting list needs to change."],
-    steps:[{t:"Name 30 specific targets",d:"People or companies you can find and contact within 24 hours."},{t:"Write one audience-specific message",d:"Reference their situation. Not your offer. Their situation first."},{t:"Send it to the first 10 today",d:"No waiting. No refining. Send and record the results."}],
-    rule:"Every piece of work you do must be for one specific person before it is for anyone else."
+    headline:"You're not reaching the people who will pay.",
+    weak:"Targeting is the constraint.",
+    why1:"Reaching the wrong people is more expensive than reaching no one.",
+    why2:"The right people exist. You haven't identified them specifically enough to find them.",
+    costs:["time spent on conversations that go nowhere","energy on messaging that persuades nobody","wrong conclusions from wrong data"],
+    ignore:["your content volume","your brand visuals","your website copy"],
+    impact:["revenue is inconsistent because buyers are inconsistent","you can't improve what you can't identify","referrals don't work without a specific audience"],
+    fix:"Name three specific people who would pay for what you do today.",
+    money:[
+      {label:"Immediate",val:"Targeted outreach",note:"direct to the right three people"},
+      {label:"Short-term",val:"Clear audience",note:"referrals start working"},
+      {label:"Scaled",val:"Niche authority",note:"inbound without constant outreach"}
+    ],
+    offers:[
+      {tier:"Entry",name:"Audit or single-session review"},
+      {tier:"Core",name:"Focused engagement, defined scope"},
+      {tier:"Premium",name:"Ongoing partnership, monthly"}
+    ],
+    pricing:[
+      {tier:"Entry",val:"$750–$1.2k"},
+      {tier:"Core",val:"$3k–$5k"},
+      {tier:"Premium",val:"$6k–$10k/mo"}
+    ],
+    outreach:[
+      {label:"Direct",text:"I work specifically with [type of person]. Are you dealing with [specific problem]?"},
+      {label:"Observation",text:"I saw [specific thing you did]. That's exactly the kind of problem I solve for [who]."},
+      {label:"Offer",text:"I have one opening this month for [specific person]. Here's what changes: [one sentence]. Interested?"}
+    ],
+    steps:["Name 30 specific people who fit exactly","Write one message referencing their situation","Send it to the first 10 today"],
+    rule:"Do not change the system while you're running it."
   },
   revenue:{
     tag:"Revenue model",
     headline:"You have no predictable income path.",
-    weak:"Weak area: revenue structure",
-    why1:"Inconsistent revenue is not a luck problem. It is a structure problem. Without a defined way income enters and repeats, you are starting from zero every month.",
-    why2:"This is fixable before you change anything else. You do not need more clients. You need a system for the clients you already have or almost have.",
-    costs:["Feast and famine cycles are entirely structural, not random","You cannot hire, invest, or scale on unpredictable income","Every decision is harder when the revenue floor is unknown"],
-    impact:["Month-to-month instability prevents compounding","You cannot build on revenue you cannot predict","The mental cost of income uncertainty is higher than the financial cost"],
-    ignore:"Do not launch new products, add services, or build a content strategy while the revenue structure is undefined. Fix the floor before you build the ceiling.",
-    fix:"Identify one repeating revenue stream you can activate today. This is a retainer offer, a monthly advisory, or a recurring product. Price it. Name the three people you will offer it to. Send the offer this week.",
-    money:[{label:"Immediate",val:"$2k–$5k",note:"One retainer at a defined monthly rate closes the gap"},{label:"Short-term",val:"$6k–$12k/mo",note:"3 retained clients at consistent rates"},{label:"Scaled",val:"$15k–$25k/mo",note:"Mixed model: retained base plus project work on top"}],
-    offerIntro:"Retainer structure built for your situation:",
-    offers:[{tier:"Base",name:"Monthly Advisory",price:"$1.5k–$2.5k/mo"},{tier:"Core",name:"Active Retainer",price:"$3k–$5k/mo"},{tier:"Full",name:"Embedded Partnership",price:"$7k–$12k/mo"}],
-    pricing:"Monthly retainers should be priced at a slight discount to the equivalent project work. The discount is for predictability, not for extra hours. Define the scope tightly. The moment the scope is undefined, the retainer becomes a liability.",
-    outreach:["Contact your last 5 clients or warm contacts today","Offer a monthly retainer at the lowest tier first","Frame it as continuity, not a new sale","Follow up at day 3 and day 7 if no reply","Close one before sending the next batch"],
-    steps:[{t:"Define the retainer scope",d:"What is included every month. What is not. Written clearly."},{t:"Set the monthly price",d:"Start at your base tier. Commit to it before reaching out."},{t:"Offer it to 5 people this week",d:"Existing relationships first. New contacts second."}],
-    rule:"You do not launch new offers until one recurring revenue stream is active and stable."
+    weak:"Structure is the constraint.",
+    why1:"Inconsistent revenue is not a luck problem. It is a structure problem.",
+    why2:"You don't need more clients. You need a system for the clients you almost have.",
+    costs:["decisions made without a floor","inability to hire, invest, or scale","every month starting from zero"],
+    ignore:["new product ideas","additional service lines","content strategy"],
+    impact:["month-to-month instability prevents compounding","you can't build on revenue you can't predict","the mental cost of uncertainty is higher than the financial cost"],
+    fix:"Identify one repeating revenue stream you can activate this week.",
+    money:[
+      {label:"Immediate",val:"One retainer",note:"defined monthly rate closes the gap"},
+      {label:"Short-term",val:"Three retained clients",note:"consistent rates, predictable floor"},
+      {label:"Scaled",val:"Mixed model",note:"retained base plus project work on top"}
+    ],
+    offers:[
+      {tier:"Base",name:"Monthly advisory, light touch"},
+      {tier:"Core",name:"Active retainer, defined scope"},
+      {tier:"Full",name:"Embedded partnership, weekly"}
+    ],
+    pricing:[
+      {tier:"Base",val:"$1.5k–$2.5k/mo"},
+      {tier:"Core",val:"$3k–$5k/mo"},
+      {tier:"Full",val:"$7k–$12k/mo"}
+    ],
+    outreach:[
+      {label:"Direct",text:"I have capacity for one retained client this month. Here's the scope and rate: [one sentence]. Does that work?"},
+      {label:"Observation",text:"We've worked together before. I'm moving to a retainer model. Here's what that looks like for you."},
+      {label:"Offer",text:"Continuity makes more sense than project-by-project. Here's what monthly looks like: [scope + price]."}
+    ],
+    steps:["Define the retainer scope in writing","Set the price and commit before reaching out","Offer it to five existing relationships this week"],
+    rule:"Do not change the system while you're running it."
   },
   execution:{
     tag:"Execution gap",
     headline:"The work is defined. You are not executing it.",
-    weak:"Weak area: execution consistency",
-    why1:"You already know what to do. The problem is not information or strategy. The problem is that the defined work is not happening at the volume and consistency required.",
-    why2:"This is an environment and structure problem, not a motivation problem. The conditions you work in are producing inconsistent output.",
-    costs:["Every day without execution is revenue that does not exist","Starting and stopping resets your position in every relationship you are building","Inconsistency makes everything else harder to measure and fix"],
-    impact:["You cannot test what you cannot run consistently","Inconsistent outreach produces inconsistent results that look like a strategy problem","Nothing compounds without daily execution"],
-    ignore:"Do not research new strategies, read more content, or add tools. You have what you need. The only variable is whether you run the work daily.",
-    fix:"Remove one condition that is preventing you from starting. Then set one task with a defined endpoint and do it for 30 minutes without switching. That is the entire system. Run it every day for 7 days before assessing anything.",
-    money:[{label:"Immediate",val:"$1k–$3k",note:"Consistent outreach closes 1 client within 2 weeks"},{label:"Short-term",val:"$4k–$8k/mo",note:"Daily execution compounds into a stable pipeline"},{label:"Scaled",val:"$10k–$18k/mo",note:"Systems replace effort. Output maintains without willpower."}],
-    offerIntro:"What to execute daily for the next 14 days:",
-    offers:[{tier:"Day 1–7",name:"15–20 outreach messages per day",price:""},{tier:"Day 8–14",name:"2 discovery calls booked",price:""},{tier:"Day 15+",name:"First close. Then repeat.",price:""}],
-    pricing:"Do not discount while executing. The temptation to lower prices to close faster is a sign of low volume, not a pricing problem. Increase output before you change price.",
-    outreach:["Send 15 targeted messages today before anything else","Follow up every open thread within 24 hours","Do not check results until you have run this for 5 days","Book two calls this week. Calls before closes.","Track actions, not feelings. Volume is the only variable right now."],
-    steps:[{t:"Remove the first interruption",d:"Phone out of reach. One tab open. One task defined."},{t:"Run 30 minutes of execution right now",d:"Not planning. Not research. Outreach or delivery."},{t:"Set tomorrow's task before today ends",d:"Write it down. When you open work tomorrow, it is already decided."}],
-    rule:"You do not assess the strategy until you have run it consistently for 14 days."
+    weak:"Consistency is the constraint.",
+    why1:"The problem is not information or strategy.",
+    why2:"The work isn't happening at the volume and consistency required.",
+    costs:["revenue that does not exist because the work is not going out","relationships that reset every time you stop","everything harder to measure and fix"],
+    ignore:["new strategies","additional tools","content you haven't started"],
+    impact:["you can't test what you can't run consistently","inconsistent outreach looks like a strategy problem","nothing compounds without daily execution"],
+    fix:"Remove one condition preventing you from starting. Do one task for 30 minutes without switching.",
+    money:[
+      {label:"Immediate",val:"Consistent outreach",note:"one close within two weeks"},
+      {label:"Short-term",val:"Daily execution",note:"compounds into a stable pipeline"},
+      {label:"Scaled",val:"Systems replace effort",note:"output maintains without willpower"}
+    ],
+    offers:[
+      {tier:"Day 1–7",name:"15–20 outreach messages per day"},
+      {tier:"Day 8–14",name:"Two discovery calls booked"},
+      {tier:"Day 15+",name:"First close. Then repeat."}
+    ],
+    pricing:[
+      {tier:"Your rate",val:"Do not discount"},
+      {tier:"Volume fix",val:"More output, not lower price"},
+      {tier:"Track",val:"Actions, not feelings"}
+    ],
+    outreach:[
+      {label:"Direct",text:"Send 15 targeted messages today. Not tomorrow."},
+      {label:"Observation",text:"Follow up every open thread within 24 hours."},
+      {label:"Offer",text:"Book two calls this week. Calls before closes."}
+    ],
+    steps:["Remove the first interruption right now","Run 30 minutes of execution immediately","Set tomorrow's task before today ends"],
+    rule:"Do not change the system while you're running it."
   },
   visibility:{
     tag:"Visibility gap",
     headline:"The right people do not know you exist.",
-    weak:"Weak area: market presence",
-    why1:"A strong offer with no distribution is invisible. The problem is not the quality of the work. It is that the people who would pay for it are not finding it.",
-    why2:"Visibility is not about volume of content. It is about consistent presence in front of a specific group of people who have the problem you solve.",
-    costs:["You are competing for clients you are not even in the room with","Referrals cannot happen if people do not know you well enough to describe what you do","Every month of low visibility is ground given to someone doing the same work more publicly"],
-    impact:["Inbound leads do not exist without visibility","Warm referrals dry up within 6 months of going quiet","You are relying entirely on outreach while ignoring the easier path"],
-    ignore:"Do not build a new website, create a new brand, or launch a newsletter right now. Visibility through content and presence on existing platforms is faster and cheaper than infrastructure.",
-    fix:"Publish one piece of content this week that shows a specific result from your work. Not a thought. Not advice. A result. Post it where your target audience already is. Do this every week for the next 6 weeks without stopping.",
-    money:[{label:"Immediate",val:"$1k–$2k",note:"One inbound inquiry from first visible content this month"},{label:"Short-term",val:"$3k–$7k/mo",note:"Consistent visibility generates 2–4 warm leads per month"},{label:"Scaled",val:"$8k–$15k/mo",note:"Authority positioning makes outreach easier and closes faster"}],
-    offerIntro:"Content-to-client path for your situation:",
-    offers:[{tier:"Week 1",name:"Publish one result-based post",price:""},{tier:"Month 1",name:"Weekly posting with direct CTA",price:""},{tier:"Month 3+",name:"Inbound leads from compounded presence",price:""}],
-    pricing:"Visibility is a pricing lever. The more people see you producing results, the less you have to justify your rate. Public proof reduces negotiation. Every piece of content that shows a result is a pricing argument that runs without you.",
-    outreach:["Share every piece of content directly with 10 specific people who would find it relevant","Ask for one referral per week from someone who already knows your work","Reply to every comment and message within 24 hours","Mention your work explicitly in 20% of what you publish","Do not hide what you do or how to hire you"],
-    steps:[{t:"Write the result post this week",d:"One specific outcome. One client situation. What changed."},{t:"Post it on one platform where your audience already is",d:"LinkedIn, Substack, or a specific community. One place first."},{t:"Send it directly to 10 people today",d:"Not a broadcast. Individual messages with one line of context."}],
-    rule:"You do not go quiet. Consistency over 6 weeks beats one great piece of content followed by silence."
+    weak:"Presence is the constraint.",
+    why1:"A strong offer with no distribution is invisible.",
+    why2:"Visibility is consistent presence in front of people who have the problem you solve.",
+    costs:["competing for clients you're not even in the room with","referrals that can't happen because nobody knows you well enough","ground given to someone doing the same work more publicly"],
+    ignore:["a new website","a new brand","a newsletter you haven't started"],
+    impact:["inbound leads don't exist without visibility","warm referrals dry up within six months of going quiet","you're relying entirely on outreach while ignoring the easier path"],
+    fix:"Publish one piece of content this week showing a specific result from your work.",
+    money:[
+      {label:"Immediate",val:"One visible result",note:"one inbound inquiry this month"},
+      {label:"Short-term",val:"Consistent presence",note:"two to four warm leads per month"},
+      {label:"Scaled",val:"Authority positioning",note:"outreach easier, closes faster"}
+    ],
+    offers:[
+      {tier:"Week 1",name:"One result-based post, published"},
+      {tier:"Month 1",name:"Weekly posting with a direct CTA"},
+      {tier:"Month 3+",name:"Inbound leads from compounded presence"}
+    ],
+    pricing:[
+      {tier:"Entry",val:"$1k–$2k"},
+      {tier:"Core",val:"$3k–$7k/mo"},
+      {tier:"Scaled",val:"$8k–$15k/mo"}
+    ],
+    outreach:[
+      {label:"Direct",text:"Share every post directly with 10 specific people who would find it relevant."},
+      {label:"Observation",text:"Ask for one referral per week from someone who already knows your work."},
+      {label:"Offer",text:"Mention what you do and how to hire you in 20% of what you publish."}
+    ],
+    steps:["Write the result post this week — one outcome, one situation, what changed","Post it on one platform where your audience already is","Send it directly to 10 people today, individually"],
+    rule:"Do not change the system while you're running it."
   }
 };
 
-/* ============================================================
+/* ════════════════════════════════════════════════
    SCORING
-   ============================================================ */
+   ════════════════════════════════════════════════ */
 function score(inp){
   var t=inp.toLowerCase(),s={offer:0,audience:0,revenue:0,execution:0,visibility:0};
-  if(/no client|no sale|not selling|not closing|can't close|can.t explain|hard to describe|confusing|unclear offer|what i do|don.t know what/.test(t))s.offer+=3;
+  if(/no client|no sale|not selling|not closing|can't close|hard to describe|confusing|unclear offer|what i do|don.t know what/.test(t))s.offer+=3;
   if(/offer|package|service|what i sell|what i do|describe my/.test(t))s.offer+=1;
   if(/no target|wrong client|bad lead|anyone|everyone|broad|general|niche|who to reach|audience|who to sell/.test(t))s.audience+=3;
   if(/client type|ideal client|target market|who is this for/.test(t))s.audience+=1;
@@ -880,16 +914,13 @@ function score(inp){
   return w;
 }
 
-/* ============================================================
+/* ════════════════════════════════════════════════
    MEMORY
-   ============================================================ */
+   ════════════════════════════════════════════════ */
 var SK='sth_analysis_v1';
 function loadMem(){try{return JSON.parse(localStorage.getItem(SK))||null;}catch(e){return null;}}
 function saveMem(e){try{localStorage.setItem(SK,JSON.stringify(e));}catch(e){}}
 
-/* ============================================================
-   STATE
-   ============================================================ */
 var curA=null,curI='';
 
 function showState(id){
@@ -899,9 +930,9 @@ function showState(id){
   window.scrollTo({top:0,behavior:'smooth'});
 }
 
-/* ============================================================
+/* ════════════════════════════════════════════════
    INIT INPUT
-   ============================================================ */
+   ════════════════════════════════════════════════ */
 function initInput(){
   var m=loadMem();
   if(!m)return;
@@ -913,13 +944,12 @@ function initInput(){
     '<p style="font-family:var(--serif);font-size:17px;color:var(--text-3);margin-bottom:12px;font-style:italic;">"'+trunc(m.input,80)+'"</p>'+
     '<div class="tag tag-issue" style="margin-bottom:0;"><span class="tag-dot"></span><span>'+A[m.type].tag+'</span></div>';
 }
-
 function trunc(s,n){return s.length>n?s.slice(0,n)+'…':s;}
 
-/* ============================================================
+/* ════════════════════════════════════════════════
    LOADING
-   ============================================================ */
-var loadMsgs=['Reading the signal…','Identifying the primary issue…','Scoring weak areas…','Building the analysis…','Almost there…'];
+   ════════════════════════════════════════════════ */
+var loadMsgs=['Locating the constraint…','Checking the signal…','Stripping out what doesn\'t matter…','Building the result…','Almost there…'];
 
 function runLoad(cb){
   showState('loading-state');
@@ -931,74 +961,103 @@ function runLoad(cb){
   setTimeout(function(){clearInterval(iv);cb();},2600);
 }
 
-/* ============================================================
-   FORMAT HEADLINE
-   ============================================================ */
+/* ════════════════════════════════════════════════
+   FORMAT
+   ════════════════════════════════════════════════ */
 function fmtHl(text){
   var w=text.split(' ');
   if(w.length>4){var c=w.length-3;return w.slice(0,c).join(' ')+' <em>'+w.slice(c).join(' ')+'</em>';}
   return '<em>'+text+'</em>';
 }
 
-/* ============================================================
+/* ════════════════════════════════════════════════
    RENDER FREE
-   ============================================================ */
+   ════════════════════════════════════════════════ */
 function renderFree(a){
-  document.getElementById('fr-tag').textContent=a.tag;
   document.getElementById('fr-headline').innerHTML=fmtHl(a.headline);
   document.getElementById('fr-why-1').textContent=a.why1;
   document.getElementById('fr-why-2').textContent=a.why2;
   var cl=document.getElementById('fr-costs');cl.innerHTML='';
-  a.costs.forEach(function(c){var li=document.createElement('li');li.innerHTML='<span>'+c+'</span>';cl.appendChild(li);});
+  a.costs.forEach(function(c){
+    var li=document.createElement('li');
+    li.innerHTML='<span>'+c+'</span>';
+    cl.appendChild(li);
+  });
   showState('state-free');
 }
 
-/* ============================================================
+/* ════════════════════════════════════════════════
    RENDER PAID
-   ============================================================ */
+   ════════════════════════════════════════════════ */
 function renderPaid(a,type){
-  // memory block
-  var m=loadMem(),mc=document.getElementById('memory-compare');
-  if(m&&m.type){
-    mc.classList.remove('hidden');
-    document.getElementById('mem-prev-issue').textContent=A[m.type].tag;
-    document.getElementById('mem-curr-issue').textContent=a.tag;
-    var map={offer:'offer clarity',audience:'audience definition',revenue:'revenue structure',execution:'execution consistency',visibility:'market visibility'};
-    if(m.type!==type){
-      document.getElementById('mem-interp').textContent='Your previous primary issue was '+map[m.type]+'. The current analysis identifies '+map[type]+' as the primary block. This shift is meaningful. It may indicate progress on the previous issue, or a different constraint has become the limiting factor.';
-      document.getElementById('mem-next').textContent='The current focus is correct. Do not return to the previous issue until this one is resolved.';
-    }else{
-      document.getElementById('mem-interp').textContent='The same issue is still the primary block. You identified it before. This run confirms it has not been resolved.';
-      document.getElementById('mem-next').textContent='Fix this before running another analysis. Another analysis will return the same result.';
-    }
+  var m=loadMem();
+  var mc=document.getElementById('memory-compare');
+  var mb=document.getElementById('memory-baseline');
+  var map={offer:'unclear offer',audience:'weak targeting',revenue:'no revenue structure',execution:'execution gap',visibility:'low visibility'};
+
+  if(m&&m.type&&m.type!==type){
+    mc.classList.remove('hidden');mb.classList.add('hidden');
+    document.getElementById('mem-prev-issue').textContent=map[m.type];
+    document.getElementById('mem-curr-issue').textContent=map[type];
+    document.getElementById('mem-interp').textContent='You fixed the first constraint. Now the next one is visible.';
+    document.getElementById('mem-next').textContent='Fix '+map[type]+' before running this again.';
+  } else if(m&&m.type&&m.type===type){
+    mc.classList.remove('hidden');mb.classList.add('hidden');
+    document.getElementById('mem-prev-issue').textContent=map[m.type];
+    document.getElementById('mem-curr-issue').textContent=map[type];
+    document.getElementById('mem-interp').textContent='The same constraint is still active. This run confirms it has not been resolved.';
+    document.getElementById('mem-next').textContent='Fix this before running another analysis.';
+  } else {
+    mb.classList.remove('hidden');mc.classList.add('hidden');
   }
 
-  // fields
-  document.getElementById('paid-tag').textContent=a.tag;
   document.getElementById('paid-headline').innerHTML=fmtHl(a.headline);
   document.getElementById('paid-weak').textContent=a.weak;
   document.getElementById('paid-why-1').textContent=a.why1;
   document.getElementById('paid-why-2').textContent=a.why2;
-  document.getElementById('paid-ignore').textContent=a.ignore;
   document.getElementById('paid-fix').textContent=a.fix;
-  document.getElementById('paid-offer-intro').textContent=a.offerIntro;
-  document.getElementById('paid-pricing').textContent=a.pricing;
   document.getElementById('paid-rule').textContent=a.rule;
+
+  var ig=document.getElementById('paid-ignore-list');ig.innerHTML='';
+  a.ignore.forEach(function(c){var li=document.createElement('li');li.innerHTML='<span>'+c+'</span>';ig.appendChild(li);});
 
   var imp=document.getElementById('paid-impact');imp.innerHTML='';
   a.impact.forEach(function(c){var li=document.createElement('li');li.innerHTML='<span>'+c+'</span>';imp.appendChild(li);});
 
   var mon=document.getElementById('paid-money');mon.innerHTML='';
-  a.money.forEach(function(m){var d=document.createElement('div');d.className='money-cell';d.innerHTML='<span class="money-cell-label">'+m.label+'</span><div class="money-cell-val">'+m.val+'</div><p class="money-cell-note">'+m.note+'</p>';mon.appendChild(d);});
+  a.money.forEach(function(m){
+    var d=document.createElement('div');d.className='money-cell';
+    d.innerHTML='<span class="money-cell-label">'+m.label+'</span><div class="money-cell-val">'+m.val+'</div><p class="money-cell-note">'+m.note+'</p>';
+    mon.appendChild(d);
+  });
 
   var off=document.getElementById('paid-offers');off.innerHTML='';
-  a.offers.forEach(function(o){var r=document.createElement('div');r.className='offer-row';r.innerHTML='<span class="offer-tier">'+o.tier+'</span><span class="offer-name">'+o.name+'</span><span class="offer-price">'+o.price+'</span>';off.appendChild(r);});
+  a.offers.forEach(function(o){
+    var r=document.createElement('div');r.className='offer-row';
+    r.innerHTML='<span class="offer-tier">'+o.tier+'</span><span class="offer-name">'+o.name+'</span>';
+    off.appendChild(r);
+  });
+
+  var pl=document.getElementById('paid-pricing-list');pl.innerHTML='';
+  a.pricing.forEach(function(p){
+    var li=document.createElement('li');li.className='price-row';
+    li.innerHTML='<span class="price-tier">'+p.tier+'</span><span class="price-val">'+p.val+'</span>';
+    pl.appendChild(li);
+  });
 
   var ou=document.getElementById('paid-outreach');ou.innerHTML='';
-  a.outreach.forEach(function(item,i){var li=document.createElement('li');li.className='outreach-item';li.innerHTML='<span class="outreach-n">0'+(i+1)+'</span><span class="outreach-t">'+item+'</span>';ou.appendChild(li);});
+  a.outreach.forEach(function(item){
+    var d=document.createElement('div');d.className='msg-item';
+    d.innerHTML='<span class="msg-label">'+item.label+'</span><p class="msg-text">'+item.text+'</p>';
+    ou.appendChild(d);
+  });
 
   var st=document.getElementById('paid-steps');st.innerHTML='';
-  a.steps.forEach(function(s,i){var li=document.createElement('li');li.className='step-item';li.innerHTML='<span class="step-n">'+(i+1)+'</span><div><div class="step-title">'+s.t+'</div><p class="step-desc">'+s.d+'</p></div>';st.appendChild(li);});
+  a.steps.forEach(function(s,i){
+    var li=document.createElement('li');li.className='do-item';
+    li.innerHTML='<span class="do-n">'+(i+1)+'</span><span class="do-text">'+s+'</span>';
+    st.appendChild(li);
+  });
 
   showState('state-paid');
   document.querySelectorAll('#state-paid .pb').forEach(function(b,i){
@@ -1006,9 +1065,9 @@ function renderPaid(a,type){
   });
 }
 
-/* ============================================================
+/* ════════════════════════════════════════════════
    EVENTS
-   ============================================================ */
+   ════════════════════════════════════════════════ */
 document.getElementById('run-btn').addEventListener('click',function(){
   var val=document.getElementById('analysis-input').value.trim();
   if(!val){
@@ -1018,7 +1077,10 @@ document.getElementById('run-btn').addEventListener('click',function(){
   }
   curI=val;
   var type=score(val);curA=A[type];
-  runLoad(function(){saveMem({input:val,type:type,ts:Date.now()});renderFree(curA);});
+  runLoad(function(){
+    saveMem({input:val,type:type,ts:Date.now()});
+    renderFree(curA);
+  });
 });
 
 document.getElementById('demo-unlock-btn').addEventListener('click',function(){
