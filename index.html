@@ -11,28 +11,33 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg:       #080807;
-      --bg-1:     #0d0d0b;
-      --bg-2:     #121210;
-      --bg-3:     #181816;
-      --gold:     #c4a35a;
-      --gold-dim: #7a6535;
-      --blue:     #2b4fd4;
-      --text:     #f4ede0;
-      --text-2:   #cbc3b4;
-      --text-3:   #a09890;
-      --text-4:   #6e6558;
-      --text-5:   #3e3b36;
-      --border-3: rgba(244,237,224,0.06);
-      --border-g: rgba(196,163,90,0.10);
-      --border-g2:rgba(196,163,90,0.18);
+      --bg:            #080807;
+      --bg-1:          #0d0d0b;
+      --bg-2:          #121210;
+      --bg-3:          #181614;
+      --oxblood:       #2a0f12;
+      --oxblood-acc:   #5a1f24;
+      --oxblood-faint: rgba(42,15,18,0.65);
+      --gold:          #c4a35a;
+      --gold-dim:      #8a7040;
+      --gold-faint:    rgba(196,163,90,0.08);
+      --gold-line:     rgba(196,163,90,0.18);
+      --blue:          #2b4fd4;
+      --blue-hi:       #3a5ee0;
+      --text-primary:  #f4ede0;
+      --text-secondary:#d2c7b8;
+      --text-muted:    #a89f92;
+      --text-dim:      #6e6558;
+      --text-label:    #4a4540;
+      --border:        rgba(244,237,224,0.07);
+      --border-gold:   rgba(196,163,90,0.15);
     }
 
     html { scroll-behavior: smooth; }
 
     body {
       background: var(--bg);
-      color: var(--text);
+      color: var(--text-primary);
       font-family: 'Lato', sans-serif;
       font-weight: 300;
       -webkit-font-smoothing: antialiased;
@@ -44,17 +49,17 @@
       position: fixed;
       inset: 0;
       background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
-      opacity: 0.022;
+      opacity: 0.025;
       pointer-events: none;
-      z-index: 200;
+      z-index: 300;
     }
 
     /* REVEAL */
     .reveal {
       opacity: 0;
       transform: translateY(18px);
-      transition: opacity 0.8s cubic-bezier(0.22,1,0.36,1),
-                  transform 0.8s cubic-bezier(0.22,1,0.36,1);
+      transition: opacity 0.85s cubic-bezier(0.22,1,0.36,1),
+                  transform 0.85s cubic-bezier(0.22,1,0.36,1);
     }
     .reveal.visible { opacity: 1; transform: none; }
     .d1 { transition-delay: 0.10s; }
@@ -67,39 +72,37 @@
     nav {
       position: fixed;
       top: 0; left: 0; right: 0;
-      z-index: 100;
+      z-index: 200;
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 20px;
-      padding: 20px 48px;
-      background: linear-gradient(to bottom, rgba(8,8,7,0.97), transparent);
+      padding: 20px 52px;
+      background: linear-gradient(to bottom, rgba(8,8,7,0.98) 0%, transparent 100%);
+      border-bottom: 1px solid transparent;
+      transition: border-color 0.3s;
     }
+    nav.scrolled { border-bottom-color: var(--border); }
 
     .nav-mark {
       font-family: 'Cormorant Garamond', serif;
       font-weight: 300;
       font-size: 17px;
-      letter-spacing: 0.14em;
+      letter-spacing: 0.15em;
       text-transform: uppercase;
-      color: var(--text);
+      color: var(--text-primary);
       text-decoration: none;
       flex-shrink: 0;
     }
 
-    /* two nav groups: primary (visible) + secondary (desktop only) */
-    .nav-primary {
+    .nav-primary, .nav-secondary {
       display: flex;
       align-items: center;
-      gap: 24px;
+      gap: 22px;
     }
-
     .nav-secondary {
-      display: flex;
-      align-items: center;
-      gap: 18px;
       padding-left: 18px;
-      border-left: 1px solid var(--border-3);
+      border-left: 1px solid var(--border);
     }
 
     .nav-link {
@@ -108,20 +111,20 @@
       font-weight: 300;
       letter-spacing: 0.15em;
       text-transform: uppercase;
-      color: var(--text-4);
+      color: var(--text-dim);
       text-decoration: none;
-      transition: color 0.2s;
+      transition: color 0.22s;
       white-space: nowrap;
     }
-    .nav-link:hover { color: var(--text-2); }
+    .nav-link:hover { color: var(--text-secondary); }
     .nav-link-gold { color: var(--gold-dim); }
     .nav-link-gold:hover { color: var(--gold); }
-    .nav-link-em { color: var(--text-3); }
-    .nav-link-em:hover { color: var(--text); }
+    .nav-link-em { color: var(--text-muted); }
+    .nav-link-em:hover { color: var(--text-primary); }
 
     /* SHARED */
-    section { border-bottom: 1px solid var(--border-3); }
-    .pad { padding: 96px 48px; }
+    section { border-bottom: 1px solid var(--border); }
+    .pad { padding: 100px 52px; }
     .inner { max-width: 1100px; margin: 0 auto; }
 
     .eyebrow {
@@ -130,7 +133,7 @@
       font-weight: 300;
       letter-spacing: 0.22em;
       text-transform: uppercase;
-      color: var(--text-5);
+      color: var(--text-label);
       margin-bottom: 44px;
       display: flex;
       align-items: center;
@@ -141,7 +144,7 @@
       display: block;
       width: 20px;
       height: 1px;
-      background: var(--text-5);
+      background: var(--text-label);
       flex-shrink: 0;
     }
 
@@ -151,7 +154,7 @@
       font-size: clamp(34px, 4.5vw, 54px);
       line-height: 1.05;
       letter-spacing: -0.01em;
-      color: var(--text);
+      color: var(--text-primary);
     }
 
     .gold-rule {
@@ -176,10 +179,13 @@
       padding: 14px 28px;
       border: none;
       cursor: pointer;
-      transition: background 0.2s;
+      transition: background 0.22s, box-shadow 0.22s;
       white-space: nowrap;
     }
-    .btn-blue:hover { background: #3a5ee0; }
+    .btn-blue:hover {
+      background: var(--blue-hi);
+      box-shadow: 0 4px 24px rgba(43,79,212,0.3);
+    }
 
     .btn-ghost {
       display: inline-block;
@@ -188,13 +194,13 @@
       font-weight: 300;
       letter-spacing: 0.14em;
       text-transform: uppercase;
-      color: var(--text-4);
+      color: var(--text-dim);
       text-decoration: none;
-      border-bottom: 1px solid var(--text-5);
+      border-bottom: 1px solid var(--text-label);
       padding-bottom: 2px;
-      transition: color 0.2s, border-color 0.2s;
+      transition: color 0.22s, border-color 0.22s;
     }
-    .btn-ghost:hover { color: var(--text-2); border-color: var(--text-3); }
+    .btn-ghost:hover { color: var(--text-secondary); border-color: var(--text-muted); }
 
     .cta-row {
       display: flex;
@@ -203,34 +209,58 @@
       flex-wrap: wrap;
     }
 
-    /* ── S1: HERO ────────────────────────────────────── */
+    /* price sub-line under hero CTA */
+    .cta-sub {
+      margin-top: 14px;
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      font-weight: 300;
+      letter-spacing: 0.14em;
+      color: var(--gold);
+      line-height: 1.6;
+    }
+
+    /* S1: HERO */
     #hero {
       min-height: 100vh;
       display: flex;
       align-items: center;
-      padding: 130px 48px 100px;
+      padding: 140px 52px 110px;
       position: relative;
       overflow: hidden;
+    }
+
+    #hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 60% 80% at 80% 50%, var(--oxblood) 0%, transparent 70%);
+      opacity: 0.5;
+      pointer-events: none;
     }
 
     .hero-bg-word {
       position: absolute;
       top: 50%;
-      right: -40px;
+      right: -20px;
       transform: translateY(-50%);
       font-family: 'Cormorant Garamond', serif;
       font-weight: 300;
       font-style: italic;
-      font-size: clamp(160px, 22vw, 320px);
+      font-size: clamp(140px, 20vw, 300px);
       color: transparent;
-      -webkit-text-stroke: 1px rgba(196,163,90,0.04);
+      -webkit-text-stroke: 1px rgba(196,163,90,0.05);
       pointer-events: none;
       user-select: none;
       white-space: nowrap;
       line-height: 1;
     }
 
-    .hero-inner { max-width: 780px; position: relative; z-index: 1; }
+    .hero-inner {
+      max-width: 780px;
+      position: relative;
+      z-index: 1;
+    }
 
     .hero-eyebrow {
       font-family: 'DM Mono', monospace;
@@ -255,116 +285,98 @@
     .hero-headline {
       font-family: 'Cormorant Garamond', serif;
       font-weight: 300;
-      font-size: clamp(56px, 8.5vw, 108px);
+      font-size: clamp(54px, 8vw, 106px);
       line-height: 0.93;
       letter-spacing: -0.02em;
-      color: var(--text);
-      margin-bottom: 36px;
-    }
-
-    .hero-sub {
-      font-size: 15px;
-      color: var(--text-4);
-      line-height: 1.9;
+      color: var(--text-primary);
       margin-bottom: 32px;
     }
 
-    .hero-uses {
+    .hero-sub {
+      font-size: 16px;
+      color: var(--text-secondary);
+      line-height: 1.8;
+      margin-bottom: 12px;
+      max-width: 520px;
+    }
+
+    .hero-detail {
+      font-size: 15px;
+      color: var(--text-secondary);
+      line-height: 1.75;
       margin-bottom: 44px;
-    }
-
-    .hero-uses-intro {
-      font-family: 'Cormorant Garamond', serif;
-      font-weight: 300;
-      font-style: italic;
-      font-size: clamp(18px, 1.8vw, 22px);
-      color: var(--text-2);
-      margin-bottom: 16px;
-    }
-
-    .hero-list {
-      list-style: none;
-    }
-    .hero-list li {
-      font-size: 14px;
-      color: var(--text-2);
-      padding: 7px 0 7px 18px;
-      position: relative;
-      border-bottom: 1px solid var(--border-3);
-      line-height: 1.4;
-    }
-    .hero-list li:last-child { border-bottom: none; }
-    .hero-list li::before {
-      content: '';
-      position: absolute;
-      left: 0; top: 50%;
-      transform: translateY(-50%);
-      width: 6px; height: 1px;
-      background: var(--gold-dim);
-    }
-
-    .hero-add {
-      margin-top: 20px;
-      font-size: 14px;
-      color: var(--text-4);
-      line-height: 1.7;
+      max-width: 500px;
     }
 
     .hero-rule-bottom {
       position: absolute;
-      bottom: 0; left: 48px; right: 48px;
+      bottom: 0; left: 52px; right: 52px;
       height: 1px;
-      background: linear-gradient(to right, rgba(196,163,90,0.25), transparent 60%);
+      background: linear-gradient(to right, rgba(196,163,90,0.2), transparent 55%);
     }
 
-    /* ── S2: DIAGNOSTIC ──────────────────────────────── */
-    #diagnostic { background: var(--bg-1); }
-
-    .diag-head {
-      margin-bottom: 52px;
+    /* S2: DIAGNOSTIC */
+    #diagnostic {
+      background: var(--bg-1);
+      position: relative;
+    }
+    #diagnostic::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 100%;
+      background: radial-gradient(ellipse 50% 60% at 0% 100%, var(--oxblood-faint), transparent 70%);
+      pointer-events: none;
     }
 
-    .diag-head-title {
+    .diag-head { margin-bottom: 52px; }
+
+    .diag-title {
       font-family: 'Cormorant Garamond', serif;
       font-weight: 300;
       font-size: clamp(38px, 5vw, 62px);
       line-height: 1;
       letter-spacing: -0.015em;
-      color: var(--text);
+      color: var(--text-primary);
       margin-bottom: 12px;
     }
 
-    .diag-head-sub {
-      font-size: 14px;
-      color: var(--text-4);
-      margin-bottom: 4px;
+    .diag-sub {
+      font-size: 15px;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
     }
 
-    .diag-clarify {
-      font-family: 'DM Mono', monospace;
-      font-size: 10px;
-      letter-spacing: 0.1em;
-      color: var(--text-5);
-      margin-top: 6px;
+    .diag-context {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-style: italic;
+      font-size: clamp(16px, 1.8vw, 20px);
+      color: var(--text-muted);
+      line-height: 1.5;
     }
 
     .diag-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
       gap: 2px;
-      background: var(--border-3);
+      background: var(--border);
+      margin-bottom: 2px;
     }
 
     .diag-card {
       background: var(--bg-1);
-      padding: 44px 36px 48px;
+      padding: 40px 32px 44px;
       display: flex;
       flex-direction: column;
+      cursor: pointer;
       position: relative;
-      transition: background 0.25s;
-      text-decoration: none;
+      transition: background 0.25s, box-shadow 0.22s;
+      border: none;
+      text-align: left;
+      color: inherit;
+      font-family: inherit;
     }
-    .diag-card:hover { background: var(--bg-2); }
     .diag-card::before {
       content: '';
       position: absolute;
@@ -374,59 +386,154 @@
       opacity: 0;
       transition: opacity 0.25s;
     }
-    .diag-card:hover::before { opacity: 1; }
+    .diag-card:hover {
+      background: var(--bg-2);
+      box-shadow: inset 0 0 0 1px rgba(196,163,90,0.08);
+    }
+    .diag-card:hover::before { opacity: 0.6; }
+
+    .diag-card.active {
+      background: var(--oxblood);
+      border: 1px solid var(--oxblood-acc);
+      box-shadow: 0 4px 24px rgba(42,15,18,0.4);
+    }
+    .diag-card.active::before { opacity: 1; }
 
     .diag-num {
       font-family: 'DM Mono', monospace;
       font-size: 9px;
       letter-spacing: 0.2em;
-      color: var(--text-5);
-      margin-bottom: 20px;
+      color: var(--text-label);
+      margin-bottom: 18px;
     }
+    .diag-card.active .diag-num { color: rgba(196,163,90,0.55); }
 
     .diag-card-title {
       font-family: 'Cormorant Garamond', serif;
       font-weight: 300;
-      font-size: clamp(20px, 1.8vw, 25px);
-      color: var(--text);
+      font-size: clamp(19px, 1.8vw, 24px);
+      color: var(--text-primary);
       line-height: 1.15;
       letter-spacing: -0.01em;
-      margin-bottom: 14px;
+      margin-bottom: 12px;
       flex: 1;
     }
 
     .diag-card-sub {
-      font-size: 12px;
-      color: var(--text-4);
+      font-size: 13px;
+      color: var(--text-secondary);
       line-height: 1.65;
-      margin-bottom: 32px;
+      margin-bottom: 24px;
+    }
+    .diag-card.active .diag-card-sub { color: var(--text-primary); }
+
+    .diag-indicator {
+      width: 20px;
+      height: 1px;
+      background: var(--text-label);
+      transition: width 0.25s, background 0.25s;
+    }
+    .diag-card:hover .diag-indicator { width: 32px; background: var(--gold-dim); }
+    .diag-card.active .diag-indicator { width: 32px; background: var(--gold); }
+
+    /* result panel */
+    .diag-result {
+      background: var(--bg-2);
+      border: 1px solid var(--border);
+      border-top: none;
+      padding: 44px 48px 48px;
+      position: relative;
+      overflow: hidden;
+      min-height: 220px;
+    }
+    .diag-result::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(to right, var(--gold-dim), transparent 50%);
+      opacity: 0.5;
     }
 
-    .diag-cta {
+    .result-state {
+      display: none;
+      animation: fadeResult 0.4s ease forwards;
+    }
+    .result-state.active { display: block; }
+
+    @keyframes fadeResult {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: none; }
+    }
+
+    .result-default-text {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-style: italic;
+      font-size: clamp(18px, 2vw, 24px);
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    .result-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold-dim);
+      margin-bottom: 14px;
+    }
+
+    .result-issue {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-size: clamp(22px, 2.5vw, 32px);
+      color: var(--text-primary);
+      line-height: 1.1;
+      letter-spacing: -0.01em;
+      margin-bottom: 10px;
+    }
+
+    .result-start {
       font-family: 'DM Mono', monospace;
       font-size: 10px;
-      font-weight: 400;
-      letter-spacing: 0.12em;
+      letter-spacing: 0.14em;
       text-transform: uppercase;
-      color: var(--blue);
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      transition: gap 0.2s;
+      color: var(--gold);
+      margin-bottom: 16px;
     }
-    .diag-card:hover .diag-cta { gap: 10px; }
 
-    .diag-footer-note {
-      padding-top: 40px;
+    .result-why {
+      font-size: 15px;
+      color: var(--text-secondary);
+      line-height: 1.7;
+      max-width: 540px;
+      margin-bottom: 28px;
+    }
+
+    /* conversion bridge below CTA in result */
+    .result-bridge {
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
       font-family: 'DM Mono', monospace;
       font-size: 10px;
       letter-spacing: 0.1em;
-      color: var(--text-5);
+      color: var(--gold-dim);
+      line-height: 1.7;
+    }
+
+    .diag-footer-note {
+      padding-top: 28px;
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      color: var(--text-label);
       line-height: 1.8;
     }
 
-    /* ── S3: systems ──────────────────────────────────── */
-    #systems { background: var(--bg); }
+    /* S3: SYSTEM */
+    #system { background: var(--bg); }
 
     .two-col {
       display: grid;
@@ -435,23 +542,20 @@
       align-items: start;
     }
 
-    .systems-copy p {
+    .system-copy p {
       font-size: 15px;
-      color: var(--text-2);
+      color: var(--text-secondary);
       line-height: 1.75;
-      margin-bottom: 8px;
+      margin-bottom: 10px;
     }
 
-    .phase-list {
-      list-style: none;
-      margin: 28px 0 40px;
-    }
+    .phase-list { list-style: none; margin: 28px 0 40px; }
     .phase-list li {
       display: flex;
       align-items: flex-start;
       gap: 16px;
-      padding: 14px 0;
-      border-bottom: 1px solid var(--border-3);
+      padding: 15px 0;
+      border-bottom: 1px solid var(--border);
     }
     .phase-list li:last-child { border-bottom: none; }
 
@@ -465,32 +569,70 @@
     }
 
     .phase-desc {
-      font-size: 13px;
-      color: var(--text-3);
+      font-size: 14px;
+      color: var(--text-secondary);
       line-height: 1.5;
-      padding-top: 3px;
+      padding-top: 2px;
     }
 
-    /* ── S4: PRODUCTS ────────────────────────────────── */
-    #products { background: var(--bg-1); }
+    /* products intro bridge */
+    .products-bridge {
+      font-size: 14px;
+      color: var(--text-muted);
+      line-height: 1.7;
+      margin-bottom: 0;
+      padding-top: 12px;
+      border-top: 1px solid var(--border);
+      margin-top: 8px;
+    }
+
+    /* S4: PRODUCTS */
+    #products {
+      background: var(--bg-1);
+      position: relative;
+    }
+    #products::before {
+      content: '';
+      position: absolute;
+      top: 0; right: 0;
+      width: 40%;
+      height: 100%;
+      background: radial-gradient(ellipse 80% 60% at 100% 0%, var(--oxblood-faint), transparent 70%);
+      pointer-events: none;
+    }
+
+    .products-intro {
+      font-size: 15px;
+      color: var(--text-muted);
+      line-height: 1.7;
+      max-width: 580px;
+      margin-bottom: 0;
+    }
 
     .products-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 2px;
-      background: var(--border-3);
-      margin-top: 56px;
+      background: var(--border);
+      margin-top: 40px;
+      position: relative;
+      z-index: 1;
     }
 
     .product-card {
       background: var(--bg-1);
-      padding: 44px 40px 48px;
+      padding: 44px 38px 48px;
       display: flex;
       flex-direction: column;
       position: relative;
-      transition: background 0.25s;
+      transition: background 0.25s, box-shadow 0.25s, transform 0.25s;
     }
-    .product-card:hover { background: var(--bg-2); }
+    .product-card:hover {
+      background: var(--bg-2);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+      transform: translateY(-2px);
+      z-index: 2;
+    }
     .product-card::before {
       content: '';
       position: absolute;
@@ -507,24 +649,24 @@
       font-size: 9px;
       letter-spacing: 0.2em;
       text-transform: uppercase;
-      color: var(--text-5);
-      margin-bottom: 20px;
+      color: var(--text-label);
+      margin-bottom: 18px;
     }
 
     .product-title {
       font-family: 'Cormorant Garamond', serif;
       font-weight: 300;
       font-size: clamp(22px, 2.2vw, 30px);
-      color: var(--text);
+      color: var(--text-primary);
       letter-spacing: -0.01em;
       line-height: 1.1;
-      margin-bottom: 14px;
+      margin-bottom: 12px;
     }
 
     .product-body {
-      font-size: 13px;
-      color: var(--text-3);
-      line-height: 1.7;
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.75;
       flex: 1;
       margin-bottom: 28px;
     }
@@ -533,43 +675,56 @@
       font-family: 'Cormorant Garamond', serif;
       font-weight: 300;
       font-size: 22px;
-      color: var(--text-2);
+      color: var(--text-secondary);
       margin-bottom: 20px;
     }
 
     .product-card.club-card .product-tag { color: var(--gold-dim); }
     .product-card.club-card .product-title { color: var(--gold); }
 
-    /* ── S5: PRIVATE ACCESS ──────────────────────────── */
-    #private { background: var(--bg); }
+    /* S5: PRIVATE ACCESS */
+    #private {
+      background: var(--bg);
+      position: relative;
+    }
+    #private::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 50% 70% at 100% 50%, var(--oxblood-faint), transparent 65%);
+      pointer-events: none;
+    }
 
     .private-inner {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 80px;
       align-items: center;
+      position: relative;
+      z-index: 1;
     }
 
-    .private-tag-list {
+    .private-list {
       list-style: none;
-      margin: 24px 0 36px;
+      margin: 20px 0 36px;
     }
-    .private-tag-list li {
+    .private-list li {
       font-family: 'DM Mono', monospace;
       font-size: 11px;
       letter-spacing: 0.08em;
-      color: var(--text-3);
+      color: var(--text-secondary);
       padding: 10px 0;
-      border-bottom: 1px solid var(--border-3);
+      border-bottom: 1px solid var(--border);
+      line-height: 1.5;
     }
-    .private-tag-list li:last-child { border-bottom: none; }
+    .private-list li:last-child { border-bottom: none; }
 
-    .private-right p {
+    .private-right-text {
       font-family: 'Cormorant Garamond', serif;
       font-weight: 300;
       font-style: italic;
       font-size: clamp(18px, 2vw, 26px);
-      color: var(--text-2);
+      color: var(--text-secondary);
       line-height: 1.55;
       margin-bottom: 6px;
     }
@@ -581,9 +736,10 @@
       font-size: clamp(16px, 1.6vw, 20px);
       color: var(--gold);
       margin-top: 20px;
+      line-height: 1.4;
     }
 
-    /* ── S6: PROOF ───────────────────────────────────── */
+    /* S6: PROOF */
     #proof { background: var(--bg-1); }
 
     .proof-inner { max-width: 640px; }
@@ -593,22 +749,19 @@
       font-weight: 300;
       font-style: italic;
       font-size: clamp(22px, 2.8vw, 34px);
-      color: var(--text);
+      color: var(--text-primary);
       line-height: 1.35;
       margin-bottom: 28px;
     }
 
-    .proof-list {
-      list-style: none;
-      margin: 16px 0 28px;
-    }
+    .proof-list { list-style: none; margin: 16px 0 28px; }
     .proof-list li {
       font-family: 'DM Mono', monospace;
       font-size: 11px;
       letter-spacing: 0.08em;
-      color: var(--text-4);
-      padding: 8px 0;
-      border-bottom: 1px solid var(--border-3);
+      color: var(--text-dim);
+      padding: 9px 0;
+      border-bottom: 1px solid var(--border);
     }
     .proof-list li:last-child { border-bottom: none; }
 
@@ -617,13 +770,13 @@
       font-weight: 400;
       font-style: italic;
       font-size: clamp(18px, 2vw, 24px);
-      color: var(--text-2);
+      color: var(--text-secondary);
     }
 
-    /* ── FOOTER ──────────────────────────────────────── */
+    /* FOOTER */
     footer {
-      padding: 52px 48px;
-      border-top: 1px solid var(--border-3);
+      padding: 56px 52px;
+      border-top: 1px solid var(--border);
     }
 
     .footer-inner {
@@ -641,7 +794,7 @@
       font-size: 16px;
       letter-spacing: 0.14em;
       text-transform: uppercase;
-      color: var(--text-4);
+      color: var(--text-dim);
       display: block;
       margin-bottom: 10px;
     }
@@ -651,7 +804,7 @@
       font-size: 10px;
       font-weight: 300;
       letter-spacing: 0.08em;
-      color: var(--text-5);
+      color: var(--text-label);
       line-height: 1.8;
     }
 
@@ -660,7 +813,7 @@
       font-size: 9px;
       letter-spacing: 0.2em;
       text-transform: uppercase;
-      color: var(--text-5);
+      color: var(--text-label);
       margin-bottom: 18px;
     }
 
@@ -671,17 +824,17 @@
       font-weight: 300;
       letter-spacing: 0.12em;
       text-transform: uppercase;
-      color: var(--text-5);
+      color: var(--text-label);
       text-decoration: none;
       padding: 7px 0;
-      border-bottom: 1px solid var(--border-3);
+      border-bottom: 1px solid var(--border);
       transition: color 0.2s;
       display: block;
     }
     .footer-links a:last-child { border-bottom: none; }
-    .footer-links a:hover { color: var(--text-3); }
+    .footer-links a:hover { color: var(--text-muted); }
 
-    /* ── RESPONSIVE ──────────────────────────────────── */
+    /* RESPONSIVE */
     @media (max-width: 1060px) {
       .diag-grid { grid-template-columns: repeat(2, 1fr); }
       .products-grid { grid-template-columns: repeat(2, 1fr); }
@@ -690,11 +843,12 @@
     @media (max-width: 960px) {
       nav { padding: 18px 28px; }
       .nav-secondary { display: none; }
-      #hero { padding: 120px 28px 90px; }
+      #hero { padding: 130px 28px 100px; }
       .hero-rule-bottom { left: 28px; right: 28px; }
-      .pad { padding: 76px 28px; }
+      .pad { padding: 80px 28px; }
       .two-col { grid-template-columns: 1fr; gap: 48px; }
       .private-inner { grid-template-columns: 1fr; gap: 44px; }
+      .diag-result { padding: 36px 28px 40px; }
       footer { padding: 44px 28px; }
       .footer-inner { grid-template-columns: 1fr; gap: 40px; }
     }
@@ -702,13 +856,14 @@
     @media (max-width: 640px) {
       nav { padding: 16px 20px; }
       .nav-primary { display: none; }
-      #hero { padding: 110px 20px 80px; }
+      #hero { padding: 120px 20px 90px; }
       .hero-rule-bottom { left: 20px; right: 20px; }
-      .pad { padding: 60px 20px; }
+      .pad { padding: 64px 20px; }
       .diag-grid { grid-template-columns: 1fr; }
       .products-grid { grid-template-columns: 1fr; }
-      .diag-card,
+      .diag-card { padding: 32px 24px 36px; }
       .product-card { padding: 36px 24px 40px; }
+      .diag-result { padding: 32px 20px 36px; }
       footer { padding: 36px 20px; }
     }
   </style>
@@ -716,24 +871,22 @@
 <body>
 
   <!-- NAV -->
-  <nav>
+  <nav id="main-nav">
     <a href="/" class="nav-mark">Stephuary</a>
 
-    <!-- Primary: highest-intent routes -->
     <div class="nav-primary">
-      <a href="/analysis"          class="nav-link nav-link-em">Analysis</a>
-      <a href="/systems"            class="nav-link">systems</a>
-      <a href="/playbooks"         class="nav-link">Playbooks</a>
-      <a href="/pricing"           class="nav-link">Pricing</a>
-      <a href="/club"              class="nav-link nav-link-gold">5% Club</a>
-      <a href="/private-access"    class="nav-link">Private Access</a>
+      <a href="/analysis"           class="nav-link nav-link-em">Analysis</a>
+      <a href="/systems"            class="nav-link">Systems</a>
+      <a href="/playbooks"          class="nav-link">Playbooks</a>
+      <a href="/pricing"            class="nav-link">Pricing</a>
+      <a href="/club"               class="nav-link nav-link-gold">5% Club</a>
+      <a href="/private-access"     class="nav-link">Private Access</a>
     </div>
 
-    <!-- Secondary: supporting routes, visible on wide screens only -->
     <div class="nav-secondary">
-      <a href="/books"             class="nav-link">Books</a>
-      <a href="/snapshot"          class="nav-link">Snapshot</a>
-      <a href="/focused-review"    class="nav-link">Focused Review</a>
+      <a href="/books"              class="nav-link">Books</a>
+      <a href="/snapshot"           class="nav-link">Snapshot</a>
+      <a href="/focused-review"     class="nav-link">Focused Review</a>
       <a href="/founder-diagnostic" class="nav-link">Founder Diagnostic</a>
       <a href="https://grownspaghetti.substack.com" class="nav-link nav-link-gold" target="_blank" rel="noopener">Substack</a>
       <a href="https://onlysometimesclub.com"       class="nav-link nav-link-gold" target="_blank" rel="noopener">OSC</a>
@@ -743,35 +896,31 @@
 
   <!-- S1: HERO -->
   <section id="hero">
-    <div class="hero-bg-word" aria-hidden="true">systems</div>
+    <div class="hero-bg-word" aria-hidden="true">System</div>
     <div class="hero-inner">
-      <p class="hero-eyebrow reveal">A systems for building income</p>
+
+      <p class="hero-eyebrow reveal">Build income. Build independence.</p>
 
       <h1 class="hero-headline reveal d1">Build something<br>that makes money.</h1>
 
       <p class="hero-sub reveal d2">
-        Start from zero<br>
-        or fix what is not working
+        Stephuary is a $39 system.<br>
+        It gives you all five phases to figure out what to sell, fix what isn't working, and build something that runs.
       </p>
 
-      <div class="hero-uses reveal d3">
-        <p class="hero-uses-intro">You can use it to:</p>
-        <ul class="hero-list">
-          <li>figure out what to sell</li>
-          <li>turn what you know into income</li>
-          <li>fix what is not converting</li>
-          <li>build something that runs without you</li>
-        </ul>
-        <p class="hero-add">
-          You can keep guessing.<br>
-          Or you can start with something that works.
-        </p>
+      <p class="hero-detail reveal d3">
+        Start where you are.<br>
+        Move forward without guessing.
+      </p>
+
+      <div class="reveal d4">
+        <div class="cta-row">
+          <a href="#diagnostic" class="btn-blue">Start here →</a>
+          <a href="#system"     class="btn-ghost">See how it works →</a>
+        </div>
+        <p class="cta-sub">$39 — full system unlock &nbsp;&middot;&nbsp; All five phases included</p>
       </div>
 
-      <div class="cta-row reveal d4">
-        <a href="#diagnostic" class="btn-blue">Start here →</a>
-        <a href="#systems"     class="btn-ghost">See how it works →</a>
-      </div>
     </div>
     <div class="hero-rule-bottom"></div>
   </section>
@@ -780,78 +929,132 @@
   <section id="diagnostic">
     <div class="pad">
       <div class="inner">
+
         <div class="diag-head reveal">
-          <h2 class="diag-head-title">Start here.</h2>
-          <p class="diag-head-sub">Pick what actually applies to you.</p>
-          <p class="diag-clarify">Not everyone starts in the same place. The path that fits your situation is below.</p>
+          <h2 class="diag-title">Start here.</h2>
+          <p class="diag-sub">Pick what actually applies to you.</p>
+          <p class="diag-context">
+            Most people try to fix everything.<br>
+            That's why nothing actually changes.<br>
+            This shows you where to start.
+          </p>
         </div>
 
         <div class="diag-grid reveal d1">
 
-          <a href="/capture" class="diag-card">
+          <button class="diag-card" data-state="1" aria-pressed="false">
             <p class="diag-num">01</p>
             <p class="diag-card-title">I don't know what to sell.</p>
-            <p class="diag-card-sub">
-              You have skills or experience<br>
-              but nothing clearly defined yet.
-            </p>
-            <span class="diag-cta">Show me →</span>
-          </a>
+            <p class="diag-card-sub">You have skills or experience but nothing clearly defined yet.</p>
+            <span class="diag-indicator"></span>
+          </button>
 
-          <a href="/analysis" class="diag-card">
+          <button class="diag-card" data-state="2" aria-pressed="false">
             <p class="diag-num">02</p>
             <p class="diag-card-title">I have something but it's not making money.</p>
-            <p class="diag-card-sub">
-              You've tried offers, content, or services<br>
-              but it's not converting.
-            </p>
-            <span class="diag-cta">Diagnose it →</span>
-          </a>
+            <p class="diag-card-sub">You've tried offers, content, or services but it's not converting.</p>
+            <span class="diag-indicator"></span>
+          </button>
 
-          <a href="/playbooks" class="diag-card">
+          <button class="diag-card" data-state="3" aria-pressed="false">
             <p class="diag-num">03</p>
             <p class="diag-card-title">I need a proven way to make money.</p>
-            <p class="diag-card-sub">
-              You don't want to guess.<br>
-              You want paths that already work.
-            </p>
-            <span class="diag-cta">See paths →</span>
-          </a>
+            <p class="diag-card-sub">You don't want to guess. You want paths that already work.</p>
+            <span class="diag-indicator"></span>
+          </button>
 
-          <a href="/pricing" class="diag-card">
+          <button class="diag-card" data-state="4" aria-pressed="false">
             <p class="diag-num">04</p>
             <p class="diag-card-title">I need direct help.</p>
-            <p class="diag-card-sub">
-              You want clarity, positioning, or correction<br>
-              without figuring it out yourself.
-            </p>
-            <span class="diag-cta">View options →</span>
-          </a>
+            <p class="diag-card-sub">You want clarity, positioning, or correction without figuring it out yourself.</p>
+            <span class="diag-indicator"></span>
+          </button>
 
         </div>
 
-        <p class="diag-footer-note reveal d2">
-          You do not need to figure everything out.<br>
+        <div class="diag-result reveal d2" id="diag-result">
+
+          <div class="result-state active" id="state-0">
+            <p class="result-default-text">
+              Pick what fits.<br><br>
+              This shows you where to start inside the system.<br>
+              You don't need to fix everything.<br>
+              You just need the right entry point.
+            </p>
+          </div>
+
+          <div class="result-state" id="state-1">
+            <p class="result-label">Starting point</p>
+            <p class="result-issue">You don't have a clear offer yet.</p>
+            <p class="result-start">Start with: Capture</p>
+            <p class="result-why">
+              If it's not clear, no one's buying it.<br>
+              That's why nothing's really landing yet.
+            </p>
+            <a href="/capture" class="btn-blue">Go to Capture →</a>
+            <p class="result-bridge">All paths lead into the full Stephuary system ($39).<br>You'll enter at the phase that matches your situation.</p>
+          </div>
+
+          <div class="result-state" id="state-2">
+            <p class="result-label">Starting point</p>
+            <p class="result-issue">Your offer isn't landing clearly enough to convert.</p>
+            <p class="result-start">Start with: Analysis</p>
+            <p class="result-why">
+              If people don't get it fast, they don't buy.<br>
+              That's why your effort isn't turning into money.
+            </p>
+            <a href="/analysis" class="btn-blue">Run Analysis →</a>
+            <p class="result-bridge">All paths lead into the full Stephuary system ($39).<br>You'll enter at the phase that matches your situation.</p>
+          </div>
+
+          <div class="result-state" id="state-3">
+            <p class="result-label">Starting point</p>
+            <p class="result-issue">You need a path that already works.</p>
+            <p class="result-start">Start with: Playbooks</p>
+            <p class="result-why">
+              You don't need more ideas.<br>
+              You need a model you can use now.
+            </p>
+            <a href="/playbooks" class="btn-blue">See Playbooks →</a>
+            <p class="result-bridge">All paths lead into the full Stephuary system ($39).<br>You'll enter at the phase that matches your situation.</p>
+          </div>
+
+          <div class="result-state" id="state-4">
+            <p class="result-label">Starting point</p>
+            <p class="result-issue">You need direct help.</p>
+            <p class="result-start">Start with: Pricing</p>
+            <p class="result-why">
+              You don't need to keep guessing your way through this.<br>
+              You need the right level of support.
+            </p>
+            <a href="/pricing" class="btn-blue">View Options →</a>
+            <p class="result-bridge">All paths lead into the full Stephuary system ($39).<br>You'll enter at the phase that matches your situation.</p>
+          </div>
+
+        </div>
+
+        <p class="diag-footer-note reveal d3">
+          You don't need to figure everything out.<br>
           You need to start in the right place.
         </p>
+
       </div>
     </div>
   </section>
 
-  <!-- S3: systems -->
-  <section id="systems">
+  <!-- S3: SYSTEM -->
+  <section id="system">
     <div class="pad">
       <div class="inner">
-        <p class="eyebrow reveal">The systems</p>
+        <p class="eyebrow reveal">The system</p>
         <div class="two-col">
 
           <div class="reveal">
-            <h2 class="section-title">Five phases.<br>One outcome.</h2>
+            <h2 class="section-title">Stephuary is the full system.</h2>
             <span class="gold-rule"></span>
-            <div class="systems-copy">
-              <p>Each phase builds on the one before it.</p>
-              <p>You enter at the phase that matches your situation.</p>
-              <p>You do not need to start at the beginning if you are already past it.</p>
+            <div class="system-copy">
+              <p>One payment. Five phases. Clear next steps.</p>
+              <p>You don't buy one piece at a time. You unlock the whole thing and start where you are.</p>
             </div>
           </div>
 
@@ -867,7 +1070,7 @@
               </li>
               <li>
                 <span class="phase-name">Structure</span>
-                <span class="phase-desc">Build the systems so it runs without you managing it</span>
+                <span class="phase-desc">Build it so it runs without you managing every part</span>
               </li>
               <li>
                 <span class="phase-name">Automation</span>
@@ -878,7 +1081,7 @@
                 <span class="phase-desc">Make it stable enough to hold under pressure</span>
               </li>
             </ul>
-            <a href="/systems" class="btn-ghost">Explore the systems →</a>
+            <a href="/systems" class="btn-blue">Unlock the system → $39</a>
           </div>
 
         </div>
@@ -890,16 +1093,17 @@
   <section id="products">
     <div class="pad">
       <div class="inner">
-        <p class="eyebrow reveal">Choose what fits right now</p>
+        <p class="eyebrow reveal">Go deeper or move faster</p>
+        <p class="products-intro reveal d1">Everything starts with the system. These are optional ways to go deeper or move faster.</p>
 
         <div class="products-grid">
 
           <div class="product-card reveal">
             <p class="product-tag">Books</p>
-            <h3 class="product-title">One problem. One sitting. Done.</h3>
+            <h3 class="product-title">Start small.</h3>
             <p class="product-body">
-              Each book isolates a specific problem and solves it directly.<br>
-              Under an hour to read.<br>
+              Low-cost systems that solve one problem fast.<br>
+              Read in under an hour.<br>
               Apply the same day.
             </p>
             <p class="product-price">From $17</p>
@@ -911,7 +1115,7 @@
             <h3 class="product-title">Fix one thing fast.</h3>
             <p class="product-body">
               You bring one problem.<br>
-              You leave with exactly what to do next.
+              You leave with what to do next.
             </p>
             <p class="product-price">$197</p>
             <a href="/focused-review" class="btn-blue">Get a focused review →</a>
@@ -921,8 +1125,8 @@
             <p class="product-tag">Snapshot</p>
             <h3 class="product-title">See the full picture.</h3>
             <p class="product-body">
-              48-hour diagnostic of what is not working<br>
-              and where your money is going.
+              48-hour diagnostic of what isn't working<br>
+              and where your money is.
             </p>
             <p class="product-price">$750</p>
             <a href="/snapshot" class="btn-blue">Get snapshot →</a>
@@ -932,8 +1136,8 @@
             <p class="product-tag">Founder Diagnostic</p>
             <h3 class="product-title">Get a revenue path.</h3>
             <p class="product-body">
-              A clear path to income<br>
-              built from what you already have.
+              A clear way to make money<br>
+              from what you already have.
             </p>
             <p class="product-price">$1,500</p>
             <a href="/founder-diagnostic" class="btn-blue">Get my path →</a>
@@ -943,7 +1147,7 @@
             <p class="product-tag">Playbooks</p>
             <h3 class="product-title">Paths that already work.</h3>
             <p class="product-body">
-              Proven income paths you execute directly.<br>
+              Proven income paths you can use directly.<br>
               No guessing. No blank page.
             </p>
             <a href="/playbooks" class="btn-blue">View playbooks →</a>
@@ -974,21 +1178,24 @@
           <div class="reveal">
             <h2 class="section-title">Private Access.</h2>
             <span class="gold-rule"></span>
-            <ul class="private-tag-list">
-              <li>Correction — wrong decisions stopped before they compound</li>
+            <ul class="private-list">
+              <li>Correction — wrong decisions stopped before they get worse</li>
               <li>Positioning — where you should actually be operating</li>
               <li>Market level — local, regional, or national recalibration</li>
-              <li>Offer structure — what you build and what you stop building</li>
+              <li>Offer structure — what to build and what to stop building</li>
               <li>Revenue architecture — how it actually makes money</li>
             </ul>
             <a href="/private-access" class="btn-blue">Request access →</a>
           </div>
 
-          <div class="private-right reveal d1">
-            <p>This is not always open.</p>
-            <p>Requests are reviewed.</p>
-            <p>Not all are accepted.</p>
-            <p class="private-hook">This does not just change what you do.<br>It changes where you operate.</p>
+          <div class="reveal d1">
+            <p class="private-right-text">This isn't always open.</p>
+            <p class="private-right-text">Requests are reviewed.</p>
+            <p class="private-right-text">Not all are accepted.</p>
+            <p class="private-hook">
+              This doesn't just change what you do.<br>
+              It changes where you operate.
+            </p>
           </div>
 
         </div>
@@ -1008,7 +1215,7 @@
             <li>a website</li>
             <li>a logo</li>
           </ul>
-          <p class="proof-close">This is not theory.</p>
+          <p class="proof-close">This isn't theory.</p>
         </div>
       </div>
     </div>
@@ -1027,11 +1234,11 @@
       </div>
 
       <div>
-        <p class="footer-col-label">systems</p>
+        <p class="footer-col-label">System</p>
         <ul class="footer-links">
           <li><a href="/analysis">Analysis</a></li>
-          <li><a href="/systems">Full systems</a></li>
           <li><a href="/capture">Capture</a></li>
+          <li><a href="/systems">Systems</a></li>
           <li><a href="/books">Books</a></li>
           <li><a href="/playbooks">Playbooks</a></li>
           <li><a href="/snapshot">Snapshot</a></li>
@@ -1040,6 +1247,7 @@
           <li><a href="/club">5% Club</a></li>
           <li><a href="/private-access">Private Access</a></li>
           <li><a href="/pricing">Pricing</a></li>
+          <li><a href="mailto:hello@stephuary.com">Contact</a></li>
         </ul>
       </div>
 
@@ -1049,7 +1257,6 @@
           <li><a href="https://grownspaghetti.substack.com" target="_blank" rel="noopener">Substack</a></li>
           <li><a href="https://onlysometimesclub.com"       target="_blank" rel="noopener">Only Sometimes Club</a></li>
           <li><a href="https://github.com/stephuary/Stephuary" target="_blank" rel="noopener">GitHub</a></li>
-          <li><a href="mailto:hello@stephuary.com">Contact</a></li>
         </ul>
       </div>
 
@@ -1057,6 +1264,7 @@
   </footer>
 
   <script>
+    // Scroll reveal
     const io = new IntersectionObserver((entries) => {
       entries.forEach(e => {
         if (e.isIntersecting) {
@@ -1065,8 +1273,40 @@
         }
       });
     }, { threshold: 0.07, rootMargin: '0px 0px -28px 0px' });
-
     document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+    // Nav border on scroll
+    const mainNav = document.getElementById('main-nav');
+    window.addEventListener('scroll', () => {
+      mainNav.classList.toggle('scrolled', window.scrollY > 60);
+    }, { passive: true });
+
+    // Diagnostic card interaction
+    const cards = document.querySelectorAll('.diag-card');
+    const states = document.querySelectorAll('.result-state');
+
+    cards.forEach(card => {
+      card.addEventListener('click', () => {
+        const target = card.dataset.state;
+
+        cards.forEach(c => {
+          c.classList.remove('active');
+          c.setAttribute('aria-pressed', 'false');
+        });
+        card.classList.add('active');
+        card.setAttribute('aria-pressed', 'true');
+
+        states.forEach(s => s.classList.remove('active'));
+        const targetState = document.getElementById('state-' + target);
+        if (targetState) targetState.classList.add('active');
+
+        if (window.innerWidth < 768) {
+          document.getElementById('diag-result').scrollIntoView({
+            behavior: 'smooth', block: 'nearest'
+          });
+        }
+      });
+    });
   </script>
 
 </body>
