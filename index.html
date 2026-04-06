@@ -1,1418 +1,1116 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>Stephuary — Find what's wrong. Fix it.</title>
-<meta name="description" content="Say what you're trying to do. Get a clear answer on what's wrong and what to do next."/>
-<link rel="preconnect" href="https://fonts.g<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Stephuary — Decision System for People Building Something Real</title>
-<meta name="description" content="Find what's not working. Fix it. Move. Stephuary is a decision system for people building something real.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Lato:wght@300;400;500&display=swap" rel="stylesheet">
-<style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --bg:#090907;
-  --bg-1:#0e0f0c;
-  --bg-2:#141611;
-  --bg-3:#1a1c16;
-  --text:#f4ede0;
-  --text-2:#d6cab4;
-  --text-3:#b3a791;
-  --gold:#c4a35a;
-  --gold-soft:rgba(196,163,90,0.38);
-  --gold-faint:rgba(196,163,90,0.15);
-  --gold-dim:rgba(196,163,90,0.08);
-  --terra:#b85c38;
-  --blue:#2b4fd4;
-  --line:rgba(244,237,224,0.1);
-  --line-soft:rgba(244,237,224,0.07);
-}
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Stephuary — Build something that makes money.</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=DM+Mono:wght@300;400&family=Lato:wght@300;400&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-html{scroll-behavior:smooth}
-body{
-  font-family:'Lato',sans-serif;
-  font-weight:300;
-  background:var(--bg);
-  color:var(--text);
-  font-size:16px;
-  line-height:1.7;
-  -webkit-font-smoothing:antialiased;
-  overflow-x:hidden;
-}
-a{text-decoration:none;color:inherit}
+    :root {
+      --bg:       #080807;
+      --bg-1:     #0d0d0b;
+      --bg-2:     #121210;
+      --bg-3:     #181816;
+      --gold:     #c4a35a;
+      --gold-dim: #7a6535;
+      --blue:     #2b4fd4;
+      --terra:    #b85c38;
+      --text:     #f4ede0;
+      --text-2:   #cbc3b4;
+      --text-3:   #a09890;
+      --text-4:   #6e6558;
+      --text-5:   #3e3b36;
+      --border:   rgba(196,163,90,0.10);
+      --border-2: rgba(196,163,90,0.18);
+      --border-3: rgba(244,237,224,0.06);
+    }
 
-/* Grain */
-body::before{
-  content:'';position:fixed;inset:0;pointer-events:none;z-index:9999;opacity:.38;
-  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.045'/%3E%3C/svg%3E");
-}
+    html { scroll-behavior: smooth; }
 
-/* NAV */
-nav{
-  position:fixed;top:0;left:0;right:0;z-index:100;
-  display:flex;justify-content:space-between;align-items:center;
-  padding:22px 52px;
-  background:rgba(9,9,7,0.92);
-  backdrop-filter:blur(12px);
-  border-bottom:1px solid var(--line-soft);
-}
-.nav-logo{
-  font-family:'Cormorant Garamond',serif;
-  font-size:18px;font-weight:300;
-  color:var(--gold);letter-spacing:.04em;
-}
-.nav-links{display:flex;gap:36px;align-items:center}
-.nav-link{
-  font-size:11px;letter-spacing:.1em;text-transform:uppercase;
-  color:var(--text-3);transition:color .2s;
-}
-.nav-link:hover{color:var(--gold)}
-.nav-cta{
-  font-size:11px;letter-spacing:.1em;text-transform:uppercase;
-  color:var(--bg);background:var(--gold);
-  padding:10px 24px;font-weight:500;
-  transition:background .2s;
-}
-.nav-cta:hover{background:var(--text)}
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Lato', sans-serif;
+      font-weight: 300;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
 
-/* HERO */
-#hero{
-  min-height:100vh;
-  display:flex;flex-direction:column;justify-content:center;
-  padding:140px 52px 100px;
-  position:relative;
-  border-bottom:1px solid var(--line-soft);
-}
-#hero::after{
-  content:'';position:absolute;inset:0;pointer-events:none;
-  background:radial-gradient(ellipse at 20% 50%,rgba(196,163,90,0.04) 0%,transparent 60%);
-}
-.hero-label{
-  display:inline-flex;align-items:center;gap:10px;
-  font-size:9px;letter-spacing:.28em;text-transform:uppercase;
-  color:var(--gold);font-weight:500;margin-bottom:36px;
-}
-.hero-label::before{content:'';width:24px;height:1px;background:var(--gold);opacity:.6}
-.hero-headline{
-  font-family:'Cormorant Garamond',serif;
-  font-size:clamp(52px,7.5vw,108px);
-  line-height:.94;letter-spacing:-.025em;
-  color:var(--text);font-weight:300;
-  max-width:900px;margin-bottom:40px;
-}
-.hero-headline em{font-style:italic;color:var(--text-2)}
-.hero-sub{
-  font-size:clamp(16px,1.6vw,20px);
-  color:var(--text-2);line-height:1.65;
-  max-width:520px;margin-bottom:14px;
-}
-.hero-micro{
-  font-size:12px;letter-spacing:.06em;
-  color:var(--text-3);margin-bottom:52px;
-  font-family:'Cormorant Garamond',serif;font-style:italic;
-}
-.hero-ctas{display:flex;gap:16px;align-items:center;flex-wrap:wrap}
-.btn-primary{
-  display:inline-block;
-  font-size:11px;letter-spacing:.14em;text-transform:uppercase;
-  font-weight:500;color:#fff;background:var(--blue);
-  border:1px solid var(--blue);padding:18px 52px;
-  transition:background .2s,border-color .2s;cursor:pointer;
-}
-.btn-primary:hover{background:#3560e8;border-color:#3560e8}
-.btn-ghost{
-  display:inline-block;
-  font-size:11px;letter-spacing:.1em;text-transform:uppercase;
-  color:var(--text-2);border-bottom:1px solid rgba(214,202,180,0.4);
-  padding-bottom:2px;transition:color .2s,border-color .2s;
-}
-.btn-ghost:hover{color:var(--gold);border-bottom-color:var(--gold-soft)}
-.hero-proof{
-  position:absolute;right:52px;bottom:52px;
-  text-align:right;
-  font-family:'Cormorant Garamond',serif;
-  font-style:italic;font-size:14px;
-  color:var(--text-3);line-height:1.6;
-}
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+      opacity: 0.022;
+      pointer-events: none;
+      z-index: 200;
+    }
 
-/* HOW IT WORKS — 3 steps */
-#how{
-  padding:96px 52px;
-  border-bottom:1px solid var(--line-soft);
-}
-.section-label{
-  font-size:9px;letter-spacing:.28em;text-transform:uppercase;
-  color:var(--terra);font-weight:500;margin-bottom:48px;
-  display:flex;align-items:center;gap:10px;
-}
-.section-label::before{content:'';width:24px;height:1px;background:var(--terra);opacity:.6}
-.steps-grid{
-  display:grid;grid-template-columns:repeat(3,1fr);
-  gap:1px;background:var(--line-soft);
-  max-width:900px;
-}
-.step{background:var(--bg-1);padding:36px 32px}
-.step-num{
-  font-family:'Cormorant Garamond',serif;
-  font-size:clamp(52px,6vw,80px);
-  line-height:.88;color:var(--gold-soft);
-  font-weight:300;letter-spacing:-.02em;
-  margin-bottom:20px;
-}
-.step-title{
-  font-family:'Cormorant Garamond',serif;
-  font-size:22px;color:var(--text);
-  font-weight:300;margin-bottom:10px;
-}
-.step-body{font-size:14px;color:var(--text-3);line-height:1.68}
+    /* REVEAL */
+    .reveal {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.8s cubic-bezier(0.22,1,0.36,1),
+                  transform 0.8s cubic-bezier(0.22,1,0.36,1);
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .d1 { transition-delay: 0.10s; }
+    .d2 { transition-delay: 0.20s; }
+    .d3 { transition-delay: 0.32s; }
+    .d4 { transition-delay: 0.44s; }
+    .d5 { transition-delay: 0.56s; }
 
-/* TWO LAYERS */
-#layers{
-  padding:96px 52px;
-  border-bottom:1px solid var(--line-soft);
-}
-.layers-header{max-width:680px;margin-bottom:64px}
-.layers-eyebrow{
-  font-size:9px;letter-spacing:.28em;text-transform:uppercase;
-  color:var(--gold);font-weight:500;margin-bottom:20px;
-}
-.layers-headline{
-  font-family:'Cormorant Garamond',serif;
-  font-size:clamp(36px,4vw,56px);
-  line-height:1.08;font-weight:300;
-  color:var(--text);margin-bottom:20px;
-  letter-spacing:-.015em;
-}
-.layers-sub{
-  font-size:16px;color:var(--text-2);
-  line-height:1.68;max-width:560px;
-}
+    /* NAV */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      padding: 20px 48px;
+      background: linear-gradient(to bottom, rgba(8,8,7,0.97) 0%, transparent 100%);
+    }
 
-/* CARDS */
-.cards-grid{
-  display:grid;
-  grid-template-columns:1fr 1fr 1fr;
-  gap:1px;background:var(--line-soft);
-  max-width:960px;
-}
+    .nav-mark {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-size: 17px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text);
+      text-decoration: none;
+      flex-shrink: 0;
+    }
 
-.card{
-  background:var(--bg-1);
-  padding:40px 36px 36px;
-  position:relative;display:flex;
-  flex-direction:column;
-}
-.card::before{
-  content:'';position:absolute;
-  top:0;left:0;right:0;height:2px;
-  background:var(--line-soft);
-}
-.card.featured{
-  background:rgba(196,163,90,0.05);
-}
-.card.featured::before{
-  background:linear-gradient(90deg,var(--gold),rgba(196,163,90,0.3));
-}
-.card-recommended{
-  display:inline-block;
-  font-size:8px;letter-spacing:.22em;text-transform:uppercase;
-  color:var(--gold);font-weight:500;
-  margin-bottom:20px;
-}
-.card-title{
-  font-family:'Cormorant Garamond',serif;
-  font-size:28px;font-weight:300;
-  color:var(--text);margin-bottom:8px;
-  letter-spacing:-.01em;
-}
-.card-price{
-  font-family:'Cormorant Garamond',serif;
-  font-size:clamp(48px,5vw,68px);
-  line-height:.88;color:var(--gold);
-  font-weight:300;letter-spacing:-.02em;
-  margin-bottom:6px;
-}
-.card.featured .card-price{color:var(--gold)}
-.card-price-note{
-  font-size:11px;letter-spacing:.06em;
-  color:var(--text-3);margin-bottom:28px;
-  font-family:'Cormorant Garamond',serif;font-style:italic;
-}
-.card-desc{
-  font-size:14px;color:var(--text-2);
-  line-height:1.62;margin-bottom:24px;
-}
-.card-includes{
-  list-style:none;margin-bottom:32px;
-  display:grid;gap:8px;flex:1;
-}
-.card-includes li{
-  font-size:13px;color:var(--text-3);
-  line-height:1.5;padding-left:16px;
-  position:relative;
-}
-.card-includes li::before{
-  content:'';position:absolute;left:0;top:8px;
-  width:4px;height:1px;background:var(--gold);opacity:.5;
-}
-.card-cta{
-  display:block;width:100%;
-  font-size:11px;letter-spacing:.12em;text-transform:uppercase;
-  font-weight:500;text-align:center;
-  padding:16px 24px;
-  border:1px solid var(--line);
-  color:var(--text-2);
-  transition:border-color .2s,color .2s,background .2s;
-  cursor:pointer;
-}
-.card-cta:hover{border-color:var(--gold-soft);color:var(--gold)}
-.card.featured .card-cta{
-  background:var(--blue);border-color:var(--blue);
-  color:#fff;
-}
-.card.featured .card-cta:hover{background:#3560e8;border-color:#3560e8}
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 22px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
 
-/* DIFFERENCE */
-#difference{
-  padding:96px 52px;
-  border-bottom:1px solid var(--line-soft);
-}
-.diff-header{max-width:640px;margin-bottom:56px}
-.diff-headline{
-  font-family:'Cormorant Garamond',serif;
-  font-size:clamp(32px,3.5vw,48px);
-  font-weight:300;color:var(--text);
-  line-height:1.1;letter-spacing:-.01em;
-}
-.diff-blocks{
-  display:grid;grid-template-columns:repeat(3,1fr);
-  gap:48px;max-width:900px;
-}
-.diff-block{}
-.diff-block-name{
-  font-size:9px;letter-spacing:.22em;text-transform:uppercase;
-  color:var(--gold);font-weight:500;margin-bottom:14px;
-}
-.diff-block-title{
-  font-family:'Cormorant Garamond',serif;
-  font-size:22px;font-weight:300;
-  color:var(--text);margin-bottom:12px;
-  line-height:1.1;
-}
-.diff-block-body{
-  font-size:14px;color:var(--text-3);
-  line-height:1.7;
-}
+    .nav-link {
+      font-family: 'DM Mono', monospace;
+      font-size: 9px;
+      font-weight: 300;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--text-4);
+      text-decoration: none;
+      transition: color 0.2s;
+      white-space: nowrap;
+    }
+    .nav-link:hover { color: var(--text-2); }
+    .nav-link-gold { color: var(--gold-dim); }
+    .nav-link-gold:hover { color: var(--gold); }
 
-/* FINAL LINE */
-#final-line{
-  padding:80px 52px;
-  border-bottom:1px solid var(--line-soft);
-  display:flex;align-items:center;justify-content:space-between;
-  gap:40px;flex-wrap:wrap;
-}
-.final-text{
-  font-family:'Cormorant Garamond',serif;
-  font-style:italic;
-  font-size:clamp(22px,2.4vw,32px);
-  font-weight:300;color:var(--text-2);
-  max-width:520px;line-height:1.5;
-}
+    /* SHARED */
+    section { border-bottom: 1px solid var(--border-3); }
 
-/* FOOTER */
-footer{
-  padding:44px 52px;
-  display:flex;justify-content:space-between;
-  align-items:flex-end;flex-wrap:wrap;gap:24px;
-  background:var(--bg-3);
-}
-.footer-logo{
-  font-family:'Cormorant Garamond',serif;
-  font-size:16px;font-weight:300;color:var(--gold);
-  letter-spacing:.04em;margin-bottom:10px;
-}
-.footer-micro{
-  font-size:12px;color:var(--text-3);
-  font-family:'Cormorant Garamond',serif;font-style:italic;
-}
-.footer-links{display:flex;gap:28px;flex-wrap:wrap}
-.footer-link{
-  font-size:10px;letter-spacing:.1em;text-transform:uppercase;
-  color:var(--text-3);transition:color .2s;
-}
-.footer-link:hover{color:var(--gold)}
+    .pad { padding: 96px 48px; }
 
-/* MOBILE STICKY CTA */
-.mobile-sticky{
-  display:none;
-  position:fixed;bottom:0;left:0;right:0;z-index:200;
-  padding:16px 24px;
-  background:rgba(9,9,7,0.96);
-  border-top:1px solid var(--line-soft);
-  backdrop-filter:blur(12px);
-}
-.mobile-sticky a{
-  display:block;text-align:center;
-  background:var(--blue);color:#fff;
-  font-size:11px;letter-spacing:.14em;text-transform:uppercase;
-  font-weight:500;padding:16px;
-}
+    .inner {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
 
-/* SCROLL REVEAL */
-.reveal{opacity:0;transform:translateY(16px);transition:opacity .65s cubic-bezier(.16,1,.3,1),transform .65s cubic-bezier(.16,1,.3,1)}
-.reveal.visible{opacity:1;transform:translateY(0)}
-.reveal-delay-1{transition-delay:.08s}
-.reveal-delay-2{transition-delay:.16s}
-.reveal-delay-3{transition-delay:.24s}
-.reveal-delay-4{transition-delay:.32s}
+    .eyebrow {
+      font-family: 'DM Mono', monospace;
+      font-size: 9px;
+      font-weight: 300;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--text-5);
+      margin-bottom: 44px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .eyebrow::before {
+      content: '';
+      display: block;
+      width: 20px;
+      height: 1px;
+      background: var(--text-5);
+      flex-shrink: 0;
+    }
 
-/* MOBILE */
-@media(max-width:900px){
-  nav{padding:18px 24px}
-  .nav-links{display:none}
-  #hero{padding:120px 24px 80px;min-height:auto}
-  .hero-proof{display:none}
-  #how{padding:64px 24px}
-  .steps-grid{grid-template-columns:1fr;max-width:100%}
-  #layers{padding:64px 24px}
-  .cards-grid{grid-template-columns:1fr;max-width:100%}
-  .card{padding:32px 28px}
-  #difference{padding:64px 24px}
-  .diff-blocks{grid-template-columns:1fr;gap:36px}
-  #final-line{padding:56px 24px;flex-direction:column;align-items:flex-start}
-  footer{padding:36px 24px;flex-direction:column;align-items:flex-start}
-  .mobile-sticky{display:block}
-  body{padding-bottom:72px}
-}
-</style>
+    .section-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-size: clamp(34px, 4.5vw, 54px);
+      line-height: 1.05;
+      letter-spacing: -0.01em;
+      color: var(--text);
+    }
+
+    .gold-rule {
+      display: block;
+      width: 36px;
+      height: 1px;
+      background: linear-gradient(to right, var(--gold), transparent);
+      margin: 32px 0;
+    }
+
+    /* BUTTONS */
+    .btn-blue {
+      display: inline-block;
+      background: var(--blue);
+      color: #fff;
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      font-weight: 400;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      text-decoration: none;
+      padding: 14px 28px;
+      border: none;
+      cursor: pointer;
+      transition: background 0.2s;
+      white-space: nowrap;
+    }
+    .btn-blue:hover { background: #3a5ee0; }
+
+    .btn-ghost {
+      display: inline-block;
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      font-weight: 300;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text-4);
+      text-decoration: none;
+      border-bottom: 1px solid var(--text-5);
+      padding-bottom: 2px;
+      transition: color 0.2s, border-color 0.2s;
+    }
+    .btn-ghost:hover { color: var(--text-2); border-color: var(--text-3); }
+
+    .cta-row {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+      flex-wrap: wrap;
+    }
+
+    /* ── S1: HERO ─────────────────────────────────── */
+    #hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      padding: 130px 48px 100px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-bg-word {
+      position: absolute;
+      top: 50%;
+      right: -60px;
+      transform: translateY(-50%);
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-style: italic;
+      font-size: clamp(160px, 22vw, 320px);
+      color: transparent;
+      -webkit-text-stroke: 1px rgba(196,163,90,0.04);
+      pointer-events: none;
+      user-select: none;
+      white-space: nowrap;
+      line-height: 1;
+    }
+
+    .hero-inner { max-width: 780px; position: relative; z-index: 1; }
+
+    .hero-eyebrow {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      font-weight: 300;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--gold-dim);
+      margin-bottom: 32px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .hero-eyebrow::before {
+      content: '';
+      display: block;
+      width: 28px;
+      height: 1px;
+      background: var(--gold-dim);
+    }
+
+    .hero-headline {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-size: clamp(56px, 8.5vw, 108px);
+      line-height: 0.93;
+      letter-spacing: -0.02em;
+      color: var(--text);
+      margin-bottom: 36px;
+    }
+
+    .hero-sub {
+      font-size: 15px;
+      color: var(--text-4);
+      line-height: 1.9;
+      margin-bottom: 32px;
+    }
+
+    .hero-body-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-style: italic;
+      font-size: clamp(18px, 2vw, 24px);
+      color: var(--text-2);
+      margin-bottom: 16px;
+    }
+
+    .hero-list {
+      list-style: none;
+      margin-bottom: 28px;
+    }
+    .hero-list li {
+      font-size: 14px;
+      color: var(--text-2);
+      padding: 7px 0 7px 18px;
+      position: relative;
+      border-bottom: 1px solid var(--border-3);
+      line-height: 1.4;
+    }
+    .hero-list li:last-child { border-bottom: none; }
+    .hero-list li::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 6px;
+      height: 1px;
+      background: var(--gold-dim);
+    }
+
+    .hero-add-line {
+      font-size: 14px;
+      color: var(--text-4);
+      line-height: 1.7;
+      margin-bottom: 44px;
+    }
+
+    .hero-rule-bottom {
+      position: absolute;
+      bottom: 0; left: 48px; right: 48px;
+      height: 1px;
+      background: linear-gradient(to right, rgba(196,163,90,0.25), transparent 60%);
+    }
+
+    /* ── S2: DIAGNOSTIC ───────────────────────────── */
+    #diagnostic { background: var(--bg-1); }
+
+    .diag-header {
+      text-align: center;
+      margin-bottom: 56px;
+    }
+
+    .diag-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-size: clamp(36px, 5vw, 60px);
+      line-height: 1;
+      letter-spacing: -0.01em;
+      color: var(--text);
+      margin-bottom: 12px;
+    }
+
+    .diag-sub {
+      font-size: 14px;
+      color: var(--text-4);
+    }
+
+    .diag-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 2px;
+      background: var(--border-3);
+    }
+
+    .diag-card {
+      background: var(--bg-1);
+      padding: 44px 36px 48px;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      transition: background 0.25s;
+      text-decoration: none;
+    }
+    .diag-card:hover { background: var(--bg-2); }
+    .diag-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(to right, var(--gold), transparent 60%);
+      opacity: 0;
+      transition: opacity 0.25s;
+    }
+    .diag-card:hover::before { opacity: 1; }
+
+    .diag-num {
+      font-family: 'DM Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.2em;
+      color: var(--text-5);
+      margin-bottom: 20px;
+    }
+
+    .diag-card-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-size: clamp(20px, 2vw, 26px);
+      color: var(--text);
+      line-height: 1.15;
+      letter-spacing: -0.01em;
+      margin-bottom: 14px;
+      flex: 1;
+    }
+
+    .diag-card-sub {
+      font-size: 12px;
+      color: var(--text-4);
+      line-height: 1.6;
+      margin-bottom: 32px;
+    }
+
+    .diag-cta {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      font-weight: 400;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--blue);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: gap 0.2s;
+    }
+    .diag-card:hover .diag-cta { gap: 10px; }
+
+    .diag-footer {
+      text-align: center;
+      padding-top: 48px;
+      font-size: 14px;
+      color: var(--text-4);
+      line-height: 1.7;
+    }
+
+    /* ── S3: PATH SELECTION ───────────────────────── */
+    #paths { background: var(--bg); }
+
+    .paths-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2px;
+      background: var(--border-3);
+      margin-top: 56px;
+    }
+
+    .path-card {
+      background: var(--bg);
+      padding: 52px 48px 56px;
+      position: relative;
+      transition: background 0.25s;
+    }
+    .path-card:hover { background: var(--bg-2); }
+    .path-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(to right, var(--gold), transparent 60%);
+      opacity: 0;
+      transition: opacity 0.25s;
+    }
+    .path-card:hover::before { opacity: 1; }
+
+    .path-num {
+      font-family: 'DM Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.2em;
+      color: var(--text-5);
+      margin-bottom: 24px;
+    }
+
+    .path-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-size: clamp(26px, 3vw, 38px);
+      color: var(--text);
+      line-height: 1.1;
+      letter-spacing: -0.01em;
+      margin-bottom: 18px;
+    }
+
+    .path-desc {
+      font-size: 14px;
+      color: var(--text-3);
+      line-height: 1.7;
+      margin-bottom: 36px;
+    }
+
+    /* ── S4: SYSTEM ───────────────────────────────── */
+    #system { background: var(--bg-1); }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1.5fr;
+      gap: 80px;
+      align-items: start;
+    }
+
+    .system-copy p {
+      font-size: 15px;
+      color: var(--text-2);
+      line-height: 1.75;
+      margin-bottom: 8px;
+    }
+
+    .phase-list {
+      list-style: none;
+      margin: 28px 0 40px;
+    }
+    .phase-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--border-3);
+    }
+    .phase-list li:last-child { border-bottom: none; }
+
+    .phase-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-size: 20px;
+      color: var(--gold);
+      min-width: 120px;
+      letter-spacing: -0.01em;
+    }
+
+    .phase-desc {
+      font-size: 13px;
+      color: var(--text-3);
+      line-height: 1.5;
+      padding-top: 3px;
+    }
+
+    /* ── S5: PRODUCTS ─────────────────────────────── */
+    #products { background: var(--bg); }
+
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+      background: var(--border-3);
+      margin-top: 56px;
+    }
+
+    .product-card {
+      background: var(--bg);
+      padding: 44px 40px 48px;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      transition: background 0.25s;
+    }
+    .product-card:hover { background: var(--bg-2); }
+    .product-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(to right, var(--gold), transparent 60%);
+      opacity: 0;
+      transition: opacity 0.25s;
+    }
+    .product-card:hover::before { opacity: 1; }
+
+    /* gold top accent for featured cards */
+    .product-card.featured::before { opacity: 1; }
+
+    .product-tag {
+      font-family: 'DM Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--text-5);
+      margin-bottom: 20px;
+    }
+
+    .product-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-size: clamp(22px, 2.4vw, 30px);
+      color: var(--text);
+      letter-spacing: -0.01em;
+      line-height: 1.1;
+      margin-bottom: 14px;
+    }
+
+    .product-body {
+      font-size: 13px;
+      color: var(--text-3);
+      line-height: 1.7;
+      flex: 1;
+      margin-bottom: 28px;
+    }
+
+    .product-price {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-size: 22px;
+      color: var(--text-2);
+      margin-bottom: 20px;
+    }
+
+    /* club card special styling */
+    .product-card.club-card .product-tag { color: var(--gold-dim); }
+    .product-card.club-card .product-title { color: var(--gold); }
+
+    /* ── S6: PRIVATE ACCESS ───────────────────────── */
+    #private { background: var(--bg-1); }
+
+    .private-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+    }
+
+    .private-tag-list {
+      list-style: none;
+      margin: 24px 0 36px;
+    }
+    .private-tag-list li {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      color: var(--text-3);
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border-3);
+    }
+    .private-tag-list li:last-child { border-bottom: none; }
+
+    .private-right p {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-style: italic;
+      font-size: clamp(18px, 2vw, 26px);
+      color: var(--text-2);
+      line-height: 1.55;
+    }
+
+    /* ── S7: PROOF ────────────────────────────────── */
+    #proof { background: var(--bg); }
+
+    .proof-inner { max-width: 640px; }
+
+    .proof-quote {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-style: italic;
+      font-size: clamp(22px, 2.8vw, 34px);
+      color: var(--text);
+      line-height: 1.35;
+      margin-bottom: 28px;
+    }
+
+    .proof-list {
+      list-style: none;
+      margin: 16px 0 28px;
+    }
+    .proof-list li {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      color: var(--text-4);
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border-3);
+    }
+    .proof-list li:last-child { border-bottom: none; }
+
+    .proof-close {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 400;
+      font-style: italic;
+      font-size: clamp(18px, 2vw, 24px);
+      color: var(--text-2);
+    }
+
+    /* ── FOOTER ───────────────────────────────────── */
+    footer {
+      padding: 52px 48px;
+      border-top: 1px solid var(--border-3);
+    }
+
+    .footer-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 60px;
+      align-items: start;
+    }
+
+    .footer-mark {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-size: 16px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text-4);
+      display: block;
+      margin-bottom: 10px;
+    }
+
+    .footer-micro {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      font-weight: 300;
+      letter-spacing: 0.08em;
+      color: var(--text-5);
+      line-height: 1.8;
+    }
+
+    .footer-col-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--text-5);
+      margin-bottom: 18px;
+    }
+
+    .footer-links {
+      list-style: none;
+    }
+    .footer-links a {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      font-weight: 300;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-5);
+      text-decoration: none;
+      padding: 7px 0;
+      border-bottom: 1px solid var(--border-3);
+      transition: color 0.2s;
+      display: block;
+    }
+    .footer-links a:last-child { border-bottom: none; }
+    .footer-links a:hover { color: var(--text-3); }
+
+    /* ── RESPONSIVE ───────────────────────────────── */
+    @media (max-width: 1060px) {
+      .diag-grid { grid-template-columns: repeat(2, 1fr); }
+      .products-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 960px) {
+      nav { padding: 18px 28px; }
+      .nav-links { gap: 16px; }
+      #hero { padding: 120px 28px 90px; }
+      .hero-rule-bottom { left: 28px; right: 28px; }
+      .pad { padding: 76px 28px; }
+      .two-col { grid-template-columns: 1fr; gap: 48px; }
+      .paths-grid { grid-template-columns: 1fr; }
+      .private-inner { grid-template-columns: 1fr; gap: 44px; }
+      footer { padding: 44px 28px; }
+      .footer-inner { grid-template-columns: 1fr; gap: 40px; }
+    }
+
+    @media (max-width: 640px) {
+      nav { padding: 16px 20px; }
+      .nav-links { display: none; }
+      #hero { padding: 110px 20px 80px; }
+      .hero-rule-bottom { left: 20px; right: 20px; }
+      .pad { padding: 60px 20px; }
+      .diag-grid { grid-template-columns: 1fr; }
+      .products-grid { grid-template-columns: 1fr; }
+      .path-card { padding: 36px 24px 40px; }
+      .product-card { padding: 36px 24px 40px; }
+      .diag-card { padding: 36px 24px 40px; }
+      footer { padding: 36px 20px; }
+    }
+  </style>
 </head>
 <body>
-
-<nav>
-  <a href="/" class="nav-logo">Stephuary</a>
-  <div class="nav-links">
-    <a href="/index.html" class="nav-link">Run Analysis</a>
-    <a href="/club.html" class="nav-link">.5% Club</a>
-    <a href="https://grownspaghetti.substack.com" class="nav-link" target="_blank" rel="noopener">Substack</a>
-    <a href="/index.html" class="nav-cta">Run Analysis</a>
-  </div>
-</nav>
-
-<!-- HERO -->
-<section id="hero">
-  <div class="hero-label">Stephuary</div>
-  <h1 class="hero-headline">Find what's not<br>working. Fix it.<br><em>Move.</em></h1>
-  <p class="hero-sub">Stephuary is a decision system for people building something real. Run the analysis, see what matters, and get the next move.</p>
-  <p class="hero-micro">System for clarity, execution, and revenue paths.</p>
-  <div class="hero-ctas">
-    <a href="/index.html" class="btn-primary">Run Analysis</a>
-    <a href="#layers" class="btn-ghost">View Full Access</a>
-  </div>
-  <div class="hero-proof">
-    Built for people who are<br>already doing the work.
-  </div>
-</section>
-
-<!-- HOW IT WORKS -->
-<section id="how">
-  <div class="section-label">How it works</div>
-  <div class="steps-grid">
-    <div class="step reveal">
-      <div class="step-num">01</div>
-      <div class="step-title">Run the analysis</div>
-      <div class="step-body">Select what's happening. The diagnostic maps where your system is breaking in under two minutes.</div>
-    </div>
-    <div class="step reveal reveal-delay-1">
-      <div class="step-num">02</div>
-      <div class="step-title">See what matters</div>
-      <div class="step-body">The result shows your primary friction point. One thing, clearly named. Not a list of everything wrong.</div>
-    </div>
-    <div class="step reveal reveal-delay-2">
-      <div class="step-num">03</div>
-      <div class="step-title">Get the next move</div>
-      <div class="step-body">The System gives you a step-by-step execution path starting exactly where you are. No restarting from zero.</div>
-    </div>
-  </div>
-</section>
-
-<!-- TWO LAYERS + CARDS -->
-<section id="layers">
-  <div class="layers-header reveal">
-    <div class="layers-eyebrow">Two layers. One system.</div>
-    <h2 class="layers-headline">Stephuary tells you what to do.<br>.5% Club sharpens how you move.</h2>
-    <p class="layers-sub">One gives you clarity, structure, and revenue paths. The other gives you the private intelligence layer behind better judgment, taste, and decision-making.</p>
-  </div>
-
-  <div class="cards-grid">
-    <!-- Card 1: System -->
-    <div class="card reveal">
-      <div class="card-title">Stephuary System</div>
-      <div class="card-price">$39</div>
-      <div class="card-price-note">One time. Lifetime access.</div>
-      <div class="card-desc">Fix what's not working.</div>
-      <ul class="card-includes">
-        <li>Full diagnostic analysis</li>
-        <li>Offer clarity</li>
-        <li>Proven revenue paths</li>
-        <li>Execution steps</li>
-        <li>Automation structure</li>
-      </ul>
-      <a href="/index.html" class="card-cta">Enter System</a>
-    </div>
-
-    <!-- Card 2: Club -->
-    <div class="card reveal reveal-delay-1">
-      <div class="card-title">.5% Club</div>
-      <div class="card-price">$97</div>
-      <div class="card-price-note">One time. Lifetime access.</div>
-      <div class="card-desc">Private intelligence layer.</div>
-      <ul class="card-includes">
-        <li>Philosophy and frameworks</li>
-        <li>Cultural intelligence</li>
-        <li>Events and access callouts</li>
-        <li>Hospitality and travel access</li>
-        <li>Curated member environment</li>
-        <li>Monthly intelligence drops</li>
-      </ul>
-      <a href="/club.html" class="card-cta">Join .5% Club</a>
-    </div>
-
-    <!-- Card 3: Full Access (featured) -->
-    <div class="card featured reveal reveal-delay-2">
-      <div class="card-recommended">Recommended</div>
-      <div class="card-title">Full Access</div>
-      <div class="card-price">$127</div>
-      <div class="card-price-note">One time. Lifetime access.</div>
-      <div class="card-desc">System plus private intelligence layer.</div>
-      <ul class="card-includes">
-        <li>Everything in Stephuary System</li>
-        <li>Everything in .5% Club</li>
-      </ul>
-      <a href="https://gumroad.com/stephuary" class="card-cta" target="_blank" rel="noopener">Get Full Access</a>
-    </div>
-  </div>
-</section>
-
-<!-- DIFFERENCE -->
-<section id="difference">
-  <div class="diff-header reveal">
-    <h2 class="diff-headline">What's the difference</h2>
-  </div>
-  <div class="diff-blocks">
-    <div class="diff-block reveal">
-      <div class="diff-block-name">Stephuary System</div>
-      <div class="diff-block-title">Tells you what to do.</div>
-      <div class="diff-block-body">What to fix, what to sell, and what to do next. Structured execution built around your specific friction point.</div>
-    </div>
-    <div class="diff-block reveal reveal-delay-1">
-      <div class="diff-block-name">.5% Club</div>
-      <div class="diff-block-title">Shapes how you see.</div>
-      <div class="diff-block-body">The private layer behind how composed, high-level people actually think and move. Judgment, taste, and decision architecture.</div>
-    </div>
-    <div class="diff-block reveal reveal-delay-2">
-      <div class="diff-block-name">Full Access</div>
-      <div class="diff-block-title">Gives you both.</div>
-      <div class="diff-block-body">Structure and context together. The only option that covers execution and the intelligence layer behind it.</div>
-    </div>
-  </div>
-</section>
-
-<!-- FINAL LINE -->
-<section id="final-line">
-  <p class="final-text reveal">Start with clarity. Stay for the context.</p>
-  <a href="/index.html" class="btn-primary reveal reveal-delay-1">Run Analysis</a>
-</section>
-
-<footer>
-  <div>
-    <div class="footer-logo">Stephuary</div>
-    <div class="footer-micro">Built to be used. Not watched.</div>
-  </div>
-  <nav class="footer-links">
-    <a href="/index.html" class="footer-link">Run Analysis</a>
-    <a href="/club.html" class="footer-link">.5% Club</a>
-    <a href="https://gumroad.com/stephuary" class="footer-link" target="_blank" rel="noopener">Full Access</a>
-    <a href="https://grownspaghetti.substack.com" class="footer-link" target="_blank" rel="noopener">Substack</a>
-    <a href="https://github.com/stephuary/Stephuary" class="footer-link" target="_blank" rel="noopener">GitHub</a>
-    <a href="https://onlysometimesclub.com" class="footer-link" target="_blank" rel="noopener">Only Sometimes Club</a>
-  </nav>
-</footer>
-
-<!-- Mobile sticky CTA -->
-<div class="mobile-sticky">
-  <a href="/index.html">Run Analysis</a>
-</div>
-
-<script>
-// Scroll reveal
-var observer = new IntersectionObserver(function(entries){
-  entries.forEach(function(e){
-    if(e.isIntersecting){ e.target.classList.add('visible'); }
-  });
-}, {threshold:0.12});
-document.querySelectorAll('.reveal').forEach(function(el){ observer.observe(el); });
-
-// Hero immediate reveal
-setTimeout(function(){
-  document.querySelector('.hero-label') && document.querySelector('.hero-label').classList.add('visible');
-},100);
-</script>
-</body>
-</html>
-oogleapis.com"/>
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Mono:wght@300;400&family=Lato:wght@300;400&display=swap" rel="stylesheet"/>
-<style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-
-:root{
-  --bg:        #080807;
-  --bg-1:      #0e0e0c;
-  --bg-2:      #141412;
-  --bg-3:      #1a1a17;
-
-  --gold:      #c4a35a;
-  --gold-hi:   #d4b46a;
-  --gold-f:    rgba(196,163,90,0.06);
-  --gold-line: rgba(196,163,90,0.2);
-  --gold-lo:   rgba(196,163,90,0.12);
-
-  --blue:      #2b4fd4;
-  --blue-hi:   #3560e8;
-  --blue-lo:   rgba(43,79,212,0.12);
-
-  --text:      #f4ede0;
-  --text-2:    #cbc3b4;
-  --text-3:    #a09889;
-  --text-4:    #6e6558;
-  --text-5:    #4a4540;
-
-  --line:      rgba(244,237,224,0.08);
-  --line-2:    rgba(244,237,224,0.05);
-
-  --terra:     #b85c38;
-  --terra-lo:  rgba(184,92,56,0.09);
-  --terra-line:rgba(184,92,56,0.3);
-
-  --green-lo:  rgba(74,140,101,0.1);
-  --green-hi:  #6ab884;
-
-  --serif: "Cormorant Garamond", Georgia, serif;
-  --mono:  "DM Mono", monospace;
-  --sans:  "Lato", system-ui, sans-serif;
-  --r: 2px;
-}
-
-html,body{
-  background:var(--bg);
-  color:var(--text);
-  font-family:var(--sans);
-  font-weight:300;
-  font-size:17px;
-  line-height:1.65;
-  min-height:100%;
-  -webkit-font-smoothing:antialiased;
-}
-
-a{color:inherit;text-decoration:none}
-
-body::after{
-  content:"";position:fixed;inset:0;pointer-events:none;z-index:100;
-  opacity:0.022;
-  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  background-size:200px 200px;
-}
-
-/* ============================================================
-   LAYOUT
-   ============================================================ */
-.page{max-width:760px;margin:0 auto;padding:0 24px 120px}
-
-/* ============================================================
-   NAV
-   ============================================================ */
-.top-nav{
-  padding:26px 0 0;
-  display:flex;justify-content:space-between;align-items:center;
-  margin-bottom:80px;
-  border-bottom:1px solid var(--line-2);
-  padding-bottom:20px;
-}
-.nav-logo{
-  font-family:var(--serif);font-size:14px;
-  letter-spacing:0.18em;text-transform:uppercase;
-  color:var(--gold);font-weight:300;
-  flex-shrink:0;
-}
-.nav-links{
-  display:flex;align-items:center;gap:24px;flex-wrap:wrap;
-  justify-content:flex-end;
-}
-.nav-link{
-  font-size:10px;letter-spacing:0.14em;text-transform:uppercase;
-  color:var(--text-5);transition:color 150ms;white-space:nowrap;
-}
-.nav-link:hover{color:var(--text-3)}
-.nav-link.accent{color:var(--gold);opacity:0.8}
-.nav-link.accent:hover{opacity:1}
-
-/* ============================================================
-   TYPE
-   ============================================================ */
-.overline{
-  font-size:10px;letter-spacing:0.2em;text-transform:uppercase;
-  color:var(--gold);font-weight:400;display:block;margin-bottom:14px;
-}
-.overline-dim{
-  font-size:10px;letter-spacing:0.18em;text-transform:uppercase;
-  color:var(--text-5);font-weight:400;display:block;margin-bottom:12px;
-}
-
-h1{
-  font-family:var(--serif);font-weight:300;
-  font-size:clamp(44px,8vw,78px);
-  line-height:1.0;letter-spacing:-0.02em;
-  color:var(--text);margin-bottom:0;
-}
-h1 em{font-style:italic;color:var(--text-3)}
-
-h2{
-  font-family:var(--serif);font-weight:300;
-  font-size:clamp(24px,4vw,36px);
-  line-height:1.1;letter-spacing:-0.01em;
-  color:var(--text);margin-bottom:12px;
-}
-
-h3{
-  font-family:var(--serif);font-weight:400;
-  font-size:clamp(18px,2.5vw,22px);
-  line-height:1.2;color:var(--text);margin-bottom:8px;
-}
-
-p{color:var(--text-2);max-width:52ch}
-
-/* ============================================================
-   SECTION SPACING
-   ============================================================ */
-.section{margin-bottom:80px}
-.section-sm{margin-bottom:52px}
-
-/* ============================================================
-   HERO INPUT
-   ============================================================ */
-.input-label{
-  font-size:12px;letter-spacing:0.14em;text-transform:uppercase;
-  color:var(--text-5);display:block;margin-bottom:16px;
-}
-
-.ghost-field{
-  width:100%;background:transparent;border:none;
-  border-bottom:1px solid rgba(244,237,224,0.12);
-  color:var(--text);font-family:var(--serif);font-weight:300;
-  font-size:clamp(22px,4vw,32px);
-  padding:18px 0 14px;outline:none;resize:none;
-  line-height:1.4;letter-spacing:-0.01em;
-  transition:border-color 350ms ease;min-height:68px;display:block;
-}
-.ghost-field:focus{border-bottom-color:rgba(196,163,90,0.3)}
-.ghost-field::placeholder{color:rgba(160,152,137,0.4);font-style:italic}
-
-/* you'll get list */
-.get-list{
-  list-style:none;display:flex;flex-direction:column;gap:0;
-  margin-top:20px;margin-bottom:28px;
-  border-top:1px solid var(--line-2);
-}
-.get-list li{
-  display:flex;align-items:center;gap:12px;
-  padding:10px 0;border-bottom:1px solid var(--line-2);
-  font-size:15px;color:var(--text-3);
-}
-.get-dot{width:4px;height:4px;border-radius:50%;background:var(--gold);opacity:0.6;flex-shrink:0}
-
-/* CTA button */
-.cta-primary{
-  display:inline-flex;align-items:center;justify-content:center;
-  min-height:54px;padding:16px 28px;
-  background:var(--blue);border:none;border-radius:var(--r);
-  font-size:12px;letter-spacing:0.16em;text-transform:uppercase;
-  color:#fff;cursor:pointer;font-family:var(--sans);font-weight:400;
-  transition:background 150ms ease;white-space:nowrap;width:100%;
-}
-.cta-primary:hover{background:var(--blue-hi)}
-.cta-primary:active{transform:scale(0.97)}
-
-.btn{
-  display:inline-flex;align-items:center;justify-content:center;
-  min-height:50px;padding:14px 24px;
-  border-radius:var(--r);border:1px solid var(--line);
-  font-size:11px;letter-spacing:0.16em;text-transform:uppercase;
-  color:var(--text-3);background:transparent;cursor:pointer;
-  font-family:var(--sans);font-weight:400;
-  transition:all 140ms ease;white-space:nowrap;width:100%;
-}
-.btn:hover{border-color:var(--gold-line);color:var(--text-2)}
-.btn:active{transform:scale(0.97)}
-
-/* skip path */
-.skip-path{
-  display:flex;align-items:center;gap:10px;
-  margin-top:16px;
-  font-size:14px;color:var(--text-5);
-}
-.skip-path a{
-  color:var(--text-4);border-bottom:1px solid rgba(244,237,224,0.1);
-  transition:color 150ms,border-color 150ms;
-  font-family:var(--serif);font-style:italic;
-}
-.skip-path a:hover{color:var(--text-2);border-bottom-color:var(--gold-line)}
-
-/* ============================================================
-   EXAMPLE BLOCK
-   ============================================================ */
-.example-block{
-  margin-top:36px;
-  background:var(--bg-1);border:1px solid var(--line);
-  border-radius:var(--r);padding:22px 22px;
-}
-.example-label{
-  font-size:10px;letter-spacing:0.18em;text-transform:uppercase;
-  color:var(--text-5);display:block;margin-bottom:16px;
-}
-.example-input{
-  font-family:var(--serif);font-size:15px;font-style:italic;
-  color:var(--text-4);line-height:1.5;
-  padding-bottom:14px;border-bottom:1px solid var(--line-2);
-  margin-bottom:14px;
-}
-.example-output{
-  font-size:15px;color:var(--text-2);line-height:1.65;
-}
-.example-output strong{color:var(--text);font-weight:400}
-.example-output .ex-steps{
-  margin-top:10px;list-style:none;display:flex;flex-direction:column;gap:4px;
-}
-.example-output .ex-steps li{
-  font-size:14px;color:var(--text-3);padding-left:12px;position:relative;
-}
-.example-output .ex-steps li::before{
-  content:"";width:3px;height:3px;border-radius:50%;
-  background:var(--gold);opacity:0.6;
-  position:absolute;top:8px;left:0;
-}
-
-/* ============================================================
-   ANALYSIS OUTPUT
-   ============================================================ */
-@keyframes revealUp{
-  from{opacity:0;transform:translateY(10px)}
-  to{opacity:1;transform:translateY(0)}
-}
-.output-wrap{
-  margin-top:36px;
-  animation:revealUp 0.5s ease forwards;
-}
-
-/* confidence tag */
-.conf-tag{
-  display:inline-flex;align-items:center;gap:7px;
-  padding:4px 11px;border-radius:1px;
-  font-size:10px;letter-spacing:0.14em;text-transform:uppercase;
-  font-weight:400;margin-bottom:14px;
-}
-.conf-high{background:var(--terra-lo);color:var(--terra);border:1px solid var(--terra-line)}
-.conf-mid{background:var(--gold-lo);color:var(--gold);border:1px solid var(--gold-line)}
-.conf-low{background:var(--bg-2);color:var(--text-4);border:1px solid var(--line)}
-.conf-dot{width:4px;height:4px;border-radius:50%;background:currentColor}
-
-.output-headline{
-  font-family:var(--serif);font-size:clamp(24px,4.5vw,38px);
-  font-weight:300;letter-spacing:-0.01em;line-height:1.1;
-  color:var(--text);margin-bottom:16px;
-}
-.output-headline em{font-style:italic;color:var(--terra)}
-
-.out-section{margin-bottom:28px}
-.out-label{
-  font-size:10px;letter-spacing:0.18em;text-transform:uppercase;
-  color:var(--text-5);display:block;margin-bottom:10px;
-}
-
-.out-line{
-  font-size:16px;color:var(--text-2);line-height:1.6;max-width:none;
-}
-.out-line+.out-line{margin-top:8px}
-
-.out-list{
-  list-style:none;display:flex;flex-direction:column;gap:0;
-  border-top:1px solid var(--line-2);
-}
-.out-list li{
-  display:flex;align-items:flex-start;gap:14px;
-  padding:11px 0;border-bottom:1px solid var(--line-2);
-  font-size:15px;color:var(--text-2);line-height:1.5;
-}
-.out-list li::before{
-  content:"";width:4px;height:4px;border-radius:50%;
-  background:var(--terra);flex-shrink:0;margin-top:8px;
-}
-.out-list.neutral li::before{background:var(--text-5);opacity:0.6}
-
-.fix-card{
-  border:1px solid var(--gold-line);
-  background:linear-gradient(155deg,rgba(196,163,90,0.05),var(--bg-1));
-  border-radius:var(--r);padding:20px 20px;
-  position:relative;overflow:hidden;
-}
-.fix-card::before{
-  content:"";position:absolute;top:0;left:0;right:0;height:1px;
-  background:linear-gradient(90deg,transparent,var(--gold),transparent);opacity:0.4;
-}
-
-.do-list{
-  list-style:none;display:flex;flex-direction:column;gap:0;
-}
-.do-item{
-  display:grid;grid-template-columns:26px 1fr;
-  gap:12px;padding:12px 0;border-bottom:1px solid var(--line-2);
-  align-items:start;
-}
-.do-item:first-child{border-top:1px solid var(--line-2)}
-.do-n{
-  font-family:var(--serif);font-size:22px;font-weight:300;
-  color:var(--gold);opacity:0.32;line-height:1.1;
-}
-.do-text{font-size:15px;color:var(--text-2);line-height:1.55;padding-top:3px}
-
-.output-cta-wrap{margin-top:28px;display:flex;flex-direction:column;gap:12px}
-
-/* resistance message */
-.resistance-msg{
-  background:var(--bg-1);border:1px solid var(--line);
-  border-radius:var(--r);padding:20px;
-}
-.resistance-msg p{font-size:16px;color:var(--text-3);line-height:1.6;max-width:none}
-.resistance-msg p+p{margin-top:8px;font-size:14px;color:var(--text-5)}
-
-/* ============================================================
-   WHAT YOU LEAVE WITH
-   ============================================================ */
-.leave-grid{
-  display:grid;grid-template-columns:1fr 1fr;
-  gap:10px;margin-top:4px;
-}
-.leave-item{
-  padding:18px 18px;background:var(--bg-1);
-  border:1px solid var(--line);border-radius:var(--r);
-}
-.leave-n{
-  font-family:var(--mono);font-size:11px;color:var(--gold);
-  opacity:0.5;display:block;margin-bottom:6px;
-}
-.leave-text{font-size:15px;color:var(--text-2);line-height:1.5}
-
-/* ============================================================
-   PRIVATE ACCESS
-   ============================================================ */
-.private-block{
-  border-top:1px solid var(--line-2);
-  padding-top:40px;
-}
-.private-inner{
-  display:flex;justify-content:space-between;
-  align-items:flex-start;gap:32px;
-  flex-wrap:wrap;
-}
-.private-text h3{margin-bottom:10px}
-.private-text p{font-size:15px;color:var(--text-4);line-height:1.6;max-width:40ch}
-.private-cta{
-  flex-shrink:0;
-  display:inline-flex;align-items:center;gap:10px;
-  background:transparent;border:1px solid var(--line);
-  border-radius:var(--r);
-  padding:12px 20px;
-  font-size:10px;letter-spacing:0.16em;text-transform:uppercase;
-  color:var(--text-4);cursor:pointer;font-family:var(--sans);
-  font-weight:400;white-space:nowrap;text-decoration:none;
-  transition:border-color 150ms,color 150ms;
-}
-.private-cta:hover{border-color:var(--gold-line);color:var(--text-2)}
-
-/* ============================================================
-   EXTERNAL LINKS ROW
-   ============================================================ */
-.ext-row{
-  display:flex;flex-wrap:wrap;gap:8px 16px;
-  padding:20px 0;
-  border-top:1px solid var(--line-2);
-  border-bottom:1px solid var(--line-2);
-}
-.ext-link{
-  font-size:11px;letter-spacing:0.1em;text-transform:uppercase;
-  color:var(--text-5);transition:color 140ms;
-  display:inline-flex;align-items:center;gap:6px;
-}
-.ext-link:hover{color:var(--text-3)}
-.ext-link-arrow{font-size:9px;opacity:0.4}
-
-/* ============================================================
-   FOOTER
-   ============================================================ */
-.foot{
-  margin-top:52px;
-  padding-top:22px;border-top:1px solid var(--line-2);
-}
-.foot-grid{
-  display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));
-  gap:8px 20px;margin-bottom:24px;
-}
-.foot-link{
-  font-size:10px;letter-spacing:0.1em;text-transform:uppercase;
-  color:var(--text-5);transition:color 140ms;
-}
-.foot-link:hover{color:var(--text-4)}
-.foot-ext{display:flex;flex-wrap:wrap;gap:8px 16px}
-.foot-ext a{
-  font-size:10px;letter-spacing:0.1em;text-transform:uppercase;
-  color:var(--text-5);transition:color 140ms;
-}
-.foot-ext a:hover{color:var(--text-4)}
-.foot-divider{height:1px;background:var(--line-2);margin:16px 0}
-
-/* ============================================================
-   ANIMATIONS
-   ============================================================ */
-@keyframes fadeUp{
-  from{opacity:0;transform:translateY(6px)}
-  to{opacity:1;transform:translateY(0)}
-}
-.fade-in{animation:fadeUp 0.6s ease forwards}
-
-/* ============================================================
-   RESPONSIVE
-   ============================================================ */
-@media(max-width:640px){
-  .leave-grid{grid-template-columns:1fr}
-  .private-inner{flex-direction:column;gap:20px}
-  .private-cta{width:100%;justify-content:center}
-  h1{font-size:clamp(38px,10vw,56px)}
-  .ghost-field{font-size:clamp(20px,5vw,28px)}
-  .nav-links{gap:14px}
-  .nav-link{font-size:9px}
-}
-@media(max-width:480px){
-  .page{padding:0 18px 80px}
-  .top-nav{flex-direction:column;align-items:flex-start;gap:16px}
-  .nav-links{gap:12px}
-}
-
-.hidden{display:none!important}
-.sep{height:1px;background:var(--line-2);margin:52px 0}
-</style>
-</head>
-<body>
-<div class="page">
 
   <!-- NAV -->
-  <div class="top-nav">
-    <a href="/" class="nav-logo">Stephuary</a>
+  <nav>
+    <a href="/" class="nav-mark">Stephuary</a>
     <div class="nav-links">
-      <a href="/analysis" class="nav-link">Analysis</a>
-      <a href="/playbooks" class="nav-link">Playbooks</a>
-      <a href="/system" class="nav-link">System</a>
-      <a href="/club" class="nav-link accent">5% Club</a>
+      <a href="/capture"           class="nav-link">Start</a>
+      <a href="/system"            class="nav-link">System</a>
+      <a href="/books"             class="nav-link">Books</a>
+      <a href="/playbooks"         class="nav-link">Playbooks</a>
+      <a href="/snapshot"          class="nav-link">Snapshot</a>
+      <a href="/focused-review"    class="nav-link">Focused Review</a>
+      <a href="/founder-diagnostic" class="nav-link">Founder Diagnostic</a>
+      <a href="/club"              class="nav-link">5% Club</a>
+      <a href="/private-access"    class="nav-link">Private Access</a>
+      <a href="/pricing"           class="nav-link">Pricing</a>
+      <a href="https://grownspaghetti.substack.com" class="nav-link nav-link-gold" target="_blank" rel="noopener">Substack</a>
+      <a href="https://onlysometimesclub.com"       class="nav-link nav-link-gold" target="_blank" rel="noopener">OSC</a>
+      <a href="https://github.com/stephuary/Stephuary" class="nav-link"           target="_blank" rel="noopener">GitHub</a>
     </div>
-  </div>
+  </nav>
 
-  <!-- ══════════════════════════════════════════════
-       HERO
-       ══════════════════════════════════════════════ -->
-  <section class="section">
-    <h1>Why you're not<br>making money yet</h1>
+  <!-- S1: HERO -->
+  <section id="hero">
+    <div class="hero-bg-word" aria-hidden="true">System</div>
+    <div class="hero-inner">
+      <p class="hero-eyebrow reveal">A system for building income</p>
 
-    <p style="font-family:var(--serif);font-size:clamp(17px,2.5vw,21px);font-weight:300;font-style:italic;color:var(--text-4);line-height:1.45;max-width:38ch;margin:24px 0 36px;">
-      Say what you're trying to do.<br>
-      You'll get a clear answer on what's wrong and what to do next.
-    </p>
+      <h1 class="hero-headline reveal d1">Build something<br>that makes money.</h1>
 
-    <span class="input-label">What are you trying to do?</span>
+      <p class="hero-sub reveal d2">
+        Start from zero<br>
+        or fix what is not working
+      </p>
 
-    <textarea
-      id="main-input"
-      class="ghost-field"
-      placeholder="Be direct. What are you stuck on?"
-      rows="3"
-      spellcheck="false"
-      autocomplete="off"
-    ></textarea>
+      <div class="reveal d3">
+        <p class="hero-body-title">This is a system.</p>
+        <p class="hero-body-title" style="margin-bottom:16px;">You can use it to:</p>
+        <ul class="hero-list">
+          <li>figure out what to sell</li>
+          <li>turn what you know into income</li>
+          <li>fix what is not converting</li>
+          <li>build something that runs without you</li>
+        </ul>
+        <p class="hero-add-line">
+          You can keep guessing.<br>
+          Or you can start with something that works.
+        </p>
+      </div>
 
-    <ul class="get-list">
-      <li><span class="get-dot"></span>The real problem</li>
-      <li><span class="get-dot"></span>What's slowing you down</li>
-      <li><span class="get-dot"></span>What to do next</li>
-    </ul>
-
-    <button class="cta-primary" id="main-run-btn" type="button">
-      Show me what's wrong &rarr;
-    </button>
-
-    <div class="skip-path">
-      <span>Or</span>
-      <a href="/playbooks">skip this &rarr; See proven ways to make money</a>
-    </div>
-
-    <!-- EXAMPLE BLOCK -->
-    <div class="example-block">
-      <span class="example-label">Example</span>
-      <div class="example-input">"I'm trying to start something online but don't know what to sell"</div>
-      <div class="example-output">
-        <strong>You don't have a defined offer.</strong><br>
-        You're trying to build before deciding what you're selling.<br><br>
-        Start with:<br>
-        <strong>I help [who] get [result]</strong><br><br>
-        Test it with 10 people before building anything.
+      <div class="cta-row reveal d4">
+        <a href="/capture" class="btn-blue">Start free →</a>
+        <a href="#system"  class="btn-ghost">See how it works →</a>
       </div>
     </div>
-
-    <!-- ANALYSIS OUTPUT (injected by JS) -->
-    <div id="output-area" class="hidden"></div>
-
+    <div class="hero-rule-bottom"></div>
   </section>
 
-  <!-- ══════════════════════════════════════════════
-       WHAT YOU LEAVE WITH
-       ══════════════════════════════════════════════ -->
-  <section class="section">
-    <span class="overline-dim">What you leave with</span>
-    <div class="leave-grid">
-      <div class="leave-item">
-        <span class="leave-n">01</span>
-        <span class="leave-text">The exact problem</span>
-      </div>
-      <div class="leave-item">
-        <span class="leave-n">02</span>
-        <span class="leave-text">What to fix first</span>
-      </div>
-      <div class="leave-item">
-        <span class="leave-n">03</span>
-        <span class="leave-text">What to ignore</span>
-      </div>
-      <div class="leave-item">
-        <span class="leave-n">04</span>
-        <span class="leave-text">A simple way to make money from it</span>
-      </div>
-      <div class="leave-item" style="grid-column:1/-1;">
-        <span class="leave-n">05</span>
-        <span class="leave-text">The next 3 steps</span>
+  <!-- S2: DIAGNOSTIC -->
+  <section id="diagnostic">
+    <div class="pad">
+      <div class="inner">
+        <div class="diag-header reveal">
+          <h2 class="diag-title">Start here.</h2>
+          <p class="diag-sub">Pick what actually applies to you.</p>
+        </div>
+
+        <div class="diag-grid reveal d1">
+          <a href="/capture" class="diag-card">
+            <p class="diag-num">01</p>
+            <p class="diag-card-title">I don't know what to sell.</p>
+            <p class="diag-card-sub">You have skills or experience<br>but nothing clearly defined yet.</p>
+            <span class="diag-cta">Show me →</span>
+          </a>
+
+          <a href="/analysis" class="diag-card">
+            <p class="diag-num">02</p>
+            <p class="diag-card-title">I have something but it's not making money.</p>
+            <p class="diag-card-sub">You've tried offers, content, or services<br>but it's not converting.</p>
+            <span class="diag-cta">Diagnose it →</span>
+          </a>
+
+          <a href="/playbooks" class="diag-card">
+            <p class="diag-num">03</p>
+            <p class="diag-card-title">I need a proven way to make money.</p>
+            <p class="diag-card-sub">You don't want to guess.<br>You want paths that already work.</p>
+            <span class="diag-cta">See paths →</span>
+          </a>
+
+          <a href="/pricing" class="diag-card">
+            <p class="diag-num">04</p>
+            <p class="diag-card-title">I need direct help.</p>
+            <p class="diag-card-sub">You want clarity, positioning, or correction<br>without figuring it out yourself.</p>
+            <span class="diag-cta">View options →</span>
+          </a>
+        </div>
+
+        <p class="diag-footer reveal d2">
+          You do not need to figure everything out.<br>
+          You need to start in the right place.
+        </p>
       </div>
     </div>
   </section>
 
-  <!-- ══════════════════════════════════════════════
-       EXTERNAL LINKS ROW
-       ══════════════════════════════════════════════ -->
-  <div class="ext-row">
-    <a href="https://grownspaghetti.substack.com" class="ext-link" target="_blank" rel="noopener">
-      Grown Spaghetti <span class="ext-link-arrow">&#8599;</span>
-    </a>
-    <a href="https://onlysometimesclub.com" class="ext-link" target="_blank" rel="noopener">
-      Only Sometimes Club <span class="ext-link-arrow">&#8599;</span>
-    </a>
-    <a href="https://github.com/stephuary/Stephuary" class="ext-link" target="_blank" rel="noopener">
-      GitHub <span class="ext-link-arrow">&#8599;</span>
-    </a>
-  </div>
+  <!-- S3: PATH SELECTION -->
+  <section id="paths">
+    <div class="pad">
+      <div class="inner">
+        <p class="eyebrow reveal">Start where you are</p>
 
-  <div style="height:52px;"></div>
+        <div class="paths-grid">
+          <div class="path-card reveal">
+            <p class="path-num">Path 01</p>
+            <h2 class="path-title">I do not have an offer yet.</h2>
+            <p class="path-desc">
+              You know something.<br>
+              You just have not turned it into money yet.
+            </p>
+            <a href="/capture" class="btn-blue">Start here →</a>
+          </div>
 
-  <!-- ══════════════════════════════════════════════
-       PRIVATE ACCESS
-       ══════════════════════════════════════════════ -->
-  <section class="section private-block">
-    <div class="private-inner">
-      <div class="private-text">
-        <h3>Private Access</h3>
-        <p>For people building something that needs more than a self-serve answer. Custom systems. Direct review. Private builds.</p>
+          <div class="path-card reveal d1">
+            <p class="path-num">Path 02</p>
+            <h2 class="path-title">I have something but it is not working.</h2>
+            <p class="path-desc">
+              You have an offer, content, or business<br>
+              but it is not converting or growing.
+            </p>
+            <a href="/focused-review" class="btn-blue">Fix it →</a>
+          </div>
+        </div>
       </div>
-      <a href="/private-access" class="private-cta">
-        Request Private Access &rarr;
-      </a>
+    </div>
+  </section>
+
+  <!-- S4: SYSTEM -->
+  <section id="system">
+    <div class="pad">
+      <div class="inner">
+        <p class="eyebrow reveal">The system</p>
+        <div class="two-col">
+          <div class="reveal">
+            <h2 class="section-title">This is not content.</h2>
+            <span class="gold-rule"></span>
+            <div class="system-copy">
+              <p>This is a system you use.</p>
+              <p>You do not need to figure anything out.</p>
+              <p>You move through.</p>
+            </div>
+          </div>
+
+          <div class="reveal d1">
+            <ul class="phase-list">
+              <li>
+                <span class="phase-name">Capture</span>
+                <span class="phase-desc">what you know</span>
+              </li>
+              <li>
+                <span class="phase-name">Monetize</span>
+                <span class="phase-desc">what to sell</span>
+              </li>
+              <li>
+                <span class="phase-name">Structure</span>
+                <span class="phase-desc">how it runs</span>
+              </li>
+              <li>
+                <span class="phase-name">Automation</span>
+                <span class="phase-desc">how it scales</span>
+              </li>
+              <li>
+                <span class="phase-name">Sovereignty</span>
+                <span class="phase-desc">how it holds</span>
+              </li>
+            </ul>
+            <a href="/system" class="btn-ghost">Explore the system →</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- S5: PRODUCTS -->
+  <section id="products">
+    <div class="pad">
+      <div class="inner">
+        <p class="eyebrow reveal">If you want something immediate</p>
+
+        <div class="products-grid">
+
+          <div class="product-card reveal">
+            <p class="product-tag">Books</p>
+            <h3 class="product-title">Start small.</h3>
+            <p class="product-body">
+              Low-cost systems that solve one problem fast.<br>
+              Read in under an hour.<br>
+              Apply the same day.
+            </p>
+            <p class="product-price">From $17</p>
+            <a href="/books" class="btn-blue">View books →</a>
+          </div>
+
+          <div class="product-card reveal d1">
+            <p class="product-tag">Focused Review</p>
+            <h3 class="product-title">Fix one thing fast.</h3>
+            <p class="product-body">
+              You bring one problem.<br>
+              You leave with what to do next.
+            </p>
+            <p class="product-price">$197</p>
+            <a href="/focused-review" class="btn-blue">Get a focused review →</a>
+          </div>
+
+          <div class="product-card reveal d2">
+            <p class="product-tag">Snapshot</p>
+            <h3 class="product-title">See the full picture.</h3>
+            <p class="product-body">
+              48-hour diagnostic of what is not working<br>
+              and where your money is.
+            </p>
+            <p class="product-price">$750</p>
+            <a href="/snapshot" class="btn-blue">Get snapshot →</a>
+          </div>
+
+          <div class="product-card reveal d3">
+            <p class="product-tag">Founder Diagnostic</p>
+            <h3 class="product-title">Get a revenue path.</h3>
+            <p class="product-body">
+              A clear way to make money<br>
+              from what you already have.
+            </p>
+            <p class="product-price">$1,500</p>
+            <a href="/founder-diagnostic" class="btn-blue">Get my path →</a>
+          </div>
+
+          <div class="product-card reveal d4">
+            <p class="product-tag">Playbooks</p>
+            <h3 class="product-title">Paths that already work.</h3>
+            <p class="product-body">
+              Proven income paths you execute directly.<br>
+              No guessing required.
+            </p>
+            <a href="/playbooks" class="btn-blue">View playbooks →</a>
+          </div>
+
+          <div class="product-card club-card reveal d5">
+            <p class="product-tag">5% Club</p>
+            <h3 class="product-title">Think better.</h3>
+            <p class="product-body">
+              Private intelligence, signal, and positioning<br>
+              for people who want better judgment.
+            </p>
+            <a href="/club" class="btn-blue">Enter →</a>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- S6: PRIVATE ACCESS -->
+  <section id="private">
+    <div class="pad">
+      <div class="inner">
+        <p class="eyebrow reveal">For people building something serious</p>
+        <div class="private-inner">
+          <div class="reveal">
+            <h2 class="section-title">Private Access.</h2>
+            <span class="gold-rule"></span>
+            <ul class="private-tag-list">
+              <li>Correction</li>
+              <li>Positioning</li>
+              <li>Market level</li>
+              <li>Offer structure</li>
+              <li>Revenue architecture</li>
+            </ul>
+            <a href="/private-access" class="btn-blue">Request access →</a>
+          </div>
+          <div class="private-right reveal d1">
+            <p>
+              This is not always open.<br>
+              Requests are reviewed.<br>
+              Not all are accepted.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- S7: PROOF -->
+  <section id="proof">
+    <div class="pad">
+      <div class="inner">
+        <p class="eyebrow reveal">Not theory</p>
+        <div class="proof-inner reveal d1">
+          <p class="proof-quote">I booked my first advisory retainer before I had:</p>
+          <ul class="proof-list">
+            <li>a real email list</li>
+            <li>a website</li>
+            <li>a logo</li>
+          </ul>
+          <p class="proof-close">This is not theory.</p>
+        </div>
+      </div>
     </div>
   </section>
 
   <!-- FOOTER -->
-  <footer class="foot">
-    <div class="foot-grid">
-      <a href="/capture" class="foot-link">Capture</a>
-      <a href="/monetize" class="foot-link">Monetize</a>
-      <a href="/structure" class="foot-link">Structure</a>
-      <a href="/automation" class="foot-link">Automation</a>
-      <a href="/sovereignty" class="foot-link">Sovereignty</a>
-      <a href="/playbooks" class="foot-link">Playbooks</a>
-      <a href="/private-access" class="foot-link">Private Access</a>
-      <a href="/club" class="foot-link">5% Club</a>
-      <a href="/analysis" class="foot-link">Analysis</a>
-      <a href="/system" class="foot-link">System</a>
-    </div>
-    <div class="foot-divider"></div>
-    <div class="foot-ext">
-      <a href="https://grownspaghetti.substack.com" target="_blank" rel="noopener">Substack</a>
-      <a href="https://onlysometimesclub.com" target="_blank" rel="noopener">Only Sometimes Club</a>
-      <a href="https://github.com/stephuary/Stephuary" target="_blank" rel="noopener">GitHub</a>
+  <footer>
+    <div class="footer-inner">
+      <div>
+        <span class="footer-mark">Stephuary</span>
+        <p class="footer-micro">
+          Built to be used.<br>
+          Not watched.
+        </p>
+      </div>
+
+      <div>
+        <p class="footer-col-label">System</p>
+        <ul class="footer-links">
+          <li><a href="/capture">Start (Capture)</a></li>
+          <li><a href="/system">Full System</a></li>
+          <li><a href="/books">Books</a></li>
+          <li><a href="/playbooks">Playbooks</a></li>
+          <li><a href="/snapshot">Snapshot</a></li>
+          <li><a href="/focused-review">Focused Review</a></li>
+          <li><a href="/founder-diagnostic">Founder Diagnostic</a></li>
+          <li><a href="/club">5% Club</a></li>
+          <li><a href="/private-access">Private Access</a></li>
+          <li><a href="/pricing">Pricing</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <p class="footer-col-label">External</p>
+        <ul class="footer-links">
+          <li><a href="https://grownspaghetti.substack.com" target="_blank" rel="noopener">Substack</a></li>
+          <li><a href="https://onlysometimesclub.com"       target="_blank" rel="noopener">Only Sometimes Club</a></li>
+          <li><a href="https://github.com/stephuary/Stephuary" target="_blank" rel="noopener">GitHub</a></li>
+          <li><a href="mailto:hello@stephuary.com">Contact</a></li>
+        </ul>
+      </div>
     </div>
   </footer>
 
-</div>
+  <script>
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+          io.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.07, rootMargin: '0px 0px -28px 0px' });
 
-<script>
-/* ============================================================
-   ANALYSIS ENGINE
-   ============================================================ */
+    document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+  </script>
 
-/* -- STEP 1: Classify input clarity -- */
-function classifyClarity(input){
-  var t = input.trim();
-  var words = t.split(/\s+/).length;
-  if(words < 4) return 'low';
-  if(words < 12) return 'mid';
-  return 'high';
-}
-
-/* -- STEP 2: Detect resistance patterns -- */
-function detectResistance(input){
-  var t = input.toLowerCase().trim();
-  var vague = /i don'?t know|not sure|everything|anything|general|maybe|kind of|sort of|figure out|trying to figure/;
-  var avoidance = /idk|hmm|um|uh|well|so|like i said|as i mentioned/;
-  var words = t.split(/\s+/).length;
-  if(words < 4) return 'too_short';
-  if(vague.test(t) && words < 8) return 'vague';
-  if(avoidance.test(t)) return 'avoiding';
-  if(words > 80) return 'too_long';
-  return null;
-}
-
-/* -- STEP 3: Classify problem type -- */
-function classifyProblem(input){
-  var t = input.toLowerCase();
-  var scores = {no_offer:0, unclear_offer:0, not_converting:0, inconsistent:0, visibility:0, execution:0};
-
-  if(/don'?t know what to sell|no idea what|what to offer|nothing to sell|what my offer|what to create/.test(t)) scores.no_offer += 3;
-  if(/can'?t explain|hard to describe|complicated|confusing|nobody gets|what i do|what i sell/.test(t)) scores.unclear_offer += 3;
-  if(/not selling|no sales|no clients|no customers|no one buys|nobody buying|not converting|people look but/.test(t)) scores.not_converting += 3;
-  if(/inconsistent|some months|feast and famine|up and down|no retainer|unpredictable|sometimes i|hit or miss/.test(t)) scores.inconsistent += 3;
-  if(/no one knows|invisible|no leads|no inbound|not visible|no referral|no traffic|nobody finds/.test(t)) scores.visibility += 3;
-  if(/can'?t start|not executing|procrastinat|stuck|not moving|keep restarting|overthinking|haven'?t launched/.test(t)) scores.execution += 3;
-
-  if(/offer|package|service|sell|selling/.test(t)) scores.no_offer += 1;
-  if(/clients|customers|paying/.test(t)) scores.not_converting += 1;
-  if(/revenue|income|money/.test(t)) scores.inconsistent += 1;
-  if(/content|social|marketing|brand/.test(t)) scores.visibility += 1;
-  if(/stuck|overwhelm|busy/.test(t)) scores.execution += 1;
-
-  var max = 0, winner = 'no_offer';
-  Object.keys(scores).forEach(function(k){ if(scores[k] > max){ max = scores[k]; winner = k; } });
-  if(max === 0){ var ks = Object.keys(scores); winner = ks[Math.floor(Math.random()*3)]; }
-  return {type: winner, confidence: max >= 3 ? 'high' : max >= 1 ? 'mid' : 'low'};
-}
-
-/* -- PROBLEM DATA -- */
-var PROBLEMS = {
-  no_offer:{
-    headline:"You don't have a defined offer.",
-    why1:"You're trying to build before deciding what you're selling.",
-    why2:"Everything else depends on this.",
-    costs:["time spent building the wrong thing","conversations that can't convert","energy without direction"],
-    ignore:["website design","social media strategy","email list setup"],
-    impact:["no one can say yes to something undefined","you're confusing effort with progress"],
-    fix:"Write this: I help [who] get [result] through [how]. One sentence.",
-    secondary:null,
-    steps:["Write the offer sentence now","Test it with 10 specific people","Note who responds without needing explanation"]
-  },
-  unclear_offer:{
-    headline:"Your offer exists but no one understands it.",
-    why1:"People don't evaluate vague offers.",
-    why2:"They either get it immediately or they move on.",
-    costs:["attention without commitment","conversations that stall at 'sounds interesting'","referrals that can't describe what you do"],
-    ignore:["your pricing","your content strategy","your website copy"],
-    impact:["you're getting interest without closes","you're adjusting everything except the core issue"],
-    fix:"Say what you do in one sentence. If you can't, that's the problem.",
-    secondary:"Clarity is the constraint. Not price. Not positioning.",
-    steps:["Write one sentence describing the result you deliver","Read it to someone unfamiliar with your work","If they don't immediately understand, rewrite it"]
-  },
-  not_converting:{
-    headline:"You're getting interest. Nothing is closing.",
-    why1:"Interest without commitment means the offer isn't specific enough.",
-    why2:"Or the next step isn't clear enough to take.",
-    costs:["time in conversations that go nowhere","energy spent following up on cold leads","confidence eroding from near-misses"],
-    ignore:["your marketing volume","your content quality","your pricing model"],
-    impact:["you're getting interest without revenue","the pipeline feels full but nothing is closing"],
-    fix:"Make the next step one specific action. Not 'let me know.' Not 'feel free to reach out.' One action.",
-    secondary:"If people say 'I'll think about it', the offer isn't clear enough to decide on.",
-    steps:["Rewrite the next step as one sentence","Send it to 5 people in your current pipeline","Track how many take the action within 48 hours"]
-  },
-  inconsistent:{
-    headline:"You have no predictable income path.",
-    why1:"Inconsistent revenue is a structure problem, not a luck problem.",
-    why2:"Without a defined repeating model, you start from zero every month.",
-    costs:["decisions made without a floor","inability to hire, invest, or plan","exhaustion from constant re-acquisition"],
-    ignore:["new product ideas","new platforms","new content formats"],
-    impact:["you can't build on revenue you can't predict","every month feels like starting over"],
-    fix:"Identify one repeating revenue stream you can activate this week.",
-    secondary:"Retainer. Monthly advisory. Recurring product. Pick one and offer it to 3 people.",
-    steps:["Name the retainer or recurring offer","Set the monthly price now","Send the offer to 3 existing contacts today"]
-  },
-  visibility:{
-    headline:"The right people don't know you exist.",
-    why1:"A strong offer with no distribution is invisible.",
-    why2:"You need consistent presence where your buyers already are.",
-    costs:["competing for clients you're not in the room with","referrals that can't happen","ground given to someone doing the same work louder"],
-    ignore:["building a new website","creating a newsletter before you have readers","optimizing profiles before you have content"],
-    impact:["no inbound leads","referrals dry up within 6 months of going quiet"],
-    fix:"Publish one piece this week showing a specific result from your work.",
-    secondary:"Not advice. Not thoughts. A result. Something changed for someone.",
-    steps:["Write the result post this week","Post it where your audience already is","Send it directly to 10 specific people"]
-  },
-  execution:{
-    headline:"You know what to do. You're not doing it.",
-    why1:"The problem isn't strategy. It's execution.",
-    why2:"The work isn't happening at the volume required.",
-    costs:["revenue that doesn't exist because output didn't go out","relationships reset every time you stop","nothing compounds"],
-    ignore:["more strategy","more research","more planning tools"],
-    impact:["you can't test what you don't run","inconsistent output produces inconsistent results"],
-    fix:"Remove one condition preventing you from starting. Set a 30-minute window. Do only one thing.",
-    secondary:null,
-    steps:["Remove the first interruption right now","Do one task for 30 minutes without switching","Set tomorrow's task before today ends"]
-  }
-};
-
-/* -- RESISTANCE RESPONSES -- */
-var RESISTANCE = {
-  too_short:{
-    primary:"This isn't clear enough yet.",
-    secondary:"Say what you actually want to do."
-  },
-  vague:{
-    primary:"You're close, but this isn't defined enough.",
-    secondary:"Say it in one sentence."
-  },
-  avoiding:{
-    primary:"You're avoiding the decision.",
-    secondary:"Pick one direction."
-  },
-  too_long:{
-    primary:"Say it in one sentence.",
-    secondary:"What is the main problem?"
-  }
-};
-
-/* -- RENDER OUTPUT -- */
-function renderOutput(input){
-  var clarity = classifyClarity(input);
-  var resistance = detectResistance(input);
-  var area = document.getElementById('output-area');
-  area.innerHTML = '';
-  area.classList.remove('hidden');
-
-  if(resistance){
-    var r = RESISTANCE[resistance];
-    var html = '<div class="output-wrap">' +
-      '<div class="resistance-msg">' +
-        '<p>' + r.primary + '</p>' +
-        '<p>' + r.secondary + '</p>' +
-      '</div>' +
-    '</div>';
-    area.innerHTML = html;
-    return;
-  }
-
-  var result = classifyProblem(input);
-  var p = PROBLEMS[result.type];
-
-  var confClass = result.confidence === 'high' ? 'conf-high' : result.confidence === 'mid' ? 'conf-mid' : 'conf-low';
-  var confLabel = result.confidence === 'high' ? 'Primary issue identified' : result.confidence === 'mid' ? 'Likely issue' : 'Possible issue';
-
-  var html = '<div class="output-wrap">';
-
-  // tag
-  html += '<div class="conf-tag ' + confClass + '"><span class="conf-dot"></span>' + confLabel + '</div>';
-
-  // headline
-  html += '<div class="output-headline"><em>' + p.headline + '</em></div>';
-
-  // why it matters
-  html += '<div class="out-section">' +
-    '<span class="out-label">Why it matters</span>' +
-    '<p class="out-line">' + p.why1 + '</p>' +
-    '<p class="out-line">' + p.why2 + '</p>' +
-  '</div>';
-
-  // secondary if exists
-  if(p.secondary){
-    html += '<div class="out-section">' +
-      '<span class="out-label">What this means</span>' +
-      '<p class="out-line">' + p.secondary + '</p>' +
-    '</div>';
-  }
-
-  // costs
-  html += '<div class="out-section"><span class="out-label">What this is costing</span><ul class="out-list">';
-  p.costs.forEach(function(c){ html += '<li>' + c + '</li>'; });
-  html += '</ul></div>';
-
-  // ignore
-  html += '<div class="out-section"><span class="out-label">Ignore this for now</span><ul class="out-list neutral">';
-  p.ignore.forEach(function(c){ html += '<li>' + c + '</li>'; });
-  html += '</ul></div>';
-
-  // impact
-  html += '<div class="out-section"><span class="out-label">This is the impact</span><ul class="out-list">';
-  p.impact.forEach(function(c){ html += '<li>' + c + '</li>'; });
-  html += '</ul></div>';
-
-  // fix
-  html += '<div class="out-section"><span class="out-label">Fix this first</span>' +
-    '<div class="fix-card"><p style="font-size:16px;color:var(--text);line-height:1.65;max-width:none;">' + p.fix + '</p></div>' +
-  '</div>';
-
-  // do this now
-  html += '<div class="out-section"><span class="out-label">Do this now</span><ol class="do-list">';
-  p.steps.forEach(function(s, i){
-    html += '<li class="do-item"><span class="do-n">' + (i+1) + '</span><span class="do-text">' + s + '</span></li>';
-  });
-  html += '</ol></div>';
-
-  // CTA
-  html += '<div class="output-cta-wrap">' +
-    '<button class="cta-primary" onclick="window.location.href=\'/analysis\'">Get the full analysis &rarr;</button>' +
-    '<a href="/playbooks" class="btn" style="text-decoration:none;">See revenue paths</a>' +
-  '</div>';
-
-  html += '</div>';
-  area.innerHTML = html;
-
-  setTimeout(function(){ area.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }, 80);
-}
-
-/* -- EVENTS -- */
-document.getElementById('main-run-btn').addEventListener('click', function(){
-  var val = document.getElementById('main-input').value.trim();
-  if(!val){
-    document.getElementById('main-input').style.borderBottomColor = 'var(--terra-line)';
-    setTimeout(function(){ document.getElementById('main-input').style.borderBottomColor = ''; }, 1500);
-    return;
-  }
-  renderOutput(val);
-});
-
-document.getElementById('main-input').addEventListener('keydown', function(e){
-  if(e.key === 'Enter' && e.metaKey) document.getElementById('main-run-btn').click();
-});
-</script>
 </body>
 </html>
