@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Build Your Offer — Stephuary</title>
-<meta name="description" content="Turn what you know into a clear, sellable offer. Build it in under two minutes." />
+<title>Monetize — Stephuary</title>
+<meta name="description" content="If someone has to think too hard about what you sell, they will wait or leave." />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Lato:wght@300;400&display=swap" rel="stylesheet" />
@@ -23,6 +23,9 @@
   --text:#f4ede0;
   --text-dim:#cbc3b4;
   --text-soft:#a09889;
+  --warn:#b85c38;
+  --warn-bg:rgba(184,92,56,0.08);
+  --warn-line:rgba(184,92,56,0.3);
   --serif:"Cormorant Garamond",Georgia,serif;
   --sans:"Lato",system-ui,sans-serif;
   --radius:2px;
@@ -75,6 +78,8 @@ h2{
   line-height:1.1;
   margin-bottom:14px;
 }
+
+h2.warn-head{color:var(--warn)}
 
 p{color:var(--text-dim);max-width:52ch}
 
@@ -141,6 +146,13 @@ p{color:var(--text-dim);max-width:52ch}
   padding:32px 28px;
 }
 
+.panel-warn{
+  border:1px solid var(--warn-line);
+  background:var(--warn-bg);
+  border-radius:var(--radius);
+  padding:32px 28px;
+}
+
 .list{
   list-style:none;
   display:flex;
@@ -169,7 +181,7 @@ p{color:var(--text-dim);max-width:52ch}
 .field{
   display:flex;
   flex-direction:column;
-  gap:8px;
+  gap:6px;
   margin-bottom:22px;
 }
 .field-label{
@@ -177,6 +189,12 @@ p{color:var(--text-dim);max-width:52ch}
   color:var(--text);
   font-weight:400;
   letter-spacing:0.01em;
+}
+.field-hint{
+  font-size:12px;
+  color:var(--text-soft);
+  letter-spacing:0.01em;
+  font-style:italic;
 }
 .field input{
   background:transparent;
@@ -202,9 +220,7 @@ p{color:var(--text-dim);max-width:52ch}
   from{opacity:0;transform:translateY(12px)}
   to{opacity:1;transform:translateY(0)}
 }
-.output-section{
-  animation:revealUp 0.45s ease forwards;
-}
+.output-section{animation:revealUp 0.45s ease forwards;}
 
 .output-card{
   border:1px solid var(--gold);
@@ -216,150 +232,116 @@ p{color:var(--text-dim);max-width:52ch}
 }
 .output-card::before{
   content:"";
-  position:absolute;
-  top:0;left:0;right:0;
-  height:1px;
+  position:absolute;top:0;left:0;right:0;height:1px;
   background:linear-gradient(90deg,transparent,var(--gold),transparent);
   opacity:0.6;
 }
 
 .output-tag{
-  display:block;
-  font-size:10px;
-  letter-spacing:0.18em;
-  text-transform:uppercase;
-  color:var(--gold);
-  margin-bottom:22px;
-  font-weight:400;
+  display:block;font-size:10px;letter-spacing:0.18em;text-transform:uppercase;
+  color:var(--gold);margin-bottom:22px;font-weight:400;
 }
 
-/* The big pitch line */
 .offer-pitch{
   font-family:var(--serif);
   font-size:clamp(22px,4vw,32px);
-  font-weight:400;
-  color:var(--text);
-  line-height:1.25;
-  margin-bottom:28px;
-  padding-bottom:24px;
-  border-bottom:1px solid var(--line-soft);
+  font-weight:400;color:var(--text);
+  line-height:1.25;margin-bottom:28px;
+  padding-bottom:24px;border-bottom:1px solid var(--line-soft);
 }
 
-/* Data rows */
 .offer-grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:1px;
-  background:var(--line-soft);
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:1px;background:var(--line-soft);
   border:1px solid var(--line-soft);
-  border-radius:var(--radius);
-  overflow:hidden;
-  margin-bottom:24px;
+  border-radius:var(--radius);overflow:hidden;margin-bottom:24px;
 }
-.offer-cell{
-  background:rgba(10,10,8,0.7);
-  padding:14px 16px;
-}
-.offer-cell-label{
-  font-size:10px;
-  letter-spacing:0.14em;
-  text-transform:uppercase;
-  color:var(--text-soft);
-  margin-bottom:5px;
-  display:block;
-}
-.offer-cell-value{
-  font-size:16px;
-  color:var(--text);
-  line-height:1.4;
-}
-.offer-cell.price-cell .offer-cell-value{
-  font-family:var(--serif);
-  font-size:22px;
-  color:var(--gold);
-}
+.offer-cell{background:rgba(10,10,8,0.7);padding:14px 16px;}
+.offer-cell-label{font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--text-soft);margin-bottom:5px;display:block;}
+.offer-cell-value{font-size:16px;color:var(--text);line-height:1.4;}
+.offer-cell.price-cell .offer-cell-value{font-family:var(--serif);font-size:22px;color:var(--gold);}
 
-/* Sell line */
 .sell-line-block{
   padding:16px 18px;
   background:rgba(43,79,212,0.08);
   border:1px solid rgba(43,79,212,0.2);
   border-radius:var(--radius);
 }
-.sell-line-label{
-  font-size:10px;
-  letter-spacing:0.14em;
-  text-transform:uppercase;
-  color:rgba(43,79,212,0.7);
-  margin-bottom:8px;
-  display:block;
-}
-.sell-line{
-  font-size:16px;
-  color:var(--text);
-  line-height:1.55;
+.sell-line-label{font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:rgba(43,79,212,0.7);margin-bottom:8px;display:block;}
+.sell-line{font-size:16px;color:var(--text);line-height:1.55;}
+
+.output-note{
+  margin-top:18px;font-size:13px;
+  color:var(--text-soft);font-style:italic;
+  font-family:var(--serif);line-height:1.6;
 }
 
-/* Validation prompts */
-.validation{
-  margin-top:22px;
-  padding-top:18px;
+/* BUYER TEST */
+.buyer-checks{display:flex;flex-direction:column;gap:12px;margin:20px 0;}
+.buyer-check{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 16px;border:1px solid var(--line-soft);
+  border-radius:var(--radius);background:rgba(10,10,8,0.5);
+  cursor:pointer;gap:16px;transition:border-color 180ms ease;
+}
+.buyer-check:hover{border-color:var(--line)}
+.buyer-check.pass{border-color:rgba(196,163,90,0.4);background:rgba(196,163,90,0.04);}
+.buyer-check.fail{border-color:var(--warn-line);background:var(--warn-bg);}
+.buyer-check-text{font-size:15px;color:var(--text-dim);line-height:1.4;}
+.buyer-check-toggle{
+  display:flex;gap:0;flex-shrink:0;
+  border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;
+}
+.toggle-opt{
+  font-size:10px;letter-spacing:0.1em;text-transform:uppercase;
+  padding:7px 13px;cursor:pointer;border:none;background:transparent;
+  color:var(--text-soft);font-family:var(--sans);font-weight:400;
+  transition:background 140ms ease,color 140ms ease;
+}
+.toggle-opt.selected-yes{background:rgba(196,163,90,0.18);color:var(--gold);}
+.toggle-opt.selected-no{background:rgba(184,92,56,0.18);color:var(--warn);}
+
+.friction-result{
+  margin-top:16px;padding:16px 18px;
+  background:var(--warn-bg);border:1px solid var(--warn-line);
+  border-radius:var(--radius);display:none;
+}
+.friction-result.visible{display:block;}
+.friction-head{font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--warn);margin-bottom:10px;font-weight:400;}
+.friction-items{list-style:none;display:flex;flex-direction:column;gap:6px;}
+.friction-items li{font-size:14px;color:var(--text-dim);padding-left:14px;position:relative;}
+.friction-items li::before{content:"";width:4px;height:4px;border-radius:50%;background:var(--warn);position:absolute;top:8px;left:0;}
+.friction-fix{margin-top:12px;padding-top:12px;border-top:1px solid var(--warn-line);font-size:13px;color:var(--warn);font-style:italic;font-family:var(--serif);}
+
+/* VERSION BLOCK */
+.version-options{display:flex;flex-direction:column;gap:10px;margin-top:20px;}
+.version-opt{
+  border:1px solid var(--line-soft);border-radius:var(--radius);
+  padding:18px 20px;cursor:pointer;
+  transition:border-color 180ms ease,background 180ms ease;
+  background:rgba(10,10,8,0.4);
+}
+.version-opt:hover{border-color:var(--line);}
+.version-opt.selected{border-color:var(--gold);background:rgba(196,163,90,0.06);}
+.version-opt-label{font-size:10px;letter-spacing:0.16em;text-transform:uppercase;color:var(--gold);margin-bottom:6px;display:block;}
+.version-opt-name{font-family:var(--serif);font-size:20px;color:var(--text);margin-bottom:4px;line-height:1.2;}
+.version-opt-desc{font-size:13px;color:var(--text-soft);line-height:1.5;}
+.version-detail{
+  display:none;margin-top:10px;padding-top:10px;
   border-top:1px solid var(--line-soft);
 }
-.validation p{
-  font-size:14px;
-  color:var(--text-soft);
-  font-style:italic;
-  font-family:var(--serif);
-  margin-bottom:6px;
-  max-width:none;
-}
-.validation p:last-child{margin-bottom:0}
+.version-opt.selected .version-detail{display:block;}
+.version-detail-text{font-size:14px;color:var(--text-dim);line-height:1.6;}
+.version-detail-note{font-size:12px;color:var(--text-soft);margin-top:8px;font-style:italic;font-family:var(--serif);}
 
 /* PAID */
-.paid-section{
-  border-top:1px solid var(--line-soft);
-  padding-top:32px;
-}
-.paid-eyebrow{
-  font-size:10px;
-  letter-spacing:0.18em;
-  text-transform:uppercase;
-  color:var(--text-soft);
-  margin-bottom:12px;
-  display:block;
-}
-.paid-text{
-  font-family:var(--serif);
-  font-size:clamp(20px,3vw,26px);
-  font-weight:400;
-  color:var(--text);
-  line-height:1.3;
-  margin-bottom:10px;
-}
-.paid-sub{
-  font-size:15px;
-  color:var(--text-soft);
-  margin-bottom:22px;
-  line-height:1.6;
-  max-width:44ch;
-}
+.paid-section{border-top:1px solid var(--line-soft);padding-top:32px;}
+.paid-eyebrow{font-size:10px;letter-spacing:0.18em;text-transform:uppercase;color:var(--text-soft);margin-bottom:12px;display:block;}
+.paid-text{font-family:var(--serif);font-size:clamp(20px,3vw,26px);font-weight:400;color:var(--text);line-height:1.3;margin-bottom:10px;}
+.paid-sub{font-size:15px;color:var(--text-soft);margin-bottom:22px;line-height:1.6;max-width:44ch;}
 
-.foot{
-  border-top:1px solid var(--line-soft);
-  padding-top:20px;
-  display:flex;
-  flex-wrap:wrap;
-  gap:10px 16px;
-}
-.foot a{
-  font-size:11px;
-  letter-spacing:0.08em;
-  text-transform:uppercase;
-  color:var(--text-soft);
-  text-decoration:none;
-  transition:color 140ms ease;
-}
+.foot{border-top:1px solid var(--line-soft);padding-top:20px;display:flex;flex-wrap:wrap;gap:10px 16px;}
+.foot a{font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-soft);transition:color 140ms ease;}
 .foot a:hover{color:var(--text)}
 
 .hidden{display:none}
@@ -367,12 +349,15 @@ p{color:var(--text-dim);max-width:52ch}
 @media(max-width:680px){
   body{padding:28px 20px 80px}
   .page{gap:40px}
-  .panel{padding:24px 20px}
+  .panel,.panel-warn{padding:24px 20px}
   .output-card{padding:24px 20px}
   h1{font-size:clamp(38px,10vw,52px)}
   .btn{width:100%}
   .row{flex-direction:column;align-items:flex-start}
   .offer-grid{grid-template-columns:1fr}
+  .buyer-check{flex-direction:column;align-items:flex-start;gap:10px;}
+  .buyer-check-toggle{width:100%;}
+  .toggle-opt{flex:1;text-align:center;}
 }
 </style>
 </head>
@@ -382,87 +367,104 @@ p{color:var(--text-dim);max-width:52ch}
   <!-- HERO -->
   <section>
     <span class="label">Monetize &middot; Phase 02</span>
-    <h1>Build your offer.</h1>
-    <p class="subhead">You don't need a full business plan. You need a clear result, a format, and a price someone can understand. This builds that.</p>
+    <h1>Make this easy to buy.</h1>
+    <p class="subhead">If someone has to think too hard about what you sell, they will wait or leave.</p>
     <div class="row">
       <button class="btn btn-primary" id="hero-start" type="button">Build the offer</button>
       <a href="/system" class="link-btn">Back to System</a>
     </div>
   </section>
 
-  <!-- FIX THIS IF -->
+  <!-- THIS IS HAPPENING IF -->
   <section class="panel">
-    <h2>Fix this if</h2>
+    <h2>This is happening if</h2>
     <ul class="list">
-      <li>You know what you do but can't explain it clearly enough to sell it</li>
-      <li>People ask what you charge and you hesitate</li>
-      <li>Your offer exists somewhere in your head but not on paper</li>
-      <li>You're working but not getting paid what the work is worth</li>
-      <li>Income is inconsistent and you're not sure why</li>
+      <li>People ask what you do and you over-explain</li>
+      <li>You hesitate when saying your price</li>
+      <li>You have done the work but it is not converting</li>
+      <li>You are getting interest but not commitments</li>
+      <li>Income comes in waves, not consistently</li>
     </ul>
   </section>
 
-  <!-- WHAT YOU GET -->
+  <!-- WHAT YOU LEAVE WITH -->
   <section class="panel">
-    <h2>What you get</h2>
-    <p style="margin-bottom:14px;">After you use this tool, you have:</p>
+    <h2>What you leave with today</h2>
     <ul class="list">
-      <li>A completed offer with a clear result, format, and price</li>
-      <li>One sentence that explains it well enough to sell</li>
-      <li>Something specific enough to test this week</li>
+      <li>One clear offer</li>
+      <li>One clear price</li>
+      <li>One clear buyer</li>
+      <li>One version you can test this week</li>
     </ul>
+    <p style="margin-top:20px;font-size:15px;color:var(--text-soft);font-style:italic;padding-top:16px;border-top:1px solid var(--line-soft);max-width:none;">
+      You are not building a service menu. You are building one decision someone can say yes to.
+    </p>
   </section>
 
   <!-- TOOL -->
   <section class="panel" id="build-section">
-    <h2>Build your offer</h2>
-    <p style="margin-bottom:24px;font-size:16px;">Fill this in. Don't overthink it. You can always refine it after.</p>
+    <h2>Build the offer</h2>
+    <p style="margin-bottom:24px;font-size:16px;max-width:none;">Define one thing someone can buy now. Not everything you do.</p>
 
     <div class="field">
-      <label class="field-label" for="f-result">What result are you helping someone get?</label>
-      <input id="f-result" type="text" placeholder="Book their first client, clean up their resume, fix their onboarding" maxlength="140" autocomplete="off" />
+      <label class="field-label" for="f-who">Who is this for?</label>
+      <span class="field-hint">Specific person, not a broad category. Not "entrepreneurs" — "freelance designers who cannot close clients."</span>
+      <input id="f-who" type="text" placeholder="Freelance designers who cannot close clients" maxlength="140" autocomplete="off" />
     </div>
 
     <div class="field">
-      <label class="field-label" for="f-method">How are you delivering it?</label>
-      <input id="f-method" type="text" placeholder="1:1 session, service package, async review, audit, done-for-you setup" maxlength="140" autocomplete="off" />
+      <label class="field-label" for="f-result">What result do they get?</label>
+      <span class="field-hint">One outcome. Not a list.</span>
+      <input id="f-result" type="text" placeholder="Book their first paying client within two weeks" maxlength="140" autocomplete="off" />
+    </div>
+
+    <div class="field">
+      <label class="field-label" for="f-method">How do you deliver it?</label>
+      <span class="field-hint">One format. Not a mix.</span>
+      <input id="f-method" type="text" placeholder="2 x 60-minute sessions plus async review" maxlength="140" autocomplete="off" />
     </div>
 
     <div class="field">
       <label class="field-label" for="f-time">How long does it take?</label>
-      <input id="f-time" type="text" placeholder="48 hours, 1 week, 2 weeks" maxlength="80" autocomplete="off" />
+      <span class="field-hint">Single timeframe the buyer commits to.</span>
+      <input id="f-time" type="text" placeholder="Two weeks" maxlength="80" autocomplete="off" />
     </div>
 
     <div class="field">
       <label class="field-label" for="f-price">What is the price?</label>
-      <input id="f-price" type="text" placeholder="150, 300, 750, 1500" maxlength="40" autocomplete="off" />
+      <span class="field-hint">Single number. Not a range.</span>
+      <input id="f-price" type="text" placeholder="750" maxlength="40" autocomplete="off" />
     </div>
 
-    <button class="btn btn-primary" id="build-btn" type="button">Build the offer</button>
+    <button class="btn btn-primary" id="build-btn" type="button">Build my offer</button>
   </section>
 
   <!-- OUTPUT -->
   <section id="output-section" class="hidden">
     <div class="output-card">
-      <span class="output-tag">Offer Snapshot</span>
+      <span class="output-tag">This is what you are selling</span>
 
       <div class="offer-pitch" id="out-pitch"></div>
 
       <div class="offer-grid">
         <div class="offer-cell">
-          <span class="offer-cell-label">What it gets them</span>
+          <span class="offer-cell-label">Buyer</span>
+          <div class="offer-cell-value" id="out-who"></div>
+        </div>
+        <div class="offer-cell">
+          <span class="offer-cell-label">Result</span>
           <div class="offer-cell-value" id="out-result"></div>
         </div>
         <div class="offer-cell">
-          <span class="offer-cell-label">Format</span>
+          <span class="offer-cell-label">Delivery</span>
           <div class="offer-cell-value" id="out-method"></div>
         </div>
         <div class="offer-cell">
           <span class="offer-cell-label">Timeline</span>
           <div class="offer-cell-value" id="out-time"></div>
         </div>
-        <div class="offer-cell price-cell">
-          <span class="offer-cell-label">Starting price</span>
+        <div class="offer-cell price-cell" style="grid-column:1/-1">
+          <span class="offer-cell-label">Price</span>
           <div class="offer-cell-value" id="out-price"></div>
         </div>
       </div>
@@ -472,31 +474,105 @@ p{color:var(--text-dim);max-width:52ch}
         <div class="sell-line" id="out-sellline"></div>
       </div>
 
-      <div class="validation">
-        <p>Can someone read this and immediately decide whether to buy it?</p>
-        <p>If not, the result or the price needs to be more specific.</p>
+      <p class="output-note">If someone cannot repeat this back clearly, it is still too vague.</p>
+    </div>
+
+    <!-- BUYER TEST -->
+    <div class="panel" style="margin-top:28px;">
+      <h2>Buyer test</h2>
+      <p style="margin-top:8px;margin-bottom:4px;max-width:none;font-size:15px;">A buyer should know these three things immediately:</p>
+      <ul class="list" style="margin-bottom:20px;">
+        <li>What this is</li>
+        <li>What they get</li>
+        <li>Why it is worth the price</li>
+      </ul>
+
+      <div class="buyer-checks">
+        <div class="buyer-check" id="check-result" data-field="result">
+          <span class="buyer-check-text">Is the result obvious?</span>
+          <div class="buyer-check-toggle">
+            <button class="toggle-opt" data-val="yes" onclick="setCheck('result','yes')">Yes</button>
+            <button class="toggle-opt" data-val="no" onclick="setCheck('result','no')">No</button>
+          </div>
+        </div>
+        <div class="buyer-check" id="check-delivery" data-field="delivery">
+          <span class="buyer-check-text">Is the delivery clear?</span>
+          <div class="buyer-check-toggle">
+            <button class="toggle-opt" data-val="yes" onclick="setCheck('delivery','yes')">Yes</button>
+            <button class="toggle-opt" data-val="no" onclick="setCheck('delivery','no')">No</button>
+          </div>
+        </div>
+        <div class="buyer-check" id="check-price" data-field="price">
+          <span class="buyer-check-text">Does the price match the outcome?</span>
+          <div class="buyer-check-toggle">
+            <button class="toggle-opt" data-val="yes" onclick="setCheck('price','yes')">Yes</button>
+            <button class="toggle-opt" data-val="no" onclick="setCheck('price','no')">No</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="friction-result" id="friction-result">
+        <div class="friction-head">The friction is here</div>
+        <ul class="friction-items" id="friction-items"></ul>
+        <p class="friction-fix">Fix the weak part before changing everything else.</p>
+      </div>
+    </div>
+
+    <!-- VERSION BLOCK -->
+    <div class="panel" style="margin-top:28px;">
+      <h2>Choose the version to test</h2>
+      <p style="margin-top:8px;font-size:15px;max-width:none;">Three ways to sell the same offer. Pick one and test it this week.</p>
+
+      <div class="version-options" id="version-options">
+        <div class="version-opt" id="ver-direct" onclick="selectVersion('direct')">
+          <span class="version-opt-label">Version A</span>
+          <div class="version-opt-name">Direct outreach</div>
+          <div class="version-opt-desc">Send this offer to three specific people this week.</div>
+          <div class="version-detail">
+            <p class="version-detail-text">Write one message. Say what you do, who it is for, and what it costs. Send it to three people who already know you. Not strangers.</p>
+            <p class="version-detail-note">This is the fastest path to a first payment. No funnel required.</p>
+          </div>
+        </div>
+        <div class="version-opt" id="ver-post" onclick="selectVersion('post')">
+          <span class="version-opt-label">Version B</span>
+          <div class="version-opt-name">Public post</div>
+          <div class="version-opt-desc">Post the one-sentence pitch to one platform. See who responds.</div>
+          <div class="version-detail">
+            <p class="version-detail-text">Use the one-sentence pitch from your output above. Post it where your buyer already is. No thread, no story. One clear post. One clear offer.</p>
+            <p class="version-detail-note">You are not announcing a business. You are testing a sentence.</p>
+          </div>
+        </div>
+        <div class="version-opt" id="ver-waitlist" onclick="selectVersion('waitlist')">
+          <span class="version-opt-label">Version C</span>
+          <div class="version-opt-name">One-page waitlist</div>
+          <div class="version-opt-desc">Put the offer on a page. Drive one source of traffic to it.</div>
+          <div class="version-detail">
+            <p class="version-detail-text">Headline is the result. Subtext is who it is for and how it works. One CTA. If no one signs up after 100 views, the offer or the audience is wrong.</p>
+            <p class="version-detail-note">Do not build the full site first. One page. One offer. One traffic source.</p>
+          </div>
+        </div>
       </div>
     </div>
 
     <div class="row" style="margin-top:28px;">
       <button class="btn" id="repeat-btn" type="button">Build another</button>
-      <a href="/structure" class="btn btn-primary">Go to Structure</a>
+      <a href="/structure" class="btn btn-primary">Continue to Structure</a>
     </div>
   </section>
 
-  <!-- IMPORTANT -->
+  <!-- ONE RULE -->
   <section class="panel">
     <h2>One rule</h2>
-    <p style="margin-bottom:14px;">If people aren't buying, one of three things is wrong: the result isn't clear, the price doesn't match what they're willing to pay, or the format doesn't fit how they want to work.</p>
-    <p>You don't fix all three at once. You test one change and see what moves.</p>
+    <p style="margin-bottom:14px;max-width:none;">If people are not buying, one of three things is wrong: the result is not clear, the price does not match what they are willing to pay, or the format does not fit how they want to work.</p>
+    <p style="max-width:none;">Do not fix all three at once. Fix the first weak point and test again.</p>
   </section>
 
   <!-- PAID -->
   <section class="paid-section">
     <span class="paid-eyebrow">The full system</span>
-    <p class="paid-text">You have the offer. The Archive helps you use it.</p>
-    <p class="paid-sub">Sales scripts, pricing frameworks, positioning examples, and the complete five-phase system — structured so you move from offer to revenue without guessing what comes next.</p>
-    <a href="/systems" class="btn btn-primary">Enter the Archive &mdash; $27</a>
+    <p class="paid-text">You have the offer. The System shows you what to do with it.</p>
+    <p class="paid-sub">Execution steps, automation structure, and the complete five-phase system. Structured so you move from offer to revenue without guessing what comes next.</p>
+    <a href="/systems" class="btn btn-primary">Enter the System &rarr; $39</a>
   </section>
 
   <!-- FOOTER -->
@@ -514,105 +590,179 @@ p{color:var(--text-dim);max-width:52ch}
 (function(){
   'use strict';
 
-  var heroStart = document.getElementById('hero-start');
-  var buildBtn = document.getElementById('build-btn');
-  var repeatBtn = document.getElementById('repeat-btn');
+  var heroStart     = document.getElementById('hero-start');
+  var buildBtn      = document.getElementById('build-btn');
+  var repeatBtn     = document.getElementById('repeat-btn');
   var outputSection = document.getElementById('output-section');
-  var buildSection = document.getElementById('build-section');
+  var buildSection  = document.getElementById('build-section');
 
+  var fWho    = document.getElementById('f-who');
   var fResult = document.getElementById('f-result');
   var fMethod = document.getElementById('f-method');
-  var fTime = document.getElementById('f-time');
-  var fPrice = document.getElementById('f-price');
+  var fTime   = document.getElementById('f-time');
+  var fPrice  = document.getElementById('f-price');
 
-  var outPitch = document.getElementById('out-pitch');
-  var outResult = document.getElementById('out-result');
-  var outMethod = document.getElementById('out-method');
-  var outTime = document.getElementById('out-time');
-  var outPrice = document.getElementById('out-price');
+  var outPitch    = document.getElementById('out-pitch');
+  var outWho      = document.getElementById('out-who');
+  var outResult   = document.getElementById('out-result');
+  var outMethod   = document.getElementById('out-method');
+  var outTime     = document.getElementById('out-time');
+  var outPrice    = document.getElementById('out-price');
   var outSellline = document.getElementById('out-sellline');
 
+  // Buyer test state
+  var checkState = { result: null, delivery: null, price: null };
+
+  window.setCheck = function(field, val) {
+    checkState[field] = val;
+
+    // Update UI for the check row
+    var checkEl = document.getElementById('check-' + field);
+    checkEl.classList.remove('pass', 'fail');
+    checkEl.classList.add(val === 'yes' ? 'pass' : 'fail');
+
+    // Update button states
+    var btns = checkEl.querySelectorAll('.toggle-opt');
+    btns.forEach(function(btn) {
+      btn.classList.remove('selected-yes', 'selected-no');
+      if (btn.getAttribute('data-val') === val) {
+        btn.classList.add(val === 'yes' ? 'selected-yes' : 'selected-no');
+      }
+    });
+
+    updateFriction();
+  };
+
+  function updateFriction() {
+    var frictionEl = document.getElementById('friction-result');
+    var itemsEl    = document.getElementById('friction-items');
+    var failures   = [];
+
+    var labels = { result: 'Result', delivery: 'Delivery', price: 'Price' };
+    var hints = {
+      result:   'The outcome is not specific enough. State exactly what changes and by when.',
+      delivery: 'How you deliver this is not clear. Name the format and the structure explicitly.',
+      price:    'The price does not feel matched to what you are promising. Adjust one or the other.'
+    };
+
+    Object.keys(checkState).forEach(function(key) {
+      if (checkState[key] === 'no') {
+        failures.push({ label: labels[key], hint: hints[key] });
+      }
+    });
+
+    if (failures.length > 0) {
+      itemsEl.innerHTML = failures.map(function(f) {
+        return '<li><strong>' + f.label + '</strong> — ' + f.hint + '</li>';
+      }).join('');
+      frictionEl.classList.add('visible');
+    } else {
+      frictionEl.classList.remove('visible');
+    }
+  }
+
+  // Version selector
+  window.selectVersion = function(key) {
+    ['direct', 'post', 'waitlist'].forEach(function(k) {
+      var el = document.getElementById('ver-' + k);
+      if (el) el.classList.toggle('selected', k === key);
+    });
+  };
+
   function formatPrice(raw) {
-    // Strip non-numeric except comma/period
     var cleaned = raw.replace(/[^0-9.,]/g, '');
-    if(!cleaned) return raw;
-    // If it's a number, format it
-    var num = parseFloat(cleaned.replace(/,/g,''));
-    if(isNaN(num)) return raw;
-    return '$' + num.toLocaleString('en-US', {minimumFractionDigits:0, maximumFractionDigits:0});
+    if (!cleaned) return raw;
+    var num = parseFloat(cleaned.replace(/,/g, ''));
+    if (isNaN(num)) return raw;
+    return '$' + num.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
   }
 
-  function buildPitch(result, method, time, price) {
-    var r = result.trim();
-    var m = method.trim();
-    var t = time.trim();
-    var p = price.trim();
-    // Capitalize first letter, make it read naturally
-    var rLower = r.charAt(0).toLowerCase() + r.slice(1);
-    return 'I help you ' + rLower + ' through ' + m + ' in ' + t + '.';
+  function cap(str) {
+    if (!str) return str;
+    return str.charAt(0).toUpperCase() + str.slice(1);
   }
 
-  function buildSellLine(result, method, time, price) {
-    var r = result.trim();
-    var rLower = r.charAt(0).toLowerCase() + r.slice(1);
-    var p = formatPrice(price);
-    return 'For ' + p + ', I\'ll help you ' + rLower + ' using ' + method.trim().toLowerCase() + ' delivered in ' + time.trim().toLowerCase() + '.';
-  }
-
-  heroStart.addEventListener('click', function(){
-    buildSection.scrollIntoView({behavior:'smooth', block:'start'});
-    setTimeout(function(){ fResult.focus(); }, 340);
+  heroStart.addEventListener('click', function() {
+    buildSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    setTimeout(function() { fWho.focus(); }, 340);
   });
 
-  buildBtn.addEventListener('click', function(){
+  buildBtn.addEventListener('click', function() {
+    var who    = fWho.value.trim();
     var result = fResult.value.trim();
     var method = fMethod.value.trim();
-    var time = fTime.value.trim();
-    var price = fPrice.value.trim();
+    var time   = fTime.value.trim();
+    var price  = fPrice.value.trim();
 
-    if(!result || !method || !time || !price){
-      var original = buildBtn.textContent;
-      buildBtn.textContent = 'Fill in all four fields';
-      setTimeout(function(){ buildBtn.textContent = original; }, 1800);
-      // Focus first empty
-      if(!result){ fResult.focus(); return; }
-      if(!method){ fMethod.focus(); return; }
-      if(!time){ fTime.focus(); return; }
-      if(!price){ fPrice.focus(); return; }
+    if (!who || !result || !method || !time || !price) {
+      var orig = buildBtn.textContent;
+      buildBtn.textContent = 'Fill in all five fields';
+      var inputs = [fWho, fResult, fMethod, fTime, fPrice];
+      for (var i = 0; i < inputs.length; i++) {
+        if (!inputs[i].value.trim()) { inputs[i].focus(); break; }
+      }
+      setTimeout(function() { buildBtn.textContent = orig; }, 1800);
       return;
     }
 
-    outPitch.textContent = buildPitch(result, method, time, price);
-    outResult.textContent = result.charAt(0).toUpperCase() + result.slice(1);
-    outMethod.textContent = method.charAt(0).toUpperCase() + method.slice(1);
-    outTime.textContent = time.charAt(0).toUpperCase() + time.slice(1);
-    outPrice.textContent = formatPrice(price);
-    outSellline.textContent = buildSellLine(result, method, time, price);
+    var priceFormatted = formatPrice(price);
+
+    // Build the main pitch sentence
+    var whoLower    = who.charAt(0).toLowerCase() + who.slice(1);
+    var resultLower = result.charAt(0).toLowerCase() + result.slice(1);
+    var methodLower = method.charAt(0).toLowerCase() + method.slice(1);
+    var timeLower   = time.charAt(0).toLowerCase() + time.slice(1);
+
+    var pitch = 'I help ' + whoLower + ' get ' + resultLower + ' through ' + methodLower + ' in ' + timeLower + ' for ' + priceFormatted + '.';
+    outPitch.textContent = pitch.charAt(0).toUpperCase() + pitch.slice(1);
+
+    outWho.textContent    = cap(who);
+    outResult.textContent = cap(result);
+    outMethod.textContent = cap(method);
+    outTime.textContent   = cap(time);
+    outPrice.textContent  = priceFormatted;
+    outSellline.textContent = 'For ' + priceFormatted + ', I help ' + whoLower + ' get ' + resultLower + '. Delivered through ' + methodLower + ' in ' + timeLower + '.';
+
+    // Reset buyer test
+    checkState = { result: null, delivery: null, price: null };
+    ['result', 'delivery', 'price'].forEach(function(k) {
+      var el = document.getElementById('check-' + k);
+      if (el) { el.classList.remove('pass', 'fail'); }
+      var btns = el ? el.querySelectorAll('.toggle-opt') : [];
+      btns.forEach(function(b) { b.classList.remove('selected-yes', 'selected-no'); });
+    });
+    document.getElementById('friction-result').classList.remove('visible');
+
+    // Reset version selector
+    ['direct', 'post', 'waitlist'].forEach(function(k) {
+      var el = document.getElementById('ver-' + k);
+      if (el) el.classList.remove('selected');
+    });
 
     outputSection.classList.remove('hidden');
     outputSection.classList.add('output-section');
 
-    setTimeout(function(){
-      outputSection.scrollIntoView({behavior:'smooth', block:'start'});
+    setTimeout(function() {
+      outputSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }, 60);
   });
 
-  repeatBtn.addEventListener('click', function(){
-    fResult.value = ''; fMethod.value = ''; fTime.value = ''; fPrice.value = '';
+  repeatBtn.addEventListener('click', function() {
+    [fWho, fResult, fMethod, fTime, fPrice].forEach(function(f) { f.value = ''; });
     outputSection.classList.add('hidden');
     outputSection.classList.remove('output-section');
-    buildSection.scrollIntoView({behavior:'smooth', block:'start'});
-    setTimeout(function(){ fResult.focus(); }, 340);
+    buildSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    setTimeout(function() { fWho.focus(); }, 340);
   });
 
   // Tab through fields, Enter on last submits
-  document.addEventListener('keydown', function(e){
-    if(e.key !== 'Enter') return;
-    var inputs = [fResult, fMethod, fTime, fPrice];
+  var inputs = [fWho, fResult, fMethod, fTime, fPrice];
+  document.addEventListener('keydown', function(e) {
+    if (e.key !== 'Enter') return;
     var idx = inputs.indexOf(document.activeElement);
-    if(idx >= 0 && idx < inputs.length - 1){
+    if (idx >= 0 && idx < inputs.length - 1) {
       inputs[idx + 1].focus();
-    } else if(idx === inputs.length - 1){
+    } else if (idx === inputs.length - 1) {
       buildBtn.click();
     }
   });
