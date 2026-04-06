@@ -3,1433 +3,370 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Stephuary — The System Diagnostic</title>
-<meta name="description" content="Find what's slowing your work, income, or consistency. Fix it.">
-<meta property="og:title" content="Stephuary — The System Diagnostic">
-<meta property="og:description" content="Select what's happening. We'll show you exactly where to start.">
-<meta property="og:type" content="website">
-<meta property="og:url" content="https://www.stephuary.com">
+<title>.5% Club — Private Intelligence Layer</title>
+<meta name="description" content="A private intelligence layer. Not a course. Not a feed.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Lato:wght@300;400;500&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg-0:#090907;
-  --bg-1:#0f100d;
-  --bg-2:#141611;
-  --bg-3:#1a1c16;
-  --line:rgba(244,237,224,0.16);
-  --line-soft:rgba(244,237,224,0.1);
-  --text:#f4ede0;
-  --text-2:#d6cab4;
-  --text-3:#b3a791;
-  --gold:#c4a35a;
-  --gold-soft:rgba(196,163,90,0.42);
-  --gold-faint:rgba(196,163,90,0.2);
-  --terra:#b85c38;
-  --terra-soft:rgba(184,92,56,0.24);
-  --green:#1f3824;
-  --green-2:#27482e;
-  --blue:#2b4fd4;
-  --blue-soft:rgba(43,79,212,0.18);
-  --frag-bg:rgba(244,237,224,0.05);
-  --frag-border:rgba(244,237,224,0.18);
+  --bg:#0a0a08;--bg-1:#0f100d;--bg-2:#141611;--bg-3:#1a1c16;
+  --text:#f5f0e8;--text-2:rgba(245,240,232,0.72);--text-3:rgba(245,240,232,0.42);
+  --gold:#c4a35a;--gold-soft:rgba(196,163,90,0.35);--gold-faint:rgba(196,163,90,0.12);--gold-dim:rgba(196,163,90,0.06);
+  --border:rgba(196,163,90,0.18);--border-soft:rgba(245,240,232,0.08);
 }
+html{scroll-behavior:smooth}
+body{font-family:'Lato',sans-serif;font-weight:300;background:var(--bg);color:var(--text);font-size:16px;line-height:1.72;-webkit-font-smoothing:antialiased;overflow-x:hidden;}
+a{text-decoration:none;color:inherit}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:9998;opacity:.36;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");}
 
-html,body{width:100%;height:100%;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;}
-body{font-family:'Lato',sans-serif;font-weight:300;font-size:16px;line-height:1.72;background:var(--bg-0);color:var(--text);overflow:hidden;cursor:auto;}
-body.cursor-enhanced{cursor:none}
-body.resolved{overflow:auto;cursor:auto;}
-a{text-decoration:none}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;justify-content:space-between;align-items:center;padding:22px 52px;background:rgba(10,10,8,0.94);backdrop-filter:blur(12px);border-bottom:1px solid var(--border-soft);}
+.nav-mark{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:300;color:var(--gold);letter-spacing:-.02em;}
+.nav-back{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-3);transition:color .2s;display:flex;align-items:center;gap:8px;}
+.nav-back::before{content:'←'}
+.nav-back:hover{color:var(--gold)}
 
-/* Cursor */
-#cursor{position:fixed;width:12px;height:12px;border-radius:50%;background:var(--gold);transform:translate(-50%,-50%);z-index:9999;pointer-events:none;transition:width .16s,height .16s,background .16s;display:none}
-#cursor.active{width:8px;height:8px;background:var(--terra)}
-#cursor-ring{position:fixed;width:36px;height:36px;border-radius:50%;border:1px solid rgba(196,163,90,0.34);transform:translate(-50%,-50%);z-index:9998;pointer-events:none;transition:width .2s,height .2s,border-color .2s;display:none}
-#cursor-ring.hover{width:52px;height:52px;border-color:rgba(196,163,90,0.64)}
+/* HERO */
+#hero{min-height:100vh;display:flex;flex-direction:column;justify-content:flex-end;padding:140px 52px 96px;border-bottom:1px solid var(--border-soft);position:relative;}
+#hero::before{content:'';position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at 80% 20%,rgba(196,163,90,0.03) 0%,transparent 55%);}
+.hero-mark{position:absolute;top:50%;left:52px;transform:translateY(-50%);font-family:'Cormorant Garamond',serif;font-size:clamp(120px,20vw,240px);line-height:1;font-weight:300;color:var(--gold-dim);letter-spacing:-.04em;pointer-events:none;user-select:none;opacity:0;animation:markReveal 1.8s cubic-bezier(.16,1,.3,1) forwards;}
+@keyframes markReveal{from{opacity:0;transform:translateY(-48%) scale(.94)}to{opacity:1;transform:translateY(-50%) scale(1)}}
+.hero-content{position:relative;z-index:1}
+.hero-eyebrow{font-size:9px;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);font-weight:500;margin-bottom:32px;opacity:0;animation:fadeUp .7s cubic-bezier(.16,1,.3,1) forwards .3s;}
+.hero-headline{font-family:'Cormorant Garamond',serif;font-size:clamp(44px,6.5vw,92px);line-height:.98;letter-spacing:-.025em;font-weight:300;color:var(--text);max-width:760px;margin-bottom:32px;opacity:0;animation:fadeUp .8s cubic-bezier(.16,1,.3,1) forwards .45s;}
+.hero-headline em{font-style:italic;color:var(--text-2)}
+.hero-sub{font-size:18px;color:var(--text-2);line-height:1.6;max-width:440px;margin-bottom:48px;font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:300;opacity:0;animation:fadeUp .7s cubic-bezier(.16,1,.3,1) forwards .6s;}
+.hero-ctas{display:flex;gap:20px;align-items:center;flex-wrap:wrap;opacity:0;animation:fadeUp .6s cubic-bezier(.16,1,.3,1) forwards .75s;}
+.btn-gold-outline{display:inline-block;font-size:10px;letter-spacing:.16em;text-transform:uppercase;font-weight:500;color:var(--gold);border:1px solid var(--border);padding:16px 44px;transition:background .25s,color .25s,border-color .25s;cursor:pointer;}
+.btn-gold-outline:hover{background:var(--gold);color:var(--bg);border-color:var(--gold)}
+.hero-secondary{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-3);border-bottom:1px solid rgba(245,240,232,0.2);padding-bottom:2px;transition:color .2s;cursor:pointer;}
+.hero-secondary:hover{color:var(--text-2)}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
 
-/* Entry overlay */
-#entry-overlay{position:fixed;inset:0;z-index:5000;background:var(--bg-0);display:flex;align-items:center;justify-content:center;padding:56px}
-#entry-overlay::before{content:'';position:absolute;inset:0;pointer-events:none;opacity:.7;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.045'/%3E%3C/svg%3E")}
-#entry-overlay::after{content:'';position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at center,transparent 28%,rgba(9,9,7,0.9) 100%)}
-.entry-inner{max-width:560px;text-align:center;position:relative;z-index:1;}
-.entry-wordmark{display:block;margin-bottom:42px;font-size:12px;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);font-weight:500;opacity:0}
-.entry-headline{font-family:'Cormorant Garamond',serif;font-size:clamp(34px,4.4vw,54px);line-height:1.14;letter-spacing:-.01em;color:var(--text);margin-bottom:20px;font-weight:300;opacity:0}
-.entry-sub{font-size:15px;color:var(--text-2);line-height:1.62;margin-bottom:8px;opacity:0}
-.entry-support{display:block;margin-bottom:42px;font-size:11px;letter-spacing:.14em;color:var(--gold-soft);text-transform:uppercase;opacity:0}
-.entry-start-btn{display:block;margin:0 auto 18px;width:100%;max-width:280px;background:var(--gold);color:var(--bg-0);border:none;padding:18px 0;font-size:12px;letter-spacing:.14em;text-transform:uppercase;font-weight:500;cursor:pointer;transition:background .2s ease;opacity:0}
-.entry-start-btn:hover{background:var(--text)}
-.entry-skip-link{display:inline-block;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-3);border-bottom:1px solid rgba(179,167,145,0.5);padding-bottom:2px;transition:color .2s,border-color .2s;opacity:0}
-.entry-skip-link:hover{color:var(--gold);border-bottom-color:var(--gold-faint)}
+/* SECTIONS */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:start;}
+.section-pad{padding:96px 52px;border-bottom:1px solid var(--border-soft);}
+.section-eyebrow{font-size:9px;letter-spacing:.28em;text-transform:uppercase;color:var(--gold);font-weight:500;margin-bottom:28px;display:flex;align-items:center;gap:10px;}
+.section-eyebrow::before{content:'';width:20px;height:1px;background:var(--gold);opacity:.5}
+.section-headline{font-family:'Cormorant Garamond',serif;font-size:clamp(32px,3.5vw,48px);line-height:1.08;font-weight:300;color:var(--text);letter-spacing:-.015em;}
 
-/* Game field */
-#game-field{position:fixed;inset:0;overflow:hidden;background:linear-gradient(180deg,var(--bg-0),var(--bg-1) 38%,var(--bg-2) 100%);}
-#game-field::before{content:'';position:absolute;inset:0;pointer-events:none;opacity:.58;z-index:1;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E")}
-#game-field::after{content:'';position:absolute;inset:0;pointer-events:none;z-index:1;background:radial-gradient(ellipse at center,transparent 24%,rgba(9,9,7,0.74) 100%)}
+/* WHAT */
+.what-body{font-size:15px;color:var(--text-2);line-height:1.78;margin-bottom:28px;}
+.plain-list{list-style:none;display:grid;gap:12px;margin-bottom:32px;}
+.plain-list li{font-size:14px;color:var(--text-3);padding-left:18px;position:relative;line-height:1.55;}
+.plain-list li::before{content:'';position:absolute;left:0;top:8px;width:5px;height:1px;background:var(--gold);opacity:.5;}
+.italic-close{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:18px;color:var(--text-2);line-height:1.55;padding-top:20px;border-top:1px solid var(--border-soft);}
 
-/* Header */
-#site-header{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;justify-content:space-between;align-items:center;padding:30px 50px}
-.logo{color:var(--gold);font-size:12px;font-weight:500;letter-spacing:.32em;text-transform:uppercase;opacity:0}
-#skip-btn{background:none;border:none;color:var(--text-2);font-size:11px;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;opacity:0;border-bottom:1px solid transparent;padding-bottom:2px;transition:color .2s,border-color .2s}
-#skip-btn:hover{color:var(--gold);border-bottom-color:var(--gold-faint)}
+/* INSIDE GRID */
+.inside-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border-soft);max-width:900px;margin-top:56px;}
+.inside-item{background:var(--bg-1);padding:32px 28px;}
+.inside-num{font-family:'Cormorant Garamond',serif;font-size:36px;font-weight:300;color:var(--gold-soft);line-height:1;margin-bottom:16px;letter-spacing:-.02em;}
+.inside-title{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--text);font-weight:400;margin-bottom:8px;}
+.inside-body{font-size:13px;color:var(--text-3);line-height:1.6;}
+.inside-closing{margin-top:36px;max-width:540px;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:16px;color:var(--text-3);line-height:1.65;}
 
-#remaining-counter{position:fixed;left:50%;top:30px;transform:translateX(-50%);z-index:100;opacity:0;transition:opacity .3s ease}
-#remaining-counter.visible{opacity:1}
-#remaining-counter span{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-2)}
+/* NOT THIS */
+.ruled-list{list-style:none;display:grid;gap:0;margin-bottom:32px;}
+.ruled-list li{font-size:clamp(16px,1.8vw,20px);color:var(--text-3);padding:18px 0;border-bottom:1px solid var(--border-soft);font-family:'Cormorant Garamond',serif;font-style:italic;line-height:1.4;}
+.ruled-list li:first-child{border-top:1px solid var(--border-soft);}
 
-/* Anchor center text */
-#anchor-fragment{
-  position:absolute;left:50%;top:50%;
-  transform:translate(-50%,-50%);
-  z-index:10;text-align:center;pointer-events:none;
-  opacity:0;width:220px;
-}
-#anchor-fragment p{
-  font-family:'Cormorant Garamond',serif;font-style:italic;
-  font-size:clamp(18px,2vw,26px);line-height:1.45;
-  color:rgba(244,237,224,0.22);
-}
+/* DROP PREVIEW */
+.drop-card{max-width:680px;border:1px solid var(--border);background:var(--bg-1);padding:40px;position:relative;overflow:hidden;margin-top:48px;}
+.drop-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,var(--gold),rgba(196,163,90,0.2) 60%,transparent);}
+.drop-theme-label{font-size:9px;letter-spacing:.24em;text-transform:uppercase;color:var(--gold);font-weight:500;margin-bottom:12px;}
+.drop-title{font-family:'Cormorant Garamond',serif;font-size:clamp(36px,4vw,52px);font-weight:300;color:var(--text);line-height:1;letter-spacing:-.02em;margin-bottom:8px;}
+.drop-date{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--text-3);margin-bottom:28px;}
+.drop-lines{display:grid;gap:10px;margin-bottom:36px;}
+.drop-line{font-size:14px;color:var(--text-2);padding-left:16px;position:relative;line-height:1.5;}
+.drop-line::before{content:'';position:absolute;left:0;top:8px;width:4px;height:1px;background:var(--gold);opacity:.4;}
+.drop-cta-btn{display:inline-block;font-size:10px;letter-spacing:.14em;text-transform:uppercase;font-weight:500;color:var(--gold);border:1px solid var(--border);padding:13px 32px;transition:background .25s,color .25s;cursor:pointer;}
+.drop-cta-btn:hover{background:var(--gold);color:var(--bg)}
+.drop-locked{margin-top:16px;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:13px;color:var(--text-3);}
 
-/* Fragments */
-.fragment{
-  position:absolute;z-index:20;
-  padding:10px 14px;
-  border:1px solid var(--frag-border);
-  background:var(--frag-bg);
-  backdrop-filter:blur(3px);
-  border-radius:1px;cursor:pointer;user-select:none;
-  opacity:0;
-  transition:border-color .16s,background .16s,box-shadow .16s;
-  max-width:190px;
-}
-.fragment:hover{border-color:var(--gold-soft);background:rgba(196,163,90,0.1);box-shadow:0 0 16px rgba(196,163,90,0.08)}
-.fragment.clicking{border-color:var(--gold);background:rgba(196,163,90,0.18);box-shadow:0 0 22px rgba(196,163,90,0.2);}
-.fragment.placed{opacity:.15 !important;border-color:rgba(196,163,90,0.12);background:rgba(196,163,90,0.03);pointer-events:none;}
-.fragment-text{font-size:15px;letter-spacing:.005em;line-height:1.38;color:rgba(244,237,224,0.9);white-space:normal;display:block;font-weight:300;}
+/* ENV BLOCKS */
+.env-blocks{display:grid;gap:32px;}
+.env-label{font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);font-weight:500;margin-bottom:10px;}
+.env-body{font-size:15px;color:var(--text-2);line-height:1.72;}
 
-/* Zones */
-.zone{
-  position:absolute;z-index:5;
-  border:1px dashed rgba(196,163,90,0.08);
-  background:rgba(196,163,90,0.01);
-  border-radius:2px;padding:14px 12px;
-  display:flex;flex-direction:column;align-items:center;justify-content:flex-start;
-  transition:border-color .3s,background .3s,box-shadow .25s,transform .25s;
-}
-.zone.active{border-color:rgba(196,163,90,0.22);background:rgba(196,163,90,0.03)}
-.zone.intensity1{border-color:rgba(196,163,90,0.32);background:rgba(196,163,90,0.05)}
-.zone.intensity2{border-color:rgba(196,163,90,0.48);background:rgba(196,163,90,0.08);box-shadow:inset 0 0 28px rgba(196,163,90,0.05)}
-.zone.intensity3{border-color:rgba(196,163,90,0.64);background:rgba(196,163,90,0.12);box-shadow:inset 0 0 42px rgba(196,163,90,0.08)}
-.zone.dominant{border-color:rgba(184,92,56,0.86)!important;box-shadow:0 0 24px rgba(184,92,56,0.2),inset 0 0 52px rgba(184,92,56,0.12)!important;transform:scale(1.015)}
-.zone.just-received{background:rgba(196,163,90,0.18)!important;border-color:rgba(196,163,90,0.72)!important}
-.zone-label{text-align:center;pointer-events:none;position:relative;z-index:6}
-.zone-name{font-family:'Cormorant Garamond',serif;font-size:clamp(22px,2.2vw,30px);line-height:1;font-weight:300;color:var(--text);margin-bottom:4px;opacity:0;transition:opacity .35s;}
-.zone-truth{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:13px;line-height:1.4;color:var(--text-2);opacity:0;margin-bottom:4px;transition:opacity .35s;}
-.zone-micro{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold-soft);font-weight:400}
-.zone.revealed .zone-name{opacity:1}
-.zone.revealed .zone-truth{opacity:1}
-.zone.dominant .zone-micro{color:rgba(184,92,56,0.95)}
+/* WHO */
+.who-list{list-style:none;max-width:640px;display:grid;gap:0;margin-top:48px;}
+.who-item{padding:22px 0;border-bottom:1px solid var(--border-soft);font-family:'Cormorant Garamond',serif;font-size:clamp(20px,2.2vw,28px);font-weight:300;color:var(--text-2);line-height:1.3;display:flex;align-items:baseline;gap:16px;}
+.who-item:first-child{border-top:1px solid var(--border-soft)}
+.who-num{font-size:10px;letter-spacing:.12em;color:var(--gold-soft);font-family:'Lato',sans-serif;flex-shrink:0;padding-top:4px;}
 
-#instruction{position:fixed;left:50%;bottom:36px;transform:translateX(-50%);z-index:100;text-align:center;opacity:0}
-#instruction p{font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-2);white-space:nowrap}
-#ambient-signal{position:fixed;right:34px;bottom:28px;z-index:100;opacity:0}
-#ambient-signal p{font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--text-3)}
-#ambient-signal p.active{color:var(--gold-soft)}
+/* PRICE */
+.price-amount{font-family:'Cormorant Garamond',serif;font-size:clamp(80px,12vw,140px);line-height:.88;font-weight:300;color:var(--gold);letter-spacing:-.03em;margin-bottom:8px;}
+.price-note{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:16px;color:var(--text-3);margin-bottom:36px;}
+.price-body{font-size:15px;color:var(--text-2);line-height:1.72;max-width:400px;margin-bottom:16px;}
+.price-body-2{font-size:14px;color:var(--text-3);line-height:1.65;max-width:400px;margin-bottom:36px;}
+.btn-gold-solid{display:inline-block;font-size:10px;letter-spacing:.18em;text-transform:uppercase;font-weight:500;color:var(--bg);background:var(--gold);border:1px solid var(--gold);padding:18px 52px;transition:background .25s,color .25s,border-color .25s;cursor:pointer;}
+.btn-gold-solid:hover{background:var(--text);border-color:var(--text);color:var(--bg)}
+.bundle-note{margin-top:20px;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:14px;color:var(--text-3);}
+.bundle-note a{color:var(--gold);border-bottom:1px solid rgba(196,163,90,0.3);transition:color .2s;}
+.bundle-note a:hover{color:var(--text)}
+.price-right{display:grid;gap:20px;}
+.conn-item{padding:24px 28px;border:1px solid var(--border-soft);background:var(--bg-1);}
+.conn-item-label{font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);font-weight:500;margin-bottom:8px;}
+.conn-item-text{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:300;color:var(--text-2);line-height:1.3;}
+.conn-item.featured{border:1px solid rgba(196,163,90,0.35);background:rgba(196,163,90,0.05);}
 
-/* ===================== RESOLUTION ===================== */
-#resolution{display:none;min-height:100vh;background:linear-gradient(180deg,var(--bg-0),var(--bg-1) 35%,var(--bg-2) 100%);color:var(--text);position:relative}
-#resolution.visible{display:block}
-#resolution::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.5;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.028'/%3E%3C/svg%3E")}
+/* FINAL */
+#final{padding:120px 52px;text-align:center;position:relative;}
+#final::before{content:'';position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at center,rgba(196,163,90,0.04) 0%,transparent 65%);}
+.final-headline{font-family:'Cormorant Garamond',serif;font-size:clamp(36px,5vw,68px);line-height:1.04;font-weight:300;color:var(--text);letter-spacing:-.02em;max-width:640px;margin:0 auto 40px;}
 
-#res-nav{position:sticky;top:0;z-index:50;display:flex;justify-content:space-between;align-items:center;padding:20px 48px;background:rgba(12,13,11,0.96);border-bottom:1px solid var(--line-soft)}
-.res-logo{font-size:12px;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);font-weight:500}
-.res-nav-right{display:flex;gap:30px;align-items:center}
-.res-nav-link,.res-nav-restart{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-2);background:none;border:none;cursor:pointer}
-.res-nav-link:hover,.res-nav-restart:hover{color:var(--gold)}
-
-/* Diagnosis banner */
-#diagnosis-banner{padding:52px 48px 0;position:relative;z-index:1;opacity:0;}
-
-.diag-phase-label{
-  display:inline-flex;align-items:center;gap:10px;
-  font-size:9px;letter-spacing:.26em;text-transform:uppercase;
-  color:var(--terra);font-weight:500;margin-bottom:28px;opacity:0;
-}
-.diag-phase-label::before{content:'';display:block;width:28px;height:1px;background:var(--terra);opacity:.6;}
-
-.diag-headline{
-  font-family:'Cormorant Garamond',serif;
-  font-size:clamp(48px,6vw,86px);
-  line-height:.96;letter-spacing:-.024em;
-  color:var(--text);max-width:860px;
-  margin-bottom:36px;font-weight:300;opacity:0;
-}
-
-.diag-blocks{
-  display:grid;grid-template-columns:1fr 1fr;
-  gap:1px;background:var(--line-soft);
-  border:1px solid var(--line-soft);max-width:860px;
-}
-
-.diag-block{background:var(--bg-1);padding:26px 28px;opacity:0;}
-.diag-block-label{display:block;font-size:9px;letter-spacing:.24em;text-transform:uppercase;color:var(--gold);margin-bottom:10px;font-weight:500;opacity:0.65;}
-.diag-block-text{font-family:'Cormorant Garamond',serif;font-size:clamp(17px,1.8vw,21px);color:var(--text-2);line-height:1.46;font-weight:300;}
-
-.diag-block.start-block{background:rgba(43,79,212,0.06);border-left:3px solid rgba(43,79,212,0.5);}
-.diag-block.start-block .diag-block-label{color:rgba(110,148,255,0.9);}
-.diag-block.start-block .diag-block-text{font-family:'Cormorant Garamond',serif;font-size:clamp(18px,2vw,25px);color:var(--text);font-weight:300;}
-
-.diag-anchor-line{
-  display:block;padding:16px 28px;
-  background:var(--bg-2);border:1px solid var(--line-soft);border-top:none;
-  max-width:860px;
-  font-size:clamp(13px,1.1vw,15px);letter-spacing:.06em;
-  color:var(--text-3);font-style:italic;font-family:'Cormorant Garamond',serif;
-  opacity:0;
-}
-
-/* CTA */
-#diagnosis-cta{padding:28px 48px;border-bottom:1px solid var(--line-soft);position:relative;z-index:1;background:rgba(15,16,13,0.84);opacity:0;}
-.btn-diag-primary,.btn-primary{
-  display:inline-block;font-size:11px;letter-spacing:.12em;text-transform:uppercase;
-  font-weight:500;color:#fff;background:var(--blue);border:1px solid var(--blue);
-  padding:16px 48px;transition:background .2s,border-color .2s;cursor:pointer;
-}
-.btn-diag-primary:hover,.btn-primary:hover{background:var(--blue-hover,#3560e8);border-color:var(--blue-hover,#3560e8);}
-.btn-diag-primary.entering,.btn-primary.entering{pointer-events:none;opacity:.9}
-
-/* Results grid */
-/* Signal breakdown — dramatic reveal */
-#diagnosis-results-wrap{padding:36px 48px 0;position:relative;z-index:1;opacity:0;}
-.diagnosis-friction-line{display:block;margin-bottom:14px;font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--text-3);font-weight:500;}
-.result-card{border:1px solid var(--line);background:rgba(20,22,17,0.9);padding:28px 28px 20px;}
-.result-card-head{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;margin-bottom:22px;}
-.result-card-title{font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);font-weight:500}
-.result-card-meta{font-size:9px;color:var(--text-3);text-transform:uppercase;letter-spacing:.12em}
-#diagnosis-results{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line-soft);}
-
-/* Zone blocks */
-.diag-zone{
-  background:var(--bg-2);padding:26px 20px 22px;
-  transition:background .4s;
-  opacity:0;transform:translateY(10px);
-  position:relative;overflow:hidden;
-}
-/* Terra border draw — starts at 0 width, animates in JS */
-.diag-zone::before{
-  content:'';position:absolute;top:0;left:0;right:0;height:2px;
-  background:var(--terra);transform:scaleX(0);transform-origin:left;
-  transition:transform 0s;
-}
-.diag-zone.leading{background:rgba(184,92,56,0.05);}
-.diag-zone.leading::before{transform:scaleX(1);transition:transform 0.6s cubic-bezier(.16,1,.3,1);}
-
-.diag-zone-name{
-  font-size:9px;letter-spacing:.2em;text-transform:uppercase;
-  color:var(--text-3);margin-bottom:18px;font-weight:500;
-  opacity:0;
-}
-.diag-zone-count{display:flex;align-items:baseline;gap:8px;margin-bottom:8px}
-.diag-zone-count-num{
-  font-family:'Cormorant Garamond',serif;
-  font-size:clamp(48px,5.5vw,76px);
-  line-height:.88;color:var(--text);
-  letter-spacing:-.02em;font-weight:300;
-  opacity:0;display:block;
-}
-.diag-zone-count-note{font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-3);opacity:0;}
-.diag-zone-label{font-size:13px;color:var(--text-3);line-height:1.5;margin-top:6px;opacity:0;}
-
-/* Leading zone — number hits terra after count-up */
-.diag-zone.leading .diag-zone-name{color:var(--terra);}
-.diag-zone.leading .diag-zone-count-num{color:var(--terra);}
-
-/* Scroll reveal prose blocks */
-.reveal-stack{padding:48px 48px 0;position:relative;z-index:1;max-width:860px}
-.reveal-block{padding:42px 0;border-top:1px solid var(--line-soft);}
-.reveal-block:last-child{border-bottom:1px solid var(--line-soft);}
-.reveal-category{
-  display:block;margin-bottom:14px;
-  font-size:9px;letter-spacing:.22em;text-transform:uppercase;
-  color:var(--terra);font-weight:500;
-  opacity:0;transform:translateY(10px);
-}
-.reveal-headline{
-  font-family:'Cormorant Garamond',serif;font-weight:300;
-  font-size:clamp(26px,2.8vw,38px);
-  line-height:1.08;color:var(--text);
-  margin-bottom:20px;letter-spacing:-.01em;
-  opacity:0;transform:translateY(14px);
-}
-.reveal-body{
-  font-size:16px;color:var(--text-3);line-height:1.76;
-  max-width:620px;margin-bottom:10px;
-  opacity:0;transform:translateY(10px);
-}
-.reveal-body:last-child{margin-bottom:0;}
-
-#scroll-cue{display:flex;justify-content:center;padding:28px 0 0;opacity:.8}
-
-/* Explain */
-.explain-stack{padding:36px 48px 0;position:relative;z-index:1;max-width:720px}
-.explain-block{border-top:1px solid var(--line-soft)}
-.explain-block:last-child{border-bottom:1px solid var(--line-soft)}
-.explain-toggle{width:100%;display:flex;justify-content:space-between;align-items:center;background:none;border:none;color:inherit;cursor:pointer;padding:18px 0;text-align:left;gap:24px;transition:opacity .2s}
-.explain-toggle:hover{opacity:.8}
-.explain-toggle h2{font-family:'Cormorant Garamond',serif;font-weight:300;font-size:clamp(17px,1.7vw,21px);line-height:1.1;color:var(--text-2);font-style:italic;margin:0}
-.explain-indicator{font-size:18px;color:var(--gold-soft);flex-shrink:0;transition:transform .22s,color .2s;line-height:1}
-.explain-block.open .explain-indicator{transform:rotate(45deg);color:var(--gold)}
-.explain-body{max-height:0;overflow:hidden;transition:max-height .32s ease,opacity .25s ease;opacity:0}
-.explain-block.open .explain-body{max-height:400px;opacity:1}
-.explain-body p{font-size:15px;color:var(--text-3);line-height:1.7;margin-bottom:8px;padding-bottom:2px}
-.explain-body p:last-child{margin-bottom:20px}
-.explain-body ul{list-style:none;margin:4px 0 16px;display:grid;gap:4px}
-.explain-body li{font-size:15px;color:var(--text-3);line-height:1.6;padding-left:16px;position:relative}
-.explain-body li::before{content:'—';position:absolute;left:0;color:var(--gold);opacity:.4;font-size:12px;top:3px}
-
-.rule-divider{margin:48px 0;padding:0 48px}
-.rule-divider::before{content:'';display:block;height:1px;background:var(--line-soft)}
-
-/* Phase menu — flat scroll-reveal rows */
-#menu-section{padding:0 48px 72px;position:relative;z-index:1}
-.menu-label{display:block;margin-bottom:16px;font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--terra);font-weight:500;opacity:0;transform:translateY(10px);}
-.menu-intro{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:20px;line-height:1.58;color:var(--text-2);max-width:720px;margin-bottom:12px;opacity:0;transform:translateY(10px);}
-.menu-command{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--text);margin-bottom:12px;opacity:0;transform:translateY(10px);}
-.phase-headline{font-size:15px;color:var(--text-2);line-height:1.6;max-width:720px;margin-bottom:8px;opacity:0;transform:translateY(10px);}
-.phase-subline{font-size:14px;color:var(--text-3);line-height:1.62;max-width:720px;margin:0 0 22px;opacity:0;transform:translateY(10px);}
-.menu-courses{max-width:800px}
-.menu-course{
-  border-bottom:1px solid var(--line-soft);
-  opacity:0;transform:translateY(14px);
-}
-.menu-course:first-child{border-top:1px solid var(--line-soft)}
-.menu-course.recommended{
-  border-top:1px solid rgba(184,92,56,0.5);
-  border-bottom:1px solid rgba(184,92,56,0.5);
-  background:rgba(184,92,56,0.06);
-}
-.menu-course-row{
-  display:grid;grid-template-columns:100px 1fr;
-  gap:0 20px;padding:28px 0;
-}
-.course-num{font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);font-weight:500;padding-top:8px;opacity:.7}
-.course-name{font-family:'Cormorant Garamond',serif;font-size:clamp(36px,4.5vw,60px);line-height:.95;color:var(--text);margin-bottom:8px;letter-spacing:-.015em;font-weight:300;}
-.course-desc{font-size:14px;color:var(--text-2);line-height:1.56;letter-spacing:.01em;margin-bottom:10px;}
-.course-detail{font-size:13px;color:var(--text-3);line-height:1.6;margin-bottom:14px;font-family:'Cormorant Garamond',serif;font-style:italic;}
-.menu-panel-cta{display:inline-block;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);border-bottom:1px solid var(--gold-faint);padding-bottom:2px;}
-.menu-panel-cta:hover{color:var(--text);border-bottom-color:rgba(244,237,224,0.28)}
-.menu-course.recommended .menu-panel-cta{color:var(--text);border-bottom-color:rgba(184,92,56,0.58);font-weight:500}
-.menu-course.recommended .course-name{color:var(--text);}
-.modules-note{padding:18px 0 18px 120px;border-bottom:1px solid var(--line-soft);opacity:0;transform:translateY(10px);}
-.modules-note p{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;color:var(--text-3)}
-
-/* System entry — NO card box, raw section */
-#system-entry-section{padding:0 48px 88px;position:relative;z-index:1}
-.entry-section-label{display:block;margin-bottom:22px;font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:var(--terra);font-weight:500;opacity:0;}
-.entry-description{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:clamp(19px,2.1vw,26px);line-height:1.5;color:var(--text-2);max-width:520px;margin-bottom:24px;font-weight:300;opacity:0;}
-.entry-price{font-family:'Cormorant Garamond',serif;font-size:clamp(68px,8.5vw,110px);line-height:.88;color:var(--gold);margin-bottom:6px;letter-spacing:-.02em;font-weight:300;opacity:0;}
-.entry-price-note{display:block;margin-bottom:32px;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;color:var(--text-3);opacity:0;}
-.entry-divider{height:1px;background:var(--line-soft);max-width:520px;margin-bottom:28px;opacity:0;}
-.cta-row{display:flex;gap:24px;align-items:center;flex-wrap:wrap;opacity:0;}
-.btn-ghost-link{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-2);border-bottom:1px solid rgba(214,202,180,0.5);padding-bottom:2px}
-.btn-ghost-link:hover{color:var(--gold);border-bottom-color:var(--gold-faint)}
-.entry-note{margin-top:28px;opacity:0;}
-.entry-note p{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;line-height:1.72;color:var(--text-3)}
-.private-signal{padding:34px 0 0;max-width:720px;opacity:0;}
-.private-signal p{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:16px;line-height:1.68;color:var(--text-2);margin-bottom:10px}
-.private-signal a{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-2);border-bottom:1px solid rgba(214,202,180,0.5);padding-bottom:2px}
-.private-signal a:hover{color:var(--gold);border-bottom-color:var(--gold-faint)}
-.founder-signal{padding:18px 0 0;max-width:720px;opacity:0;}
-.founder-signal p{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;line-height:1.72;color:var(--text-3)}
-
-/* Philosophy + footer */
-#philosophy{background:var(--bg-3);padding:32px 48px;text-align:center;border-top:1px solid var(--line-soft);border-bottom:1px solid var(--line-soft)}
-.phil-rule{width:28px;height:1px;margin:0 auto 18px;background:var(--gold-faint)}
-.phil-quote{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:clamp(15px,1.5vw,20px);line-height:1.52;color:var(--text-2);max-width:560px;margin:0 auto 18px;font-weight:300;letter-spacing:-.005em}
-.phil-wordmark{font-size:9px;letter-spacing:.28em;text-transform:uppercase;color:var(--gold-soft);font-weight:500}
-#res-footer{background:var(--bg-3);padding:44px 48px;display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:24px}
-.footer-left>span:first-child{display:block;margin-bottom:12px;font-size:12px;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);font-weight:500}
-.footer-micro{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:16px;line-height:1.7;color:var(--text-2)}
-.footer-studio{display:block;margin-top:8px;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;line-height:1.72;color:var(--text-3)}
-.osc-link{display:block;margin-top:10px;font-size:11px;color:var(--text-3)}
-.osc-link a{color:var(--gold)}
+footer{padding:40px 52px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:20px;background:var(--bg-3);border-top:1px solid var(--border-soft);}
+.footer-mark{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:300;color:var(--gold);}
 .footer-links{display:flex;gap:24px;flex-wrap:wrap}
-.footer-links a{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-2)}
-.footer-links a:hover{color:var(--gold)}
+.footer-link{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-3);transition:color .2s;}
+.footer-link:hover{color:var(--gold)}
 
-/* Mobile */
-@media (max-width:900px){
-  body{cursor:auto}
-  #cursor,#cursor-ring{display:none}
-  #site-header{padding:22px 24px}
-  #entry-overlay{padding:32px 22px}
-  .entry-headline{font-size:clamp(28px,8vw,42px)}
-  .fragment{padding:9px 12px}
-  .fragment-text{font-size:14px}
-  .zone-name{font-size:20px}
-  .zone-truth{font-size:13px}
-  #instruction{bottom:24px;width:calc(100% - 34px)}
-  #instruction p{font-size:12px;white-space:normal}
-  #ambient-signal{display:none}
-  #remaining-counter{top:22px}
-  #res-nav{padding:16px 20px}
-  #diagnosis-banner{padding:36px 20px 0}
-  .diag-headline{font-size:clamp(38px,9vw,58px)}
-  .diag-blocks{grid-template-columns:1fr}
-  #diagnosis-cta{padding:22px 20px 24px}
-  #diagnosis-results-wrap{padding:28px 20px 0}
-  #diagnosis-results{grid-template-columns:1fr 1fr}
-  .diag-zone-count-num{font-size:clamp(40px,8vw,56px)}
-  .reveal-stack{padding:28px 20px 0;}
-  .reveal-headline{font-size:clamp(22px,6vw,30px);}
-  .rule-divider{margin:36px 0;padding:0 20px}
-  #menu-section{padding:0 20px 52px}
-  .menu-course-row{grid-template-columns:72px 1fr;gap:0 10px;padding:20px 0;}
-  .course-name{font-size:clamp(30px,8vw,44px)}
-  .modules-note{padding-left:80px}
-  #system-entry-section{padding:0 20px 64px}
-  .entry-price{font-size:clamp(56px,13vw,80px)}
-  #philosophy{padding:24px 20px}
-  #res-footer{padding:32px 20px;flex-direction:column;align-items:flex-start}
-  .btn-diag-primary,.btn-primary{width:100%;text-align:center;display:block;padding:16px 20px}
-}
-@media (max-width:560px){
-  .menu-course-row{grid-template-columns:1fr;}
-  .course-num{display:block;margin-bottom:6px;}
-  .modules-note{padding-left:0}
-  #diagnosis-results{grid-template-columns:1fr}
-  .result-card{padding:20px 16px 12px}
-  .diag-blocks{grid-template-columns:1fr}
+.mobile-sticky{display:none;position:fixed;bottom:0;left:0;right:0;z-index:200;padding:14px 20px;background:rgba(10,10,8,0.97);border-top:1px solid var(--border);backdrop-filter:blur(12px);}
+.mobile-sticky a{display:block;text-align:center;background:var(--gold);color:var(--bg);font-size:10px;letter-spacing:.16em;text-transform:uppercase;font-weight:500;padding:15px;}
+
+.reveal{opacity:0;transform:translateY(18px);transition:opacity .7s cubic-bezier(.16,1,.3,1),transform .7s cubic-bezier(.16,1,.3,1)}
+.reveal.visible{opacity:1;transform:translateY(0)}
+.reveal-d1{transition-delay:.1s}.reveal-d2{transition-delay:.2s}.reveal-d3{transition-delay:.3s}
+
+@media(max-width:900px){
+  nav{padding:18px 20px}
+  #hero{padding:110px 20px 72px;min-height:auto}
+  .hero-mark{font-size:clamp(80px,28vw,140px);left:20px}
+  .section-pad{padding:64px 20px}
+  .two-col{grid-template-columns:1fr;gap:36px}
+  .inside-grid{grid-template-columns:1fr;max-width:100%}
+  .drop-card{padding:28px 20px}
+  #final{padding:80px 20px}
+  footer{padding:32px 20px;flex-direction:column;align-items:flex-start}
+  .mobile-sticky{display:block}
+  body{padding-bottom:64px}
 }
 </style>
 </head>
 <body>
 
-<div id="cursor"></div>
-<div id="cursor-ring"></div>
+<nav>
+  <div class="nav-mark">.5%</div>
+  <a href="/homepage.html" class="nav-back">Stephuary</a>
+</nav>
 
-<div id="entry-overlay" role="dialog" aria-modal="true" aria-label="Stephuary">
-  <div class="entry-inner">
-    <span class="entry-wordmark">Stephuary</span>
-    <h1 class="entry-headline">Find what&rsquo;s slowing your work, income, or consistency. Fix it.</h1>
-    <p class="entry-sub">Select what&rsquo;s happening. We&rsquo;ll show you exactly where to start.</p>
-    <span class="entry-support">Takes 10 seconds.</span>
-    <button class="entry-start-btn" id="overlay-start-btn">Start</button>
-    <a href="#system-entry-section" class="entry-skip-link" id="overlay-skip-link">Skip</a>
-  </div>
-</div>
-
-<header id="site-header">
-  <a href="/" class="logo">Stephuary</a>
-  <a href="#system-entry-section" id="skip-btn">Skip &rarr;</a>
-</header>
-
-<div id="game-field" role="main" aria-label="Interactive diagnostic">
-  <div id="anchor-fragment" aria-hidden="true">
-    <p>I have everything I need<br>except the structure.</p>
-  </div>
-  <div id="instruction" aria-live="polite">
-    <p>Pick what fits.</p>
-  </div>
-  <div id="ambient-signal" aria-live="polite" aria-atomic="true">
-    <p id="ambient-text">Updating</p>
-  </div>
-  <div id="remaining-counter" aria-live="polite">
-    <span id="remaining-text"></span>
-  </div>
-</div>
-
-<div id="resolution" role="main" aria-label="Your result">
-  <nav id="res-nav" aria-label="Main">
-    <a href="/" class="res-logo">Stephuary</a>
-    <div class="res-nav-right">
-      <button class="res-nav-restart" onclick="location.reload()">Restart</button>
-      <a href="https://gumroad.com/stephuary" class="res-nav-link" target="_blank" rel="noopener">The System</a>
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-mark" aria-hidden="true">.5%</div>
+  <div class="hero-content">
+    <div class="hero-eyebrow">Private access</div>
+    <h1 class="hero-headline">Most people are<br>informed. Very few<br>are <em>composed.</em></h1>
+    <p class="hero-sub">This is where that difference is built.</p>
+    <div class="hero-ctas">
+      <a href="#price" class="btn-gold-outline">Request Access</a>
+      <a href="#inside" class="hero-secondary">View what's inside</a>
     </div>
+  </div>
+</section>
+
+<!-- WHAT THIS IS -->
+<section class="section-pad">
+  <div class="two-col">
+    <div>
+      <div class="section-eyebrow reveal">What this is</div>
+      <h2 class="section-headline reveal reveal-d1">A private layer inside Stephuary.</h2>
+    </div>
+    <div>
+      <p class="what-body reveal">Built around how people at the top actually operate. Not theory. Not motivation. The actual patterns behind decision quality, composure under pressure, and the way environments shape how you move.</p>
+      <ul class="plain-list reveal reveal-d1">
+        <li>Decision patterns</li>
+        <li>Cultural intelligence</li>
+        <li>Lived experience, operator-level</li>
+        <li>Environments that shape how people move</li>
+      </ul>
+      <div class="italic-close reveal reveal-d2">This is not content. It is curation.</div>
+    </div>
+  </div>
+</section>
+
+<!-- INSIDE -->
+<section class="section-pad" id="inside">
+  <div class="section-eyebrow reveal">Inside</div>
+  <h2 class="section-headline reveal reveal-d1">What you get access to.</h2>
+  <div class="inside-grid">
+    <div class="inside-item reveal">
+      <div class="inside-num">01</div>
+      <div class="inside-title">Intelligence Drops</div>
+      <div class="inside-body">Monthly intelligence releases. Five briefs, one protocol, a curated resource stack. Nothing published until it is ready.</div>
+    </div>
+    <div class="inside-item reveal reveal-d1">
+      <div class="inside-num">02</div>
+      <div class="inside-title">Cultural Recommendations</div>
+      <div class="inside-body">Hotels, film, music, place. Selected from the operator side of the desk, not review sites.</div>
+    </div>
+    <div class="inside-item reveal reveal-d2">
+      <div class="inside-num">03</div>
+      <div class="inside-title">Frameworks</div>
+      <div class="inside-body">Decision architecture used in real environments. The Pre-Decision System. Protected bandwidth. CEI framework applied.</div>
+    </div>
+    <div class="inside-item reveal">
+      <div class="inside-num">04</div>
+      <div class="inside-title">Access Callouts</div>
+      <div class="inside-body">Events, openings, windows. The ones worth attending and how to get in. Updated when relevant, not on a content calendar.</div>
+    </div>
+    <div class="inside-item reveal reveal-d1">
+      <div class="inside-num">05</div>
+      <div class="inside-title">Member Space</div>
+      <div class="inside-body">Private. Signal-only. Where members share observations and exchange access intel. Curated, not moderated.</div>
+    </div>
+    <div class="inside-item reveal reveal-d2">
+      <div class="inside-num">06</div>
+      <div class="inside-title">Operator Insight</div>
+      <div class="inside-body">Direct access to 20+ years of hospitality operations across 19+ countries. Ask. Get an actual answer.</div>
+    </div>
+  </div>
+  <p class="inside-closing reveal">Everything is selected. Nothing is random.</p>
+</section>
+
+<!-- NOT THIS -->
+<section class="section-pad">
+  <div class="two-col">
+    <div>
+      <div class="section-eyebrow reveal">Not this</div>
+      <h2 class="section-headline reveal reveal-d1">What this is not.</h2>
+    </div>
+    <div>
+      <ul class="ruled-list reveal">
+        <li>Not a content feed</li>
+        <li>Not a productivity system</li>
+        <li>Not a chat group</li>
+        <li>Not daily noise</li>
+      </ul>
+      <p class="italic-close reveal reveal-d1">If you are looking for volume, this is not for you.</p>
+    </div>
+  </div>
+</section>
+
+<!-- DROP PREVIEW -->
+<section class="section-pad">
+  <div class="section-eyebrow reveal">Current drop</div>
+  <div class="drop-card reveal reveal-d1">
+    <div class="drop-theme-label">April 2026 · Vol. 01 · Theme</div>
+    <div class="drop-title">Foundation</div>
+    <div class="drop-date">Released April 2026</div>
+    <div class="drop-lines">
+      <div class="drop-line">Five intelligence briefs</div>
+      <div class="drop-line">One protocol card</div>
+      <div class="drop-line">Curated resource stack</div>
+      <div class="drop-line">Operator-level hospitality recommendations</div>
+    </div>
+    <a href="#price" class="drop-cta-btn">Get Access to Read</a>
+    <p class="drop-locked">Members read this in full. Join below.</p>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="section-pad">
+  <div class="two-col">
+    <div>
+      <div class="section-eyebrow reveal">How this works</div>
+      <h2 class="section-headline reveal reveal-d1">Built to be used over time.</h2>
+    </div>
+    <div class="env-blocks">
+      <div class="reveal">
+        <div class="env-label">Drops</div>
+        <div class="env-body">New material releases in drops. Each one is self-contained. You read when you are ready.</div>
+      </div>
+      <div class="reveal reveal-d1">
+        <div class="env-label">Pressure</div>
+        <div class="env-body">No expectation to keep up. No pressure to consume everything. Return when you need something.</div>
+      </div>
+      <div class="reveal reveal-d2">
+        <div class="env-label">Access</div>
+        <div class="env-body">One payment. Everything that exists now and everything added after. No subscriptions. No tiers inside the tier.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHO -->
+<section class="section-pad">
+  <div class="section-eyebrow reveal">Who this is for</div>
+  <h2 class="section-headline reveal reveal-d1">This is for you if</h2>
+  <ul class="who-list">
+    <li class="who-item reveal"><span class="who-num">01</span>You notice details most people miss</li>
+    <li class="who-item reveal reveal-d1"><span class="who-num">02</span>You care how things feel, not just what they are</li>
+    <li class="who-item reveal reveal-d2"><span class="who-num">03</span>You want better judgment, not more information</li>
+    <li class="who-item reveal reveal-d3"><span class="who-num">04</span>You move between environments and want to read them clearly</li>
+  </ul>
+</section>
+
+<!-- PRICE -->
+<section class="section-pad" id="price">
+  <div class="two-col" style="align-items:center">
+    <div>
+      <div class="section-eyebrow reveal">Access</div>
+      <div class="price-amount reveal reveal-d1">$97</div>
+      <p class="price-note reveal reveal-d1">One time. Lifetime access.</p>
+      <p class="price-body reveal reveal-d2">This is not a subscription. Pay once. Everything that exists now, and everything added going forward.</p>
+      <p class="price-body-2 reveal reveal-d2">Access is ongoing. The archive grows. Your access never expires.</p>
+      <a href="https://gumroad.com/stephuary" class="btn-gold-solid reveal reveal-d3" target="_blank" rel="noopener">Join .5% Club</a>
+      <p class="bundle-note reveal reveal-d3">Want the Stephuary System too? <a href="https://gumroad.com/stephuary" target="_blank" rel="noopener">Full Access is $127</a> and includes both.</p>
+    </div>
+    <div class="price-right">
+      <div class="conn-item reveal">
+        <div class="conn-item-label">Stephuary System · $39</div>
+        <div class="conn-item-text">Clarity, execution steps, revenue paths. Fix what's breaking.</div>
+      </div>
+      <div class="conn-item reveal reveal-d1">
+        <div class="conn-item-label">.5% Club · $97</div>
+        <div class="conn-item-text">Private intelligence layer. Decision architecture. Cultural access.</div>
+      </div>
+      <div class="conn-item featured reveal reveal-d2">
+        <div class="conn-item-label">Full Access · $127</div>
+        <div class="conn-item-text">Both. One payment. Everything.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHERE THIS FITS -->
+<section class="section-pad">
+  <div class="two-col">
+    <div>
+      <div class="section-eyebrow reveal">Where this fits</div>
+      <h2 class="section-headline reveal reveal-d1">Stephuary gives you structure. .5% Club gives you context.</h2>
+      <p class="what-body reveal reveal-d2" style="margin-top:20px">One tells you what to do. The other shapes how you see. Most people need both.</p>
+    </div>
+    <div style="display:flex;align-items:center">
+      <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:clamp(20px,2.4vw,30px);color:var(--text-2);line-height:1.55;" class="reveal">
+        Start with clarity.<br>Stay for the context.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FINAL -->
+<section id="final">
+  <h2 class="final-headline reveal">You don't need more input. You need better signals.</h2>
+  <a href="https://gumroad.com/stephuary" class="btn-gold-solid reveal reveal-d1" target="_blank" rel="noopener">Join .5% Club</a>
+</section>
+
+<footer>
+  <div class="footer-mark">.5%</div>
+  <nav class="footer-links">
+    <a href="/homepage.html" class="footer-link">Stephuary</a>
+    <a href="/index.html" class="footer-link">Run Analysis</a>
+    <a href="https://gumroad.com/stephuary" class="footer-link" target="_blank" rel="noopener">Full Access</a>
+    <a href="https://grownspaghetti.substack.com" class="footer-link" target="_blank" rel="noopener">Substack</a>
+    <a href="https://onlysometimesclub.com" class="footer-link" target="_blank" rel="noopener">Only Sometimes Club</a>
   </nav>
+</footer>
 
-  <div id="diagnosis-banner">
-    <span class="diag-phase-label" id="diagnosis-label">Execution Friction</span>
-    <h1 class="diag-headline" id="diagnosis-heading">Start with: Structure</h1>
-    <div class="diag-blocks">
-      <div class="diag-block" id="diag-block-problem">
-        <span class="diag-block-label">Problem</span>
-        <div class="diag-block-text" id="diag-problem">You start things but do not finish them.</div>
-      </div>
-      <div class="diag-block" id="diag-block-means">
-        <span class="diag-block-label">What this means</span>
-        <div class="diag-block-text" id="diag-means">There is no clear breakdown of steps or timeline, so work stalls before completion.</div>
-      </div>
-      <div class="diag-block start-block" id="diag-block-start" style="grid-column:1/-1">
-        <span class="diag-block-label">Start here</span>
-        <div class="diag-block-text" id="diag-start">Turn what you are doing into steps you can complete.</div>
-      </div>
-    </div>
-    <span class="diag-anchor-line">This is where to start. Not everything at once.</span>
-  </div>
-
-  <div id="diagnosis-cta">
-    <a href="/structure" class="btn-diag-primary" id="diag-cta-btn">Fix execution &rarr;</a>
-  </div>
-
-  <div id="diagnosis-results-wrap">
-    <span class="diagnosis-friction-line">Where it&rsquo;s breaking</span>
-    <div class="result-card">
-      <div class="result-card-head">
-        <span class="result-card-title">Signal breakdown</span>
-        <span class="result-card-meta">Highest count = fix first</span>
-      </div>
-      <div id="diagnosis-results" aria-label="Result breakdown"></div>
-    </div>
-  </div>
-
-  <section class="reveal-stack" aria-label="Diagnosis translation">
-
-    <div class="reveal-block">
-      <span class="reveal-category">Diagnosis</span>
-      <h2 class="reveal-headline">This is a system map.</h2>
-      <p class="reveal-body">You just mapped where your system is breaking.</p>
-      <p class="reveal-body">This is not a personality result. It is an operational diagnosis. Each signal shows where momentum is being lost — work, execution, daily rhythm, or environment. You do not fix everything at once. You fix the first constraint.</p>
-    </div>
-
-    <div class="reveal-block">
-      <span class="reveal-category">Outcome</span>
-      <h2 class="reveal-headline">You already have what you need.</h2>
-      <p class="reveal-body">You do not need more information. You need a working offer. A structure that holds. A system that runs without restarting. Output that builds.</p>
-      <p class="reveal-body">Each phase fixes one of these. Nothing else.</p>
-    </div>
-
-    <div class="reveal-block">
-      <span class="reveal-category">The Product</span>
-      <h2 class="reveal-headline">Five phases. One private dashboard.</h2>
-      <p class="reveal-body">A step-by-step operating structure. It shows you exactly what to fix, in what order, so your work starts working. You enter a private dashboard with all five phases. Start with your result. Fix it immediately.</p>
-    </div>
-
-    <div class="reveal-block">
-      <span class="reveal-category">After Entry</span>
-      <h2 class="reveal-headline">The work begins immediately.</h2>
-      <p class="reveal-body">You unlock all five phases. Each phase shows you exactly what to fix. You get step-by-step execution and tools. You move from idea to working system.</p>
-    </div>
-
-  </section>
-
-  <div id="scroll-cue" aria-hidden="true">
-    <svg width="18" height="24" viewBox="0 0 16 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M8 1V19M8 19L2 13M8 19L14 13" stroke="rgba(214,202,180,0.5)" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
-    </svg>
-  </div>
-
-  <div class="rule-divider"></div>
-
-  <section id="menu-section" aria-labelledby="menu-heading">
-    <span class="menu-label" id="menu-heading">The System</span>
-    <p class="phase-headline">The System is divided into five phases. Each phase fixes a different constraint.</p>
-    <p class="phase-subline">Phases are not separate products. Phases are not collections. Phases are not books.</p>
-    <p class="menu-intro">Start where your system is breaking. Fix that first.</p>
-    <p class="menu-command">Don&rsquo;t explore. Start here.</p>
-
-    <div class="menu-courses" role="list">
-      <div class="menu-course" role="listitem" data-system="capture">
-        <div class="menu-course-row">
-          <span class="course-num">Phase 01</span>
-          <div class="course-main">
-            <div class="course-name">Capture</div>
-            <div class="course-desc">Get the idea out of your head and into something usable.</div>
-            <p class="course-detail">Clarity, framing, and direction. Built from the original work.</p>
-            <a class="menu-panel-cta" href="/capture">Go to Capture</a>
-          </div>
-        </div>
-      </div>
-      <div class="menu-course" role="listitem" data-system="monetize">
-        <div class="menu-course-row">
-          <span class="course-num">Phase 02</span>
-          <div class="course-main">
-            <div class="course-name">Monetize</div>
-            <div class="course-desc">Turn what you have into something people pay for.</div>
-            <p class="course-detail">Offer design, pricing, and conversion. Built from the original work.</p>
-            <a class="menu-panel-cta" href="/monetize">Go to Monetize</a>
-          </div>
-        </div>
-      </div>
-      <div class="menu-course" role="listitem" data-system="structure">
-        <div class="menu-course-row">
-          <span class="course-num">Phase 03</span>
-          <div class="course-main">
-            <div class="course-name">Structure</div>
-            <div class="course-desc">Finish what you start. Every time.</div>
-            <p class="course-detail">Workflows, execution systems, and output structure. Built from the original work.</p>
-            <a class="menu-panel-cta" href="/structure">Go to Structure</a>
-          </div>
-        </div>
-      </div>
-      <div class="menu-course" role="listitem" data-system="automation">
-        <div class="menu-course-row">
-          <span class="course-num">Phase 04</span>
-          <div class="course-main">
-            <div class="course-name">Automation</div>
-            <div class="course-desc">Stop doing the same work twice.</div>
-            <p class="course-detail">Templates, repeatable processes, and tools. Built from the original work.</p>
-            <a class="menu-panel-cta" href="/automation">Go to Automation</a>
-          </div>
-        </div>
-      </div>
-      <div class="menu-course" role="listitem" data-system="sovereign">
-        <div class="menu-course-row">
-          <span class="course-num">Phase 05</span>
-          <div class="course-main">
-            <div class="course-name">Sovereignty</div>
-            <div class="course-desc">Build a life that holds under pressure.</div>
-            <p class="course-detail">Personal systems, environment, and stability. Built from the original work.</p>
-            <a class="menu-panel-cta" href="/sovereignty">Go to Sovereignty</a>
-          </div>
-        </div>
-      </div>
-      <div class="modules-note" role="note">
-        <p>Collections expand the work. The System gets it working first.</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- System entry — no card box -->
-  <section id="system-entry-section" aria-labelledby="entry-section-label">
-    <span class="entry-section-label" id="entry-section-label">Enter the System</span>
-    <p class="entry-description">Everything you need to fix this, structured and ready.</p>
-    <div class="entry-price">$27</div>
-    <span class="entry-price-note">The core product. Five phases. One private dashboard.</span>
-    <div class="entry-divider"></div>
-    <div class="cta-row">
-      <a href="https://gumroad.com/stephuary" class="btn-primary" id="system-cta-btn" target="_blank" rel="noopener">Enter the System &rarr;</a>
-      <a href="/" class="btn-ghost-link">Take the diagnostic again</a>
-    </div>
-    <div class="entry-note">
-      <p>The System is already mapped. You just need to enter it.</p>
-    </div>
-    <div class="private-signal">
-      <p>Not everything is self-serve. Some systems are built with you.</p>
-      <a href="/private-access">Request access &rarr;</a>
-    </div>
-    <div class="founder-signal">
-      <p>Private Access is the custom layer for complex constraints.</p>
-    </div>
-  </section>
-
-  <div id="philosophy" role="complementary">
-    <div class="phil-rule"></div>
-    <p class="phil-quote">&ldquo;The economics of discretion &mdash; treating privacy and selective visibility as compounding assets.&rdquo;</p>
-    <div class="phil-rule"></div>
-    <span class="phil-wordmark">Stephuary</span>
-  </div>
-
-  <footer id="res-footer" role="contentinfo">
-    <div class="footer-left">
-      <span>Stephuary</span>
-      <p class="footer-micro">Built to be used.<br>Not watched.</p>
-      <span class="footer-studio">Full-build engagements operate through Stephuary Studio.</span>
-      <span class="osc-link">Working at the business level. <a href="https://onlysometimesclub.com" target="_blank" rel="noopener">Only Sometimes Club.</a></span>
-    </div>
-    <nav class="footer-links" aria-label="Footer navigation">
-      <a href="/">Home</a>
-      <a href="https://gumroad.com/stephuary" target="_blank" rel="noopener">Enter the System</a>
-      <a href="https://grownspaghetti.substack.com" target="_blank" rel="noopener">Substack</a>
-      <a href="https://onlysometimesclub.com" target="_blank" rel="noopener">Only Sometimes Club</a>
-      <a href="https://github.com/stephuary/Stephuary" target="_blank" rel="noopener">GitHub</a>
-    </nav>
-  </footer>
+<div class="mobile-sticky">
+  <a href="#price">Join .5% Club — $97</a>
 </div>
 
 <script>
-(function(){
-  'use strict';
-
-  gsap.registerPlugin(ScrollTrigger);
-
-  // Lightweight smooth scroll — no external library, no proxy conflicts
-  // Uses native scroll with lerp interpolation via rAF
-  var lenis = (function(){
-    if(window.innerWidth < 900){ return null; }
-    var current = 0;
-    var target = 0;
-    var ease = 0.1;
-    var rafId = null;
-    var active = false;
-
-    function lerp(a, b, t){ return a + (b - a) * t; }
-
-    function tick(){
-      if(!active){ return; }
-      target = window.scrollY || window.pageYOffset;
-      current = lerp(current, target, ease);
-      var diff = Math.abs(target - current);
-      ScrollTrigger.update();
-      rafId = requestAnimationFrame(tick);
-    }
-
-    return {
-      start: function(){
-        active = true;
-        current = window.scrollY || window.pageYOffset;
-        target = current;
-        if(!rafId){ tick(); }
-      },
-      stop: function(){
-        active = false;
-        if(rafId){ cancelAnimationFrame(rafId); rafId = null; }
-      }
-    };
-  }());
-
-  var MAX_SELECTIONS = 6;
-  var AUTO_RESOLVE_DELAY = 2700;
-  var MIN_SELECTIONS_FOR_PAUSE_RESOLVE = 3;
-
-  var fragments = [
-    {id:'b1',text:"I don't know what to charge.",zone:'business'},
-    {id:'b2',text:"I have an audience. Nobody's buying.",zone:'business'},
-    {id:'b3',text:"I built something. Nobody bought it.",zone:'business'},
-    {id:'s1',text:"I've been working on this for months.",zone:'self'},
-    {id:'s2',text:"I keep restarting.",zone:'self'},
-    {id:'s3',text:"I'm productive. Nothing is shipping.",zone:'self'},
-    {id:'h1',text:"I reset every Monday.",zone:'home'},
-    {id:'h2',text:"I'm consistent. Nothing is accumulating.",zone:'home'},
-    {id:'h3',text:"I have time. I don't have momentum.",zone:'home'},
-    {id:'sp1',text:"I work everywhere. Nothing gets finished.",zone:'space'},
-    {id:'sp2',text:"My setup works against me.",zone:'space'},
-    {id:'sp3',text:"I can't think clearly where I am.",zone:'space'}
-  ];
-
-  var zones = [
-    {id:'business',name:'Business',micro:'Work',truth:"The money isn't steady.",
-      pos:{d:{l:'3%',t:'10%',w:'30%',h:'40%'},m:{l:'2%',t:'5%',w:'46%',h:'39%'}}},
-    {id:'self',name:'Self',micro:'Execution',truth:'You keep restarting.',
-      pos:{d:{l:'67%',t:'10%',w:'30%',h:'40%'},m:{l:'52%',t:'5%',w:'46%',h:'39%'}}},
-    {id:'home',name:'Home',micro:'Daily',truth:'The day runs you.',
-      pos:{d:{l:'3%',t:'52%',w:'30%',h:'40%'},m:{l:'2%',t:'54%',w:'46%',h:'39%'}}},
-    {id:'space',name:'Space',micro:'Environment',truth:'The place is costing you.',
-      pos:{d:{l:'67%',t:'52%',w:'30%',h:'40%'},m:{l:'52%',t:'54%',w:'46%',h:'39%'}}}
-  ];
-
-  var state = {
-    isMobile: window.innerWidth < 900,
-    gameActive: true,
-    hasInteracted: false,
-    placedFragments: {},
-    zoneCounts: {business:0,self:0,home:0,space:0},
-    zoneRevealed: {business:false,self:false,home:false,space:false},
-    totalPlaced: 0,
-    pauseResolveTimer: null
-  };
-
-  var systemMenu = {initialized:false,rows:[],byKey:{}};
-  var cursor = document.getElementById('cursor');
-  var cursorRing = document.getElementById('cursor-ring');
-  var mouseX = 0, mouseY = 0, ringX = 0, ringY = 0;
-  var customCursorEnabled = false;
-
-  function enableCustomCursor(){
-    if(customCursorEnabled || state.isMobile || !cursor || !cursorRing){ return; }
-    customCursorEnabled = true;
-    document.body.classList.add('cursor-enhanced');
-    cursor.style.display = 'block';
-    cursorRing.style.display = 'block';
-  }
-
-  function normalizeRecommendation(v){
-    v = (v||'').toLowerCase();
-    if(v.indexOf('capture')>-1) return 'capture';
-    if(v.indexOf('monetize')>-1) return 'monetize';
-    if(v.indexOf('structure')>-1) return 'structure';
-    if(v.indexOf('automation')>-1) return 'automation';
-    if(v.indexOf('sovereign')>-1) return 'sovereign';
-    return '';
-  }
-
-  function setSystemRowOpen(row, open){
-    if(!row){ return; }
-    systemMenu.rows.forEach(function(item){
-      var btn = item.querySelector('.menu-course-toggle');
-      var isCurrent = item === row;
-      if(isCurrent && open){ item.classList.add('open'); if(btn) btn.setAttribute('aria-expanded','true'); }
-      else { item.classList.remove('open'); if(btn) btn.setAttribute('aria-expanded','false'); }
-    });
-  }
-
-  function toggleSystemRow(row){
-    if(!row){ return; }
-    setSystemRowOpen(row, !row.classList.contains('open'));
-  }
-
-  function setRecommendedRow(key){
-    systemMenu.rows.forEach(function(item){ item.classList.remove('recommended'); });
-    if(key && systemMenu.byKey[key]){
-      systemMenu.byKey[key].classList.add('recommended');
-      var mc = document.querySelector('.menu-courses');
-      if(mc) mc.classList.add('has-recommendation');
-    }
-  }
-
-  function openRecommendedSystem(startValue, shouldScroll){
-    var key = normalizeRecommendation(startValue);
-    if(!key){ return; }
-    setRecommendedRow(key);
-    var targetRow = systemMenu.byKey[key];
-    if(!targetRow){ return; }
-    if(shouldScroll !== false){
-      var section = document.getElementById('menu-section');
-      if(section) section.scrollIntoView({behavior:'smooth',block:'start'});
-    }
-    setTimeout(function(){ setSystemRowOpen(targetRow, true); }, shouldScroll === false ? 80 : 220);
-  }
-
-  function initSystemMenu(){
-    if(systemMenu.initialized){ return; }
-    systemMenu.rows = Array.prototype.slice.call(document.querySelectorAll('.menu-course[data-system]'));
-    systemMenu.rows.forEach(function(row){
-      var key = row.getAttribute('data-system');
-      if(key) systemMenu.byKey[key] = row;
-      // No toggle — flat layout, scroll reveals all
-    });
-    systemMenu.initialized = true;
-  }
-
-  // Cursor
-  if(!state.isMobile && cursor && cursorRing){
-    mouseX = window.innerWidth/2; mouseY = window.innerHeight/2;
-    ringX = mouseX; ringY = mouseY;
-    document.addEventListener('mousemove', function(e){
-      if(!customCursorEnabled) enableCustomCursor();
-      mouseX = e.clientX; mouseY = e.clientY;
-      cursor.style.left = mouseX+'px'; cursor.style.top = mouseY+'px';
-    });
-    (function animateRing(){
-      if(customCursorEnabled){
-        ringX += (mouseX - ringX) * 0.12;
-        ringY += (mouseY - ringY) * 0.12;
-        cursorRing.style.left = ringX+'px'; cursorRing.style.top = ringY+'px';
-      }
-      requestAnimationFrame(animateRing);
-    }());
-  }
-
-  // Entry overlay — GSAP reveal
-  var overlay = document.getElementById('entry-overlay');
-  var overlayStart = document.getElementById('overlay-start-btn');
-  var overlaySkip = document.getElementById('overlay-skip-link');
-
-  gsap.timeline({delay:0.2})
-    .to('.entry-wordmark', {opacity:1, y:0, duration:0.6, ease:'power3.out'}, 0)
-    .to('.entry-headline', {opacity:1, y:0, duration:0.7, ease:'power3.out'}, 0.18)
-    .to('.entry-sub',      {opacity:1, y:0, duration:0.6, ease:'power3.out'}, 0.32)
-    .to('.entry-support',  {opacity:1, duration:0.5, ease:'power2.out'}, 0.44)
-    .to('.entry-start-btn',{opacity:1, duration:0.5, ease:'power2.out'}, 0.52)
-    .to('.entry-skip-link',{opacity:1, duration:0.4, ease:'power2.out'}, 0.60);
-
-  function dismissOverlay(){
-    gsap.to(overlay, {opacity:0, duration:0.45, ease:'power2.in', onComplete:function(){ overlay.style.display='none'; }});
-  }
-
-  overlay.addEventListener('click', function(e){
-    if(e.target === overlaySkip || overlaySkip.contains(e.target)){ return; }
-    dismissOverlay();
-  });
-  overlayStart.addEventListener('click', function(e){ e.stopPropagation(); dismissOverlay(); });
-  overlaySkip.addEventListener('click', function(e){
-    e.stopPropagation();
-    dismissOverlay();
-    triggerResolution(false);
-  });
-
-  function updateInstruction(text){
-    var wrap = document.getElementById('instruction');
-    if(!wrap){ return; }
-    wrap.querySelector('p').textContent = text;
-  }
-
-  // ---- BUILD GAME ----
-  function buildGame(){
-    var field = document.getElementById('game-field');
-
-    var placement = [
-      {x:5,  y:16}, {x:14, y:26}, {x:6,  y:36},
-      {x:74, y:16}, {x:68, y:27}, {x:72, y:37},
-      {x:13, y:58}, {x:5,  y:68}, {x:10, y:78},
-      {x:68, y:58}, {x:77, y:68}, {x:69, y:78}
-    ];
-    var placementMobile = [
-      {x:3,  y:10}, {x:12, y:20}, {x:4,  y:30},
-      {x:55, y:10}, {x:51, y:21}, {x:54, y:30},
-      {x:10, y:58}, {x:3,  y:68}, {x:8,  y:77},
-      {x:51, y:58}, {x:60, y:68}, {x:52, y:77}
-    ];
-
-    // Build zones
-    zones.forEach(function(z){
-      var p = state.isMobile ? z.pos.m : z.pos.d;
-      var el = document.createElement('div');
-      el.className = 'zone';
-      el.id = 'zone-' + z.id;
-      el.style.cssText = 'left:'+p.l+';top:'+p.t+';width:'+p.w+';height:'+p.h;
-      el.innerHTML = '<div class="zone-label"><div class="zone-name">'+z.name+'</div><div class="zone-truth">'+z.truth+'</div><div class="zone-micro" data-base="'+z.micro+'">'+z.micro+' (0)</div></div>';
-      field.appendChild(el);
-    });
-
-    // Zone names fade in with GSAP stagger
-    gsap.to('.zone-name', {opacity:0.55, duration:0.8, stagger:0.12, ease:'power2.out', delay:1.0});
-
-    // Build fragments with GSAP stagger entrance
-    var fragEls = [];
-    fragments.forEach(function(frag, idx){
-      var el = document.createElement('div');
-      el.className = 'fragment';
-      el.id = 'frag-' + frag.id;
-      el.setAttribute('role','button');
-      el.setAttribute('tabindex','0');
-      el.setAttribute('aria-label', frag.text);
-      el.innerHTML = '<span class="fragment-text">'+frag.text+'</span>';
-      var pos = state.isMobile ? placementMobile[idx] : placement[idx];
-      el.style.left = pos.x + '%';
-      el.style.top  = pos.y + '%';
-      el.addEventListener('click', function(){ handleClick(frag); });
-      el.addEventListener('keydown', function(e){ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); handleClick(frag); }});
-      el.addEventListener('mouseenter', function(){ if(cursorRing) cursorRing.classList.add('hover'); });
-      el.addEventListener('mouseleave', function(){ if(cursorRing) cursorRing.classList.remove('hover'); });
-      field.appendChild(el);
-      fragEls.push(el);
-    });
-
-    // GSAP staggered card entrance — y settle from below
-    gsap.fromTo(fragEls,
-      {opacity:0, y:18},
-      {opacity:1, y:0, duration:0.65, stagger:{amount:0.9, from:'random'}, ease:'power3.out', delay:0.9}
-    );
-
-    // Floating animation via GSAP (replaces CSS keyframes)
-    fragEls.forEach(function(el, i){
-      gsap.to(el, {
-        y: '+=5',
-        duration: 2.8 + (i % 4) * 0.3,
-        ease: 'sine.inOut',
-        yoyo: true,
-        repeat: -1,
-        delay: (i * 0.22) % 2.0
-      });
-    });
-
-    // Anchor text
-    gsap.to('#anchor-fragment', {opacity:1, duration:1.2, ease:'power2.out', delay:1.4});
-
-    // Header + instruction
-    gsap.to('.logo', {opacity:1, duration:0.7, ease:'power2.out', delay:0.5});
-    gsap.to('#skip-btn', {opacity:1, duration:0.7, ease:'power2.out', delay:0.9});
-    gsap.to('#instruction', {opacity:1, duration:0.7, ease:'power2.out', delay:1.6});
-    gsap.to('#ambient-signal', {opacity:1, duration:0.7, ease:'power2.out', delay:1.9});
-
-    updateRemainingCounter();
-  }
-
-  function updateRemainingCounter(){
-    var remaining = MAX_SELECTIONS - state.totalPlaced;
-    var wrap = document.getElementById('remaining-counter');
-    var text = document.getElementById('remaining-text');
-    if(!wrap||!text){ return; }
-    if(state.hasInteracted && state.gameActive){
-      text.textContent = remaining + ' left';
-      wrap.classList.add('visible');
-    } else {
-      wrap.classList.remove('visible');
-    }
-  }
-
-  function updateAmbientSignal(){
-    var el = document.getElementById('ambient-text');
-    if(!el){ return; }
-    var top = getTopZones();
-    if(top[0].count > 0){
-      var names = {business:'Business',self:'Self',home:'Home',space:'Space'};
-      el.textContent = 'Pattern forming — ' + names[top[0].id];
-      el.classList.add('active');
-    } else {
-      el.textContent = 'Updating';
-      el.classList.remove('active');
-    }
-  }
-
-  function schedulePauseResolve(){
-    clearTimeout(state.pauseResolveTimer);
-    if(state.totalPlaced < MIN_SELECTIONS_FOR_PAUSE_RESOLVE || !state.gameActive){ return; }
-    state.pauseResolveTimer = setTimeout(function(){
-      if(!state.gameActive){ return; }
-      updateInstruction("That's enough.");
-      triggerResolution(false);
-    }, AUTO_RESOLVE_DELAY);
-  }
-
-  function handleClick(frag){
-    if(!state.gameActive){ return; }
-    var el = document.getElementById('frag-' + frag.id);
-    if(!el || state.placedFragments[frag.id]){ return; }
-    if(!state.hasInteracted){
-      state.hasInteracted = true;
-      updateInstruction("Keep going.");
-      zones.forEach(function(z){
-        var zoneEl = document.getElementById('zone-' + z.id);
-        if(zoneEl) zoneEl.classList.add('active');
-      });
-    }
-    if(cursor) cursor.classList.add('active');
-    setTimeout(function(){ if(cursor) cursor.classList.remove('active'); }, 180);
-
-    // Click pulse
-    gsap.to(el, {scale:1.04, duration:0.08, ease:'power2.out', onComplete:function(){
-      placeFragment(frag.id, frag.zone);
-      if(state.totalPlaced >= MAX_SELECTIONS){
-        updateInstruction("That's enough.");
-        triggerResolution(false);
-        return;
-      }
-      if(state.totalPlaced >= MAX_SELECTIONS - 1){ updateInstruction("That's enough."); }
-      else { updateInstruction("Keep going."); }
-      schedulePauseResolve();
-    }});
-  }
-
-  function placeFragment(fragId, zoneId){
-    var el = document.getElementById('frag-' + fragId);
-    if(!el || state.placedFragments[fragId]){ return; }
-    state.placedFragments[fragId] = zoneId;
-    state.zoneCounts[zoneId] += 1;
-    state.totalPlaced += 1;
-
-    // Kill floating tween, fade out with GSAP
-    gsap.killTweensOf(el);
-    gsap.to(el, {opacity:0.15, scale:0.88, duration:0.3, ease:'power2.in'});
-    el.classList.add('placed');
-
-    var zoneEl = document.getElementById('zone-' + zoneId);
-    if(zoneEl){
-      if(!state.zoneRevealed[zoneId]){
-        state.zoneRevealed[zoneId] = true;
-        zoneEl.classList.add('revealed');
-        // Animate zone label in
-        gsap.fromTo(zoneEl.querySelector('.zone-name'),
-          {opacity:0, y:6},
-          {opacity:1, y:0, duration:0.5, ease:'power3.out'}
-        );
-        gsap.fromTo(zoneEl.querySelector('.zone-truth'),
-          {opacity:0, y:4},
-          {opacity:1, y:0, duration:0.5, ease:'power3.out', delay:0.1}
-        );
-      }
-      // Flash
-      gsap.fromTo(zoneEl, {background:'rgba(196,163,90,0.18)'}, {background:'rgba(196,163,90,0.03)', duration:0.5, ease:'power2.out'});
-    }
-
-    updateZoneVisuals();
-    updateRemainingCounter();
-    updateAmbientSignal();
-  }
-
-  function getTopZones(){
-    var order = {business:0,self:1,home:2,space:3};
-    return Object.keys(state.zoneCounts)
-      .map(function(id){ return {id:id, count:state.zoneCounts[id]}; })
-      .sort(function(a,b){ return b.count!==a.count ? b.count-a.count : order[a.id]-order[b.id]; });
-  }
-
-  function updateZoneVisuals(){
-    var top = getTopZones();
-    var leadBy = top[0].count - top[1].count;
-    zones.forEach(function(z){
-      var zoneEl = document.getElementById('zone-' + z.id);
-      if(!zoneEl){ return; }
-      var count = state.zoneCounts[z.id];
-      zoneEl.classList.remove('intensity1','intensity2','intensity3','dominant');
-      if(count >= 4) zoneEl.classList.add('intensity3');
-      else if(count >= 2) zoneEl.classList.add('intensity2');
-      else if(count >= 1) zoneEl.classList.add('intensity1');
-      var micro = zoneEl.querySelector('.zone-micro');
-      if(micro) micro.textContent = (micro.getAttribute('data-base')||'') + ' (' + count + ')';
-    });
-    if(top[0].count > 0 && leadBy >= 2){
-      var dominant = document.getElementById('zone-' + top[0].id);
-      if(dominant) dominant.classList.add('dominant');
-    }
-  }
-
-  // ---- RESULT MAP ----
-  var resultMap = {
-    'Revenue Friction':{phase:'Monetize',headline:'Start with: Monetize',problem:'People are not buying what you have.',means:'Either the offer is unclear, priced wrong, or not positioned in a way that makes someone act.',start:'Fix the offer before doing anything else.',cta:'Fix the offer',href:'/monetize'},
-    'Execution Friction':{phase:'Structure',headline:'Start with: Structure',problem:'You start things but do not finish them.',means:'There is no clear breakdown of steps or timeline, so work stalls before completion.',start:'Turn what you are doing into steps you can complete.',cta:'Fix execution',href:'/structure'},
-    'Routine Friction':{phase:'Automation',headline:'Start with: Automation',problem:'You are repeating work or relying on willpower to stay consistent.',means:'Without systems, everything resets and nothing compounds.',start:'Remove repetition and make the work automatic.',cta:'Fix the system',href:'/automation'},
-    'Environment Friction':{phase:'Sovereignty',headline:'Start with: Life',problem:'Your setup is slowing you down.',means:'Your space, schedule, or energy is interfering with output.',start:'Fix your environment so the work becomes easier.',cta:'Fix your setup',href:'/sovereignty'},
-    'Execution Gap':{phase:'Monetize',headline:'Start with: Monetize',problem:'The work exists. People are not buying it.',means:'The offer is not clear enough or the follow-through is breaking before a sale happens.',start:'Get the offer legible before fixing anything else.',cta:'Fix the offer',href:'/monetize'},
-    'Consistency Collapse':{phase:'Structure',headline:'Start with: Structure',problem:'You know what to do but it is not getting done consistently.',means:'The system is not holding long enough for anything to compound.',start:'Build the structure that keeps the work moving without willpower.',cta:'Fix execution',href:'/structure'},
-    'Environment Drag':{phase:'Sovereignty',headline:'Start with: Life',problem:'Your setup is costing output before you even start.',means:'The space, schedule, or energy conditions are creating friction the work has to fight through.',start:'Fix the environment first. The work gets easier immediately.',cta:'Fix your setup',href:'/sovereignty'},
-    'Structural Misalignment':{phase:'Structure',headline:'Start with: Structure',problem:'The build and the environment are working against each other.',means:'You are trying to execute inside conditions that were not designed for this kind of work.',start:'Create the structure that lets the work hold regardless of conditions.',cta:'Fix execution',href:'/structure'},
-    'Capacity Leak':{phase:'Structure',headline:'Start with: Structure',problem:'The ambition is real. The day cannot hold it.',means:'What you are trying to build requires more protected time and capacity than your current setup allows.',start:'Restructure the day so the work has room to actually happen.',cta:'Fix execution',href:'/structure'},
-    'Friction Loop':{phase:'Automation',headline:'Start with: Automation',problem:'You are rebuilding the same things over and over.',means:'Without repeatable systems, effort resets every time and momentum cannot build.',start:'Stop restarting. Document what works and make it the default.',cta:'Fix the system',href:'/automation'}
-  };
-
-  function resolveResult(){
-    var top = getTopZones();
-    var first = top[0], second = top[1];
-    var clearlySingle = first.count > 0 && (first.count - second.count) >= 2;
-    var clusterMap = {'business+self':'Execution Gap','home+self':'Consistency Collapse','home+space':'Environment Drag','business+space':'Structural Misalignment','business+home':'Capacity Leak','self+space':'Friction Loop'};
-    var singleMap = {business:'Revenue Friction',self:'Execution Friction',home:'Routine Friction',space:'Environment Friction'};
-    var label = clearlySingle ? singleMap[first.id] : (clusterMap[[first.id,second.id].sort().join('+')] || singleMap[first.id]);
-    return {label:label, data:resultMap[label], top:top};
-  }
-
-  function buildDiagnosis(){
-    var resolved = resolveResult();
-    var d = resolved.data;
-    var labelEl = document.getElementById('diagnosis-label');
-    var headEl = document.getElementById('diagnosis-heading');
-    var problemEl = document.getElementById('diag-problem');
-    var meansEl = document.getElementById('diag-means');
-    var startEl = document.getElementById('diag-start');
-    var ctaBtn = document.getElementById('diag-cta-btn');
-    if(labelEl) labelEl.textContent = resolved.label;
-    if(headEl) headEl.textContent = d.headline;
-    if(problemEl) problemEl.textContent = d.problem;
-    if(meansEl) meansEl.textContent = d.means;
-    if(startEl) startEl.textContent = d.start;
-    if(ctaBtn){ ctaBtn.setAttribute('href',d.href); ctaBtn.setAttribute('data-target-href',d.href); ctaBtn.textContent = d.cta + ' \u2192'; }
-    setRecommendedRow(normalizeRecommendation(d.phase));
-
-    var zoneNames = {business:'Work',self:'Execution',home:'Daily',space:'Environment'};
-    var zoneSupport = {business:'People are not buying',self:'Work is not getting completed',home:'Nothing is repeating consistently',space:'Your setup is slowing output'};
-    var top = resolved.top;
-    var leadingId = top[0].count > top[1].count ? top[0].id : null;
-    var wrap = document.getElementById('diagnosis-results');
-    if(!wrap){ return; }
-    wrap.innerHTML = '';
-    ['business','self','home','space'].forEach(function(zoneId){
-      var div = document.createElement('div');
-      div.className = 'diag-zone' + (leadingId===zoneId?' leading':'');
-      // Start count at 0 for animation
-      div.innerHTML = '<div class="diag-zone-name">'+zoneNames[zoneId]+'</div><div class="diag-zone-count"><span class="diag-zone-count-num" data-target="'+state.zoneCounts[zoneId]+'">0</span><span class="diag-zone-count-note">signals</span></div><div class="diag-zone-label">'+zoneSupport[zoneId]+'</div>';
-      wrap.appendChild(div);
-    });
-  }
-
-  // ---- RESOLUTION TRANSITION — GSAP choreography ----
-  function triggerResolution(skipToArchive){
-    if(!state.gameActive){ return; }
-    state.gameActive = false;
-    clearTimeout(state.pauseResolveTimer);
-    updateInstruction("That's enough.");
-    buildDiagnosis();
-
-    var field = document.getElementById('game-field');
-    var resolution = document.getElementById('resolution');
-    var header = document.getElementById('site-header');
-
-    // Game field exit: scale down + fade
-    gsap.to(field, {
-      opacity: 0,
-      scale: 0.97,
-      duration: 0.7,
-      ease: 'power2.in',
-      onComplete: function(){
-        field.style.display = 'none';
-        header.style.display = 'none';
-        document.body.classList.add('resolved');
-        resolution.classList.add('visible');
-        // Resume Lenis now that body is scrollable
-        if(lenis){ lenis.start(); }
-
-        // Reset scroll position to top — no auto-scroll
-        window.scrollTo(0, 0);
-
-        // Staggered reveal of diagnosis sections
-        var tl = gsap.timeline({delay: 0.1});
-
-        // Banner container
-        tl.to('#diagnosis-banner', {opacity:1, duration:0.01}, 0);
-
-        // Phase label
-        tl.fromTo('.diag-phase-label',
-          {opacity:0, x:-12},
-          {opacity:1, x:0, duration:0.5, ease:'power3.out'}, 0.05
-        );
-
-        // Big headline
-        tl.fromTo('.diag-headline',
-          {opacity:0, y:22},
-          {opacity:1, y:0, duration:1.0, ease:'power4.out'}, 0.2
-        );
-
-        // Problem + means blocks
-        tl.fromTo('#diag-block-problem',
-          {opacity:0, y:14},
-          {opacity:1, y:0, duration:0.65, ease:'power3.out'}, 0.7
-        );
-        tl.fromTo('#diag-block-means',
-          {opacity:0, y:14},
-          {opacity:1, y:0, duration:0.65, ease:'power3.out'}, 0.82
-        );
-
-        // Start here block
-        tl.fromTo('#diag-block-start',
-          {opacity:0, y:14},
-          {opacity:1, y:0, duration:0.7, ease:'power3.out'}, 1.0
-        );
-
-        // Anchor line
-        tl.fromTo('.diag-anchor-line',
-          {opacity:0},
-          {opacity:1, duration:0.5, ease:'power2.out'}, 1.2
-        );
-
-        // CTA
-        tl.fromTo('#diagnosis-cta',
-          {opacity:0, y:8},
-          {opacity:1, y:0, duration:0.5, ease:'power3.out'}, 1.35
-        );
-
-        // Results grid
-        tl.fromTo('#diagnosis-results-wrap',
-          {opacity:0, y:10},
-          {opacity:1, y:0, duration:0.6, ease:'power3.out'}, 1.55
-        );
-
-        // Count-up with A+B dramatic reveal — blocks build left to right, leading number slams
-        tl.add(function(){
-          var zoneEls = document.querySelectorAll('.diag-zone');
-          var leadingEl = document.querySelector('.diag-zone.leading');
-
-          zoneEls.forEach(function(zone, i){
-            var isLeading = zone.classList.contains('leading');
-            var delay = i * 0.18;
-            var numEl = zone.querySelector('.diag-zone-count-num');
-            var nameEl = zone.querySelector('.diag-zone-name');
-            var noteEl = zone.querySelector('.diag-zone-count-note');
-            var labelEl = zone.querySelector('.diag-zone-label');
-            var target = parseInt(numEl ? numEl.getAttribute('data-target') : '0', 10) || 0;
-
-            // Block slides up
-            gsap.to(zone, {opacity:1, y:0, duration:0.55, ease:'power3.out', delay:delay});
-
-            // Name fades in first
-            gsap.to(nameEl, {opacity:1, duration:0.4, ease:'power2.out', delay:delay + 0.1});
-
-            // Label fades in
-            gsap.to(labelEl, {opacity:1, duration:0.4, ease:'power2.out', delay:delay + 0.15});
-
-            // Note fades in
-            gsap.to(noteEl, {opacity:1, duration:0.35, ease:'power2.out', delay:delay + 0.2});
-
-            if(isLeading){
-              // Leading: pause, then slam with overshoot
-              gsap.set(numEl, {opacity:1, scale:0.7, y:12});
-              gsap.to(numEl, {
-                scale:1.08, y:0,
-                duration:0.5, ease:'back.out(2.2)',
-                delay: delay + 0.35,
-                onStart: function(){
-                  // Terra border draw
-                  gsap.to(zone, {duration:0.01, onComplete:function(){
-                    zone.style.transition = 'none';
-                    var before = window.getComputedStyle(zone, '::before');
-                  }});
-                }
-              });
-              gsap.to(numEl, {scale:1.0, duration:0.3, ease:'power2.inOut', delay: delay + 0.85});
-
-              // Count up after slam settles
-              gsap.to({val:0}, {
-                val: target,
-                duration: 0.7,
-                ease: 'power2.out',
-                delay: delay + 0.4,
-                onUpdate: function(){
-                  numEl.textContent = Math.round(this.targets()[0].val);
-                }
-              });
-
-            } else {
-              // Non-leading: soft count up
-              gsap.to(numEl, {opacity:1, y:0, duration:0.45, ease:'power3.out', delay:delay + 0.25});
-              gsap.to({val:0}, {
-                val: target,
-                duration: 0.6,
-                ease: 'power1.out',
-                delay: delay + 0.3,
-                onUpdate: function(){
-                  numEl.textContent = Math.round(this.targets()[0].val);
-                }
-              });
-            }
-          });
-        }, 1.6);
-
-        // ---- FULL PAGE SCROLL REVEAL — every element line by line ----
-        setTimeout(function(){
-
-          function revealEl(el, delay){
-            delay = delay || 0;
-            ScrollTrigger.create({
-              trigger: el,
-              start: 'top 90%',
-              once: true,
-              onEnter: function(){
-                gsap.to(el, {opacity:1, y:0, duration:0.62, ease:'power3.out', delay:delay});
-              }
-            });
-          }
-
-          function revealEls(selector, staggerDelay){
-            staggerDelay = staggerDelay || 0.07;
-            document.querySelectorAll(selector).forEach(function(el, i){
-              revealEl(el, i * staggerDelay);
-            });
-          }
-
-          // Diagnosis banner elements (already animated in on load, skip)
-
-          // Reveal-stack prose blocks — category, headline, each paragraph individually
-          document.querySelectorAll('.reveal-block').forEach(function(block){
-            var children = block.querySelectorAll('.reveal-category, .reveal-headline, .reveal-body');
-            children.forEach(function(child, i){
-              ScrollTrigger.create({
-                trigger: child,
-                start: 'top 91%',
-                once: true,
-                onEnter: function(){
-                  gsap.to(child, {opacity:1, y:0, duration:0.6, ease:'power3.out', delay: i * 0.08});
-                }
-              });
-            });
-          });
-
-          // Rule divider
-          document.querySelectorAll('.rule-divider').forEach(function(el){
-            gsap.set(el, {opacity:0});
-            ScrollTrigger.create({
-              trigger: el, start:'top 92%', once:true,
-              onEnter: function(){ gsap.to(el, {opacity:1, duration:0.5, ease:'power2.out'}); }
-            });
-          });
-
-          // Menu section header elements
-          ['.menu-label','.phase-headline','.phase-subline','.menu-intro','.menu-command'].forEach(function(sel, i){
-            var el = document.querySelector(sel);
-            if(!el) return;
-            ScrollTrigger.create({
-              trigger: el, start:'top 91%', once:true,
-              onEnter: function(){ gsap.to(el, {opacity:1, y:0, duration:0.55, ease:'power3.out', delay: i*0.07}); }
-            });
-          });
-
-          // Phase rows — each row then its inner elements stagger
-          document.querySelectorAll('.menu-course').forEach(function(row, i){
-            ScrollTrigger.create({
-              trigger: row, start:'top 88%', once:true,
-              onEnter: function(){
-                gsap.to(row, {opacity:1, y:0, duration:0.6, ease:'power3.out'});
-                // Inner elements stagger after row appears
-                var inner = row.querySelectorAll('.course-num, .course-name, .course-desc, .course-detail, .menu-panel-cta');
-                gsap.fromTo(inner,
-                  {opacity:0, y:8},
-                  {opacity:1, y:0, duration:0.45, stagger:0.06, ease:'power2.out', delay:0.15}
-                );
-              }
-            });
-          });
-
-          // Modules note
-          var modNote = document.querySelector('.modules-note');
-          if(modNote) revealEl(modNote);
-
-          // System entry section — every child element
-          var entryChildren = document.querySelectorAll(
-            '.entry-section-label, .entry-description, .entry-price, .entry-price-note, .entry-divider, .cta-row, .entry-note, .private-signal, .founder-signal'
-          );
-          entryChildren.forEach(function(el, i){
-            gsap.set(el, {y:16});
-            ScrollTrigger.create({
-              trigger: el, start:'top 91%', once:true,
-              onEnter: function(){ gsap.to(el, {opacity:1, y:0, duration:0.6, ease:'power3.out', delay: i*0.07}); }
-            });
-          });
-
-          // Philosophy
-          var philEls = document.querySelectorAll('.phil-rule, .phil-quote, .phil-wordmark');
-          philEls.forEach(function(el, i){
-            gsap.set(el, {opacity:0, y:10});
-            ScrollTrigger.create({
-              trigger: el, start:'top 91%', once:true,
-              onEnter: function(){ gsap.to(el, {opacity:1, y:0, duration:0.6, ease:'power3.out', delay: i*0.1}); }
-            });
-          });
-
-          // Footer elements
-          var footerEls = document.querySelectorAll('.footer-left > *, .footer-links a');
-          footerEls.forEach(function(el, i){
-            gsap.set(el, {opacity:0, y:8});
-            ScrollTrigger.create({
-              trigger: el, start:'top 96%', once:true,
-              onEnter: function(){ gsap.to(el, {opacity:1, y:0, duration:0.5, ease:'power2.out', delay: i*0.05}); }
-            });
-          });
-
-          // Recommended phase highlight
-          var headEl = document.getElementById('diagnosis-heading');
-          setRecommendedRow(normalizeRecommendation(headEl ? headEl.textContent : ''));
-
-        }, 300);
-
-        // CTA click handler
-        var diagBtn = document.getElementById('diag-cta-btn');
-        if(diagBtn){
-          diagBtn.addEventListener('click', function(e){
-            e.preventDefault();
-            if(diagBtn.classList.contains('entering')){ return; }
-            diagBtn.classList.add('entering');
-            diagBtn.textContent = 'Opening...';
-            var target = diagBtn.getAttribute('data-target-href') || diagBtn.getAttribute('href') || '/structure';
-            setTimeout(function(){ window.location.href = target; }, 320);
-          });
-        }
-
-        if(skipToArchive){
-          setTimeout(function(){
-            var arch = document.getElementById('system-entry-section');
-            if(arch) arch.scrollIntoView({behavior:'smooth'});
-          }, 500);
-        }
-      }
-    });
-  }
-
-  document.getElementById('skip-btn').addEventListener('click', function(e){
-    e.preventDefault();
-    triggerResolution(false);
-  });
-
-  document.getElementById('game-field').addEventListener('contextmenu', function(e){ e.preventDefault(); });
-
-  // No accordion toggles — page is full scroll reveal
-
-  function safeInit(){
-    try{
-      if(lenis){ lenis.stop(); }
-      initSystemMenu();
-      updateInstruction("Pick what fits.");
-      buildGame();
-    }catch(err){
-      try{ console.error('Stephuary init failed:', err); }catch(_){}
-    }
-  }
-
-  if(document.readyState === 'complete'){ safeInit(); }
-  else {
-    window.addEventListener('load', safeInit, {once:true});
-    window.setTimeout(function(){ if(!document.querySelector('.zone')) safeInit(); }, 1400);
-  }
-}());
+var observer = new IntersectionObserver(function(entries){
+  entries.forEach(function(e){ if(e.isIntersecting) e.target.classList.add('visible'); });
+},{threshold:0.1});
+document.querySelectorAll('.reveal').forEach(function(el){ observer.observe(el); });
 </script>
 </body>
 </html>
