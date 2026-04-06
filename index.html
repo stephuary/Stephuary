@@ -1,1436 +1,1439 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Stephuary — The System Diagnostic</title>
-<meta name="description" content="Find what's slowing your work, income, or consistency. Fix it.">
-<meta property="og:title" content="Stephuary — The System Diagnostic">
-<meta property="og:description" content="Select what's happening. We'll show you exactly where to start.">
-<meta property="og:type" content="website">
-<meta property="og:url" content="https://www.stephuary.com">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Lato:wght@300;400;500&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Run Analysis — Stephuary</title>
+<meta name="description" content="Find what is costing you. Know what to fix first."/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Mono:wght@300;400&family=Lato:wght@300;400&display=swap" rel="stylesheet"/>
 <style>
+/* ======================================================
+   RESET + ROOT
+   ====================================================== */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
 :root{
-  --bg-0:#090907;
-  --bg-1:#0f100d;
-  --bg-2:#141611;
-  --bg-3:#1a1c16;
-  --line:rgba(244,237,224,0.16);
-  --line-soft:rgba(244,237,224,0.1);
-  --text:#f4ede0;
-  --text-2:#d6cab4;
-  --text-3:#b3a791;
-  --gold:#c4a35a;
-  --gold-soft:rgba(196,163,90,0.42);
-  --gold-faint:rgba(196,163,90,0.2);
-  --terra:#b85c38;
-  --terra-soft:rgba(184,92,56,0.24);
-  --green:#1f3824;
-  --green-2:#27482e;
-  --blue:#2b4fd4;
-  --blue-soft:rgba(43,79,212,0.18);
-  --frag-bg:rgba(244,237,224,0.05);
-  --frag-border:rgba(244,237,224,0.18);
+  --bg:       #080807;
+  --bg-1:     #0e0e0c;
+  --bg-2:     #141412;
+  --bg-3:     #1a1a17;
+  --bg-4:     #202020;
+
+  --gold:     #c4a35a;
+  --gold-hi:  #d4b46a;
+  --gold-lo:  rgba(196,163,90,0.18);
+  --gold-f:   rgba(196,163,90,0.07);
+  --gold-line:rgba(196,163,90,0.22);
+
+  --blue:     #2b4fd4;
+  --blue-hi:  #3560e8;
+  --blue-lo:  rgba(43,79,212,0.14);
+
+  --text:     #f4ede0;
+  --text-2:   #cbc3b4;
+  --text-3:   #a09889;
+  --text-4:   #6e6558;
+
+  --line:     rgba(244,237,224,0.08);
+  --line-2:   rgba(244,237,224,0.05);
+
+  --terra:    #b85c38;
+  --terra-lo: rgba(184,92,56,0.1);
+  --terra-line:rgba(184,92,56,0.35);
+
+  --green:    #4a8c65;
+  --green-lo: rgba(74,140,101,0.1);
+  --green-hi: #6ab884;
+
+  --serif: "Cormorant Garamond", Georgia, serif;
+  --mono:  "DM Mono", monospace;
+  --sans:  "Lato", system-ui, sans-serif;
+  --r: 2px;
 }
 
-html,body{width:100%;height:100%;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;}
-body{font-family:'Lato',sans-serif;font-weight:300;font-size:16px;line-height:1.72;background:var(--bg-0);color:var(--text);overflow:hidden;cursor:auto;}
-body.cursor-enhanced{cursor:none}
-body.resolved{overflow:auto;cursor:auto;}
-a{text-decoration:none}
-
-/* Cursor */
-#cursor{position:fixed;width:12px;height:12px;border-radius:50%;background:var(--gold);transform:translate(-50%,-50%);z-index:9999;pointer-events:none;transition:width .16s,height .16s,background .16s;display:none}
-#cursor.active{width:8px;height:8px;background:var(--terra)}
-#cursor-ring{position:fixed;width:36px;height:36px;border-radius:50%;border:1px solid rgba(196,163,90,0.34);transform:translate(-50%,-50%);z-index:9998;pointer-events:none;transition:width .2s,height .2s,border-color .2s;display:none}
-#cursor-ring.hover{width:52px;height:52px;border-color:rgba(196,163,90,0.64)}
-
-/* Entry overlay */
-#entry-overlay{position:fixed;inset:0;z-index:5000;background:var(--bg-0);display:flex;align-items:center;justify-content:center;padding:56px}
-#entry-overlay::before{content:'';position:absolute;inset:0;pointer-events:none;opacity:.7;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.045'/%3E%3C/svg%3E")}
-#entry-overlay::after{content:'';position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at center,transparent 28%,rgba(9,9,7,0.9) 100%)}
-.entry-inner{max-width:560px;text-align:center;position:relative;z-index:1;}
-.entry-wordmark{display:block;margin-bottom:42px;font-size:12px;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);font-weight:500;opacity:0}
-.entry-headline{font-family:'Cormorant Garamond',serif;font-size:clamp(34px,4.4vw,54px);line-height:1.14;letter-spacing:-.01em;color:var(--text);margin-bottom:20px;font-weight:300;opacity:0}
-.entry-sub{font-size:15px;color:var(--text-2);line-height:1.62;margin-bottom:8px;opacity:0}
-.entry-support{display:block;margin-bottom:42px;font-size:11px;letter-spacing:.14em;color:var(--gold-soft);text-transform:uppercase;opacity:0}
-.entry-start-btn{display:block;margin:0 auto 18px;width:100%;max-width:280px;background:var(--gold);color:var(--bg-0);border:none;padding:18px 0;font-size:12px;letter-spacing:.14em;text-transform:uppercase;font-weight:500;cursor:pointer;transition:background .2s ease;opacity:0}
-.entry-start-btn:hover{background:var(--text)}
-.entry-skip-link{display:inline-block;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-3);border-bottom:1px solid rgba(179,167,145,0.5);padding-bottom:2px;transition:color .2s,border-color .2s;opacity:0}
-.entry-skip-link:hover{color:var(--gold);border-bottom-color:var(--gold-faint)}
-
-/* Game field */
-#game-field{position:fixed;inset:0;overflow:hidden;background:linear-gradient(180deg,var(--bg-0),var(--bg-1) 38%,var(--bg-2) 100%);}
-#game-field::before{content:'';position:absolute;inset:0;pointer-events:none;opacity:.58;z-index:1;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E")}
-#game-field::after{content:'';position:absolute;inset:0;pointer-events:none;z-index:1;background:radial-gradient(ellipse at center,transparent 24%,rgba(9,9,7,0.74) 100%)}
-
-/* Header */
-#site-header{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;justify-content:space-between;align-items:center;padding:30px 50px}
-.logo{color:var(--gold);font-size:12px;font-weight:500;letter-spacing:.32em;text-transform:uppercase;opacity:0}
-#skip-btn{background:none;border:none;color:var(--text-2);font-size:11px;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;opacity:0;border-bottom:1px solid transparent;padding-bottom:2px;transition:color .2s,border-color .2s}
-#skip-btn:hover{color:var(--gold);border-bottom-color:var(--gold-faint)}
-
-#remaining-counter{position:fixed;left:50%;top:30px;transform:translateX(-50%);z-index:100;opacity:0;transition:opacity .3s ease}
-#remaining-counter.visible{opacity:1}
-#remaining-counter span{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-2)}
-
-/* Anchor center text */
-#anchor-fragment{
-  position:absolute;left:50%;top:50%;
-  transform:translate(-50%,-50%);
-  z-index:10;text-align:center;pointer-events:none;
-  opacity:0;width:220px;
-}
-#anchor-fragment p{
-  font-family:'Cormorant Garamond',serif;font-style:italic;
-  font-size:clamp(18px,2vw,26px);line-height:1.45;
-  color:rgba(244,237,224,0.22);
+html,body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:var(--sans);
+  font-weight:300;
+  font-size:17px;
+  line-height:1.65;
+  min-height:100%;
+  -webkit-font-smoothing:antialiased;
 }
 
-/* Fragments */
-.fragment{
-  position:absolute;z-index:20;
-  padding:10px 14px;
-  border:1px solid var(--frag-border);
-  background:var(--frag-bg);
-  backdrop-filter:blur(3px);
-  border-radius:1px;cursor:pointer;user-select:none;
+a{color:inherit;text-decoration:none}
+
+/* ======================================================
+   GRAIN OVERLAY
+   ====================================================== */
+body::after{
+  content:"";
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  z-index:100;
+  opacity:0.025;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size:200px 200px;
+}
+
+/* ======================================================
+   LAYOUT
+   ====================================================== */
+.page{
+  max-width:720px;
+  margin:0 auto;
+  padding:0 24px 120px;
+}
+
+.top-nav{
+  padding:28px 0 0;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:64px;
+}
+.nav-logo{
+  font-family:var(--serif);
+  font-size:13px;
+  letter-spacing:0.18em;
+  text-transform:uppercase;
+  color:var(--gold);
+  font-weight:300;
+}
+.nav-link{
+  font-size:10px;
+  letter-spacing:0.14em;
+  text-transform:uppercase;
+  color:var(--text-4);
+  transition:color 140ms;
+}
+.nav-link:hover{color:var(--text-3)}
+
+/* ======================================================
+   TYPOGRAPHY
+   ====================================================== */
+.overline{
+  font-size:10px;
+  letter-spacing:0.2em;
+  text-transform:uppercase;
+  color:var(--gold);
+  font-weight:400;
+  display:block;
+  margin-bottom:14px;
+}
+.overline-muted{
+  font-size:10px;
+  letter-spacing:0.18em;
+  text-transform:uppercase;
+  color:var(--text-4);
+  font-weight:400;
+  display:block;
+  margin-bottom:12px;
+}
+
+h1{
+  font-family:var(--serif);
+  font-weight:300;
+  font-size:clamp(48px,8vw,80px);
+  line-height:0.98;
+  letter-spacing:-0.02em;
+  margin-bottom:24px;
+  color:var(--text);
+}
+h1 em{font-style:italic;color:var(--text-2)}
+
+h2{
+  font-family:var(--serif);
+  font-weight:300;
+  font-size:clamp(28px,4.5vw,42px);
+  line-height:1.08;
+  letter-spacing:-0.01em;
+  margin-bottom:16px;
+}
+
+h3{
+  font-family:var(--serif);
+  font-weight:400;
+  font-size:clamp(20px,3vw,26px);
+  line-height:1.2;
+  margin-bottom:10px;
+}
+
+.lead{
+  font-size:18px;
+  color:var(--text-2);
+  line-height:1.65;
+  max-width:44ch;
+  margin-bottom:36px;
+}
+
+p{color:var(--text-2);max-width:56ch}
+
+/* ======================================================
+   STATES
+   ====================================================== */
+.state{display:none}
+.state.active{display:block}
+
+/* ======================================================
+   INPUT SECTION
+   ====================================================== */
+.input-wrap{
+  position:relative;
+  margin-bottom:16px;
+}
+.input-field{
+  width:100%;
+  background:var(--bg-1);
+  border:1px solid var(--line);
+  border-radius:var(--r);
+  color:var(--text);
+  font-family:var(--sans);
+  font-weight:300;
+  font-size:17px;
+  padding:18px 20px;
+  outline:none;
+  transition:border-color 200ms ease,background 200ms ease;
+  resize:none;
+  min-height:80px;
+  line-height:1.55;
+}
+.input-field:focus{
+  border-color:var(--gold-line);
+  background:rgba(196,163,90,0.03);
+}
+.input-field::placeholder{color:var(--text-4);font-style:italic}
+
+.input-hint{
+  font-size:13px;
+  color:var(--text-4);
+  margin-bottom:24px;
+  font-style:italic;
+}
+
+/* ======================================================
+   BUTTONS
+   ====================================================== */
+.btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:52px;
+  padding:15px 28px;
+  border-radius:var(--r);
+  border:1px solid var(--line);
+  font-size:11px;
+  letter-spacing:0.16em;
+  text-transform:uppercase;
+  color:var(--text);
+  background:transparent;
+  cursor:pointer;
+  font-family:var(--sans);
+  font-weight:400;
+  transition:all 140ms ease;
+  white-space:nowrap;
+  width:100%;
+}
+.btn:active{transform:scale(0.97)}
+
+.btn-primary{
+  background:var(--blue);
+  border-color:var(--blue);
+  color:#fff;
+}
+.btn-primary:hover{background:var(--blue-hi);border-color:var(--blue-hi)}
+
+.btn-gold{
+  background:transparent;
+  border:1px solid var(--gold-line);
+  color:var(--gold);
+  letter-spacing:0.14em;
+}
+.btn-gold:hover{background:var(--gold-f);color:var(--gold-hi)}
+
+.btn-ghost{
+  border:1px solid var(--line);
+  color:var(--text-3);
+}
+.btn-ghost:hover{border-color:var(--gold-line);color:var(--text)}
+
+/* ======================================================
+   LOADING
+   ====================================================== */
+#loading-state{
+  padding:80px 0;
+  display:none;
+  flex-direction:column;
+  align-items:center;
+  gap:32px;
+}
+#loading-state.active{display:flex}
+
+.loading-bar-track{
+  width:100%;
+  max-width:320px;
+  height:1px;
+  background:var(--line);
+  border-radius:1px;
+  overflow:hidden;
+}
+.loading-bar-fill{
+  height:100%;
+  width:0%;
+  background:linear-gradient(90deg,var(--gold),var(--gold-hi));
+  border-radius:1px;
+  transition:width 2.4s cubic-bezier(0.25,1,0.5,1);
+}
+.loading-text{
+  font-family:var(--serif);
+  font-size:22px;
+  font-weight:300;
+  color:var(--text-3);
+  font-style:italic;
+  letter-spacing:0.01em;
+}
+.loading-detail{
+  font-size:11px;
+  letter-spacing:0.16em;
+  text-transform:uppercase;
+  color:var(--text-4);
+  min-height:16px;
+  transition:opacity 300ms;
+}
+
+/* ======================================================
+   RESULT BLOCKS
+   ====================================================== */
+.result-section{
+  margin-bottom:52px;
+}
+.result-section + .result-section{
+  border-top:1px solid var(--line-2);
+  padding-top:52px;
+}
+
+/* Issue headline */
+.issue-headline{
+  font-family:var(--serif);
+  font-size:clamp(32px,6vw,54px);
+  line-height:1.05;
+  font-weight:300;
+  letter-spacing:-0.015em;
+  margin-bottom:20px;
+  color:var(--text);
+}
+.issue-headline em{
+  font-style:italic;
+  color:var(--terra);
+}
+
+/* Tag */
+.tag{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:5px 12px;
+  border-radius:1px;
+  font-size:10px;
+  letter-spacing:0.14em;
+  text-transform:uppercase;
+  font-weight:400;
+  margin-bottom:16px;
+}
+.tag-issue{background:var(--terra-lo);color:var(--terra);border:1px solid var(--terra-line)}
+.tag-clear{background:var(--green-lo);color:var(--green-hi);border:1px solid rgba(74,140,101,0.3)}
+.tag-dot{width:5px;height:5px;border-radius:50%;background:currentColor}
+
+/* Cost list */
+.cost-list{
+  list-style:none;
+  display:flex;
+  flex-direction:column;
+  gap:0;
+  border-top:1px solid var(--line-2);
+}
+.cost-list li{
+  display:flex;
+  align-items:flex-start;
+  gap:16px;
+  padding:14px 0;
+  border-bottom:1px solid var(--line-2);
+  font-size:16px;
+  color:var(--text-2);
+  line-height:1.5;
+}
+.cost-list li::before{
+  content:"";
+  width:4px;
+  height:4px;
+  border-radius:50%;
+  background:var(--terra);
+  flex-shrink:0;
+  margin-top:9px;
+}
+
+/* Why block */
+.why-block{
+  background:var(--bg-1);
+  border:1px solid var(--line);
+  border-radius:var(--r);
+  padding:24px 22px;
+  margin-bottom:0;
+}
+.why-block p{
+  font-size:16px;
+  color:var(--text-2);
+  line-height:1.65;
+  max-width:none;
+}
+.why-block p + p{margin-top:12px}
+
+/* Ignore block */
+.ignore-block{
+  padding:16px 20px;
+  background:rgba(255,255,255,0.02);
+  border-left:2px solid var(--line);
+  border-radius:0 var(--r) var(--r) 0;
+}
+.ignore-block p{
+  font-size:15px;
+  color:var(--text-3);
+  font-style:italic;
+  font-family:var(--serif);
+  max-width:none;
+}
+
+/* Fix card */
+.fix-card{
+  border:1px solid var(--gold-line);
+  background:linear-gradient(160deg,rgba(196,163,90,0.06),var(--bg-1));
+  border-radius:var(--r);
+  padding:26px 24px;
+  position:relative;
+  overflow:hidden;
+}
+.fix-card::before{
+  content:"";
+  position:absolute;
+  top:0;left:0;right:0;
+  height:1px;
+  background:linear-gradient(90deg,transparent,var(--gold),transparent);
+  opacity:0.5;
+}
+
+/* Money grid */
+.money-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:12px;
+}
+.money-cell{
+  padding:18px 16px;
+  border:1px solid var(--line);
+  border-radius:var(--r);
+  background:var(--bg-1);
+}
+.money-cell-label{
+  font-size:10px;
+  letter-spacing:0.14em;
+  text-transform:uppercase;
+  color:var(--text-4);
+  margin-bottom:8px;
+  display:block;
+}
+.money-cell-val{
+  font-family:var(--serif);
+  font-size:18px;
+  color:var(--text);
+  line-height:1.2;
+  margin-bottom:6px;
+}
+.money-cell-note{
+  font-size:13px;
+  color:var(--text-3);
+  line-height:1.45;
+}
+
+/* Offer builder */
+.offer-grid{
+  display:flex;
+  flex-direction:column;
+  gap:0;
+}
+.offer-row{
+  display:grid;
+  grid-template-columns:80px 1fr auto;
+  gap:12px 24px;
+  align-items:center;
+  padding:14px 0;
+  border-bottom:1px solid var(--line-2);
+}
+.offer-row:first-child{border-top:1px solid var(--line-2)}
+.offer-tier{
+  font-size:10px;
+  letter-spacing:0.14em;
+  text-transform:uppercase;
+  color:var(--text-4);
+}
+.offer-name{
+  font-size:16px;
+  color:var(--text);
+}
+.offer-price{
+  font-family:var(--serif);
+  font-size:20px;
+  color:var(--gold);
+  white-space:nowrap;
+}
+
+/* Outreach block */
+.outreach-list{
+  list-style:none;
+  display:flex;
+  flex-direction:column;
+  gap:0;
+}
+.outreach-item{
+  display:flex;
+  align-items:flex-start;
+  gap:20px;
+  padding:13px 0;
+  border-bottom:1px solid var(--line-2);
+}
+.outreach-item:first-child{border-top:1px solid var(--line-2)}
+.outreach-num{
+  font-family:var(--mono);
+  font-size:12px;
+  color:var(--gold);
+  opacity:0.7;
+  min-width:18px;
+  padding-top:2px;
+}
+.outreach-text{
+  font-size:15px;
+  color:var(--text-2);
+  line-height:1.55;
+}
+
+/* Steps */
+.steps-list{
+  list-style:none;
+  display:flex;
+  flex-direction:column;
+  gap:0;
+  counter-reset:step;
+}
+.step-item{
+  display:grid;
+  grid-template-columns:32px 1fr;
+  gap:16px;
+  padding:16px 0;
+  border-bottom:1px solid var(--line-2);
+}
+.step-item:first-child{border-top:1px solid var(--line-2)}
+.step-n{
+  font-family:var(--serif);
+  font-size:28px;
+  font-weight:300;
+  color:var(--gold);
+  opacity:0.4;
+  line-height:1.1;
+}
+.step-body{}
+.step-title{
+  font-size:15px;
+  font-weight:400;
+  color:var(--text);
+  margin-bottom:4px;
+}
+.step-desc{
+  font-size:14px;
+  color:var(--text-3);
+  line-height:1.55;
+  max-width:none;
+}
+
+/* One rule */
+.rule-block{
+  border-top:1px solid var(--gold-line);
+  padding-top:24px;
+}
+.rule-text{
+  font-family:var(--serif);
+  font-size:clamp(20px,3vw,28px);
+  font-weight:300;
+  color:var(--text-2);
+  line-height:1.4;
+  font-style:italic;
+}
+
+/* ======================================================
+   LOCK GATE
+   ====================================================== */
+.lock-gate{
+  position:relative;
+  margin-top:8px;
+}
+.lock-blur{
+  filter:blur(5px);
+  pointer-events:none;
+  user-select:none;
+  opacity:0.4;
+}
+.lock-panel{
+  position:absolute;
+  inset:0;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:16px;
+  background:linear-gradient(to bottom,transparent 0%,var(--bg) 50%);
+  z-index:2;
+  padding:40px 24px;
+}
+.lock-label{
+  font-size:11px;
+  letter-spacing:0.18em;
+  text-transform:uppercase;
+  color:var(--text-4);
+  text-align:center;
+}
+.lock-items{
+  list-style:none;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  text-align:center;
+}
+.lock-items li{
+  font-size:15px;
+  color:var(--text-3);
+}
+.lock-cta-wrap{
+  width:100%;
+  max-width:360px;
+}
+
+/* ======================================================
+   MEMORY LAYER
+   ====================================================== */
+.memory-card{
+  border:1px solid var(--line);
+  background:var(--bg-1);
+  border-radius:var(--r);
+  padding:24px 22px;
+  position:relative;
+  overflow:hidden;
+}
+.memory-card::before{
+  content:"";
+  position:absolute;
+  top:0;left:0;
+  width:2px;
+  height:100%;
+  background:var(--gold);
+  opacity:0.4;
+}
+
+.memory-delta{
+  display:grid;
+  grid-template-columns:1fr auto 1fr;
+  gap:12px;
+  align-items:center;
+  margin:18px 0;
+}
+.memory-prev,.memory-curr{
+  padding:12px 14px;
+  border-radius:var(--r);
+  background:var(--bg-2);
+  border:1px solid var(--line-2);
+}
+.memory-prev-label,.memory-curr-label{
+  font-size:9px;
+  letter-spacing:0.14em;
+  text-transform:uppercase;
+  color:var(--text-4);
+  margin-bottom:6px;
+  display:block;
+}
+.memory-prev-val{
+  font-size:14px;
+  color:var(--text-3);
+}
+.memory-curr-val{
+  font-size:14px;
+  color:var(--text);
+  font-weight:400;
+}
+.memory-arrow{
+  font-size:18px;
+  color:var(--gold);
+  opacity:0.5;
+  text-align:center;
+}
+.memory-interp{
+  font-size:15px;
+  color:var(--text-2);
+  line-height:1.6;
+  border-top:1px solid var(--line-2);
+  padding-top:16px;
+  max-width:none;
+}
+.memory-next{
+  font-size:14px;
+  color:var(--text-3);
+  margin-top:12px;
+  font-style:italic;
+  font-family:var(--serif);
+  max-width:none;
+}
+
+/* ======================================================
+   PROGRESSIVE REVEAL
+   ====================================================== */
+@keyframes revealUp{
+  from{opacity:0;transform:translateY(14px)}
+  to{opacity:1;transform:translateY(0)}
+}
+.reveal{
   opacity:0;
-  transition:border-color .16s,background .16s,box-shadow .16s;
-  max-width:190px;
+  animation:revealUp 0.5s ease forwards;
 }
-.fragment:hover{border-color:var(--gold-soft);background:rgba(196,163,90,0.1);box-shadow:0 0 16px rgba(196,163,90,0.08)}
-.fragment.clicking{border-color:var(--gold);background:rgba(196,163,90,0.18);box-shadow:0 0 22px rgba(196,163,90,0.2);}
-.fragment.placed{opacity:.15 !important;border-color:rgba(196,163,90,0.12);background:rgba(196,163,90,0.03);pointer-events:none;}
-.fragment-text{font-size:15px;letter-spacing:.005em;line-height:1.38;color:rgba(244,237,224,0.9);white-space:normal;display:block;font-weight:300;}
+.reveal-1{animation-delay:0.05s}
+.reveal-2{animation-delay:0.15s}
+.reveal-3{animation-delay:0.28s}
+.reveal-4{animation-delay:0.42s}
+.reveal-5{animation-delay:0.58s}
+.reveal-6{animation-delay:0.72s}
 
-/* Zones */
-.zone{
-  position:absolute;z-index:5;
-  border:1px dashed rgba(196,163,90,0.08);
-  background:rgba(196,163,90,0.01);
-  border-radius:2px;padding:14px 12px;
-  display:flex;flex-direction:column;align-items:center;justify-content:flex-start;
-  transition:border-color .3s,background .3s,box-shadow .25s,transform .25s;
-}
-.zone.active{border-color:rgba(196,163,90,0.22);background:rgba(196,163,90,0.03)}
-.zone.intensity1{border-color:rgba(196,163,90,0.32);background:rgba(196,163,90,0.05)}
-.zone.intensity2{border-color:rgba(196,163,90,0.48);background:rgba(196,163,90,0.08);box-shadow:inset 0 0 28px rgba(196,163,90,0.05)}
-.zone.intensity3{border-color:rgba(196,163,90,0.64);background:rgba(196,163,90,0.12);box-shadow:inset 0 0 42px rgba(196,163,90,0.08)}
-.zone.dominant{border-color:rgba(184,92,56,0.86)!important;box-shadow:0 0 24px rgba(184,92,56,0.2),inset 0 0 52px rgba(184,92,56,0.12)!important;transform:scale(1.015)}
-.zone.just-received{background:rgba(196,163,90,0.18)!important;border-color:rgba(196,163,90,0.72)!important}
-.zone-label{text-align:center;pointer-events:none;position:relative;z-index:6}
-.zone-name{font-family:'Cormorant Garamond',serif;font-size:clamp(22px,2.2vw,30px);line-height:1;font-weight:300;color:var(--text);margin-bottom:4px;opacity:0;transition:opacity .35s;}
-.zone-truth{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:13px;line-height:1.4;color:var(--text-2);opacity:0;margin-bottom:4px;transition:opacity .35s;}
-.zone-micro{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold-soft);font-weight:400}
-.zone.revealed .zone-name{opacity:1}
-.zone.revealed .zone-truth{opacity:1}
-.zone.dominant .zone-micro{color:rgba(184,92,56,0.95)}
-
-#instruction{position:fixed;left:50%;bottom:36px;transform:translateX(-50%);z-index:100;text-align:center;opacity:0}
-#instruction p{font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-2);white-space:nowrap}
-#ambient-signal{position:fixed;right:34px;bottom:28px;z-index:100;opacity:0}
-#ambient-signal p{font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--text-3)}
-#ambient-signal p.active{color:var(--gold-soft)}
-
-/* ===================== RESOLUTION ===================== */
-#resolution{display:none;min-height:100vh;background:linear-gradient(180deg,var(--bg-0),var(--bg-1) 35%,var(--bg-2) 100%);color:var(--text);position:relative}
-#resolution.visible{display:block}
-#resolution::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.5;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.028'/%3E%3C/svg%3E")}
-
-#res-nav{position:sticky;top:0;z-index:50;display:flex;justify-content:space-between;align-items:center;padding:20px 48px;background:rgba(12,13,11,0.96);border-bottom:1px solid var(--line-soft)}
-.res-logo{font-size:12px;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);font-weight:500}
-.res-nav-right{display:flex;gap:30px;align-items:center}
-.res-nav-link,.res-nav-restart{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-2);background:none;border:none;cursor:pointer}
-.res-nav-link:hover,.res-nav-restart:hover{color:var(--gold)}
-
-/* Diagnosis banner */
-#diagnosis-banner{padding:52px 48px 0;position:relative;z-index:1;opacity:0;}
-
-.diag-phase-label{
-  display:inline-flex;align-items:center;gap:10px;
-  font-size:9px;letter-spacing:.26em;text-transform:uppercase;
-  color:var(--terra);font-weight:500;margin-bottom:28px;opacity:0;
-}
-.diag-phase-label::before{content:'';display:block;width:28px;height:1px;background:var(--terra);opacity:.6;}
-
-.diag-headline{
-  font-family:'Cormorant Garamond',serif;
-  font-size:clamp(48px,6vw,86px);
-  line-height:.96;letter-spacing:-.024em;
-  color:var(--text);max-width:860px;
-  margin-bottom:36px;font-weight:300;opacity:0;
-}
-
-.diag-blocks{
-  display:grid;grid-template-columns:1fr 1fr;
-  gap:1px;background:var(--line-soft);
-  border:1px solid var(--line-soft);max-width:860px;
-}
-
-.diag-block{background:var(--bg-1);padding:26px 28px;opacity:0;}
-.diag-block-label{display:block;font-size:9px;letter-spacing:.24em;text-transform:uppercase;color:var(--gold);margin-bottom:10px;font-weight:500;opacity:0.65;}
-.diag-block-text{font-family:'Cormorant Garamond',serif;font-size:clamp(17px,1.8vw,21px);color:var(--text-2);line-height:1.46;font-weight:300;}
-
-.diag-block.start-block{background:rgba(43,79,212,0.06);border-left:3px solid rgba(43,79,212,0.5);}
-.diag-block.start-block .diag-block-label{color:rgba(110,148,255,0.9);}
-.diag-block.start-block .diag-block-text{font-family:'Cormorant Garamond',serif;font-size:clamp(18px,2vw,25px);color:var(--text);font-weight:300;}
-
-.diag-anchor-line{
-  display:block;padding:16px 28px;
-  background:var(--bg-2);border:1px solid var(--line-soft);border-top:none;
-  max-width:860px;
-  font-size:clamp(13px,1.1vw,15px);letter-spacing:.06em;
-  color:var(--text-3);font-style:italic;font-family:'Cormorant Garamond',serif;
+/* Paid progressive */
+.paid-block{
   opacity:0;
+  transform:translateY(10px);
+  transition:opacity 0.45s ease, transform 0.45s ease;
+}
+.paid-block.shown{
+  opacity:1;
+  transform:translateY(0);
 }
 
-/* CTA */
-#diagnosis-cta{padding:28px 48px;border-bottom:1px solid var(--line-soft);position:relative;z-index:1;background:rgba(15,16,13,0.84);opacity:0;}
-.btn-diag-primary,.btn-primary{
-  display:inline-block;font-size:11px;letter-spacing:.12em;text-transform:uppercase;
-  font-weight:500;color:#fff;background:var(--blue);border:1px solid var(--blue);
-  padding:16px 48px;transition:background .2s,border-color .2s;cursor:pointer;
+/* ======================================================
+   SECTION SEPARATOR
+   ====================================================== */
+.sep{
+  height:1px;
+  background:var(--line-2);
+  margin:52px 0;
 }
-.btn-diag-primary:hover,.btn-primary:hover{background:var(--blue-hover,#3560e8);border-color:var(--blue-hover,#3560e8);}
-.btn-diag-primary.entering,.btn-primary.entering{pointer-events:none;opacity:.9}
 
-/* Results grid */
-/* Signal breakdown — dramatic reveal */
-#diagnosis-results-wrap{padding:36px 48px 0;position:relative;z-index:1;opacity:0;}
-.diagnosis-friction-line{display:block;margin-bottom:14px;font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--text-3);font-weight:500;}
-.result-card{border:1px solid var(--line);background:rgba(20,22,17,0.9);padding:28px 28px 20px;}
-.result-card-head{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;margin-bottom:22px;}
-.result-card-title{font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);font-weight:500}
-.result-card-meta{font-size:9px;color:var(--text-3);text-transform:uppercase;letter-spacing:.12em}
-#diagnosis-results{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line-soft);}
+/* ======================================================
+   UTILITY
+   ====================================================== */
+.gap-8{margin-bottom:8px}
+.gap-12{margin-bottom:12px}
+.gap-16{margin-bottom:16px}
+.gap-20{margin-bottom:20px}
+.gap-24{margin-bottom:24px}
+.gap-32{margin-bottom:32px}
+.gap-40{margin-bottom:40px}
+.hidden{display:none!important}
 
-/* Zone blocks */
-.diag-zone{
-  background:var(--bg-2);padding:26px 20px 22px;
-  transition:background .4s;
-  opacity:0;transform:translateY(10px);
-  position:relative;overflow:hidden;
+/* ======================================================
+   FOOTER
+   ====================================================== */
+.foot{
+  border-top:1px solid var(--line-2);
+  padding-top:24px;
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px 16px;
+  margin-top:80px;
 }
-/* Terra border draw — starts at 0 width, animates in JS */
-.diag-zone::before{
-  content:'';position:absolute;top:0;left:0;right:0;height:2px;
-  background:var(--terra);transform:scaleX(0);transform-origin:left;
-  transition:transform 0s;
+.foot a{
+  font-size:10px;
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  color:var(--text-4);
+  transition:color 140ms;
 }
-.diag-zone.leading{background:rgba(184,92,56,0.05);}
-.diag-zone.leading::before{transform:scaleX(1);transition:transform 0.6s cubic-bezier(.16,1,.3,1);}
+.foot a:hover{color:var(--text-3)}
 
-.diag-zone-name{
-  font-size:9px;letter-spacing:.2em;text-transform:uppercase;
-  color:var(--text-3);margin-bottom:18px;font-weight:500;
-  opacity:0;
+/* ======================================================
+   RESPONSIVE
+   ====================================================== */
+@media(max-width:640px){
+  .money-grid{grid-template-columns:1fr}
+  .offer-row{grid-template-columns:60px 1fr;gap:8px 12px}
+  .offer-price{grid-column:2}
+  .memory-delta{grid-template-columns:1fr;gap:8px}
+  .memory-arrow{transform:rotate(90deg)}
+  h1{font-size:clamp(40px,10vw,56px)}
+  h2{font-size:clamp(24px,6vw,34px)}
 }
-.diag-zone-count{display:flex;align-items:baseline;gap:8px;margin-bottom:8px}
-.diag-zone-count-num{
-  font-family:'Cormorant Garamond',serif;
-  font-size:clamp(48px,5.5vw,76px);
-  line-height:.88;color:var(--text);
-  letter-spacing:-.02em;font-weight:300;
-  opacity:0;display:block;
-}
-.diag-zone-count-note{font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-3);opacity:0;}
-.diag-zone-label{font-size:13px;color:var(--text-3);line-height:1.5;margin-top:6px;opacity:0;}
-
-/* Leading zone — number hits terra after count-up */
-.diag-zone.leading .diag-zone-name{color:var(--terra);}
-.diag-zone.leading .diag-zone-count-num{color:var(--terra);}
-
-/* Scroll reveal prose blocks */
-.reveal-stack{padding:48px 48px 0;position:relative;z-index:1;max-width:860px}
-.reveal-block{padding:42px 0;border-top:1px solid var(--line-soft);}
-.reveal-block:last-child{border-bottom:1px solid var(--line-soft);}
-.reveal-category{
-  display:block;margin-bottom:14px;
-  font-size:9px;letter-spacing:.22em;text-transform:uppercase;
-  color:var(--terra);font-weight:500;
-  opacity:0;transform:translateY(10px);
-}
-.reveal-headline{
-  font-family:'Cormorant Garamond',serif;font-weight:300;
-  font-size:clamp(26px,2.8vw,38px);
-  line-height:1.08;color:var(--text);
-  margin-bottom:20px;letter-spacing:-.01em;
-  opacity:0;transform:translateY(14px);
-}
-.reveal-body{
-  font-size:16px;color:var(--text-3);line-height:1.76;
-  max-width:620px;margin-bottom:10px;
-  opacity:0;transform:translateY(10px);
-}
-.reveal-body:last-child{margin-bottom:0;}
-
-#scroll-cue{display:flex;justify-content:center;padding:28px 0 0;opacity:.8}
-
-/* Explain */
-.explain-stack{padding:36px 48px 0;position:relative;z-index:1;max-width:720px}
-.explain-block{border-top:1px solid var(--line-soft)}
-.explain-block:last-child{border-bottom:1px solid var(--line-soft)}
-.explain-toggle{width:100%;display:flex;justify-content:space-between;align-items:center;background:none;border:none;color:inherit;cursor:pointer;padding:18px 0;text-align:left;gap:24px;transition:opacity .2s}
-.explain-toggle:hover{opacity:.8}
-.explain-toggle h2{font-family:'Cormorant Garamond',serif;font-weight:300;font-size:clamp(17px,1.7vw,21px);line-height:1.1;color:var(--text-2);font-style:italic;margin:0}
-.explain-indicator{font-size:18px;color:var(--gold-soft);flex-shrink:0;transition:transform .22s,color .2s;line-height:1}
-.explain-block.open .explain-indicator{transform:rotate(45deg);color:var(--gold)}
-.explain-body{max-height:0;overflow:hidden;transition:max-height .32s ease,opacity .25s ease;opacity:0}
-.explain-block.open .explain-body{max-height:400px;opacity:1}
-.explain-body p{font-size:15px;color:var(--text-3);line-height:1.7;margin-bottom:8px;padding-bottom:2px}
-.explain-body p:last-child{margin-bottom:20px}
-.explain-body ul{list-style:none;margin:4px 0 16px;display:grid;gap:4px}
-.explain-body li{font-size:15px;color:var(--text-3);line-height:1.6;padding-left:16px;position:relative}
-.explain-body li::before{content:'—';position:absolute;left:0;color:var(--gold);opacity:.4;font-size:12px;top:3px}
-
-.rule-divider{margin:48px 0;padding:0 48px}
-.rule-divider::before{content:'';display:block;height:1px;background:var(--line-soft)}
-
-/* Phase menu — flat scroll-reveal rows */
-#menu-section{padding:0 48px 72px;position:relative;z-index:1}
-.menu-label{display:block;margin-bottom:16px;font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--terra);font-weight:500;opacity:0;transform:translateY(10px);}
-.menu-intro{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:20px;line-height:1.58;color:var(--text-2);max-width:720px;margin-bottom:12px;opacity:0;transform:translateY(10px);}
-.menu-command{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--text);margin-bottom:12px;opacity:0;transform:translateY(10px);}
-.phase-headline{font-size:15px;color:var(--text-2);line-height:1.6;max-width:720px;margin-bottom:8px;opacity:0;transform:translateY(10px);}
-.phase-subline{font-size:14px;color:var(--text-3);line-height:1.62;max-width:720px;margin:0 0 22px;opacity:0;transform:translateY(10px);}
-.menu-courses{max-width:800px}
-.menu-course{
-  border-bottom:1px solid var(--line-soft);
-  opacity:0;transform:translateY(14px);
-}
-.menu-course:first-child{border-top:1px solid var(--line-soft)}
-.menu-course.recommended{
-  border-top:1px solid rgba(184,92,56,0.5);
-  border-bottom:1px solid rgba(184,92,56,0.5);
-  background:rgba(184,92,56,0.06);
-}
-.menu-course-row{
-  display:grid;grid-template-columns:100px 1fr;
-  gap:0 20px;padding:28px 0;
-}
-.course-num{font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);font-weight:500;padding-top:8px;opacity:.7}
-.course-name{font-family:'Cormorant Garamond',serif;font-size:clamp(36px,4.5vw,60px);line-height:.95;color:var(--text);margin-bottom:8px;letter-spacing:-.015em;font-weight:300;}
-.course-desc{font-size:14px;color:var(--text-2);line-height:1.56;letter-spacing:.01em;margin-bottom:10px;}
-.course-detail{font-size:13px;color:var(--text-3);line-height:1.6;margin-bottom:14px;font-family:'Cormorant Garamond',serif;font-style:italic;}
-.menu-panel-cta{display:inline-block;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);border-bottom:1px solid var(--gold-faint);padding-bottom:2px;}
-.menu-panel-cta:hover{color:var(--text);border-bottom-color:rgba(244,237,224,0.28)}
-.menu-course.recommended .menu-panel-cta{color:var(--text);border-bottom-color:rgba(184,92,56,0.58);font-weight:500}
-.menu-course.recommended .course-name{color:var(--text);}
-.modules-note{padding:18px 0 18px 120px;border-bottom:1px solid var(--line-soft);opacity:0;transform:translateY(10px);}
-.modules-note p{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;color:var(--text-3)}
-
-/* System entry — NO card box, raw section */
-#system-entry-section{padding:0 48px 88px;position:relative;z-index:1}
-.entry-section-label{display:block;margin-bottom:22px;font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:var(--terra);font-weight:500;opacity:0;}
-.entry-description{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:clamp(19px,2.1vw,26px);line-height:1.5;color:var(--text-2);max-width:520px;margin-bottom:24px;font-weight:300;opacity:0;}
-.entry-price{font-family:'Cormorant Garamond',serif;font-size:clamp(68px,8.5vw,110px);line-height:.88;color:var(--gold);margin-bottom:6px;letter-spacing:-.02em;font-weight:300;opacity:0;}
-.entry-price-note{display:block;margin-bottom:32px;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;color:var(--text-3);opacity:0;}
-.entry-divider{height:1px;background:var(--line-soft);max-width:520px;margin-bottom:28px;opacity:0;}
-.cta-row{display:flex;gap:24px;align-items:center;flex-wrap:wrap;opacity:0;}
-.btn-ghost-link{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-2);border-bottom:1px solid rgba(214,202,180,0.5);padding-bottom:2px}
-.btn-ghost-link:hover{color:var(--gold);border-bottom-color:var(--gold-faint)}
-.entry-note{margin-top:28px;opacity:0;}
-.entry-note p{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;line-height:1.72;color:var(--text-3)}
-.private-signal{padding:34px 0 0;max-width:720px;opacity:0;}
-.private-signal p{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:16px;line-height:1.68;color:var(--text-2);margin-bottom:10px}
-.private-signal a{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-2);border-bottom:1px solid rgba(214,202,180,0.5);padding-bottom:2px}
-.private-signal a:hover{color:var(--gold);border-bottom-color:var(--gold-faint)}
-.founder-signal{padding:18px 0 0;max-width:720px;opacity:0;}
-.founder-signal p{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;line-height:1.72;color:var(--text-3)}
-
-/* Philosophy + footer */
-#philosophy{background:var(--bg-3);padding:32px 48px;text-align:center;border-top:1px solid var(--line-soft);border-bottom:1px solid var(--line-soft)}
-.phil-rule{width:28px;height:1px;margin:0 auto 18px;background:var(--gold-faint)}
-.phil-quote{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:clamp(15px,1.5vw,20px);line-height:1.52;color:var(--text-2);max-width:560px;margin:0 auto 18px;font-weight:300;letter-spacing:-.005em}
-.phil-wordmark{font-size:9px;letter-spacing:.28em;text-transform:uppercase;color:var(--gold-soft);font-weight:500}
-#res-footer{background:var(--bg-3);padding:44px 48px;display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:24px}
-.footer-left>span:first-child{display:block;margin-bottom:12px;font-size:12px;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);font-weight:500}
-.footer-micro{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:16px;line-height:1.7;color:var(--text-2)}
-.footer-studio{display:block;margin-top:8px;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;line-height:1.72;color:var(--text-3)}
-.osc-link{display:block;margin-top:10px;font-size:11px;color:var(--text-3)}
-.osc-link a{color:var(--gold)}
-.footer-links{display:flex;gap:24px;flex-wrap:wrap}
-.footer-links a{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-2)}
-.footer-links a:hover{color:var(--gold)}
-
-/* Mobile */
-@media (max-width:900px){
-  body{cursor:auto}
-  #cursor,#cursor-ring{display:none}
-  #site-header{padding:22px 24px}
-  #entry-overlay{padding:32px 22px}
-  .entry-headline{font-size:clamp(28px,8vw,42px)}
-  .fragment{padding:9px 12px}
-  .fragment-text{font-size:14px}
-  .zone-name{font-size:20px}
-  .zone-truth{font-size:13px}
-  #instruction{bottom:24px;width:calc(100% - 34px)}
-  #instruction p{font-size:12px;white-space:normal}
-  #ambient-signal{display:none}
-  #remaining-counter{top:22px}
-  #res-nav{padding:16px 20px}
-  #diagnosis-banner{padding:36px 20px 0}
-  .diag-headline{font-size:clamp(38px,9vw,58px)}
-  .diag-blocks{grid-template-columns:1fr}
-  #diagnosis-cta{padding:22px 20px 24px}
-  #diagnosis-results-wrap{padding:28px 20px 0}
-  #diagnosis-results{grid-template-columns:1fr 1fr}
-  .diag-zone-count-num{font-size:clamp(40px,8vw,56px)}
-  .reveal-stack{padding:28px 20px 0;}
-  .reveal-headline{font-size:clamp(22px,6vw,30px);}
-  .rule-divider{margin:36px 0;padding:0 20px}
-  #menu-section{padding:0 20px 52px}
-  .menu-course-row{grid-template-columns:72px 1fr;gap:0 10px;padding:20px 0;}
-  .course-name{font-size:clamp(30px,8vw,44px)}
-  .modules-note{padding-left:80px}
-  #system-entry-section{padding:0 20px 64px}
-  .entry-price{font-size:clamp(56px,13vw,80px)}
-  #philosophy{padding:24px 20px}
-  #res-footer{padding:32px 20px;flex-direction:column;align-items:flex-start}
-  .btn-diag-primary,.btn-primary{width:100%;text-align:center;display:block;padding:16px 20px}
-}
-@media (max-width:560px){
-  .menu-course-row{grid-template-columns:1fr;}
-  .course-num{display:block;margin-bottom:6px;}
-  .modules-note{padding-left:0}
-  #diagnosis-results{grid-template-columns:1fr}
-  .result-card{padding:20px 16px 12px}
-  .diag-blocks{grid-template-columns:1fr}
+@media(max-width:400px){
+  .page{padding:0 16px 80px}
 }
 </style>
 </head>
 <body>
+<div class="page">
 
-<div id="cursor"></div>
-<div id="cursor-ring"></div>
-
-<div id="entry-overlay" role="dialog" aria-modal="true" aria-label="Stephuary">
-  <div class="entry-inner">
-    <span class="entry-wordmark">Stephuary</span>
-    <h1 class="entry-headline">Find what&rsquo;s not working. Fix it. Move.</h1>
-    <p class="entry-sub">Select what&rsquo;s happening. The diagnostic maps where your system is breaking and shows you the next move.</p>
-    <span class="entry-support">Takes under two minutes.</span>
-    <button class="entry-start-btn" id="overlay-start-btn">Run Analysis</button>
-    <a href="#system-entry-section" class="entry-skip-link" id="overlay-skip-link">View Full Access</a>
+  <!-- NAV -->
+  <div class="top-nav">
+    <span class="nav-logo">Stephuary</span>
+    <a href="/system" class="nav-link">&larr; System</a>
   </div>
-</div>
 
-<header id="site-header">
-  <a href="/homepage.html" class="logo">Stephuary</a>
-  <a href="#system-entry-section" id="skip-btn">Full Access &rarr;</a>
-</header>
+  <!-- ============================================
+       STATE: INPUT
+       ============================================ -->
+  <div id="state-input" class="state active">
+    <span class="overline">Diagnostic</span>
+    <h1>Find what's<br><em>costing you</em></h1>
+    <p class="lead">Describe your business, what you sell, or paste a URL. The system identifies the primary issue and tells you what to fix first.</p>
 
-<div id="game-field" role="main" aria-label="Interactive diagnostic">
-  <div id="anchor-fragment" aria-hidden="true">
-    <p>I have everything I need<br>except the structure.</p>
-  </div>
-  <div id="instruction" aria-live="polite">
-    <p>Pick what fits.</p>
-  </div>
-  <div id="ambient-signal" aria-live="polite" aria-atomic="true">
-    <p id="ambient-text">Updating</p>
-  </div>
-  <div id="remaining-counter" aria-live="polite">
-    <span id="remaining-text"></span>
-  </div>
-</div>
+    <textarea
+      id="analysis-input"
+      class="input-field"
+      placeholder="Describe your offer, your current situation, or paste a URL…"
+      rows="4"
+    ></textarea>
+    <p class="input-hint">Example: "I offer brand strategy for small businesses. I have a website but no consistent clients."</p>
+    <button class="btn btn-primary" id="run-btn" type="button">Run analysis</button>
 
-<div id="resolution" role="main" aria-label="Your result">
-  <nav id="res-nav" aria-label="Main">
-    <a href="/homepage.html" class="res-logo">Stephuary</a>
-    <div class="res-nav-right">
-      <button class="res-nav-restart" onclick="location.reload()">Restart</button>
-      <a href="/club.html" class="res-nav-link">.5% Club</a>
-    </div>
-  </nav>
-
-  <div id="diagnosis-banner">
-    <span class="diag-phase-label" id="diagnosis-label">Execution Friction</span>
-    <h1 class="diag-headline" id="diagnosis-heading">Start with: Structure</h1>
-    <div class="diag-blocks">
-      <div class="diag-block" id="diag-block-problem">
-        <span class="diag-block-label">Problem</span>
-        <div class="diag-block-text" id="diag-problem">You start things but do not finish them.</div>
+    <!-- Memory preview if previous run exists -->
+    <div id="memory-preview" class="hidden" style="margin-top:40px;">
+      <hr class="sep" style="margin-top:0;margin-bottom:28px;"/>
+      <span class="overline-muted">Previous run</span>
+      <div class="memory-card" id="memory-preview-card">
+        <!-- filled by JS -->
       </div>
-      <div class="diag-block" id="diag-block-means">
-        <span class="diag-block-label">What this means</span>
-        <div class="diag-block-text" id="diag-means">There is no clear breakdown of steps or timeline, so work stalls before completion.</div>
+      <p style="font-size:13px;color:var(--text-4);margin-top:12px;font-style:italic;">Running a new analysis updates your history.</p>
+    </div>
+  </div>
+
+  <!-- ============================================
+       STATE: LOADING
+       ============================================ -->
+  <div id="loading-state" class="state">
+    <p class="loading-text">Analyzing what actually matters…</p>
+    <div class="loading-bar-track">
+      <div class="loading-bar-fill" id="loading-bar"></div>
+    </div>
+    <p class="loading-detail" id="loading-detail"></p>
+  </div>
+
+  <!-- ============================================
+       STATE: FREE RESULT
+       ============================================ -->
+  <div id="state-free" class="state">
+
+    <!-- 01 — ISSUE -->
+    <div class="result-section reveal reveal-1">
+      <span class="overline">This is what's actually wrong</span>
+      <div class="tag tag-issue gap-16"><span class="tag-dot"></span><span id="fr-tag">Primary issue</span></div>
+      <div class="issue-headline" id="fr-headline">Loading issue…</div>
+      <div class="why-block">
+        <p id="fr-why-1"></p>
+        <p id="fr-why-2"></p>
       </div>
-      <div class="diag-block start-block" id="diag-block-start" style="grid-column:1/-1">
-        <span class="diag-block-label">Start here</span>
-        <div class="diag-block-text" id="diag-start">Turn what you are doing into steps you can complete.</div>
-      </div>
-    </div>
-    <span class="diag-anchor-line">This is where to start. Not everything at once.</span>
-  </div>
-
-  <div id="diagnosis-cta">
-    <a href="/structure" class="btn-diag-primary" id="diag-cta-btn">Fix execution &rarr;</a>
-  </div>
-
-  <div id="diagnosis-results-wrap">
-    <span class="diagnosis-friction-line">Where it&rsquo;s breaking</span>
-    <div class="result-card">
-      <div class="result-card-head">
-        <span class="result-card-title">Signal breakdown</span>
-        <span class="result-card-meta">Highest count = fix first</span>
-      </div>
-      <div id="diagnosis-results" aria-label="Result breakdown"></div>
-    </div>
-  </div>
-
-  <section class="reveal-stack" aria-label="Diagnosis translation">
-
-    <div class="reveal-block">
-      <span class="reveal-category">Diagnosis</span>
-      <h2 class="reveal-headline">This is a system map.</h2>
-      <p class="reveal-body">You just mapped where your system is breaking.</p>
-      <p class="reveal-body">This is not a personality result. It is an operational diagnosis. Each signal shows where momentum is being lost — work, execution, daily rhythm, or environment. You do not fix everything at once. You fix the first constraint.</p>
     </div>
 
-    <div class="reveal-block">
-      <span class="reveal-category">Outcome</span>
-      <h2 class="reveal-headline">You already have what you need.</h2>
-      <p class="reveal-body">You do not need more information. You need a working offer. A structure that holds. A system that runs without restarting. Output that builds.</p>
-      <p class="reveal-body">Each phase fixes one of these. Nothing else.</p>
+    <!-- 02 — COST -->
+    <div class="result-section reveal reveal-2">
+      <span class="overline-muted gap-12">What this is costing</span>
+      <ul class="cost-list" id="fr-costs"></ul>
     </div>
 
-    <div class="reveal-block">
-      <span class="reveal-category">The Product</span>
-      <h2 class="reveal-headline">Five phases. One private dashboard.</h2>
-      <p class="reveal-body">A step-by-step operating structure. It shows you exactly what to fix, in what order, so your work starts working. You enter a private dashboard with all five phases. Start with your result. Fix it immediately.</p>
-    </div>
+    <!-- 03 — LOCK GATE -->
+    <div class="result-section reveal reveal-3">
+      <span class="overline-muted gap-12">Full analysis</span>
 
-    <div class="reveal-block">
-      <span class="reveal-category">After Entry</span>
-      <h2 class="reveal-headline">The work begins immediately.</h2>
-      <p class="reveal-body">You unlock all five phases. Each phase shows you exactly what to fix. You get step-by-step execution and tools. You move from idea to working system.</p>
-    </div>
+      <div class="lock-gate">
+        <!-- Blurred preview -->
+        <div class="lock-blur">
+          <div class="result-section">
+            <p style="margin-bottom:12px;font-size:15px;color:var(--text-3);">Fix this first</p>
+            <div style="height:12px;width:80%;background:var(--bg-3);border-radius:1px;margin-bottom:8px;"></div>
+            <div style="height:12px;width:60%;background:var(--bg-3);border-radius:1px;margin-bottom:24px;"></div>
+            <p style="margin-bottom:12px;font-size:15px;color:var(--text-3);">Your best offer</p>
+            <div style="height:12px;width:90%;background:var(--bg-3);border-radius:1px;margin-bottom:8px;"></div>
+            <div style="height:12px;width:50%;background:var(--bg-3);border-radius:1px;margin-bottom:24px;"></div>
+            <p style="margin-bottom:12px;font-size:15px;color:var(--text-3);">Pricing</p>
+            <div style="height:12px;width:70%;background:var(--bg-3);border-radius:1px;margin-bottom:8px;"></div>
+            <div style="height:12px;width:40%;background:var(--bg-3);border-radius:1px;"></div>
+          </div>
+        </div>
 
-  </section>
-
-  <div id="scroll-cue" aria-hidden="true">
-    <svg width="18" height="24" viewBox="0 0 16 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M8 1V19M8 19L2 13M8 19L14 13" stroke="rgba(214,202,180,0.5)" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
-    </svg>
-  </div>
-
-  <div class="rule-divider"></div>
-
-  <section id="menu-section" aria-labelledby="menu-heading">
-    <span class="menu-label" id="menu-heading">The System</span>
-    <p class="phase-headline">The System is divided into five phases. Each phase fixes a different constraint.</p>
-    <p class="phase-subline">Phases are not separate products. Phases are not collections. Phases are not books.</p>
-    <p class="menu-intro">Start where your system is breaking. Fix that first.</p>
-    <p class="menu-command">Don&rsquo;t explore. Start here.</p>
-
-    <div class="menu-courses" role="list">
-      <div class="menu-course" role="listitem" data-system="capture">
-        <div class="menu-course-row">
-          <span class="course-num">Phase 01</span>
-          <div class="course-main">
-            <div class="course-name">Capture</div>
-            <div class="course-desc">Get the idea out of your head and into something usable.</div>
-            <p class="course-detail">Clarity, framing, and direction. Built from the original work.</p>
-            <a class="menu-panel-cta" href="/capture">Go to Capture</a>
+        <!-- Lock overlay -->
+        <div class="lock-panel">
+          <p class="lock-label">Included in the full analysis</p>
+          <ul class="lock-items">
+            <li>What to fix first</li>
+            <li>What to ignore</li>
+            <li>Your best offer</li>
+            <li>Pricing strategy</li>
+            <li>Outreach sequence</li>
+            <li>Next steps today</li>
+          </ul>
+          <div class="lock-cta-wrap">
+            <button class="btn btn-primary" id="unlock-btn" type="button" style="margin-bottom:12px;">
+              See exactly what to do &rarr; Enter the System ($39)
+            </button>
+            <button class="btn btn-ghost" id="demo-unlock-btn" type="button" style="font-size:10px;min-height:40px;">
+              Preview full analysis (demo)
+            </button>
           </div>
         </div>
       </div>
-      <div class="menu-course" role="listitem" data-system="monetize">
-        <div class="menu-course-row">
-          <span class="course-num">Phase 02</span>
-          <div class="course-main">
-            <div class="course-name">Monetize</div>
-            <div class="course-desc">Turn what you have into something people pay for.</div>
-            <p class="course-detail">Offer design, pricing, and conversion. Built from the original work.</p>
-            <a class="menu-panel-cta" href="/monetize">Go to Monetize</a>
-          </div>
-        </div>
-      </div>
-      <div class="menu-course" role="listitem" data-system="structure">
-        <div class="menu-course-row">
-          <span class="course-num">Phase 03</span>
-          <div class="course-main">
-            <div class="course-name">Structure</div>
-            <div class="course-desc">Finish what you start. Every time.</div>
-            <p class="course-detail">Workflows, execution systems, and output structure. Built from the original work.</p>
-            <a class="menu-panel-cta" href="/structure">Go to Structure</a>
-          </div>
-        </div>
-      </div>
-      <div class="menu-course" role="listitem" data-system="automation">
-        <div class="menu-course-row">
-          <span class="course-num">Phase 04</span>
-          <div class="course-main">
-            <div class="course-name">Automation</div>
-            <div class="course-desc">Stop doing the same work twice.</div>
-            <p class="course-detail">Templates, repeatable processes, and tools. Built from the original work.</p>
-            <a class="menu-panel-cta" href="/automation">Go to Automation</a>
-          </div>
-        </div>
-      </div>
-      <div class="menu-course" role="listitem" data-system="sovereign">
-        <div class="menu-course-row">
-          <span class="course-num">Phase 05</span>
-          <div class="course-main">
-            <div class="course-name">Sovereignty</div>
-            <div class="course-desc">Build a life that holds under pressure.</div>
-            <p class="course-detail">Personal systems, environment, and stability. Built from the original work.</p>
-            <a class="menu-panel-cta" href="/sovereignty">Go to Sovereignty</a>
-          </div>
-        </div>
-      </div>
-      <div class="modules-note" role="note">
-        <p>Collections expand the work. The System gets it working first.</p>
-      </div>
     </div>
-  </section>
 
-  <!-- System entry — no card box -->
-  <section id="system-entry-section" aria-labelledby="entry-section-label">
-    <span class="entry-section-label" id="entry-section-label">Enter the System</span>
-    <p class="entry-description">Everything you need to fix this, structured and ready.</p>
-    <div class="entry-price">$39</div>
-    <span class="entry-price-note">The core product. Five phases. One private dashboard.</span>
-    <div class="entry-divider"></div>
-    <div class="cta-row">
-      <a href="https://gumroad.com/stephuary" class="btn-primary" id="system-cta-btn" target="_blank" rel="noopener">Enter the System &rarr;</a>
-      <a href="/" class="btn-ghost-link">Take the diagnostic again</a>
+    <!-- Run again -->
+    <div class="reveal reveal-4" style="margin-top:40px;">
+      <button class="btn btn-ghost" id="rerun-btn-free" type="button" style="max-width:240px;">Run a new analysis</button>
     </div>
-    <div class="entry-note">
-      <p>The System is already mapped. You just need to enter it.</p>
-    </div>
-    <div class="private-signal">
-      <p>Want the private intelligence layer too? Full Access includes the Stephuary System and .5% Club for $127.</p>
-      <a href="/club.html">Learn about .5% Club &rarr;</a>
-    </div>
-    <div class="founder-signal">
-      <p>One payment. Lifetime access to both.</p>
-    </div>
-  </section>
 
-  <div id="philosophy" role="complementary">
-    <div class="phil-rule"></div>
-    <p class="phil-quote">&ldquo;The economics of discretion &mdash; treating privacy and selective visibility as compounding assets.&rdquo;</p>
-    <div class="phil-rule"></div>
-    <span class="phil-wordmark">Stephuary</span>
-  </div>
+  </div><!-- /state-free -->
 
-  <footer id="res-footer" role="contentinfo">
-    <div class="footer-left">
-      <span>Stephuary</span>
-      <p class="footer-micro">Built to be used.<br>Not watched.</p>
-      <span class="footer-studio">Full-build engagements operate through Stephuary Studio.</span>
-      <span class="osc-link">Working at the business level. <a href="https://onlysometimesclub.com" target="_blank" rel="noopener">Only Sometimes Club.</a></span>
+  <!-- ============================================
+       STATE: FULL / PAID RESULT
+       ============================================ -->
+  <div id="state-paid" class="state">
+
+    <!-- Memory comparison (if previous) -->
+    <div id="memory-compare" class="paid-block gap-40 hidden">
+      <span class="overline">Compared to your last run</span>
+      <div class="memory-card">
+        <div class="memory-delta">
+          <div class="memory-prev">
+            <span class="memory-prev-label">Previous issue</span>
+            <p class="memory-prev-val" id="mem-prev-issue"></p>
+          </div>
+          <div class="memory-arrow">&#8594;</div>
+          <div class="memory-curr">
+            <span class="memory-curr-label">Current issue</span>
+            <p class="memory-curr-val" id="mem-curr-issue"></p>
+          </div>
+        </div>
+        <p class="memory-interp" id="mem-interp"></p>
+        <p class="memory-next" id="mem-next"></p>
+      </div>
+      <div class="sep"></div>
     </div>
-    <nav class="footer-links" aria-label="Footer navigation">
-      <a href="/homepage.html" class="footer-link">Home</a>
-      <a href="/club.html" class="footer-link">.5% Club</a>
-      <a href="https://gumroad.com/stephuary" target="_blank" rel="noopener" class="footer-link">Full Access</a>
-      <a href="https://grownspaghetti.substack.com" target="_blank" rel="noopener" class="footer-link">Substack</a>
-      <a href="https://onlysometimesclub.com" target="_blank" rel="noopener" class="footer-link">Only Sometimes Club</a>
-      <a href="https://github.com/stephuary/Stephuary" target="_blank" rel="noopener" class="footer-link">GitHub</a>
-    </nav>
-  </footer>
-</div>
+
+    <!-- 01 — What actually matters -->
+    <div class="paid-block result-section">
+      <span class="overline">What actually matters</span>
+      <div class="tag tag-issue gap-12"><span class="tag-dot"></span><span id="paid-tag"></span></div>
+      <div class="issue-headline" id="paid-headline"></div>
+      <div class="tag tag-issue gap-20" style="opacity:0.65;font-size:9px;" id="paid-weak-tag"><span class="tag-dot"></span><span id="paid-weak"></span></div>
+    </div>
+
+    <!-- 02 — Why this is the problem -->
+    <div class="paid-block result-section">
+      <span class="overline-muted gap-16">Why this is the problem</span>
+      <div class="why-block">
+        <p id="paid-why-1"></p>
+        <p id="paid-why-2" style="margin-top:12px;"></p>
+      </div>
+    </div>
+
+    <!-- 03 — Ignore this for now -->
+    <div class="paid-block result-section">
+      <span class="overline-muted gap-16">Ignore this for now</span>
+      <div class="ignore-block">
+        <p id="paid-ignore"></p>
+      </div>
+    </div>
+
+    <!-- 04 — Impact -->
+    <div class="paid-block result-section">
+      <span class="overline-muted gap-16">This is the impact</span>
+      <ul class="cost-list" id="paid-impact"></ul>
+    </div>
+
+    <!-- 05 — Fix this first -->
+    <div class="paid-block result-section">
+      <span class="overline gap-16">Fix this first</span>
+      <div class="fix-card">
+        <p id="paid-fix" style="font-size:16px;color:var(--text);line-height:1.65;max-width:none;"></p>
+      </div>
+    </div>
+
+    <!-- 06 — How this turns into money -->
+    <div class="paid-block result-section">
+      <span class="overline-muted gap-16">How this turns into money</span>
+      <div class="money-grid" id="paid-money"></div>
+    </div>
+
+    <!-- 07 — Offer builder -->
+    <div class="paid-block result-section">
+      <span class="overline-muted gap-16">Offer builder</span>
+      <p class="gap-16" id="paid-offer-intro" style="font-size:15px;color:var(--text-3);"></p>
+      <div class="offer-grid" id="paid-offers"></div>
+    </div>
+
+    <!-- 08 — Pricing -->
+    <div class="paid-block result-section">
+      <span class="overline-muted gap-16">Pricing</span>
+      <div class="why-block">
+        <p id="paid-pricing" style="max-width:none;"></p>
+      </div>
+    </div>
+
+    <!-- 09 — Outreach -->
+    <div class="paid-block result-section">
+      <span class="overline-muted gap-16">Outreach</span>
+      <ul class="outreach-list" id="paid-outreach"></ul>
+    </div>
+
+    <!-- 10 — Next steps -->
+    <div class="paid-block result-section">
+      <span class="overline gap-16">Next steps</span>
+      <ol class="steps-list" id="paid-steps"></ol>
+    </div>
+
+    <!-- 11 — One rule -->
+    <div class="paid-block result-section">
+      <div class="rule-block">
+        <span class="overline-muted gap-12">One rule</span>
+        <p class="rule-text" id="paid-rule"></p>
+      </div>
+    </div>
+
+    <!-- CTA -->
+    <div class="paid-block" style="margin-top:40px;">
+      <button class="btn btn-primary" onclick="window.location.href='/monetize'" style="margin-bottom:14px;">
+        Build and test this &rarr; Go to Monetize
+      </button>
+      <button class="btn btn-ghost" id="rerun-btn-paid" type="button">Run a new analysis</button>
+    </div>
+
+    <footer class="foot">
+      <a href="/system">System</a>
+      <a href="/capture">Capture</a>
+      <a href="/monetize">Monetize</a>
+      <a href="/structure">Structure</a>
+      <a href="/automation">Automation</a>
+      <a href="/sovereignty">Sovereignty</a>
+    </footer>
+
+  </div><!-- /state-paid -->
+
+</div><!-- /page -->
 
 <script>
-(function(){
-  'use strict';
+/* ======================================================
+   DATA — ANALYSIS PATTERNS
+   ====================================================== */
+var ANALYSES = {
 
-  gsap.registerPlugin(ScrollTrigger);
+  offer: {
+    tag:        "Offer clarity",
+    headline:   "Your offer is not clear enough to buy.",
+    weak:       "Weak area: offer definition",
+    why1:       "People do not buy confusing offers. They move on. If someone reads your description and cannot immediately understand the result they get and who it is for, they leave.",
+    why2:       "This is not a design problem or a pricing problem. The offer itself is undefined.",
+    costs:      ["Every visitor who leaves without contacting you is a decision you forced them to make","Unclear offers attract the wrong clients and repel the right ones","You are spending energy on everything except the one thing that closes clients"],
+    impact:     ["You are losing clients before a conversation starts","The wrong people reach out and the right people do not","Every month without a clear offer is revenue that does not exist"],
+    ignore:     "Do not touch your website design, social presence, or content strategy until the offer is defined. Those are distribution. This is the product.",
+    fix:        "Write one sentence: who you help, what they get, and what changes for them. That sentence is the offer. Everything else is built on top of it. Do not move to the next step until you can say it without thinking.",
+    money:      [{label:"Immediate",val:"$1k–$3k",note:"First client with a clear offer, closed in days not months"},{label:"Short-term",val:"$3k–$6k/mo",note:"2–3 clients at a defined rate with a repeatable close"},{label:"Scaled",val:"$8k–$15k/mo",note:"Offer productized, referrals compounding, no custom scoping"}],
+    offerIntro: "Based on what you described, here is what your offer structure should look like:",
+    offers:     [{tier:"Entry",name:"Clarity Session",price:"$500–$800"},{tier:"Core",name:"Strategy Package",price:"$2k–$3.5k"},{tier:"Premium",name:"Retained Advisory",price:"$5k–$8k/mo"}],
+    pricing:    "Underpricing is the most common mistake after a vague offer. Price the outcome, not the time. A $3k offer that delivers $30k in clarity is not expensive. Start with a mid-tier price and do not discount. If people push back on price, the offer is still unclear.",
+    outreach:   ["Identify 20 specific people who need this outcome today","Write a 3-sentence message: what you do, what result they get, and what you want them to do next","Send 10 messages today. Not tomorrow. Today.","Follow up once at day 5 if no reply. One follow-up only.","Track replies and closes. If reply rate is below 10%, change who you are reaching."],
+    steps:      [{t:"Write the offer sentence",d:"Who + what they get + what changes. One sentence. No qualifiers."},{t:"Set the price",d:"Start at your mid-tier number. Write it down. Commit to it before sending anything."},{t:"Send to 10 people today",d:"Not a broadcast. Specific people you already know need this."}],
+    rule:       "Do not add complexity until you have one clear offer that closes consistently."
+  },
 
-  // Lightweight smooth scroll — no external library, no proxy conflicts
-  // Uses native scroll with lerp interpolation via rAF
-  var lenis = (function(){
-    if(window.innerWidth < 900){ return null; }
-    var current = 0;
-    var target = 0;
-    var ease = 0.1;
-    var rafId = null;
-    var active = false;
+  audience: {
+    tag:        "Audience definition",
+    headline:   "You are not reaching the people who will pay.",
+    weak:       "Weak area: target audience",
+    why1:       "Reaching the wrong people is more expensive than reaching no one. It burns time, generates bad leads, and makes you believe the offer does not work when the problem is targeting.",
+    why2:       "The right people exist. You have not identified them specifically enough to find them.",
+    costs:      ["Conversations that go nowhere take the same time as conversations that close","Marketing to a broad audience produces generic messaging that persuades nobody","You are measuring wrong results and drawing wrong conclusions"],
+    impact:     ["Revenue is inconsistent because buyers are inconsistent","You cannot improve what you cannot identify","The path to referrals does not exist without a specific audience"],
+    ignore:     "Do not build new content, redesign anything, or launch new offers until you can name exactly who you are selling to. Specificity comes before distribution.",
+    fix:        "Name three specific companies or three specific people who would pay for what you offer today. Not a demographic. Not a persona. Actual names or actual types with enough detail to find them on LinkedIn in under five minutes.",
+    money:      [{label:"Immediate",val:"$1.5k–$4k",note:"Direct outreach to the three specific targets you just named"},{label:"Short-term",val:"$5k–$10k/mo",note:"Clear audience means referrals start working"},{label:"Scaled",val:"$12k–$20k/mo",note:"Niche authority drives inbound without constant outreach"}],
+    offerIntro: "Structured for the audience type you described:",
+    offers:     [{tier:"Entry",name:"Audit or Assessment",price:"$750–$1.2k"},{tier:"Core",name:"Focused Engagement",price:"$3k–$5k"},{tier:"Premium",name:"Ongoing Partnership",price:"$6k–$10k/mo"}],
+    pricing:    "Specific audiences pay more than broad ones. The more precisely you describe who you work with, the easier it is to justify a premium. Niche positioning is a pricing lever, not a limitation.",
+    outreach:   ["Build a list of 30 specific people who match your audience exactly","Write a message that references their specific situation, not a category","Send 15 messages per day, 5 days per week","Respond to every reply within 4 hours","Measure reply rate weekly. Below 8% means the targeting list needs to change."],
+    steps:      [{t:"Name 30 specific targets",d:"People or companies you can find and contact within 24 hours."},{t:"Write one audience-specific message",d:"Reference their situation. Not your offer. Their situation first."},{t:"Send it to the first 10 today",d:"No waiting. No refining. Send and record the results."}],
+    rule:       "Every piece of work you do must be for one specific person before it is for anyone else."
+  },
 
-    function lerp(a, b, t){ return a + (b - a) * t; }
+  revenue: {
+    tag:        "Revenue model",
+    headline:   "You have no predictable income path.",
+    weak:       "Weak area: revenue structure",
+    why1:       "Inconsistent revenue is not a luck problem. It is a structure problem. Without a defined way income enters and repeats, you are starting from zero every month.",
+    why2:       "This is fixable before you change anything else. You do not need more clients. You need a system for the clients you already have or almost have.",
+    costs:      ["Feast and famine cycles are entirely structural, not random","You cannot hire, invest, or scale on unpredictable income","Every decision is harder when the revenue floor is unknown"],
+    impact:     ["Month-to-month instability prevents compounding","You cannot build on revenue you cannot predict","The mental cost of income uncertainty is higher than the financial cost"],
+    ignore:     "Do not launch new products, add services, or build a content strategy while the revenue structure is undefined. Fix the floor before you build the ceiling.",
+    fix:        "Identify one repeating revenue stream you can activate today. This is a retainer offer, a monthly advisory, or a recurring product. Price it. Name the three people you will offer it to. Send the offer this week.",
+    money:      [{label:"Immediate",val:"$2k–$5k",note:"One retainer at a defined monthly rate closes the gap"},{label:"Short-term",val:"$6k–$12k/mo",note:"3 retained clients at consistent rates"},{label:"Scaled",val:"$15k–$25k/mo",note:"Mixed model: retained base plus project work on top"}],
+    offerIntro: "Retainer structure built for your situation:",
+    offers:     [{tier:"Base",name:"Monthly Advisory",price:"$1.5k–$2.5k/mo"},{tier:"Core",name:"Active Retainer",price:"$3k–$5k/mo"},{tier:"Full",name:"Embedded Partnership",price:"$7k–$12k/mo"}],
+    pricing:    "Monthly retainers should be priced at a slight discount to the equivalent project work. The discount is for predictability, not for extra hours. Define the scope tightly. The moment the scope is undefined, the retainer becomes a liability.",
+    outreach:   ["Contact your last 5 clients or warm contacts today","Offer a monthly retainer at the lowest tier first","Frame it as continuity, not a new sale","Follow up at day 3 and day 7 if no reply","Close one before sending the next batch"],
+    steps:      [{t:"Define the retainer scope",d:"What is included every month. What is not. Written clearly."},{t:"Set the monthly price",d:"Start at your base tier. Commit to it before reaching out."},{t:"Offer it to 5 people this week",d:"Existing relationships first. New contacts second."}],
+    rule:       "You do not launch new offers until one recurring revenue stream is active and stable."
+  },
 
-    function tick(){
-      if(!active){ return; }
-      target = window.scrollY || window.pageYOffset;
-      current = lerp(current, target, ease);
-      var diff = Math.abs(target - current);
-      ScrollTrigger.update();
-      rafId = requestAnimationFrame(tick);
+  execution: {
+    tag:        "Execution gap",
+    headline:   "The work is defined. You are not executing it.",
+    weak:       "Weak area: execution consistency",
+    why1:       "You already know what to do. The problem is not information or strategy. The problem is that the defined work is not happening at the volume and consistency required.",
+    why2:       "This is an environment and structure problem, not a motivation problem. The conditions you work in are producing inconsistent output.",
+    costs:      ["Every day without execution is revenue that does not exist","Starting and stopping resets your position in every relationship you are building","Inconsistency makes everything else harder to measure and fix"],
+    impact:     ["You cannot test what you cannot run consistently","Inconsistent outreach produces inconsistent results that look like a strategy problem","Nothing compounds without daily execution"],
+    ignore:     "Do not research new strategies, read more content, or add tools. You have what you need. The only variable is whether you run the work daily.",
+    fix:        "Remove one condition that is preventing you from starting. Then set one task with a defined endpoint and do it for 30 minutes without switching. That is the entire system. Run it every day for 7 days before assessing anything.",
+    money:      [{label:"Immediate",val:"$1k–$3k",note:"Consistent outreach closes 1 client within 2 weeks"},{label:"Short-term",val:"$4k–$8k/mo",note:"Daily execution compounds into a stable pipeline"},{label:"Scaled",val:"$10k–$18k/mo",note:"Systems replace effort. Output maintains without willpower."}],
+    offerIntro: "What to execute daily for the next 14 days:",
+    offers:     [{tier:"Day 1–7",name:"15–20 outreach messages per day",price:""},{tier:"Day 8–14",name:"2 discovery calls booked",price:""},{tier:"Day 15+",name:"First close. Then repeat.",price:""}],
+    pricing:    "Do not discount while executing. The temptation to lower prices to close faster is a sign of low volume, not a pricing problem. Increase output before you change price.",
+    outreach:   ["Send 15 targeted messages today before anything else","Follow up every open thread within 24 hours","Do not check results until you have run this for 5 days","Book two calls this week. Calls before closes.","Track actions, not feelings. Volume is the only variable right now."],
+    steps:      [{t:"Remove the first interruption",d:"Phone out of reach. One tab open. One task defined."},{t:"Run 30 minutes of execution right now",d:"Not planning. Not research. Outreach or delivery."},{t:"Set tomorrow's task before today ends",d:"Write it down. When you open work tomorrow, it is already decided."}],
+    rule:       "You do not assess the strategy until you have run it consistently for 14 days."
+  },
+
+  visibility: {
+    tag:        "Visibility gap",
+    headline:   "The right people do not know you exist.",
+    weak:       "Weak area: market presence",
+    why1:       "A strong offer with no distribution is invisible. The problem is not the quality of the work. It is that the people who would pay for it are not finding it.",
+    why2:       "Visibility is not about volume of content. It is about consistent presence in front of a specific group of people who have the problem you solve.",
+    costs:      ["You are competing for clients you are not even in the room with","Referrals cannot happen if people do not know you well enough to describe what you do","Every month of low visibility is ground given to someone doing the same work more publicly"],
+    impact:     ["Inbound leads do not exist without visibility","Warm referrals dry up within 6 months of going quiet","You are relying entirely on outreach while ignoring the easier path"],
+    ignore:     "Do not build a new website, create a new brand, or launch a newsletter right now. Visibility through content and presence on existing platforms is faster and cheaper than infrastructure.",
+    fix:        "Publish one piece of content this week that shows a specific result from your work. Not a thought. Not advice. A result. Post it where your target audience already is. Do this every week for the next 6 weeks without stopping.",
+    money:      [{label:"Immediate",val:"$1k–$2k",note:"One inbound inquiry from first visible content this month"},{label:"Short-term",val:"$3k–$7k/mo",note:"Consistent visibility generates 2–4 warm leads per month"},{label:"Scaled",val:"$8k–$15k/mo",note:"Authority positioning makes outreach easier and closes faster"}],
+    offerIntro: "Content-to-client path for your situation:",
+    offers:     [{tier:"Week 1",name:"Publish one result-based post",price:""},{tier:"Month 1",name:"Weekly posting with direct CTA",price:""},{tier:"Month 3+",name:"Inbound leads from compounded presence",price:""}],
+    pricing:    "Visibility is a pricing lever. The more people see you producing results, the less you have to justify your rate. Public proof reduces negotiation. Every piece of content that shows a result is a pricing argument that runs without you.",
+    outreach:   ["Share every piece of content directly with 10 specific people who would find it relevant","Ask for one referral per week from someone who already knows your work","Reply to every comment and message within 24 hours","Mention your work explicitly in 20% of what you publish","Do not hide what you do or how to hire you"],
+    steps:      [{t:"Write the result post this week",d:"One specific outcome. One client situation. What changed."},{t:"Post it on one platform where your audience already is",d:"LinkedIn, Substack, or a specific community. One place first."},{t:"Send it directly to 10 people today",d:"Not a broadcast. Individual messages with one line of context."}],
+    rule:       "You do not go quiet. Consistency over 6 weeks beats one great piece of content followed by silence."
+  }
+};
+
+/* ======================================================
+   SCORING LOGIC
+   ====================================================== */
+function score(input){
+  var t = input.toLowerCase();
+  var s = {offer:0, audience:0, revenue:0, execution:0, visibility:0};
+
+  // Offer signals
+  if(/no client|no sale|not selling|not closing|can't close|can.t explain|hard to describe|confusing|unclear offer|what i do|don.t know what/.test(t)) s.offer += 3;
+  if(/offer|package|service|what i sell|what i do|describe my/.test(t)) s.offer += 1;
+
+  // Audience signals
+  if(/no target|wrong client|bad lead|anyone|everyone|broad|general|niche|who to reach|audience|who to sell/.test(t)) s.audience += 3;
+  if(/client type|ideal client|target market|who is this for/.test(t)) s.audience += 1;
+
+  // Revenue signals
+  if(/inconsistent|feast and famine|no recurring|unpredictable|no retainer|month to month|income/.test(t)) s.revenue += 3;
+  if(/revenue|income|money|cash|paying/.test(t)) s.revenue += 1;
+
+  // Execution signals
+  if(/not doing|not executing|procrastinat|can.t start|not shipping|stuck|sitting on it|not moving|too slow|delay|overthinking/.test(t)) s.execution += 3;
+  if(/busy|overwhelm|too much|no time|distract/.test(t)) s.execution += 2;
+
+  // Visibility signals
+  if(/no one knows|invisible|no leads|no inbound|not visible|no referral|no one finds|website.*no traffic/.test(t)) s.visibility += 3;
+  if(/marketing|content|social|presence|brand|awareness/.test(t)) s.visibility += 1;
+
+  // Default boost if nothing scores
+  var max = 0; var winner = 'offer';
+  Object.keys(s).forEach(function(k){ if(s[k]>max){max=s[k];winner=k;} });
+  if(max === 0){
+    // URL or vague input — pick offer as safest default with slight randomness
+    var keys = Object.keys(s);
+    winner = keys[Math.floor(Math.random() * 3)]; // bias toward first 3
+  }
+  return winner;
+}
+
+/* ======================================================
+   MEMORY (localStorage)
+   ====================================================== */
+var STORAGE_KEY = 'sth_analysis_v1';
+
+function loadMemory(){
+  try{ return JSON.parse(localStorage.getItem(STORAGE_KEY)) || null; }
+  catch(e){ return null; }
+}
+function saveMemory(entry){
+  try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(entry)); }
+  catch(e){}
+}
+
+/* ======================================================
+   STATE MANAGEMENT
+   ====================================================== */
+var currentAnalysis = null;
+var currentInput = '';
+
+function showState(id){
+  document.querySelectorAll('.state').forEach(function(el){el.classList.remove('active')});
+  var el = document.getElementById(id);
+  if(el) el.classList.add('active');
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+/* ======================================================
+   INPUT PAGE INIT
+   ====================================================== */
+function initInputPage(){
+  var mem = loadMemory();
+  if(mem){
+    var preview = document.getElementById('memory-preview');
+    var card = document.getElementById('memory-preview-card');
+    preview.classList.remove('hidden');
+    card.innerHTML =
+      '<span class="overline-muted" style="margin-bottom:10px;display:block;">Last run</span>' +
+      '<p style="font-family:var(--serif);font-size:18px;color:var(--text-2);margin-bottom:10px;font-style:italic;">"'+ truncate(mem.input, 80) +'"</p>' +
+      '<div class="tag tag-issue" style="margin-bottom:0;"><span class="tag-dot"></span><span>' + ANALYSES[mem.type].tag + '</span></div>';
+  }
+}
+
+function truncate(str, n){
+  return str.length > n ? str.slice(0,n)+'…' : str;
+}
+
+/* ======================================================
+   LOADING SEQUENCE
+   ====================================================== */
+var loadingMessages = [
+  'Reading the input…',
+  'Identifying the primary issue…',
+  'Scoring weak areas…',
+  'Building your analysis…',
+  'Finalising recommendations…'
+];
+
+function runLoading(cb){
+  showState('loading-state');
+  var bar = document.getElementById('loading-bar');
+  var detail = document.getElementById('loading-detail');
+  var idx = 0;
+
+  setTimeout(function(){ bar.style.width = '100%'; }, 50);
+
+  var msgInterval = setInterval(function(){
+    if(idx < loadingMessages.length){
+      detail.textContent = loadingMessages[idx++];
     }
+  }, 480);
 
-    return {
-      start: function(){
-        active = true;
-        current = window.scrollY || window.pageYOffset;
-        target = current;
-        if(!rafId){ tick(); }
-      },
-      stop: function(){
-        active = false;
-        if(rafId){ cancelAnimationFrame(rafId); rafId = null; }
-      }
-    };
-  }());
+  setTimeout(function(){
+    clearInterval(msgInterval);
+    cb();
+  }, 2600);
+}
 
-  var MAX_SELECTIONS = 6;
-  var AUTO_RESOLVE_DELAY = 2700;
-  var MIN_SELECTIONS_FOR_PAUSE_RESOLVE = 3;
+/* ======================================================
+   RENDER FREE RESULT
+   ====================================================== */
+function renderFree(a){
+  document.getElementById('fr-tag').textContent = a.tag;
+  document.getElementById('fr-headline').innerHTML = formatHeadline(a.headline);
+  document.getElementById('fr-why-1').textContent = a.why1;
+  document.getElementById('fr-why-2').textContent = a.why2;
 
-  var fragments = [
-    {id:'b1',text:"I don't know what to charge.",zone:'business'},
-    {id:'b2',text:"I have an audience. Nobody's buying.",zone:'business'},
-    {id:'b3',text:"I built something. Nobody bought it.",zone:'business'},
-    {id:'s1',text:"I've been working on this for months.",zone:'self'},
-    {id:'s2',text:"I keep restarting.",zone:'self'},
-    {id:'s3',text:"I'm productive. Nothing is shipping.",zone:'self'},
-    {id:'h1',text:"I reset every Monday.",zone:'home'},
-    {id:'h2',text:"I'm consistent. Nothing is accumulating.",zone:'home'},
-    {id:'h3',text:"I have time. I don't have momentum.",zone:'home'},
-    {id:'sp1',text:"I work everywhere. Nothing gets finished.",zone:'space'},
-    {id:'sp2',text:"My setup works against me.",zone:'space'},
-    {id:'sp3',text:"I can't think clearly where I am.",zone:'space'}
-  ];
+  var costList = document.getElementById('fr-costs');
+  costList.innerHTML = '';
+  a.costs.forEach(function(c){
+    var li = document.createElement('li');
+    li.innerHTML = '<span>'+c+'</span>';
+    costList.appendChild(li);
+  });
 
-  var zones = [
-    {id:'business',name:'Business',micro:'Work',truth:"The money isn't steady.",
-      pos:{d:{l:'3%',t:'10%',w:'30%',h:'40%'},m:{l:'2%',t:'5%',w:'46%',h:'39%'}}},
-    {id:'self',name:'Self',micro:'Execution',truth:'You keep restarting.',
-      pos:{d:{l:'67%',t:'10%',w:'30%',h:'40%'},m:{l:'52%',t:'5%',w:'46%',h:'39%'}}},
-    {id:'home',name:'Home',micro:'Daily',truth:'The day runs you.',
-      pos:{d:{l:'3%',t:'52%',w:'30%',h:'40%'},m:{l:'2%',t:'54%',w:'46%',h:'39%'}}},
-    {id:'space',name:'Space',micro:'Environment',truth:'The place is costing you.',
-      pos:{d:{l:'67%',t:'52%',w:'30%',h:'40%'},m:{l:'52%',t:'54%',w:'46%',h:'39%'}}}
-  ];
+  showState('state-free');
+}
 
-  var state = {
-    isMobile: window.innerWidth < 900,
-    gameActive: true,
-    hasInteracted: false,
-    placedFragments: {},
-    zoneCounts: {business:0,self:0,home:0,space:0},
-    zoneRevealed: {business:false,self:false,home:false,space:false},
-    totalPlaced: 0,
-    pauseResolveTimer: null
+function formatHeadline(text){
+  // Italicise the last few words
+  var words = text.split(' ');
+  if(words.length > 4){
+    var cut = words.length - 3;
+    return words.slice(0,cut).join(' ') + ' <em>' + words.slice(cut).join(' ') + '</em>';
+  }
+  return '<em>'+text+'</em>';
+}
+
+/* ======================================================
+   RENDER PAID / FULL RESULT
+   ====================================================== */
+function renderPaid(a, type){
+  // Memory comparison
+  var mem = loadMemory();
+  var memCompare = document.getElementById('memory-compare');
+  if(mem && mem.type && mem.type !== type){
+    memCompare.classList.remove('hidden');
+    document.getElementById('mem-prev-issue').textContent = ANALYSES[mem.type].tag;
+    document.getElementById('mem-curr-issue').textContent = a.tag;
+    document.getElementById('mem-interp').textContent = buildMemoryInterp(mem.type, type);
+    document.getElementById('mem-next').textContent = 'The current focus is correct. Do not return to the previous issue until this one is resolved.';
+  } else if(mem && mem.type === type){
+    memCompare.classList.remove('hidden');
+    document.getElementById('mem-prev-issue').textContent = ANALYSES[mem.type].tag;
+    document.getElementById('mem-curr-issue').textContent = a.tag;
+    document.getElementById('mem-interp').textContent = 'The same issue is still the primary block. You identified it before. This run confirms it has not been resolved.';
+    document.getElementById('mem-next').textContent = 'Fix this before running another analysis. Another analysis will return the same result.';
+  }
+
+  // Fill fields
+  document.getElementById('paid-tag').textContent = a.tag;
+  document.getElementById('paid-headline').innerHTML = formatHeadline(a.headline);
+  document.getElementById('paid-weak').textContent = a.weak;
+  document.getElementById('paid-why-1').textContent = a.why1;
+  document.getElementById('paid-why-2').textContent = a.why2;
+  document.getElementById('paid-ignore').textContent = a.ignore;
+  document.getElementById('paid-fix').textContent = a.fix;
+  document.getElementById('paid-offer-intro').textContent = a.offerIntro;
+  document.getElementById('paid-pricing').textContent = a.pricing;
+  document.getElementById('paid-rule').textContent = a.rule;
+
+  // Impact
+  var impactEl = document.getElementById('paid-impact');
+  impactEl.innerHTML = '';
+  a.impact.forEach(function(c){
+    var li = document.createElement('li');
+    li.innerHTML = '<span>'+c+'</span>';
+    impactEl.appendChild(li);
+  });
+
+  // Money
+  var moneyEl = document.getElementById('paid-money');
+  moneyEl.innerHTML = '';
+  a.money.forEach(function(m){
+    var cell = document.createElement('div');
+    cell.className = 'money-cell';
+    cell.innerHTML = '<span class="money-cell-label">'+m.label+'</span><div class="money-cell-val">'+m.val+'</div><p class="money-cell-note">'+m.note+'</p>';
+    moneyEl.appendChild(cell);
+  });
+
+  // Offers
+  var offersEl = document.getElementById('paid-offers');
+  offersEl.innerHTML = '';
+  a.offers.forEach(function(o){
+    var row = document.createElement('div');
+    row.className = 'offer-row';
+    row.innerHTML = '<span class="offer-tier">'+o.tier+'</span><span class="offer-name">'+o.name+'</span><span class="offer-price">'+o.price+'</span>';
+    offersEl.appendChild(row);
+  });
+
+  // Outreach
+  var outEl = document.getElementById('paid-outreach');
+  outEl.innerHTML = '';
+  a.outreach.forEach(function(item, i){
+    var li = document.createElement('li');
+    li.className = 'outreach-item';
+    li.innerHTML = '<span class="outreach-num">0'+(i+1)+'</span><span class="outreach-text">'+item+'</span>';
+    outEl.appendChild(li);
+  });
+
+  // Steps
+  var stepsEl = document.getElementById('paid-steps');
+  stepsEl.innerHTML = '';
+  a.steps.forEach(function(s, i){
+    var li = document.createElement('li');
+    li.className = 'step-item';
+    li.innerHTML = '<span class="step-n">'+(i+1)+'</span><div class="step-body"><div class="step-title">'+s.t+'</div><p class="step-desc">'+s.d+'</p></div>';
+    stepsEl.appendChild(li);
+  });
+
+  // Progressive reveal
+  showState('state-paid');
+  var blocks = document.querySelectorAll('#state-paid .paid-block');
+  blocks.forEach(function(block, i){
+    setTimeout(function(){
+      block.classList.add('shown');
+    }, 80 + i * 120);
+  });
+}
+
+function buildMemoryInterp(prev, curr){
+  var map = {
+    offer:      'offer clarity',
+    audience:   'audience definition',
+    revenue:    'revenue structure',
+    execution:  'execution consistency',
+    visibility: 'market visibility'
   };
+  return 'Your previous primary issue was ' + map[prev] + '. The current analysis identifies ' + map[curr] + ' as the primary block. This shift is meaningful. It may indicate progress on the previous issue, or a different constraint has become the limiting factor.';
+}
 
-  var systemMenu = {initialized:false,rows:[],byKey:{}};
-  var cursor = document.getElementById('cursor');
-  var cursorRing = document.getElementById('cursor-ring');
-  var mouseX = 0, mouseY = 0, ringX = 0, ringY = 0;
-  var customCursorEnabled = false;
-
-  function enableCustomCursor(){
-    if(customCursorEnabled || state.isMobile || !cursor || !cursorRing){ return; }
-    customCursorEnabled = true;
-    document.body.classList.add('cursor-enhanced');
-    cursor.style.display = 'block';
-    cursorRing.style.display = 'block';
+/* ======================================================
+   EVENTS
+   ====================================================== */
+document.getElementById('run-btn').addEventListener('click', function(){
+  var val = document.getElementById('analysis-input').value.trim();
+  if(!val){
+    document.getElementById('analysis-input').style.borderColor = 'var(--terra-line)';
+    setTimeout(function(){ document.getElementById('analysis-input').style.borderColor = ''; }, 1500);
+    return;
   }
+  currentInput = val;
+  var type = score(val);
+  currentAnalysis = ANALYSES[type];
 
-  function normalizeRecommendation(v){
-    v = (v||'').toLowerCase();
-    if(v.indexOf('capture')>-1) return 'capture';
-    if(v.indexOf('monetize')>-1) return 'monetize';
-    if(v.indexOf('structure')>-1) return 'structure';
-    if(v.indexOf('automation')>-1) return 'automation';
-    if(v.indexOf('sovereign')>-1) return 'sovereign';
-    return '';
-  }
-
-  function setSystemRowOpen(row, open){
-    if(!row){ return; }
-    systemMenu.rows.forEach(function(item){
-      var btn = item.querySelector('.menu-course-toggle');
-      var isCurrent = item === row;
-      if(isCurrent && open){ item.classList.add('open'); if(btn) btn.setAttribute('aria-expanded','true'); }
-      else { item.classList.remove('open'); if(btn) btn.setAttribute('aria-expanded','false'); }
-    });
-  }
-
-  function toggleSystemRow(row){
-    if(!row){ return; }
-    setSystemRowOpen(row, !row.classList.contains('open'));
-  }
-
-  function setRecommendedRow(key){
-    systemMenu.rows.forEach(function(item){ item.classList.remove('recommended'); });
-    if(key && systemMenu.byKey[key]){
-      systemMenu.byKey[key].classList.add('recommended');
-      var mc = document.querySelector('.menu-courses');
-      if(mc) mc.classList.add('has-recommendation');
-    }
-  }
-
-  function openRecommendedSystem(startValue, shouldScroll){
-    var key = normalizeRecommendation(startValue);
-    if(!key){ return; }
-    setRecommendedRow(key);
-    var targetRow = systemMenu.byKey[key];
-    if(!targetRow){ return; }
-    if(shouldScroll !== false){
-      var section = document.getElementById('menu-section');
-      if(section) section.scrollIntoView({behavior:'smooth',block:'start'});
-    }
-    setTimeout(function(){ setSystemRowOpen(targetRow, true); }, shouldScroll === false ? 80 : 220);
-  }
-
-  function initSystemMenu(){
-    if(systemMenu.initialized){ return; }
-    systemMenu.rows = Array.prototype.slice.call(document.querySelectorAll('.menu-course[data-system]'));
-    systemMenu.rows.forEach(function(row){
-      var key = row.getAttribute('data-system');
-      if(key) systemMenu.byKey[key] = row;
-      // No toggle — flat layout, scroll reveals all
-    });
-    systemMenu.initialized = true;
-  }
-
-  // Cursor
-  if(!state.isMobile && cursor && cursorRing){
-    mouseX = window.innerWidth/2; mouseY = window.innerHeight/2;
-    ringX = mouseX; ringY = mouseY;
-    document.addEventListener('mousemove', function(e){
-      if(!customCursorEnabled) enableCustomCursor();
-      mouseX = e.clientX; mouseY = e.clientY;
-      cursor.style.left = mouseX+'px'; cursor.style.top = mouseY+'px';
-    });
-    (function animateRing(){
-      if(customCursorEnabled){
-        ringX += (mouseX - ringX) * 0.12;
-        ringY += (mouseY - ringY) * 0.12;
-        cursorRing.style.left = ringX+'px'; cursorRing.style.top = ringY+'px';
-      }
-      requestAnimationFrame(animateRing);
-    }());
-  }
-
-  // Entry overlay — GSAP reveal
-  var overlay = document.getElementById('entry-overlay');
-  var overlayStart = document.getElementById('overlay-start-btn');
-  var overlaySkip = document.getElementById('overlay-skip-link');
-
-  gsap.timeline({delay:0.2})
-    .to('.entry-wordmark', {opacity:1, y:0, duration:0.6, ease:'power3.out'}, 0)
-    .to('.entry-headline', {opacity:1, y:0, duration:0.7, ease:'power3.out'}, 0.18)
-    .to('.entry-sub',      {opacity:1, y:0, duration:0.6, ease:'power3.out'}, 0.32)
-    .to('.entry-support',  {opacity:1, duration:0.5, ease:'power2.out'}, 0.44)
-    .to('.entry-start-btn',{opacity:1, duration:0.5, ease:'power2.out'}, 0.52)
-    .to('.entry-skip-link',{opacity:1, duration:0.4, ease:'power2.out'}, 0.60);
-
-  function dismissOverlay(){
-    gsap.to(overlay, {opacity:0, duration:0.45, ease:'power2.in', onComplete:function(){ overlay.style.display='none'; }});
-  }
-
-  overlay.addEventListener('click', function(e){
-    if(e.target === overlaySkip || overlaySkip.contains(e.target)){ return; }
-    dismissOverlay();
+  runLoading(function(){
+    // Save memory
+    saveMemory({ input: val, type: type, ts: Date.now() });
+    renderFree(currentAnalysis);
   });
-  overlayStart.addEventListener('click', function(e){ e.stopPropagation(); dismissOverlay(); });
-  overlaySkip.addEventListener('click', function(e){
-    e.stopPropagation();
-    dismissOverlay();
-    triggerResolution(false);
-  });
+});
+
+document.getElementById('demo-unlock-btn').addEventListener('click', function(){
+  var type = score(currentInput || '');
+  currentAnalysis = ANALYSES[type];
+  renderPaid(currentAnalysis, type);
+});
+
+document.getElementById('unlock-btn').addEventListener('click', function(){
+  // In production: redirect to payment or check session
+  var type = score(currentInput || '');
+  currentAnalysis = ANALYSES[type];
+  renderPaid(currentAnalysis, type);
+});
+
+document.getElementById('rerun-btn-free').addEventListener('click', function(){
+  document.getElementById('analysis-input').value = '';
+  initInputPage();
+  showState('state-input');
+});
+
+document.getElementById('rerun-btn-paid').addEventListener('click', function(){
+  document.getElementById('analysis-input').value = '';
+  initInputPage();
+  showState('state-input');
+});
+
+/* Enter key submits */
+document.getElementById('analysis-input').addEventListener('keydown', function(e){
+  if(e.key === 'Enter' && e.metaKey){ document.getElementById('run-btn').click(); }
+});
+
+/* ======================================================
+   INIT
+   ====================================================== */
+initInputPage();
 
-  function updateInstruction(text){
-    var wrap = document.getElementById('instruction');
-    if(!wrap){ return; }
-    wrap.querySelector('p').textContent = text;
-  }
-
-  // ---- BUILD GAME ----
-  function buildGame(){
-    var field = document.getElementById('game-field');
-
-    var placement = [
-      {x:5,  y:16}, {x:14, y:26}, {x:6,  y:36},
-      {x:74, y:16}, {x:68, y:27}, {x:72, y:37},
-      {x:13, y:58}, {x:5,  y:68}, {x:10, y:78},
-      {x:68, y:58}, {x:77, y:68}, {x:69, y:78}
-    ];
-    var placementMobile = [
-      {x:3,  y:10}, {x:12, y:20}, {x:4,  y:30},
-      {x:55, y:10}, {x:51, y:21}, {x:54, y:30},
-      {x:10, y:58}, {x:3,  y:68}, {x:8,  y:77},
-      {x:51, y:58}, {x:60, y:68}, {x:52, y:77}
-    ];
-
-    // Build zones
-    zones.forEach(function(z){
-      var p = state.isMobile ? z.pos.m : z.pos.d;
-      var el = document.createElement('div');
-      el.className = 'zone';
-      el.id = 'zone-' + z.id;
-      el.style.cssText = 'left:'+p.l+';top:'+p.t+';width:'+p.w+';height:'+p.h;
-      el.innerHTML = '<div class="zone-label"><div class="zone-name">'+z.name+'</div><div class="zone-truth">'+z.truth+'</div><div class="zone-micro" data-base="'+z.micro+'">'+z.micro+' (0)</div></div>';
-      field.appendChild(el);
-    });
-
-    // Zone names fade in with GSAP stagger
-    gsap.to('.zone-name', {opacity:0.55, duration:0.8, stagger:0.12, ease:'power2.out', delay:1.0});
-
-    // Build fragments with GSAP stagger entrance
-    var fragEls = [];
-    fragments.forEach(function(frag, idx){
-      var el = document.createElement('div');
-      el.className = 'fragment';
-      el.id = 'frag-' + frag.id;
-      el.setAttribute('role','button');
-      el.setAttribute('tabindex','0');
-      el.setAttribute('aria-label', frag.text);
-      el.innerHTML = '<span class="fragment-text">'+frag.text+'</span>';
-      var pos = state.isMobile ? placementMobile[idx] : placement[idx];
-      el.style.left = pos.x + '%';
-      el.style.top  = pos.y + '%';
-      el.addEventListener('click', function(){ handleClick(frag); });
-      el.addEventListener('keydown', function(e){ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); handleClick(frag); }});
-      el.addEventListener('mouseenter', function(){ if(cursorRing) cursorRing.classList.add('hover'); });
-      el.addEventListener('mouseleave', function(){ if(cursorRing) cursorRing.classList.remove('hover'); });
-      field.appendChild(el);
-      fragEls.push(el);
-    });
-
-    // GSAP staggered card entrance — y settle from below
-    gsap.fromTo(fragEls,
-      {opacity:0, y:18},
-      {opacity:1, y:0, duration:0.65, stagger:{amount:0.9, from:'random'}, ease:'power3.out', delay:0.9}
-    );
-
-    // Floating animation via GSAP (replaces CSS keyframes)
-    fragEls.forEach(function(el, i){
-      gsap.to(el, {
-        y: '+=5',
-        duration: 2.8 + (i % 4) * 0.3,
-        ease: 'sine.inOut',
-        yoyo: true,
-        repeat: -1,
-        delay: (i * 0.22) % 2.0
-      });
-    });
-
-    // Anchor text
-    gsap.to('#anchor-fragment', {opacity:1, duration:1.2, ease:'power2.out', delay:1.4});
-
-    // Header + instruction
-    gsap.to('.logo', {opacity:1, duration:0.7, ease:'power2.out', delay:0.5});
-    gsap.to('#skip-btn', {opacity:1, duration:0.7, ease:'power2.out', delay:0.9});
-    gsap.to('#instruction', {opacity:1, duration:0.7, ease:'power2.out', delay:1.6});
-    gsap.to('#ambient-signal', {opacity:1, duration:0.7, ease:'power2.out', delay:1.9});
-
-    updateRemainingCounter();
-  }
-
-  function updateRemainingCounter(){
-    var remaining = MAX_SELECTIONS - state.totalPlaced;
-    var wrap = document.getElementById('remaining-counter');
-    var text = document.getElementById('remaining-text');
-    if(!wrap||!text){ return; }
-    if(state.hasInteracted && state.gameActive){
-      text.textContent = remaining + ' left';
-      wrap.classList.add('visible');
-    } else {
-      wrap.classList.remove('visible');
-    }
-  }
-
-  function updateAmbientSignal(){
-    var el = document.getElementById('ambient-text');
-    if(!el){ return; }
-    var top = getTopZones();
-    if(top[0].count > 0){
-      var names = {business:'Business',self:'Self',home:'Home',space:'Space'};
-      el.textContent = 'Pattern forming — ' + names[top[0].id];
-      el.classList.add('active');
-    } else {
-      el.textContent = 'Updating';
-      el.classList.remove('active');
-    }
-  }
-
-  function schedulePauseResolve(){
-    clearTimeout(state.pauseResolveTimer);
-    if(state.totalPlaced < MIN_SELECTIONS_FOR_PAUSE_RESOLVE || !state.gameActive){ return; }
-    state.pauseResolveTimer = setTimeout(function(){
-      if(!state.gameActive){ return; }
-      updateInstruction("That's enough.");
-      triggerResolution(false);
-    }, AUTO_RESOLVE_DELAY);
-  }
-
-  function handleClick(frag){
-    if(!state.gameActive){ return; }
-    var el = document.getElementById('frag-' + frag.id);
-    if(!el || state.placedFragments[frag.id]){ return; }
-    if(!state.hasInteracted){
-      state.hasInteracted = true;
-      updateInstruction("Keep going.");
-      zones.forEach(function(z){
-        var zoneEl = document.getElementById('zone-' + z.id);
-        if(zoneEl) zoneEl.classList.add('active');
-      });
-    }
-    if(cursor) cursor.classList.add('active');
-    setTimeout(function(){ if(cursor) cursor.classList.remove('active'); }, 180);
-
-    // Click pulse
-    gsap.to(el, {scale:1.04, duration:0.08, ease:'power2.out', onComplete:function(){
-      placeFragment(frag.id, frag.zone);
-      if(state.totalPlaced >= MAX_SELECTIONS){
-        updateInstruction("That's enough.");
-        triggerResolution(false);
-        return;
-      }
-      if(state.totalPlaced >= MAX_SELECTIONS - 1){ updateInstruction("That's enough."); }
-      else { updateInstruction("Keep going."); }
-      schedulePauseResolve();
-    }});
-  }
-
-  function placeFragment(fragId, zoneId){
-    var el = document.getElementById('frag-' + fragId);
-    if(!el || state.placedFragments[fragId]){ return; }
-    state.placedFragments[fragId] = zoneId;
-    state.zoneCounts[zoneId] += 1;
-    state.totalPlaced += 1;
-
-    // Kill floating tween, fade out with GSAP
-    gsap.killTweensOf(el);
-    gsap.to(el, {opacity:0.15, scale:0.88, duration:0.3, ease:'power2.in'});
-    el.classList.add('placed');
-
-    var zoneEl = document.getElementById('zone-' + zoneId);
-    if(zoneEl){
-      if(!state.zoneRevealed[zoneId]){
-        state.zoneRevealed[zoneId] = true;
-        zoneEl.classList.add('revealed');
-        // Animate zone label in
-        gsap.fromTo(zoneEl.querySelector('.zone-name'),
-          {opacity:0, y:6},
-          {opacity:1, y:0, duration:0.5, ease:'power3.out'}
-        );
-        gsap.fromTo(zoneEl.querySelector('.zone-truth'),
-          {opacity:0, y:4},
-          {opacity:1, y:0, duration:0.5, ease:'power3.out', delay:0.1}
-        );
-      }
-      // Flash
-      gsap.fromTo(zoneEl, {background:'rgba(196,163,90,0.18)'}, {background:'rgba(196,163,90,0.03)', duration:0.5, ease:'power2.out'});
-    }
-
-    updateZoneVisuals();
-    updateRemainingCounter();
-    updateAmbientSignal();
-  }
-
-  function getTopZones(){
-    var order = {business:0,self:1,home:2,space:3};
-    return Object.keys(state.zoneCounts)
-      .map(function(id){ return {id:id, count:state.zoneCounts[id]}; })
-      .sort(function(a,b){ return b.count!==a.count ? b.count-a.count : order[a.id]-order[b.id]; });
-  }
-
-  function updateZoneVisuals(){
-    var top = getTopZones();
-    var leadBy = top[0].count - top[1].count;
-    zones.forEach(function(z){
-      var zoneEl = document.getElementById('zone-' + z.id);
-      if(!zoneEl){ return; }
-      var count = state.zoneCounts[z.id];
-      zoneEl.classList.remove('intensity1','intensity2','intensity3','dominant');
-      if(count >= 4) zoneEl.classList.add('intensity3');
-      else if(count >= 2) zoneEl.classList.add('intensity2');
-      else if(count >= 1) zoneEl.classList.add('intensity1');
-      var micro = zoneEl.querySelector('.zone-micro');
-      if(micro) micro.textContent = (micro.getAttribute('data-base')||'') + ' (' + count + ')';
-    });
-    if(top[0].count > 0 && leadBy >= 2){
-      var dominant = document.getElementById('zone-' + top[0].id);
-      if(dominant) dominant.classList.add('dominant');
-    }
-  }
-
-  // ---- RESULT MAP ----
-  var resultMap = {
-    'Revenue Friction':{phase:'Monetize',headline:'Start with: Monetize',problem:'People are not buying what you have.',means:'Either the offer is unclear, priced wrong, or not positioned in a way that makes someone act.',start:'Fix the offer before doing anything else.',cta:'Fix the offer',href:'/monetize'},
-    'Execution Friction':{phase:'Structure',headline:'Start with: Structure',problem:'You start things but do not finish them.',means:'There is no clear breakdown of steps or timeline, so work stalls before completion.',start:'Turn what you are doing into steps you can complete.',cta:'Fix execution',href:'/structure'},
-    'Routine Friction':{phase:'Automation',headline:'Start with: Automation',problem:'You are repeating work or relying on willpower to stay consistent.',means:'Without systems, everything resets and nothing compounds.',start:'Remove repetition and make the work automatic.',cta:'Fix the system',href:'/automation'},
-    'Environment Friction':{phase:'Sovereignty',headline:'Start with: Life',problem:'Your setup is slowing you down.',means:'Your space, schedule, or energy is interfering with output.',start:'Fix your environment so the work becomes easier.',cta:'Fix your setup',href:'/sovereignty'},
-    'Execution Gap':{phase:'Monetize',headline:'Start with: Monetize',problem:'The work exists. People are not buying it.',means:'The offer is not clear enough or the follow-through is breaking before a sale happens.',start:'Get the offer legible before fixing anything else.',cta:'Fix the offer',href:'/monetize'},
-    'Consistency Collapse':{phase:'Structure',headline:'Start with: Structure',problem:'You know what to do but it is not getting done consistently.',means:'The system is not holding long enough for anything to compound.',start:'Build the structure that keeps the work moving without willpower.',cta:'Fix execution',href:'/structure'},
-    'Environment Drag':{phase:'Sovereignty',headline:'Start with: Life',problem:'Your setup is costing output before you even start.',means:'The space, schedule, or energy conditions are creating friction the work has to fight through.',start:'Fix the environment first. The work gets easier immediately.',cta:'Fix your setup',href:'/sovereignty'},
-    'Structural Misalignment':{phase:'Structure',headline:'Start with: Structure',problem:'The build and the environment are working against each other.',means:'You are trying to execute inside conditions that were not designed for this kind of work.',start:'Create the structure that lets the work hold regardless of conditions.',cta:'Fix execution',href:'/structure'},
-    'Capacity Leak':{phase:'Structure',headline:'Start with: Structure',problem:'The ambition is real. The day cannot hold it.',means:'What you are trying to build requires more protected time and capacity than your current setup allows.',start:'Restructure the day so the work has room to actually happen.',cta:'Fix execution',href:'/structure'},
-    'Friction Loop':{phase:'Automation',headline:'Start with: Automation',problem:'You are rebuilding the same things over and over.',means:'Without repeatable systems, effort resets every time and momentum cannot build.',start:'Stop restarting. Document what works and make it the default.',cta:'Fix the system',href:'/automation'}
-  };
-
-  function resolveResult(){
-    var top = getTopZones();
-    var first = top[0], second = top[1];
-    var clearlySingle = first.count > 0 && (first.count - second.count) >= 2;
-    var clusterMap = {'business+self':'Execution Gap','home+self':'Consistency Collapse','home+space':'Environment Drag','business+space':'Structural Misalignment','business+home':'Capacity Leak','self+space':'Friction Loop'};
-    var singleMap = {business:'Revenue Friction',self:'Execution Friction',home:'Routine Friction',space:'Environment Friction'};
-    var label = clearlySingle ? singleMap[first.id] : (clusterMap[[first.id,second.id].sort().join('+')] || singleMap[first.id]);
-    return {label:label, data:resultMap[label], top:top};
-  }
-
-  function buildDiagnosis(){
-    var resolved = resolveResult();
-    var d = resolved.data;
-    var labelEl = document.getElementById('diagnosis-label');
-    var headEl = document.getElementById('diagnosis-heading');
-    var problemEl = document.getElementById('diag-problem');
-    var meansEl = document.getElementById('diag-means');
-    var startEl = document.getElementById('diag-start');
-    var ctaBtn = document.getElementById('diag-cta-btn');
-    if(labelEl) labelEl.textContent = resolved.label;
-    if(headEl) headEl.textContent = d.headline;
-    if(problemEl) problemEl.textContent = d.problem;
-    if(meansEl) meansEl.textContent = d.means;
-    if(startEl) startEl.textContent = d.start;
-    if(ctaBtn){ ctaBtn.setAttribute('href',d.href); ctaBtn.setAttribute('data-target-href',d.href); ctaBtn.textContent = d.cta + ' \u2192'; }
-    setRecommendedRow(normalizeRecommendation(d.phase));
-
-    var zoneNames = {business:'Work',self:'Execution',home:'Daily',space:'Environment'};
-    var zoneSupport = {business:'People are not buying',self:'Work is not getting completed',home:'Nothing is repeating consistently',space:'Your setup is slowing output'};
-    var top = resolved.top;
-    var leadingId = top[0].count > top[1].count ? top[0].id : null;
-    var wrap = document.getElementById('diagnosis-results');
-    if(!wrap){ return; }
-    wrap.innerHTML = '';
-    ['business','self','home','space'].forEach(function(zoneId){
-      var div = document.createElement('div');
-      div.className = 'diag-zone' + (leadingId===zoneId?' leading':'');
-      // Start count at 0 for animation
-      div.innerHTML = '<div class="diag-zone-name">'+zoneNames[zoneId]+'</div><div class="diag-zone-count"><span class="diag-zone-count-num" data-target="'+state.zoneCounts[zoneId]+'">0</span><span class="diag-zone-count-note">signals</span></div><div class="diag-zone-label">'+zoneSupport[zoneId]+'</div>';
-      wrap.appendChild(div);
-    });
-  }
-
-  // ---- RESOLUTION TRANSITION — GSAP choreography ----
-  function triggerResolution(skipToArchive){
-    if(!state.gameActive){ return; }
-    state.gameActive = false;
-    clearTimeout(state.pauseResolveTimer);
-    updateInstruction("That's enough.");
-    buildDiagnosis();
-
-    var field = document.getElementById('game-field');
-    var resolution = document.getElementById('resolution');
-    var header = document.getElementById('site-header');
-
-    // Game field exit: scale down + fade
-    gsap.to(field, {
-      opacity: 0,
-      scale: 0.97,
-      duration: 0.7,
-      ease: 'power2.in',
-      onComplete: function(){
-        field.style.display = 'none';
-        header.style.display = 'none';
-        document.body.classList.add('resolved');
-        resolution.classList.add('visible');
-        // Resume Lenis now that body is scrollable
-        if(lenis){ lenis.start(); }
-
-        // Reset scroll position to top — no auto-scroll
-        window.scrollTo(0, 0);
-
-        // Staggered reveal of diagnosis sections
-        var tl = gsap.timeline({delay: 0.1});
-
-        // Banner container
-        tl.to('#diagnosis-banner', {opacity:1, duration:0.01}, 0);
-
-        // Phase label
-        tl.fromTo('.diag-phase-label',
-          {opacity:0, x:-12},
-          {opacity:1, x:0, duration:0.5, ease:'power3.out'}, 0.05
-        );
-
-        // Big headline
-        tl.fromTo('.diag-headline',
-          {opacity:0, y:22},
-          {opacity:1, y:0, duration:1.0, ease:'power4.out'}, 0.2
-        );
-
-        // Problem + means blocks
-        tl.fromTo('#diag-block-problem',
-          {opacity:0, y:14},
-          {opacity:1, y:0, duration:0.65, ease:'power3.out'}, 0.7
-        );
-        tl.fromTo('#diag-block-means',
-          {opacity:0, y:14},
-          {opacity:1, y:0, duration:0.65, ease:'power3.out'}, 0.82
-        );
-
-        // Start here block
-        tl.fromTo('#diag-block-start',
-          {opacity:0, y:14},
-          {opacity:1, y:0, duration:0.7, ease:'power3.out'}, 1.0
-        );
-
-        // Anchor line
-        tl.fromTo('.diag-anchor-line',
-          {opacity:0},
-          {opacity:1, duration:0.5, ease:'power2.out'}, 1.2
-        );
-
-        // CTA
-        tl.fromTo('#diagnosis-cta',
-          {opacity:0, y:8},
-          {opacity:1, y:0, duration:0.5, ease:'power3.out'}, 1.35
-        );
-
-        // Results grid
-        tl.fromTo('#diagnosis-results-wrap',
-          {opacity:0, y:10},
-          {opacity:1, y:0, duration:0.6, ease:'power3.out'}, 1.55
-        );
-
-        // Count-up with A+B dramatic reveal — blocks build left to right, leading number slams
-        tl.add(function(){
-          var zoneEls = document.querySelectorAll('.diag-zone');
-          var leadingEl = document.querySelector('.diag-zone.leading');
-
-          zoneEls.forEach(function(zone, i){
-            var isLeading = zone.classList.contains('leading');
-            var delay = i * 0.18;
-            var numEl = zone.querySelector('.diag-zone-count-num');
-            var nameEl = zone.querySelector('.diag-zone-name');
-            var noteEl = zone.querySelector('.diag-zone-count-note');
-            var labelEl = zone.querySelector('.diag-zone-label');
-            var target = parseInt(numEl ? numEl.getAttribute('data-target') : '0', 10) || 0;
-
-            // Block slides up
-            gsap.to(zone, {opacity:1, y:0, duration:0.55, ease:'power3.out', delay:delay});
-
-            // Name fades in first
-            gsap.to(nameEl, {opacity:1, duration:0.4, ease:'power2.out', delay:delay + 0.1});
-
-            // Label fades in
-            gsap.to(labelEl, {opacity:1, duration:0.4, ease:'power2.out', delay:delay + 0.15});
-
-            // Note fades in
-            gsap.to(noteEl, {opacity:1, duration:0.35, ease:'power2.out', delay:delay + 0.2});
-
-            if(isLeading){
-              // Leading: pause, then slam with overshoot
-              gsap.set(numEl, {opacity:1, scale:0.7, y:12});
-              gsap.to(numEl, {
-                scale:1.08, y:0,
-                duration:0.5, ease:'back.out(2.2)',
-                delay: delay + 0.35,
-                onStart: function(){
-                  // Terra border draw
-                  gsap.to(zone, {duration:0.01, onComplete:function(){
-                    zone.style.transition = 'none';
-                    var before = window.getComputedStyle(zone, '::before');
-                  }});
-                }
-              });
-              gsap.to(numEl, {scale:1.0, duration:0.3, ease:'power2.inOut', delay: delay + 0.85});
-
-              // Count up after slam settles
-              gsap.to({val:0}, {
-                val: target,
-                duration: 0.7,
-                ease: 'power2.out',
-                delay: delay + 0.4,
-                onUpdate: function(){
-                  numEl.textContent = Math.round(this.targets()[0].val);
-                }
-              });
-
-            } else {
-              // Non-leading: soft count up
-              gsap.to(numEl, {opacity:1, y:0, duration:0.45, ease:'power3.out', delay:delay + 0.25});
-              gsap.to({val:0}, {
-                val: target,
-                duration: 0.6,
-                ease: 'power1.out',
-                delay: delay + 0.3,
-                onUpdate: function(){
-                  numEl.textContent = Math.round(this.targets()[0].val);
-                }
-              });
-            }
-          });
-        }, 1.6);
-
-        // ---- FULL PAGE SCROLL REVEAL — every element line by line ----
-        setTimeout(function(){
-
-          function revealEl(el, delay){
-            delay = delay || 0;
-            ScrollTrigger.create({
-              trigger: el,
-              start: 'top 90%',
-              once: true,
-              onEnter: function(){
-                gsap.to(el, {opacity:1, y:0, duration:0.62, ease:'power3.out', delay:delay});
-              }
-            });
-          }
-
-          function revealEls(selector, staggerDelay){
-            staggerDelay = staggerDelay || 0.07;
-            document.querySelectorAll(selector).forEach(function(el, i){
-              revealEl(el, i * staggerDelay);
-            });
-          }
-
-          // Diagnosis banner elements (already animated in on load, skip)
-
-          // Reveal-stack prose blocks — category, headline, each paragraph individually
-          document.querySelectorAll('.reveal-block').forEach(function(block){
-            var children = block.querySelectorAll('.reveal-category, .reveal-headline, .reveal-body');
-            children.forEach(function(child, i){
-              ScrollTrigger.create({
-                trigger: child,
-                start: 'top 91%',
-                once: true,
-                onEnter: function(){
-                  gsap.to(child, {opacity:1, y:0, duration:0.6, ease:'power3.out', delay: i * 0.08});
-                }
-              });
-            });
-          });
-
-          // Rule divider
-          document.querySelectorAll('.rule-divider').forEach(function(el){
-            gsap.set(el, {opacity:0});
-            ScrollTrigger.create({
-              trigger: el, start:'top 92%', once:true,
-              onEnter: function(){ gsap.to(el, {opacity:1, duration:0.5, ease:'power2.out'}); }
-            });
-          });
-
-          // Menu section header elements
-          ['.menu-label','.phase-headline','.phase-subline','.menu-intro','.menu-command'].forEach(function(sel, i){
-            var el = document.querySelector(sel);
-            if(!el) return;
-            ScrollTrigger.create({
-              trigger: el, start:'top 91%', once:true,
-              onEnter: function(){ gsap.to(el, {opacity:1, y:0, duration:0.55, ease:'power3.out', delay: i*0.07}); }
-            });
-          });
-
-          // Phase rows — each row then its inner elements stagger
-          document.querySelectorAll('.menu-course').forEach(function(row, i){
-            ScrollTrigger.create({
-              trigger: row, start:'top 88%', once:true,
-              onEnter: function(){
-                gsap.to(row, {opacity:1, y:0, duration:0.6, ease:'power3.out'});
-                // Inner elements stagger after row appears
-                var inner = row.querySelectorAll('.course-num, .course-name, .course-desc, .course-detail, .menu-panel-cta');
-                gsap.fromTo(inner,
-                  {opacity:0, y:8},
-                  {opacity:1, y:0, duration:0.45, stagger:0.06, ease:'power2.out', delay:0.15}
-                );
-              }
-            });
-          });
-
-          // Modules note
-          var modNote = document.querySelector('.modules-note');
-          if(modNote) revealEl(modNote);
-
-          // System entry section — every child element
-          var entryChildren = document.querySelectorAll(
-            '.entry-section-label, .entry-description, .entry-price, .entry-price-note, .entry-divider, .cta-row, .entry-note, .private-signal, .founder-signal'
-          );
-          entryChildren.forEach(function(el, i){
-            gsap.set(el, {y:16});
-            ScrollTrigger.create({
-              trigger: el, start:'top 91%', once:true,
-              onEnter: function(){ gsap.to(el, {opacity:1, y:0, duration:0.6, ease:'power3.out', delay: i*0.07}); }
-            });
-          });
-
-          // Philosophy
-          var philEls = document.querySelectorAll('.phil-rule, .phil-quote, .phil-wordmark');
-          philEls.forEach(function(el, i){
-            gsap.set(el, {opacity:0, y:10});
-            ScrollTrigger.create({
-              trigger: el, start:'top 91%', once:true,
-              onEnter: function(){ gsap.to(el, {opacity:1, y:0, duration:0.6, ease:'power3.out', delay: i*0.1}); }
-            });
-          });
-
-          // Footer elements
-          var footerEls = document.querySelectorAll('.footer-left > *, .footer-links a');
-          footerEls.forEach(function(el, i){
-            gsap.set(el, {opacity:0, y:8});
-            ScrollTrigger.create({
-              trigger: el, start:'top 96%', once:true,
-              onEnter: function(){ gsap.to(el, {opacity:1, y:0, duration:0.5, ease:'power2.out', delay: i*0.05}); }
-            });
-          });
-
-          // Recommended phase highlight
-          var headEl = document.getElementById('diagnosis-heading');
-          setRecommendedRow(normalizeRecommendation(headEl ? headEl.textContent : ''));
-
-        }, 300);
-
-        // CTA click handler
-        var diagBtn = document.getElementById('diag-cta-btn');
-        if(diagBtn){
-          diagBtn.addEventListener('click', function(e){
-            e.preventDefault();
-            if(diagBtn.classList.contains('entering')){ return; }
-            diagBtn.classList.add('entering');
-            diagBtn.textContent = 'Opening...';
-            var target = diagBtn.getAttribute('data-target-href') || diagBtn.getAttribute('href') || '/structure';
-            setTimeout(function(){ window.location.href = target; }, 320);
-          });
-        }
-
-        if(skipToArchive){
-          setTimeout(function(){
-            var arch = document.getElementById('system-entry-section');
-            if(arch) arch.scrollIntoView({behavior:'smooth'});
-          }, 500);
-        }
-      }
-    });
-  }
-
-  document.getElementById('skip-btn').addEventListener('click', function(e){
-    e.preventDefault();
-    triggerResolution(false);
-  });
-
-  document.getElementById('game-field').addEventListener('contextmenu', function(e){ e.preventDefault(); });
-
-  // No accordion toggles — page is full scroll reveal
-
-  function safeInit(){
-    try{
-      if(lenis){ lenis.stop(); }
-      initSystemMenu();
-      updateInstruction("Pick what fits.");
-      buildGame();
-    }catch(err){
-      try{ console.error('Stephuary init failed:', err); }catch(_){}
-    }
-  }
-
-  if(document.readyState === 'complete'){ safeInit(); }
-  else {
-    window.addEventListener('load', safeInit, {once:true});
-    window.setTimeout(function(){ if(!document.querySelector('.zone')) safeInit(); }, 1400);
-  }
-}());
 </script>
 </body>
 </html>
