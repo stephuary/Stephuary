@@ -3,319 +3,1206 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Operator Intelligence — Test Mode</title>
-<meta name="description" content="A live preview of a structured operator intelligence system that diagnoses friction, identifies missed leverage, and returns immediate interventions.">
+<title>Operator Intelligence — Live Diagnostic Preview</title>
+<meta name="description" content="A live diagnostic preview of a private operator intelligence system designed to identify structural inefficiencies, missed leverage, and immediate correction paths.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Lato:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg:#0a0a08;--bg-1:#0f100d;--bg-2:#141611;--bg-3:#1a1c16;
-  --text:#f5f0e8;--text-2:rgba(245,240,232,0.72);--text-3:rgba(245,240,232,0.42);
-  --gold:#c4a35a;--gold-soft:rgba(196,163,90,0.35);--gold-faint:rgba(196,163,90,0.12);--gold-dim:rgba(196,163,90,0.06);
-  --border:rgba(196,163,90,0.18);--border-soft:rgba(245,240,232,0.08);
-  --error:#c97f7f;--success:#8ea97d;--warn:#8f835f;
-  --shadow:0 16px 60px rgba(0,0,0,0.32);
+  --bg:#0a0a08;
+  --bg-1:#0f100d;
+  --bg-2:#131510;
+  --bg-3:#181a14;
+  --text:#f5f0e8;
+  --text-2:rgba(245,240,232,0.74);
+  --text-3:rgba(245,240,232,0.44);
+  --text-4:rgba(245,240,232,0.24);
+  --gold:#c4a35a;
+  --gold-soft:rgba(196,163,90,0.28);
+  --gold-faint:rgba(196,163,90,0.11);
+  --gold-dim:rgba(196,163,90,0.045);
+  --border:rgba(196,163,90,0.16);
+  --border-soft:rgba(245,240,232,0.07);
+  --border-softer:rgba(245,240,232,0.045);
+  --error:#c97f7f;
+  --success:#93a983;
+  --shadow:0 18px 70px rgba(0,0,0,0.34);
+  --ease:cubic-bezier(.16,1,.3,1);
 }
 html{scroll-behavior:smooth}
 body{
-  font-family:'Lato',sans-serif;font-weight:300;background:var(--bg);color:var(--text);
-  font-size:16px;line-height:1.72;-webkit-font-smoothing:antialiased;overflow-x:hidden;
+  font-family:'Lato',sans-serif;
+  font-weight:300;
+  background:var(--bg);
+  color:var(--text);
+  font-size:16px;
+  line-height:1.78;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+  overflow-x:hidden;
 }
 a{text-decoration:none;color:inherit}
 button,input,textarea,select{font:inherit}
 body::before{
-  content:'';position:fixed;inset:0;pointer-events:none;z-index:9998;opacity:.36;
-  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  content:'';
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  z-index:9998;
+  opacity:.28;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
 }
+body::after{
+  content:'';
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  z-index:-1;
+  background:
+    radial-gradient(ellipse at 80% 18%, rgba(196,163,90,0.04) 0%, transparent 52%),
+    radial-gradient(ellipse at 12% 86%, rgba(196,163,90,0.025) 0%, transparent 40%);
+}
+::selection{background:rgba(196,163,90,0.22);color:var(--text)}
+::-webkit-scrollbar{width:10px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:rgba(196,163,90,0.12);border-radius:999px;border:2px solid var(--bg)}
+::-webkit-scrollbar-thumb:hover{background:rgba(196,163,90,0.22)}
 
 nav{
-  position:fixed;top:0;left:0;right:0;z-index:100;display:flex;justify-content:space-between;align-items:center;
-  padding:22px 52px;background:rgba(10,10,8,0.94);backdrop-filter:blur(12px);border-bottom:1px solid var(--border-soft);
+  position:fixed;
+  top:0;left:0;right:0;
+  z-index:100;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:22px 52px;
+  background:rgba(10,10,8,0.92);
+  backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--border-softer);
 }
 .nav-mark{
-  font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:300;color:var(--gold);letter-spacing:-.02em;
+  font-family:'Cormorant Garamond',serif;
+  font-size:20px;
+  font-weight:300;
+  color:var(--gold);
+  letter-spacing:-.025em;
 }
 .nav-back{
-  font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-3);transition:color .2s;
-  display:flex;align-items:center;gap:8px;
+  font-size:10px;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--text-3);
+  transition:color .25s var(--ease);
+  display:flex;
+  align-items:center;
+  gap:8px;
 }
 .nav-back::before{content:'←'}
 .nav-back:hover{color:var(--gold)}
 
 #hero{
-  min-height:100vh;display:flex;flex-direction:column;justify-content:flex-end;padding:140px 52px 96px;
-  border-bottom:1px solid var(--border-soft);position:relative;
-}
-#hero::before{
-  content:'';position:absolute;inset:0;pointer-events:none;
-  background:
-    radial-gradient(ellipse at 80% 22%,rgba(196,163,90,0.045) 0%,transparent 55%),
-    radial-gradient(ellipse at 10% 88%,rgba(196,163,90,0.025) 0%,transparent 45%);
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  justify-content:flex-end;
+  padding:148px 52px 108px;
+  border-bottom:1px solid var(--border-softer);
+  position:relative;
 }
 .hero-mark{
-  position:absolute;top:50%;left:52px;transform:translateY(-50%);
-  font-family:'Cormorant Garamond',serif;font-size:clamp(110px,18vw,230px);line-height:1;font-weight:300;
-  color:var(--gold-dim);letter-spacing:-.05em;pointer-events:none;user-select:none;opacity:0;
-  animation:markReveal 1.8s cubic-bezier(.16,1,.3,1) forwards;
+  position:absolute;
+  top:50%;
+  left:52px;
+  transform:translateY(-50%);
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(118px,18vw,230px);
+  line-height:1;
+  font-weight:300;
+  color:var(--gold-dim);
+  letter-spacing:-.055em;
+  pointer-events:none;
+  user-select:none;
+  opacity:0;
+  animation:markReveal 1.8s var(--ease) forwards;
 }
-@keyframes markReveal{from{opacity:0;transform:translateY(-48%) scale(.94)}to{opacity:1;transform:translateY(-50%) scale(1)}}
-.hero-content{position:relative;z-index:1;max-width:1150px}
+@keyframes markReveal{
+  from{opacity:0;transform:translateY(-48%) scale(.95)}
+  to{opacity:1;transform:translateY(-50%) scale(1)}
+}
+.hero-content{position:relative;z-index:1;max-width:1180px}
 .hero-eyebrow{
-  font-size:9px;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);font-weight:500;margin-bottom:32px;opacity:0;
-  animation:fadeUp .7s cubic-bezier(.16,1,.3,1) forwards .3s;
+  font-size:9px;
+  letter-spacing:.32em;
+  text-transform:uppercase;
+  color:var(--gold);
+  font-weight:500;
+  margin-bottom:34px;
+  opacity:0;
+  animation:fadeUp .8s var(--ease) forwards .24s;
 }
 .hero-headline{
-  font-family:'Cormorant Garamond',serif;font-size:clamp(44px,6.4vw,92px);line-height:.98;letter-spacing:-.03em;
-  font-weight:300;color:var(--text);max-width:930px;margin-bottom:24px;opacity:0;
-  animation:fadeUp .8s cubic-bezier(.16,1,.3,1) forwards .45s;
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(46px,6.25vw,92px);
+  line-height:.95;
+  letter-spacing:-.038em;
+  font-weight:300;
+  color:var(--text);
+  max-width:980px;
+  margin-bottom:26px;
+  opacity:0;
+  animation:fadeUp .85s var(--ease) forwards .38s;
 }
 .hero-sub{
-  font-size:18px;color:var(--text-2);line-height:1.6;max-width:630px;margin-bottom:44px;
-  font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:300;opacity:0;
-  animation:fadeUp .7s cubic-bezier(.16,1,.3,1) forwards .6s;
+  max-width:640px;
+  margin-bottom:44px;
+  font-size:18px;
+  color:var(--text-2);
+  line-height:1.6;
+  font-family:'Cormorant Garamond',serif;
+  font-style:italic;
+  font-weight:300;
+  opacity:0;
+  animation:fadeUp .8s var(--ease) forwards .52s;
 }
 .hero-ctas{
-  display:flex;gap:20px;align-items:center;flex-wrap:wrap;opacity:0;
-  animation:fadeUp .6s cubic-bezier(.16,1,.3,1) forwards .75s;
+  display:flex;
+  gap:18px;
+  align-items:center;
+  flex-wrap:wrap;
+  opacity:0;
+  animation:fadeUp .75s var(--ease) forwards .66s;
 }
 .btn-gold-outline,.btn-gold-solid,.btn-dark-outline{
-  display:inline-block;font-size:10px;letter-spacing:.16em;text-transform:uppercase;font-weight:500;
-  padding:16px 44px;transition:background .25s,color .25s,border-color .25s,transform .25s;cursor:pointer;border:none;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  min-height:52px;
+  padding:16px 38px;
+  border:1px solid transparent;
+  font-size:10px;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  font-weight:500;
+  transition:
+    background .28s var(--ease),
+    color .28s var(--ease),
+    border-color .28s var(--ease),
+    transform .28s var(--ease),
+    box-shadow .28s var(--ease);
+  cursor:pointer;
 }
-.btn-gold-outline{color:var(--gold);border:1px solid var(--border);background:transparent}
-.btn-gold-outline:hover{background:var(--gold);color:var(--bg);border-color:var(--gold);transform:translateY(-1px)}
-.btn-gold-solid{color:var(--bg);background:var(--gold);border:1px solid var(--gold)}
-.btn-gold-solid:hover{background:var(--text);border-color:var(--text);color:var(--bg);transform:translateY(-1px)}
-.btn-dark-outline{color:var(--text-2);border:1px solid var(--border-soft);background:transparent}
-.btn-dark-outline:hover{border-color:var(--border);color:var(--text);transform:translateY(-1px)}
+.btn-gold-outline{
+  color:var(--gold);
+  border-color:var(--border);
+  background:transparent;
+}
+.btn-gold-outline:hover{
+  background:var(--gold);
+  color:var(--bg);
+  border-color:var(--gold);
+  transform:translateY(-1px);
+  box-shadow:0 10px 26px rgba(196,163,90,0.14);
+}
+.btn-gold-solid{
+  color:var(--bg);
+  background:var(--gold);
+  border-color:var(--gold);
+}
+.btn-gold-solid:hover{
+  background:var(--text);
+  border-color:var(--text);
+  color:var(--bg);
+  transform:translateY(-1px);
+  box-shadow:0 12px 28px rgba(245,240,232,0.08);
+}
+.btn-dark-outline{
+  color:var(--text-2);
+  border-color:var(--border-soft);
+  background:transparent;
+}
+.btn-dark-outline:hover{
+  color:var(--text);
+  border-color:var(--border);
+  transform:translateY(-1px);
+}
 .hero-secondary{
-  font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-3);
-  border-bottom:1px solid rgba(245,240,232,0.2);padding-bottom:2px;transition:color .2s;cursor:pointer;
+  font-size:10px;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  color:var(--text-3);
+  border-bottom:1px solid rgba(245,240,232,0.18);
+  padding-bottom:2px;
+  transition:color .25s var(--ease),border-color .25s var(--ease);
 }
-.hero-secondary:hover{color:var(--text-2)}
+.hero-secondary:hover{color:var(--text-2);border-color:rgba(245,240,232,0.28)}
+
 .hero-meta{
-  margin-top:60px;display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border-soft);max-width:980px;
-  opacity:0;animation:fadeUp .7s cubic-bezier(.16,1,.3,1) forwards .9s;
+  margin-top:68px;
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:1px;
+  background:var(--border-softer);
+  max-width:980px;
+  opacity:0;
+  animation:fadeUp .85s var(--ease) forwards .82s;
 }
-.hero-meta-item{background:var(--bg-1);padding:24px 24px 22px}
-.hero-meta-label{font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);margin-bottom:10px}
-.hero-meta-copy{font-size:13px;color:var(--text-3);line-height:1.55}
+.hero-meta-item{
+  background:var(--bg-1);
+  padding:26px 24px 24px;
+}
+.hero-meta-label{
+  font-size:9px;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  color:var(--gold);
+  margin-bottom:10px;
+}
+.hero-meta-copy{
+  font-size:13px;
+  color:var(--text-3);
+  line-height:1.62;
+}
 
-@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeUp{
+  from{opacity:0;transform:translateY(16px)}
+  to{opacity:1;transform:translateY(0)}
+}
 
-.section-pad{padding:96px 52px;border-bottom:1px solid var(--border-soft)}
-.two-col{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:start}
+.section-pad{
+  padding:108px 52px;
+  border-bottom:1px solid var(--border-softer);
+}
+.two-col{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:90px;
+  align-items:start;
+}
 .section-eyebrow{
-  font-size:9px;letter-spacing:.28em;text-transform:uppercase;color:var(--gold);font-weight:500;margin-bottom:28px;
-  display:flex;align-items:center;gap:10px;
+  font-size:9px;
+  letter-spacing:.3em;
+  text-transform:uppercase;
+  color:var(--gold);
+  font-weight:500;
+  margin-bottom:30px;
+  display:flex;
+  align-items:center;
+  gap:10px;
 }
-.section-eyebrow::before{content:'';width:20px;height:1px;background:var(--gold);opacity:.5}
+.section-eyebrow::before{
+  content:'';
+  width:20px;
+  height:1px;
+  background:var(--gold);
+  opacity:.46;
+}
 .section-headline{
-  font-family:'Cormorant Garamond',serif;font-size:clamp(32px,3.5vw,48px);line-height:1.08;font-weight:300;color:var(--text);letter-spacing:-.015em;
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(34px,3.45vw,48px);
+  line-height:1.04;
+  letter-spacing:-.028em;
+  font-weight:300;
+  color:var(--text);
 }
-.what-body{font-size:15px;color:var(--text-2);line-height:1.78;margin-bottom:24px}
-.plain-list{list-style:none;display:grid;gap:12px;margin-bottom:32px}
-.plain-list li{font-size:14px;color:var(--text-3);padding-left:18px;position:relative;line-height:1.55}
-.plain-list li::before{content:'';position:absolute;left:0;top:8px;width:5px;height:1px;background:var(--gold);opacity:.5}
+.what-body{
+  font-size:15px;
+  color:var(--text-2);
+  line-height:1.84;
+  margin-bottom:26px;
+  max-width:560px;
+}
+.plain-list{
+  list-style:none;
+  display:grid;
+  gap:12px;
+  margin-bottom:34px;
+  max-width:560px;
+}
+.plain-list li{
+  font-size:14px;
+  color:var(--text-3);
+  padding-left:18px;
+  position:relative;
+  line-height:1.62;
+}
+.plain-list li::before{
+  content:'';
+  position:absolute;
+  left:0;
+  top:9px;
+  width:5px;
+  height:1px;
+  background:var(--gold);
+  opacity:.5;
+}
 .italic-close{
-  font-family:'Cormorant Garamond',serif;font-style:italic;font-size:18px;color:var(--text-2);line-height:1.55;
-  padding-top:20px;border-top:1px solid var(--border-soft)
+  max-width:580px;
+  padding-top:20px;
+  border-top:1px solid var(--border-softer);
+  font-family:'Cormorant Garamond',serif;
+  font-style:italic;
+  font-size:18px;
+  color:var(--text-2);
+  line-height:1.56;
 }
+
+.entry-panel{
+  max-width:840px;
+  padding:28px 30px;
+  background:linear-gradient(180deg,var(--bg-1),rgba(15,16,13,0.96));
+  border:1px solid var(--border-soft);
+  box-shadow:var(--shadow);
+}
+.entry-kicker{
+  font-size:10px;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  color:var(--gold);
+  margin-bottom:14px;
+}
+.entry-copy{
+  max-width:640px;
+  font-size:15px;
+  color:var(--text-2);
+  line-height:1.78;
+  margin-bottom:22px;
+}
+.entry-copy strong{font-weight:400;color:var(--text)}
 
 .live-shell{
-  display:grid;grid-template-columns:minmax(0,1fr) 420px;gap:36px;align-items:start;
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 420px;
+  gap:38px;
+  align-items:start;
 }
 .form-wrap{max-width:100%}
-.form-intro{font-size:15px;color:var(--text-2);line-height:1.78;margin-bottom:36px}
-.form-grid{display:grid;gap:20px}
-.field-group{display:grid;gap:10px}
-.field-label{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);font-weight:500}
-.field-help{font-size:13px;color:var(--text-3);line-height:1.55}
+.form-intro{
+  max-width:620px;
+  font-size:15px;
+  color:var(--text-2);
+  line-height:1.82;
+  margin-bottom:36px;
+}
+.form-stage{
+  display:grid;
+  gap:18px;
+}
+.step-card{
+  padding:22px 22px 20px;
+  border:1px solid var(--border-soft);
+  background:linear-gradient(180deg,var(--bg-1),rgba(15,16,13,0.96));
+  transition:
+    border-color .35s var(--ease),
+    background .35s var(--ease),
+    transform .35s var(--ease),
+    opacity .35s var(--ease);
+  opacity:.56;
+}
+.step-card.active{
+  opacity:1;
+  border-color:var(--border);
+  background:linear-gradient(180deg,var(--bg-2),rgba(19,21,16,0.98));
+  transform:translateY(-1px);
+}
+.step-card.complete{
+  opacity:.82;
+}
+.step-top{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:18px;
+  margin-bottom:12px;
+}
+.step-label{
+  font-size:10px;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  color:var(--gold);
+  font-weight:500;
+}
+.step-index{
+  font-size:10px;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--text-4);
+}
+.step-question{
+  font-family:'Cormorant Garamond',serif;
+  font-size:28px;
+  line-height:1.08;
+  letter-spacing:-.02em;
+  font-weight:300;
+  color:var(--text);
+  margin-bottom:10px;
+}
+.step-help{
+  font-size:13px;
+  color:var(--text-3);
+  line-height:1.62;
+  margin-bottom:16px;
+  max-width:560px;
+}
 .field-input,.field-textarea,.field-select{
-  width:100%;background:var(--bg-1);color:var(--text);border:1px solid var(--border-soft);padding:16px 18px;
-  font-family:'Lato',sans-serif;font-size:15px;font-weight:300;outline:none;
-  transition:border-color .2s,background .2s,box-shadow .2s,transform .2s;
+  width:100%;
+  background:rgba(10,10,8,0.22);
+  color:var(--text);
+  border:1px solid var(--border-softer);
+  padding:16px 18px;
+  font-size:15px;
+  font-weight:300;
+  outline:none;
+  line-height:1.7;
+  transition:
+    border-color .28s var(--ease),
+    background .28s var(--ease),
+    box-shadow .28s var(--ease),
+    transform .28s var(--ease);
+  caret-color:var(--gold);
 }
-.field-input::placeholder,.field-textarea::placeholder{color:rgba(245,240,232,0.32)}
+.field-input::placeholder,.field-textarea::placeholder{color:rgba(245,240,232,0.28)}
 .field-input:focus,.field-textarea:focus,.field-select:focus{
-  border-color:var(--border);background:var(--bg-2);box-shadow:0 0 0 1px rgba(196,163,90,0.12);
+  border-color:var(--border);
+  background:var(--bg-2);
+  box-shadow:0 0 0 1px rgba(196,163,90,0.1),0 0 22px rgba(196,163,90,0.045);
+  transform:translateY(-1px);
 }
-.field-textarea{min-height:130px;resize:vertical}
+.field-textarea{min-height:128px;resize:vertical}
 .field-select{
   appearance:none;
   background-image:
     linear-gradient(45deg,transparent 50%,var(--gold) 50%),
     linear-gradient(135deg,var(--gold) 50%,transparent 50%);
-  background-position:calc(100% - 20px) calc(1.2em + 2px),calc(100% - 15px) calc(1.2em + 2px);
-  background-size:5px 5px,5px 5px;background-repeat:no-repeat;
+  background-position:calc(100% - 20px) calc(1.25em + 2px),calc(100% - 15px) calc(1.25em + 2px);
+  background-size:5px 5px,5px 5px;
+  background-repeat:no-repeat;
 }
-.form-actions{display:flex;gap:20px;align-items:center;flex-wrap:wrap;margin-top:8px}
-.form-note{font-size:13px;color:var(--text-3);line-height:1.65;max-width:380px}
-.small-guard{
-  display:inline-flex;align-items:center;gap:10px;padding:12px 14px;border:1px solid var(--border-soft);background:var(--bg-1);margin-top:10px
+.reveal-step{
+  max-height:0;
+  overflow:hidden;
+  transition:max-height .7s var(--ease),opacity .55s var(--ease),margin-top .55s var(--ease);
+  opacity:0;
+  margin-top:0;
 }
-.small-guard span:first-child{font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold)}
-.small-guard span:last-child{font-size:13px;color:var(--text-3)}
+.reveal-step.visible{
+  max-height:340px;
+  opacity:1;
+  margin-top:16px;
+}
+
+.form-footer{
+  margin-top:20px;
+  display:flex;
+  flex-wrap:wrap;
+  gap:18px;
+  align-items:center;
+}
+.form-note{
+  max-width:420px;
+  font-size:13px;
+  color:var(--text-3);
+  line-height:1.65;
+}
+.system-ready{
+  margin-top:14px;
+  display:inline-flex;
+  align-items:center;
+  gap:12px;
+  padding:12px 14px;
+  border:1px solid var(--border-softer);
+  background:var(--bg-1);
+}
+.system-ready-dot{
+  width:7px;height:7px;border-radius:50%;
+  background:var(--gold);
+  box-shadow:0 0 0 rgba(196,163,90,0.46);
+  animation:pulse 1.8s infinite;
+}
+.system-ready-copy{
+  font-size:12px;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--text-3);
+}
+@keyframes pulse{
+  0%{box-shadow:0 0 0 0 rgba(196,163,90,0.42)}
+  70%{box-shadow:0 0 0 12px rgba(196,163,90,0)}
+  100%{box-shadow:0 0 0 0 rgba(196,163,90,0)}
+}
+
 .side-panel{
-  position:sticky;top:110px;background:linear-gradient(180deg,var(--bg-1),rgba(15,16,13,0.94));border:1px solid var(--border-soft);
-  padding:28px 26px;box-shadow:var(--shadow)
+  position:sticky;
+  top:110px;
+  background:linear-gradient(180deg,var(--bg-1),rgba(15,16,13,0.95));
+  border:1px solid var(--border-soft);
+  padding:28px 26px;
+  box-shadow:var(--shadow);
 }
 .side-panel-title{
-  font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);margin-bottom:16px
+  font-size:10px;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  color:var(--gold);
+  margin-bottom:18px;
 }
-.side-panel-body{font-size:14px;color:var(--text-3);line-height:1.72;margin-bottom:22px}
-.side-list{list-style:none;display:grid;gap:14px}
-.side-list li{padding-left:18px;position:relative;font-size:13px;color:var(--text-2);line-height:1.55}
-.side-list li::before{content:'';position:absolute;left:0;top:8px;width:5px;height:1px;background:var(--gold);opacity:.55}
+.side-panel-body{
+  font-size:14px;
+  color:var(--text-3);
+  line-height:1.74;
+  margin-bottom:22px;
+}
+.signal-box{
+  padding:18px 18px 16px;
+  border:1px solid var(--border-softer);
+  background:rgba(10,10,8,0.22);
+  margin-bottom:18px;
+}
+.signal-box-label{
+  font-size:10px;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  color:var(--gold);
+  margin-bottom:12px;
+}
+.signal-item{
+  padding:10px 0;
+  border-top:1px solid var(--border-softer);
+}
+.signal-item:first-of-type{border-top:none;padding-top:0}
+.signal-name{
+  font-size:10px;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--text-4);
+  margin-bottom:6px;
+}
+.signal-value{
+  font-size:14px;
+  color:var(--text-2);
+  line-height:1.58;
+}
+.side-list{
+  list-style:none;
+  display:grid;
+  gap:14px;
+}
+.side-list li{
+  padding-left:18px;
+  position:relative;
+  font-size:13px;
+  color:var(--text-2);
+  line-height:1.58;
+}
+.side-list li::before{
+  content:'';
+  position:absolute;
+  left:0;top:8px;
+  width:5px;height:1px;
+  background:var(--gold);
+  opacity:.55;
+}
 .side-panel-foot{
-  margin-top:24px;padding-top:18px;border-top:1px solid var(--border-soft);font-family:'Cormorant Garamond',serif;
-  font-style:italic;font-size:16px;color:var(--text-3);line-height:1.55
+  margin-top:24px;
+  padding-top:18px;
+  border-top:1px solid var(--border-softer);
+  font-family:'Cormorant Garamond',serif;
+  font-style:italic;
+  font-size:16px;
+  color:var(--text-3);
+  line-height:1.54;
 }
 
 .engine-wrap{margin-top:42px}
 .state-panel,.result-shell,.error-panel{
-  border:1px solid var(--border-soft);background:linear-gradient(180deg,var(--bg-1),rgba(15,16,13,0.95));box-shadow:var(--shadow);
+  display:none;
+  border:1px solid var(--border-soft);
+  background:linear-gradient(180deg,var(--bg-1),rgba(15,16,13,0.96));
+  box-shadow:var(--shadow);
 }
-.state-panel{display:none;padding:28px 28px 26px}
 .state-panel.visible,.result-shell.visible,.error-panel.visible{display:block}
-.state-top{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;margin-bottom:22px}
+.state-panel{padding:30px 30px 28px}
+.state-top{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:18px;
+  margin-bottom:24px;
+}
 .state-top h3{
-  font-family:'Cormorant Garamond',serif;font-size:34px;font-weight:300;letter-spacing:-.02em;line-height:1.05;color:var(--text)
+  font-family:'Cormorant Garamond',serif;
+  font-size:34px;
+  line-height:1.02;
+  letter-spacing:-.02em;
+  font-weight:300;
+  color:var(--text);
+  margin-bottom:8px;
 }
-.state-top p{max-width:480px;font-size:14px;color:var(--text-3);line-height:1.65}
-.state-pulse{
-  width:12px;height:12px;border-radius:50%;background:var(--gold);box-shadow:0 0 0 rgba(196,163,90,0.5);animation:pulse 1.6s infinite;
-}
-@keyframes pulse{
-  0%{box-shadow:0 0 0 0 rgba(196,163,90,0.45)}
-  70%{box-shadow:0 0 0 14px rgba(196,163,90,0)}
-  100%{box-shadow:0 0 0 0 rgba(196,163,90,0)}
+.state-top p{
+  max-width:500px;
+  font-size:14px;
+  color:var(--text-3);
+  line-height:1.68;
 }
 .status-lines{display:grid;gap:12px}
 .status-line{
-  display:flex;justify-content:space-between;align-items:center;padding:14px 16px;background:var(--bg-2);border:1px solid var(--border-soft)
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:14px 16px;
+  background:var(--bg-2);
+  border:1px solid var(--border-softer);
+  transition:border-color .35s var(--ease),transform .35s var(--ease),background .35s var(--ease);
 }
-.status-label{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-2)}
+.status-label{
+  font-size:12px;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  color:var(--text-2);
+  transition:color .35s var(--ease);
+}
 .status-dot{
-  width:7px;height:7px;border-radius:50%;background:var(--gold-soft);opacity:.35;transition:opacity .35s ease,transform .35s ease,background .35s ease;
+  width:7px;height:7px;border-radius:50%;
+  background:var(--gold-soft);
+  opacity:.34;
+  transition:opacity .35s var(--ease),transform .35s var(--ease),background .35s var(--ease);
 }
-.status-line.active .status-dot{opacity:1;transform:scale(1.25);background:var(--gold)}
+.status-line.active{
+  border-color:var(--border);
+  transform:translateY(-1px);
+}
+.status-line.active .status-dot{
+  opacity:1;
+  transform:scale(1.24);
+  background:var(--gold);
+}
 .status-line.active .status-label{color:var(--gold)}
 
-.result-shell{display:none;padding:30px 30px 0}
+.error-panel{
+  padding:24px;
+  border-color:rgba(201,127,127,0.24);
+}
+.error-title{
+  font-size:10px;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  color:var(--error);
+  margin-bottom:10px;
+}
+.error-body{
+  font-size:14px;
+  color:var(--text-2);
+  line-height:1.66;
+}
+
+.result-shell{padding:32px 32px 0}
 .result-top{
-  display:flex;justify-content:space-between;align-items:flex-end;gap:20px;margin-bottom:24px;padding-bottom:22px;border-bottom:1px solid var(--border-soft)
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-end;
+  gap:20px;
+  margin-bottom:26px;
+  padding-bottom:22px;
+  border-bottom:1px solid var(--border-softer);
 }
-.result-kicker{font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:10px}
+.result-kicker{
+  font-size:9px;
+  letter-spacing:.2em;
+  text-transform:uppercase;
+  color:var(--gold);
+  margin-bottom:10px;
+}
 .result-title{
-  font-family:'Cormorant Garamond',serif;font-size:clamp(34px,4vw,52px);line-height:1.02;font-weight:300;letter-spacing:-.02em;color:var(--text)
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(34px,4vw,52px);
+  line-height:1;
+  letter-spacing:-.026em;
+  font-weight:300;
+  color:var(--text);
 }
-.result-sub{font-size:13px;color:var(--text-3);max-width:390px;line-height:1.65}
+.result-sub{
+  max-width:390px;
+  font-size:13px;
+  color:var(--text-3);
+  line-height:1.66;
+}
+.result-friction{
+  margin-bottom:18px;
+  padding:16px 18px;
+  border:1px solid var(--border-softer);
+  background:rgba(10,10,8,0.18);
+}
+.result-friction-copy{
+  font-size:13px;
+  color:var(--text-3);
+  line-height:1.64;
+}
 .system-note{
-  padding:24px;border:1px solid var(--border);background:linear-gradient(180deg,rgba(196,163,90,0.09),rgba(196,163,90,0.03));
-  margin-bottom:18px
+  padding:26px;
+  border:1px solid var(--border);
+  background:linear-gradient(180deg,rgba(196,163,90,0.09),rgba(196,163,90,0.025));
+  margin-bottom:20px;
 }
-.system-note-label{font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);margin-bottom:10px}
+.system-note-label{
+  font-size:10px;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  color:var(--gold);
+  margin-bottom:10px;
+}
 .system-note-copy{
-  font-family:'Cormorant Garamond',serif;font-size:28px;line-height:1.14;font-weight:300;letter-spacing:-.015em;color:var(--text)
+  font-family:'Cormorant Garamond',serif;
+  font-size:30px;
+  line-height:1.12;
+  letter-spacing:-.018em;
+  font-weight:300;
+  color:var(--text);
 }
-.intervention-grid{display:grid;gap:16px;margin-bottom:18px}
+.meaning-panel{
+  display:none;
+  margin-bottom:20px;
+  padding:22px;
+  border:1px solid var(--border-softer);
+  background:var(--bg-1);
+}
+.meaning-panel.visible{display:block}
+.meaning-label{
+  font-size:10px;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  color:var(--gold);
+  margin-bottom:10px;
+}
+.meaning-copy{
+  font-size:16px;
+  color:var(--text-2);
+  line-height:1.72;
+}
+.intervention-grid{
+  display:grid;
+  gap:18px;
+  margin-bottom:22px;
+}
 .intervention-card{
-  padding:22px;border:1px solid var(--border-soft);background:var(--bg-1);transition:border-color .2s,transform .2s,background .2s
+  opacity:0;
+  transform:translateY(8px);
+  transition:opacity .55s var(--ease),transform .55s var(--ease),border-color .25s var(--ease),background .25s var(--ease);
+  padding:24px;
+  border:1px solid var(--border-softer);
+  background:var(--bg-1);
 }
-.intervention-card:hover{border-color:var(--border);transform:translateY(-1px);background:var(--bg-2)}
-.intervention-top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;margin-bottom:14px}
-.intervention-name{font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold)}
-.intervention-index{font-size:10px;color:var(--text-3);letter-spacing:.14em;text-transform:uppercase}
+.intervention-card.visible{
+  opacity:1;
+  transform:translateY(0);
+}
+.intervention-card:hover{
+  border-color:var(--border);
+  background:var(--bg-2);
+}
+.intervention-top{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:14px;
+  margin-bottom:14px;
+}
+.intervention-name{
+  font-size:10px;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  color:var(--gold);
+}
+.intervention-index{
+  font-size:10px;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--text-4);
+}
 .intervention-diagnosis{
-  font-size:16px;color:var(--text);line-height:1.6;margin-bottom:14px
+  font-size:17px;
+  color:var(--text);
+  line-height:1.68;
+  margin-bottom:14px;
 }
 .intervention-action{
-  padding-top:14px;border-top:1px solid var(--border-soft);font-size:14px;color:var(--text-2);line-height:1.72
+  padding-top:14px;
+  border-top:1px solid var(--border-softer);
+  font-size:14px;
+  color:var(--text-2);
+  line-height:1.76;
 }
 .next-move{
-  margin-bottom:26px;padding:22px;border:1px solid var(--border-soft);background:var(--bg-2)
+  display:none;
+  margin-bottom:20px;
+  padding:24px;
+  border:1px solid var(--border-soft);
+  background:var(--bg-2);
 }
-.next-move-label{font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);margin-bottom:10px}
-.next-move-copy{font-size:18px;color:var(--text);line-height:1.6}
+.next-move.visible{display:block}
+.next-move-label{
+  font-size:10px;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  color:var(--gold);
+  margin-bottom:10px;
+}
+.next-move-copy{
+  font-size:18px;
+  color:var(--text);
+  line-height:1.68;
+}
+.result-meta{
+  display:none;
+  grid-template-columns:1fr 1fr;
+  gap:1px;
+  background:var(--border-softer);
+  margin-bottom:22px;
+}
+.result-meta.visible{display:grid}
+.result-meta-item{
+  background:var(--bg-1);
+  padding:16px 18px;
+}
+.result-meta-label{
+  font-size:10px;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--text-4);
+  margin-bottom:8px;
+}
+.result-meta-value{
+  font-size:14px;
+  color:var(--text-2);
+  line-height:1.6;
+}
+.alt-view-wrap{
+  display:none;
+  margin-bottom:20px;
+}
+.alt-view-wrap.visible{display:block}
+.view-toggle{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  min-height:44px;
+  padding:12px 18px;
+  border:1px solid var(--border-soft);
+  background:transparent;
+  color:var(--text-2);
+  font-size:10px;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  transition:all .28s var(--ease);
+  cursor:pointer;
+}
+.view-toggle:hover{
+  border-color:var(--border);
+  color:var(--text);
+}
+.alt-view-panel{
+  display:none;
+  margin-top:14px;
+  padding:22px;
+  border:1px solid var(--border-softer);
+  background:rgba(10,10,8,0.18);
+}
+.alt-view-panel.visible{display:block}
+.alt-grid{
+  display:grid;
+  gap:14px;
+}
+.alt-row{
+  padding:14px 0;
+  border-top:1px solid var(--border-softer);
+}
+.alt-row:first-child{border-top:none;padding-top:0}
+.alt-label{
+  font-size:10px;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  color:var(--gold);
+  margin-bottom:8px;
+}
+.alt-copy{
+  font-size:14px;
+  color:var(--text-2);
+  line-height:1.72;
+}
+.preview-complete{
+  display:none;
+  margin-bottom:20px;
+  padding:18px 20px;
+  border:1px solid var(--border-softer);
+  background:rgba(10,10,8,0.18);
+}
+.preview-complete.visible{display:block}
+.preview-complete-title{
+  font-size:10px;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  color:var(--gold);
+  margin-bottom:8px;
+}
+.preview-complete-copy{
+  font-size:14px;
+  color:var(--text-3);
+  line-height:1.68;
+}
 .gate-block{
-  margin:0 -30px;padding:34px 30px;background:linear-gradient(180deg,var(--bg-3),rgba(20,22,17,0.94));border-top:1px solid var(--border-soft)
+  margin:0 -32px;
+  padding:36px 32px;
+  background:linear-gradient(180deg,var(--bg-3),rgba(24,26,20,0.95));
+  border-top:1px solid var(--border-softer);
 }
 .gate-head{
-  display:grid;grid-template-columns:1.2fr .8fr;gap:28px;align-items:end;margin-bottom:24px
+  display:grid;
+  grid-template-columns:1.2fr .8fr;
+  gap:30px;
+  align-items:end;
+  margin-bottom:26px;
 }
 .gate-headline{
-  font-family:'Cormorant Garamond',serif;font-size:clamp(30px,3.4vw,42px);line-height:1.04;font-weight:300;letter-spacing:-.02em
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(30px,3.4vw,42px);
+  line-height:1.03;
+  letter-spacing:-.026em;
+  font-weight:300;
+  color:var(--text);
 }
-.gate-copy{font-size:14px;color:var(--text-3);line-height:1.72}
-.lock-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border-soft);margin-bottom:24px}
-.lock-item{background:var(--bg-1);padding:22px}
-.lock-label{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--text);margin-bottom:8px}
-.lock-body{font-size:13px;color:var(--text-3);line-height:1.6}
-.gate-actions{display:flex;gap:18px;align-items:center;flex-wrap:wrap}
-.gate-note{font-size:12px;color:var(--text-3);letter-spacing:.08em;text-transform:uppercase}
+.gate-copy{
+  font-size:14px;
+  color:var(--text-3);
+  line-height:1.74;
+}
+.lock-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:1px;
+  background:var(--border-softer);
+  margin-bottom:24px;
+}
+.lock-item{
+  background:var(--bg-1);
+  padding:22px;
+}
+.lock-label{
+  font-size:10px;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--text);
+  margin-bottom:8px;
+}
+.lock-body{
+  font-size:13px;
+  color:var(--text-3);
+  line-height:1.64;
+}
+.gate-actions{
+  display:flex;
+  gap:16px;
+  align-items:center;
+  flex-wrap:wrap;
+}
+.gate-note{
+  font-size:12px;
+  color:var(--text-3);
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
 
-.error-panel{display:none;padding:22px;margin-top:18px;border-color:rgba(201,127,127,0.28)}
-.error-title{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--error);margin-bottom:10px}
-.error-body{font-size:14px;color:var(--text-2);line-height:1.65}
-
-.inside-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border-soft);max-width:100%;margin-top:56px}
-.inside-item{background:var(--bg-1);padding:32px 28px}
+.inside-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:1px;
+  background:var(--border-softer);
+  margin-top:58px;
+}
+.inside-item{
+  background:var(--bg-1);
+  padding:34px 28px;
+}
 .inside-num{
-  font-family:'Cormorant Garamond',serif;font-size:36px;font-weight:300;color:var(--gold-soft);line-height:1;margin-bottom:16px;letter-spacing:-.02em;
+  font-family:'Cormorant Garamond',serif;
+  font-size:38px;
+  font-weight:300;
+  color:var(--gold-soft);
+  line-height:1;
+  margin-bottom:16px;
+  letter-spacing:-.02em;
 }
-.inside-title{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--text);font-weight:400;margin-bottom:8px}
-.inside-body{font-size:13px;color:var(--text-3);line-height:1.6}
+.inside-title{
+  font-size:12px;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  color:var(--text);
+  font-weight:400;
+  margin-bottom:8px;
+}
+.inside-body{
+  font-size:13px;
+  color:var(--text-3);
+  line-height:1.64;
+}
 .inside-closing{
-  margin-top:36px;max-width:680px;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:16px;color:var(--text-3);line-height:1.65;
+  margin-top:38px;
+  max-width:700px;
+  font-family:'Cormorant Garamond',serif;
+  font-style:italic;
+  font-size:16px;
+  color:var(--text-3);
+  line-height:1.66;
 }
 
-.benchmark-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border-soft);margin-top:48px}
-.benchmark-item{background:var(--bg-1);padding:24px}
-.benchmark-k{font-family:'Cormorant Garamond',serif;font-size:30px;color:var(--gold-soft);margin-bottom:8px}
-.benchmark-t{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--text);margin-bottom:10px}
-.benchmark-b{font-size:13px;color:var(--text-3);line-height:1.58}
+.benchmark-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:1px;
+  background:var(--border-softer);
+  margin-top:50px;
+}
+.benchmark-item{
+  background:var(--bg-1);
+  padding:24px;
+}
+.benchmark-k{
+  font-family:'Cormorant Garamond',serif;
+  font-size:30px;
+  color:var(--gold-soft);
+  margin-bottom:8px;
+}
+.benchmark-t{
+  font-size:10px;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--text);
+  margin-bottom:10px;
+}
+.benchmark-b{
+  font-size:13px;
+  color:var(--text-3);
+  line-height:1.62;
+}
 
-.who-list{list-style:none;max-width:860px;display:grid;gap:0;margin-top:48px}
+.who-list{
+  list-style:none;
+  max-width:880px;
+  display:grid;
+  gap:0;
+  margin-top:48px;
+}
 .who-item{
-  padding:22px 0;border-bottom:1px solid var(--border-soft);font-family:'Cormorant Garamond',serif;
-  font-size:clamp(20px,2.2vw,28px);font-weight:300;color:var(--text-2);line-height:1.3;display:flex;align-items:baseline;gap:16px;
+  padding:22px 0;
+  border-bottom:1px solid var(--border-softer);
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(20px,2.2vw,28px);
+  font-weight:300;
+  color:var(--text-2);
+  line-height:1.3;
+  display:flex;
+  align-items:baseline;
+  gap:16px;
 }
-.who-item:first-child{border-top:1px solid var(--border-soft)}
-.who-num{font-size:10px;letter-spacing:.12em;color:var(--gold-soft);font-family:'Lato',sans-serif;flex-shrink:0;padding-top:4px}
+.who-item:first-child{border-top:1px solid var(--border-softer)}
+.who-num{
+  font-size:10px;
+  letter-spacing:.12em;
+  color:var(--gold-soft);
+  font-family:'Lato',sans-serif;
+  flex-shrink:0;
+  padding-top:4px;
+}
 
-#final{padding:120px 52px;text-align:center;position:relative}
+#final{
+  padding:124px 52px;
+  text-align:center;
+  position:relative;
+}
 #final::before{
-  content:'';position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at center,rgba(196,163,90,0.04) 0%,transparent 65%);
+  content:'';
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  background:radial-gradient(ellipse at center,rgba(196,163,90,0.032) 0%,transparent 65%);
 }
 .final-headline{
-  font-family:'Cormorant Garamond',serif;font-size:clamp(36px,5vw,68px);line-height:1.04;font-weight:300;color:var(--text);
-  letter-spacing:-.02em;max-width:820px;margin:0 auto 26px;
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(38px,5vw,68px);
+  line-height:1.02;
+  font-weight:300;
+  letter-spacing:-.028em;
+  color:var(--text);
+  max-width:860px;
+  margin:0 auto 24px;
 }
-.final-sub{max-width:560px;margin:0 auto 40px;font-size:15px;color:var(--text-3);line-height:1.72}
+.final-sub{
+  max-width:580px;
+  margin:0 auto 40px;
+  font-size:15px;
+  color:var(--text-3);
+  line-height:1.74;
+}
 
 footer{
-  padding:40px 52px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:20px;background:var(--bg-3);
-  border-top:1px solid var(--border-soft);
+  padding:42px 52px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:20px;
+  background:var(--bg-3);
+  border-top:1px solid var(--border-softer);
 }
-.footer-mark{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:300;color:var(--gold)}
+.footer-mark{
+  font-family:'Cormorant Garamond',serif;
+  font-size:18px;
+  font-weight:300;
+  color:var(--gold);
+}
 .footer-links{display:flex;gap:24px;flex-wrap:wrap}
-.footer-link{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-3);transition:color .2s}
+.footer-link{
+  font-size:10px;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  color:var(--text-3);
+  transition:color .25s var(--ease);
+}
 .footer-link:hover{color:var(--gold)}
 
 .mobile-sticky{
-  display:none;position:fixed;bottom:0;left:0;right:0;z-index:200;padding:14px 20px;background:rgba(10,10,8,0.97);
-  border-top:1px solid var(--border);backdrop-filter:blur(12px)
+  display:none;
+  position:fixed;
+  bottom:0;left:0;right:0;
+  z-index:200;
+  padding:14px 20px;
+  background:rgba(10,10,8,0.97);
+  border-top:1px solid var(--border);
+  backdrop-filter:blur(12px);
 }
 .mobile-sticky a{
-  display:block;text-align:center;background:var(--gold);color:var(--bg);font-size:10px;letter-spacing:.16em;text-transform:uppercase;
-  font-weight:500;padding:15px;
+  display:block;
+  text-align:center;
+  background:var(--gold);
+  color:var(--bg);
+  font-size:10px;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  font-weight:500;
+  padding:15px;
 }
 
-.reveal{opacity:0;transform:translateY(18px);transition:opacity .7s cubic-bezier(.16,1,.3,1),transform .7s cubic-bezier(.16,1,.3,1)}
-.reveal.visible{opacity:1;transform:translateY(0)}
-.reveal-d1{transition-delay:.1s}.reveal-d2{transition-delay:.2s}.reveal-d3{transition-delay:.3s}
+.reveal{
+  opacity:0;
+  transform:translateY(18px);
+  transition:opacity .85s var(--ease),transform .85s var(--ease);
+}
+.reveal.visible{
+  opacity:1;
+  transform:translateY(0);
+}
+.reveal-d1{transition-delay:.08s}
+.reveal-d2{transition-delay:.16s}
+.reveal-d3{transition-delay:.24s}
 
 @media(max-width:1100px){
   .live-shell{grid-template-columns:1fr}
@@ -326,16 +1213,17 @@ footer{
 }
 @media(max-width:900px){
   nav{padding:18px 20px}
-  #hero{padding:110px 20px 72px;min-height:auto}
-  .hero-mark{font-size:clamp(80px,28vw,140px);left:20px}
+  #hero{padding:112px 20px 76px;min-height:auto}
+  .hero-mark{font-size:clamp(84px,28vw,140px);left:20px}
   .hero-meta{grid-template-columns:1fr}
-  .section-pad{padding:64px 20px}
-  .two-col{grid-template-columns:1fr;gap:36px}
-  .inside-grid{grid-template-columns:1fr;max-width:100%}
+  .section-pad{padding:74px 20px}
+  .two-col{grid-template-columns:1fr;gap:38px}
+  .inside-grid{grid-template-columns:1fr}
   .benchmark-grid{grid-template-columns:1fr}
-  .result-shell{padding:22px 22px 0}
-  .gate-block{margin:0 -22px;padding:28px 22px}
-  #final{padding:80px 20px}
+  .result-shell{padding:24px 24px 0}
+  .gate-block{margin:0 -24px;padding:30px 24px}
+  .result-meta{grid-template-columns:1fr}
+  #final{padding:84px 20px}
   footer{padding:32px 20px;flex-direction:column;align-items:flex-start}
   .mobile-sticky{display:block}
   body{padding-bottom:64px}
@@ -352,27 +1240,39 @@ footer{
 <section id="hero">
   <div class="hero-mark" aria-hidden="true">OI</div>
   <div class="hero-content">
-    <div class="hero-eyebrow">Live preview</div>
-    <h1 class="hero-headline">A system that identifies where you’re operating inefficiently and tells you what to change next.</h1>
-    <p class="hero-sub">This is a working preview of the intervention layer inside a larger operator intelligence system. Enter a real workflow problem. The system returns a structured correction.</p>
+    <div class="hero-eyebrow">Live diagnostic preview</div>
+    <h1 class="hero-headline">A system that identifies where you’re operating incorrectly and tells you what to change next.</h1>
+    <p class="hero-sub">This is a controlled preview of the intervention layer inside a larger operator intelligence system. Enter a real operational problem. The system returns a structured correction.</p>
     <div class="hero-ctas">
-      <a href="#live-diagnostic" class="btn-gold-outline">Run the system</a>
+      <a href="#entry" class="btn-gold-outline">Enter Diagnostic</a>
       <a href="#inside" class="hero-secondary">Inside the full system</a>
     </div>
 
     <div class="hero-meta">
       <div class="hero-meta-item">
         <div class="hero-meta-label">What this is</div>
-        <div class="hero-meta-copy">A controlled prototype designed to demonstrate real diagnostic logic, not generic AI output.</div>
+        <div class="hero-meta-copy">A narrow but working preview designed to demonstrate how the correction layer thinks.</div>
       </div>
       <div class="hero-meta-item">
         <div class="hero-meta-label">What it returns</div>
-        <div class="hero-meta-copy">One system note, three interventions, and one immediate next move with no filler.</div>
+        <div class="hero-meta-copy">One system note, three interventions, and one immediate next move. Nothing broad. Nothing decorative.</div>
       </div>
       <div class="hero-meta-item">
         <div class="hero-meta-label">What it is not</div>
-        <div class="hero-meta-copy">Not a dashboard. Not a content tool. Not a vague advisor. This is a correction layer.</div>
+        <div class="hero-meta-copy">Not a dashboard. Not general advice. Not a productivity app. This is an intervention environment.</div>
       </div>
+    </div>
+  </div>
+</section>
+
+<section class="section-pad" id="entry">
+  <div class="section-eyebrow reveal">Before you proceed</div>
+  <div class="entry-panel reveal reveal-d1">
+    <div class="entry-kicker">System entry</div>
+    <p class="entry-copy">This system performs best with <strong>real, current problems</strong>. Surface-level input produces low-value output. It is designed to identify where your thinking or execution is incorrect, not to hand out generic advice.</p>
+    <div class="hero-ctas" style="opacity:1;animation:none">
+      <a href="#live-diagnostic" class="btn-gold-solid">Proceed to Diagnostic</a>
+      <a href="#how" class="btn-dark-outline">How it works</a>
     </div>
   </div>
 </section>
@@ -380,66 +1280,96 @@ footer{
 <section class="section-pad">
   <div class="two-col">
     <div>
-      <div class="section-eyebrow reveal">Before you run it</div>
-      <h2 class="section-headline reveal reveal-d1">This preview is intentionally narrow.</h2>
+      <div class="section-eyebrow reveal">What to expect</div>
+      <h2 class="section-headline reveal reveal-d1">This preview is designed to feel controlled, not casual.</h2>
     </div>
     <div>
-      <p class="what-body reveal">The point is not to simulate an entire platform. The point is to make one interaction good enough that the system feels real, useful, and slightly uncomfortable in its accuracy.</p>
+      <p class="what-body reveal">The point is not to simulate an entire platform. The point is to make one interaction precise enough that the system feels real, selective, and useful immediately.</p>
       <ul class="plain-list reveal reveal-d1">
-        <li>Limited to one live diagnostic flow</li>
-        <li>Returns structured interventions, not broad advice</li>
-        <li>Built to surface friction, wasted effort, and missed leverage</li>
-        <li>Designed to lead into a higher-level paid diagnostic, not replace it</li>
+        <li>Weak input should not produce a strong answer</li>
+        <li>The system isolates structural issues, not just visible symptoms</li>
+        <li>The public preview is intentionally narrow</li>
+        <li>The private layer goes materially deeper</li>
       </ul>
-      <div class="italic-close reveal reveal-d2">This is the visible layer. The deeper system is private, cumulative, and much more precise.</div>
+      <div class="italic-close reveal reveal-d2">A good result should feel less like inspiration and more like an internal correction.</div>
     </div>
   </div>
 </section>
 
 <section class="section-pad" id="live-diagnostic">
-  <div class="section-eyebrow reveal">Test mode</div>
+  <div class="section-eyebrow reveal">Diagnostic interface</div>
   <div class="live-shell">
     <div class="form-wrap">
       <h2 class="section-headline reveal reveal-d1">Run a live diagnostic preview.</h2>
-      <p class="form-intro reveal reveal-d2">Enter a real problem, not a hypothetical one. The stronger the signal, the sharper the intervention.</p>
+      <p class="form-intro reveal reveal-d2">Not all inputs produce useful outputs. Enter a real problem. The stronger the signal, the sharper the intervention.</p>
 
-      <form class="form-grid reveal reveal-d2" id="operator-form" novalidate>
-        <div class="field-group">
-          <label class="field-label" for="goal">What are you trying to do?</label>
-          <input class="field-input" type="text" id="goal" name="goal" placeholder="Example: Clarify an offer, tighten a workflow, improve execution." required>
+      <form id="operator-form" novalidate>
+        <div class="form-stage reveal reveal-d2">
+
+          <div class="step-card active" data-step="1">
+            <div class="step-top">
+              <div class="step-label">Step 01</div>
+              <div class="step-index">Current objective</div>
+            </div>
+            <div class="step-question">What are you trying to do?</div>
+            <div class="step-help">Name the actual objective, not the tool or task. Good input here makes the entire preview stronger.</div>
+            <input class="field-input" type="text" id="goal" name="goal" placeholder="Example: Clarify a high-ticket offer, tighten a workflow, improve execution." required>
+          </div>
+
+          <div class="step-card" data-step="2">
+            <div class="step-top">
+              <div class="step-label">Step 02</div>
+              <div class="step-index">Primary friction</div>
+            </div>
+            <div class="step-question">What is breaking or slowing this down?</div>
+            <div class="step-help">Describe what is repeating, stalling, or remaining unclear. Be concrete.</div>
+            <div class="reveal-step" id="reveal-2">
+              <textarea class="field-textarea" id="friction" name="friction" placeholder="What is taking too long, staying unclear, or forcing repeated work?" required></textarea>
+            </div>
+          </div>
+
+          <div class="step-card" data-step="3">
+            <div class="step-top">
+              <div class="step-label">Step 03</div>
+              <div class="step-index">Previous attempts</div>
+            </div>
+            <div class="step-question">What have you already tried?</div>
+            <div class="step-help">This helps the system distinguish between a new issue and a repeated pattern.</div>
+            <div class="reveal-step" id="reveal-3">
+              <textarea class="field-textarea" id="tried" name="tried" placeholder="What have you rewritten, delegated, automated, tested, or changed already?" required></textarea>
+            </div>
+          </div>
+
+          <div class="step-card" data-step="4">
+            <div class="step-top">
+              <div class="step-label">Step 04</div>
+              <div class="step-index">Immediate priority</div>
+            </div>
+            <div class="step-question">What kind of outcome matters most right now?</div>
+            <div class="step-help">Choose the pressure point that matters most in this moment.</div>
+            <div class="reveal-step" id="reveal-4">
+              <select class="field-select" id="priority" name="priority" required>
+                <option value="" selected disabled>Select one</option>
+                <option value="Clearer positioning">Clearer positioning</option>
+                <option value="Faster execution">Faster execution</option>
+                <option value="Better AI adoption">Better AI adoption</option>
+                <option value="Workflow simplification">Workflow simplification</option>
+                <option value="Offer clarity">Offer clarity</option>
+                <option value="Operational structure">Operational structure</option>
+              </select>
+            </div>
+          </div>
+
         </div>
 
-        <div class="field-group">
-          <label class="field-label" for="friction">What is taking too long or creating friction?</label>
-          <textarea class="field-textarea" id="friction" name="friction" placeholder="Be specific. What is dragging, repeating, stalling, or staying unclear?" required></textarea>
-        </div>
-
-        <div class="field-group">
-          <label class="field-label" for="tried">What have you already tried?</label>
-          <textarea class="field-textarea" id="tried" name="tried" placeholder="What have you rewritten, reworked, delegated, automated, tested, or changed already?" required></textarea>
-        </div>
-
-        <div class="field-group">
-          <label class="field-label" for="priority">What kind of outcome do you need most right now?</label>
-          <select class="field-select" id="priority" name="priority" required>
-            <option value="" selected disabled>Select one</option>
-            <option value="Clearer positioning">Clearer positioning</option>
-            <option value="Faster execution">Faster execution</option>
-            <option value="Better AI adoption">Better AI adoption</option>
-            <option value="Workflow simplification">Workflow simplification</option>
-            <option value="Offer clarity">Offer clarity</option>
-            <option value="Operational structure">Operational structure</option>
-          </select>
-        </div>
-
-        <div class="form-actions">
+        <div class="form-footer reveal reveal-d3">
           <button type="submit" class="btn-gold-solid" id="submit-btn">Run Diagnostic</button>
-          <p class="form-note">This prototype returns a limited intervention preview, not the full system.</p>
+          <p class="form-note">Public preview is intentionally narrow. This is the visible surface of a larger system.</p>
         </div>
 
-        <div class="small-guard">
-          <span>Preview mode</span>
-          <span>This system is not designed for continuous use in public preview.</span>
+        <div class="system-ready reveal reveal-d3">
+          <span class="system-ready-dot" aria-hidden="true"></span>
+          <span class="system-ready-copy">System ready</span>
         </div>
       </form>
 
@@ -448,20 +1378,20 @@ footer{
           <div class="state-top">
             <div>
               <h3>Running diagnostic...</h3>
-              <p>Detecting friction, wasted effort, and missed leverage. This should feel more like an internal review than a chatbot response.</p>
+              <p>Separating symptom from cause. Identifying structural failures. Mapping correction points.</p>
             </div>
-            <div class="state-pulse" aria-hidden="true"></div>
           </div>
           <div class="status-lines">
-            <div class="status-line active"><span class="status-label">Parsing operational inputs</span><span class="status-dot"></span></div>
-            <div class="status-line"><span class="status-label">Identifying structural inefficiencies</span><span class="status-dot"></span></div>
-            <div class="status-line"><span class="status-label">Generating interventions</span><span class="status-dot"></span></div>
+            <div class="status-line active"><span class="status-label">Parsing input quality</span><span class="status-dot"></span></div>
+            <div class="status-line"><span class="status-label">Separating symptom from cause</span><span class="status-dot"></span></div>
+            <div class="status-line"><span class="status-label">Mapping intervention points</span><span class="status-dot"></span></div>
+            <div class="status-line"><span class="status-label">Preparing correction layer</span><span class="status-dot"></span></div>
           </div>
         </div>
 
         <div class="error-panel" id="error-panel" aria-live="polite">
           <div class="error-title">Diagnostic unavailable</div>
-          <div class="error-body">Something interrupted the run. Refresh the page or connect this form to your backend route for live output.</div>
+          <div class="error-body">The system could not generate a reliable preview from the current input. Tighten the signal and try again.</div>
         </div>
 
         <div class="result-shell" id="result-shell" aria-live="polite">
@@ -470,7 +1400,11 @@ footer{
               <div class="result-kicker">Diagnostic returned</div>
               <h3 class="result-title">Intervention Preview</h3>
             </div>
-            <p class="result-sub">A narrow result from a wider system. Structured to show how the correction layer thinks, not everything it knows.</p>
+            <p class="result-sub">This is a limited public layer. The full system tracks patterns, calibrates to context, and goes deeper over time.</p>
+          </div>
+
+          <div class="result-friction" id="result-friction">
+            <div class="result-friction-copy" id="result-friction-copy"></div>
           </div>
 
           <div class="system-note">
@@ -478,50 +1412,95 @@ footer{
             <div class="system-note-copy" id="system-note-copy"></div>
           </div>
 
+          <div class="meaning-panel" id="meaning-panel">
+            <div class="meaning-label">What this means</div>
+            <div class="meaning-copy" id="meaning-copy"></div>
+          </div>
+
           <div class="intervention-grid" id="intervention-grid"></div>
 
-          <div class="next-move">
+          <div class="next-move" id="next-move">
             <div class="next-move-label">Immediate Next Move</div>
             <div class="next-move-copy" id="next-move-copy"></div>
           </div>
 
+          <div class="result-meta" id="result-meta">
+            <div class="result-meta-item">
+              <div class="result-meta-label">Confidence</div>
+              <div class="result-meta-value" id="confidence-copy"></div>
+            </div>
+            <div class="result-meta-item">
+              <div class="result-meta-label">Risk if unchanged</div>
+              <div class="result-meta-value" id="risk-copy"></div>
+            </div>
+          </div>
+
+          <div class="alt-view-wrap" id="alt-view-wrap">
+            <button class="view-toggle" type="button" id="view-toggle">View as System Breakdown</button>
+            <div class="alt-view-panel" id="alt-view-panel">
+              <div class="alt-grid">
+                <div class="alt-row">
+                  <div class="alt-label">Issue</div>
+                  <div class="alt-copy" id="alt-issue"></div>
+                </div>
+                <div class="alt-row">
+                  <div class="alt-label">Root Cause</div>
+                  <div class="alt-copy" id="alt-root"></div>
+                </div>
+                <div class="alt-row">
+                  <div class="alt-label">Leverage Point</div>
+                  <div class="alt-copy" id="alt-leverage"></div>
+                </div>
+                <div class="alt-row">
+                  <div class="alt-label">Correction Path</div>
+                  <div class="alt-copy" id="alt-correction"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="preview-complete" id="preview-complete">
+            <div class="preview-complete-title">Preview complete</div>
+            <div class="preview-complete-copy">You have reached the limit of this public preview. This system is not designed for continuous use in public mode.</div>
+          </div>
+
           <div class="gate-block" id="inside">
             <div class="gate-head">
-              <h4 class="gate-headline">Continue with full diagnostic access.</h4>
-              <p class="gate-copy">This preview isolates a single issue. Most operations are losing revenue across multiple points at once. The full system identifies and corrects these breakdowns across structure, positioning, behavior, experience, and execution.</p>
+              <h4 class="gate-headline">This preview isolates one issue. The full diagnostic identifies the highest-cost breakdowns across your operation.</h4>
+              <p class="gate-copy">The paid diagnostic does not stop at a single correction. It identifies where your structure, positioning, execution, and leverage break down together, then maps the intervention path.</p>
             </div>
 
             <div class="lock-grid">
               <div class="lock-item">
                 <div class="lock-label">Pattern detection</div>
-                <div class="lock-body">Recurring inefficiencies tracked across sessions instead of treated as one-off problems.</div>
+                <div class="lock-body">Repeated inefficiencies tracked over time instead of treated as isolated incidents.</div>
               </div>
               <div class="lock-item">
                 <div class="lock-label">Memory layer</div>
-                <div class="lock-body">The system gets sharper by understanding your context, not restarting from zero each time.</div>
+                <div class="lock-body">The system gets sharper by holding context rather than restarting from zero.</div>
               </div>
               <div class="lock-item">
                 <div class="lock-label">Intervention history</div>
-                <div class="lock-body">Corrections stack over time so execution improves instead of resetting after each insight.</div>
+                <div class="lock-body">Corrections stack so execution improves instead of resetting after each insight.</div>
               </div>
               <div class="lock-item">
                 <div class="lock-label">Operator calibration</div>
-                <div class="lock-body">Higher precision around how you work, where you stall, and where leverage is repeatedly missed.</div>
+                <div class="lock-body">Deeper precision around how you work, where you stall, and where leverage is repeatedly missed.</div>
               </div>
               <div class="lock-item">
                 <div class="lock-label">Structural diagnostics</div>
-                <div class="lock-body">Deeper evaluation across offers, workflows, systems, pre-arrival signals, and execution flow.</div>
+                <div class="lock-body">Higher-level evaluation across offers, workflows, systems, timing, and execution design.</div>
               </div>
               <div class="lock-item">
                 <div class="lock-label">Private deployment</div>
-                <div class="lock-body">For operators, founders, and selective partners who need a real correction layer, not inspiration.</div>
+                <div class="lock-body">Designed for operators and decision-makers responsible for real outcomes, not casual use.</div>
               </div>
             </div>
 
             <div class="gate-actions">
               <a href="/snapshot.html" class="btn-gold-solid">Book Snapshot — $750</a>
               <a href="/request-access.html" class="btn-dark-outline">Request Private Access</a>
-              <div class="gate-note">Designed for operators responsible for real outcomes.</div>
+              <div class="gate-note">A larger system sits behind this layer.</div>
             </div>
           </div>
         </div>
@@ -529,68 +1508,93 @@ footer{
     </div>
 
     <aside class="side-panel reveal reveal-d3">
-      <div class="side-panel-title">What this measures</div>
-      <p class="side-panel-body">This preview is built to identify what is structurally wrong, not merely what feels frustrating. It treats inefficiency as a pattern problem, not a motivation problem.</p>
+      <div class="side-panel-title">Signal detected</div>
+      <p class="side-panel-body">The system should begin reflecting your input before the result is returned. This reduces skepticism and increases the sense that something real is happening.</p>
+
+      <div class="signal-box">
+        <div class="signal-box-label">Live mirror</div>
+
+        <div class="signal-item">
+          <div class="signal-name">Goal</div>
+          <div class="signal-value" id="mirror-goal">Awaiting input.</div>
+        </div>
+
+        <div class="signal-item">
+          <div class="signal-name">Friction</div>
+          <div class="signal-value" id="mirror-friction">No active signal yet.</div>
+        </div>
+
+        <div class="signal-item">
+          <div class="signal-name">Pattern</div>
+          <div class="signal-value" id="mirror-pattern">The system will infer a likely pattern as the input sharpens.</div>
+        </div>
+
+        <div class="signal-item">
+          <div class="signal-name">Priority</div>
+          <div class="signal-value" id="mirror-priority">No priority selected.</div>
+        </div>
+      </div>
+
       <ul class="side-list">
-        <li>Where effort is misplaced</li>
-        <li>Where the real bottleneck is different from the symptom</li>
-        <li>What should stop, what should become repeatable, and what should be leveraged</li>
-        <li>What a stronger next move looks like within 24 hours</li>
+        <li>This system performs better with specific inputs</li>
+        <li>Not all signals deserve strong output</li>
+        <li>The public layer demonstrates the correction logic, not the full intelligence stack</li>
       </ul>
-      <div class="side-panel-foot">A good result should feel clear, corrective, and specific enough to act on immediately.</div>
+
+      <div class="side-panel-foot">A good preview should feel selective, slightly severe, and immediately useful.</div>
     </aside>
   </div>
 </section>
 
-<section class="section-pad">
+<section class="section-pad" id="how">
   <div class="section-eyebrow reveal">How it works</div>
-  <h2 class="section-headline reveal reveal-d1">The logic is simple. The intelligence is not.</h2>
+  <h2 class="section-headline reveal reveal-d1">The structure is simple. The judgment is the product.</h2>
 
   <div class="inside-grid">
     <div class="inside-item reveal">
       <div class="inside-num">01</div>
       <div class="inside-title">Capture</div>
-      <div class="inside-body">A real operational problem enters the system through constrained inputs designed to reduce vagueness.</div>
+      <div class="inside-body">A real operational problem enters through constrained inputs designed to reduce vagueness.</div>
     </div>
     <div class="inside-item reveal reveal-d1">
       <div class="inside-num">02</div>
       <div class="inside-title">Diagnosis</div>
-      <div class="inside-body">The system separates symptom from cause, identifies structural friction, and looks for leverage points.</div>
+      <div class="inside-body">The system separates symptom from cause and looks for structural failure rather than surface frustration.</div>
     </div>
     <div class="inside-item reveal reveal-d2">
       <div class="inside-num">03</div>
       <div class="inside-title">Intervention</div>
-      <div class="inside-body">The output tells you what to stop, what to systemize, and where better leverage should replace manual effort.</div>
+      <div class="inside-body">The output tells you what is incorrectly structured, where leverage is being missed, and what to correct next.</div>
     </div>
   </div>
 
-  <p class="inside-closing reveal">The value is not in returning text. The value is in naming the real issue with enough precision that action becomes obvious.</p>
+  <p class="inside-closing reveal">The value is not in generating text quickly. The value is in isolating the right issue with enough accuracy that the next move becomes obvious.</p>
 </section>
 
 <section class="section-pad">
   <div class="section-eyebrow reveal">Inside the full system</div>
-  <h2 class="section-headline reveal reveal-d1">The live preview is one layer of a much larger architecture.</h2>
+  <h2 class="section-headline reveal reveal-d1">This layer demonstrates how the system identifies and corrects operational inefficiencies at scale.</h2>
 
   <div class="benchmark-grid">
     <div class="benchmark-item reveal">
       <div class="benchmark-k">A</div>
       <div class="benchmark-t">Intervention layer</div>
-      <div class="benchmark-b">What you are seeing here. Sharp correction, narrow scope, immediate action.</div>
+      <div class="benchmark-b">What you are seeing here. Narrow scope. Immediate correction. High visibility.</div>
     </div>
     <div class="benchmark-item reveal reveal-d1">
       <div class="benchmark-k">B</div>
       <div class="benchmark-t">Memory layer</div>
-      <div class="benchmark-b">Repeated patterns tracked across time so the system compounds instead of restarting.</div>
+      <div class="benchmark-b">Patterns tracked over time so repeated inefficiencies become easier to detect.</div>
     </div>
     <div class="benchmark-item reveal reveal-d2">
       <div class="benchmark-k">C</div>
       <div class="benchmark-t">Calibration layer</div>
-      <div class="benchmark-b">Operator-specific intelligence that becomes more precise as context increases.</div>
+      <div class="benchmark-b">Precision improves as the system learns how the operator thinks, works, and stalls.</div>
     </div>
     <div class="benchmark-item reveal reveal-d3">
       <div class="benchmark-k">D</div>
       <div class="benchmark-t">Deployment layer</div>
-      <div class="benchmark-b">The part that converts insight into systems, correction, and measurable operational change.</div>
+      <div class="benchmark-b">Where insight becomes structure, correction, and measurable operational change.</div>
     </div>
   </div>
 </section>
@@ -600,16 +1604,16 @@ footer{
   <h2 class="section-headline reveal reveal-d1">Built for people already responsible for outcomes.</h2>
   <ul class="who-list">
     <li class="who-item reveal"><span class="who-num">01</span>Founders and operators trying to remove friction from execution</li>
-    <li class="who-item reveal reveal-d1"><span class="who-num">02</span>Business owners who already know something is off but need precision</li>
-    <li class="who-item reveal reveal-d2"><span class="who-num">03</span>Teams that need a correction layer, not more noise</li>
-    <li class="who-item reveal reveal-d3"><span class="who-num">04</span>Selective buyers, partners, and investors evaluating system potential</li>
+    <li class="who-item reveal reveal-d1"><span class="who-num">02</span>Business owners who know something is off and need precision</li>
+    <li class="who-item reveal reveal-d2"><span class="who-num">03</span>Teams that need a correction layer, not more stimulation</li>
+    <li class="who-item reveal reveal-d3"><span class="who-num">04</span>Selective buyers and partners evaluating system potential</li>
   </ul>
 </section>
 
 <section id="final">
-  <h2 class="final-headline reveal">A narrow preview should still feel dangerous in the right hands.</h2>
-  <p class="final-sub reveal reveal-d1">Use the live diagnostic. See how the system thinks. Then decide whether you want the private layer that goes deeper.</p>
-  <a href="#live-diagnostic" class="btn-gold-solid reveal reveal-d2">Run the System</a>
+  <h2 class="final-headline reveal">A narrow preview should still feel like something real is happening.</h2>
+  <p class="final-sub reveal reveal-d1">Run the live diagnostic. See how the system thinks. Then decide whether you want the private layer that goes deeper.</p>
+  <a href="#live-diagnostic" class="btn-gold-solid reveal reveal-d2">Run the Diagnostic</a>
 </section>
 
 <footer>
@@ -624,7 +1628,7 @@ footer{
 </footer>
 
 <div class="mobile-sticky">
-  <a href="#live-diagnostic">Run the System</a>
+  <a href="#live-diagnostic">Run the Diagnostic</a>
 </div>
 
 <script>
@@ -632,94 +1636,359 @@ const observer = new IntersectionObserver(function(entries){
   entries.forEach(function(entry){
     if(entry.isIntersecting){ entry.target.classList.add('visible'); }
   });
-},{threshold:0.12});
+},{threshold:0.14});
 document.querySelectorAll('.reveal').forEach(function(el){ observer.observe(el); });
+
+const goalInput = document.getElementById('goal');
+const frictionInput = document.getElementById('friction');
+const triedInput = document.getElementById('tried');
+const priorityInput = document.getElementById('priority');
+
+const reveal2 = document.getElementById('reveal-2');
+const reveal3 = document.getElementById('reveal-3');
+const reveal4 = document.getElementById('reveal-4');
+
+const stepCards = document.querySelectorAll('.step-card');
+
+function updateSteps(){
+  const goalFilled = goalInput.value.trim().length > 4;
+  const frictionFilled = frictionInput.value.trim().length > 12;
+  const triedFilled = triedInput.value.trim().length > 12;
+
+  if(goalFilled){
+    reveal2.classList.add('visible');
+    stepCards[0].classList.add('complete');
+    stepCards[1].classList.add('active');
+  } else {
+    reveal2.classList.remove('visible');
+    reveal3.classList.remove('visible');
+    reveal4.classList.remove('visible');
+    stepCards[0].classList.remove('complete');
+    stepCards[1].classList.remove('active','complete');
+    stepCards[2].classList.remove('active','complete');
+    stepCards[3].classList.remove('active');
+  }
+
+  if(frictionFilled && goalFilled){
+    reveal3.classList.add('visible');
+    stepCards[1].classList.add('complete');
+    stepCards[2].classList.add('active');
+  } else {
+    reveal3.classList.remove('visible');
+    reveal4.classList.remove('visible');
+    stepCards[1].classList.remove('complete');
+    stepCards[2].classList.remove('active','complete');
+    stepCards[3].classList.remove('active');
+  }
+
+  if(triedFilled && frictionFilled && goalFilled){
+    reveal4.classList.add('visible');
+    stepCards[2].classList.add('complete');
+    stepCards[3].classList.add('active');
+  } else {
+    reveal4.classList.remove('visible');
+    stepCards[2].classList.remove('complete');
+    stepCards[3].classList.remove('active');
+  }
+}
+
+goalInput.addEventListener('input', updateSteps);
+frictionInput.addEventListener('input', updateSteps);
+triedInput.addEventListener('input', updateSteps);
+
+const mirrorGoal = document.getElementById('mirror-goal');
+const mirrorFriction = document.getElementById('mirror-friction');
+const mirrorPattern = document.getElementById('mirror-pattern');
+const mirrorPriority = document.getElementById('mirror-priority');
+
+function summarizeText(text, fallback){
+  const clean = text.trim();
+  if(!clean) return fallback;
+  if(clean.length <= 72) return clean;
+  return clean.slice(0, 72).replace(/\s+\S*$/, '') + '…';
+}
+function inferPattern(goal, friction, tried, priority){
+  const combined = (goal + ' ' + friction + ' ' + tried + ' ' + priority).toLowerCase();
+  if(combined.includes('rewrite') || combined.includes('rewriting') || combined.includes('copy')) return 'Surface-level iteration';
+  if(combined.includes('offer') || combined.includes('position') || combined.includes('positioning')) return 'Structural clarity issue';
+  if(combined.includes('workflow') || combined.includes('process') || combined.includes('system')) return 'Improvised execution pattern';
+  if(combined.includes('ai') || combined.includes('automation')) return 'Leverage being added too late';
+  if(combined.includes('time') || combined.includes('slow') || combined.includes('too long')) return 'Misallocation of effort';
+  return 'Pattern still forming';
+}
+function updateMirror(){
+  const goal = goalInput.value;
+  const friction = frictionInput.value;
+  const tried = triedInput.value;
+  const priority = priorityInput.value;
+
+  mirrorGoal.textContent = summarizeText(goal, 'Awaiting input.');
+  mirrorFriction.textContent = summarizeText(friction, 'No active signal yet.');
+  mirrorPriority.textContent = priority || 'No priority selected.';
+  mirrorPattern.textContent = inferPattern(goal, friction, tried, priority);
+}
+goalInput.addEventListener('input', updateMirror);
+frictionInput.addEventListener('input', updateMirror);
+triedInput.addEventListener('input', updateMirror);
+priorityInput.addEventListener('change', updateMirror);
 
 const form = document.getElementById('operator-form');
 const submitBtn = document.getElementById('submit-btn');
 const statePanel = document.getElementById('state-panel');
 const resultShell = document.getElementById('result-shell');
 const errorPanel = document.getElementById('error-panel');
+
 const systemNoteCopy = document.getElementById('system-note-copy');
+const meaningPanel = document.getElementById('meaning-panel');
+const meaningCopy = document.getElementById('meaning-copy');
 const interventionGrid = document.getElementById('intervention-grid');
+const nextMoveBlock = document.getElementById('next-move');
 const nextMoveCopy = document.getElementById('next-move-copy');
+const resultMeta = document.getElementById('result-meta');
+const confidenceCopy = document.getElementById('confidence-copy');
+const riskCopy = document.getElementById('risk-copy');
+const previewComplete = document.getElementById('preview-complete');
+const resultFrictionCopy = document.getElementById('result-friction-copy');
+
+const altViewWrap = document.getElementById('alt-view-wrap');
+const viewToggle = document.getElementById('view-toggle');
+const altViewPanel = document.getElementById('alt-view-panel');
+const altIssue = document.getElementById('alt-issue');
+const altRoot = document.getElementById('alt-root');
+const altLeverage = document.getElementById('alt-leverage');
+const altCorrection = document.getElementById('alt-correction');
+
+let currentAltVisible = false;
+viewToggle.addEventListener('click', function(){
+  currentAltVisible = !currentAltVisible;
+  altViewPanel.classList.toggle('visible', currentAltVisible);
+  viewToggle.textContent = currentAltVisible ? 'Hide System Breakdown' : 'View as System Breakdown';
+});
 
 const previewResponses = [
   {
-    system_note: "The problem is not lack of effort. The problem is that you are trying to improve surface execution without correcting the structure underneath it.",
+    trigger: ['offer','position','positioning','copy','rewrite'],
+    system_note: "This is incorrectly structured. You are trying to improve visible language before deciding what the offer actually is.",
+    meaning: "You are not stuck. You are operating inside an unclear offer hierarchy, which is why the work keeps repeating.",
     interventions: [
       {
         title: "Eliminate",
-        diagnosis: "You are revising outputs before the decision framework is clear. That creates repeated work disguised as refinement.",
-        action: "Stop editing downstream materials until the core promise, buyer, and outcome are reduced to one clean operating statement."
+        diagnosis: "You are revising downstream copy before the underlying decision framework is stable. That turns refinement into repetition.",
+        action: "Stop editing outward-facing language until the offer, buyer, outcome, and proof are reduced to one clean statement."
       },
       {
         title: "Systemize",
-        diagnosis: "Your process relies too much on improvisation. That makes every new task feel like a new problem.",
-        action: "Create one fixed decision structure: objective, constraint, proof, delivery path, next action. Run every task through that before execution."
+        diagnosis: "The positioning process is being rebuilt each time instead of run through a fixed structure.",
+        action: "Use one decision framework only: problem, buyer, outcome, proof, scope. Do not write copy before those five lines exist."
       },
       {
         title: "Leverage",
-        diagnosis: "AI is being used late, after confusion has already spread across the work.",
-        action: "Use AI to pressure-test clarity at the structure stage, not to rescue unclear work at the end."
+        diagnosis: "AI is being used too late, after the confusion has already spread through the work.",
+        action: "Use AI to pressure-test clarity after the structure is defined, not to rescue unclear work at the end."
       }
     ],
-    next_move: "Write the actual problem in one sentence, then write the desired outcome in one sentence. Do not touch the visible output until those two lines are solid."
+    next_move: "Write the offer in one sentence and the buyer in one sentence. Do not touch the page again until both are clear.",
+    confidence: "High",
+    risk: "Continued rewriting, slower conversion, and a weaker signal to the buyer.",
+    alt: {
+      issue: "Repeated rewriting without stronger conversion.",
+      root: "The offer is structurally unclear, so the copy keeps carrying work it cannot solve.",
+      leverage: "Clarify the offer architecture before changing another visible asset.",
+      correction: "Reduce the system to one clean promise, then rebuild the page from that line outward."
+    }
   },
   {
-    system_note: "You do not have a capacity problem first. You have a sequencing problem that keeps making execution feel heavier than it is.",
+    trigger: ['workflow','process','system','execute','execution'],
+    system_note: "This is a sequencing failure. Strategy, production, and review are collapsing into the same block of work.",
+    meaning: "The issue is not capacity first. The issue is that the order of operations is inefficient, so everything feels heavier than it is.",
     interventions: [
       {
         title: "Eliminate",
-        diagnosis: "You are mixing strategy, production, and review into the same work block. That blurs judgment and slows everything down.",
-        action: "Separate planning from execution immediately. One block decides, one block builds, one block reviews."
+        diagnosis: "You are mixing decision-making and production in the same session, which weakens both.",
+        action: "Separate planning from execution immediately. One block decides. One block builds. One block reviews."
       },
       {
         title: "Systemize",
-        diagnosis: "The same choices are being remade repeatedly because there is no reusable operating logic.",
-        action: "Turn recurring decisions into a standard input sheet with goal, audience, constraints, and desired outcome."
+        diagnosis: "Recurring work still depends too much on improvisation.",
+        action: "Create a standard input sheet for repeated tasks: objective, constraint, proof, output type, deadline."
       },
       {
         title: "Leverage",
-        diagnosis: "Manual drafting is taking too much oxygen from higher-value thinking.",
-        action: "Use AI to generate first-pass structures only after your constraints are defined. Keep the judgment layer human."
+        diagnosis: "Manual effort is still occupying work that should be compressed.",
+        action: "Use AI for first-pass structuring and cleanup only after the constraints are set."
       }
     ],
-    next_move: "Choose one repeated task this week and convert it into a fixed process before doing it again manually."
+    next_move: "Choose one repeated task this week and convert it into a fixed process before doing it manually again.",
+    confidence: "High",
+    risk: "Continued drag, decision fatigue, and slow throughput across the system.",
+    alt: {
+      issue: "Work feels heavier than it should.",
+      root: "The sequence is wrong, so high-value judgment is leaking into low-value execution.",
+      leverage: "Separate deciding from doing so each mode can perform properly.",
+      correction: "Install one fixed structure for repeated work and stop remaking the same decisions."
+    }
   },
   {
-    system_note: "The visible issue looks like inconsistency, but the deeper issue is unclear priority. Too many things are being treated as equally urgent.",
+    trigger: ['ai','automation','automate'],
+    system_note: "AI is being added as a convenience layer instead of a leverage layer. That is why it feels helpful but not transformative.",
+    meaning: "The issue is not whether AI is available. The issue is that it has not been inserted at the correct point in the workflow.",
     interventions: [
       {
         title: "Eliminate",
-        diagnosis: "Low-value tasks are occupying the same level of attention as revenue-shaping work.",
-        action: "Remove or delay anything that does not alter conversion, delivery quality, or structural clarity this week."
+        diagnosis: "You are still doing manual drafting and sorting in places where judgment is not the bottleneck.",
+        action: "Remove AI from vanity use and place it only where repeated, low-leverage effort is consuming time."
       },
       {
         title: "Systemize",
-        diagnosis: "You need a stronger hierarchy for what gets handled first and what gets ignored.",
-        action: "Create three tiers only: critical, useful, later. Force every task into one of them before acting."
+        diagnosis: "There is no fixed rule for when AI should be used and when human judgment should stay in control.",
+        action: "Build a simple rule: AI for first-pass structure and cleanup. Human for strategy, taste, and final decisions."
       },
       {
         title: "Leverage",
-        diagnosis: "AI can absorb more of the repetitive sorting and formatting layer than it currently does.",
-        action: "Use AI for categorization, first-draft structuring, and cleanup so your attention stays on judgment and direction."
+        diagnosis: "The current use pattern improves speed a little but does not change how work is organized.",
+        action: "Move AI earlier in the process so it reduces setup time, not just polishing time."
       }
     ],
-    next_move: "Cut your current list in half. Keep only what affects clarity, revenue, or delivery this week."
+    next_move: "Pick one repeated manual task and decide whether AI should structure it, sort it, or remove it entirely.",
+    confidence: "Medium to high",
+    risk: "AI stays cosmetic, while the underlying workflow remains inefficient.",
+    alt: {
+      issue: "AI is present but not changing outcomes enough.",
+      root: "It is being applied in the wrong part of the workflow.",
+      leverage: "Use AI where repetition is high and judgment is low.",
+      correction: "Reassign AI to structure and compression rather than last-minute assistance."
+    }
+  },
+  {
+    trigger: ['time','slow','too long','delay','stuck'],
+    system_note: "This is a misallocation of effort. Too much attention is being given to work that does not materially change the result.",
+    meaning: "You do not need more force first. You need a stronger hierarchy for where time should and should not go.",
+    interventions: [
+      {
+        title: "Eliminate",
+        diagnosis: "Low-impact tasks are receiving the same quality of attention as high-impact decisions.",
+        action: "Cut or delay anything this week that does not affect clarity, delivery quality, or conversion."
+      },
+      {
+        title: "Systemize",
+        diagnosis: "There is no strong filter separating critical work from attractive but secondary work.",
+        action: "Classify every task into three tiers only: critical, useful, later."
+      },
+      {
+        title: "Leverage",
+        diagnosis: "Compression opportunities are being missed because everything is still being treated as hand-built.",
+        action: "Use templates, first-pass automation, and tighter decision criteria before adding more effort."
+      }
+    ],
+    next_move: "Reduce your current working list by half. Keep only what changes clarity, delivery, or revenue this week.",
+    confidence: "High",
+    risk: "Continued busyness with weak movement on the real objective.",
+    alt: {
+      issue: "Work is consuming time without proportional movement.",
+      root: "The hierarchy is weak, so low-value tasks keep entering the same field of attention.",
+      leverage: "Create harder filters before adding more effort.",
+      correction: "Reduce task volume and protect the small set of actions that actually move the system."
+    }
+  },
+  {
+    trigger: [],
+    system_note: "The visible issue is only part of the problem. The deeper issue is that the work is being treated symptom by symptom instead of structurally.",
+    meaning: "You are likely trying to improve outputs one at a time when the operating logic underneath them needs correction first.",
+    interventions: [
+      {
+        title: "Eliminate",
+        diagnosis: "You are still responding to visible friction as if each symptom is separate.",
+        action: "Stop fixing downstream manifestations one by one until the root structure is named clearly."
+      },
+      {
+        title: "Systemize",
+        diagnosis: "The work needs a stronger governing framework so repeated decisions stop being made from scratch.",
+        action: "Define the core logic first: what matters, what does not, and what the system is actually trying to produce."
+      },
+      {
+        title: "Leverage",
+        diagnosis: "Better tools will not solve a weak structure on their own.",
+        action: "Use AI and automation only after the operating framework is clarified."
+      }
+    ],
+    next_move: "Name the real objective, the main constraint, and the single outcome that matters most. Keep those visible while you work.",
+    confidence: "Medium",
+    risk: "Repeated effort with uneven results because the structure remains uncorrected.",
+    alt: {
+      issue: "Visible problems keep recurring in new forms.",
+      root: "The operating logic is under-defined, so symptoms keep returning.",
+      leverage: "Clarify the structure before adding new output.",
+      correction: "Reduce the work to one governing framework and rebuild from there."
+    }
   }
 ];
 
-function renderResult(data){
-  systemNoteCopy.textContent = data.system_note;
+function chooseResponse(payload){
+  const combined = `${payload.goal} ${payload.friction} ${payload.tried} ${payload.priority}`.toLowerCase();
+  for(const item of previewResponses){
+    if(item.trigger.some(term => combined.includes(term))) return item;
+  }
+  return previewResponses[previewResponses.length - 1];
+}
+
+function isInputStrong(payload){
+  const goalStrong = payload.goal.trim().length > 10;
+  const frictionStrong = payload.friction.trim().length > 24;
+  const triedStrong = payload.tried.trim().length > 18;
+  const priorityStrong = !!payload.priority;
+  return goalStrong && frictionStrong && triedStrong && priorityStrong;
+}
+
+function cycleStatuses(){
+  const lines = Array.from(document.querySelectorAll('.status-line'));
+  lines.forEach(line => line.classList.remove('active'));
+  let step = 0;
+  lines[0].classList.add('active');
+  const interval = setInterval(function(){
+    lines.forEach(line => line.classList.remove('active'));
+    step += 1;
+    if(step < lines.length){
+      lines[step].classList.add('active');
+    } else {
+      clearInterval(interval);
+    }
+  }, 820);
+  return interval;
+}
+
+function resetResultVisuals(){
   interventionGrid.innerHTML = '';
+  meaningPanel.classList.remove('visible');
+  nextMoveBlock.classList.remove('visible');
+  resultMeta.classList.remove('visible');
+  altViewWrap.classList.remove('visible');
+  altViewPanel.classList.remove('visible');
+  currentAltVisible = false;
+  viewToggle.textContent = 'View as System Breakdown';
+  previewComplete.classList.remove('visible');
+}
+
+function renderResult(payload, data){
+  resultFrictionCopy.textContent = `Input detected: ${summarizeText(payload.goal, '')} — ${inferPattern(payload.goal, payload.friction, payload.tried, payload.priority)}.`;
+  systemNoteCopy.textContent = data.system_note;
+  meaningCopy.textContent = data.meaning;
+  confidenceCopy.textContent = data.confidence;
+  riskCopy.textContent = data.risk;
+  nextMoveCopy.textContent = data.next_move;
+
+  altIssue.textContent = data.alt.issue;
+  altRoot.textContent = data.alt.root;
+  altLeverage.textContent = data.alt.leverage;
+  altCorrection.textContent = data.alt.correction;
+
+  meaningPanel.classList.add('visible');
 
   data.interventions.forEach(function(item, index){
     const card = document.createElement('div');
     card.className = 'intervention-card';
     card.innerHTML = `
       <div class="intervention-top">
-        <div class="intervention-name">Intervention ${String(index + 1).padStart(2, '0')} — ${item.title}</div>
+        <div class="intervention-name">Intervention ${String(index + 1).padStart(2,'0')} — ${item.title}</div>
         <div class="intervention-index">Correction Layer</div>
       </div>
       <div class="intervention-diagnosis">${item.diagnosis}</div>
@@ -728,37 +1997,51 @@ function renderResult(data){
     interventionGrid.appendChild(card);
   });
 
-  nextMoveCopy.textContent = data.next_move;
+  const cards = Array.from(document.querySelectorAll('.intervention-card'));
+  setTimeout(() => {
+    cards[0] && cards[0].classList.add('visible');
+  }, 260);
+  setTimeout(() => {
+    cards[1] && cards[1].classList.add('visible');
+  }, 620);
+  setTimeout(() => {
+    cards[2] && cards[2].classList.add('visible');
+  }, 980);
+  setTimeout(() => {
+    nextMoveBlock.classList.add('visible');
+  }, 1260);
+  setTimeout(() => {
+    resultMeta.classList.add('visible');
+  }, 1520);
+  setTimeout(() => {
+    altViewWrap.classList.add('visible');
+  }, 1740);
+  setTimeout(() => {
+    previewComplete.classList.add('visible');
+  }, 1960);
 }
 
-function cycleStatuses(){
-  const lines = Array.from(document.querySelectorAll('.status-line'));
-  lines.forEach(function(line){ line.classList.remove('active'); });
-  let step = 0;
-  lines[0].classList.add('active');
-
-  const interval = setInterval(function(){
-    lines.forEach(function(line){ line.classList.remove('active'); });
-    step += 1;
-    if(step < lines.length){
-      lines[step].classList.add('active');
-    } else {
-      clearInterval(interval);
-    }
-  }, 900);
-
-  return interval;
-}
-
-function runPreview(){
-  return new Promise(function(resolve){
-    const selected = previewResponses[Math.floor(Math.random() * previewResponses.length)];
-    setTimeout(function(){ resolve(selected); }, 2600);
+function fakeDiagnosticRun(payload){
+  return new Promise(function(resolve,reject){
+    setTimeout(function(){
+      if(!isInputStrong(payload)){
+        reject(new Error('weak-input'));
+        return;
+      }
+      resolve(chooseResponse(payload));
+    }, 2800);
   });
 }
 
 form.addEventListener('submit', async function(e){
   e.preventDefault();
+
+  const payload = {
+    goal: goalInput.value.trim(),
+    friction: frictionInput.value.trim(),
+    tried: triedInput.value.trim(),
+    priority: priorityInput.value
+  };
 
   if(!form.checkValidity()){
     form.reportValidity();
@@ -769,35 +2052,21 @@ form.addEventListener('submit', async function(e){
   submitBtn.style.opacity = '.55';
   errorPanel.classList.remove('visible');
   resultShell.classList.remove('visible');
+  resetResultVisuals();
   statePanel.classList.add('visible');
   statePanel.scrollIntoView({behavior:'smooth', block:'start'});
 
   const statusInterval = cycleStatuses();
 
   try{
-    const payload = {
-      goal: document.getElementById('goal').value.trim(),
-      friction: document.getElementById('friction').value.trim(),
-      tried: document.getElementById('tried').value.trim(),
-      priority: document.getElementById('priority').value
-    };
-
-    // Replace runPreview() with a real fetch call later:
-    // const response = await fetch('/api/operator-diagnostic', {
-    //   method:'POST',
-    //   headers:{'Content-Type':'application/json'},
-    //   body: JSON.stringify(payload)
-    // });
-    // if(!response.ok) throw new Error('Request failed');
-    // const data = await response.json();
-
-    const data = await runPreview(payload);
+    // Replace fakeDiagnosticRun(payload) with a real backend call later.
+    const data = await fakeDiagnosticRun(payload);
     clearInterval(statusInterval);
-    renderResult(data);
 
     statePanel.classList.remove('visible');
     resultShell.classList.add('visible');
     resultShell.scrollIntoView({behavior:'smooth', block:'start'});
+    renderResult(payload, data);
   } catch(err){
     clearInterval(statusInterval);
     statePanel.classList.remove('visible');
