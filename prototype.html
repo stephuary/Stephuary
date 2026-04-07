@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Operator Intelligence — Live Diagnostic Preview</title>
-<meta name="description" content="A live diagnostic preview of a private operator intelligence system designed to identify structural inefficiencies, missed leverage, and immediate correction paths.">
+<meta name="description" content="A live diagnostic preview of a private operator intelligence system that identifies structural inefficiencies, missed leverage, and immediate correction paths.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Lato:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
@@ -14,6 +14,7 @@
   --bg-1:#0f100d;
   --bg-2:#131510;
   --bg-3:#181a14;
+  --bg-4:#1f221b;
   --text:#f5f0e8;
   --text-2:rgba(245,240,232,0.74);
   --text-3:rgba(245,240,232,0.44);
@@ -29,6 +30,7 @@
   --success:#93a983;
   --shadow:0 18px 70px rgba(0,0,0,0.34);
   --ease:cubic-bezier(.16,1,.3,1);
+  --ease-soft:cubic-bezier(.22,1,.36,1);
 }
 html{scroll-behavior:smooth}
 body{
@@ -44,30 +46,102 @@ body{
 }
 a{text-decoration:none;color:inherit}
 button,input,textarea,select{font:inherit}
+::selection{background:rgba(196,163,90,0.18);color:var(--text)}
+
 body::before{
   content:'';
   position:fixed;
   inset:0;
   pointer-events:none;
   z-index:9998;
-  opacity:.28;
-  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+  opacity:.24;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.88' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
 }
 body::after{
   content:'';
   position:fixed;
   inset:0;
-  pointer-events:none;
   z-index:-1;
+  pointer-events:none;
   background:
-    radial-gradient(ellipse at 80% 18%, rgba(196,163,90,0.04) 0%, transparent 52%),
-    radial-gradient(ellipse at 12% 86%, rgba(196,163,90,0.025) 0%, transparent 40%);
+    radial-gradient(ellipse at 82% 18%, rgba(196,163,90,0.04) 0%, transparent 54%),
+    radial-gradient(ellipse at 12% 86%, rgba(196,163,90,0.022) 0%, transparent 42%);
 }
-::selection{background:rgba(196,163,90,0.22);color:var(--text)}
+
 ::-webkit-scrollbar{width:10px}
 ::-webkit-scrollbar-track{background:var(--bg)}
-::-webkit-scrollbar-thumb{background:rgba(196,163,90,0.12);border-radius:999px;border:2px solid var(--bg)}
+::-webkit-scrollbar-thumb{
+  background:rgba(196,163,90,0.12);
+  border-radius:999px;
+  border:2px solid var(--bg);
+}
 ::-webkit-scrollbar-thumb:hover{background:rgba(196,163,90,0.22)}
+
+#opening-veil{
+  position:fixed;
+  inset:0;
+  z-index:1000;
+  background:
+    radial-gradient(ellipse at center, rgba(196,163,90,0.03) 0%, transparent 48%),
+    linear-gradient(180deg, rgba(10,10,8,0.98), rgba(10,10,8,1));
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  transition:opacity .9s var(--ease), visibility .9s var(--ease);
+}
+#opening-veil.hidden{
+  opacity:0;
+  visibility:hidden;
+}
+.veil-inner{
+  max-width:680px;
+  padding:32px;
+}
+.veil-mark{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(70px,10vw,120px);
+  line-height:1;
+  letter-spacing:-.05em;
+  color:var(--gold-dim);
+  margin-bottom:16px;
+  opacity:0;
+  transform:translateY(10px);
+  animation:veilFade 1s var(--ease) forwards .1s;
+}
+.veil-eyebrow{
+  font-size:10px;
+  letter-spacing:.22em;
+  text-transform:uppercase;
+  color:var(--gold);
+  margin-bottom:14px;
+  opacity:0;
+  transform:translateY(10px);
+  animation:veilFade 1s var(--ease) forwards .28s;
+}
+.veil-title{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(34px,4.4vw,56px);
+  line-height:1.02;
+  letter-spacing:-.03em;
+  font-weight:300;
+  color:var(--text);
+  margin-bottom:14px;
+  opacity:0;
+  transform:translateY(10px);
+  animation:veilFade 1s var(--ease) forwards .42s;
+}
+.veil-copy{
+  font-size:15px;
+  line-height:1.78;
+  color:var(--text-3);
+  opacity:0;
+  transform:translateY(10px);
+  animation:veilFade 1s var(--ease) forwards .56s;
+}
+@keyframes veilFade{
+  to{opacity:1;transform:translateY(0)}
+}
 
 nav{
   position:fixed;
@@ -89,14 +163,14 @@ nav{
   letter-spacing:-.025em;
 }
 .nav-back{
+  display:flex;
+  align-items:center;
+  gap:8px;
   font-size:10px;
   letter-spacing:.14em;
   text-transform:uppercase;
   color:var(--text-3);
   transition:color .25s var(--ease);
-  display:flex;
-  align-items:center;
-  gap:8px;
 }
 .nav-back::before{content:'←'}
 .nav-back:hover{color:var(--gold)}
@@ -106,7 +180,7 @@ nav{
   display:flex;
   flex-direction:column;
   justify-content:flex-end;
-  padding:148px 52px 108px;
+  padding:152px 52px 116px;
   border-bottom:1px solid var(--border-softer);
   position:relative;
 }
@@ -121,8 +195,8 @@ nav{
   font-weight:300;
   color:var(--gold-dim);
   letter-spacing:-.055em;
-  pointer-events:none;
   user-select:none;
+  pointer-events:none;
   opacity:0;
   animation:markReveal 1.8s var(--ease) forwards;
 }
@@ -130,7 +204,7 @@ nav{
   from{opacity:0;transform:translateY(-48%) scale(.95)}
   to{opacity:1;transform:translateY(-50%) scale(1)}
 }
-.hero-content{position:relative;z-index:1;max-width:1180px}
+.hero-content{position:relative;z-index:1;max-width:1160px}
 .hero-eyebrow{
   font-size:9px;
   letter-spacing:.32em;
@@ -139,31 +213,31 @@ nav{
   font-weight:500;
   margin-bottom:34px;
   opacity:0;
-  animation:fadeUp .8s var(--ease) forwards .24s;
+  animation:fadeUp .85s var(--ease) forwards .2s;
 }
 .hero-headline{
   font-family:'Cormorant Garamond',serif;
-  font-size:clamp(46px,6.25vw,92px);
-  line-height:.95;
-  letter-spacing:-.038em;
+  font-size:clamp(46px,6.1vw,92px);
+  line-height:.94;
+  letter-spacing:-.04em;
   font-weight:300;
   color:var(--text);
   max-width:980px;
-  margin-bottom:26px;
+  margin-bottom:24px;
   opacity:0;
-  animation:fadeUp .85s var(--ease) forwards .38s;
+  animation:fadeUp .88s var(--ease) forwards .36s;
 }
 .hero-sub{
-  max-width:640px;
+  max-width:620px;
   margin-bottom:44px;
   font-size:18px;
   color:var(--text-2);
-  line-height:1.6;
+  line-height:1.56;
   font-family:'Cormorant Garamond',serif;
   font-style:italic;
   font-weight:300;
   opacity:0;
-  animation:fadeUp .8s var(--ease) forwards .52s;
+  animation:fadeUp .85s var(--ease) forwards .5s;
 }
 .hero-ctas{
   display:flex;
@@ -171,7 +245,7 @@ nav{
   align-items:center;
   flex-wrap:wrap;
   opacity:0;
-  animation:fadeUp .75s var(--ease) forwards .66s;
+  animation:fadeUp .8s var(--ease) forwards .64s;
 }
 .btn-gold-outline,.btn-gold-solid,.btn-dark-outline{
   display:inline-flex;
@@ -234,9 +308,12 @@ nav{
   color:var(--text-3);
   border-bottom:1px solid rgba(245,240,232,0.18);
   padding-bottom:2px;
-  transition:color .25s var(--ease),border-color .25s var(--ease);
+  transition:color .25s var(--ease), border-color .25s var(--ease);
 }
-.hero-secondary:hover{color:var(--text-2);border-color:rgba(245,240,232,0.28)}
+.hero-secondary:hover{
+  color:var(--text-2);
+  border-color:rgba(245,240,232,0.28);
+}
 
 .hero-meta{
   margin-top:68px;
@@ -246,7 +323,7 @@ nav{
   background:var(--border-softer);
   max-width:980px;
   opacity:0;
-  animation:fadeUp .85s var(--ease) forwards .82s;
+  animation:fadeUp .88s var(--ease) forwards .8s;
 }
 .hero-meta-item{
   background:var(--bg-1);
@@ -271,47 +348,46 @@ nav{
 }
 
 .section-pad{
-  padding:108px 52px;
+  padding:112px 52px;
   border-bottom:1px solid var(--border-softer);
 }
 .two-col{
   display:grid;
   grid-template-columns:1fr 1fr;
-  gap:90px;
+  gap:92px;
   align-items:start;
 }
 .section-eyebrow{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin-bottom:30px;
   font-size:9px;
   letter-spacing:.3em;
   text-transform:uppercase;
   color:var(--gold);
   font-weight:500;
-  margin-bottom:30px;
-  display:flex;
-  align-items:center;
-  gap:10px;
 }
 .section-eyebrow::before{
   content:'';
-  width:20px;
-  height:1px;
+  width:20px;height:1px;
   background:var(--gold);
   opacity:.46;
 }
 .section-headline{
   font-family:'Cormorant Garamond',serif;
-  font-size:clamp(34px,3.45vw,48px);
-  line-height:1.04;
-  letter-spacing:-.028em;
+  font-size:clamp(34px,3.35vw,48px);
+  line-height:1.02;
+  letter-spacing:-.03em;
   font-weight:300;
   color:var(--text);
 }
 .what-body{
+  max-width:560px;
   font-size:15px;
   color:var(--text-2);
-  line-height:1.84;
-  margin-bottom:26px;
-  max-width:560px;
+  line-height:1.82;
+  margin-bottom:24px;
 }
 .plain-list{
   list-style:none;
@@ -321,35 +397,33 @@ nav{
   max-width:560px;
 }
 .plain-list li{
+  position:relative;
+  padding-left:18px;
   font-size:14px;
   color:var(--text-3);
-  padding-left:18px;
-  position:relative;
   line-height:1.62;
 }
 .plain-list li::before{
   content:'';
   position:absolute;
-  left:0;
-  top:9px;
-  width:5px;
-  height:1px;
+  left:0;top:9px;
+  width:5px;height:1px;
   background:var(--gold);
   opacity:.5;
 }
 .italic-close{
-  max-width:580px;
+  max-width:560px;
   padding-top:20px;
   border-top:1px solid var(--border-softer);
   font-family:'Cormorant Garamond',serif;
   font-style:italic;
   font-size:18px;
   color:var(--text-2);
-  line-height:1.56;
+  line-height:1.54;
 }
 
 .entry-panel{
-  max-width:840px;
+  max-width:820px;
   padding:28px 30px;
   background:linear-gradient(180deg,var(--bg-1),rgba(15,16,13,0.96));
   border:1px solid var(--border-soft);
@@ -363,7 +437,7 @@ nav{
   margin-bottom:14px;
 }
 .entry-copy{
-  max-width:640px;
+  max-width:620px;
   font-size:15px;
   color:var(--text-2);
   line-height:1.78;
@@ -373,22 +447,19 @@ nav{
 
 .live-shell{
   display:grid;
-  grid-template-columns:minmax(0,1fr) 420px;
+  grid-template-columns:minmax(0,1fr) 410px;
   gap:38px;
   align-items:start;
 }
 .form-wrap{max-width:100%}
 .form-intro{
-  max-width:620px;
+  max-width:610px;
   font-size:15px;
   color:var(--text-2);
-  line-height:1.82;
-  margin-bottom:36px;
+  line-height:1.78;
+  margin-bottom:34px;
 }
-.form-stage{
-  display:grid;
-  gap:18px;
-}
+.form-stage{display:grid;gap:18px}
 .step-card{
   padding:22px 22px 20px;
   border:1px solid var(--border-soft);
@@ -397,8 +468,9 @@ nav{
     border-color .35s var(--ease),
     background .35s var(--ease),
     transform .35s var(--ease),
-    opacity .35s var(--ease);
-  opacity:.56;
+    opacity .35s var(--ease),
+    padding .35s var(--ease);
+  opacity:.58;
 }
 .step-card.active{
   opacity:1;
@@ -408,6 +480,8 @@ nav{
 }
 .step-card.complete{
   opacity:.82;
+  padding-top:18px;
+  padding-bottom:18px;
 }
 .step-top{
   display:flex;
@@ -432,18 +506,18 @@ nav{
 .step-question{
   font-family:'Cormorant Garamond',serif;
   font-size:28px;
-  line-height:1.08;
+  line-height:1.06;
   letter-spacing:-.02em;
   font-weight:300;
   color:var(--text);
   margin-bottom:10px;
 }
 .step-help{
+  max-width:540px;
   font-size:13px;
   color:var(--text-3);
-  line-height:1.62;
+  line-height:1.6;
   margin-bottom:16px;
-  max-width:560px;
 }
 .field-input,.field-textarea,.field-select{
   width:100%;
@@ -453,20 +527,20 @@ nav{
   padding:16px 18px;
   font-size:15px;
   font-weight:300;
-  outline:none;
   line-height:1.7;
+  outline:none;
+  caret-color:var(--gold);
   transition:
     border-color .28s var(--ease),
     background .28s var(--ease),
     box-shadow .28s var(--ease),
     transform .28s var(--ease);
-  caret-color:var(--gold);
 }
 .field-input::placeholder,.field-textarea::placeholder{color:rgba(245,240,232,0.28)}
 .field-input:focus,.field-textarea:focus,.field-select:focus{
   border-color:var(--border);
   background:var(--bg-2);
-  box-shadow:0 0 0 1px rgba(196,163,90,0.1),0 0 22px rgba(196,163,90,0.045);
+  box-shadow:0 0 0 1px rgba(196,163,90,0.1), 0 0 22px rgba(196,163,90,0.045);
   transform:translateY(-1px);
 }
 .field-textarea{min-height:128px;resize:vertical}
@@ -482,7 +556,7 @@ nav{
 .reveal-step{
   max-height:0;
   overflow:hidden;
-  transition:max-height .7s var(--ease),opacity .55s var(--ease),margin-top .55s var(--ease);
+  transition:max-height .7s var(--ease), opacity .55s var(--ease), margin-top .55s var(--ease);
   opacity:0;
   margin-top:0;
 }
@@ -491,19 +565,18 @@ nav{
   opacity:1;
   margin-top:16px;
 }
-
 .form-footer{
-  margin-top:20px;
+  margin-top:22px;
   display:flex;
   flex-wrap:wrap;
   gap:18px;
   align-items:center;
 }
 .form-note{
-  max-width:420px;
+  max-width:410px;
   font-size:13px;
   color:var(--text-3);
-  line-height:1.65;
+  line-height:1.62;
 }
 .system-ready{
   margin-top:14px;
@@ -545,19 +618,33 @@ nav{
   letter-spacing:.18em;
   text-transform:uppercase;
   color:var(--gold);
-  margin-bottom:18px;
+  margin-bottom:16px;
 }
 .side-panel-body{
   font-size:14px;
   color:var(--text-3);
-  line-height:1.74;
-  margin-bottom:22px;
+  line-height:1.7;
+  margin-bottom:18px;
 }
 .signal-box{
-  padding:18px 18px 16px;
+  padding:18px;
   border:1px solid var(--border-softer);
   background:rgba(10,10,8,0.22);
   margin-bottom:18px;
+  position:relative;
+  overflow:hidden;
+}
+.signal-box::after{
+  content:'';
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  background:linear-gradient(90deg,transparent,rgba(196,163,90,0.035),transparent);
+  transform:translateX(-100%);
+  animation:signalSweep 3.2s linear infinite;
+}
+@keyframes signalSweep{
+  to{transform:translateX(100%)}
 }
 .signal-box-label{
   font-size:10px;
@@ -581,7 +668,42 @@ nav{
 .signal-value{
   font-size:14px;
   color:var(--text-2);
-  line-height:1.58;
+  line-height:1.56;
+}
+.signal-strength{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin-bottom:18px;
+}
+.signal-strength-label{
+  font-size:10px;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  color:var(--text-4);
+}
+.signal-strength-bars{
+  display:flex;
+  gap:6px;
+  flex:1;
+  max-width:180px;
+}
+.signal-bar{
+  height:8px;
+  flex:1;
+  border-radius:999px;
+  background:rgba(245,240,232,0.07);
+  transition:background .28s var(--ease), box-shadow .28s var(--ease);
+}
+.signal-bar.active{
+  background:var(--gold);
+  box-shadow:0 0 10px rgba(196,163,90,0.18);
+}
+.signal-strength-value{
+  font-size:12px;
+  color:var(--text-3);
+  min-width:92px;
+  text-align:right;
 }
 .side-list{
   list-style:none;
@@ -589,8 +711,8 @@ nav{
   gap:14px;
 }
 .side-list li{
-  padding-left:18px;
   position:relative;
+  padding-left:18px;
   font-size:13px;
   color:var(--text-2);
   line-height:1.58;
@@ -604,7 +726,7 @@ nav{
   opacity:.55;
 }
 .side-panel-foot{
-  margin-top:24px;
+  margin-top:22px;
   padding-top:18px;
   border-top:1px solid var(--border-softer);
   font-family:'Cormorant Garamond',serif;
@@ -640,10 +762,10 @@ nav{
   margin-bottom:8px;
 }
 .state-top p{
-  max-width:500px;
+  max-width:480px;
   font-size:14px;
   color:var(--text-3);
-  line-height:1.68;
+  line-height:1.66;
 }
 .status-lines{display:grid;gap:12px}
 .status-line{
@@ -653,7 +775,7 @@ nav{
   padding:14px 16px;
   background:var(--bg-2);
   border:1px solid var(--border-softer);
-  transition:border-color .35s var(--ease),transform .35s var(--ease),background .35s var(--ease);
+  transition:border-color .35s var(--ease), transform .35s var(--ease), background .35s var(--ease);
 }
 .status-label{
   font-size:12px;
@@ -666,7 +788,7 @@ nav{
   width:7px;height:7px;border-radius:50%;
   background:var(--gold-soft);
   opacity:.34;
-  transition:opacity .35s var(--ease),transform .35s var(--ease),background .35s var(--ease);
+  transition:opacity .35s var(--ease), transform .35s var(--ease), background .35s var(--ease);
 }
 .status-line.active{
   border-color:var(--border);
@@ -717,15 +839,15 @@ nav{
   font-family:'Cormorant Garamond',serif;
   font-size:clamp(34px,4vw,52px);
   line-height:1;
-  letter-spacing:-.026em;
+  letter-spacing:-.028em;
   font-weight:300;
   color:var(--text);
 }
 .result-sub{
-  max-width:390px;
+  max-width:370px;
   font-size:13px;
   color:var(--text-3);
-  line-height:1.66;
+  line-height:1.62;
 }
 .result-friction{
   margin-bottom:18px;
@@ -736,13 +858,13 @@ nav{
 .result-friction-copy{
   font-size:13px;
   color:var(--text-3);
-  line-height:1.64;
+  line-height:1.62;
 }
 .system-note{
   padding:26px;
   border:1px solid var(--border);
   background:linear-gradient(180deg,rgba(196,163,90,0.09),rgba(196,163,90,0.025));
-  margin-bottom:20px;
+  margin-bottom:18px;
 }
 .system-note-label{
   font-size:10px;
@@ -754,15 +876,15 @@ nav{
 .system-note-copy{
   font-family:'Cormorant Garamond',serif;
   font-size:30px;
-  line-height:1.12;
-  letter-spacing:-.018em;
+  line-height:1.1;
+  letter-spacing:-.02em;
   font-weight:300;
   color:var(--text);
 }
 .meaning-panel{
   display:none;
-  margin-bottom:20px;
-  padding:22px;
+  margin-bottom:18px;
+  padding:20px 22px;
   border:1px solid var(--border-softer);
   background:var(--bg-1);
 }
@@ -777,17 +899,22 @@ nav{
 .meaning-copy{
   font-size:16px;
   color:var(--text-2);
-  line-height:1.72;
+  line-height:1.68;
 }
+
 .intervention-grid{
   display:grid;
   gap:18px;
-  margin-bottom:22px;
+  margin-bottom:20px;
 }
 .intervention-card{
   opacity:0;
   transform:translateY(8px);
-  transition:opacity .55s var(--ease),transform .55s var(--ease),border-color .25s var(--ease),background .25s var(--ease);
+  transition:
+    opacity .55s var(--ease),
+    transform .55s var(--ease),
+    border-color .25s var(--ease),
+    background .25s var(--ease);
   padding:24px;
   border:1px solid var(--border-softer);
   background:var(--bg-1);
@@ -822,19 +949,35 @@ nav{
 .intervention-diagnosis{
   font-size:17px;
   color:var(--text);
-  line-height:1.68;
-  margin-bottom:14px;
+  line-height:1.64;
+  margin-bottom:16px;
 }
-.intervention-action{
-  padding-top:14px;
-  border-top:1px solid var(--border-softer);
+.intervention-split{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:1px;
+  background:var(--border-softer);
+}
+.intervention-block{
+  padding:14px 16px;
+  background:rgba(10,10,8,0.16);
+}
+.intervention-block-label{
+  font-size:9px;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  color:var(--text-4);
+  margin-bottom:8px;
+}
+.intervention-block-copy{
   font-size:14px;
   color:var(--text-2);
-  line-height:1.76;
+  line-height:1.72;
 }
+
 .next-move{
   display:none;
-  margin-bottom:20px;
+  margin-bottom:18px;
   padding:24px;
   border:1px solid var(--border-soft);
   background:var(--bg-2);
@@ -850,14 +993,14 @@ nav{
 .next-move-copy{
   font-size:18px;
   color:var(--text);
-  line-height:1.68;
+  line-height:1.64;
 }
 .result-meta{
   display:none;
   grid-template-columns:1fr 1fr;
   gap:1px;
   background:var(--border-softer);
-  margin-bottom:22px;
+  margin-bottom:18px;
 }
 .result-meta.visible{display:grid}
 .result-meta-item{
@@ -876,9 +1019,10 @@ nav{
   color:var(--text-2);
   line-height:1.6;
 }
+
 .alt-view-wrap{
   display:none;
-  margin-bottom:20px;
+  margin-bottom:18px;
 }
 .alt-view-wrap.visible{display:block}
 .view-toggle{
@@ -908,10 +1052,7 @@ nav{
   background:rgba(10,10,8,0.18);
 }
 .alt-view-panel.visible{display:block}
-.alt-grid{
-  display:grid;
-  gap:14px;
-}
+.alt-grid{display:grid;gap:14px}
 .alt-row{
   padding:14px 0;
   border-top:1px solid var(--border-softer);
@@ -931,7 +1072,7 @@ nav{
 }
 .preview-complete{
   display:none;
-  margin-bottom:20px;
+  margin-bottom:18px;
   padding:18px 20px;
   border:1px solid var(--border-softer);
   background:rgba(10,10,8,0.18);
@@ -947,7 +1088,37 @@ nav{
 .preview-complete-copy{
   font-size:14px;
   color:var(--text-3);
-  line-height:1.68;
+  line-height:1.66;
+}
+.preview-locked .form-stage,
+.preview-locked .form-footer,
+.preview-locked .system-ready{
+  opacity:.34;
+  pointer-events:none;
+  filter:grayscale(.08);
+  transition:opacity .35s var(--ease), filter .35s var(--ease);
+}
+.preview-locked .form-wrap{
+  position:relative;
+}
+.preview-lock-overlay{
+  display:none;
+  position:absolute;
+  inset:0;
+  z-index:2;
+  background:linear-gradient(180deg,rgba(10,10,8,0.08),rgba(10,10,8,0.34));
+  pointer-events:none;
+}
+.preview-locked .preview-lock-overlay{display:block}
+
+.gate-proof{
+  margin-bottom:22px;
+  padding:14px 0 0;
+  border-top:1px solid var(--border-softer);
+  font-size:12px;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  color:var(--text-3);
 }
 .gate-block{
   margin:0 -32px;
@@ -960,20 +1131,20 @@ nav{
   grid-template-columns:1.2fr .8fr;
   gap:30px;
   align-items:end;
-  margin-bottom:26px;
+  margin-bottom:24px;
 }
 .gate-headline{
   font-family:'Cormorant Garamond',serif;
-  font-size:clamp(30px,3.4vw,42px);
-  line-height:1.03;
-  letter-spacing:-.026em;
+  font-size:clamp(30px,3.3vw,42px);
+  line-height:1.02;
+  letter-spacing:-.028em;
   font-weight:300;
   color:var(--text);
 }
 .gate-copy{
   font-size:14px;
   color:var(--text-3);
-  line-height:1.74;
+  line-height:1.7;
 }
 .lock-grid{
   display:grid;
@@ -996,7 +1167,7 @@ nav{
 .lock-body{
   font-size:13px;
   color:var(--text-3);
-  line-height:1.64;
+  line-height:1.62;
 }
 .gate-actions{
   display:flex;
@@ -1051,7 +1222,7 @@ nav{
   font-style:italic;
   font-size:16px;
   color:var(--text-3);
-  line-height:1.66;
+  line-height:1.62;
 }
 
 .benchmark-grid{
@@ -1086,7 +1257,7 @@ nav{
 
 .who-list{
   list-style:none;
-  max-width:880px;
+  max-width:860px;
   display:grid;
   gap:0;
   margin-top:48px;
@@ -1114,7 +1285,7 @@ nav{
 }
 
 #final{
-  padding:124px 52px;
+  padding:126px 52px;
   text-align:center;
   position:relative;
 }
@@ -1128,19 +1299,19 @@ nav{
 .final-headline{
   font-family:'Cormorant Garamond',serif;
   font-size:clamp(38px,5vw,68px);
-  line-height:1.02;
+  line-height:1.01;
   font-weight:300;
-  letter-spacing:-.028em;
+  letter-spacing:-.03em;
   color:var(--text);
   max-width:860px;
-  margin:0 auto 24px;
+  margin:0 auto 22px;
 }
 .final-sub{
-  max-width:580px;
+  max-width:560px;
   margin:0 auto 40px;
   font-size:15px;
   color:var(--text-3);
-  line-height:1.74;
+  line-height:1.7;
 }
 
 footer{
@@ -1159,7 +1330,11 @@ footer{
   font-weight:300;
   color:var(--gold);
 }
-.footer-links{display:flex;gap:24px;flex-wrap:wrap}
+.footer-links{
+  display:flex;
+  gap:24px;
+  flex-wrap:wrap;
+}
 .footer-link{
   font-size:10px;
   letter-spacing:.1em;
@@ -1194,7 +1369,7 @@ footer{
 .reveal{
   opacity:0;
   transform:translateY(18px);
-  transition:opacity .85s var(--ease),transform .85s var(--ease);
+  transition:opacity .88s var(--ease), transform .88s var(--ease);
 }
 .reveal.visible{
   opacity:1;
@@ -1213,24 +1388,38 @@ footer{
 }
 @media(max-width:900px){
   nav{padding:18px 20px}
-  #hero{padding:112px 20px 76px;min-height:auto}
+  #hero{padding:120px 20px 84px;min-height:auto}
   .hero-mark{font-size:clamp(84px,28vw,140px);left:20px}
   .hero-meta{grid-template-columns:1fr}
-  .section-pad{padding:74px 20px}
-  .two-col{grid-template-columns:1fr;gap:38px}
+  .section-pad{padding:80px 20px}
+  .two-col{grid-template-columns:1fr;gap:40px}
   .inside-grid{grid-template-columns:1fr}
   .benchmark-grid{grid-template-columns:1fr}
   .result-shell{padding:24px 24px 0}
   .gate-block{margin:0 -24px;padding:30px 24px}
   .result-meta{grid-template-columns:1fr}
-  #final{padding:84px 20px}
+  .intervention-split{grid-template-columns:1fr}
+  #final{padding:88px 20px}
   footer{padding:32px 20px;flex-direction:column;align-items:flex-start}
   .mobile-sticky{display:block}
   body{padding-bottom:64px}
+  .veil-inner{padding:20px}
+  .result-title{font-size:42px}
+  .system-note-copy{font-size:32px}
+  .next-move-copy{font-size:19px}
 }
 </style>
 </head>
 <body>
+
+<div id="opening-veil" aria-hidden="true">
+  <div class="veil-inner">
+    <div class="veil-mark">OI</div>
+    <div class="veil-eyebrow">Operator Intelligence</div>
+    <div class="veil-title">Live Diagnostic Preview</div>
+    <div class="veil-copy">System ready.</div>
+  </div>
+</div>
 
 <nav>
   <div class="nav-mark">Operator Intelligence</div>
@@ -1242,7 +1431,7 @@ footer{
   <div class="hero-content">
     <div class="hero-eyebrow">Live diagnostic preview</div>
     <h1 class="hero-headline">A system that identifies where you’re operating incorrectly and tells you what to change next.</h1>
-    <p class="hero-sub">This is a controlled preview of the intervention layer inside a larger operator intelligence system. Enter a real operational problem. The system returns a structured correction.</p>
+    <p class="hero-sub">A controlled preview of the intervention layer inside a larger operator intelligence system. Enter a real problem. Receive a structured correction.</p>
     <div class="hero-ctas">
       <a href="#entry" class="btn-gold-outline">Enter Diagnostic</a>
       <a href="#inside" class="hero-secondary">Inside the full system</a>
@@ -1255,11 +1444,11 @@ footer{
       </div>
       <div class="hero-meta-item">
         <div class="hero-meta-label">What it returns</div>
-        <div class="hero-meta-copy">One system note, three interventions, and one immediate next move. Nothing broad. Nothing decorative.</div>
+        <div class="hero-meta-copy">One system note, three interventions, and one immediate next move.</div>
       </div>
       <div class="hero-meta-item">
         <div class="hero-meta-label">What it is not</div>
-        <div class="hero-meta-copy">Not a dashboard. Not general advice. Not a productivity app. This is an intervention environment.</div>
+        <div class="hero-meta-copy">Not a dashboard. Not general advice. Not casual use.</div>
       </div>
     </div>
   </div>
@@ -1269,7 +1458,7 @@ footer{
   <div class="section-eyebrow reveal">Before you proceed</div>
   <div class="entry-panel reveal reveal-d1">
     <div class="entry-kicker">System entry</div>
-    <p class="entry-copy">This system performs best with <strong>real, current problems</strong>. Surface-level input produces low-value output. It is designed to identify where your thinking or execution is incorrect, not to hand out generic advice.</p>
+    <p class="entry-copy">This system performs best with <strong>real, current problems</strong>. Surface-level input produces low-value output. Continue only if the problem is real.</p>
     <div class="hero-ctas" style="opacity:1;animation:none">
       <a href="#live-diagnostic" class="btn-gold-solid">Proceed to Diagnostic</a>
       <a href="#how" class="btn-dark-outline">How it works</a>
@@ -1284,22 +1473,23 @@ footer{
       <h2 class="section-headline reveal reveal-d1">This preview is designed to feel controlled, not casual.</h2>
     </div>
     <div>
-      <p class="what-body reveal">The point is not to simulate an entire platform. The point is to make one interaction precise enough that the system feels real, selective, and useful immediately.</p>
+      <p class="what-body reveal">The point is not to simulate an entire platform. The point is to make one interaction precise enough that the system feels real and useful immediately.</p>
       <ul class="plain-list reveal reveal-d1">
         <li>Weak input should not produce a strong answer</li>
         <li>The system isolates structural issues, not just visible symptoms</li>
         <li>The public preview is intentionally narrow</li>
-        <li>The private layer goes materially deeper</li>
       </ul>
-      <div class="italic-close reveal reveal-d2">A good result should feel less like inspiration and more like an internal correction.</div>
+      <div class="italic-close reveal reveal-d2">A good result should feel less like inspiration and more like correction.</div>
     </div>
   </div>
 </section>
 
 <section class="section-pad" id="live-diagnostic">
   <div class="section-eyebrow reveal">Diagnostic interface</div>
-  <div class="live-shell">
-    <div class="form-wrap">
+  <div class="live-shell" id="live-shell">
+    <div class="form-wrap" id="form-wrap">
+      <div class="preview-lock-overlay"></div>
+
       <h2 class="section-headline reveal reveal-d1">Run a live diagnostic preview.</h2>
       <p class="form-intro reveal reveal-d2">Not all inputs produce useful outputs. Enter a real problem. The stronger the signal, the sharper the intervention.</p>
 
@@ -1312,7 +1502,7 @@ footer{
               <div class="step-index">Current objective</div>
             </div>
             <div class="step-question">What are you trying to do?</div>
-            <div class="step-help">Name the actual objective, not the tool or task. Good input here makes the entire preview stronger.</div>
+            <div class="step-help">Name the actual objective, not the task.</div>
             <input class="field-input" type="text" id="goal" name="goal" placeholder="Example: Clarify a high-ticket offer, tighten a workflow, improve execution." required>
           </div>
 
@@ -1322,7 +1512,7 @@ footer{
               <div class="step-index">Primary friction</div>
             </div>
             <div class="step-question">What is breaking or slowing this down?</div>
-            <div class="step-help">Describe what is repeating, stalling, or remaining unclear. Be concrete.</div>
+            <div class="step-help">Describe what is repeating, stalling, or staying unclear.</div>
             <div class="reveal-step" id="reveal-2">
               <textarea class="field-textarea" id="friction" name="friction" placeholder="What is taking too long, staying unclear, or forcing repeated work?" required></textarea>
             </div>
@@ -1334,7 +1524,7 @@ footer{
               <div class="step-index">Previous attempts</div>
             </div>
             <div class="step-question">What have you already tried?</div>
-            <div class="step-help">This helps the system distinguish between a new issue and a repeated pattern.</div>
+            <div class="step-help">This helps the system distinguish a new issue from a repeated pattern.</div>
             <div class="reveal-step" id="reveal-3">
               <textarea class="field-textarea" id="tried" name="tried" placeholder="What have you rewritten, delegated, automated, tested, or changed already?" required></textarea>
             </div>
@@ -1364,7 +1554,7 @@ footer{
 
         <div class="form-footer reveal reveal-d3">
           <button type="submit" class="btn-gold-solid" id="submit-btn">Run Diagnostic</button>
-          <p class="form-note">Public preview is intentionally narrow. This is the visible surface of a larger system.</p>
+          <p class="form-note">Public preview is intentionally narrow.</p>
         </div>
 
         <div class="system-ready reveal reveal-d3">
@@ -1391,7 +1581,7 @@ footer{
 
         <div class="error-panel" id="error-panel" aria-live="polite">
           <div class="error-title">Diagnostic unavailable</div>
-          <div class="error-body">The system could not generate a reliable preview from the current input. Tighten the signal and try again.</div>
+          <div class="error-body">Input signal too vague to generate a useful intervention. Tighten the signal and try again.</div>
         </div>
 
         <div class="result-shell" id="result-shell" aria-live="polite">
@@ -1400,10 +1590,10 @@ footer{
               <div class="result-kicker">Diagnostic returned</div>
               <h3 class="result-title">Intervention Preview</h3>
             </div>
-            <p class="result-sub">This is a limited public layer. The full system tracks patterns, calibrates to context, and goes deeper over time.</p>
+            <p class="result-sub">A limited public layer. The private system goes deeper over time.</p>
           </div>
 
-          <div class="result-friction" id="result-friction">
+          <div class="result-friction">
             <div class="result-friction-copy" id="result-friction-copy"></div>
           </div>
 
@@ -1461,10 +1651,12 @@ footer{
 
           <div class="preview-complete" id="preview-complete">
             <div class="preview-complete-title">Preview complete</div>
-            <div class="preview-complete-copy">You have reached the limit of this public preview. This system is not designed for continuous use in public mode.</div>
+            <div class="preview-complete-copy">You have reached the limit of this public preview. The full system is not publicly available.</div>
           </div>
 
           <div class="gate-block" id="inside">
+            <div class="gate-proof">Built from operational pattern recognition, luxury service standards, and intervention-based diagnostic logic.</div>
+
             <div class="gate-head">
               <h4 class="gate-headline">This preview isolates one issue. The full diagnostic identifies the highest-cost breakdowns across your operation.</h4>
               <p class="gate-copy">The paid diagnostic does not stop at a single correction. It identifies where your structure, positioning, execution, and leverage break down together, then maps the intervention path.</p>
@@ -1485,7 +1677,7 @@ footer{
               </div>
               <div class="lock-item">
                 <div class="lock-label">Operator calibration</div>
-                <div class="lock-body">Deeper precision around how you work, where you stall, and where leverage is repeatedly missed.</div>
+                <div class="lock-body">Deeper precision around how you work and where leverage is repeatedly missed.</div>
               </div>
               <div class="lock-item">
                 <div class="lock-label">Structural diagnostics</div>
@@ -1493,7 +1685,7 @@ footer{
               </div>
               <div class="lock-item">
                 <div class="lock-label">Private deployment</div>
-                <div class="lock-body">Designed for operators and decision-makers responsible for real outcomes, not casual use.</div>
+                <div class="lock-body">Designed for operators and decision-makers responsible for real outcomes.</div>
               </div>
             </div>
 
@@ -1509,14 +1701,24 @@ footer{
 
     <aside class="side-panel reveal reveal-d3">
       <div class="side-panel-title">Signal detected</div>
-      <p class="side-panel-body">The system should begin reflecting your input before the result is returned. This reduces skepticism and increases the sense that something real is happening.</p>
+      <p class="side-panel-body">The interface should begin reflecting your input before the result is returned.</p>
+
+      <div class="signal-strength">
+        <div class="signal-strength-label">Input quality</div>
+        <div class="signal-strength-bars">
+          <div class="signal-bar" id="bar-1"></div>
+          <div class="signal-bar" id="bar-2"></div>
+          <div class="signal-bar" id="bar-3"></div>
+        </div>
+        <div class="signal-strength-value" id="signal-strength-value">Weak signal</div>
+      </div>
 
       <div class="signal-box">
         <div class="signal-box-label">Live mirror</div>
 
         <div class="signal-item">
           <div class="signal-name">Goal</div>
-          <div class="signal-value" id="mirror-goal">Awaiting input.</div>
+          <div class="signal-value" id="mirror-goal">Awaiting active signal.</div>
         </div>
 
         <div class="signal-item">
@@ -1538,7 +1740,7 @@ footer{
       <ul class="side-list">
         <li>This system performs better with specific inputs</li>
         <li>Not all signals deserve strong output</li>
-        <li>The public layer demonstrates the correction logic, not the full intelligence stack</li>
+        <li>The public layer demonstrates the correction logic, not the full stack</li>
       </ul>
 
       <div class="side-panel-foot">A good preview should feel selective, slightly severe, and immediately useful.</div>
@@ -1634,10 +1836,16 @@ footer{
 <script>
 const observer = new IntersectionObserver(function(entries){
   entries.forEach(function(entry){
-    if(entry.isIntersecting){ entry.target.classList.add('visible'); }
+    if(entry.isIntersecting) entry.target.classList.add('visible');
   });
 },{threshold:0.14});
 document.querySelectorAll('.reveal').forEach(function(el){ observer.observe(el); });
+
+window.addEventListener('load', function(){
+  setTimeout(function(){
+    document.getElementById('opening-veil').classList.add('hidden');
+  }, 1600);
+});
 
 const goalInput = document.getElementById('goal');
 const frictionInput = document.getElementById('friction');
@@ -1700,12 +1908,14 @@ const mirrorGoal = document.getElementById('mirror-goal');
 const mirrorFriction = document.getElementById('mirror-friction');
 const mirrorPattern = document.getElementById('mirror-pattern');
 const mirrorPriority = document.getElementById('mirror-priority');
+const signalValue = document.getElementById('signal-strength-value');
+const bars = [document.getElementById('bar-1'), document.getElementById('bar-2'), document.getElementById('bar-3')];
 
 function summarizeText(text, fallback){
   const clean = text.trim();
   if(!clean) return fallback;
   if(clean.length <= 72) return clean;
-  return clean.slice(0, 72).replace(/\s+\S*$/, '') + '…';
+  return clean.slice(0,72).replace(/\s+\S*$/, '') + '…';
 }
 function inferPattern(goal, friction, tried, priority){
   const combined = (goal + ' ' + friction + ' ' + tried + ' ' + priority).toLowerCase();
@@ -1716,16 +1926,34 @@ function inferPattern(goal, friction, tried, priority){
   if(combined.includes('time') || combined.includes('slow') || combined.includes('too long')) return 'Misallocation of effort';
   return 'Pattern still forming';
 }
+function getSignalScore(){
+  let score = 0;
+  if(goalInput.value.trim().length > 10) score++;
+  if(frictionInput.value.trim().length > 24) score++;
+  if(triedInput.value.trim().length > 18) score++;
+  if(priorityInput.value) score++;
+  return Math.min(score, 3);
+}
+function updateSignalMeter(){
+  const score = getSignalScore();
+  bars.forEach((bar,index)=>{
+    bar.classList.toggle('active', index < score);
+  });
+  if(score <= 1) signalValue.textContent = 'Weak signal';
+  if(score === 2) signalValue.textContent = 'Usable signal';
+  if(score >= 3) signalValue.textContent = 'High signal';
+}
 function updateMirror(){
   const goal = goalInput.value;
   const friction = frictionInput.value;
   const tried = triedInput.value;
   const priority = priorityInput.value;
 
-  mirrorGoal.textContent = summarizeText(goal, 'Awaiting input.');
+  mirrorGoal.textContent = summarizeText(goal, 'Awaiting active signal.');
   mirrorFriction.textContent = summarizeText(friction, 'No active signal yet.');
   mirrorPriority.textContent = priority || 'No priority selected.';
   mirrorPattern.textContent = inferPattern(goal, friction, tried, priority);
+  updateSignalMeter();
 }
 goalInput.addEventListener('input', updateMirror);
 frictionInput.addEventListener('input', updateMirror);
@@ -1747,7 +1975,6 @@ const nextMoveCopy = document.getElementById('next-move-copy');
 const resultMeta = document.getElementById('result-meta');
 const confidenceCopy = document.getElementById('confidence-copy');
 const riskCopy = document.getElementById('risk-copy');
-const previewComplete = document.getElementById('preview-complete');
 const resultFrictionCopy = document.getElementById('result-friction-copy');
 
 const altViewWrap = document.getElementById('alt-view-wrap');
@@ -1758,7 +1985,11 @@ const altRoot = document.getElementById('alt-root');
 const altLeverage = document.getElementById('alt-leverage');
 const altCorrection = document.getElementById('alt-correction');
 
+const previewComplete = document.getElementById('preview-complete');
+const liveShell = document.getElementById('live-shell');
 let currentAltVisible = false;
+let previewUsed = false;
+
 viewToggle.addEventListener('click', function(){
   currentAltVisible = !currentAltVisible;
   altViewPanel.classList.toggle('visible', currentAltVisible);
@@ -1767,158 +1998,173 @@ viewToggle.addEventListener('click', function(){
 
 const previewResponses = [
   {
-    trigger: ['offer','position','positioning','copy','rewrite'],
-    system_note: "This is incorrectly structured. You are trying to improve visible language before deciding what the offer actually is.",
-    meaning: "You are not stuck. You are operating inside an unclear offer hierarchy, which is why the work keeps repeating.",
-    interventions: [
+    trigger:['offer','position','positioning','copy','rewrite'],
+    system_note:"This is incorrectly structured. You are trying to improve visible language before deciding what the offer actually is.",
+    meaning:"You are not stuck. You are operating inside an unclear offer hierarchy, which is why the work keeps repeating.",
+    interventions:[
       {
-        title: "Eliminate",
-        diagnosis: "You are revising downstream copy before the underlying decision framework is stable. That turns refinement into repetition.",
-        action: "Stop editing outward-facing language until the offer, buyer, outcome, and proof are reduced to one clean statement."
+        title:"Eliminate",
+        diagnosis:"You are revising downstream copy before the underlying decision framework is stable. That turns refinement into repetition.",
+        consequence:"Continued rewriting without stronger conversion.",
+        action:"Stop editing outward-facing language until the offer, buyer, outcome, and proof are reduced to one clean statement."
       },
       {
-        title: "Systemize",
-        diagnosis: "The positioning process is being rebuilt each time instead of run through a fixed structure.",
-        action: "Use one decision framework only: problem, buyer, outcome, proof, scope. Do not write copy before those five lines exist."
+        title:"Systemize",
+        diagnosis:"The positioning process is being rebuilt each time instead of run through a fixed structure.",
+        consequence:"Each revision starts too close to zero.",
+        action:"Use one decision framework only: problem, buyer, outcome, proof, scope. Do not write copy before those five lines exist."
       },
       {
-        title: "Leverage",
-        diagnosis: "AI is being used too late, after the confusion has already spread through the work.",
-        action: "Use AI to pressure-test clarity after the structure is defined, not to rescue unclear work at the end."
+        title:"Leverage",
+        diagnosis:"AI is being used too late, after the confusion has already spread through the work.",
+        consequence:"Speed improves slightly while clarity stays weak.",
+        action:"Use AI to pressure-test clarity after the structure is defined, not to rescue unclear work at the end."
       }
     ],
-    next_move: "Write the offer in one sentence and the buyer in one sentence. Do not touch the page again until both are clear.",
-    confidence: "High",
-    risk: "Continued rewriting, slower conversion, and a weaker signal to the buyer.",
-    alt: {
-      issue: "Repeated rewriting without stronger conversion.",
-      root: "The offer is structurally unclear, so the copy keeps carrying work it cannot solve.",
-      leverage: "Clarify the offer architecture before changing another visible asset.",
-      correction: "Reduce the system to one clean promise, then rebuild the page from that line outward."
+    next_move:"Write the offer in one sentence and the buyer in one sentence. Do not touch the page again until both are clear.",
+    confidence:"High",
+    risk:"Continued rewriting, slower conversion, and a weaker signal to the buyer.",
+    alt:{
+      issue:"Repeated rewriting without stronger conversion.",
+      root:"The offer is structurally unclear, so the copy keeps carrying work it cannot solve.",
+      leverage:"Clarify the offer architecture before changing another visible asset.",
+      correction:"Reduce the system to one clean promise, then rebuild the page from that line outward."
     }
   },
   {
-    trigger: ['workflow','process','system','execute','execution'],
-    system_note: "This is a sequencing failure. Strategy, production, and review are collapsing into the same block of work.",
-    meaning: "The issue is not capacity first. The issue is that the order of operations is inefficient, so everything feels heavier than it is.",
-    interventions: [
+    trigger:['workflow','process','system','execute','execution'],
+    system_note:"This is a sequencing failure. Strategy, production, and review are collapsing into the same block of work.",
+    meaning:"The issue is not capacity first. The issue is that the order of operations is inefficient, so everything feels heavier than it is.",
+    interventions:[
       {
-        title: "Eliminate",
-        diagnosis: "You are mixing decision-making and production in the same session, which weakens both.",
-        action: "Separate planning from execution immediately. One block decides. One block builds. One block reviews."
+        title:"Eliminate",
+        diagnosis:"You are mixing decision-making and production in the same session, which weakens both.",
+        consequence:"Judgment degrades while execution slows.",
+        action:"Separate planning from execution immediately. One block decides. One block builds. One block reviews."
       },
       {
-        title: "Systemize",
-        diagnosis: "Recurring work still depends too much on improvisation.",
-        action: "Create a standard input sheet for repeated tasks: objective, constraint, proof, output type, deadline."
+        title:"Systemize",
+        diagnosis:"Recurring work still depends too much on improvisation.",
+        consequence:"The same decisions keep being remade manually.",
+        action:"Create a standard input sheet for repeated tasks: objective, constraint, proof, output type, deadline."
       },
       {
-        title: "Leverage",
-        diagnosis: "Manual effort is still occupying work that should be compressed.",
-        action: "Use AI for first-pass structuring and cleanup only after the constraints are set."
+        title:"Leverage",
+        diagnosis:"Manual effort is still occupying work that should be compressed.",
+        consequence:"High-value time is spent on setup and cleanup.",
+        action:"Use AI for first-pass structuring and cleanup only after the constraints are set."
       }
     ],
-    next_move: "Choose one repeated task this week and convert it into a fixed process before doing it manually again.",
-    confidence: "High",
-    risk: "Continued drag, decision fatigue, and slow throughput across the system.",
-    alt: {
-      issue: "Work feels heavier than it should.",
-      root: "The sequence is wrong, so high-value judgment is leaking into low-value execution.",
-      leverage: "Separate deciding from doing so each mode can perform properly.",
-      correction: "Install one fixed structure for repeated work and stop remaking the same decisions."
+    next_move:"Choose one repeated task this week and convert it into a fixed process before doing it manually again.",
+    confidence:"High",
+    risk:"Continued drag, decision fatigue, and slow throughput across the system.",
+    alt:{
+      issue:"Work feels heavier than it should.",
+      root:"The sequence is wrong, so high-value judgment is leaking into low-value execution.",
+      leverage:"Separate deciding from doing so each mode can perform properly.",
+      correction:"Install one fixed structure for repeated work and stop remaking the same decisions."
     }
   },
   {
-    trigger: ['ai','automation','automate'],
-    system_note: "AI is being added as a convenience layer instead of a leverage layer. That is why it feels helpful but not transformative.",
-    meaning: "The issue is not whether AI is available. The issue is that it has not been inserted at the correct point in the workflow.",
-    interventions: [
+    trigger:['ai','automation','automate'],
+    system_note:"AI is being added as a convenience layer instead of a leverage layer. That is why it feels helpful but not transformative.",
+    meaning:"The issue is not whether AI is available. The issue is that it has not been inserted at the correct point in the workflow.",
+    interventions:[
       {
-        title: "Eliminate",
-        diagnosis: "You are still doing manual drafting and sorting in places where judgment is not the bottleneck.",
-        action: "Remove AI from vanity use and place it only where repeated, low-leverage effort is consuming time."
+        title:"Eliminate",
+        diagnosis:"You are still doing manual drafting and sorting in places where judgment is not the bottleneck.",
+        consequence:"AI remains cosmetic instead of structural.",
+        action:"Remove AI from vanity use and place it only where repeated, low-leverage effort is consuming time."
       },
       {
-        title: "Systemize",
-        diagnosis: "There is no fixed rule for when AI should be used and when human judgment should stay in control.",
-        action: "Build a simple rule: AI for first-pass structure and cleanup. Human for strategy, taste, and final decisions."
+        title:"Systemize",
+        diagnosis:"There is no fixed rule for when AI should be used and when human judgment should stay in control.",
+        consequence:"Usage is inconsistent and results feel uneven.",
+        action:"Build a simple rule: AI for first-pass structure and cleanup. Human for strategy, taste, and final decisions."
       },
       {
-        title: "Leverage",
-        diagnosis: "The current use pattern improves speed a little but does not change how work is organized.",
-        action: "Move AI earlier in the process so it reduces setup time, not just polishing time."
+        title:"Leverage",
+        diagnosis:"The current use pattern improves speed a little but does not change how work is organized.",
+        consequence:"Efficiency improves without real operating change.",
+        action:"Move AI earlier in the process so it reduces setup time, not just polishing time."
       }
     ],
-    next_move: "Pick one repeated manual task and decide whether AI should structure it, sort it, or remove it entirely.",
-    confidence: "Medium to high",
-    risk: "AI stays cosmetic, while the underlying workflow remains inefficient.",
-    alt: {
-      issue: "AI is present but not changing outcomes enough.",
-      root: "It is being applied in the wrong part of the workflow.",
-      leverage: "Use AI where repetition is high and judgment is low.",
-      correction: "Reassign AI to structure and compression rather than last-minute assistance."
+    next_move:"Pick one repeated manual task and decide whether AI should structure it, sort it, or remove it entirely.",
+    confidence:"Medium to high",
+    risk:"AI stays cosmetic while the underlying workflow remains inefficient.",
+    alt:{
+      issue:"AI is present but not changing outcomes enough.",
+      root:"It is being applied in the wrong part of the workflow.",
+      leverage:"Use AI where repetition is high and judgment is low.",
+      correction:"Reassign AI to structure and compression rather than last-minute assistance."
     }
   },
   {
-    trigger: ['time','slow','too long','delay','stuck'],
-    system_note: "This is a misallocation of effort. Too much attention is being given to work that does not materially change the result.",
-    meaning: "You do not need more force first. You need a stronger hierarchy for where time should and should not go.",
-    interventions: [
+    trigger:['time','slow','too long','delay','stuck'],
+    system_note:"This is a misallocation of effort. Too much attention is being given to work that does not materially change the result.",
+    meaning:"You do not need more force first. You need a stronger hierarchy for where time should and should not go.",
+    interventions:[
       {
-        title: "Eliminate",
-        diagnosis: "Low-impact tasks are receiving the same quality of attention as high-impact decisions.",
-        action: "Cut or delay anything this week that does not affect clarity, delivery quality, or conversion."
+        title:"Eliminate",
+        diagnosis:"Low-impact tasks are receiving the same quality of attention as high-impact decisions.",
+        consequence:"Busyness expands while meaningful movement stays flat.",
+        action:"Cut or delay anything this week that does not affect clarity, delivery quality, or conversion."
       },
       {
-        title: "Systemize",
-        diagnosis: "There is no strong filter separating critical work from attractive but secondary work.",
-        action: "Classify every task into three tiers only: critical, useful, later."
+        title:"Systemize",
+        diagnosis:"There is no strong filter separating critical work from attractive but secondary work.",
+        consequence:"Everything feels urgent, so nothing gets proper weight.",
+        action:"Classify every task into three tiers only: critical, useful, later."
       },
       {
-        title: "Leverage",
-        diagnosis: "Compression opportunities are being missed because everything is still being treated as hand-built.",
-        action: "Use templates, first-pass automation, and tighter decision criteria before adding more effort."
+        title:"Leverage",
+        diagnosis:"Compression opportunities are being missed because everything is still being treated as hand-built.",
+        consequence:"Manual effort keeps expanding to fill the system.",
+        action:"Use templates, first-pass automation, and tighter decision criteria before adding more effort."
       }
     ],
-    next_move: "Reduce your current working list by half. Keep only what changes clarity, delivery, or revenue this week.",
-    confidence: "High",
-    risk: "Continued busyness with weak movement on the real objective.",
-    alt: {
-      issue: "Work is consuming time without proportional movement.",
-      root: "The hierarchy is weak, so low-value tasks keep entering the same field of attention.",
-      leverage: "Create harder filters before adding more effort.",
-      correction: "Reduce task volume and protect the small set of actions that actually move the system."
+    next_move:"Reduce your current working list by half. Keep only what changes clarity, delivery, or revenue this week.",
+    confidence:"High",
+    risk:"Continued busyness with weak movement on the real objective.",
+    alt:{
+      issue:"Work is consuming time without proportional movement.",
+      root:"The hierarchy is weak, so low-value tasks keep entering the same field of attention.",
+      leverage:"Create harder filters before adding more effort.",
+      correction:"Reduce task volume and protect the small set of actions that actually move the system."
     }
   },
   {
-    trigger: [],
-    system_note: "The visible issue is only part of the problem. The deeper issue is that the work is being treated symptom by symptom instead of structurally.",
-    meaning: "You are likely trying to improve outputs one at a time when the operating logic underneath them needs correction first.",
-    interventions: [
+    trigger:[],
+    system_note:"The visible issue is only part of the problem. The deeper issue is that the work is being treated symptom by symptom instead of structurally.",
+    meaning:"You are likely trying to improve outputs one at a time when the operating logic underneath them needs correction first.",
+    interventions:[
       {
-        title: "Eliminate",
-        diagnosis: "You are still responding to visible friction as if each symptom is separate.",
-        action: "Stop fixing downstream manifestations one by one until the root structure is named clearly."
+        title:"Eliminate",
+        diagnosis:"You are still responding to visible friction as if each symptom is separate.",
+        consequence:"Symptoms disappear briefly and then return in new forms.",
+        action:"Stop fixing downstream manifestations one by one until the root structure is named clearly."
       },
       {
-        title: "Systemize",
-        diagnosis: "The work needs a stronger governing framework so repeated decisions stop being made from scratch.",
-        action: "Define the core logic first: what matters, what does not, and what the system is actually trying to produce."
+        title:"Systemize",
+        diagnosis:"The work needs a stronger governing framework so repeated decisions stop being made from scratch.",
+        consequence:"The system remains dependent on improvisation.",
+        action:"Define the core logic first: what matters, what does not, and what the system is actually trying to produce."
       },
       {
-        title: "Leverage",
-        diagnosis: "Better tools will not solve a weak structure on their own.",
-        action: "Use AI and automation only after the operating framework is clarified."
+        title:"Leverage",
+        diagnosis:"Better tools will not solve a weak structure on their own.",
+        consequence:"You add capability without enough clarity to direct it.",
+        action:"Use AI and automation only after the operating framework is clarified."
       }
     ],
-    next_move: "Name the real objective, the main constraint, and the single outcome that matters most. Keep those visible while you work.",
-    confidence: "Medium",
-    risk: "Repeated effort with uneven results because the structure remains uncorrected.",
-    alt: {
-      issue: "Visible problems keep recurring in new forms.",
-      root: "The operating logic is under-defined, so symptoms keep returning.",
-      leverage: "Clarify the structure before adding new output.",
-      correction: "Reduce the work to one governing framework and rebuild from there."
+    next_move:"Name the real objective, the main constraint, and the single outcome that matters most. Keep those visible while you work.",
+    confidence:"Medium",
+    risk:"Repeated effort with uneven results because the structure remains uncorrected.",
+    alt:{
+      issue:"Visible problems keep recurring in new forms.",
+      root:"The operating logic is under-defined, so symptoms keep returning.",
+      leverage:"Clarify the structure before adding new output.",
+      correction:"Reduce the work to one governing framework and rebuild from there."
     }
   }
 ];
@@ -1992,33 +2238,29 @@ function renderResult(payload, data){
         <div class="intervention-index">Correction Layer</div>
       </div>
       <div class="intervention-diagnosis">${item.diagnosis}</div>
-      <div class="intervention-action"><strong>Action:</strong> ${item.action}</div>
+      <div class="intervention-split">
+        <div class="intervention-block">
+          <div class="intervention-block-label">Consequence</div>
+          <div class="intervention-block-copy">${item.consequence}</div>
+        </div>
+        <div class="intervention-block">
+          <div class="intervention-block-label">Correction</div>
+          <div class="intervention-block-copy">${item.action}</div>
+        </div>
+      </div>
     `;
     interventionGrid.appendChild(card);
   });
 
   const cards = Array.from(document.querySelectorAll('.intervention-card'));
-  setTimeout(() => {
-    cards[0] && cards[0].classList.add('visible');
-  }, 260);
-  setTimeout(() => {
-    cards[1] && cards[1].classList.add('visible');
-  }, 620);
-  setTimeout(() => {
-    cards[2] && cards[2].classList.add('visible');
-  }, 980);
-  setTimeout(() => {
-    nextMoveBlock.classList.add('visible');
-  }, 1260);
-  setTimeout(() => {
-    resultMeta.classList.add('visible');
-  }, 1520);
-  setTimeout(() => {
-    altViewWrap.classList.add('visible');
-  }, 1740);
-  setTimeout(() => {
-    previewComplete.classList.add('visible');
-  }, 1960);
+
+  setTimeout(()=>{ cards[0] && cards[0].classList.add('visible'); }, 320);
+  setTimeout(()=>{ cards[1] && cards[1].classList.add('visible'); }, 760);
+  setTimeout(()=>{ cards[2] && cards[2].classList.add('visible'); }, 1180);
+  setTimeout(()=>{ nextMoveBlock.classList.add('visible'); }, 1540);
+  setTimeout(()=>{ resultMeta.classList.add('visible'); }, 1820);
+  setTimeout(()=>{ altViewWrap.classList.add('visible'); }, 2060);
+  setTimeout(()=>{ previewComplete.classList.add('visible'); }, 2300);
 }
 
 function fakeDiagnosticRun(payload){
@@ -2029,12 +2271,14 @@ function fakeDiagnosticRun(payload){
         return;
       }
       resolve(chooseResponse(payload));
-    }, 2800);
+    }, 2900);
   });
 }
 
 form.addEventListener('submit', async function(e){
   e.preventDefault();
+
+  if(previewUsed) return;
 
   const payload = {
     goal: goalInput.value.trim(),
@@ -2059,22 +2303,23 @@ form.addEventListener('submit', async function(e){
   const statusInterval = cycleStatuses();
 
   try{
-    // Replace fakeDiagnosticRun(payload) with a real backend call later.
     const data = await fakeDiagnosticRun(payload);
     clearInterval(statusInterval);
-
     statePanel.classList.remove('visible');
     resultShell.classList.add('visible');
     resultShell.scrollIntoView({behavior:'smooth', block:'start'});
     renderResult(payload, data);
+
+    previewUsed = true;
+    liveShell.classList.add('preview-locked');
   } catch(err){
     clearInterval(statusInterval);
     statePanel.classList.remove('visible');
     errorPanel.classList.add('visible');
     errorPanel.scrollIntoView({behavior:'smooth', block:'start'});
   } finally {
-    submitBtn.disabled = false;
-    submitBtn.style.opacity = '1';
+    submitBtn.disabled = previewUsed;
+    submitBtn.style.opacity = previewUsed ? '.38' : '1';
   }
 });
 </script>
