@@ -174,7 +174,7 @@ footer{padding:40px 52px;display:flex;justify-content:space-between;align-items:
         <li>No direct messaging without approval</li>
         <li>No percentage taken on anything that happens here</li>
       </ul>
-      <div class="italic-close reveal reveal-d2">If approved, you will receive access instructions.</div>
+      <div class="italic-close reveal reveal-d2">For testing, this page links directly into the approved member page.</div>
     </div>
   </div>
 </section>
@@ -186,7 +186,7 @@ footer{padding:40px 52px;display:flex;justify-content:space-between;align-items:
     <h2 class="section-headline reveal reveal-d1">Apply for access.</h2>
     <p class="form-intro reveal reveal-d2">This works best for people who are actively building, placing, hiring, funding, expanding, or moving something real. Keep this direct.</p>
 
-    <form class="form-grid reveal reveal-d2" id="access-form" action="#" method="post" novalidate>
+    <form class="form-grid reveal reveal-d2" id="access-form" action="/approved.html" method="get" novalidate>
       <div class="field-group">
         <label class="field-label" for="what-do">What do you do?</label>
         <input class="field-input" type="text" id="what-do" name="what_do" placeholder="Be direct." required>
@@ -239,12 +239,7 @@ footer{padding:40px 52px;display:flex;justify-content:space-between;align-items:
 
       <div class="form-actions">
         <button type="submit" class="btn-gold-solid">Submit Application</button>
-        <p class="form-note">Not all requests are accepted. If approved, you will receive access instructions.</p>
-      </div>
-
-      <div class="form-status" id="form-status">
-        <strong style="display:block;color:var(--text);font-weight:400;margin-bottom:8px;">Application received</strong>
-        If approved, you’ll receive access instructions.
+        <p class="form-note">Testing mode. Submitting this form will take you directly to the approved page.</p>
       </div>
     </form>
   </div>
@@ -289,7 +284,7 @@ footer{padding:40px 52px;display:flex;justify-content:space-between;align-items:
 <!-- FINAL -->
 <section id="final">
   <h2 class="final-headline reveal">Private. Direct. Used when something real needs to move.</h2>
-  <a href="#apply" class="btn-gold-solid reveal reveal-d1">Apply Now</a>
+  <a href="/approved.html" class="btn-gold-solid reveal reveal-d1">Enter Approved Page</a>
 </section>
 
 <footer>
@@ -303,7 +298,7 @@ footer{padding:40px 52px;display:flex;justify-content:space-between;align-items:
 </footer>
 
 <div class="mobile-sticky">
-  <a href="#apply">Apply For Access</a>
+  <a href="/approved.html">Enter Approved Page</a>
 </div>
 
 <script>
@@ -313,15 +308,10 @@ var observer = new IntersectionObserver(function(entries){
 document.querySelectorAll('.reveal').forEach(function(el){ observer.observe(el); });
 
 var form = document.getElementById('access-form');
-var statusBox = document.getElementById('form-status');
 
 form.addEventListener('submit', function(e){
-  e.preventDefault();
-  if(form.checkValidity()){
-    statusBox.classList.add('visible');
-    form.reset();
-    statusBox.scrollIntoView({behavior:'smooth', block:'nearest'});
-  } else {
+  if(!form.checkValidity()){
+    e.preventDefault();
     form.reportValidity();
   }
 });
