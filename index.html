@@ -81,12 +81,13 @@
 
     a, button, input, select {
       transition:
-        color 0.22s ease,
-        background-color 0.22s ease,
-        border-color 0.22s ease,
-        transform 0.22s ease,
-        box-shadow 0.22s ease,
-        opacity 0.22s ease;
+        color 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+        background-color 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+        border-color 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+        transform 0.32s cubic-bezier(0.22, 1, 0.36, 1),
+        box-shadow 0.32s cubic-bezier(0.22, 1, 0.36, 1),
+        opacity 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+        filter 0.32s cubic-bezier(0.22, 1, 0.36, 1);
     }
 
     a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible {
@@ -424,17 +425,29 @@
     }
 
     body.execution-focused section:not(#execution) {
-      opacity: 0.52;
-      filter: saturate(0.88);
+      opacity: 0.44;
+      filter: saturate(0.82) blur(0.3px);
       transition: opacity 0.28s ease, filter 0.28s ease;
     }
 
     body.execution-focused #execution {
-      background: #161411;
+      background:
+        radial-gradient(circle at 50% 46%, rgba(244, 237, 224, 0.018), transparent 56%),
+        #171513;
       box-shadow:
         inset 0 1px 0 rgba(196, 163, 90, 0.08),
         inset 0 -1px 0 rgba(196, 163, 90, 0.08),
-        0 0 0 1px rgba(196, 163, 90, 0.04);
+        0 0 0 1px rgba(196, 163, 90, 0.04),
+        0 0 80px rgba(0, 0, 0, 0.24);
+    }
+
+    body.execution-focused #execution::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at 50% 48%, transparent 0%, transparent 44%, rgba(0, 0, 0, 0.16) 100%);
     }
 
     .diag-head { margin-bottom: 24px; max-width: 640px; }
@@ -1091,6 +1104,12 @@
       box-shadow: 0 0 12px rgba(196, 163, 90, 0.18);
     }
 
+    .execution-progress-point.is-next-cue {
+      border-color: rgba(196, 163, 90, 0.66);
+      background: rgba(196, 163, 90, 0.16);
+      animation: progressCuePulse 0.46s ease;
+    }
+
     .execution-progress-shell.is-advancing .execution-progress-point.is-active {
       animation: executionPointPulse 0.34s ease;
     }
@@ -1258,7 +1277,7 @@
     }
 
     .execution-path-grid.has-active .path-card {
-      opacity: 0.36;
+      opacity: 0.26;
     }
 
     .path-card {
@@ -1308,20 +1327,24 @@
 
     .path-card.is-active {
       opacity: 1;
-      transform: translateY(-6px);
+      transform: translateY(-9px);
       border-color: rgba(196, 163, 90, 0.92);
       box-shadow:
         inset 0 0 0 1px rgba(196, 163, 90, 0.26),
-        0 18px 34px rgba(0, 0, 0, 0.24);
+        0 22px 40px rgba(0, 0, 0, 0.28);
       background: linear-gradient(160deg, rgba(196, 163, 90, 0.11), var(--bg-1));
     }
 
     .execution-path-grid.has-active .path-card.is-active:hover {
       opacity: 1;
-      transform: translateY(-6px);
+      transform: translateY(-9px);
       box-shadow:
         inset 0 0 0 1px rgba(196, 163, 90, 0.26),
-        0 18px 34px rgba(0, 0, 0, 0.24);
+        0 22px 40px rgba(0, 0, 0, 0.28);
+    }
+
+    .path-card.path-card-commit-flash {
+      animation: pathCommitFlash 0.38s cubic-bezier(0.22, 1, 0.36, 1);
     }
 
     .path-card.is-active .path-card-header {
@@ -1572,6 +1595,24 @@
       color: var(--gold);
     }
 
+    .checklist-momentum {
+      margin-top: 12px;
+      font-family: "DM Mono", monospace;
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      line-height: 1.8;
+      text-transform: uppercase;
+      color: var(--text-primary);
+      opacity: 0;
+      transform: translateY(4px);
+      transition: opacity 0.24s ease, transform 0.24s ease;
+    }
+
+    .checklist-momentum.is-visible {
+      opacity: 0.9;
+      transform: translateY(0);
+    }
+
     .checklist-list {
       list-style: none;
       display: flex;
@@ -1709,6 +1750,27 @@
       transform: translateY(0);
     }
 
+    @keyframes pathCommitFlash {
+      0% {
+        box-shadow:
+          inset 0 0 0 1px rgba(196, 163, 90, 0.34),
+          0 0 0 rgba(196, 163, 90, 0),
+          0 22px 40px rgba(0, 0, 0, 0.28);
+      }
+      40% {
+        box-shadow:
+          inset 0 0 0 1px rgba(196, 163, 90, 0.34),
+          0 0 30px rgba(196, 163, 90, 0.18),
+          0 24px 42px rgba(0, 0, 0, 0.3);
+      }
+      100% {
+        box-shadow:
+          inset 0 0 0 1px rgba(196, 163, 90, 0.26),
+          0 0 0 rgba(196, 163, 90, 0),
+          0 22px 40px rgba(0, 0, 0, 0.28);
+      }
+    }
+
     @keyframes executionPulse {
       0% { transform: scaleX(0.98); opacity: 0.85; }
       100% { transform: scaleX(1); opacity: 1; }
@@ -1717,6 +1779,12 @@
     @keyframes executionPointPulse {
       0% { transform: scale(1.08); }
       100% { transform: scale(1.22); }
+    }
+
+    @keyframes progressCuePulse {
+      0% { transform: scale(1); opacity: 0.82; }
+      50% { transform: scale(1.16); opacity: 1; }
+      100% { transform: scale(1); opacity: 0.82; }
     }
 
     .decision-grid { margin-top: 22px; border-top: 1px solid var(--border); }
@@ -2254,6 +2322,10 @@
 
     .footer-links a:hover { color: var(--text-muted); }
 
+    .mobile-action-bar {
+      display: none;
+    }
+
     @media (max-width: 1100px) {
       .diag-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .execution-path-grid, .products-grid { grid-template-columns: 1fr; }
@@ -2284,19 +2356,55 @@
     @media (max-width: 720px) {
       .nav { padding: 16px 20px; align-items: flex-start; }
       .nav-links { display: none; }
-      #hero { min-height: auto; padding: 118px 20px 88px; }
-      .hero-headline { font-size: clamp(46px, 14vw, 78px); }
+      #hero { min-height: auto; padding: 108px 20px 72px; }
+      .hero-headline { font-size: clamp(40px, 11vw, 60px); max-width: 10ch; }
+      .hero-subhead,
+      .hero-detail,
+      .hero-consequence-follow,
+      .diag-card-sub,
+      .result-why,
+      .result-bridge,
+      .system-meta-sub,
+      .execution-panel-copy,
+      .execution-day-copy,
+      .execution-block-copy,
+      .path-summary,
+      .path-visible-line,
+      .micro-list li,
+      .decision-cond-text,
+      .decision-action-text,
+      .product-short,
+      .product-body,
+      .sub-list li,
+      .support-list li,
+      .club-sub,
+      .section-copy p,
+      .private-right-copy,
+      .proof-intro,
+      .proof-add,
+      .proof-close {
+        font-size: 16px;
+        line-height: 1.86;
+        max-width: 31ch;
+      }
+      .section-copy p + p,
+      .execution-intro p + p,
+      .proof-wrap p + p,
+      .club-copy p + p {
+        margin-top: 10px;
+      }
       .hero-rule-bottom { left: 20px; right: 20px; }
-      .pad { padding: 60px 20px; }
+      .pad { padding: 48px 20px; }
+      section { scroll-margin-top: 78px; }
       .diag-grid, .execution-setup, .execution-path-grid, .products-grid { grid-template-columns: 1fr; }
       .system-visual {
-        padding: 22px 18px 20px;
+        padding: 18px 16px 16px;
       }
       .system-track {
         display: flex;
-        gap: 28px;
+        gap: 24px;
         overflow-x: auto;
-        padding-bottom: 12px;
+        padding-bottom: 8px;
         scrollbar-width: none;
       }
       .system-track::-webkit-scrollbar { display: none; }
@@ -2307,7 +2415,7 @@
         min-width: 860px;
       }
       .system-node {
-        flex: 0 0 146px;
+        flex: 0 0 136px;
       }
       .system-node-desc {
         opacity: 1;
@@ -2317,18 +2425,197 @@
       .execution-panel--primary {
         grid-column: auto;
       }
-      .diag-card { min-height: 0; padding: 26px 20px 28px; }
-      .diag-result, .path-card-header, .path-section-toggle, .path-section-content, .path-card-cta, .execution-panel {
-        padding-left: 20px;
-        padding-right: 20px;
+      .section-toggle { margin-bottom: 18px; }
+      .section-toggle-title { font-size: clamp(26px, 7vw, 36px); }
+      .diag-grid { gap: 10px; background: transparent; }
+      .diag-grid.has-active .diag-card:not(.active) {
+        opacity: 0.28;
+        filter: saturate(0.72);
       }
-      .execution-setup { padding: 22px 20px; }
-      .product-card, .club-panel { min-height: 0; padding: 34px 24px 38px; }
-      footer { padding: 36px 20px; }
+      .diag-grid.has-active .diag-card.active {
+        order: -1;
+        box-shadow: 0 16px 34px rgba(42, 15, 18, 0.44);
+      }
+      .diag-card { min-height: 0; padding: 22px 18px 22px; }
+      .diag-result { min-height: 0; }
+      .diag-result, .path-card-header, .path-section-toggle, .path-section-content, .path-card-cta, .execution-panel {
+        padding-left: 18px;
+        padding-right: 18px;
+      }
+      .execution-dashboard { gap: 12px; margin-bottom: 24px; }
+      .execution-panel { padding-top: 18px; padding-bottom: 18px; }
+      .execution-panel--primary { padding-top: 20px; padding-bottom: 18px; }
+      .execution-block { margin-top: 24px; }
+      .execution-block + .execution-block { margin-top: 28px; }
+      .execution-setup {
+        padding: 18px;
+        gap: 12px;
+        margin-top: 14px;
+      }
+      .execution-input, .execution-select, .tracker-input {
+        min-height: 52px;
+        padding: 14px 16px;
+      }
+      .execution-setup-row {
+        position: sticky;
+        bottom: 72px;
+        z-index: 4;
+        margin-top: 6px;
+        padding-top: 8px;
+        background: linear-gradient(to top, rgba(8, 8, 7, 0.96), rgba(8, 8, 7, 0));
+      }
+      .execution-path-grid {
+        gap: 12px;
+        margin-top: 16px;
+      }
+      .path-card {
+        border-color: rgba(244, 237, 224, 0.08);
+      }
+      .path-card-header {
+        padding-top: 18px;
+        padding-bottom: 14px;
+      }
+      .path-card-cta {
+        padding-top: 12px;
+        padding-bottom: 14px;
+      }
+      .execution-path-grid.has-active .path-card:not(.is-active) {
+        opacity: 0.18;
+        transform: none;
+        filter: saturate(0.65);
+      }
+      .execution-path-grid.has-active .path-card:not(.is-active) .path-card-body,
+      .execution-path-grid.has-active .path-card:not(.is-active) .path-card-cta,
+      .execution-path-grid.has-active .path-card:not(.is-active) .path-card-confirm {
+        display: none;
+      }
+      .execution-path-grid.has-active .path-card:not(.is-active) .path-card-header {
+        padding-bottom: 16px;
+      }
+      .path-card.is-active {
+        transform: translateY(-6px);
+        box-shadow:
+          inset 0 0 0 1px rgba(196, 163, 90, 0.28),
+          0 18px 30px rgba(0, 0, 0, 0.26);
+      }
+      .path-card.is-active .path-card-body {
+        display: flex;
+      }
+      .path-section-toggle {
+        min-height: 48px;
+      }
+      .checklist-list {
+        gap: 12px;
+        margin-top: 12px;
+      }
+      .checklist-item {
+        gap: 14px;
+        padding: 14px 0;
+      }
+      .checklist-toggle {
+        width: 22px;
+        height: 22px;
+        margin-top: 2px;
+      }
+      .checklist-toggle.is-complete::after {
+        left: 7px;
+        top: 4px;
+        width: 5px;
+        height: 9px;
+      }
+      .tracker-input {
+        font-size: 28px;
+      }
+      .execution-tracker-grid {
+        gap: 10px;
+        margin-top: 16px;
+      }
+      .tracker-feedback {
+        padding: 16px;
+      }
+      .product-card, .club-panel { min-height: 0; padding: 24px 18px 24px; }
+      .products-grid { gap: 12px; background: transparent; }
+      #club, #private, #proof {
+        opacity: 0.92;
+      }
+      .club-panel,
+      .proof-wrap,
+      .private-grid {
+        filter: saturate(0.92);
+      }
+      footer {
+        padding: 28px 20px 108px;
+      }
       .cta-row { align-items: flex-start; gap: 18px; }
       .btn-blue, .btn-ghost { width: 100%; justify-content: center; }
       .section-toggle { align-items: flex-start; }
       .section-toggle-cue { padding-top: 6px; }
+      .btn-blue,
+      .btn-ghost,
+      .diag-card,
+      .path-card,
+      .product-card,
+      .section-toggle,
+      .phase-toggle,
+      .path-section-toggle,
+      .day-tab,
+      .checklist-toggle,
+      .footer-links a {
+        -webkit-tap-highlight-color: transparent;
+      }
+      .btn-blue:active,
+      .btn-ghost:active,
+      .diag-card:active,
+      .path-card:active,
+      .product-card:active,
+      .section-toggle:active,
+      .phase-toggle:active,
+      .path-section-toggle:active,
+      .day-tab:active,
+      .footer-links a:active {
+        filter: brightness(1.05);
+        opacity: 0.96;
+      }
+      .mobile-action-bar {
+        position: fixed;
+        left: 14px;
+        right: 14px;
+        bottom: calc(env(safe-area-inset-bottom, 0px) + 12px);
+        z-index: 30;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 14px;
+        border: 1px solid rgba(196, 163, 90, 0.16);
+        background: rgba(8, 8, 7, 0.92);
+        backdrop-filter: blur(10px);
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.28);
+      }
+      .mobile-action-copy {
+        min-width: 0;
+        flex: 1;
+      }
+      .mobile-action-label {
+        font-family: "DM Mono", monospace;
+        font-size: 9px;
+        letter-spacing: 0.16em;
+        line-height: 1.6;
+        text-transform: uppercase;
+        color: var(--text-dim);
+      }
+      .mobile-action-title {
+        margin-top: 2px;
+        font-family: "Cormorant Garamond", serif;
+        font-size: 18px;
+        line-height: 1.12;
+        color: var(--text-primary);
+      }
+      .mobile-action-bar .btn-blue {
+        width: auto;
+        min-height: 42px;
+        padding: 12px 16px;
+        font-size: 10px;
+      }
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -2358,17 +2645,17 @@
             Make what you already know sellable
           </h1>
           <p class="hero-subhead">
-            <span class="lead-sentence">You do not need more ideas.</span>
+            <span class="lead-sentence">You don’t need more ideas.</span>
             You need one sellable direction, one buyer, and one next move.
           </p>
           <p class="hero-detail">
             <span class="lead-sentence">Stephuary is a six-phase system</span> for turning your skills, experience, and perspective into clearer offers, buyer paths, structure, and revenue.
           </p>
           <p class="hero-consequence">
-            If what you already have is not defined clearly enough to sell, you will keep working without matching revenue.
+            If what you already have isn’t defined clearly enough to sell, you’ll keep working without matching revenue.
           </p>
           <p class="hero-consequence-follow">
-            Most people are not missing effort. They are missing a clear problem, buyer, and next step.
+            Most people aren’t missing effort. They’re missing a clear problem, buyer, and next step.
           </p>
           <p class="hero-micro">
             If this is unclear, you are likely building something that will not convert.
@@ -2409,22 +2696,22 @@
                 <div class="diag-grid" role="group" aria-label="Starting point diagnostic">
                   <button class="diag-card" type="button" data-state="1" aria-pressed="false">
                     <p class="diag-num">01</p>
-                    <p class="diag-card-title">I know things. I just do not know what to sell.</p>
+                    <p class="diag-card-title">I know things. I just don’t know what to sell.</p>
                     <p class="diag-card-sub">You have skills, perspective, experience, or ideas, but nothing defined enough for someone to buy yet.</p>
                     <span class="diag-indicator" aria-hidden="true"></span>
                   </button>
 
                   <button class="diag-card" type="button" data-state="2" aria-pressed="false">
                     <p class="diag-num">02</p>
-                    <p class="diag-card-title">I know what I do. I cannot find who needs it.</p>
-                    <p class="diag-card-sub">You have something real. You have not yet connected it to a specific problem, buyer type, or set of real clients who would pay for it.</p>
+                    <p class="diag-card-title">I know what I do. I can’t find who needs it.</p>
+                    <p class="diag-card-sub">You have something real. You haven’t connected it to a specific problem, buyer type, or set of real clients who’d pay for it.</p>
                     <span class="diag-indicator" aria-hidden="true"></span>
                   </button>
 
                   <button class="diag-card" type="button" data-state="3" aria-pressed="false">
                     <p class="diag-num">03</p>
-                    <p class="diag-card-title">I already have something, but it is not converting.</p>
-                    <p class="diag-card-sub">You have an offer, service, page, or direction, but it is not landing clearly enough to make consistent money.</p>
+                    <p class="diag-card-title">I already have something, but it isn’t converting.</p>
+                    <p class="diag-card-sub">You have an offer, service, page, or direction, but it isn’t landing clearly enough to make consistent money.</p>
                     <span class="diag-indicator" aria-hidden="true"></span>
                   </button>
 
@@ -2442,7 +2729,7 @@
                       Start in the right place.
                       <br /><br />
                       Pick what applies.
-                      You do not need to fix everything.
+                      You don’t need to fix everything.
                       You need the right entry point.
                     </p>
                   </div>
@@ -2458,7 +2745,7 @@
                       Once that is defined, Position takes it into the market.
                     </p>
                     <p class="result-outcome">This is where most first offers come from.</p>
-                    <p class="result-commit-line">This is where you start. Do not switch for 7 days.</p>
+                    <p class="result-commit-line">This is where you start. Don’t switch for 7 days.</p>
                     <a href="/capture" class="btn-blue">Go to Capture →</a>
                     <p class="result-bridge">
                       This is Phase 01 of the full Stephuary system.
@@ -2471,11 +2758,11 @@
                     <p class="result-issue">You need to identify where your skills solve a problem people already pay to fix. If this part is wrong, everything after it gets harder to sell.</p>
                     <p class="result-start">Start with: Position</p>
                     <p class="result-why">
-                      Having skills is not enough. You need one defined problem, one buyer type, and a clear set of real targets before anything converts.
+                      Having skills isn’t enough. You need one defined problem, one buyer type, and a clear set of real targets before anything converts.
                       Position takes what you have and places it where money is already moving.
                     </p>
                     <p class="result-outcome">You leave with a diagnosed problem, a buyer type, a target list, and a service direction.</p>
-                    <p class="result-commit-line">This is where you start. Do not switch for 7 days.</p>
+                    <p class="result-commit-line">This is where you start. Don’t switch for 7 days.</p>
                     <a href="/position" class="btn-blue">Enter Phase 02 →</a>
                     <p class="result-bridge">
                       Position is Phase 02 of the full Stephuary system.
@@ -2488,11 +2775,11 @@
                     <p class="result-issue">Something is being missed between what you mean and what people understand.</p>
                     <p class="result-start">Start with: Monetize</p>
                     <p class="result-why">
-                      If people do not understand the value fast, they do not buy.
+                      If people don’t understand the value fast, they don’t buy.
                       Monetize helps you tighten the offer, result, buyer fit, and pricing logic so the value lands faster and more clearly.
                     </p>
                     <p class="result-outcome">Tightening this usually changes what happens next within days, not months.</p>
-                    <p class="result-commit-line">This is where you start. Do not switch for 7 days.</p>
+                    <p class="result-commit-line">This is where you start. Don’t switch for 7 days.</p>
                     <a href="/monetize" class="btn-blue">Enter Phase 03 →</a>
                     <p class="result-bridge">
                       Monetize is Phase 03 of the full Stephuary system.
@@ -2505,12 +2792,12 @@
                     <p class="result-issue">You need correction, not more circling.</p>
                     <p class="result-start">Start with: Pricing + Support Options</p>
                     <p class="result-why">
-                      Sometimes the problem is not effort.
-                      It is direction, positioning, structure, or the level you are operating at.
+                      Sometimes the problem isn’t effort.
+                      It’s direction, positioning, structure, or the level you’re operating at.
                       This is where you stop guessing and choose the right level of support based on what actually needs to be fixed.
                     </p>
-                    <p class="result-outcome">This is for when you do not want to keep learning by trial and error.</p>
-                    <p class="result-commit-line">This is where you start. Do not switch for 7 days.</p>
+                    <p class="result-outcome">This is for when you don’t want to keep learning by trial and error.</p>
+                    <p class="result-commit-line">This is where you start. Don’t switch for 7 days.</p>
                     <a href="/pricing" class="btn-blue">View Options →</a>
                     <p class="result-bridge">
                       The full Stephuary system is still the base layer.
@@ -2520,7 +2807,7 @@
                 </div>
 
                 <p class="diag-footer-note">
-                  You do not need to solve everything today.
+                  You don’t need to solve everything today.
                   You need to start where the real problem is.
                 </p>
               </div>
@@ -2545,13 +2832,13 @@
                 <div class="system-grid">
                   <div>
                     <div class="section-copy system-copy">
-                      <p><span class="lead-sentence">Stephuary is not a course library</span> and not a pile of disconnected tools.</p>
-                      <p><span class="lead-sentence">It is a connected system</span> for turning what you already know into something defined, positioned, sellable, and capable of producing money.</p>
+                      <p><span class="lead-sentence">Stephuary isn’t a course library</span> or a pile of disconnected tools.</p>
+                      <p><span class="lead-sentence">It’s a connected system</span> for turning what you already know into something defined, positioned, sellable, and able to produce money.</p>
                       <p><span class="lead-sentence">You unlock the full system once,</span> then enter at the phase where the actual bottleneck is.</p>
                     </div>
                     <p class="system-meta">$39 one-time unlock &middot; All six phases included &middot; Start where the problem is real</p>
                     <p class="system-meta-sub">
-                      <span class="lead-sentence">Most people enter to solve one problem.</span> They stay because the rest of the system becomes easier once the first real bottleneck is fixed.
+                      <span class="lead-sentence">Most people enter to solve one problem.</span> They stay because the rest of the system gets easier once the first real bottleneck is fixed.
                       Once the direction is clear and the offer exists, the next question is simple: which revenue path should run first?
                     </p>
                     <div class="system-visual" aria-label="Stephuary phase progression">
@@ -2660,7 +2947,7 @@
                         <button class="phase-toggle" type="button">
                           <span class="phase-left">
                             <span class="phase-name">Automation</span>
-                            <span class="phase-summary">Remove repeat decisions so progress is not lost to avoidable work.</span>
+                            <span class="phase-summary">Remove repeat decisions so progress isn’t lost to avoidable work.</span>
                           </span>
                           <span class="phase-arrow" aria-hidden="true"></span>
                         </button>
@@ -2709,8 +2996,8 @@
                   <p><span class="lead-sentence">Once the direction is positioned and the offer is clear,</span> this is how revenue starts.</p>
                   <p><span class="lead-sentence">This layer assumes</span> the problem, buyer, and offer are already defined.</p>
                   <p><span class="lead-sentence">Revenue paths that already work.</span><br />Not tools. Not templates.<br />The paths that turn what you already have into money.</p>
-                  <p><span class="lead-sentence">Select your position.</span> The system shows the paths that fit. Choose one. Run it.</p>
-                  <p class="execution-note">Choose one path and run it. Do not evaluate all options.</p>
+                  <p><span class="lead-sentence">Pick your position.</span> The system shows the paths that fit. Pick one. Run it.</p>
+                  <p class="execution-note">Pick one path and run it. Don’t evaluate the others.</p>
                   <p class="execution-compare-line">The fastest way to lose momentum here is to keep comparing instead of running.</p>
                 </div>
 
@@ -2723,7 +3010,7 @@
 
                   <div class="execution-panel execution-panel--primary">
                     <p class="execution-panel-label">Active Path</p>
-                    <p class="execution-active" id="active-path-display">No path selected yet. Choose one path and commit to it for 7 days.</p>
+                    <p class="execution-active" id="active-path-display">No path selected yet. Pick one path and commit to it for 7 days.</p>
                     <p class="execution-status-line" id="execution-status-line">Day 1 · No path selected</p>
                     <p class="execution-lock-line" id="execution-lock-line">No path locked yet.</p>
                   </div>
@@ -2757,7 +3044,7 @@
                       <button class="day-tab" type="button" data-day="6">Day 6</button>
                       <button class="day-tab" type="button" data-day="7">Day 7</button>
                     </div>
-                    <p class="execution-day-copy" id="execution-day-copy">Choose one path. Define the result. Complete first actions.</p>
+                    <p class="execution-day-copy" id="execution-day-copy">Pick one path. Define the result. Complete the first actions.</p>
                   </div>
 
                   <div class="execution-panel">
@@ -2767,7 +3054,7 @@
                       <li>1–2 conversations</li>
                       <li>1 outcome</li>
                     </ul>
-                    <p class="execution-target-priority" id="target-priority">Choose a path to load the correct target.</p>
+                    <p class="execution-target-priority" id="target-priority">Pick a path to load the right target.</p>
                   </div>
 
                   <div class="execution-panel">
@@ -2778,7 +3065,7 @@
 
                   <div class="execution-panel">
                     <p class="execution-panel-label">Rule</p>
-                    <p class="execution-panel-copy">Do not modify the path for 7 days unless data proves failure.</p>
+                    <p class="execution-panel-copy">Don’t change the path for 7 days unless the data says it’s failing.</p>
                   </div>
                 </div>
 
@@ -2801,7 +3088,7 @@
                       </select>
                     </div>
                     <div class="execution-setup-row">
-                      <button class="btn-blue" id="run-paths-btn" type="button">Select a path</button>
+                      <button class="btn-blue" id="run-paths-btn" type="button">Pick a path</button>
                       <span id="run-hint" class="execution-hint"></span>
                     </div>
                   </div>
@@ -2809,7 +3096,7 @@
 
                 <div class="execution-block" id="paths-section">
                   <span class="execution-block-label">Revenue paths</span>
-                  <h3 class="execution-block-title">Select the path that fits</h3>
+                  <h3 class="execution-block-title">Pick the path that fits</h3>
                   <div class="execution-path-grid" id="path-grid"></div>
                 </div>
 
@@ -2818,7 +3105,7 @@
                   <h3 class="execution-block-title">Run today's work</h3>
                   <p class="checklist-preline">Do this before changing anything.</p>
                   <div id="checklist-container">
-                    <p class="checklist-placeholder">Commit to one path. Then run today's work.</p>
+                    <p class="checklist-placeholder">Commit to one path. Then run today’s work.</p>
                   </div>
                 </div>
 
@@ -2873,7 +3160,7 @@
                       </div>
                       <div class="decision-action">
                         <span class="decision-action-label">Correction</span>
-                        <p class="decision-action-text">The offer or price is weak. State the outcome in one sentence. If you cannot, fix the offer first.</p>
+                        <p class="decision-action-text">The offer or price is weak. State the outcome in one sentence. If you can’t, fix the offer first.</p>
                       </div>
                     </div>
 
@@ -2912,9 +3199,9 @@
                   </div>
                 </div>
 
-                <p class="execution-final-line">Choose one path. Run it completely. Then decide what changes.</p>
+                <p class="execution-final-line">Pick one path. Run it completely. Then decide what changes.</p>
                 <p class="execution-routing">
-                  If you cannot tell which path should run first, use Snapshot.<br />
+                  If you can’t tell which path should run first, use Snapshot.<br />
                   If the offer is still unclear, use Focused Review.
                 </p>
               </div>
@@ -2950,8 +3237,8 @@
                     <p class="product-price">$39</p>
                     <button class="product-toggle" type="button">Open details</button>
                     <div class="product-detail">
-                      <p class="product-body">This is where people start. The rest of the ecosystem becomes more useful once this foundation is in place.</p>
-                      <p class="product-note">If you are unsure where to begin, begin here.</p>
+                      <p class="product-body">This is where people start. The rest of the ecosystem gets more useful once this foundation is in place.</p>
+                      <p class="product-note">If you’re not sure where to begin, begin here.</p>
                       <p class="product-stack">All six phases &middot; Start where you fit</p>
 
                       <div class="product-substack">
@@ -3014,7 +3301,7 @@
                 <p class="section-transition-line">Once the system runs and decisions get sharper, access becomes the constraint.</p>
                 <div class="club-grid">
                   <div class="club-copy">
-                    <p class="club-top-line">Most people do not need this yet.</p>
+                    <p class="club-top-line">Most people don’t need this yet.</p>
                     <p class="section-copy"><span class="lead-sentence">This is a selective access layer</span> for people who need stronger proximity to opportunity, capital, and decision-makers who can move things forward.</p>
                     <p class="club-sub">
                       System is the entry.<br />
@@ -3028,7 +3315,7 @@
                   <div class="club-panel">
                     <h3 class="club-panel-title">Private network for serious access.</h3>
                     <ul class="club-list">
-                      <li>Filtered access to people, rooms, and decisions that are not useful when made public</li>
+                      <li>Filtered access to people, rooms, and decisions that aren’t useful when made public</li>
                       <li>Built for relevance, not browsing</li>
                       <li>Relevant proximity across business, capital, creative, and deal movement</li>
                       <li>Separate from the correction layer and separate from the entry system</li>
@@ -3068,7 +3355,7 @@
                   </div>
 
                   <div>
-                    <p class="private-right-copy">Used when an offer, position, or direction needs to be corrected before more time is spent.</p>
+                  <p class="private-right-copy">Used when an offer, position, or direction needs to be corrected before more time gets spent.</p>
                     <p class="private-hook">This is where wrong decisions get corrected early.</p>
                     <p class="private-micro">Every wrong month compounds the cost. Correct it before it spreads.</p>
                   </div>
@@ -3103,7 +3390,7 @@
                     <li>no audience at scale</li>
                     <li>no finished ecosystem</li>
                   </ul>
-                  <p class="proof-close">It was not fully built yet. It still sold.</p>
+                  <p class="proof-close">It wasn’t fully built yet. It still sold.</p>
                   <p class="proof-final">Clear value gets paid. Polish comes after.</p>
                 </div>
               </div>
@@ -3155,6 +3442,14 @@
     </footer>
   </div>
 
+  <div class="mobile-action-bar" id="mobile-action-bar" aria-hidden="true">
+    <div class="mobile-action-copy">
+      <p class="mobile-action-label" id="mobile-action-label">Next step</p>
+      <p class="mobile-action-title" id="mobile-action-title">Diagnose where to start</p>
+    </div>
+    <a href="#diagnostic" class="btn-blue" id="mobile-action-link">Diagnose</a>
+  </div>
+
   <script>
     (function () {
       var nav = document.getElementById("main-nav");
@@ -3162,6 +3457,28 @@
       var states = Array.prototype.slice.call(document.querySelectorAll(".result-state"));
       var resultPanel = document.getElementById("diag-result");
       var collapsibles = Array.prototype.slice.call(document.querySelectorAll("[data-collapsible]"));
+      var mobileActionBar = document.getElementById("mobile-action-bar");
+      var mobileActionLabel = document.getElementById("mobile-action-label");
+      var mobileActionTitle = document.getElementById("mobile-action-title");
+      var mobileActionLink = document.getElementById("mobile-action-link");
+
+      function isMobileView() {
+        return window.innerWidth <= 720;
+      }
+
+      function updateMobileActionBar(mode, href, label, title) {
+        if (!mobileActionBar || !mobileActionLink || !mobileActionLabel || !mobileActionTitle) return;
+        if (!isMobileView()) {
+          mobileActionBar.setAttribute("aria-hidden", "true");
+          return;
+        }
+        mobileActionBar.setAttribute("aria-hidden", "false");
+        mobileActionBar.setAttribute("data-mode", mode || "default");
+        mobileActionLink.setAttribute("href", href || "#diagnostic");
+        mobileActionLink.textContent = label || "Diagnose";
+        mobileActionLabel.textContent = "Next step";
+        mobileActionTitle.textContent = title || "Diagnose where to start";
+      }
 
       function setActiveState(id) {
         var grid = document.querySelector(".diag-grid");
@@ -3176,6 +3493,17 @@
         });
         if (window.innerWidth < 721 && resultPanel) {
           resultPanel.scrollIntoView({ behavior: "smooth", block: "nearest" });
+        }
+        if (isMobileView()) {
+          var map = {
+            "0": { href: "#diagnostic", label: "Diagnose", title: "Diagnose where to start" },
+            "1": { href: "/capture", label: "Start", title: "Start with Capture" },
+            "2": { href: "/position", label: "Start", title: "Start with Position" },
+            "3": { href: "/monetize", label: "Start", title: "Start with Monetize" },
+            "4": { href: "/pricing", label: "Correct", title: "Correct the issue" }
+          };
+          var nextAction = map[id] || map["0"];
+          updateMobileActionBar("diagnostic", nextAction.href, nextAction.label, nextAction.title);
         }
       }
 
@@ -3215,6 +3543,14 @@
           setPanelState(shell, !expanded);
         });
       });
+
+      if (isMobileView()) {
+        var proofShell = document.getElementById("proof-toggle");
+        if (proofShell) {
+          var proofContainer = proofShell.closest("[data-collapsible]");
+          if (proofContainer) setPanelState(proofContainer, false);
+        }
+      }
 
       Array.prototype.slice.call(document.querySelectorAll(".phase-toggle")).forEach(function (toggle) {
         toggle.addEventListener("click", function () {
@@ -3262,12 +3598,12 @@
       }
 
       var dayCopyMap = {
-        "1": "Choose one path. Define the result. Complete first actions.",
-        "2": "Repeat actions. Track responses. Do not change path unless signal is clearly wrong.",
+        "1": "Pick one path. Define the result. Complete the first actions.",
+        "2": "Repeat the actions. Track responses. Don’t change the path unless the signal is clearly wrong.",
         "3": "Review numbers. Identify constraint.",
-        "4": "Keep running. No new decisions without evidence.",
+        "4": "Keep running. Don’t make new decisions without evidence.",
         "5": "Identify patterns. What repeats?",
-        "6": "Adjust only what data supports.",
+        "6": "Adjust only what the data supports.",
         "7": "Review week. Continue or change."
       };
 
@@ -3389,7 +3725,7 @@
             '<div class="path-visible-meta">' +
               '<p class="path-visible-line"><strong>Outcome</strong>' + card.outcome + "</p>" +
               '<p class="path-visible-line"><strong>Channel</strong>' + card.channel + "</p>" +
-              '<p class="path-card-confirm">Path selected. Do not evaluate others.</p>' +
+              '<p class="path-card-confirm">Path locked. Don’t evaluate the others.</p>' +
             "</div>" +
           "</div>" +
           '<div class="path-card-body">' +
@@ -3433,7 +3769,7 @@
       function updateActivePathDisplay(title) {
         var display = document.getElementById("active-path-display");
         if (!display) return;
-        display.textContent = title ? title : "No path selected yet. Choose one path and commit to it for 7 days.";
+        display.textContent = title ? title : "No path selected yet. Pick one path and commit to it for 7 days.";
       }
 
       function updateLockLine(title) {
@@ -3441,7 +3777,7 @@
         var primaryPanel = document.querySelector(".execution-panel--primary");
         if (primaryPanel) primaryPanel.classList.toggle("is-locked", !!title);
         if (!lockLine) return;
-        lockLine.textContent = title ? "Path selected. Do not evaluate others." : "No path locked yet.";
+        lockLine.textContent = title ? "Path locked. Don’t evaluate the others." : "No path locked yet.";
       }
 
       function updateStatusLine() {
@@ -3474,6 +3810,29 @@
             tab.removeAttribute("data-advancing");
           }
         });
+      }
+
+      function triggerCommitFlash(title) {
+        var activeCard = document.querySelector('.path-card[data-path-title="' + title.replace(/"/g, '\\"') + '"]');
+        var confirmNode = activeCard ? activeCard.querySelector(".path-card-confirm") : null;
+
+        if (activeCard) {
+          activeCard.classList.remove("path-card-commit-flash");
+          void activeCard.offsetWidth;
+          activeCard.classList.add("path-card-commit-flash");
+          window.setTimeout(function () {
+            activeCard.classList.remove("path-card-commit-flash");
+          }, 420);
+        }
+
+        if (confirmNode) {
+          confirmNode.textContent = "Locked. Run this.";
+          window.setTimeout(function () {
+            if (getActivePath() === title) {
+              confirmNode.textContent = "Day 1 starts now.";
+            }
+          }, 360);
+        }
       }
 
       function initExecutionFocus() {
@@ -3512,6 +3871,9 @@
         Array.prototype.slice.call(document.querySelectorAll(".path-card")).forEach(function (card) {
           card.classList.toggle("is-active", card.getAttribute("data-path-title") === title);
         });
+        if (isMobileView()) {
+          updateMobileActionBar(title ? "execution" : "default", title ? "#execution" : "#diagnostic", title ? "Run" : "Diagnose", title ? "Run Day 1" : "Diagnose where to start");
+        }
       }
 
       function updateObjective() {
@@ -3522,8 +3884,8 @@
         var dayCopy = dayCopyMap[activeDay] || dayCopyMap["1"];
 
         if (!activePath) {
-          primary.textContent = "Pick one path. Then run today's work.";
-          secondary.textContent = "No movement happens until one path is selected and held.";
+          primary.textContent = "Pick one path. Then run today’s work.";
+          secondary.textContent = "Nothing moves until one path is selected and held.";
           return;
         }
 
@@ -3535,7 +3897,7 @@
         var activePath = getActivePath();
         var target = document.getElementById("target-priority");
         if (!target) return;
-        target.textContent = activePath ? pathTargets[activePath] : "Choose a path to load the correct target.";
+        target.textContent = activePath ? pathTargets[activePath] : "Pick a path to load the right target.";
       }
 
       function updateStreak() {
@@ -3587,6 +3949,7 @@
           var pointDay = parseInt(point.getAttribute("data-progress-day"), 10) || 0;
           point.classList.toggle("is-reached", pointDay <= activeDayNumber);
           point.classList.toggle("is-active", pointDay === activeDayNumber);
+          point.classList.remove("is-next-cue");
         });
 
         var completion = document.getElementById("execution-completion");
@@ -3622,7 +3985,7 @@
             "</li>";
         });
 
-        html += "</ul>";
+        html += '</ul><p class="checklist-momentum" id="checklist-momentum">Keep going.</p>';
         container.innerHTML = html;
 
         Array.prototype.slice.call(container.querySelectorAll(".checklist-toggle")).forEach(function (toggle) {
@@ -3635,7 +3998,8 @@
             if (!state[currentPath]) state[currentPath] = { days: {}, completedDays: {} };
             if (!state[currentPath].days[currentDay]) state[currentPath].days[currentDay] = {};
 
-            state[currentPath].days[currentDay][index] = !state[currentPath].days[currentDay][index];
+            var nextState = !state[currentPath].days[currentDay][index];
+            state[currentPath].days[currentDay][index] = nextState;
 
             var allComplete = (checklistLibrary[currentPath][currentDay] || []).every(function (_, itemIndex) {
               return !!state[currentPath].days[currentDay][itemIndex];
@@ -3647,8 +4011,31 @@
             renderChecklist();
             updateDayTabs();
             updateStreak();
+            if (nextState) {
+              triggerChecklistMomentum(currentDay);
+            }
           });
         });
+      }
+
+      function triggerChecklistMomentum(day) {
+        triggerDayAdvance(day);
+        var nextPoint = document.querySelector('.execution-progress-point[data-progress-day="' + (parseInt(day, 10) + 1) + '"]');
+        var momentum = document.getElementById("checklist-momentum");
+
+        if (nextPoint) {
+          nextPoint.classList.add("is-next-cue");
+          window.setTimeout(function () {
+            nextPoint.classList.remove("is-next-cue");
+          }, 520);
+        }
+
+        if (momentum) {
+          momentum.classList.add("is-visible");
+          window.setTimeout(function () {
+            momentum.classList.remove("is-visible");
+          }, 900);
+        }
       }
 
       function setActivePath(title) {
@@ -3669,6 +4056,7 @@
         renderChecklist();
         updateStreak();
         focusChecklist();
+        triggerCommitFlash(title);
       }
 
       function setExecutionDay(day) {
@@ -3701,7 +4089,7 @@
 
         pendingPathSwitch = title;
         updateRunButtons(getActivePath());
-        if (hint) hint.textContent = "Path already running. Click again to switch.";
+        if (hint) hint.textContent = "Path is already running. Click again to switch.";
 
         pendingPathTimer = window.setTimeout(function () {
           pendingPathSwitch = null;
@@ -3747,7 +4135,7 @@
           message.textContent = "Replies are present but closes are weak. Offer clarity, pricing, or conversion logic is the problem now.";
         } else if (closes > 0 && closeRate >= 0.1) {
           feedback.classList.add("on-track");
-          message.textContent = "Signal is working. Keep the path stable, protect volume, and do not change direction early.";
+          message.textContent = "Signal is working. Keep the path stable, protect volume, and don’t change direction early.";
         } else if (responses > 0 && closes === 0) {
           feedback.classList.add("warning");
           message.textContent = "Responses are coming in but nothing is converting. Tighten the ask, the outcome, and the price logic.";
@@ -3878,6 +4266,7 @@
       restoreTracker();
       initHeroCanvas();
       initExecutionFocus();
+      updateMobileActionBar("default", "#diagnostic", "Diagnose", "Diagnose where to start");
 
       Array.prototype.slice.call(document.querySelectorAll(".run-path-btn")).forEach(function (button) {
         button.addEventListener("click", function () {
@@ -3914,7 +4303,7 @@
           var skillType = document.getElementById("s-type");
           var hint = document.getElementById("run-hint");
           if (skillType && !skillType.value) {
-            hint.textContent = "Select a skill type to continue.";
+            hint.textContent = "Pick a skill type to continue.";
             window.setTimeout(function () { hint.textContent = ""; }, 2000);
             return;
           }
@@ -3925,6 +4314,9 @@
 
       updateNav();
       window.addEventListener("scroll", updateNav, { passive: true });
+      window.addEventListener("resize", function () {
+        updateMobileActionBar(getActivePath() ? "execution" : "default", getActivePath() ? "#execution" : "#diagnostic", getActivePath() ? "Run" : "Diagnose", getActivePath() ? "Run Day 1" : "Diagnose where to start");
+      });
     })();
   </script>
 </body>
