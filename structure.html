@@ -3,749 +3,2172 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Break It Down — Stephuary</title>
-<meta name="description" content="Define the work so it gets finished." />
+<title>Structure — Stephuary</title>
+<meta name="description" content="Phase 04 — Turn the offer into a structure that is easier to deliver, repeat, and scale without constant reinvention." />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Lato:wght@300;400&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet" />
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 
 :root{
   --bg-0:#0a0a08;
-  --bg-1:#12120f;
-  --bg-2:#171713;
+  --bg-1:#10100d;
+  --bg-2:#151510;
+  --bg-3:#191913;
+  --panel:rgba(18,18,15,0.94);
+  --panel-soft:rgba(23,23,19,0.82);
   --line:rgba(196,163,90,0.22);
-  --line-soft:rgba(196,163,90,0.12);
+  --line-soft:rgba(196,163,90,0.10);
   --gold:#c4a35a;
-  --gold-dim:rgba(196,163,90,0.18);
+  --gold-soft:rgba(196,163,90,0.14);
   --blue:#2b4fd4;
-  --blue-hover:#3560e8;
-  --blue-dim:rgba(43,79,212,0.14);
+  --blue-hover:#355fe4;
   --text:#f4ede0;
-  --text-dim:#cbc3b4;
-  --text-soft:#a09889;
-  --serif:"Cormorant Garamond",Georgia,serif;
-  --sans:"Lato",systems-ui,sans-serif;
+  --text-dim:#ccc3b4;
+  --text-soft:#9d9587;
+  --warn:#b85c38;
+  --warn-soft:rgba(184,92,56,0.16);
+  --warn-line:rgba(184,92,56,0.26);
+  --ok:#7f9a56;
+  --ok-soft:rgba(127,154,86,0.14);
+  --shadow:0 12px 44px rgba(0,0,0,0.28);
   --radius:2px;
+  --serif:"Cormorant Garamond", Georgia, serif;
+  --sans:"Lato", system-ui, sans-serif;
+  --content:760px;
+  --rail:228px;
+  --notes:328px;
+  --shell-gap:28px;
 }
 
 html,body{
-  background:var(--bg-0);
+  min-height:100%;
+  background:
+    radial-gradient(circle at top left, rgba(196,163,90,0.05), transparent 26%),
+    linear-gradient(180deg, #0a0a08 0%, #0d0d0a 100%);
   color:var(--text);
   font-family:var(--sans);
   font-weight:300;
   font-size:18px;
   line-height:1.6;
-  min-height:100%;
 }
 
-body{padding:36px 24px 96px}
+body{
+  min-height:100vh;
+  overflow-x:hidden;
+}
+
 a{color:inherit;text-decoration:none}
+button,input,textarea{font:inherit}
 
-.page{
-  max-width:640px;
+.shell{
+  min-height:100vh;
+  display:grid;
+  grid-template-columns:var(--rail) minmax(0,var(--content)) var(--notes);
+  gap:var(--shell-gap);
+  align-items:start;
+  max-width:calc(var(--rail) + var(--content) + var(--notes) + (var(--shell-gap) * 2) + 80px);
   margin:0 auto;
-  display:flex;
-  flex-direction:column;
-  gap:52px;
+  padding:28px 24px 80px;
 }
 
-/* ---- TYPOGRAPHY ---- */
+.left-rail{
+  position:sticky;
+  top:24px;
+  align-self:start;
+}
+
+.center{
+  min-width:0;
+}
+
+.right-notes{
+  position:sticky;
+  top:24px;
+  align-self:start;
+}
+
+.rail-card,
+.notes-card,
+.panel,
+.output-card,
+.entry-card{
+  border:1px solid var(--line-soft);
+  background:linear-gradient(180deg, rgba(17,17,13,0.96), rgba(20,20,16,0.98));
+  box-shadow:var(--shadow);
+  border-radius:var(--radius);
+}
+
+.rail-card{
+  padding:22px 18px;
+}
+
+.notes-card{
+  padding:22px 20px;
+}
+
+.entry-overlay{
+  position:fixed;
+  inset:0;
+  z-index:50;
+  background:
+    linear-gradient(180deg, rgba(8,8,6,0.94), rgba(8,8,6,0.96)),
+    radial-gradient(circle at 20% 10%, rgba(196,163,90,0.08), transparent 35%);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  transition:opacity 220ms ease, visibility 220ms ease;
+}
+
+.entry-overlay.hidden{
+  opacity:0;
+  visibility:hidden;
+  pointer-events:none;
+}
+
+.entry-card{
+  width:min(940px,100%);
+  padding:34px 28px 28px;
+  display:grid;
+  grid-template-columns:minmax(0,1.25fr) minmax(280px,0.75fr);
+  gap:24px;
+  border-color:var(--line);
+}
+
 .label{
   display:inline-block;
   font-size:10px;
   letter-spacing:0.18em;
   text-transform:uppercase;
   color:var(--gold);
-  margin-bottom:16px;
   font-weight:400;
 }
+
+.entry-label{margin-bottom:16px}
 
 h1{
   font-family:var(--serif);
   font-weight:400;
-  font-size:clamp(42px,7vw,64px);
-  line-height:1.04;
+  font-size:clamp(42px,7vw,70px);
+  line-height:1.02;
+  letter-spacing:-0.015em;
   margin-bottom:16px;
-  letter-spacing:-0.01em;
 }
 
 h2{
   font-family:var(--serif);
   font-weight:400;
-  font-size:clamp(26px,4vw,34px);
-  line-height:1.1;
+  font-size:clamp(28px,4vw,38px);
+  line-height:1.08;
+  letter-spacing:-0.01em;
   margin-bottom:14px;
 }
 
 h3{
   font-family:var(--serif);
   font-weight:400;
-  font-size:20px;
-  line-height:1.2;
-  color:var(--text);
-  margin-bottom:6px;
+  font-size:clamp(20px,3vw,28px);
+  line-height:1.15;
+  margin-bottom:10px;
 }
 
-p{color:var(--text-dim);max-width:52ch}
-
-.subhead{
-  font-size:17px;
+p{
   color:var(--text-dim);
-  line-height:1.6;
-  margin-bottom:24px;
-  max-width:44ch;
+  max-width:60ch;
 }
 
-/* ---- BUTTONS ---- */
-.btn{
-  text-decoration:none;
-  min-height:50px;
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  padding:14px 22px;
-  border-radius:var(--radius);
-  border:1px solid var(--line);
-  font-size:11px;
-  letter-spacing:0.14em;
-  text-transform:uppercase;
-  color:var(--text);
-  background:transparent;
-  cursor:pointer;
-  font-family:var(--sans);
-  font-weight:400;
-  transition:background 140ms ease,border-color 140ms ease,color 140ms ease,transform 100ms ease;
-}
-.btn:hover{border-color:var(--gold);color:var(--text)}
-.btn:active{transform:scale(0.97)}
-
-.btn-primary{
-  background:var(--blue);
-  border-color:var(--blue);
-  color:#fff;
-}
-.btn-primary:hover{
-  background:var(--blue-hover);
-  border-color:var(--blue-hover);
-  color:#fff;
+.entry-copy p{
+  font-size:18px;
+  max-width:35ch;
 }
 
-.link-btn{
-  font-size:11px;
-  letter-spacing:0.1em;
-  text-transform:uppercase;
-  color:var(--text-soft);
-  border-bottom:1px solid transparent;
-  transition:color 140ms ease,border-color 140ms ease;
-  display:inline-flex;
-  align-items:center;
-  padding:4px 0;
-}
-.link-btn:hover{color:var(--text);border-bottom-color:var(--line-soft)}
-
-.row{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
-
-/* ---- PANELS ---- */
-.panel{
-  border:1px solid var(--line-soft);
-  background:linear-gradient(160deg,var(--bg-1),var(--bg-2));
-  border-radius:var(--radius);
-  padding:32px 28px;
-}
-
-/* ---- LISTS ---- */
-.list{
+.entry-points{
   list-style:none;
   display:flex;
   flex-direction:column;
-  gap:10px;
-  margin-top:12px;
+  gap:11px;
+  margin-top:18px;
 }
-.list li{
-  color:var(--text-dim);
-  font-size:17px;
-  line-height:1.55;
-  padding-left:16px;
+
+.entry-points li,
+.bullet-list li,
+.logic-list li{
   position:relative;
+  padding-left:16px;
+  color:var(--text-dim);
 }
-.list li::before{
+
+.entry-points li::before,
+.bullet-list li::before,
+.logic-list li::before{
   content:"";
   width:4px;
   height:4px;
   border-radius:50%;
   background:var(--gold);
   position:absolute;
-  top:10px;
   left:0;
+  top:11px;
 }
 
-/* ---- FORM ---- */
-.field{
+.entry-aside{
+  border:1px solid var(--line-soft);
+  padding:20px 18px;
+  background:rgba(196,163,90,0.04);
+}
+
+.entry-aside .mini{
+  font-size:12px;
+  color:var(--text-soft);
+  margin-bottom:10px;
+  text-transform:uppercase;
+  letter-spacing:0.12em;
+}
+
+.entry-aside .aside-text{
+  font-family:var(--serif);
+  font-size:24px;
+  line-height:1.24;
+  color:var(--text);
+}
+
+.entry-actions{
+  margin-top:22px;
+  display:flex;
+  flex-wrap:wrap;
+  gap:12px;
+}
+
+.btn{
+  min-height:50px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:var(--radius);
+  border:1px solid var(--line);
+  padding:14px 20px;
+  text-transform:uppercase;
+  letter-spacing:0.14em;
+  font-size:11px;
+  font-weight:400;
+  background:transparent;
+  color:var(--text);
+  cursor:pointer;
+  transition:border-color 140ms ease, background 140ms ease, color 140ms ease, transform 100ms ease;
+}
+
+.btn:hover{border-color:var(--gold);color:var(--text)}
+.btn:active{transform:scale(0.98)}
+
+.btn-primary{
+  background:var(--blue);
+  border-color:var(--blue);
+  color:#fff;
+}
+
+.btn-primary:hover{
+  background:var(--blue-hover);
+  border-color:var(--blue-hover);
+  color:#fff;
+}
+
+.btn-soft{
+  background:rgba(196,163,90,0.06);
+}
+
+.link-inline{
+  display:inline-flex;
+  align-items:center;
+  font-size:11px;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  color:var(--text-soft);
+  border-bottom:1px solid transparent;
+  padding-bottom:2px;
+  transition:color 140ms ease,border-color 140ms ease;
+}
+
+.link-inline:hover{
+  color:var(--text);
+  border-color:var(--line);
+}
+
+.rail-top{
+  padding-bottom:18px;
+  border-bottom:1px solid var(--line-soft);
+  margin-bottom:18px;
+}
+
+.rail-phase{
+  font-size:11px;
+  color:var(--text-soft);
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  margin-bottom:8px;
+}
+
+.rail-title{
+  font-family:var(--serif);
+  font-size:32px;
+  line-height:1;
+  margin-bottom:10px;
+}
+
+.rail-sub{
+  font-size:14px;
+  color:var(--text-soft);
+  line-height:1.55;
+}
+
+.rail-progress{
   display:flex;
   flex-direction:column;
-  gap:8px;
-  margin-bottom:22px;
+  gap:10px;
+  margin-bottom:20px;
 }
-.field-label{
-  font-size:15px;
+
+.progress-item{
+  display:flex;
+  gap:12px;
+  align-items:flex-start;
+  padding:10px 0;
+  border-bottom:1px solid rgba(196,163,90,0.06);
+}
+
+.progress-item:last-child{border-bottom:none}
+
+.progress-num{
+  width:24px;
+  flex:0 0 24px;
+  font-size:10px;
+  color:var(--text-soft);
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  padding-top:2px;
+}
+
+.progress-copy{
+  min-width:0;
+}
+
+.progress-copy strong{
+  display:block;
+  font-size:13px;
   color:var(--text);
   font-weight:400;
   letter-spacing:0.01em;
 }
-.field input{
+
+.progress-copy span{
+  display:block;
+  font-size:12px;
+  color:var(--text-soft);
+  line-height:1.45;
+  margin-top:2px;
+}
+
+.progress-item.active .progress-num,
+.progress-item.active .progress-copy strong{color:var(--gold)}
+
+.progress-item.complete .progress-copy strong{color:var(--text)}
+.progress-item.complete .progress-num{color:var(--ok)}
+
+.rail-actions{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  padding-top:16px;
+  border-top:1px solid var(--line-soft);
+}
+
+.main-stack{
+  display:flex;
+  flex-direction:column;
+  gap:24px;
+}
+
+.hero{
+  padding:30px 28px 26px;
+  border:1px solid var(--line-soft);
+  background:
+    linear-gradient(180deg, rgba(18,18,14,0.98), rgba(16,16,12,0.98)),
+    radial-gradient(circle at top right, rgba(196,163,90,0.06), transparent 28%);
+  box-shadow:var(--shadow);
+}
+
+.hero .label{margin-bottom:14px}
+
+.hero-sub{
+  font-size:18px;
+  color:var(--text-dim);
+  max-width:44ch;
+  margin-bottom:20px;
+}
+
+.hero-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:1px;
+  background:var(--line-soft);
+  border:1px solid var(--line-soft);
+  margin-top:22px;
+}
+
+.hero-cell{
+  background:rgba(10,10,8,0.7);
+  padding:16px 16px 14px;
+}
+
+.hero-cell .small{
+  display:block;
+  font-size:10px;
+  letter-spacing:0.14em;
+  text-transform:uppercase;
+  color:var(--text-soft);
+  margin-bottom:6px;
+}
+
+.hero-cell .value{
+  font-size:15px;
+  color:var(--text);
+  line-height:1.45;
+}
+
+.panel{
+  padding:28px 26px;
+}
+
+.panel-top{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:16px;
+  margin-bottom:18px;
+}
+
+.step-meta{
+  font-size:10px;
+  letter-spacing:0.18em;
+  text-transform:uppercase;
+  color:var(--gold);
+  font-weight:400;
+}
+
+.step-body{
+  display:flex;
+  flex-direction:column;
+  gap:18px;
+}
+
+.field-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:18px 16px;
+}
+
+.field{
+  display:flex;
+  flex-direction:column;
+  gap:7px;
+}
+
+.field.full{grid-column:1/-1}
+
+.field-label{
+  font-size:15px;
+  font-weight:400;
+  color:var(--text);
+}
+
+.field-hint{
+  font-size:12px;
+  color:var(--text-soft);
+  font-style:italic;
+  line-height:1.45;
+}
+
+.field input,
+.field textarea{
+  width:100%;
   background:transparent;
   border:1px solid var(--line);
-  border-radius:var(--radius);
   color:var(--text);
-  font-family:var(--sans);
-  font-weight:300;
-  font-size:17px;
-  padding:15px 16px;
-  width:100%;
+  padding:14px 15px;
+  border-radius:var(--radius);
   outline:none;
-  transition:border-color 200ms ease,background 200ms ease;
+  transition:border-color 160ms ease, background 160ms ease;
 }
-.field input:focus{
+
+.field textarea{
+  min-height:112px;
+  resize:vertical;
+}
+
+.field input:focus,
+.field textarea:focus{
   border-color:var(--gold);
-  background:rgba(196,163,90,0.03);
-}
-.field input::placeholder{color:var(--text-soft);font-style:italic}
-
-/* ---- OUTPUT CARD ---- */
-@keyframes revealUp{
-  from{opacity:0;transform:translateY(12px)}
-  to{opacity:1;transform:translateY(0)}
+  background:rgba(196,163,90,0.035);
 }
 
-.output-section{
-  animation:revealUp 0.45s ease forwards;
+.field input::placeholder,
+.field textarea::placeholder{
+  color:var(--text-soft);
+}
+
+.step-actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  align-items:center;
+}
+
+.inline-note{
+  font-size:13px;
+  color:var(--text-soft);
+  max-width:none;
+}
+
+.chips{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+}
+
+.chip{
+  background:transparent;
+  border:1px solid var(--line);
+  color:var(--text-dim);
+  padding:9px 12px;
+  font-size:11px;
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  cursor:pointer;
+  transition:border-color 140ms ease, color 140ms ease, background 140ms ease;
+}
+
+.chip:hover{
+  border-color:var(--gold);
+  color:var(--text);
+  background:rgba(196,163,90,0.05);
+}
+
+.chip.active{
+  border-color:var(--gold);
+  color:var(--text);
+  background:rgba(196,163,90,0.07);
+}
+
+.status-badge{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  font-size:10px;
+  letter-spacing:0.13em;
+  text-transform:uppercase;
+  color:var(--text-soft);
+  border:1px solid var(--line-soft);
+  padding:8px 10px;
+}
+
+.status-dot{
+  width:6px;
+  height:6px;
+  border-radius:50%;
+  background:var(--gold);
 }
 
 .output-card{
-  border:1px solid var(--gold);
-  background:linear-gradient(160deg,rgba(196,163,90,0.07),rgba(196,163,90,0.03));
-  border-radius:var(--radius);
-  padding:32px 28px;
+  padding:30px 28px;
+  border-color:var(--line);
+  background:
+    linear-gradient(180deg, rgba(18,18,14,0.98), rgba(17,17,13,0.98)),
+    radial-gradient(circle at top right, rgba(196,163,90,0.08), transparent 28%);
   position:relative;
   overflow:hidden;
 }
+
 .output-card::before{
   content:"";
   position:absolute;
-  top:0;left:0;right:0;
+  top:0;
+  left:0;
+  right:0;
   height:1px;
-  background:linear-gradient(90deg,transparent,var(--gold),transparent);
-  opacity:0.6;
+  background:linear-gradient(90deg, transparent, var(--gold), transparent);
+  opacity:0.65;
+}
+
+.output-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:16px;
+  margin-bottom:20px;
 }
 
 .output-tag{
-  display:block;
+  display:inline-block;
   font-size:10px;
   letter-spacing:0.18em;
   text-transform:uppercase;
   color:var(--gold);
-  margin-bottom:22px;
   font-weight:400;
+  margin-bottom:12px;
 }
 
-.output-project{
+.output-headline{
   font-family:var(--serif);
-  font-size:clamp(22px,3.5vw,28px);
-  font-weight:400;
+  font-size:clamp(30px,4vw,44px);
+  line-height:1.08;
   color:var(--text);
-  line-height:1.2;
-  margin-bottom:28px;
-  padding-bottom:20px;
+  max-width:13ch;
+}
+
+.output-tools{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+}
+
+.mini-btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:38px;
+  padding:10px 12px;
+  border:1px solid var(--line);
+  font-size:10px;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  color:var(--text-soft);
+  background:transparent;
+  cursor:pointer;
+}
+
+.mini-btn:hover{
+  border-color:var(--gold);
+  color:var(--text);
+}
+
+.artifact-grid{
+  display:grid;
+  grid-template-columns:1.15fr 0.85fr;
+  gap:24px;
+}
+
+.artifact-block{
+  display:flex;
+  flex-direction:column;
+  gap:16px;
+}
+
+.statement{
+  font-family:var(--serif);
+  font-size:clamp(24px,3.2vw,34px);
+  line-height:1.24;
+  color:var(--text);
+  padding-bottom:18px;
   border-bottom:1px solid var(--line-soft);
 }
 
-.output-section-label{
+.detail-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:1px;
+  background:var(--line-soft);
+  border:1px solid var(--line-soft);
+}
+
+.detail-cell{
+  background:rgba(10,10,8,0.7);
+  padding:14px 15px;
+}
+
+.detail-cell.wide{grid-column:1/-1}
+
+.detail-label{
+  display:block;
   font-size:10px;
-  letter-spacing:0.16em;
+  letter-spacing:0.14em;
   text-transform:uppercase;
   color:var(--text-soft);
-  margin-bottom:10px;
-  margin-top:22px;
-  display:block;
+  margin-bottom:5px;
 }
-.output-section-label:first-of-type{margin-top:0}
 
-.step-list{
+.detail-value{
+  font-size:15px;
+  color:var(--text);
+  line-height:1.45;
+}
+
+.artifact-subsection{
+  border-top:1px solid var(--line-soft);
+  padding-top:16px;
+}
+
+.artifact-subsection:first-child{
+  border-top:none;
+  padding-top:0;
+}
+
+.artifact-subsection .sub-label{
+  display:block;
+  font-size:10px;
+  letter-spacing:0.14em;
+  text-transform:uppercase;
+  color:var(--text-soft);
+  margin-bottom:8px;
+}
+
+.artifact-subsection .sub-text{
+  font-size:15px;
+  color:var(--text-dim);
+  line-height:1.58;
+}
+
+.sequence-list,
+.checklist-list,
+.matrix-list{
   list-style:none;
   display:flex;
   flex-direction:column;
-  gap:0;
-  margin-bottom:4px;
+  gap:10px;
 }
-.step-row{
-  display:flex;
-  align-items:flex-start;
-  gap:16px;
-  padding:13px 0;
-  border-bottom:1px solid var(--line-soft);
+
+.sequence-list li,
+.checklist-list li,
+.matrix-list li{
+  padding:10px 12px;
+  border:1px solid var(--line-soft);
+  background:rgba(10,10,8,0.44);
 }
-.step-row:last-child{border-bottom:none}
-.step-num{
+
+.sequence-list strong,
+.checklist-list strong,
+.matrix-list strong{
+  display:block;
+  font-size:11px;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  color:var(--text-soft);
+  font-weight:400;
+  margin-bottom:5px;
+}
+
+.sequence-list span,
+.checklist-list span,
+.matrix-list span{
+  display:block;
+  font-size:14px;
+  color:var(--text-dim);
+  line-height:1.5;
+}
+
+.warn-box{
+  border:1px solid var(--warn-line);
+  background:var(--warn-soft);
+  padding:18px 16px;
+}
+
+.warn-box .warn-label{
+  display:block;
+  font-size:10px;
+  letter-spacing:0.14em;
+  text-transform:uppercase;
+  color:var(--warn);
+  margin-bottom:8px;
+  font-weight:400;
+}
+
+.warn-box .warn-text{
+  font-size:14px;
+  color:var(--text-dim);
+  line-height:1.55;
+}
+
+.bridge{
+  border:1px solid var(--line);
+  background:linear-gradient(180deg, rgba(196,163,90,0.06), rgba(196,163,90,0.03));
+  padding:24px 22px;
+}
+
+.bridge-title{
   font-family:var(--serif);
-  font-size:13px;
-  color:var(--gold);
-  min-width:18px;
-  padding-top:2px;
-  opacity:0.8;
+  font-size:30px;
+  line-height:1.08;
+  margin-bottom:10px;
 }
-.step-text{
+
+.bridge-text{
   font-size:16px;
   color:var(--text-dim);
-  line-height:1.5;
+  max-width:none;
+  margin-bottom:16px;
 }
 
-.vague-warning{
-  margin-top:20px;
-  padding:14px 16px;
-  background:rgba(196,163,90,0.06);
-  border-left:2px solid var(--gold);
-  border-radius:0 var(--radius) var(--radius) 0;
-}
-.vague-warning p{
-  font-size:15px;
-  color:var(--text-soft);
-  line-height:1.55;
-  max-width:none;
-}
-
-.friction-block{
-  margin-top:22px;
-  padding:16px 18px;
-  background:rgba(255,255,255,0.025);
-  border:1px solid var(--line-soft);
-  border-radius:var(--radius);
-}
-.friction-label{
-  font-size:10px;
-  letter-spacing:0.16em;
-  text-transform:uppercase;
-  color:var(--text-soft);
-  margin-bottom:10px;
-  display:block;
-}
-.friction-issue{
-  font-family:var(--serif);
-  font-size:18px;
-  color:var(--text);
-  margin-bottom:8px;
-  font-style:italic;
-}
-.friction-fix{
-  font-size:14px;
-  color:var(--text-soft);
-  max-width:none;
-}
-
-.exec-check{
-  margin-top:22px;
-  padding-top:20px;
-  border-top:1px solid var(--line-soft);
-}
-.exec-check-title{
-  font-size:10px;
-  letter-spacing:0.16em;
-  text-transform:uppercase;
-  color:var(--text-soft);
-  margin-bottom:14px;
-  display:block;
-}
-.exec-check p{
-  font-size:15px;
-  color:var(--text-dim);
-  margin-bottom:10px;
-  max-width:none;
-}
-.exec-check-items{
-  list-style:none;
+.bridge-actions{
   display:flex;
-  flex-direction:column;
-  gap:8px;
-  margin-bottom:14px;
-}
-.exec-check-items li{
-  font-size:15px;
-  color:var(--text-dim);
-  padding-left:14px;
-  position:relative;
-  line-height:1.5;
-}
-.exec-check-items li::before{
-  content:"";
-  width:3px;
-  height:3px;
-  border-radius:50%;
-  background:var(--text-soft);
-  position:absolute;
-  top:9px;
-  left:0;
-}
-.exec-check-note{
-  font-size:14px;
-  color:var(--text-soft);
-  font-style:italic;
-  max-width:none;
+  flex-wrap:wrap;
+  gap:10px;
 }
 
-/* ---- PAID SECTION ---- */
-.paid-section{
-  border-top:1px solid var(--line-soft);
-  padding-top:32px;
-}
-.paid-eyebrow{
+.notes-title{
   font-size:10px;
   letter-spacing:0.18em;
   text-transform:uppercase;
-  color:var(--text-soft);
+  color:var(--gold);
   margin-bottom:12px;
-  display:block;
-}
-.paid-text{
-  font-family:var(--serif);
-  font-size:clamp(20px,3vw,26px);
-  font-weight:400;
-  color:var(--text);
-  line-height:1.3;
-  margin-bottom:10px;
-}
-.paid-sub{
-  font-size:15px;
-  color:var(--text-soft);
-  margin-bottom:22px;
-  line-height:1.6;
-  max-width:44ch;
 }
 
-/* ---- FOOTER ---- */
-.foot{
+.notes-head{
+  font-family:var(--serif);
+  font-size:30px;
+  line-height:1;
+  margin-bottom:14px;
+}
+
+.notes-list{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  margin-bottom:18px;
+}
+
+.note-item{
+  padding:12px 12px 11px;
+  border:1px solid var(--line-soft);
+  background:rgba(10,10,8,0.46);
+}
+
+.note-item .name{
+  display:block;
+  font-size:10px;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  color:var(--text-soft);
+  margin-bottom:5px;
+}
+
+.note-item .val{
+  display:block;
+  font-size:14px;
+  color:var(--text);
+  line-height:1.45;
+}
+
+.note-item.empty .val{color:var(--text-soft)}
+
+.notes-actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  padding-top:16px;
   border-top:1px solid var(--line-soft);
-  padding-top:20px;
+}
+
+.phase-footer{
+  border-top:1px solid var(--line-soft);
+  padding-top:18px;
   display:flex;
   flex-wrap:wrap;
   gap:10px 16px;
 }
-.foot a{
+
+.phase-footer a{
   font-size:11px;
-  letter-spacing:0.08em;
+  letter-spacing:0.1em;
   text-transform:uppercase;
   color:var(--text-soft);
-  text-decoration:none;
   transition:color 140ms ease;
 }
-.foot a:hover{color:var(--text)}
 
-.hidden{display:none}
+.phase-footer a:hover{color:var(--text)}
 
-@media(max-width:680px){
-  body{padding:28px 20px 80px}
-  .page{gap:40px}
-  .panel{padding:24px 20px}
-  .output-card{padding:24px 20px}
-  h1{font-size:clamp(38px,10vw,52px)}
-  .btn{width:100%}
-  .row{flex-direction:column;align-items:flex-start}
-  .link-btn{align-self:center}
+.hidden{display:none !important}
+
+@media (max-width:1200px){
+  .shell{
+    grid-template-columns:220px minmax(0,1fr);
+    max-width:1080px;
+  }
+  .right-notes{
+    position:static;
+    grid-column:1 / -1;
+    order:3;
+  }
+  .center{order:2}
+}
+
+@media (max-width:860px){
+  .shell{
+    grid-template-columns:1fr;
+    padding:18px 16px 72px;
+    gap:18px;
+  }
+  .left-rail,
+  .right-notes{
+    position:static;
+  }
+  .entry-card{
+    grid-template-columns:1fr;
+    padding:28px 20px 22px;
+  }
+  .hero,
+  .panel,
+  .output-card,
+  .rail-card,
+  .notes-card{
+    padding:22px 18px;
+  }
+  .hero-grid,
+  .field-grid,
+  .artifact-grid{
+    grid-template-columns:1fr;
+  }
+  .detail-grid{
+    grid-template-columns:1fr;
+  }
+  .panel-top,
+  .output-header{
+    flex-direction:column;
+    align-items:flex-start;
+  }
+  .btn{
+    width:100%;
+  }
+  .mini-btn{
+    flex:1;
+  }
 }
 </style>
 </head>
 <body>
-<main class="page">
 
-  <!-- HERO -->
-  <section>
-    <span class="label">Structure &middot; Phase 03</span>
-    <h1>Define the work so it gets finished.</h1>
-    <p class="subhead">If the next step is not obvious, you will not start.</p>
-    <div class="row">
-      <button class="btn btn-primary" id="hero-start" type="button">Make it executable</button>
-      <a href="/systems" class="link-btn">Back to systems</a>
-    </div>
-  </section>
-
-  <!-- THIS IS HAPPENING IF -->
-  <section class="panel">
-    <h2>This is happening if</h2>
-    <ul class="list">
-      <li>You start things and do not return to them</li>
-      <li>You open the work and do not know what to do first</li>
-      <li>You avoid starting even when you have time</li>
-      <li>You restart instead of continuing</li>
-      <li>You think about the work more than you move it</li>
-    </ul>
-  </section>
-
-  <!-- WHAT YOU LEAVE WITH TODAY -->
-  <section class="panel">
-    <h2>What you leave with today</h2>
-    <ul class="list">
-      <li>One defined outcome</li>
-      <li>The first step you can do immediately</li>
-      <li>The next two steps in order</li>
-      <li>Everything else removed</li>
-    </ul>
-    <p style="margin-top:18px;font-size:16px;color:var(--text-soft);">You are not organizing work. You are removing everything that prevents starting.</p>
-  </section>
-
-  <!-- TOOL -->
-  <section class="panel" id="tool-section">
-    <h2>Define what actually gets finished</h2>
-    <p style="margin-bottom:22px;font-size:16px;">Pick one thing. Not everything you are working on.</p>
-
-    <div class="field">
-      <label class="field-label" for="f-task">What are you finishing?</label>
-      <input id="f-task" type="text" placeholder="rewrite homepage offer / send 3 outreach messages / finalize pricing page" maxlength="160" autocomplete="off" />
-    </div>
-
-    <button class="btn btn-primary" id="build-btn" type="button">Make it executable</button>
-  </section>
-
-  <!-- OUTPUT -->
-  <section id="output-section" class="hidden">
-    <div class="output-card">
-      <span class="output-tag">This is the work</span>
-
-      <div class="output-project" id="out-project"></div>
-
-      <span class="output-section-label">Step 1</span>
-      <div class="step-list" id="out-steps"></div>
-
-      <div class="vague-warning">
-        <p>If step one is not something you can do in the next 5 minutes, this is still too vague.</p>
-      </div>
-
-      <!-- Execution Check -->
-      <div class="exec-check">
-        <span class="exec-check-title">Execution check</span>
-        <p>You should be able to:</p>
-        <ul class="exec-check-items">
-          <li>Start step one immediately</li>
-          <li>Complete it without asking questions</li>
-          <li>Move to step two without rethinking everything</li>
-        </ul>
-        <p class="exec-check-note">If not, the work is still undefined.</p>
-      </div>
-
-      <!-- Friction Identifier -->
-      <div class="friction-block" id="friction-block">
-        <span class="friction-label">Where this usually breaks</span>
-        <div class="friction-issue" id="friction-issue"></div>
-        <p class="friction-fix">Fix this before doing more work.</p>
+<div class="entry-overlay" id="entry-overlay" aria-hidden="false">
+  <div class="entry-card">
+    <div class="entry-copy">
+      <span class="label entry-label">Stephuary · Phase 04</span>
+      <h1>Structure</h1>
+      <p>This is where an offer stops depending on improvisation and becomes something you can actually run.</p>
+      <ul class="entry-points">
+        <li>You are not cleaning up the backend.</li>
+        <li>You are turning the offer into a delivery structure, client flow, internal workflow, and repeatable sequence.</li>
+        <li>You leave knowing what stays manual, what can be standardized, and what should move into Automation next.</li>
+      </ul>
+      <div class="entry-actions">
+        <button class="btn btn-primary" type="button" id="enter-phase">Enter Phase 04</button>
+        <a class="btn btn-soft" href="/monetize">Back to Monetize</a>
       </div>
     </div>
+    <aside class="entry-aside">
+      <div class="mini">What happens here</div>
+      <p class="aside-text">Break down the offer. Sequence delivery. Map the client journey. Define the internal workflow. Surface bottlenecks. Remove extra decisions. Lock the operating structure. Route it into Automation.</p>
+    </aside>
+  </div>
+</div>
 
-    <div class="row" style="margin-top:28px;">
-      <button class="btn" id="repeat-btn" type="button">Start over</button>
-      <a href="/automation" class="btn btn-primary">Go to Automation</a>
+<div class="shell">
+  <aside class="left-rail">
+    <div class="rail-card">
+      <div class="rail-top">
+        <div class="rail-phase">Phase 04</div>
+        <div class="rail-title">Structure</div>
+        <p class="rail-sub">Turn the offer into a structure that is easier to deliver, repeat, and scale without constant reinvention.</p>
+      </div>
+
+      <div class="rail-progress" id="rail-progress">
+        <div class="progress-item" data-step="1">
+          <div class="progress-num">01</div>
+          <div class="progress-copy"><strong>Offer breakdown</strong><span>Separate the offer into real components.</span></div>
+        </div>
+        <div class="progress-item" data-step="2">
+          <div class="progress-num">02</div>
+          <div class="progress-copy"><strong>Delivery sequence</strong><span>Define the order of delivery.</span></div>
+        </div>
+        <div class="progress-item" data-step="3">
+          <div class="progress-num">03</div>
+          <div class="progress-copy"><strong>Client journey</strong><span>Map what the client sees and receives.</span></div>
+        </div>
+        <div class="progress-item" data-step="4">
+          <div class="progress-num">04</div>
+          <div class="progress-copy"><strong>Internal workflow</strong><span>Map what happens behind the scenes.</span></div>
+        </div>
+        <div class="progress-item" data-step="5">
+          <div class="progress-num">05</div>
+          <div class="progress-copy"><strong>Bottlenecks</strong><span>Find what is too manual or too custom.</span></div>
+        </div>
+        <div class="progress-item" data-step="6">
+          <div class="progress-num">06</div>
+          <div class="progress-copy"><strong>Simplification</strong><span>Remove unnecessary steps and decisions.</span></div>
+        </div>
+        <div class="progress-item" data-step="7">
+          <div class="progress-num">07</div>
+          <div class="progress-copy"><strong>Repeatable structure</strong><span>Create the operating sequence.</span></div>
+        </div>
+        <div class="progress-item" data-step="8">
+          <div class="progress-num">08</div>
+          <div class="progress-copy"><strong>Route to Automation</strong><span>Identify what should be automated next.</span></div>
+        </div>
+      </div>
+
+      <div class="rail-actions">
+        <button class="btn btn-soft" type="button" id="save-phase">Save phase</button>
+        <button class="btn btn-soft" type="button" id="reset-phase">Reset phase</button>
+        <a class="btn" href="/systems">Back to systems</a>
+      </div>
     </div>
-  </section>
+  </aside>
 
-  <!-- ONE CONSTRAINT -->
-  <section class="panel">
-    <h2>One constraint</h2>
-    <p>If you do not know what to do in the next 5 minutes, this is not defined yet.</p>
-  </section>
+  <main class="center">
+    <div class="main-stack">
 
-  <!-- REALITY BLOCK -->
-  <section class="panel">
-    <h2>If this does not get done</h2>
-    <p style="margin-bottom:14px;">It is not because you need more time.</p>
-    <p style="margin-bottom:12px;">It is usually because:</p>
-    <ul class="list">
-      <li>The outcome is unclear</li>
-      <li>The first step is not defined</li>
-      <li>The work requires decisions you have not made yet</li>
-    </ul>
-  </section>
+      <section class="hero">
+        <span class="label">Structure · Phase 04</span>
+        <h1>Make the offer operable.</h1>
+        <p class="hero-sub">This is the architecture phase. The offer already exists. Now it needs a delivery structure, a client flow, an internal workflow, and a sequence that can repeat without depending on memory.</p>
 
-  <!-- systems TRANSITION -->
-  <section class="panel">
-    <h2>When this works</h2>
-    <p style="margin-bottom:12px;">You can start without thinking.</p>
-    <p style="margin-bottom:12px;">You can continue without restarting.</p>
-    <p style="margin-bottom:22px;">You can finish without expanding the scope.</p>
-    <p style="margin-bottom:6px;font-size:15px;color:var(--text-soft);">Now you need:</p>
-    <ul class="list" style="margin-bottom:24px;">
-      <li>A systems that repeats this</li>
-      <li>A way to remove manual effort</li>
-      <li>Consistency without relying on discipline</li>
-    </ul>
-    <a href="/automation" class="btn btn-primary">Continue to Automation</a>
-  </section>
+        <div class="hero-grid">
+          <div class="hero-cell">
+            <span class="small">Output</span>
+            <div class="value">One clear delivery structure and one repeatable sequence.</div>
+          </div>
+          <div class="hero-cell">
+            <span class="small">Detection</span>
+            <div class="value">Surface manual work, custom work, missing handoffs, and sequencing problems.</div>
+          </div>
+          <div class="hero-cell">
+            <span class="small">Next</span>
+            <div class="value">Automation removes unnecessary manual repetition from the structure you define here.</div>
+          </div>
+        </div>
+      </section>
 
-  <!-- PAID SECTION -->
-  <section class="paid-section">
-    <span class="paid-eyebrow">The full systems</span>
-    <p class="paid-text">You have the execution plan. The system gives you the rest.</p>
-    <p class="paid-sub">Scripts, decision frameworks, templates, and the complete five-phase systems — structured so you move through it without restarting.</p>
-    <a href="/systems" class="btn btn-primary">Enter the system &mdash; $39</a>
-  </section>
+      <section class="panel" id="step-1">
+        <div class="panel-top">
+          <div>
+            <div class="step-meta">Step 01</div>
+            <h2>Offer breakdown</h2>
+          </div>
+          <div class="status-badge"><span class="status-dot"></span><span>Break the offer into actual components</span></div>
+        </div>
+        <div class="step-body">
+          <p>A vague offer cannot be structured. Break it into what is actually delivered.</p>
+          <div class="field-grid">
+            <div class="field full">
+              <label class="field-label" for="offerName">What is the offer?</label>
+              <span class="field-hint">Name the actual offer, not the category.</span>
+              <input id="offerName" type="text" maxlength="140" placeholder="Offer Positioning Sprint" autocomplete="off" />
+            </div>
+            <div class="field">
+              <label class="field-label" for="offerOutcome">What is the core outcome?</label>
+              <span class="field-hint">What should exist for the client by the end?</span>
+              <input id="offerOutcome" type="text" maxlength="140" placeholder="A clear offer they can explain, price, and test" autocomplete="off" />
+            </div>
+            <div class="field">
+              <label class="field-label" for="offerTimeline">What is the delivery window?</label>
+              <span class="field-hint">Use one time frame.</span>
+              <input id="offerTimeline" type="text" maxlength="80" placeholder="One week" autocomplete="off" />
+            </div>
+            <div class="field full">
+              <label class="field-label" for="offerParts">What are the actual components?</label>
+              <span class="field-hint">Separate what is delivered into real parts, not broad claims.</span>
+              <textarea id="offerParts" maxlength="300" placeholder="Kickoff intake, buyer definition, offer framing, pricing decision, test version, final summary"></textarea>
+            </div>
+          </div>
+          <div class="chips" id="component-chips">
+            <button class="chip" type="button" data-insert="kickoff">Kickoff</button>
+            <button class="chip" type="button" data-insert="intake">Intake</button>
+            <button class="chip" type="button" data-insert="review">Review</button>
+            <button class="chip" type="button" data-insert="delivery">Delivery</button>
+            <button class="chip" type="button" data-insert="summary">Summary</button>
+          </div>
+          <div class="step-actions">
+            <button class="btn btn-primary" type="button" data-next="2">Continue to delivery sequence</button>
+          </div>
+        </div>
+      </section>
 
-  <!-- FOOTER -->
-  <footer class="foot">
-    <a href="/systems">systems</a>
-    <a href="/capture">Capture</a>
-    <a href="/monetize">Monetize</a>
-    <a href="/automation">Automation</a>
-    <a href="/sovereignty">Sovereignty</a>
-    <a href="/private-access">Private Access</a>
-  </footer>
+      <section class="panel" id="step-2">
+        <div class="panel-top">
+          <div>
+            <div class="step-meta">Step 02</div>
+            <h2>Delivery sequence</h2>
+          </div>
+          <div class="status-badge"><span class="status-dot"></span><span>Define the order of delivery</span></div>
+        </div>
+        <div class="step-body">
+          <p>The client should move through a sequence, not a pile of steps.</p>
+          <div class="field-grid">
+            <div class="field full">
+              <label class="field-label" for="deliverySequence">What is the order of delivery?</label>
+              <span class="field-hint">Write it in sequence, separated by commas.</span>
+              <textarea id="deliverySequence" maxlength="300" placeholder="Payment received, welcome sent, intake collected, session delivered, summary sent, follow-up scheduled"></textarea>
+            </div>
+            <div class="field">
+              <label class="field-label" for="deliveryStart">What triggers the start?</label>
+              <span class="field-hint">Payment, booking, approval, something else.</span>
+              <input id="deliveryStart" type="text" maxlength="100" placeholder="Payment received" autocomplete="off" />
+            </div>
+            <div class="field">
+              <label class="field-label" for="deliveryEnd">What defines completion?</label>
+              <span class="field-hint">What must exist at the end for the work to count as done?</span>
+              <input id="deliveryEnd" type="text" maxlength="120" placeholder="Client has final deliverable and next-step clarity" autocomplete="off" />
+            </div>
+          </div>
+          <div class="step-actions">
+            <button class="btn btn-primary" type="button" data-next="3">Continue to client journey</button>
+          </div>
+        </div>
+      </section>
 
-</main>
+      <section class="panel" id="step-3">
+        <div class="panel-top">
+          <div>
+            <div class="step-meta">Step 03</div>
+            <h2>Client journey</h2>
+          </div>
+          <div class="status-badge"><span class="status-dot"></span><span>Map what the client sees and receives</span></div>
+        </div>
+        <div class="step-body">
+          <p>If the client experience is missing visible moments, the delivery will feel loose even when work is happening.</p>
+          <div class="field-grid">
+            <div class="field full">
+              <label class="field-label" for="clientTouchpoints">What does the client see and receive?</label>
+              <span class="field-hint">Write the visible client-facing sequence, separated by commas.</span>
+              <textarea id="clientTouchpoints" maxlength="300" placeholder="Welcome email, intake form, confirmation, live session, summary document, follow-up note"></textarea>
+            </div>
+            <div class="field">
+              <label class="field-label" for="clientComms">Where does communication happen?</label>
+              <span class="field-hint">Name the main communication points.</span>
+              <input id="clientComms" type="text" maxlength="140" placeholder="Welcome, confirmation, delivery, wrap-up" autocomplete="off" />
+            </div>
+            <div class="field">
+              <label class="field-label" for="clientConfusion">Where could the client get confused?</label>
+              <span class="field-hint">What moment needs more clarity?</span>
+              <input id="clientConfusion" type="text" maxlength="140" placeholder="What happens between payment and the live session" autocomplete="off" />
+            </div>
+          </div>
+          <div class="step-actions">
+            <button class="btn btn-primary" type="button" data-next="4">Continue to internal workflow</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel" id="step-4">
+        <div class="panel-top">
+          <div>
+            <div class="step-meta">Step 04</div>
+            <h2>Internal workflow</h2>
+          </div>
+          <div class="status-badge"><span class="status-dot"></span><span>Map what happens behind the scenes</span></div>
+        </div>
+        <div class="step-body">
+          <p>The client sees the front. Structure depends on the back.</p>
+          <div class="field-grid">
+            <div class="field full">
+              <label class="field-label" for="internalWorkflow">What happens behind the scenes?</label>
+              <span class="field-hint">Write the internal sequence, separated by commas.</span>
+              <textarea id="internalWorkflow" maxlength="300" placeholder="Review intake, prepare notes, run session, organize decisions, send summary, log follow-up"></textarea>
+            </div>
+            <div class="field">
+              <label class="field-label" for="handoffs">Where are the handoffs?</label>
+              <span class="field-hint">What changes hands between tools, people, or stages?</span>
+              <input id="handoffs" type="text" maxlength="140" placeholder="Payment to welcome, intake to prep, session to summary" autocomplete="off" />
+            </div>
+            <div class="field">
+              <label class="field-label" for="memoryWork">What still depends on memory?</label>
+              <span class="field-hint">What are you remembering instead of defining?</span>
+              <input id="memoryWork" type="text" maxlength="140" placeholder="Follow-up timing and what to include in the summary" autocomplete="off" />
+            </div>
+          </div>
+          <div class="step-actions">
+            <button class="btn btn-primary" type="button" data-next="5">Continue to bottlenecks</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel" id="step-5">
+        <div class="panel-top">
+          <div>
+            <div class="step-meta">Step 05</div>
+            <h2>Bottlenecks</h2>
+          </div>
+          <div class="status-badge"><span class="status-dot"></span><span>Identify what is too manual or too custom</span></div>
+        </div>
+        <div class="step-body">
+          <p>This is where friction gets named instead of excused.</p>
+          <div class="field-grid">
+            <div class="field">
+              <label class="field-label" for="manualWork">What is too manual?</label>
+              <span class="field-hint">What repeats with no good reason?</span>
+              <input id="manualWork" type="text" maxlength="140" placeholder="Rewriting emails and summary notes from scratch" autocomplete="off" />
+            </div>
+            <div class="field">
+              <label class="field-label" for="customWork">What is too custom?</label>
+              <span class="field-hint">Where are you making unnecessary variations?</span>
+              <input id="customWork" type="text" maxlength="140" placeholder="Changing the structure of every client summary" autocomplete="off" />
+            </div>
+            <div class="field">
+              <label class="field-label" for="slowWork">What is too slow?</label>
+              <span class="field-hint">Where is the sequence dragging?</span>
+              <input id="slowWork" type="text" maxlength="140" placeholder="Delay between payment and first client communication" autocomplete="off" />
+            </div>
+            <div class="field">
+              <label class="field-label" for="sequenceBreak">Where does the sequence break?</label>
+              <span class="field-hint">What part does not repeat reliably yet?</span>
+              <input id="sequenceBreak" type="text" maxlength="140" placeholder="No standard wrap-up and follow-up cadence" autocomplete="off" />
+            </div>
+          </div>
+          <div class="step-actions">
+            <button class="btn btn-primary" type="button" data-next="6">Continue to simplification</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel" id="step-6">
+        <div class="panel-top">
+          <div>
+            <div class="step-meta">Step 06</div>
+            <h2>Simplification</h2>
+          </div>
+          <div class="status-badge"><span class="status-dot"></span><span>Remove unnecessary steps and complexity</span></div>
+        </div>
+        <div class="step-body">
+          <p>Structure gets stronger when extra decisions disappear.</p>
+          <div class="field-grid">
+            <div class="field full">
+              <label class="field-label" for="removeList">What gets removed?</label>
+              <span class="field-hint">Name the steps, decisions, or variations that should stop.</span>
+              <textarea id="removeList" maxlength="300" placeholder="Custom email writing, custom summary formatting, manual reminder tracking, unnecessary pre-work"></textarea>
+            </div>
+            <div class="field">
+              <label class="field-label" for="templateItems">What can be templatized?</label>
+              <span class="field-hint">What should become a repeatable asset?</span>
+              <input id="templateItems" type="text" maxlength="140" placeholder="Welcome email, session agenda, summary document, follow-up note" autocomplete="off" />
+            </div>
+            <div class="field">
+              <label class="field-label" for="manualKeep">What should stay manual?</label>
+              <span class="field-hint">Keep only what truly benefits from judgment.</span>
+              <input id="manualKeep" type="text" maxlength="140" placeholder="Live analysis, final recommendations, sensitive client nuance" autocomplete="off" />
+            </div>
+          </div>
+          <div class="step-actions">
+            <button class="btn btn-primary" type="button" id="generate-structure">Generate structure artifact</button>
+            <span class="inline-note">This will build the structure, detect friction, and open the repeatable sequence.</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="output-card hidden" id="artifact-section">
+        <div class="output-header">
+          <div>
+            <span class="output-tag">Structure artifact</span>
+            <div class="output-headline">A delivery system that can repeat.</div>
+          </div>
+          <div class="output-tools">
+            <button class="mini-btn" type="button" id="copy-output">Copy output</button>
+            <button class="mini-btn" type="button" id="export-output">Export output</button>
+          </div>
+        </div>
+
+        <div class="artifact-grid">
+          <div class="artifact-block">
+            <div class="statement" id="primary-structure"></div>
+
+            <div class="detail-grid">
+              <div class="detail-cell">
+                <span class="detail-label">Offer</span>
+                <div class="detail-value" id="detail-offer"></div>
+              </div>
+              <div class="detail-cell">
+                <span class="detail-label">Core outcome</span>
+                <div class="detail-value" id="detail-outcome"></div>
+              </div>
+              <div class="detail-cell">
+                <span class="detail-label">Delivery window</span>
+                <div class="detail-value" id="detail-timeline"></div>
+              </div>
+              <div class="detail-cell">
+                <span class="detail-label">Structure type</span>
+                <div class="detail-value" id="detail-structure-type"></div>
+              </div>
+              <div class="detail-cell wide">
+                <span class="detail-label">Operating read</span>
+                <div class="detail-value" id="detail-operating-read"></div>
+              </div>
+            </div>
+
+            <div class="artifact-subsection">
+              <span class="sub-label">Delivery sequence</span>
+              <ul class="sequence-list" id="delivery-sequence-list"></ul>
+            </div>
+
+            <div class="artifact-subsection">
+              <span class="sub-label">Client-facing process</span>
+              <ul class="sequence-list" id="client-process-list"></ul>
+            </div>
+
+            <div class="artifact-subsection">
+              <span class="sub-label">Internal process</span>
+              <ul class="sequence-list" id="internal-process-list"></ul>
+            </div>
+
+            <div class="artifact-subsection">
+              <span class="sub-label">Repeatable checklist</span>
+              <ul class="checklist-list" id="repeatable-checklist"></ul>
+            </div>
+          </div>
+
+          <div class="artifact-block">
+            <div class="artifact-subsection">
+              <span class="sub-label">Bottleneck summary</span>
+              <div class="sub-text" id="bottleneck-summary"></div>
+            </div>
+
+            <div class="artifact-subsection">
+              <span class="sub-label">Simplification summary</span>
+              <div class="sub-text" id="simplification-summary"></div>
+            </div>
+
+            <div class="artifact-subsection">
+              <span class="sub-label">What can be templatized</span>
+              <div class="sub-text" id="templatized-summary"></div>
+            </div>
+
+            <div class="artifact-subsection">
+              <span class="sub-label">What should stay manual</span>
+              <div class="sub-text" id="manual-summary"></div>
+            </div>
+
+            <div class="artifact-subsection">
+              <span class="sub-label">What should move into Automation</span>
+              <div class="sub-text" id="automation-summary"></div>
+            </div>
+
+            <div class="artifact-subsection">
+              <span class="sub-label">Logic layer</span>
+              <ul class="matrix-list" id="logic-layer-list"></ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel hidden" id="step-7">
+        <div class="panel-top">
+          <div>
+            <div class="step-meta">Step 07</div>
+            <h2>Repeatable structure</h2>
+          </div>
+          <div class="status-badge"><span class="status-dot"></span><span>Create the operating sequence</span></div>
+        </div>
+        <div class="step-body">
+          <p>This is the version that should run the same way next time.</p>
+          <div class="field-grid">
+            <div class="field full">
+              <label class="field-label" for="operatingSequence">What is the final operating sequence?</label>
+              <span class="field-hint">If left blank, this will be built from your delivery sequence automatically.</span>
+              <textarea id="operatingSequence" maxlength="300" placeholder="Trigger, welcome, intake, prep, deliver, summarize, follow-up, log"></textarea>
+            </div>
+          </div>
+          <div class="step-actions">
+            <button class="btn btn-primary" type="button" data-next="8">Continue to Automation bridge</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="bridge hidden" id="step-8">
+        <div class="step-meta" style="margin-bottom:10px;">Step 08</div>
+        <div class="bridge-title">Route the sequence into Automation.</div>
+        <p class="bridge-text" id="bridge-copy">
+          Structure defines the sequence. Automation removes unnecessary manual repetition from that sequence. If the structure is still unstable, refine it here first. If the sequence is clear, move it forward.
+        </p>
+        <div class="bridge-actions">
+          <a class="btn btn-primary" href="/automation" id="to-automation">Continue to Automation</a>
+          <button class="btn btn-soft" type="button" id="refine-first">Refine Structure first</button>
+        </div>
+      </section>
+
+      <footer class="phase-footer">
+        <a href="/systems">systems</a>
+        <a href="/capture">Capture</a>
+        <a href="/position">Position</a>
+        <a href="/monetize">Monetize</a>
+        <a href="/structure">Structure</a>
+        <a href="/automation">Automation</a>
+        <a href="/sovereignty">Sovereignty</a>
+        <a href="/private-access">Private Access</a>
+      </footer>
+
+    </div>
+  </main>
+
+  <aside class="right-notes">
+    <div class="notes-card">
+      <div class="notes-title">Live output</div>
+      <div class="notes-head">Structure notes</div>
+
+      <div class="notes-list">
+        <div class="note-item empty" id="note-offer-wrap">
+          <span class="name">Offer</span>
+          <span class="val" id="note-offer">Not defined yet</span>
+        </div>
+        <div class="note-item empty" id="note-sequence-wrap">
+          <span class="name">Delivery sequence</span>
+          <span class="val" id="note-sequence">Not defined yet</span>
+        </div>
+        <div class="note-item empty" id="note-client-wrap">
+          <span class="name">Client journey</span>
+          <span class="val" id="note-client">Not defined yet</span>
+        </div>
+        <div class="note-item empty" id="note-internal-wrap">
+          <span class="name">Internal workflow</span>
+          <span class="val" id="note-internal">Not defined yet</span>
+        </div>
+        <div class="note-item empty" id="note-bottleneck-wrap">
+          <span class="name">Primary bottleneck</span>
+          <span class="val" id="note-bottleneck">Waiting for artifact</span>
+        </div>
+        <div class="note-item empty" id="note-remove-wrap">
+          <span class="name">What gets removed</span>
+          <span class="val" id="note-remove">Not defined yet</span>
+        </div>
+        <div class="note-item empty" id="note-template-wrap">
+          <span class="name">What can be templatized</span>
+          <span class="val" id="note-template">Not defined yet</span>
+        </div>
+        <div class="note-item empty" id="note-manual-wrap">
+          <span class="name">What stays manual</span>
+          <span class="val" id="note-manual">Not defined yet</span>
+        </div>
+        <div class="note-item empty" id="note-automation-wrap">
+          <span class="name">Automation later</span>
+          <span class="val" id="note-automation">Waiting for structure</span>
+        </div>
+        <div class="note-item empty" id="note-next-wrap">
+          <span class="name">Next move</span>
+          <span class="val" id="note-next">Define the structure and route it into Automation</span>
+        </div>
+      </div>
+
+      <div class="notes-actions">
+        <button class="mini-btn" type="button" id="copy-summary">Copy summary</button>
+        <button class="mini-btn" type="button" id="resume-progress">Resume progress</button>
+      </div>
+    </div>
+  </aside>
+</div>
+
 <script>
 (function(){
   'use strict';
 
-  var heroStart = document.getElementById('hero-start');
-  var buildBtn = document.getElementById('build-btn');
-  var repeatBtn = document.getElementById('repeat-btn');
-  var outputSection = document.getElementById('output-section');
-  var toolSection = document.getElementById('tool-section');
-  var taskInput = document.getElementById('f-task');
+  var STORAGE_KEY = 'stephuary_structure_phase_04_v2';
 
-  var outProject = document.getElementById('out-project');
-  var outSteps = document.getElementById('out-steps');
-  var frictionIssue = document.getElementById('friction-issue');
-
-  function classify(task) {
-    var t = task.toLowerCase();
-    if (/site|website|web|page|landing/.test(t)) return 'site';
-    if (/offer|service|package|sell|price|pricing|pitch/.test(t)) return 'offer';
-    if (/deck|present|slide/.test(t)) return 'deck';
-    if (/write|rewrite|article|essay|post|piece|copy/.test(t)) return 'content';
-    if (/launch|release|ship|publish|go live/.test(t)) return 'launch';
-    if (/email|outreach|message|send/.test(t)) return 'outreach';
-    if (/client|deliver|diagnosis|report/.test(t)) return 'client';
-    return 'default';
-  }
-
-  // Each plan: 3 numbered steps + friction pattern
-  var plans = {
-    site: {
-      steps: [
-        'Write one sentence: what this page does and who it is for.',
-        'List the sections in order. Hero, what it is, how to get it. Nothing else.',
-        'Write the hero copy only. Do not touch anything else until it is done.'
-      ],
-      friction: 'The outcome is too broad. You are trying to build a site instead of finish one page.'
+  var state = {
+    overlayDismissed: false,
+    currentStep: 1,
+    artifactBuilt: false,
+    inputs: {
+      offerName: '',
+      offerOutcome: '',
+      offerTimeline: '',
+      offerParts: '',
+      deliverySequence: '',
+      deliveryStart: '',
+      deliveryEnd: '',
+      clientTouchpoints: '',
+      clientComms: '',
+      clientConfusion: '',
+      internalWorkflow: '',
+      handoffs: '',
+      memoryWork: '',
+      manualWork: '',
+      customWork: '',
+      slowWork: '',
+      sequenceBreak: '',
+      removeList: '',
+      templateItems: '',
+      manualKeep: '',
+      operatingSequence: ''
     },
-    offer: {
-      steps: [
-        'Write the result someone gets in one sentence. Not the method. The result.',
-        'Set the format: call, package, deliverable, audit. Pick one.',
-        'Write the price. Write it now. Do not research competitors first.'
-      ],
-      friction: 'There are hidden decisions inside the work. Decide the format before writing anything else.'
-    },
-    deck: {
-      steps: [
-        'Write the one conclusion you want the audience to leave with.',
-        'List the three points that lead to that conclusion.',
-        'Write the first slide: what this is and why it matters now. Copy only.'
-      ],
-      friction: 'Step one is unclear. The conclusion is not defined yet.'
-    },
-    content: {
-      steps: [
-        'Write the one sentence you actually want to say.',
-        'Write the opening. Do not write a hook. Write the point.',
-        'Write the ending. What do you want the reader to do or think next.'
-      ],
-      friction: 'Too many steps exist. You are writing before the point is clear.'
-    },
-    launch: {
-      steps: [
-        'List what has to be true for this to count as launched.',
-        'Cut the list to the three things that actually matter.',
-        'Finish the first one completely before touching the next.'
-      ],
-      friction: 'The outcome is too broad. Launch conditions are not defined yet.'
-    },
-    outreach: {
-      steps: [
-        'Write the name of one specific person you are reaching out to.',
-        'Write what you want them to do in one sentence.',
-        'Write the message. One draft. Do not edit before sending.'
-      ],
-      friction: 'Step one is unclear. You are doing outreach without a specific recipient in mind.'
-    },
-    client: {
-      steps: [
-        'Write exactly what you are delivering and in what format.',
-        'Identify the one piece of work blocking delivery.',
-        'Do that piece. Do not move to anything else first.'
-      ],
-      friction: 'There are hidden decisions. What you are delivering is not specific enough yet.'
-    },
-    default: {
-      steps: [
-        'Write what done looks like. Specific. What will exist that does not exist now.',
-        'Identify the one physical action that starts the work.',
-        'Do that action. Not the planning. The action.'
-      ],
-      friction: 'Step one is unclear. The outcome needs a more specific definition before any work starts.'
+    derived: {
+      structureType: '',
+      operatingRead: '',
+      bottleneckSummary: '',
+      simplificationSummary: '',
+      templatizedSummary: '',
+      manualSummary: '',
+      automationSummary: '',
+      logicLayer: [],
+      deliveryList: [],
+      clientList: [],
+      internalList: [],
+      checklist: [],
+      nextMove: ''
     }
   };
 
-  heroStart.addEventListener('click', function(){
-    toolSection.scrollIntoView({behavior:'smooth', block:'start'});
-    setTimeout(function(){ taskInput.focus(); }, 340);
-  });
+  var fields = [
+    'offerName','offerOutcome','offerTimeline','offerParts',
+    'deliverySequence','deliveryStart','deliveryEnd',
+    'clientTouchpoints','clientComms','clientConfusion',
+    'internalWorkflow','handoffs','memoryWork',
+    'manualWork','customWork','slowWork','sequenceBreak',
+    'removeList','templateItems','manualKeep','operatingSequence'
+  ];
 
-  buildBtn.addEventListener('click', function(){
-    var task = taskInput.value.trim();
-    if(!task){
-      buildBtn.textContent = 'Type what you are finishing';
-      setTimeout(function(){ buildBtn.textContent = 'Make it executable'; }, 1800);
+  var els = {
+    overlay: document.getElementById('entry-overlay'),
+    enterPhase: document.getElementById('enter-phase'),
+    savePhase: document.getElementById('save-phase'),
+    resetPhase: document.getElementById('reset-phase'),
+    generateStructure: document.getElementById('generate-structure'),
+    artifactSection: document.getElementById('artifact-section'),
+    step7: document.getElementById('step-7'),
+    step8: document.getElementById('step-8'),
+    copyOutput: document.getElementById('copy-output'),
+    exportOutput: document.getElementById('export-output'),
+    copySummary: document.getElementById('copy-summary'),
+    resumeProgress: document.getElementById('resume-progress'),
+    refineFirst: document.getElementById('refine-first')
+  };
+
+  function $(id){ return document.getElementById(id); }
+
+  function safeText(v, fallback){
+    var val = (v || '').trim();
+    return val ? val : fallback;
+  }
+
+  function setNote(id, value){
+    var el = $('note-' + id);
+    var wrap = $('note-' + id + '-wrap');
+    if (!el || !wrap) return;
+    var empty = !value || /Not defined yet|Waiting/.test(value);
+    el.textContent = value;
+    wrap.classList.toggle('empty', empty);
+  }
+
+  function saveState(){
+    try{
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    }catch(e){}
+  }
+
+  function loadState(){
+    try{
+      var raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return false;
+      var parsed = JSON.parse(raw);
+      if (!parsed || typeof parsed !== 'object') return false;
+      state = parsed;
+      return true;
+    }catch(e){
+      return false;
+    }
+  }
+
+  function resetState(){
+    state = {
+      overlayDismissed: false,
+      currentStep: 1,
+      artifactBuilt: false,
+      inputs: {
+        offerName: '',
+        offerOutcome: '',
+        offerTimeline: '',
+        offerParts: '',
+        deliverySequence: '',
+        deliveryStart: '',
+        deliveryEnd: '',
+        clientTouchpoints: '',
+        clientComms: '',
+        clientConfusion: '',
+        internalWorkflow: '',
+        handoffs: '',
+        memoryWork: '',
+        manualWork: '',
+        customWork: '',
+        slowWork: '',
+        sequenceBreak: '',
+        removeList: '',
+        templateItems: '',
+        manualKeep: '',
+        operatingSequence: ''
+      },
+      derived: {
+        structureType: '',
+        operatingRead: '',
+        bottleneckSummary: '',
+        simplificationSummary: '',
+        templatizedSummary: '',
+        manualSummary: '',
+        automationSummary: '',
+        logicLayer: [],
+        deliveryList: [],
+        clientList: [],
+        internalList: [],
+        checklist: [],
+        nextMove: ''
+      }
+    };
+    try{ localStorage.removeItem(STORAGE_KEY); }catch(e){}
+    renderAll();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function updateProgress(){
+    var items = document.querySelectorAll('.progress-item');
+    items.forEach(function(item){
+      var step = Number(item.getAttribute('data-step'));
+      item.classList.remove('active','complete');
+      if (step === state.currentStep) item.classList.add('active');
+      if (step < state.currentStep) item.classList.add('complete');
+    });
+  }
+
+  function showToStep(step){
+    state.currentStep = Math.max(1, Math.min(8, step));
+    if (state.currentStep >= 7 && state.artifactBuilt){
+      els.step7.classList.remove('hidden');
+    }
+    if (state.currentStep >= 8 && state.artifactBuilt){
+      els.step8.classList.remove('hidden');
+    }
+    updateProgress();
+    saveState();
+  }
+
+  function collectInputs(){
+    fields.forEach(function(key){
+      var field = $(key);
+      if (field) state.inputs[key] = field.value.trim();
+    });
+  }
+
+  function renderInputValues(){
+    fields.forEach(function(key){
+      var field = $(key);
+      if (field) field.value = state.inputs[key] || '';
+    });
+  }
+
+  function splitList(value){
+    return String(value || '')
+      .split(',')
+      .map(function(item){ return item.trim(); })
+      .filter(Boolean);
+  }
+
+  function upperFirst(str){
+    str = String(str || '').trim();
+    if (!str) return '';
+    return str.charAt(0).toUpperCase() + str.slice(1);
+  }
+
+  function lowerFirst(str){
+    str = String(str || '').trim();
+    if (!str) return '';
+    return str.charAt(0).toLowerCase() + str.slice(1);
+  }
+
+  function classifyStructureType(){
+    var offer = (state.inputs.offerName + ' ' + state.inputs.offerParts + ' ' + state.inputs.clientTouchpoints).toLowerCase();
+    if (/session|sprint|call|strategy|diagnostic|review/.test(offer)) return 'Guided service sequence';
+    if (/workshop|training|group/.test(offer)) return 'Facilitated delivery sequence';
+    if (/done-for-you|build|implementation|setup/.test(offer)) return 'Execution structure';
+    return 'Structured service delivery';
+  }
+
+  function buildOperatingRead(){
+    var deliveryCount = splitList(state.inputs.deliverySequence).length;
+    var clientCount = splitList(state.inputs.clientTouchpoints).length;
+    var internalCount = splitList(state.inputs.internalWorkflow).length;
+
+    if (deliveryCount >= 6 || internalCount >= 6) return 'The structure has enough moving parts that it needs stronger sequencing and defined handoffs.';
+    if (clientCount <= 2) return 'The client-facing structure is too thin. The work may be happening, but the experience will feel under-defined.';
+    return 'The structure is compact enough to standardize if the sequence stays consistent.';
+  }
+
+  function buildLogicLayer(){
+    var list = [];
+    var deliveryCount = splitList(state.inputs.deliverySequence).length;
+    var clientCount = splitList(state.inputs.clientTouchpoints).length;
+    var internalCount = splitList(state.inputs.internalWorkflow).length;
+    var handoffs = splitList(state.inputs.handoffs).length;
+    var removed = splitList(state.inputs.removeList).length;
+
+    if (deliveryCount > 6){
+      list.push({ label:'Too many steps', value:'The delivery sequence is carrying more steps than it probably needs. Condense it before automating anything.' });
+    }
+    if (handoffs === 0 || !state.inputs.handoffs){
+      list.push({ label:'Unclear handoffs', value:'The workflow does not clearly define where one stage hands off to the next.' });
+    }
+    if (state.inputs.customWork){
+      list.push({ label:'Custom work where standardization should exist', value:'You already named custom work. That usually means the structure is being rewritten inside delivery.' });
+    }
+    if (clientCount < 3){
+      list.push({ label:'Missing client communication points', value:'The client journey is too thin. Add visible contact points so the process feels guided, not silent.' });
+    }
+    if (state.inputs.memoryWork){
+      list.push({ label:'Decision fatigue in delivery', value:'Anything still held in memory is forcing live decisions inside execution.' });
+    }
+    if (deliveryCount !== internalCount && Math.abs(deliveryCount - internalCount) > 2){
+      list.push({ label:'Inconsistent sequencing', value:'The visible sequence and the internal sequence are not aligned tightly enough yet.' });
+    }
+    if (removed === 0){
+      list.push({ label:'Work cannot repeat reliably yet', value:'Nothing has been removed. That usually means the structure is still carrying too much variation.' });
+    }
+    if (!list.length){
+      list.push({ label:'Structure is coherent', value:'The sequence is clear enough to repeat, template, and route into Automation next.' });
+    }
+    return list;
+  }
+
+  function buildBottleneckSummary(){
+    var priorities = [];
+    if (state.inputs.manualWork) priorities.push('manual repetition around ' + lowerFirst(state.inputs.manualWork));
+    if (state.inputs.customWork) priorities.push('custom variation around ' + lowerFirst(state.inputs.customWork));
+    if (state.inputs.slowWork) priorities.push('timing drag around ' + lowerFirst(state.inputs.slowWork));
+    if (state.inputs.sequenceBreak) priorities.push('sequence instability around ' + lowerFirst(state.inputs.sequenceBreak));
+
+    if (!priorities.length){
+      return 'No bottlenecks were named yet. That usually means the workflow has not been examined hard enough.';
+    }
+
+    if (priorities.length === 1){
+      return 'The main bottleneck is ' + priorities[0] + '. Fix that before expanding the structure.';
+    }
+
+    return 'The structure is losing efficiency through ' + priorities.join(', ') + '. Start with the issue that creates the most repeated decision-making.';
+  }
+
+  function buildSimplificationSummary(){
+    var removed = safeText(state.inputs.removeList, 'nothing yet');
+    return 'The simplification move is to stop ' + lowerFirst(removed) + '. The point is not to optimize every edge. The point is to eliminate repeated decisions that never needed to exist.';
+  }
+
+  function buildTemplatizedSummary(){
+    return safeText(state.inputs.templateItems, 'Nothing named yet. Templates should be created for repeated communication, repeated prep, and repeated wrap-up.');
+  }
+
+  function buildManualSummary(){
+    return safeText(state.inputs.manualKeep, 'Nothing named yet. Keep only the parts that genuinely benefit from judgment, analysis, or relationship sensitivity.');
+  }
+
+  function buildAutomationSummary(){
+    var pieces = [];
+    if (state.inputs.templateItems) pieces.push('templated assets like ' + lowerFirst(state.inputs.templateItems));
+    if (state.inputs.manualWork) pieces.push('repetitive work like ' + lowerFirst(state.inputs.manualWork));
+    if (state.inputs.handoffs) pieces.push('handoffs like ' + lowerFirst(state.inputs.handoffs));
+    if (state.inputs.clientComms) pieces.push('communication points like ' + lowerFirst(state.inputs.clientComms));
+
+    if (!pieces.length){
+      return 'Automation should start with repetitive triggers, repeated communication, repeated status movement, and repeated document creation.';
+    }
+
+    return 'Automation should remove the manual repetition around ' + pieces.join(', ') + '.';
+  }
+
+  function buildChecklist(){
+    var operatingSequence = splitList(state.inputs.operatingSequence || state.inputs.deliverySequence);
+    if (!operatingSequence.length){
+      operatingSequence = ['Trigger start','Send welcome','Collect input','Do the work','Send summary','Log next step'];
+    }
+    return operatingSequence.map(function(item, idx){
+      return {
+        label:'Step ' + String(idx + 1).padStart(2,'0'),
+        value:upperFirst(item)
+      };
+    });
+  }
+
+  function validateCoreFields(){
+    var required = [
+      'offerName','offerOutcome','offerTimeline','offerParts',
+      'deliverySequence','deliveryStart','deliveryEnd',
+      'clientTouchpoints','clientComms',
+      'internalWorkflow','handoffs',
+      'manualWork','customWork','slowWork','sequenceBreak',
+      'removeList','templateItems','manualKeep'
+    ];
+    for (var i=0;i<required.length;i++){
+      var key = required[i];
+      if (!String(state.inputs[key] || '').trim()){
+        var field = $(key);
+        if (field){
+          field.focus();
+          field.scrollIntoView({ behavior:'smooth', block:'center' });
+        }
+        return false;
+      }
+    }
+    return true;
+  }
+
+  function renderNotes(){
+    setNote('offer', safeText(state.inputs.offerName, 'Not defined yet'));
+    setNote('sequence', safeText(state.inputs.deliverySequence, 'Not defined yet'));
+    setNote('client', safeText(state.inputs.clientTouchpoints, 'Not defined yet'));
+    setNote('internal', safeText(state.inputs.internalWorkflow, 'Not defined yet'));
+    setNote('bottleneck', safeText(state.derived.bottleneckSummary, 'Waiting for artifact'));
+    setNote('remove', safeText(state.inputs.removeList, 'Not defined yet'));
+    setNote('template', safeText(state.inputs.templateItems, 'Not defined yet'));
+    setNote('manual', safeText(state.inputs.manualKeep, 'Not defined yet'));
+    setNote('automation', safeText(state.derived.automationSummary, 'Waiting for structure'));
+    setNote('next', safeText(state.derived.nextMove, 'Define the structure and route it into Automation'));
+  }
+
+  function renderList(id, items){
+    var el = $(id);
+    if (!el) return;
+    el.innerHTML = '';
+    items.forEach(function(item, idx){
+      var li = document.createElement('li');
+      li.innerHTML = '<strong>' + (item.label || ('Step ' + (idx + 1))) + '</strong><span>' + item.value + '</span>';
+      el.appendChild(li);
+    });
+  }
+
+  function renderArtifact(){
+    if (!state.artifactBuilt){
+      els.artifactSection.classList.add('hidden');
       return;
     }
 
-    var type = classify(task);
-    var plan = plans[type];
+    $('primary-structure').textContent =
+      'The offer becomes operable when ' +
+      lowerFirst(state.inputs.offerName) +
+      ' runs through a defined delivery structure, a visible client flow, an internal workflow, and a repeatable sequence that does not depend on memory.';
 
-    // Project name
-    outProject.textContent = task.charAt(0).toUpperCase() + task.slice(1);
+    $('detail-offer').textContent = upperFirst(state.inputs.offerName);
+    $('detail-outcome').textContent = upperFirst(state.inputs.offerOutcome);
+    $('detail-timeline').textContent = upperFirst(state.inputs.offerTimeline);
+    $('detail-structure-type').textContent = state.derived.structureType;
+    $('detail-operating-read').textContent = state.derived.operatingRead;
 
-    // Steps — numbered rows
-    outSteps.innerHTML = '';
-    plan.steps.forEach(function(s, i){
-      var row = document.createElement('div');
-      row.className = 'step-row';
-      row.innerHTML = '<span class="step-num">' + (i+1) + '</span><span class="step-text">' + s + '</span>';
-      outSteps.appendChild(row);
+    renderList('delivery-sequence-list', state.derived.deliveryList);
+    renderList('client-process-list', state.derived.clientList);
+    renderList('internal-process-list', state.derived.internalList);
+    renderList('repeatable-checklist', state.derived.checklist);
+
+    $('bottleneck-summary').textContent = state.derived.bottleneckSummary;
+    $('simplification-summary').textContent = state.derived.simplificationSummary;
+    $('templatized-summary').textContent = state.derived.templatizedSummary;
+    $('manual-summary').textContent = state.derived.manualSummary;
+    $('automation-summary').textContent = state.derived.automationSummary;
+    renderList('logic-layer-list', state.derived.logicLayer);
+
+    els.artifactSection.classList.remove('hidden');
+  }
+
+  function renderSections(){
+    if (state.artifactBuilt){
+      els.step7.classList.remove('hidden');
+      if (state.currentStep >= 8) els.step8.classList.remove('hidden');
+    } else {
+      els.step7.classList.add('hidden');
+      els.step8.classList.add('hidden');
+    }
+  }
+
+  function outputText(){
+    var parts = [];
+    parts.push('STRUCTURE — PHASE 04');
+    parts.push('');
+    parts.push('Offer');
+    parts.push($('detail-offer').textContent);
+    parts.push('');
+    parts.push('Core outcome');
+    parts.push($('detail-outcome').textContent);
+    parts.push('');
+    parts.push('Delivery window');
+    parts.push($('detail-timeline').textContent);
+    parts.push('');
+    parts.push('Structure type');
+    parts.push($('detail-structure-type').textContent);
+    parts.push('');
+    parts.push('Operating read');
+    parts.push($('detail-operating-read').textContent);
+    parts.push('');
+    parts.push('Bottleneck summary');
+    parts.push(state.derived.bottleneckSummary || '');
+    parts.push('');
+    parts.push('Simplification summary');
+    parts.push(state.derived.simplificationSummary || '');
+    parts.push('');
+    parts.push('What can be templatized');
+    parts.push(state.derived.templatizedSummary || '');
+    parts.push('');
+    parts.push('What stays manual');
+    parts.push(state.derived.manualSummary || '');
+    parts.push('');
+    parts.push('Automation next');
+    parts.push(state.derived.automationSummary || '');
+    parts.push('');
+    parts.push('Next move');
+    parts.push(state.derived.nextMove || '');
+    return parts.join('\n');
+  }
+
+  function copyText(text, button){
+    if (!navigator.clipboard) return;
+    navigator.clipboard.writeText(text).then(function(){
+      if (!button) return;
+      var original = button.textContent;
+      button.textContent = 'Copied';
+      setTimeout(function(){ button.textContent = original; }, 1100);
     });
+  }
 
-    // Friction
-    frictionIssue.textContent = plan.friction;
+  function exportTextFile(){
+    var blob = new Blob([outputText()], { type:'text/plain;charset=utf-8' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = 'structure-phase-04-output.txt';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(function(){ URL.revokeObjectURL(url); }, 1000);
+  }
 
-    // Show
-    outputSection.classList.remove('hidden');
-    outputSection.classList.add('output-section');
+  function renderOverlay(){
+    if (state.overlayDismissed){
+      els.overlay.classList.add('hidden');
+      els.overlay.setAttribute('aria-hidden', 'true');
+    } else {
+      els.overlay.classList.remove('hidden');
+      els.overlay.setAttribute('aria-hidden', 'false');
+    }
+  }
+
+  function buildArtifact(){
+    collectInputs();
+    if (!validateCoreFields()){
+      var original = els.generateStructure.textContent;
+      els.generateStructure.textContent = 'Complete every field first';
+      setTimeout(function(){ els.generateStructure.textContent = original; }, 1400);
+      return;
+    }
+
+    state.artifactBuilt = true;
+    state.overlayDismissed = true;
+
+    state.derived.structureType = classifyStructureType();
+    state.derived.operatingRead = buildOperatingRead();
+    state.derived.deliveryList = splitList(state.inputs.deliverySequence).map(function(item, idx){
+      return { label:'Delivery ' + String(idx + 1).padStart(2,'0'), value:upperFirst(item) };
+    });
+    state.derived.clientList = splitList(state.inputs.clientTouchpoints).map(function(item, idx){
+      return { label:'Client point ' + String(idx + 1).padStart(2,'0'), value:upperFirst(item) };
+    });
+    state.derived.internalList = splitList(state.inputs.internalWorkflow).map(function(item, idx){
+      return { label:'Internal step ' + String(idx + 1).padStart(2,'0'), value:upperFirst(item) };
+    });
+    state.derived.checklist = buildChecklist();
+    state.derived.bottleneckSummary = buildBottleneckSummary();
+    state.derived.simplificationSummary = buildSimplificationSummary();
+    state.derived.templatizedSummary = buildTemplatizedSummary();
+    state.derived.manualSummary = buildManualSummary();
+    state.derived.automationSummary = buildAutomationSummary();
+    state.derived.logicLayer = buildLogicLayer();
+    state.derived.nextMove = 'Finalize the operating sequence, then move the repeated parts into Automation.';
+    showToStep(7);
+    renderAll();
 
     setTimeout(function(){
-      outputSection.scrollIntoView({behavior:'smooth', block:'start'});
-    }, 60);
+      els.artifactSection.scrollIntoView({ behavior:'smooth', block:'start' });
+    }, 40);
+  }
+
+  function renderAll(){
+    collectInputs();
+    renderOverlay();
+    renderInputValues();
+    renderSections();
+    renderArtifact();
+    renderNotes();
+    updateProgress();
+
+    $('bridge-copy').textContent =
+      'Structure defines the sequence. Automation removes unnecessary manual repetition from that sequence. Right now the clearest automation candidates are ' +
+      lowerFirst(state.derived.automationSummary || 'repeated communication, repeated triggers, repeated handoffs, and repeated document creation') +
+      ' If the structure still feels unstable, refine it here first. If the sequence is clear, move it forward.';
+    saveState();
+  }
+
+  fields.forEach(function(key){
+    var field = $(key);
+    if (!field) return;
+    field.addEventListener('input', function(){
+      state.inputs[key] = field.value.trim();
+      renderNotes();
+      saveState();
+    });
   });
 
-  repeatBtn.addEventListener('click', function(){
-    taskInput.value = '';
-    outputSection.classList.add('hidden');
-    outputSection.classList.remove('output-section');
-    outSteps.innerHTML = '';
-    toolSection.scrollIntoView({behavior:'smooth', block:'start'});
-    setTimeout(function(){ taskInput.focus(); }, 340);
+  document.querySelectorAll('[data-next]').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var next = Number(btn.getAttribute('data-next'));
+      showToStep(next);
+      var target = $('step-' + next) || els.step7 || els.step8;
+      if (target) target.scrollIntoView({ behavior:'smooth', block:'start' });
+    });
+  });
+
+  document.querySelectorAll('#component-chips .chip').forEach(function(chip){
+    chip.addEventListener('click', function(){
+      var insertMap = {
+        kickoff:'Kickoff',
+        intake:'Intake',
+        review:'Review',
+        delivery:'Delivery',
+        summary:'Summary'
+      };
+      var current = $('offerParts').value.trim();
+      var value = insertMap[chip.getAttribute('data-insert')] || '';
+      if (!value) return;
+      $('offerParts').value = current ? current + ', ' + value : value;
+      state.inputs.offerParts = $('offerParts').value.trim();
+      chip.classList.add('active');
+      renderNotes();
+      saveState();
+    });
+  });
+
+  els.enterPhase.addEventListener('click', function(){
+    state.overlayDismissed = true;
+    renderOverlay();
+    saveState();
+  });
+
+  els.savePhase.addEventListener('click', function(){
+    collectInputs();
+    saveState();
+    var original = els.savePhase.textContent;
+    els.savePhase.textContent = 'Saved';
+    setTimeout(function(){ els.savePhase.textContent = original; }, 1000);
+  });
+
+  els.resetPhase.addEventListener('click', function(){
+    resetState();
+  });
+
+  els.generateStructure.addEventListener('click', buildArtifact);
+
+  els.copyOutput.addEventListener('click', function(){
+    copyText(outputText(), els.copyOutput);
+  });
+
+  els.copySummary.addEventListener('click', function(){
+    var summary = [
+      'Offer: ' + safeText(state.inputs.offerName, 'Not defined yet'),
+      'Delivery sequence: ' + safeText(state.inputs.deliverySequence, 'Not defined yet'),
+      'Client journey: ' + safeText(state.inputs.clientTouchpoints, 'Not defined yet'),
+      'Internal workflow: ' + safeText(state.inputs.internalWorkflow, 'Not defined yet'),
+      'Primary bottleneck: ' + safeText(state.derived.bottleneckSummary, 'Waiting for artifact'),
+      'What gets removed: ' + safeText(state.inputs.removeList, 'Not defined yet'),
+      'What can be templatized: ' + safeText(state.inputs.templateItems, 'Not defined yet'),
+      'What stays manual: ' + safeText(state.inputs.manualKeep, 'Not defined yet'),
+      'Automation later: ' + safeText(state.derived.automationSummary, 'Waiting for structure'),
+      'Next move: ' + safeText(state.derived.nextMove, 'Define the structure and route it into Automation')
+    ].join('\n');
+    copyText(summary, els.copySummary);
+  });
+
+  els.exportOutput.addEventListener('click', exportTextFile);
+
+  els.resumeProgress.addEventListener('click', function(){
+    renderAll();
+    var targetId = state.currentStep <= 6 ? 'step-' + state.currentStep : state.currentStep === 7 ? 'step-7' : 'step-8';
+    var target = $(targetId);
+    if (target) target.scrollIntoView({ behavior:'smooth', block:'start' });
+  });
+
+  els.refineFirst.addEventListener('click', function(){
+    showToStep(1);
+    $('step-1').scrollIntoView({ behavior:'smooth', block:'start' });
   });
 
   document.addEventListener('keydown', function(e){
-    if(e.key === 'Enter' && document.activeElement === taskInput){
-      buildBtn.click();
+    if (e.key === 'Escape' && !state.overlayDismissed){
+      state.overlayDismissed = true;
+      renderOverlay();
+      saveState();
     }
   });
+
+  loadState();
+  if (!state.inputs) {
+    state.inputs = {
+      offerName: '',
+      offerOutcome: '',
+      offerTimeline: '',
+      offerParts: '',
+      deliverySequence: '',
+      deliveryStart: '',
+      deliveryEnd: '',
+      clientTouchpoints: '',
+      clientComms: '',
+      clientConfusion: '',
+      internalWorkflow: '',
+      handoffs: '',
+      memoryWork: '',
+      manualWork: '',
+      customWork: '',
+      slowWork: '',
+      sequenceBreak: '',
+      removeList: '',
+      templateItems: '',
+      manualKeep: '',
+      operatingSequence: ''
+    };
+  }
+  if (!state.derived) {
+    state.derived = {
+      structureType: '',
+      operatingRead: '',
+      bottleneckSummary: '',
+      simplificationSummary: '',
+      templatizedSummary: '',
+      manualSummary: '',
+      automationSummary: '',
+      logicLayer: [],
+      deliveryList: [],
+      clientList: [],
+      internalList: [],
+      checklist: [],
+      nextMove: ''
+    };
+  }
+  if (!state.currentStep) state.currentStep = 1;
+
+  if (state.artifactBuilt){
+    state.derived.structureType = classifyStructureType();
+    state.derived.operatingRead = buildOperatingRead();
+    state.derived.deliveryList = splitList(state.inputs.deliverySequence).map(function(item, idx){
+      return { label:'Delivery ' + String(idx + 1).padStart(2,'0'), value:upperFirst(item) };
+    });
+    state.derived.clientList = splitList(state.inputs.clientTouchpoints).map(function(item, idx){
+      return { label:'Client point ' + String(idx + 1).padStart(2,'0'), value:upperFirst(item) };
+    });
+    state.derived.internalList = splitList(state.inputs.internalWorkflow).map(function(item, idx){
+      return { label:'Internal step ' + String(idx + 1).padStart(2,'0'), value:upperFirst(item) };
+    });
+    state.derived.checklist = buildChecklist();
+    state.derived.bottleneckSummary = buildBottleneckSummary();
+    state.derived.simplificationSummary = buildSimplificationSummary();
+    state.derived.templatizedSummary = buildTemplatizedSummary();
+    state.derived.manualSummary = buildManualSummary();
+    state.derived.automationSummary = buildAutomationSummary();
+    state.derived.logicLayer = buildLogicLayer();
+    if (!state.derived.nextMove) state.derived.nextMove = 'Finalize the operating sequence, then move the repeated parts into Automation.';
+  }
+
+  renderAll();
 }());
 </script>
 </body>
