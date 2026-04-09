@@ -409,7 +409,22 @@
 
     #diagnostic, #products, #proof { background: var(--bg-1); }
     #system, #club, #private { background: var(--bg); }
-    #execution { background: var(--bg-2); }
+    #execution {
+      background: var(--bg-2);
+      transition: background-color 0.28s ease, box-shadow 0.28s ease;
+    }
+
+    body.execution-focused section:not(#execution) {
+      opacity: 0.58;
+      filter: saturate(0.9);
+      transition: opacity 0.28s ease, filter 0.28s ease;
+    }
+
+    body.execution-focused #execution {
+      box-shadow:
+        inset 0 1px 0 rgba(196, 163, 90, 0.08),
+        inset 0 -1px 0 rgba(196, 163, 90, 0.08);
+    }
 
     .diag-head { margin-bottom: 24px; max-width: 640px; }
     .diag-sub { margin-bottom: 10px; font-size: 16px; color: var(--text-primary); }
@@ -639,6 +654,17 @@
       text-transform: uppercase;
     }
 
+    .system-close-line {
+      margin-top: 28px;
+      padding-top: 18px;
+      border-top: 1px solid var(--border);
+      max-width: 620px;
+      font-family: "Cormorant Garamond", serif;
+      font-size: clamp(22px, 2.4vw, 29px);
+      line-height: 1.4;
+      color: var(--text-secondary);
+    }
+
     .system-visual {
       margin: 34px 0 26px;
       padding: 30px 34px 28px;
@@ -843,8 +869,28 @@
 
     .phase-link:hover { color: var(--gold); }
 
-    .execution-intro { max-width: 760px; margin-bottom: 28px; }
+    .execution-intro { max-width: 820px; margin-bottom: 30px; }
     .execution-intro p + p { margin-top: 10px; }
+
+    .execution-entry-line {
+      margin-bottom: 12px;
+      font-family: "Cormorant Garamond", serif;
+      font-size: clamp(28px, 3vw, 42px);
+      line-height: 1.02;
+      letter-spacing: -0.02em;
+      color: var(--text-primary);
+      max-width: 16ch;
+    }
+
+    .execution-entry-support {
+      margin-bottom: 20px;
+      font-family: "Cormorant Garamond", serif;
+      font-style: italic;
+      font-size: clamp(19px, 2vw, 24px);
+      line-height: 1.42;
+      color: var(--text-secondary);
+      max-width: 24ch;
+    }
 
     .execution-note, .execution-compare-line, .execution-routing, .checklist-preline {
       font-family: "DM Mono", monospace;
@@ -881,6 +927,13 @@
       box-shadow:
         inset 0 0 0 1px rgba(196, 163, 90, 0.04),
         0 20px 48px rgba(0, 0, 0, 0.18);
+    }
+
+    .execution-panel--primary.is-locked {
+      border-color: rgba(196, 163, 90, 0.28);
+      box-shadow:
+        inset 0 0 0 1px rgba(196, 163, 90, 0.06),
+        0 24px 56px rgba(196, 163, 90, 0.08);
     }
 
     .execution-panel--primary::before {
@@ -926,11 +979,26 @@
       text-transform: uppercase;
     }
 
+    .execution-lock-line {
+      margin-top: 8px;
+      font-family: "DM Mono", monospace;
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      line-height: 1.8;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+
     .execution-progress-shell {
       margin-bottom: 16px;
       padding: 16px 16px 14px;
       border: 1px solid rgba(196, 163, 90, 0.14);
       background: rgba(255, 255, 255, 0.015);
+    }
+
+    .execution-progress-shell.is-advancing {
+      border-color: rgba(196, 163, 90, 0.22);
+      box-shadow: 0 0 0 1px rgba(196, 163, 90, 0.04);
     }
 
     .execution-progress-top {
@@ -962,6 +1030,11 @@
       height: 100%;
       background: linear-gradient(to right, rgba(196, 163, 90, 0.62), rgba(196, 163, 90, 1));
       transition: width 0.24s ease;
+      transform-origin: left center;
+    }
+
+    .execution-progress-shell.is-advancing .execution-progress-fill {
+      animation: executionPulse 0.34s ease;
     }
 
     .execution-progress-points {
@@ -993,6 +1066,10 @@
       box-shadow: 0 0 12px rgba(196, 163, 90, 0.18);
     }
 
+    .execution-progress-shell.is-advancing .execution-progress-point.is-active {
+      animation: executionPointPulse 0.34s ease;
+    }
+
     .day-tabs { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 16px; }
 
     .day-tab {
@@ -1013,6 +1090,13 @@
       box-shadow:
         inset 0 0 0 1px rgba(196, 163, 90, 0.12),
         0 0 0 1px rgba(196, 163, 90, 0.04);
+    }
+
+    .day-tab.is-active[data-advancing="true"] {
+      box-shadow:
+        inset 0 0 0 1px rgba(196, 163, 90, 0.16),
+        0 0 0 1px rgba(196, 163, 90, 0.06),
+        0 8px 20px rgba(196, 163, 90, 0.06);
     }
 
     .day-tab.is-complete {
@@ -1200,6 +1284,11 @@
         inset 0 0 0 1px rgba(196, 163, 90, 0.22),
         0 22px 52px rgba(196, 163, 90, 0.1);
       background: linear-gradient(160deg, rgba(196, 163, 90, 0.11), var(--bg-1));
+    }
+
+    .path-card.is-active .path-card-header {
+      border-bottom-color: rgba(196, 163, 90, 0.18);
+      background: linear-gradient(180deg, rgba(196, 163, 90, 0.05), rgba(196, 163, 90, 0));
     }
 
     .path-card.is-active::after {
@@ -1390,6 +1479,10 @@
       box-shadow: 0 8px 28px rgba(196, 163, 90, 0.18);
     }
 
+    .run-path-btn.is-active::after {
+      content: " \00b7 Path selected";
+    }
+
     .checklist-preline {
       margin-bottom: 10px;
       color: var(--gold-dim);
@@ -1538,6 +1631,16 @@
       transform: translateY(0);
     }
 
+    @keyframes executionPulse {
+      0% { transform: scaleX(0.98); opacity: 0.85; }
+      100% { transform: scaleX(1); opacity: 1; }
+    }
+
+    @keyframes executionPointPulse {
+      0% { transform: scale(1.08); }
+      100% { transform: scale(1.22); }
+    }
+
     .decision-grid { margin-top: 22px; border-top: 1px solid var(--border); }
 
     .decision-row {
@@ -1584,6 +1687,26 @@
       color: var(--gold-dim);
     }
 
+    .section-transition-line {
+      margin-bottom: 14px;
+      max-width: 19ch;
+      font-family: "Cormorant Garamond", serif;
+      font-size: clamp(28px, 3vw, 40px);
+      line-height: 1.04;
+      letter-spacing: -0.02em;
+      color: var(--text-primary);
+    }
+
+    .section-transition-copy {
+      max-width: 34ch;
+      margin-bottom: 24px;
+      font-family: "Cormorant Garamond", serif;
+      font-style: italic;
+      font-size: clamp(18px, 1.9vw, 23px);
+      line-height: 1.46;
+      color: var(--text-secondary);
+    }
+
     .products-intro {
       max-width: 700px;
       font-size: 15px;
@@ -1605,7 +1728,7 @@
 
     .products-grid {
       display: grid;
-      grid-template-columns: 1.2fr 0.8fr;
+      grid-template-columns: 1.34fr 0.66fr;
       gap: 2px;
       background: var(--border);
       margin-top: 34px;
@@ -1646,10 +1769,44 @@
       box-shadow: inset 0 0 0 1px var(--border-gold);
     }
 
+    .product-card-primary .product-title {
+      font-size: clamp(28px, 2.8vw, 36px);
+    }
+
+    .product-entry-kicker {
+      margin-bottom: 14px;
+      font-family: "DM Mono", monospace;
+      font-size: 9px;
+      letter-spacing: 0.18em;
+      line-height: 1.8;
+      text-transform: uppercase;
+      color: var(--gold);
+    }
+
+    .product-entry-kicker span {
+      display: block;
+      color: var(--text-muted);
+    }
+
     .product-card.open {
       border-color: rgba(196, 163, 90, 0.18);
       background: linear-gradient(180deg, rgba(196, 163, 90, 0.04), rgba(196, 163, 90, 0.01)), var(--bg-2);
       box-shadow: inset 0 0 0 1px rgba(196, 163, 90, 0.08), var(--shadow-gold);
+    }
+
+    .product-card-secondary {
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.01), rgba(255, 255, 255, 0)), var(--bg-1);
+      border-left: 1px solid rgba(244, 237, 224, 0.04);
+    }
+
+    .product-card-secondary .product-tag,
+    .product-card-secondary .product-short,
+    .product-card-secondary .support-list li {
+      color: var(--text-muted);
+    }
+
+    .product-card-secondary .product-title {
+      color: var(--text-secondary);
     }
 
     .product-card.open .product-detail { padding-top: 16px; }
@@ -1815,9 +1972,9 @@
 
     .club-panel {
       padding: 34px 32px 36px;
-      background: linear-gradient(180deg, rgba(196, 163, 90, 0.03), rgba(196, 163, 90, 0)), var(--bg-2);
-      border: 1px solid var(--border-gold);
-      box-shadow: inset 0 0 0 1px rgba(196, 163, 90, 0.03);
+      background: linear-gradient(180deg, rgba(196, 163, 90, 0.02), rgba(196, 163, 90, 0)), var(--bg-1);
+      border: 1px solid rgba(196, 163, 90, 0.12);
+      box-shadow: inset 0 0 0 1px rgba(196, 163, 90, 0.02);
     }
 
     .club-panel-title {
@@ -1843,6 +2000,25 @@
     }
 
     .club-list li:last-child, .private-list li:last-child { border-bottom: none; }
+
+    .club-entry-link {
+      display: inline-block;
+      margin-top: 4px;
+      font-family: "DM Mono", monospace;
+      font-size: 10px;
+      letter-spacing: 0.16em;
+      line-height: 1.8;
+      text-transform: uppercase;
+      text-decoration: none;
+      color: var(--gold);
+      border-bottom: 1px solid rgba(196, 163, 90, 0.26);
+      padding-bottom: 4px;
+    }
+
+    .club-entry-link:hover {
+      color: var(--text-primary);
+      border-color: rgba(196, 163, 90, 0.46);
+    }
 
     .private-right-copy {
       font-family: "Cormorant Garamond", serif;
@@ -2327,6 +2503,7 @@
                     </div>
                     <p class="system-entry-line">Everything after this works better when this is clear.</p>
                     <p class="system-bridge">Once this is defined, the next step is choosing how it produces money.</p>
+                    <p class="system-close-line">Once this is clear, you don’t need more information. You need to run something.</p>
                   </div>
 
                   <div>
@@ -2427,6 +2604,8 @@
             <div class="collapsible-content" id="execution-panel" role="region" aria-labelledby="execution-toggle">
               <div class="collapsible-content-inner">
                 <div class="execution-intro section-copy">
+                  <p class="execution-entry-line">Stop looking for the best path. Pick one and run it.</p>
+                  <p class="execution-entry-support">You don’t need more information. You need movement.</p>
                   <p>Once the direction is positioned and the offer is clear, this is how revenue starts.</p>
                   <p>This layer assumes the problem, buyer, and offer are already defined.</p>
                   <p>Revenue paths that already work.<br />Not tools. Not templates.<br />The paths that turn what you already have into money.</p>
@@ -2446,6 +2625,7 @@
                     <p class="execution-panel-label">Active Path</p>
                     <p class="execution-active" id="active-path-display">No path selected yet. Choose one path and commit to it for 7 days.</p>
                     <p class="execution-status-line" id="execution-status-line">Day 1 · No path selected</p>
+                    <p class="execution-lock-line" id="execution-lock-line">No path locked yet.</p>
                   </div>
 
                   <div class="execution-panel">
@@ -2656,11 +2836,14 @@
 
             <div class="collapsible-content" id="products-panel" role="region" aria-labelledby="products-toggle">
               <div class="collapsible-content-inner">
+                <p class="section-transition-line">If the path breaks, you don’t start over. You correct it.</p>
+                <p class="section-transition-copy">Most people don’t need more tools. They need correction at the right point.</p>
                 <p class="products-intro">The system is primary. Everything else exists to deepen it or support it when something needs intervention.</p>
                 <p class="products-emphasis">Start with the System. Add books if needed. Use support only when a deeper issue needs intervention.</p>
 
                 <div class="products-grid">
                   <article class="product-card product-card-primary open">
+                    <p class="product-entry-kicker">Primary entry<span>Everything starts here</span></p>
                     <p class="product-tag">Main entry</p>
                     <h3 class="product-title">Stephuary System</h3>
                     <p class="product-short">The full six-phase environment for turning what you know into a clearer offer, usable structure, and real next steps.</p>
@@ -2684,7 +2867,7 @@
                     <a href="/systems" class="btn-blue">Unlock the system →</a>
                   </article>
 
-                  <article class="product-card open">
+                  <article class="product-card product-card-secondary open">
                     <p class="product-tag">Support progression</p>
                     <h3 class="product-title">Support when the issue goes deeper</h3>
                     <p class="product-short">A clear intervention ladder for when one problem needs correction, when the problem needs diagnosis, or when the whole direction needs recalibration.</p>
@@ -2728,6 +2911,7 @@
 
             <div class="collapsible-content" id="club-panel" role="region" aria-labelledby="club-toggle">
               <div class="collapsible-content-inner">
+                <p class="section-transition-line">Once the system runs and decisions get sharper, access becomes the constraint.</p>
                 <div class="club-grid">
                   <div class="club-copy">
                     <p class="section-copy">This is a selective access layer for people who need stronger proximity to opportunity, capital, and decision-makers who can move things forward.</p>
@@ -2736,7 +2920,7 @@
                       Offers solve specific problems.<br />
                       5% Club is the access layer.
                     </p>
-                    <a href="/club" class="btn-blue">Enter →</a>
+                    <a href="/club" class="club-entry-link">Enter →</a>
                     <p class="club-note">Selective by design &middot; Relevance matters more than volume</p>
                   </div>
 
@@ -3146,12 +3330,61 @@
         display.textContent = title ? "Active: " + title : "No path selected yet. Choose one path and commit to it for 7 days.";
       }
 
+      function updateLockLine(title) {
+        var lockLine = document.getElementById("execution-lock-line");
+        var primaryPanel = document.querySelector(".execution-panel--primary");
+        if (primaryPanel) primaryPanel.classList.toggle("is-locked", !!title);
+        if (!lockLine) return;
+        lockLine.textContent = title ? "Path selected. Locked for 7 days." : "No path locked yet.";
+      }
+
       function updateStatusLine() {
         var activePath = getActivePath();
         var activeDay = getActiveDay();
         var statusLine = document.getElementById("execution-status-line");
         if (!statusLine) return;
         statusLine.textContent = activePath ? "Day " + activeDay + " \u00b7 " + activePath : "Day " + activeDay + " \u00b7 No path selected";
+      }
+
+      function triggerDayAdvance(day) {
+        var shell = document.querySelector(".execution-progress-shell");
+        if (shell) {
+          shell.classList.remove("is-advancing");
+          void shell.offsetWidth;
+          shell.classList.add("is-advancing");
+          window.setTimeout(function () {
+            shell.classList.remove("is-advancing");
+          }, 380);
+        }
+
+        Array.prototype.slice.call(document.querySelectorAll(".day-tab")).forEach(function (tab) {
+          var isActive = tab.getAttribute("data-day") === String(day);
+          if (isActive) {
+            tab.setAttribute("data-advancing", "true");
+            window.setTimeout(function () {
+              tab.removeAttribute("data-advancing");
+            }, 380);
+          } else {
+            tab.removeAttribute("data-advancing");
+          }
+        });
+      }
+
+      function initExecutionFocus() {
+        var executionSection = document.getElementById("execution");
+        if (!executionSection || !("IntersectionObserver" in window)) return;
+
+        var observer = new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            if (entry.target === executionSection) {
+              document.body.classList.toggle("execution-focused", entry.isIntersecting && entry.intersectionRatio > 0.42);
+            }
+          });
+        }, {
+          threshold: [0.25, 0.42, 0.6]
+        });
+
+        observer.observe(executionSection);
       }
 
       function updateRunButtons(title) {
@@ -3311,6 +3544,7 @@
       function setActivePath(title) {
         safeSet(storage.activePath, title);
         updateActivePathDisplay(title);
+        updateLockLine(title);
         updateStatusLine();
         updateRunButtons(title);
         updateObjective();
@@ -3322,6 +3556,7 @@
 
       function setExecutionDay(day) {
         safeSet(storage.executionDay, day);
+        triggerDayAdvance(day);
         updateDayTabs();
         updateStatusLine();
         updateObjective();
@@ -3485,6 +3720,7 @@
       renderExecutionCards();
 
       updateActivePathDisplay(getActivePath());
+      updateLockLine(getActivePath());
       updateStatusLine();
       updateRunButtons(getActivePath());
       updateObjective();
@@ -3494,6 +3730,7 @@
       updateStreak();
       restoreTracker();
       initHeroCanvas();
+      initExecutionFocus();
 
       Array.prototype.slice.call(document.querySelectorAll(".run-path-btn")).forEach(function (button) {
         button.addEventListener("click", function () {
