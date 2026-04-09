@@ -1233,7 +1233,7 @@
     }
 
     .execution-path-grid.has-active .path-card {
-      opacity: 0.78;
+      opacity: 0.64;
     }
 
     .path-card {
@@ -1257,7 +1257,9 @@
     }
 
     .execution-path-grid.has-active .path-card:hover {
-      opacity: 0.92;
+      opacity: 0.74;
+      transform: none;
+      box-shadow: none;
     }
 
     .path-card.featured {
@@ -1284,6 +1286,14 @@
         inset 0 0 0 1px rgba(196, 163, 90, 0.22),
         0 22px 52px rgba(196, 163, 90, 0.1);
       background: linear-gradient(160deg, rgba(196, 163, 90, 0.11), var(--bg-1));
+    }
+
+    .execution-path-grid.has-active .path-card.is-active:hover {
+      opacity: 1;
+      transform: translateY(-4px);
+      box-shadow:
+        inset 0 0 0 1px rgba(196, 163, 90, 0.22),
+        0 22px 52px rgba(196, 163, 90, 0.1);
     }
 
     .path-card.is-active .path-card-header {
@@ -1492,6 +1502,16 @@
       font-size: 15px;
       line-height: 1.74;
       color: var(--text-secondary);
+    }
+
+    .checklist-live-label {
+      margin-bottom: 12px;
+      font-family: "DM Mono", monospace;
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      line-height: 1.8;
+      text-transform: uppercase;
+      color: var(--gold);
     }
 
     .checklist-list {
@@ -3134,6 +3154,8 @@
         executionStreak: "stephuary_execution_streak",
         executionChecklist: "stephuary_execution_checklist"
       };
+      var pendingPathSwitch = null;
+      var pendingPathTimer = null;
 
       function safeGet(key) {
         try { return window.localStorage.getItem(key); } catch (error) { return null; }
@@ -3335,7 +3357,7 @@
         var primaryPanel = document.querySelector(".execution-panel--primary");
         if (primaryPanel) primaryPanel.classList.toggle("is-locked", !!title);
         if (!lockLine) return;
-        lockLine.textContent = title ? "Path selected. Locked for 7 days." : "No path locked yet.";
+        lockLine.textContent = title ? "You are now running this path. Locked for 7 days." : "No path locked yet.";
       }
 
       function updateStatusLine() {
@@ -3396,7 +3418,11 @@
         Array.prototype.slice.call(document.querySelectorAll(".run-path-btn")).forEach(function (button) {
           var match = button.getAttribute("data-path-title") === title;
           button.classList.toggle("is-active", !!title && match);
-          button.textContent = match ? "Running now" : "Run this path";
+          if (pendingPathSwitch && button.getAttribute("data-path-title") === pendingPathSwitch) {
+            button.textContent = "Click again to switch";
+          } else {
+            button.textContent = match ? "Running now" : "Run this path";
+          }
         });
 
         Array.prototype.slice.call(document.querySelectorAll(".path-card")).forEach(function (card) {
@@ -3501,7 +3527,7 @@
         var pathState = checklistState[activePath] || { days: {}, completedDays: {} };
         var dayState = pathState.days[activeDay] || {};
         var items = checklistLibrary[activePath][activeDay] || [];
-        var html = '<ul class="checklist-list">';
+        var html = '<p class="checklist-live-label">Day ' + activeDay + ' starts now</p><ul class="checklist-list">';
 
         items.forEach(function (item, index) {
           var isComplete = !!dayState[index];
@@ -3543,6 +3569,12 @@
 
       function setActivePath(title) {
         safeSet(storage.activePath, title);
+        safeSet(storage.executionDay, "1");
+        pendingPathSwitch = null;
+        if (pendingPathTimer) {
+          window.clearTimeout(pendingPathTimer);
+          pendingPathTimer = null;
+        }
         updateActivePathDisplay(title);
         updateLockLine(title);
         updateStatusLine();
@@ -3552,6 +3584,7 @@
         updateDayTabs();
         renderChecklist();
         updateStreak();
+        focusChecklist();
       }
 
       function setExecutionDay(day) {
@@ -3561,6 +3594,36 @@
         updateStatusLine();
         updateObjective();
         renderChecklist();
+      }
+
+      function focusChecklist() {
+        var checklistHeading = document.querySelector("#execution .execution-block:nth-of-type(3) .execution-block-title");
+        if (checklistHeading) {
+          checklistHeading.setAttribute("tabindex", "-1");
+          checklistHeading.focus({ preventScroll: true });
+        }
+        var checklistBlock = document.getElementById("checklist-container");
+        if (checklistBlock) {
+          checklistBlock.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+      }
+
+      function requestPathSwitch(title) {
+        var hint = document.getElementById("run-hint");
+        if (pendingPathTimer) {
+          window.clearTimeout(pendingPathTimer);
+          pendingPathTimer = null;
+        }
+
+        pendingPathSwitch = title;
+        updateRunButtons(getActivePath());
+        if (hint) hint.textContent = "Path already running. Click again to switch.";
+
+        pendingPathTimer = window.setTimeout(function () {
+          pendingPathSwitch = null;
+          updateRunButtons(getActivePath());
+          if (hint) hint.textContent = "";
+        }, 2200);
       }
 
       function evaluateTracker() {
@@ -3735,6 +3798,17 @@
       Array.prototype.slice.call(document.querySelectorAll(".run-path-btn")).forEach(function (button) {
         button.addEventListener("click", function () {
           var title = button.getAttribute("data-path-title");
+          var currentPath = getActivePath();
+          if (currentPath && currentPath !== title) {
+            if (pendingPathSwitch === title) {
+              setActivePath(title);
+              var hint = document.getElementById("run-hint");
+              if (hint) hint.textContent = "";
+            } else {
+              requestPathSwitch(title);
+            }
+            return;
+          }
           setActivePath(title);
         });
       });
