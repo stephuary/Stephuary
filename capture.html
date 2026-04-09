@@ -3,691 +3,1533 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Capture — Stephuary</title>
-<meta name="description" content="If you cannot say it in one sentence, you cannot build it. Define it now." />
+<title>Capture — Phase 01 · Stephuary</title>
+<meta name="description" content="Your idea is not unclear. It is not defined enough to use. Extract what is already there so it can be used on purpose." />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=DM+Mono:wght@300;400&family=Lato:wght@300;400&display=swap" rel="stylesheet" />
 <style>
+
+/* ============================================================
+   TOKENS — exact match with Position page
+   ============================================================ */
+
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  --bg:           #0a0a0a;
-  --card:         #111111;
-  --card-2:       #161616;
-  --border:       rgba(255,255,255,0.08);
-  --border-focus: rgba(198,168,94,0.5);
-  --border-hover: rgba(255,255,255,0.16);
-  --text:         #ffffff;
-  --text-2:       #a1a1a1;
-  --text-3:       #666666;
-  --gold:         #c6a85e;
-  --gold-bg:      rgba(198,168,94,0.08);
-  --blue:         #2b4fd4;
-  --blue-hover:   #3560e8;
-  --output-bg:    rgba(198,168,94,0.06);
-  --output-border:#c6a85e;
-  --warn-bg:      rgba(184,92,56,0.08);
-  --warn-border:  rgba(184,92,56,0.5);
-  --warn-text:    #c4705a;
-  --radius:       10px;
-  --max:          640px;
+  --bg-dark:    #080807;
+  --bg-1:       #0e0e0c;
+  --bg-2:       #141412;
+  --bg-3:       #1a1a17;
+  --gold:       #c4a35a;
+  --gold-mid:   rgba(196,163,90,0.45);
+  --gold-faint: rgba(196,163,90,0.12);
+  --gold-glow:  rgba(196,163,90,0.06);
+  --gold-dim:   #8a7040;
+  --white:      #f4f0e8;
+  --terra:      #b85c38;
+  --terra-faint:rgba(184,92,56,0.1);
+  --text-2:     rgba(244,240,232,0.6);
+  --text-3:     rgba(244,240,232,0.32);
+  --text-4:     rgba(244,240,232,0.15);
+  --line:       rgba(196,163,90,0.1);
+  --line-hi:    rgba(196,163,90,0.22);
 }
 
-html, body {
-  background: var(--bg);
-  color: var(--text);
-  font-family: 'Inter', -apple-systems, BlinkMacsystemsFont, sans-serif;
-  font-size: 18px;
-  line-height: 1.5;
-  font-weight: 400;
-  -webkit-font-smoothing: antialiased;
-  min-height: 100%;
+html { -webkit-font-smoothing: antialiased; }
+
+body {
+  background: var(--bg-dark);
+  color: var(--white);
+  font-family: 'Lato', sans-serif;
+  font-weight: 300;
+  min-height: 100vh;
+  cursor: none;
+  overflow-x: hidden;
 }
 
-a { color: inherit; text-decoration: none; }
+a { color: var(--gold); text-decoration: none; }
+button { font-family: 'Lato', sans-serif; cursor: none; }
+textarea, input, select { font-family: 'Lato', sans-serif; }
 
-.page {
-  max-width: var(--max);
-  margin: 0 auto;
-  padding: 0 24px 96px;
-  display: flex;
-  flex-direction: column;
-  gap: 56px;
+/* ============================================================
+   GRAIN + VIGNETTE
+   ============================================================ */
+
+#grain {
+  position: fixed; inset: 0; pointer-events: none; z-index: 9000;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+  opacity: 0.024;
 }
 
-/* NAV */
-.top-nav {
-  padding: 28px 0 0;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-.nav-logo {
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--gold);
-}
-.nav-back {
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--text-2);
-  transition: color 0.15s;
-}
-.nav-back:hover { color: var(--text); }
+/* ============================================================
+   CURSOR
+   ============================================================ */
 
-/* HERO */
-.hero { padding-top: 16px; }
+#cursor {
+  position: fixed; width: 10px; height: 10px; border-radius: 50%;
+  background: var(--gold); pointer-events: none; z-index: 9999;
+  transform: translate(-50%,-50%);
+  transition: width .18s ease, height .18s ease, background .18s ease;
+}
+#cursor.active { width: 7px; height: 7px; background: var(--terra); }
 
-.label {
-  display: block;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--gold);
+#cursor-ring {
+  position: fixed; width: 32px; height: 32px; border-radius: 50%;
+  border: 1px solid rgba(196,163,90,0.28); pointer-events: none; z-index: 9998;
+  transform: translate(-50%,-50%);
+  transition: width .28s ease, height .28s ease, border-color .28s ease;
+}
+#cursor-ring.hover { width: 48px; height: 48px; border-color: rgba(196,163,90,0.55); }
+
+/* ============================================================
+   HEADER
+   ============================================================ */
+
+#site-header {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 500;
+  padding: 26px 52px;
+  display: flex; align-items: center; justify-content: space-between;
+  background: linear-gradient(to bottom, rgba(8,8,7,0.96) 0%, rgba(8,8,7,0.7) 70%, transparent 100%);
+  backdrop-filter: blur(6px);
+}
+
+.logo {
+  font-family: 'Lato', sans-serif; font-weight: 400; font-size: 9px;
+  letter-spacing: 0.46em; color: var(--gold); text-transform: uppercase;
+  opacity: 0; animation: fadeIn 1s ease forwards 0.4s;
+}
+
+.header-phase {
+  font-family: 'DM Mono', monospace; font-size: 9px;
+  letter-spacing: 0.2em; color: rgba(196,163,90,0.32); text-transform: uppercase;
+  opacity: 0; animation: fadeIn 1s ease forwards 0.8s;
+}
+
+/* ============================================================
+   ENTRY OVERLAY
+   ============================================================ */
+
+#entry-overlay {
+  position: fixed; inset: 0; z-index: 5000;
+  background: var(--bg-dark);
+  display: flex; align-items: center; justify-content: center;
+  padding: 48px; cursor: none;
+}
+
+#entry-overlay::before {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  opacity: 0.7;
+}
+#entry-overlay::after {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(ellipse at center, transparent 20%, rgba(8,8,7,0.9) 100%);
+}
+
+.entry-inner {
+  position: relative; z-index: 1; text-align: center; max-width: 480px;
+  animation: fadeUp 0.9s cubic-bezier(0.16,1,0.3,1) forwards;
+}
+
+.entry-wordmark {
+  display: block; margin-bottom: 8px;
+  font-family: 'Lato', sans-serif; font-weight: 400; font-size: 9px;
+  letter-spacing: 0.5em; color: var(--gold); text-transform: uppercase;
+}
+.entry-phase-tag {
+  display: block; margin-bottom: 44px;
+  font-family: 'DM Mono', monospace; font-size: 9px;
+  letter-spacing: 0.22em; color: rgba(196,163,90,0.28); text-transform: uppercase;
+}
+
+.entry-headline {
+  font-family: 'Cormorant Garamond', serif; font-weight: 300;
+  font-size: clamp(24px,3.2vw,40px); color: rgba(244,240,232,0.92);
+  line-height: 1.22; letter-spacing: -0.01em; margin-bottom: 20px;
+}
+.entry-headline em { font-style: italic; color: var(--gold); }
+
+.entry-sub {
+  display: block; margin-bottom: 6px;
+  font-family: 'Lato', sans-serif; font-weight: 300; font-size: 9px;
+  letter-spacing: 0.22em; color: rgba(244,240,232,0.28); text-transform: uppercase;
+}
+
+.entry-outputs {
+  display: inline-block; text-align: left; margin: 0 auto 44px;
+}
+.entry-outputs span {
+  display: block; font-family: 'DM Mono', monospace; font-size: 9px;
+  letter-spacing: 0.1em; color: rgba(244,240,232,0.2); line-height: 2.3;
+}
+.entry-outputs span::before { content: '→ '; color: rgba(196,163,90,0.28); }
+
+.entry-start-btn {
+  display: block; width: 100%; max-width: 270px; margin: 0 auto 18px;
+  font-family: 'Lato', sans-serif; font-weight: 400; font-size: 9px;
+  letter-spacing: 0.38em; text-transform: uppercase;
+  color: var(--bg-dark); background: var(--gold); border: none;
+  padding: 19px 0; cursor: none;
+  transition: background 0.22s ease;
+}
+.entry-start-btn:hover { background: var(--white); }
+
+.entry-skip {
+  display: block; font-family: 'Lato', sans-serif; font-weight: 300; font-size: 9px;
+  letter-spacing: 0.26em; color: rgba(196,163,90,0.2); text-transform: uppercase;
+  background: none; border: none; cursor: none; transition: color 0.22s;
+}
+.entry-skip:hover { color: var(--gold-mid); }
+
+/* ============================================================
+   APP SHELL
+   ============================================================ */
+
+#app-shell {
+  display: none;
+  padding-top: 80px;
+  min-height: 100vh;
+}
+#app-shell.visible {
+  display: grid;
+  grid-template-columns: 216px 1fr 274px;
+  grid-template-areas: "rail main output";
+}
+
+/* ============================================================
+   LEFT RAIL
+   ============================================================ */
+
+#left-rail {
+  grid-area: rail;
+  position: sticky; top: 80px; height: calc(100vh - 80px);
+  overflow-y: auto; padding: 36px 0;
+  border-right: 1px solid var(--line);
+}
+
+.rail-label {
+  font-family: 'DM Mono', monospace; font-size: 8px;
+  letter-spacing: 0.26em; color: rgba(196,163,90,0.2); text-transform: uppercase;
+  padding: 0 28px; margin-bottom: 18px;
+}
+
+.step-nav { list-style: none; }
+
+.step-nav-item {
+  display: flex; align-items: center; gap: 14px;
+  padding: 11px 28px; cursor: none; position: relative;
+  transition: background 0.18s;
+}
+.step-nav-item:hover { background: var(--gold-glow); }
+.step-nav-item.active { background: rgba(196,163,90,0.05); }
+.step-nav-item.active::before {
+  content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 2px;
+  background: var(--gold);
+}
+.step-nav-item.done .snav-num { background: var(--gold); color: var(--bg-dark); border-color: var(--gold); }
+
+.snav-num {
+  width: 22px; height: 22px; border-radius: 50%;
+  border: 1px solid rgba(196,163,90,0.16);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'DM Mono', monospace; font-size: 9px;
+  color: rgba(196,163,90,0.28); flex-shrink: 0; transition: all 0.22s;
+}
+.step-nav-item.active .snav-num { border-color: var(--gold); color: var(--gold); }
+
+.snav-name {
+  font-size: 12px; font-weight: 300; letter-spacing: 0.06em;
+  color: var(--text-3); transition: color 0.22s;
+}
+.step-nav-item.active .snav-name { color: var(--white); }
+.step-nav-item.done .snav-name { color: var(--text-2); }
+
+.rail-divider { height: 1px; background: var(--line); margin: 22px 28px; }
+
+.rail-btn {
+  display: block; width: calc(100% - 56px); margin: 0 28px 8px;
+  font-family: 'DM Mono', monospace; font-size: 8px;
+  letter-spacing: 0.16em; color: rgba(196,163,90,0.26); text-transform: uppercase;
+  background: transparent; border: 1px solid rgba(196,163,90,0.09);
+  padding: 9px 14px; text-align: left; cursor: none;
+  transition: all 0.18s; border-radius: 1px;
+}
+.rail-btn:hover { border-color: rgba(196,163,90,0.22); color: rgba(196,163,90,0.55); }
+.rail-btn.danger:hover { border-color: var(--terra); color: var(--terra); }
+
+/* ============================================================
+   MAIN PANEL
+   ============================================================ */
+
+#main-panel {
+  grid-area: main;
+  padding: 52px 60px;
+  overflow-y: auto;
+  min-height: calc(100vh - 80px);
+}
+
+/* ============================================================
+   DONE STACK
+   ============================================================ */
+
+#done-stack { margin-bottom: 38px; }
+
+.done-card {
+  border: 1px solid var(--line); padding: 14px 20px;
+  margin-bottom: 6px; display: flex; align-items: center; justify-content: space-between;
+  background: var(--gold-glow); cursor: none; transition: border-color 0.18s;
+}
+.done-card:hover { border-color: var(--line-hi); }
+
+.done-card-l { display: flex; align-items: center; gap: 14px; }
+
+.done-check {
+  width: 20px; height: 20px; border-radius: 50%; background: var(--gold);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 9px; color: var(--bg-dark); flex-shrink: 0;
+}
+
+.done-lbl {
+  font-family: 'DM Mono', monospace; font-size: 8px;
+  letter-spacing: 0.2em; color: var(--gold-dim); text-transform: uppercase;
+}
+.done-summ { font-size: 12px; color: var(--text-2); margin-top: 3px; }
+
+.done-edit {
+  font-family: 'DM Mono', monospace; font-size: 8px;
+  letter-spacing: 0.14em; color: rgba(196,163,90,0.2); text-transform: uppercase;
+}
+
+/* ============================================================
+   STEP CARDS
+   ============================================================ */
+
+.step-card { display: none; animation: fadeUp 0.28s cubic-bezier(0.16,1,0.3,1) forwards; }
+.step-card.active { display: block; }
+
+.step-tag {
+  font-family: 'DM Mono', monospace; font-size: 8px;
+  letter-spacing: 0.26em; color: var(--gold); text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+.step-title {
+  font-family: 'Cormorant Garamond', serif; font-weight: 300;
+  font-size: clamp(28px,3.2vw,44px); color: var(--white);
+  line-height: 1.08; letter-spacing: -0.015em; margin-bottom: 14px;
+}
+
+.step-instr {
+  font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 300;
+  font-size: clamp(14px,1.4vw,16px); color: var(--text-2);
+  line-height: 1.72; margin-bottom: 38px; max-width: 480px;
+}
+
+/* ============================================================
+   FIELDS
+   ============================================================ */
+
+.fw { margin-bottom: 22px; }
+
+.fl {
+  display: block; margin-bottom: 8px;
+  font-family: 'DM Mono', monospace; font-size: 8px;
+  letter-spacing: 0.2em; color: rgba(196,163,90,0.36); text-transform: uppercase;
+}
+
+.fl-sub {
+  display: block; margin-bottom: 8px; margin-top: -4px;
+  font-family: 'DM Mono', monospace; font-size: 8px;
+  letter-spacing: 0.1em; color: rgba(196,163,90,0.2);
+}
+
+.fi, .fta {
+  width: 100%; background: rgba(196,163,90,0.04);
+  border: 1px solid rgba(196,163,90,0.11);
+  color: var(--white); padding: 13px 16px;
+  font-size: 13px; font-weight: 300; font-family: 'Lato', sans-serif;
+  line-height: 1.5; outline: none; border-radius: 1px;
+  transition: border-color 0.18s;
+}
+.fi:focus, .fta:focus { border-color: rgba(196,163,90,0.38); }
+.fi::placeholder, .fta::placeholder { color: rgba(196,163,90,0.2); font-style: italic; }
+.fta { resize: vertical; min-height: 90px; }
+
+/* ============================================================
+   SEPARATOR
+   ============================================================ */
+
+.sep { height: 1px; background: var(--line); margin: 28px 0; }
+
+/* ============================================================
+   ASSEMBLED BLOCK
+   ============================================================ */
+
+.ab {
+  background: rgba(196,163,90,0.04); border: 1px solid var(--line-hi);
+  padding: 22px 24px; margin-top: 22px;
+}
+.ab-lbl {
+  font-family: 'DM Mono', monospace; font-size: 8px;
+  letter-spacing: 0.22em; color: var(--gold-dim); text-transform: uppercase;
   margin-bottom: 16px;
 }
-
-h1 {
-  font-size: 48px;
-  font-weight: 600;
-  line-height: 1.08;
-  letter-spacing: -0.02em;
-  color: var(--text);
-  margin-bottom: 16px;
+.ab-row { margin-bottom: 14px; }
+.ab-row:last-child { margin-bottom: 0; }
+.ab-key {
+  font-family: 'DM Mono', monospace; font-size: 8px;
+  letter-spacing: 0.14em; color: rgba(196,163,90,0.26); text-transform: uppercase;
+  margin-bottom: 4px;
+}
+.ab-val { font-size: 13px; color: var(--text-2); line-height: 1.6; }
+.ab-val.em {
+  font-family: 'Cormorant Garamond', serif; font-style: italic;
+  font-size: 18px; color: var(--white);
+}
+.ab-val.strong {
+  font-family: 'Cormorant Garamond', serif; font-size: 15px; color: var(--white);
 }
 
-.subhead {
-  font-size: 18px;
-  color: var(--text-2);
-  line-height: 1.6;
-  max-width: 42ch;
+/* ============================================================
+   FRICTION BLOCK
+   ============================================================ */
+
+.friction-block {
+  border: 1px solid rgba(184,92,56,0.22); border-top: 2px solid var(--terra);
+  background: rgba(184,92,56,0.04); padding: 20px 24px; margin-top: 20px;
+}
+.friction-lbl {
+  font-family: 'DM Mono', monospace; font-size: 8px;
+  letter-spacing: 0.22em; color: var(--terra); text-transform: uppercase;
+  margin-bottom: 14px;
+}
+.friction-item { margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid rgba(184,92,56,0.12); }
+.friction-item:last-child { margin-bottom: 0; padding-bottom: 0; border-bottom: none; }
+.friction-tag-el {
+  display: inline-block; font-family: 'DM Mono', monospace; font-size: 8px;
+  letter-spacing: 0.14em; text-transform: uppercase; color: var(--terra);
+  border: 1px solid rgba(184,92,56,0.3); padding: 3px 9px; margin-bottom: 8px;
+  border-radius: 1px;
+}
+.friction-what { font-size: 13px; color: var(--text-2); line-height: 1.6; margin-bottom: 6px; }
+.friction-fix-line {
+  font-family: 'DM Mono', monospace; font-size: 9px;
+  letter-spacing: 0.08em; color: rgba(184,92,56,0.6); line-height: 1.6;
+}
+
+/* ============================================================
+   OUTPUT ARTIFACT (Step 05-07)
+   ============================================================ */
+
+.artifact-block {
+  background: rgba(196,163,90,0.05); border: 1px solid var(--line-hi);
+  border-top: 2px solid var(--gold-dim); padding: 24px 26px; margin-top: 20px;
+}
+.artifact-lbl {
+  font-family: 'DM Mono', monospace; font-size: 8px;
+  letter-spacing: 0.22em; color: var(--gold-dim); text-transform: uppercase;
+  margin-bottom: 18px;
+}
+.artifact-primary {
+  font-family: 'Cormorant Garamond', serif; font-weight: 300; font-style: italic;
+  font-size: clamp(18px,2vw,22px); color: var(--white); line-height: 1.55;
+  margin-bottom: 18px; padding-bottom: 18px; border-bottom: 1px solid var(--line);
+}
+.artifact-row { margin-bottom: 12px; }
+.artifact-key {
+  font-family: 'DM Mono', monospace; font-size: 8px;
+  letter-spacing: 0.14em; color: rgba(196,163,90,0.26); text-transform: uppercase;
+  margin-bottom: 4px;
+}
+.artifact-val { font-size: 13px; color: var(--text-2); line-height: 1.6; }
+
+/* ============================================================
+   DIRECTION BLOCK (Step 06)
+   ============================================================ */
+
+.direction-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 18px; }
+.direction-cell { background: rgba(196,163,90,0.04); border: 1px solid var(--line); padding: 16px 18px; }
+.direction-cell-lbl {
+  font-family: 'DM Mono', monospace; font-size: 8px;
+  letter-spacing: 0.16em; color: rgba(196,163,90,0.26); text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.direction-cell-val { font-size: 13px; color: var(--text-2); line-height: 1.6; }
+.direction-cell.full { grid-column: span 2; }
+
+/* ============================================================
+   COMPLETION STATE (Step 07)
+   ============================================================ */
+
+.completion-block {
+  background: var(--gold-faint); border: 1px solid rgba(196,163,90,0.2);
+  padding: 28px 28px; margin-top: 22px; text-align: center;
+}
+.completion-icon {
+  width: 32px; height: 32px; border-radius: 50%; background: var(--gold);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; color: var(--bg-dark); margin: 0 auto 16px;
+}
+.completion-headline {
+  font-family: 'Cormorant Garamond', serif; font-weight: 300;
+  font-size: clamp(20px,2.2vw,28px); color: var(--white);
+  line-height: 1.2; margin-bottom: 10px;
+}
+.completion-sub { font-size: 13px; color: var(--text-2); line-height: 1.6; margin-bottom: 24px; max-width: 400px; margin-left: auto; margin-right: auto; }
+
+.phase-gate {
+  background: rgba(196,163,90,0.05); border: 1px solid rgba(196,163,90,0.14);
+  padding: 20px 24px; margin-top: 22px;
+}
+.phase-gate-lbl {
+  font-family: 'DM Mono', monospace; font-size: 8px;
+  letter-spacing: 0.22em; color: var(--gold); text-transform: uppercase; margin-bottom: 8px;
+}
+.phase-gate p { font-size: 12px; color: var(--text-2); margin-bottom: 16px; line-height: 1.6; }
+
+/* ============================================================
+   BUTTONS
+   ============================================================ */
+
+.btn-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 30px; }
+
+.btn-p {
+  padding: 14px 30px; background: var(--gold); color: var(--bg-dark);
+  border: none; font-family: 'Lato', sans-serif; font-weight: 400;
+  font-size: 9px; letter-spacing: 0.3em; text-transform: uppercase;
+  cursor: none; transition: opacity 0.18s; border-radius: 1px;
+  text-decoration: none; display: inline-flex; align-items: center;
+}
+.btn-p:hover { opacity: 0.84; }
+.btn-p:disabled { opacity: 0.22; cursor: not-allowed; }
+
+.btn-g {
+  padding: 13px 22px; background: transparent;
+  color: rgba(196,163,90,0.35); border: 1px solid rgba(196,163,90,0.13);
+  font-family: 'Lato', sans-serif; font-weight: 300; font-size: 9px;
+  letter-spacing: 0.22em; text-transform: uppercase; cursor: none;
+  transition: all 0.18s; border-radius: 1px; text-decoration: none;
+  display: inline-flex; align-items: center;
+}
+.btn-g:hover { border-color: rgba(196,163,90,0.28); color: rgba(196,163,90,0.6); }
+
+.btn-c {
+  padding: 6px 14px; background: transparent;
+  color: rgba(196,163,90,0.32); border: 1px solid rgba(196,163,90,0.12);
+  font-family: 'DM Mono', monospace; font-size: 8px;
+  letter-spacing: 0.16em; text-transform: uppercase; cursor: none;
+  transition: all 0.18s; border-radius: 1px;
+}
+.btn-c:hover { border-color: var(--gold-dim); color: var(--gold); }
+.btn-c.copied { color: #6a9e6a; border-color: #6a9e6a; }
+
+.btn-d {
+  padding: 13px 22px; background: transparent;
+  color: rgba(184,92,56,0.38); border: 1px solid rgba(184,92,56,0.14);
+  font-family: 'Lato', sans-serif; font-weight: 300; font-size: 9px;
+  letter-spacing: 0.22em; text-transform: uppercase; cursor: none;
+  transition: all 0.18s; border-radius: 1px;
+}
+.btn-d:hover { border-color: var(--terra); color: var(--terra); }
+
+/* ============================================================
+   RIGHT OUTPUT PANEL
+   ============================================================ */
+
+#out-panel {
+  grid-area: output;
+  position: sticky; top: 80px; height: calc(100vh - 80px);
+  overflow-y: auto; padding: 36px 28px;
+  border-left: 1px solid var(--line);
+}
+
+.out-panel-lbl {
+  font-family: 'DM Mono', monospace; font-size: 8px;
+  letter-spacing: 0.26em; color: rgba(196,163,90,0.2); text-transform: uppercase;
   margin-bottom: 28px;
 }
 
-/* BUTTONS */
-.btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 48px;
-  padding: 13px 24px;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 600;
-  letter-spacing: 0.01em;
-  cursor: pointer;
-  border: none;
-  font-family: inherit;
-  transition: opacity 0.15s, transform 0.12s, background 0.15s;
-  white-space: nowrap;
-}
-.btn:active { transform: scale(0.97); }
+.out-sec { margin-bottom: 22px; padding-bottom: 22px; border-bottom: 1px solid var(--line); }
+.out-sec:last-child { border-bottom: none; margin-bottom: 0; }
 
-.btn-gold {
-  background: var(--gold);
-  color: #0a0a0a;
+.out-key {
+  font-family: 'DM Mono', monospace; font-size: 8px;
+  letter-spacing: 0.2em; color: var(--gold-dim); text-transform: uppercase; margin-bottom: 7px;
 }
-.btn-gold:hover { opacity: 0.88; }
-
-.btn-primary {
-  background: var(--blue);
-  color: #fff;
-}
-.btn-primary:hover { background: var(--blue-hover); }
-
-.btn-ghost {
-  background: transparent;
-  color: var(--text-2);
-  border: 1px solid var(--border);
-}
-.btn-ghost:hover {
-  color: var(--text);
-  border-color: var(--border-hover);
+.out-val { font-size: 12px; color: var(--text-2); line-height: 1.6; white-space: pre-wrap; }
+.out-val.empty { color: rgba(196,163,90,0.18); font-style: italic; }
+.out-val.statement {
+  font-family: 'Cormorant Garamond', serif; font-style: italic;
+  font-size: 14px; color: var(--white); line-height: 1.55;
 }
 
-.row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+/* ============================================================
+   TOAST
+   ============================================================ */
 
-/* PANELS */
-.panel {
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 28px 24px;
+#toast {
+  position: fixed; bottom: 32px; right: 32px;
+  background: rgba(14,14,12,0.94); border: 1px solid var(--line-hi);
+  padding: 11px 18px; font-family: 'DM Mono', monospace; font-size: 10px;
+  color: var(--text-2); letter-spacing: 0.08em; z-index: 8000;
+  opacity: 0; transform: translateY(6px);
+  transition: all 0.22s ease; pointer-events: none;
 }
+#toast.show { opacity: 1; transform: translateY(0); }
 
-/* WARN PANEL */
-.panel-warn {
-  background: var(--warn-bg);
-  border: 1px solid var(--warn-border);
-  border-radius: var(--radius);
-  padding: 28px 24px;
-}
+/* ============================================================
+   KEYFRAMES
+   ============================================================ */
 
-/* LISTS */
-.list {
-  list-style: none;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin-top: 12px;
-}
-.list li {
-  font-size: 17px;
-  color: var(--text-2);
-  line-height: 1.5;
-  padding-left: 16px;
-  position: relative;
-}
-.list li::before {
-  content: "";
-  width: 4px;
-  height: 4px;
-  border-radius: 50%;
-  background: var(--gold);
-  position: absolute;
-  top: 10px;
-  left: 0;
-}
-
-/* WARN LIST */
-.list-warn li::before { background: var(--warn-text); }
-.list-warn li { color: var(--text-2); }
-
-/* CHECK LIST */
-.list-check li::before {
-  content: "";
-  width: 6px;
-  height: 6px;
-  border-radius: 0;
-  background: none;
-  border-left: 1px solid var(--gold);
-  border-bottom: 1px solid var(--gold);
-  transform: rotate(-45deg);
-  top: 8px;
-}
-
-/* SECTION TITLE */
-h2 {
-  font-size: 22px;
-  font-weight: 600;
-  color: var(--text);
-  line-height: 1.2;
-  margin-bottom: 4px;
-}
-
-h2.warn { color: var(--warn-text); }
-
-/* FIELDS */
-.tool-instruction {
-  font-size: 16px;
-  color: var(--text-2);
-  margin-bottom: 24px;
-}
-
-.field {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin-bottom: 20px;
-}
-.field:last-of-type { margin-bottom: 24px; }
-
-.field label {
-  font-size: 15px;
-  font-weight: 500;
-  color: var(--text);
-}
-
-.field .field-format {
-  font-size: 12px;
-  font-weight: 400;
-  color: var(--text-3);
-  letter-spacing: 0.02em;
-  margin-top: -4px;
-}
-
-.field input {
-  background: var(--bg);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  color: var(--text);
-  font-family: inherit;
-  font-weight: 400;
-  font-size: 17px;
-  padding: 14px 16px;
-  width: 100%;
-  outline: none;
-  transition: border-color 0.18s, background 0.18s;
-  -webkit-appearance: none;
-}
-.field input:focus {
-  border-color: var(--border-focus);
-  background: rgba(198,168,94,0.03);
-}
-.field input::placeholder {
-  color: var(--text-3);
-  font-style: italic;
-}
-
-/* OUTPUT */
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 @keyframes fadeUp {
   from { opacity: 0; transform: translateY(10px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 
-.output-wrap {
-  animation: fadeUp 0.38s ease forwards;
+/* ============================================================
+   MOBILE
+   ============================================================ */
+
+@media (max-width: 960px) {
+  body { cursor: auto; }
+  #cursor, #cursor-ring { display: none; }
+  button { cursor: pointer; }
+  a { cursor: pointer; }
+  #app-shell.visible { grid-template-columns: 1fr; grid-template-areas: "rail" "main" "output"; }
+  #left-rail { position: static; height: auto; border-right: none; border-bottom: 1px solid var(--line); padding: 16px 0; }
+  .step-nav { display: flex; overflow-x: auto; padding: 0 10px; }
+  .step-nav-item { min-width: 76px; flex-direction: column; text-align: center; gap: 6px; padding: 10px 12px; }
+  .step-nav-item.active::before { width: 100%; height: 2px; bottom: auto; top: auto; }
+  #main-panel { padding: 32px 24px; }
+  #out-panel { position: static; height: auto; border-left: none; border-top: 1px solid var(--line); }
+  #site-header { padding: 18px 24px; }
+  .direction-grid { grid-template-columns: 1fr; }
+  .direction-cell.full { grid-column: span 1; }
+  #entry-overlay { padding: 32px 24px; }
+  .step-title { font-size: 28px; }
 }
 
-.output-card {
-  border: 1px solid var(--output-border);
-  background: var(--output-bg);
-  border-radius: var(--radius);
-  padding: 28px 24px;
-  position: relative;
-  overflow: hidden;
-}
-.output-card::before {
-  content: "";
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, var(--gold), transparent);
-  opacity: 0.5;
+@media (max-width: 560px) {
+  .entry-headline { font-size: 22px; }
+  .step-title { font-size: 24px; }
 }
 
-.output-tag {
-  display: block;
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--gold);
-  margin-bottom: 16px;
-}
-
-.output-statement {
-  font-size: 20px;
-  font-weight: 500;
-  color: var(--text);
-  line-height: 1.45;
-  margin-bottom: 0;
-}
-
-/* FRICTION TAG */
-.friction-tag {
-  display: inline-block;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--warn-text);
-  background: var(--warn-bg);
-  border: 1px solid var(--warn-border);
-  border-radius: 4px;
-  padding: 4px 10px;
-  margin-bottom: 12px;
-}
-
-.friction-label {
-  font-size: 15px;
-  color: var(--text-2);
-  line-height: 1.6;
-  margin-bottom: 8px;
-}
-
-.friction-fix {
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--warn-text);
-  margin-top: 12px;
-  padding-top: 12px;
-  border-top: 1px solid var(--warn-border);
-}
-
-/* IMPORTANT */
-.important-text {
-  font-size: 17px;
-  color: var(--text-2);
-  line-height: 1.6;
-}
-
-/* FOOTER NAV */
-.foot {
-  border-top: 1px solid var(--border);
-  padding-top: 20px;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px 18px;
-}
-.foot a {
-  font-size: 12px;
-  font-weight: 500;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--text-3);
-  transition: color 0.15s;
-}
-.foot a:hover { color: var(--text-2); }
-
-.hidden { display: none; }
-
-.divider {
-  height: 1px;
-  background: var(--border);
-  margin: 8px 0 20px;
-}
-
-@media (max-width: 640px) {
-  html, body { font-size: 16px; }
-  .page { gap: 44px; padding-bottom: 72px; }
-  h1 { font-size: 34px; }
-  h2 { font-size: 20px; }
-  .subhead { font-size: 16px; }
-  .panel { padding: 22px 18px; }
-  .panel-warn { padding: 22px 18px; }
-  .output-card { padding: 22px 18px; }
-  .field input { font-size: 16px; }
-  .output-statement { font-size: 18px; }
-  .btn { width: 100%; }
-  .row { flex-direction: column; align-items: stretch; }
-}
 </style>
 </head>
 <body>
-<div class="page">
 
-  <!-- NAV -->
-  <div class="top-nav">
-<a href="/" class="nav-logo">Stephuary</a>
-  <a href="/systems" class="nav-back">&larr; The systems</a>
+<div id="grain"></div>
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+<div id="toast"></div>
+
+<!-- ============================================================
+     ENTRY OVERLAY
+     ============================================================ -->
+
+<div id="entry-overlay" role="dialog" aria-modal="true" aria-label="Capture — Phase 01">
+  <div class="entry-inner">
+    <span class="entry-wordmark">Stephuary</span>
+    <span class="entry-phase-tag">Capture · Phase 01</span>
+    <h1 class="entry-headline">
+      Your idea is not unclear.<br>
+      It is <em>not defined enough to use.</em>
+    </h1>
+    <span class="entry-sub">You will leave with:</span>
+    <div class="entry-outputs">
+      <span>one locked core statement</span>
+      <span>one audience direction</span>
+      <span>one result direction</span>
+      <span>one spoken version</span>
+      <span>one clear next move</span>
+    </div>
+    <button class="entry-start-btn" id="entry-start">Begin Phase 01</button>
+    <button class="entry-skip" id="entry-skip">Already in progress — skip</button>
   </div>
+</div>
 
-  <!-- HERO -->
-  <section class="hero">
-    <span class="label">Capture &middot; Phase 01</span>
-    <h1>Your idea is not unclear. It is not defined enough to use.</h1>
-    <p class="subhead">If you cannot say it in one sentence, you cannot build it.</p>
-    <div class="row">
-      <button class="btn btn-gold" id="hero-start" type="button">Define it now</button>
-    </div>
-  </section>
+<!-- ============================================================
+     HEADER
+     ============================================================ -->
 
-  <!-- THIS IS HAPPENING IF -->
-  <section class="panel">
-    <h2>This is happening if</h2>
-    <ul class="list">
-      <li>You keep rewriting what you do</li>
-      <li>You cannot explain it in one sentence</li>
-      <li>You start building, then change direction</li>
-      <li>You talk about it more than you execute it</li>
-      <li>You have multiple versions of the same thing</li>
-    </ul>
-  </section>
+<header id="site-header">
+  <a href="/" class="logo">Stephuary</a>
+  <span class="header-phase">Capture · Phase 01</span>
+</header>
 
-  <!-- WHAT YOU LEAVE WITH -->
-  <section class="panel">
-    <h2>What you leave with</h2>
-    <ul class="list" style="margin-top: 12px;">
-      <li>One clear sentence</li>
-      <li>One defined direction</li>
-      <li>One version that does not change</li>
-      <li>Something you can act on immediately</li>
-    </ul>
-    <p style="margin-top: 20px; font-size: 15px; color: var(--text-3); font-style: italic; padding-top: 16px; border-top: 1px solid var(--border);">
-      You are not refining an idea. You are forcing it into a usable form.
-    </p>
-  </section>
+<!-- ============================================================
+     APP SHELL
+     ============================================================ -->
 
-  <!-- TOOL -->
-  <section class="panel" id="tool-section">
-    <h2>Define this properly</h2>
-    <p class="tool-instruction" style="margin-top: 8px;">Fill this in quickly. Do not overthink it.</p>
+<div id="app-shell">
 
-    <div class="field">
-      <label for="f-do">What do you actually do?</label>
-      <span class="field-format">Format: I help ___ do ___</span>
-      <input id="f-do" type="text" placeholder="I help ___ do ___" maxlength="160" autocomplete="off" />
-    </div>
+  <!-- LEFT RAIL -->
+  <nav id="left-rail" aria-label="Phase steps">
+    <div class="rail-label">Steps</div>
+    <ol class="step-nav">
+      <li class="step-nav-item" data-step="1" tabindex="0"><span class="snav-num">1</span><span class="snav-name">Extract</span></li>
+      <li class="step-nav-item" data-step="2" tabindex="0"><span class="snav-num">2</span><span class="snav-name">Audience</span></li>
+      <li class="step-nav-item" data-step="3" tabindex="0"><span class="snav-num">3</span><span class="snav-name">Result</span></li>
+      <li class="step-nav-item" data-step="4" tabindex="0"><span class="snav-num">4</span><span class="snav-name">Pressure</span></li>
+      <li class="step-nav-item" data-step="5" tabindex="0"><span class="snav-num">5</span><span class="snav-name">Lock</span></li>
+      <li class="step-nav-item" data-step="6" tabindex="0"><span class="snav-num">6</span><span class="snav-name">Direction</span></li>
+      <li class="step-nav-item" data-step="7" tabindex="0"><span class="snav-num">7</span><span class="snav-name">Move</span></li>
+    </ol>
+    <div class="rail-divider"></div>
+    <button class="rail-btn" id="rail-export">Export text</button>
+    <button class="rail-btn danger" id="rail-reset">Reset phase</button>
+  </nav>
 
-    <div class="field">
-      <label for="f-who">Who is this for?</label>
-      <span class="field-format">Format: People who ___</span>
-      <input id="f-who" type="text" placeholder="People who ___" maxlength="120" autocomplete="off" />
-    </div>
+  <!-- MAIN PANEL -->
+  <main id="main-panel">
 
-    <div class="field">
-      <label for="f-result">What changes for them?</label>
-      <span class="field-format">Format: So they can ___</span>
-      <input id="f-result" type="text" placeholder="So they can ___" maxlength="120" autocomplete="off" />
-    </div>
+    <div id="done-stack"></div>
 
-    <button class="btn btn-primary" id="build-btn" type="button">Make it usable</button>
-  </section>
+    <!-- STEP 1 — EXTRACT -->
+    <section class="step-card" id="step-1" aria-label="Step 1: Extract">
+      <div class="step-tag">Step 01</div>
+      <h2 class="step-title">What do you actually do?</h2>
+      <p class="step-instr">Not what you want to do. Not the refined version. Write what you actually do right now, as plainly as possible.</p>
 
-  <!-- OUTPUT -->
-  <section id="output-section" class="hidden">
-    <div class="output-wrap">
-
-      <div class="output-card">
-        <span class="output-tag">This is what you are building</span>
-        <p class="output-statement" id="output-text"></p>
+      <div class="fw">
+        <label class="fl" for="f-do">What you do</label>
+        <span class="fl-sub">Format: I help [someone] do [something]</span>
+        <input type="text" class="fi" id="f-do"
+          placeholder="I help ___ do ___" maxlength="200" autocomplete="off">
       </div>
 
-      <p style="margin-top: 16px; font-size: 14px; color: var(--text-3); font-style: italic; padding: 0 2px;">
-        If this is unclear or hard to say, nothing after this will work.
-      </p>
-
-      <!-- FRICTION IDENTIFIER -->
-      <div id="friction-section" class="panel-warn hidden" style="margin-top: 24px;">
-        <h2 class="warn" style="margin-bottom: 12px; font-size: 18px;">Where this breaks</h2>
-        <div id="friction-tag-wrap"></div>
-        <p class="friction-label" id="friction-label"></p>
-        <p class="friction-fix">Fix this before moving forward.</p>
+      <div class="fw">
+        <label class="fl" for="f-versions">Other versions you have tried</label>
+        <span class="fl-sub">Optional. List any other ways you have said this — separated by line breaks.</span>
+        <textarea class="fta" id="f-versions" placeholder="Version 1&#10;Version 2&#10;Version 3" style="min-height:100px"></textarea>
       </div>
 
-      <!-- CLARITY CHECK -->
-      <div class="panel" style="margin-top: 24px;">
-        <h2>Clarity check</h2>
-        <p style="margin-top: 8px; margin-bottom: 16px; font-size: 15px; color: var(--text-2);">You should be able to:</p>
-        <ul class="list list-check">
-          <li>Say this without thinking</li>
-          <li>Explain it in under 10 seconds</li>
-          <li>Repeat it without changing the words</li>
-        </ul>
-        <p style="margin-top: 16px; font-size: 14px; color: var(--text-3); font-style: italic; padding-top: 14px; border-top: 1px solid var(--border);">
-          If not, this is still too vague.
-        </p>
-      </div>
+      <div class="sep"></div>
 
-      <div class="row" style="margin-top: 20px;">
-        <button class="btn btn-ghost" id="reset-btn" type="button">Start over</button>
-      </div>
-
-      <!-- TRANSITION -->
-      <div style="margin-top: 36px; padding-top: 24px; border-top: 1px solid var(--border);">
-        <p style="font-size: 14px; color: var(--text-2); margin-bottom: 8px; font-weight: 600;">When this is clear</p>
-        <p style="font-size: 15px; color: var(--text-3); margin-bottom: 20px; line-height: 1.6;">
-          You can explain it quickly.<br>
-          You can move without restarting.<br>
-          You can build something that compounds.
-        </p>
-        <div class="row">
-          <a href="/monetize" class="btn btn-primary">Continue to Monetize &rarr;</a>
-          <a href="/structure" class="btn btn-ghost">Go to Execution &rarr;</a>
+      <div class="ab" id="s1-preview" style="display:none">
+        <div class="ab-lbl">Raw statement</div>
+        <div class="ab-row">
+          <div class="ab-val em" id="s1-preview-text">—</div>
+        </div>
+        <div class="ab-row" id="s1-versions-area" style="display:none">
+          <div class="ab-key">Other versions</div>
+          <div class="ab-val" id="s1-versions-text">—</div>
         </div>
       </div>
 
-    </div>
-  </section>
+      <div class="btn-row">
+        <button class="btn-p" id="s1-go">Continue to Audience →</button>
+      </div>
+    </section>
 
-  <!-- IF THIS KEEPS CHANGING -->
-  <section class="panel-warn">
-    <h2 class="warn">If this keeps changing</h2>
-    <p style="margin-top: 12px; font-size: 17px; color: var(--text-2); line-height: 1.6;">
-      You are not building.<br>
-      You are circling.
-    </p>
-    <p style="margin-top: 16px; font-size: 15px; color: var(--text-3);">Nothing compounds.</p>
-  </section>
+    <!-- STEP 2 — AUDIENCE -->
+    <section class="step-card" id="step-2" aria-label="Step 2: Audience">
+      <div class="step-tag">Step 02</div>
+      <h2 class="step-title">Who is this actually for?</h2>
+      <p class="step-instr">Not everyone. Not anyone who needs it. Name the specific type of person who would get immediate value from this.</p>
 
-  <!-- ONE CONSTRAINT -->
-  <section class="panel">
-    <h2>One constraint</h2>
-    <p class="important-text" style="margin-top: 8px;">
-      If this keeps changing, you are not building. You are circling.
-    </p>
-  </section>
+      <div class="fw">
+        <label class="fl" for="f-who">Audience</label>
+        <span class="fl-sub">Format: People who ___</span>
+        <input type="text" class="fi" id="f-who"
+          placeholder="People who ___" maxlength="160" autocomplete="off">
+      </div>
 
-  <!-- FOOTER NAV -->
-  <footer class="foot">
-    <a href="/systems">systems</a>
-    <a href="/monetize">Monetize</a>
-    <a href="/structure">Structure</a>
-    <a href="/automation">Automation</a>
-    <a href="/sovereignty">Sovereignty</a>
-    <a href="/private-access">Private Access</a>
-  </footer>
+      <div class="fw">
+        <label class="fl" for="f-who-not">Who this is not for</label>
+        <span class="fl-sub">Optional but useful. Naming the exclusion sharpens the inclusion.</span>
+        <input type="text" class="fi" id="f-who-not"
+          placeholder="This is not for ___" maxlength="160" autocomplete="off">
+      </div>
 
-</div>
+      <div class="fw">
+        <label class="fl" for="f-who-why">Why this person specifically</label>
+        <span class="fl-sub">What is it about them that makes this relevant? What are they dealing with?</span>
+        <textarea class="fta" id="f-who-why" placeholder="They are dealing with ___ / They need ___ because ___"></textarea>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn-p" id="s2-go">Continue to Result →</button>
+        <button class="btn-g" id="s2-back">Back</button>
+      </div>
+    </section>
+
+    <!-- STEP 3 — RESULT -->
+    <section class="step-card" id="step-3" aria-label="Step 3: Result">
+      <div class="step-tag">Step 03</div>
+      <h2 class="step-title">What changes for them?</h2>
+      <p class="step-instr">Not a feeling. Not a vague improvement. What is specifically different after working with you?</p>
+
+      <div class="fw">
+        <label class="fl" for="f-result">The result</label>
+        <span class="fl-sub">Format: So they can ___</span>
+        <input type="text" class="fi" id="f-result"
+          placeholder="So they can ___" maxlength="160" autocomplete="off">
+      </div>
+
+      <div class="fw">
+        <label class="fl" for="f-result-before">What is true before</label>
+        <span class="fl-sub">What is their situation before they work with you?</span>
+        <input type="text" class="fi" id="f-result-before"
+          placeholder="Before: ___" maxlength="160" autocomplete="off">
+      </div>
+
+      <div class="fw">
+        <label class="fl" for="f-result-after">What is true after</label>
+        <span class="fl-sub">What is measurably or meaningfully different?</span>
+        <input type="text" class="fi" id="f-result-after"
+          placeholder="After: ___" maxlength="160" autocomplete="off">
+      </div>
+
+      <div class="btn-row">
+        <button class="btn-p" id="s3-go">Continue to Pressure Test →</button>
+        <button class="btn-g" id="s3-back">Back</button>
+      </div>
+    </section>
+
+    <!-- STEP 4 — PRESSURE TEST -->
+    <section class="step-card" id="step-4" aria-label="Step 4: Pressure Test">
+      <div class="step-tag">Step 04</div>
+      <h2 class="step-title">Where this currently breaks</h2>
+      <p class="step-instr">This is not criticism. This is diagnosis. Every weak statement has a specific problem. Identifying it is the only way to fix it.</p>
+
+      <div class="ab">
+        <div class="ab-lbl">Statement under review</div>
+        <div class="ab-val em" id="s4-statement">—</div>
+      </div>
+
+      <div id="s4-friction-area" style="margin-top:20px"></div>
+
+      <div class="sep"></div>
+
+      <div class="ab" id="s4-clean-area" style="display:none">
+        <div class="ab-lbl">No critical issues found</div>
+        <div class="ab-row">
+          <div class="ab-val">The statement is specific enough to move forward. You can still refine in the next step.</div>
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn-p" id="s4-go">Continue to Lock Statement →</button>
+        <button class="btn-g" id="s4-back">Back</button>
+      </div>
+    </section>
+
+    <!-- STEP 5 — LOCK -->
+    <section class="step-card" id="step-5" aria-label="Step 5: Lock Statement">
+      <div class="step-tag">Step 05</div>
+      <h2 class="step-title">Lock the statement</h2>
+      <p class="step-instr">This is the version that does not change. Edit it until every word is accurate and none could be removed without losing meaning.</p>
+
+      <div class="artifact-block" id="s5-assembled">
+        <div class="artifact-lbl">Assembled statement</div>
+        <div class="artifact-primary" id="s5-assembled-text">—</div>
+        <div class="artifact-row">
+          <div class="artifact-key">Audience</div>
+          <div class="artifact-val" id="s5-audience">—</div>
+        </div>
+        <div class="artifact-row">
+          <div class="artifact-key">Result</div>
+          <div class="artifact-val" id="s5-result">—</div>
+        </div>
+        <div class="artifact-row" id="s5-before-after-wrap" style="display:none">
+          <div class="artifact-key">Before / After</div>
+          <div class="artifact-val" id="s5-before-after">—</div>
+        </div>
+      </div>
+
+      <div class="sep"></div>
+
+      <div class="fw" style="margin-top:0">
+        <label class="fl" for="f-locked">Your locked statement</label>
+        <span class="fl-sub">Edit the assembled version above until it is exactly right. Then copy it here.</span>
+        <textarea class="fta" id="f-locked" placeholder="The final, locked version of your core statement..." style="min-height:80px"></textarea>
+      </div>
+
+      <div class="fw">
+        <label class="fl" for="f-spoken">Spoken version</label>
+        <span class="fl-sub">How you would say it out loud in under 10 seconds when someone asks what you do.</span>
+        <input type="text" class="fi" id="f-spoken"
+          placeholder="When someone asks what you do..." maxlength="200" autocomplete="off">
+      </div>
+
+      <div class="btn-row">
+        <button class="btn-c" id="copy-statement">Copy Statement</button>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn-p" id="s5-go">Continue to Direction →</button>
+        <button class="btn-g" id="s5-back">Back</button>
+      </div>
+    </section>
+
+    <!-- STEP 6 — DIRECTION -->
+    <section class="step-card" id="step-6" aria-label="Step 6: Clarify Direction">
+      <div class="step-tag">Step 06</div>
+      <h2 class="step-title">What this is pointing toward</h2>
+      <p class="step-instr">Your statement is a signal. It tells you what kind of work this is, who it is actually for, and what it rules out. Name it clearly.</p>
+
+      <div class="fw">
+        <label class="fl" for="f-category">Category of work</label>
+        <span class="fl-sub">What type of work is this closest to? Advisory, consulting, coaching, done-for-you, training, creative, operational...</span>
+        <input type="text" class="fi" id="f-category"
+          placeholder="e.g. Strategic advisory, operational consulting, done-for-you..." maxlength="160" autocomplete="off">
+      </div>
+
+      <div class="fw">
+        <label class="fl" for="f-buyer">Buyer direction</label>
+        <span class="fl-sub">What type of buyer does this most naturally lead to? Individual, small team, company, founder...</span>
+        <input type="text" class="fi" id="f-buyer"
+          placeholder="e.g. Independent operators with existing revenue, founders..." maxlength="160" autocomplete="off">
+      </div>
+
+      <div class="fw">
+        <label class="fl" for="f-not">What this is not</label>
+        <span class="fl-sub">Naming the boundaries keeps the direction clean.</span>
+        <textarea class="fta" id="f-not" placeholder="This is not ___&#10;This does not include ___&#10;This is not for people who ___" style="min-height:80px"></textarea>
+      </div>
+
+      <div class="fw">
+        <label class="fl" for="f-still-weak">What is still weak or vague</label>
+        <span class="fl-sub">Optional. If something still feels off, name it here so Position can address it.</span>
+        <textarea class="fta" id="f-still-weak" placeholder="The part I am still uncertain about is ___" style="min-height:70px"></textarea>
+      </div>
+
+      <div id="s6-direction-output" style="display:none">
+        <div class="direction-grid">
+          <div class="direction-cell full" id="dc-statement"></div>
+          <div class="direction-cell" id="dc-category"></div>
+          <div class="direction-cell" id="dc-buyer"></div>
+          <div class="direction-cell full" id="dc-not"></div>
+          <div class="direction-cell full" id="dc-weak" style="display:none"></div>
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn-p" id="s6-go">Continue to Move Forward →</button>
+        <button class="btn-g" id="s6-back">Back</button>
+      </div>
+    </section>
+
+    <!-- STEP 7 — MOVE -->
+    <section class="step-card" id="step-7" aria-label="Step 7: Move Forward">
+      <div class="step-tag">Step 07</div>
+      <h2 class="step-title">Phase 01 complete</h2>
+      <p class="step-instr">You now have a defined statement, a clear audience, a real result, and a direction. The next job is placing that direction in the real world.</p>
+
+      <div class="completion-block">
+        <div class="completion-icon">✓</div>
+        <div class="completion-headline" id="s7-statement-display">—</div>
+        <p class="completion-sub">This statement is now locked. Position takes it into the market.</p>
+      </div>
+
+      <div class="artifact-block" style="margin-top:24px">
+        <div class="artifact-lbl">Phase 01 Artifact</div>
+        <div class="artifact-row">
+          <div class="artifact-key">Core Statement</div>
+          <div class="artifact-val strong" id="s7-locked">—</div>
+        </div>
+        <div class="artifact-row">
+          <div class="artifact-key">Spoken Version</div>
+          <div class="artifact-val" id="s7-spoken">—</div>
+        </div>
+        <div class="artifact-row">
+          <div class="artifact-key">Audience</div>
+          <div class="artifact-val" id="s7-audience">—</div>
+        </div>
+        <div class="artifact-row">
+          <div class="artifact-key">Result</div>
+          <div class="artifact-val" id="s7-result">—</div>
+        </div>
+        <div class="artifact-row">
+          <div class="artifact-key">Work Category</div>
+          <div class="artifact-val" id="s7-category">—</div>
+        </div>
+        <div class="artifact-row">
+          <div class="artifact-key">Buyer Direction</div>
+          <div class="artifact-val" id="s7-buyer">—</div>
+        </div>
+        <div class="artifact-row" id="s7-weak-row" style="display:none">
+          <div class="artifact-key">Still Needs Work</div>
+          <div class="artifact-val" id="s7-weak">—</div>
+        </div>
+      </div>
+
+      <div class="btn-row" style="margin-top:20px">
+        <button class="btn-c" id="copy-artifact">Copy All</button>
+        <button class="btn-g" id="export-btn">Export as Text</button>
+      </div>
+
+      <div class="sep"></div>
+
+      <div class="phase-gate">
+        <div class="phase-gate-lbl">Next Phase</div>
+        <p>Now that this is defined, it needs to be positioned in the real world. Position takes your statement and finds where it solves a problem people already pay to fix.</p>
+        <a href="/position" class="btn-p">Enter Phase 02 — Position →</a>
+      </div>
+
+      <div class="btn-row" style="margin-top:16px">
+        <button class="btn-d" id="btn-reset-p">Reset Phase</button>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- RIGHT OUTPUT PANEL -->
+  <aside id="out-panel" aria-label="Live output">
+    <div class="out-panel-lbl">Live Notes</div>
+    <div class="out-sec"><div class="out-key">Core Statement</div><div class="out-val statement empty" id="o-statement">—</div></div>
+    <div class="out-sec"><div class="out-key">Audience</div><div class="out-val empty" id="o-audience">—</div></div>
+    <div class="out-sec"><div class="out-key">Result</div><div class="out-val empty" id="o-result">—</div></div>
+    <div class="out-sec"><div class="out-key">Work Category</div><div class="out-val empty" id="o-category">—</div></div>
+    <div class="out-sec"><div class="out-key">Buyer Direction</div><div class="out-val empty" id="o-buyer">—</div></div>
+    <div class="out-sec"><div class="out-key">Friction Summary</div><div class="out-val empty" id="o-friction">—</div></div>
+    <div class="out-sec"><div class="out-key">Phase Status</div><div class="out-val empty" id="o-status">In progress</div></div>
+  </aside>
+
+</div><!-- /app-shell -->
+
 <script>
 (function () {
-  'use strict';
+'use strict';
 
-  var heroStart     = document.getElementById('hero-start');
-  var buildBtn      = document.getElementById('build-btn');
-  var resetBtn      = document.getElementById('reset-btn');
-  var toolSection   = document.getElementById('tool-section');
-  var outputSection = document.getElementById('output-section');
-  var outputText    = document.getElementById('output-text');
-  var frictionSection = document.getElementById('friction-section');
-  var frictionTagWrap = document.getElementById('friction-tag-wrap');
-  var frictionLabel   = document.getElementById('friction-label');
+/* ============================================================
+   CURSOR
+   ============================================================ */
 
-  var fDo     = document.getElementById('f-do');
-  var fWho    = document.getElementById('f-who');
-  var fResult = document.getElementById('f-result');
+var csr = document.getElementById('cursor');
+var csrR = document.getElementById('cursor-ring');
+var mx=0,my=0,rx=0,ry=0;
+var mob = window.innerWidth < 960;
 
-  heroStart.addEventListener('click', function () {
-    toolSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    setTimeout(function () { fDo.focus(); }, 340);
+if (!mob) {
+  document.addEventListener('mousemove',function(e){ mx=e.clientX;my=e.clientY;csr.style.left=mx+'px';csr.style.top=my+'px'; });
+  (function loop(){ rx+=(mx-rx)*0.12;ry+=(my-ry)*0.12;csrR.style.left=rx+'px';csrR.style.top=ry+'px';requestAnimationFrame(loop); })();
+  document.addEventListener('mousedown',function(){ csr.classList.add('active'); });
+  document.addEventListener('mouseup',function(){ csr.classList.remove('active'); });
+  document.querySelectorAll('button,a,input,textarea,select,[tabindex]').forEach(function(el){
+    el.addEventListener('mouseenter',function(){ csrR.classList.add('hover'); });
+    el.addEventListener('mouseleave',function(){ csrR.classList.remove('hover'); });
   });
+}
 
-  // Detect friction patterns in the output
-  function detectFriction(doVal, whoVal, resultVal) {
-    var issues = [];
+/* ============================================================
+   STATE + PERSISTENCE
+   ============================================================ */
 
-    // Too broad — very short or entirely generic
-    var doWords = doVal.trim().split(/\s+/).length;
-    if (doWords <= 3) {
-      issues.push({
-        tag: 'Too broad',
-        label: 'What you do is not specific enough. Anyone could say this. Add what makes yours different.'
-      });
-    }
+var KEY = 'sth_cap_v1';
+var DEF = {
+  step:1, done:[],
+  do_:'',versions:'',
+  who:'',whoNot:'',whyWho:'',
+  result:'',before_:'',after_:'',
+  locked:'',spoken:'',
+  category:'',buyer:'',notWhat:'',stillWeak:''
+};
 
-    // Unclear audience
-    if (!whoVal || whoVal.trim().split(/\s+/).length <= 2) {
-      issues.push({
-        tag: 'Unclear audience',
-        label: 'Who this is for is not defined. A broad audience means no one feels spoken to.'
-      });
-    }
+var S = (function(){
+  try {
+    var r = localStorage.getItem(KEY);
+    if (!r) return JSON.parse(JSON.stringify(DEF));
+    return Object.assign({},DEF,JSON.parse(r));
+  } catch(e){ return JSON.parse(JSON.stringify(DEF)); }
+})();
 
-    // Unclear outcome
-    if (!resultVal || resultVal.trim().split(/\s+/).length <= 2) {
-      issues.push({
-        tag: 'Unclear outcome',
-        label: 'What changes for them is not specific. The result needs to be something concrete, not a feeling.'
-      });
-    }
+function save(){ try{ localStorage.setItem(KEY,JSON.stringify(S)); }catch(e){} }
 
-    // Too much — conjunctions suggesting multiple things
-    if ((doVal + ' ' + whoVal).toLowerCase().match(/\band\b.*\band\b/)) {
-      issues.push({
-        tag: 'Trying to include too much',
-        label: 'This is doing more than one thing. Pick the one that matters most right now.'
-      });
-    }
+function hardReset(){
+  if(!confirm('Reset all Phase 01 progress? This cannot be undone.')) return;
+  localStorage.removeItem(KEY);
+  S=JSON.parse(JSON.stringify(DEF));
+  restoreAll();
+  showStep(1,false);
+  updatePanel();
+  toast('Phase 01 reset.');
+}
 
-    return issues;
+/* ============================================================
+   OVERLAY
+   ============================================================ */
+
+var overlay = document.getElementById('entry-overlay');
+
+function dismissOverlay(){
+  overlay.style.transition='opacity 0.5s ease';
+  overlay.style.opacity='0';
+  overlay.style.pointerEvents='none';
+  setTimeout(function(){ overlay.style.display='none'; },500);
+  document.getElementById('app-shell').classList.add('visible');
+}
+
+document.getElementById('entry-start').addEventListener('click',dismissOverlay);
+document.getElementById('entry-skip').addEventListener('click',dismissOverlay);
+
+/* ============================================================
+   NAVIGATION
+   ============================================================ */
+
+var LABELS=['Extract','Audience','Result','Pressure Test','Lock','Direction','Move Forward'];
+
+function showStep(n,animate){
+  S.step=n; save();
+  document.querySelectorAll('.step-card').forEach(function(c){ c.classList.remove('active'); });
+  var card=document.getElementById('step-'+n);
+  if(card){ card.classList.add('active'); if(animate!==false) setTimeout(function(){ card.scrollIntoView({behavior:'smooth',block:'start'}); },60); }
+  renderRail(); renderDoneStack();
+}
+
+function completeStep(n){
+  if(S.done.indexOf(n)<0) S.done.push(n);
+  save(); showStep(n+1,true); updatePanel();
+}
+
+function renderRail(){
+  document.querySelectorAll('.step-nav-item').forEach(function(el){
+    var n=parseInt(el.dataset.step);
+    el.classList.toggle('active',n===S.step);
+    el.classList.toggle('done',S.done.indexOf(n)>-1);
+  });
+}
+
+var STEP_SUMS = [
+  function(){ return S.do_?S.do_.substring(0,55):''; },
+  function(){ return S.who?S.who.substring(0,55):''; },
+  function(){ return S.result?S.result.substring(0,55):''; },
+  function(){ return 'Pressure test complete'; },
+  function(){ return S.locked?S.locked.substring(0,55):'Statement locked'; },
+  function(){ return S.category?S.category.substring(0,55):'Direction mapped'; },
+  function(){ return 'Phase 01 complete'; }
+];
+
+function renderDoneStack(){
+  var stack=document.getElementById('done-stack');
+  var sorted=S.done.slice().sort(function(a,b){ return a-b; });
+  if(!sorted.length){ stack.innerHTML=''; return; }
+  stack.innerHTML=sorted.map(function(n){
+    var lbl=LABELS[n-1]||'Step '+n;
+    var s=STEP_SUMS[n-1]?STEP_SUMS[n-1]():'';
+    return '<div class="done-card" onclick="gotoStep('+n+')">'
+      +'<div class="done-card-l"><div class="done-check">✓</div>'
+      +'<div><div class="done-lbl">'+esc(lbl)+'</div><div class="done-summ">'+esc(s)+'</div></div></div>'
+      +'<div class="done-edit">Edit</div></div>';
+  }).join('');
+}
+
+window.gotoStep=function(n){ showStep(n,true); };
+
+document.querySelectorAll('.step-nav-item').forEach(function(el){
+  el.addEventListener('click',function(){ showStep(parseInt(el.dataset.step),true); });
+  el.addEventListener('keydown',function(e){ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); showStep(parseInt(el.dataset.step),true); } });
+});
+
+/* ============================================================
+   FIELD BINDING
+   ============================================================ */
+
+function bind(id,key,cb){
+  var el=document.getElementById(id); if(!el) return;
+  el.value=S[key]||'';
+  el.addEventListener('input',function(){ S[key]=el.value; save(); if(cb) cb(); updatePanel(); });
+}
+
+function setText(id,v){ var el=document.getElementById(id); if(el) el.textContent=v||''; }
+function show(id){ var el=document.getElementById(id); if(el) el.style.display=''; }
+function hide(id){ var el=document.getElementById(id); if(el) el.style.display='none'; }
+function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+/* ============================================================
+   RESTORE
+   ============================================================ */
+
+function restoreAll(){
+  bind('f-do','do_',function(){ updateS1Preview(); buildAssembled(); runPressureTest(); });
+  bind('f-versions','versions',function(){ updateS1Preview(); });
+  bind('f-who','who',function(){ buildAssembled(); runPressureTest(); updatePanel(); });
+  bind('f-who-not','whoNot');
+  bind('f-who-why','whyWho');
+  bind('f-result','result',function(){ buildAssembled(); runPressureTest(); updatePanel(); });
+  bind('f-result-before','before_');
+  bind('f-result-after','after_');
+  bind('f-locked','locked',function(){ updatePanel(); syncStep7(); });
+  bind('f-spoken','spoken',function(){ updatePanel(); syncStep7(); });
+  bind('f-category','category',function(){ buildDirection(); syncStep7(); updatePanel(); });
+  bind('f-buyer','buyer',function(){ buildDirection(); syncStep7(); updatePanel(); });
+  bind('f-not','notWhat',function(){ buildDirection(); syncStep7(); });
+  bind('f-still-weak','stillWeak',function(){ buildDirection(); syncStep7(); updatePanel(); });
+
+  updateS1Preview();
+  buildAssembled();
+  runPressureTest();
+  buildDirection();
+  syncStep7();
+}
+
+/* ============================================================
+   STEP 1 — EXTRACT
+   ============================================================ */
+
+function updateS1Preview(){
+  var val=S.do_||'';
+  var prev=document.getElementById('s1-preview');
+  if(prev) prev.style.display=val?'':'none';
+  setText('s1-preview-text',val||'—');
+
+  var vWrap=document.getElementById('s1-versions-area');
+  if(vWrap) vWrap.style.display=S.versions?'':'none';
+  setText('s1-versions-text',S.versions||'');
+}
+
+document.getElementById('s1-go').addEventListener('click',function(){
+  if(!S.do_.trim()){ toast('Enter what you actually do.'); return; }
+  completeStep(1);
+});
+
+/* ============================================================
+   STEP 2 — AUDIENCE
+   ============================================================ */
+
+document.getElementById('s2-go').addEventListener('click',function(){
+  if(!S.who.trim()){ toast('Define who this is for.'); return; }
+  completeStep(2);
+});
+document.getElementById('s2-back').addEventListener('click',function(){ showStep(1,true); });
+
+/* ============================================================
+   STEP 3 — RESULT
+   ============================================================ */
+
+document.getElementById('s3-go').addEventListener('click',function(){
+  if(!S.result.trim()){ toast('Define what changes for them.'); return; }
+  completeStep(3);
+});
+document.getElementById('s3-back').addEventListener('click',function(){ showStep(2,true); });
+
+/* ============================================================
+   STEP 4 — PRESSURE TEST
+   ============================================================ */
+
+var VAGUE_WORDS=['everyone','everything','businesses','companies','success','growth','people','anyone','improve','enhance','better','help','support','assist','provide'];
+var ACTIVITY_WORDS=['doing','creating','making','building','producing','delivering','offering','providing'];
+var ABSTRACT=['clarity','transformation','change','growth','impact','results','value','potential','journey','process'];
+
+function runPressureTest(){
+  var combined=buildRawStatement();
+  setText('s4-statement',combined||'—');
+
+  var doVal=S.do_||'';
+  var whoVal=S.who||'';
+  var resVal=S.result||'';
+  var combined2=(doVal+' '+whoVal+' '+resVal).toLowerCase();
+
+  var issues=[];
+
+  /* Too broad */
+  if(VAGUE_WORDS.some(function(w){ return combined2.indexOf(' '+w+' ')>-1||combined2.indexOf(w+' ')===0; })){
+    issues.push({ tag:'Too broad', what:'One or more words in this statement could apply to almost any service. This prevents it from attracting the right people.', fix:'Replace the broad word with the specific version. Who specifically? What specifically changes?' });
   }
 
-  buildBtn.addEventListener('click', function () {
-    var doVal     = fDo.value.trim();
-    var whoVal    = fWho.value.trim();
-    var resultVal = fResult.value.trim();
+  /* Too short = not specific enough */
+  if(doVal.trim().split(/\s+/).length<5){
+    issues.push({ tag:'Under-defined', what:'The statement does not have enough specificity to be usable. It reads like a category, not a direction.', fix:'Extend it. What specifically do you do, for whom, using what approach or through what method?' });
+  }
 
-    if (!doVal) {
-      var orig = buildBtn.textContent;
-      buildBtn.textContent = 'Fill in the first field';
-      fDo.focus();
-      setTimeout(function () { buildBtn.textContent = orig; }, 1800);
-      return;
+  /* Abstract result */
+  if(ABSTRACT.some(function(w){ return resVal.toLowerCase().indexOf(w)>-1; })){
+    issues.push({ tag:'Abstract outcome', what:'The result is described in terms that are difficult to visualize or verify. Clarity and transformation are feelings, not outcomes.', fix:'Replace with something observable. What specifically is different? What can they do, build, earn, or stop worrying about?' });
+  }
+
+  /* Audience too broad */
+  if(!whoVal||whoVal.trim().split(/\s+/).length<=3){
+    issues.push({ tag:'Audience not defined', what:'The audience is either missing or so general that no specific person would feel it was written for them.', fix:'Name the type of person more specifically. What do they do? What stage are they at? What are they dealing with?' });
+  }
+
+  /* Activity not result */
+  if(doVal&&ACTIVITY_WORDS.some(function(w){ return doVal.toLowerCase().indexOf(w)>-1; })&&!resVal){
+    issues.push({ tag:'Activity without result', what:'The statement describes what you do, not what changes. Activity is not a value proposition.', fix:'Add the result. What does the person get, achieve, or stop experiencing because of this work?' });
+  }
+
+  /* Multiple audiences */
+  var andCount=(doVal+whoVal).toLowerCase().split(' and ').length-1;
+  if(andCount>=2){
+    issues.push({ tag:'Too many audiences or directions', what:'The statement is trying to include multiple things at once. When this is for multiple people with different problems, it works for none of them.', fix:'Choose one. Which buyer is most likely to pay? Start there. Position can refine further.' });
+  }
+
+  var area=document.getElementById('s4-friction-area');
+  var clean=document.getElementById('s4-clean-area');
+
+  if(issues.length===0){
+    if(area) area.innerHTML='';
+    if(clean) clean.style.display='';
+  } else {
+    if(clean) clean.style.display='none';
+    if(area){
+      area.innerHTML='<div class="friction-block"><div class="friction-lbl">Friction identified</div>'
+        +issues.map(function(i){
+          return '<div class="friction-item">'
+            +'<span class="friction-tag-el">'+esc(i.tag)+'</span>'
+            +'<p class="friction-what">'+esc(i.what)+'</p>'
+            +'<p class="friction-fix">Fix: '+esc(i.fix)+'</p>'
+            +'</div>';
+        }).join('')+'</div>';
     }
+  }
 
-    // Build statement
-    var statement = '';
-    var doClean = doVal.replace(/^i help\s+/i, '').replace(/^help\s+/i, '');
-    var whoClean = whoVal ? whoVal.replace(/^people who\s+/i, '').replace(/^who\s+/i, '') : '';
-    var resClean = resultVal ? resultVal.replace(/^so they can\s+/i, '').replace(/^so\s+/i, '') : '';
+  /* Update friction panel output */
+  var fricSum=issues.length===0?'No critical issues':issues.map(function(i){ return i.tag; }).join(', ');
+  setOut('o-friction',fricSum,issues.length>0);
+}
 
-    if (doClean && whoClean && resClean) {
-      statement = 'I help ' + doClean + ' for people who ' + whoClean + ' so they can ' + resClean + '.';
-    } else if (doClean && whoClean) {
-      statement = 'I help ' + doClean + ' for people who ' + whoClean + '.';
-    } else if (doClean && resClean) {
-      statement = 'I help ' + doClean + ' so they can ' + resClean + '.';
-    } else {
-      statement = doVal.charAt(0).toUpperCase() + doVal.slice(1);
-      if (statement[statement.length - 1] !== '.') { statement += '.'; }
-    }
+document.getElementById('s4-go').addEventListener('click',function(){
+  completeStep(4); buildAssembled();
+});
+document.getElementById('s4-back').addEventListener('click',function(){ showStep(3,true); });
 
-    statement = statement.charAt(0).toUpperCase() + statement.slice(1);
-    outputText.textContent = statement;
+/* ============================================================
+   STEP 5 — LOCK
+   ============================================================ */
 
-    // Detect friction
-    var issues = detectFriction(doVal, whoVal, resultVal);
-    if (issues.length > 0) {
-      var primary = issues[0];
-      frictionTagWrap.innerHTML = '<span class="friction-tag">' + primary.tag + '</span>';
-      frictionLabel.textContent = primary.label;
-      frictionSection.classList.remove('hidden');
-    } else {
-      frictionSection.classList.add('hidden');
-    }
+function buildAssembled(){
+  var raw=buildRawStatement();
+  setText('s5-assembled-text',raw||'—');
 
-    outputSection.classList.remove('hidden');
-    setTimeout(function () {
-      outputSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }, 60);
+  var whoClean=S.who?S.who.replace(/^people who\s*/i,''):'';
+  setText('s5-audience',whoClean||'—');
+
+  var resClean=S.result?S.result.replace(/^so they can\s*/i,''):'';
+  setText('s5-result',resClean||'—');
+
+  var baf=document.getElementById('s5-before-after-wrap');
+  if(S.before_&&S.after_){
+    if(baf) baf.style.display='';
+    setText('s5-before-after','Before: '+S.before_+' / After: '+S.after_);
+  } else {
+    if(baf) baf.style.display='none';
+  }
+
+  /* Auto-fill locked if empty */
+  var lockedEl=document.getElementById('f-locked');
+  if(lockedEl&&!lockedEl.value&&raw){
+    lockedEl.value=raw;
+    S.locked=raw; save();
+  }
+}
+
+function buildRawStatement(){
+  var doClean=(S.do_||'').replace(/^i help\s+/i,'').replace(/^help\s+/i,'');
+  var whoClean=(S.who||'').replace(/^people who\s+/i,'').replace(/^who\s+/i,'');
+  var resClean=(S.result||'').replace(/^so they can\s+/i,'').replace(/^so\s+/i,'');
+  if(!doClean) return '';
+  var s='I help '+doClean;
+  if(whoClean) s+=' for people who '+whoClean;
+  if(resClean) s+=' so they can '+resClean;
+  s=s.charAt(0).toUpperCase()+s.slice(1);
+  if(s[s.length-1]!=='.') s+='.';
+  return s;
+}
+
+document.getElementById('copy-statement').addEventListener('click',function(){
+  var el=document.getElementById('f-locked');
+  var text=el?el.value:S.locked;
+  copyText(text,document.getElementById('copy-statement'));
+});
+
+document.getElementById('s5-go').addEventListener('click',function(){
+  if(!S.locked.trim()){ toast('Lock your statement before continuing.'); return; }
+  completeStep(5); syncStep7();
+});
+document.getElementById('s5-back').addEventListener('click',function(){ showStep(4,true); });
+
+/* ============================================================
+   STEP 6 — DIRECTION
+   ============================================================ */
+
+function buildDirection(){
+  var area=document.getElementById('s6-direction-output');
+  if(!S.category&&!S.buyer&&!S.notWhat){ if(area) area.style.display='none'; return; }
+  if(area) area.style.display='';
+
+  var stmt=S.locked||buildRawStatement();
+  var dc=document.getElementById('dc-statement');
+  if(dc){ dc.innerHTML='<div class="direction-cell-lbl">Core Statement</div><div class="direction-cell-val"><em style="font-family:Cormorant Garamond,serif;font-style:italic;font-size:15px;color:var(--white)">'+esc(stmt)+'</em></div>'; }
+
+  buildDC('dc-category','Work Category',S.category);
+  buildDC('dc-buyer','Buyer Direction',S.buyer);
+  buildDC('dc-not','What This Is Not',S.notWhat);
+
+  var weakRow=document.getElementById('dc-weak');
+  if(S.stillWeak){ if(weakRow){ weakRow.style.display=''; buildDC('dc-weak','Still Needs Work',S.stillWeak); } }
+  else { if(weakRow) weakRow.style.display='none'; }
+}
+
+function buildDC(id,label,val){
+  var el=document.getElementById(id); if(!el) return;
+  if(!val){ el.style.display='none'; return; }
+  el.style.display='';
+  el.innerHTML='<div class="direction-cell-lbl">'+esc(label)+'</div><div class="direction-cell-val">'+esc(val)+'</div>';
+}
+
+document.getElementById('s6-go').addEventListener('click',function(){
+  if(!S.category.trim()&&!S.buyer.trim()){ toast('Name the work category or buyer direction before continuing.'); return; }
+  buildDirection(); completeStep(6); syncStep7();
+});
+document.getElementById('s6-back').addEventListener('click',function(){ showStep(5,true); });
+
+/* ============================================================
+   STEP 7 — SYNC + COMPLETE
+   ============================================================ */
+
+function syncStep7(){
+  var stmt=S.locked||buildRawStatement();
+  setText('s7-statement-display',stmt||'Your statement will appear here.');
+  setText('s7-locked',S.locked||stmt||'—');
+  setText('s7-spoken',S.spoken||'—');
+  var whoClean=(S.who||'').replace(/^people who\s*/i,'');
+  setText('s7-audience',whoClean||'—');
+  var resClean=(S.result||'').replace(/^so they can\s*/i,'');
+  setText('s7-result',resClean||'—');
+  setText('s7-category',S.category||'—');
+  setText('s7-buyer',S.buyer||'—');
+  var weakRow=document.getElementById('s7-weak-row');
+  if(S.stillWeak){ if(weakRow) weakRow.style.display=''; setText('s7-weak',S.stillWeak); }
+  else { if(weakRow) weakRow.style.display='none'; }
+}
+
+document.getElementById('copy-artifact').addEventListener('click',function(){
+  copyText(buildExport(),document.getElementById('copy-artifact'));
+});
+document.getElementById('export-btn').addEventListener('click',exportText);
+document.getElementById('btn-reset-p').addEventListener('click',hardReset);
+
+/* ============================================================
+   OUTPUT PANEL
+   ============================================================ */
+
+function setOut(id,val,warn){
+  var el=document.getElementById(id); if(!el) return;
+  if(val&&val!=='—'){ el.textContent=val; el.classList.remove('empty'); }
+  else { el.textContent='—'; el.classList.add('empty'); }
+  el.style.color=warn?'var(--terra)':'';
+}
+
+function updatePanel(){
+  var stmt=S.locked||buildRawStatement();
+  setOut('o-statement',stmt||null);
+  var whoClean=(S.who||'').replace(/^people who\s*/i,'');
+  setOut('o-audience',whoClean||null);
+  var resClean=(S.result||'').replace(/^so they can\s*/i,'');
+  setOut('o-result',resClean||null);
+  setOut('o-category',S.category||null);
+  setOut('o-buyer',S.buyer||null);
+  var stepsTotal=7;
+  var stepsD=S.done.length;
+  var statEl=document.getElementById('o-status');
+  if(statEl){
+    if(stepsD>=7){ statEl.textContent='Complete'; statEl.style.color='var(--gold)'; statEl.classList.remove('empty'); }
+    else if(stepsD>0){ statEl.textContent='Step '+S.step+' of '+stepsTotal; statEl.style.color=''; statEl.classList.remove('empty'); }
+    else { statEl.textContent='Not started'; statEl.classList.add('empty'); statEl.style.color=''; }
+  }
+}
+
+/* ============================================================
+   EXPORT
+   ============================================================ */
+
+function buildExport(){
+  var stmt=S.locked||buildRawStatement();
+  var whoClean=(S.who||'').replace(/^people who\s*/i,'');
+  var resClean=(S.result||'').replace(/^so they can\s*/i,'');
+  return [
+    'STEPHUARY — CAPTURE · PHASE 01','================================','',
+    'CORE STATEMENT',stmt||'(incomplete)','',
+    'SPOKEN VERSION',S.spoken||'(incomplete)','',
+    'AUDIENCE',whoClean||'(incomplete)','',
+    'RESULT',resClean||'(incomplete)','',
+    S.before_?'BEFORE\n'+S.before_:'',
+    S.after_?'AFTER\n'+S.after_:'',
+    'WORK CATEGORY',S.category||'(incomplete)','',
+    'BUYER DIRECTION',S.buyer||'(incomplete)','',
+    S.notWhat?'WHAT THIS IS NOT\n'+S.notWhat:'',
+    S.stillWeak?'STILL NEEDS WORK\n'+S.stillWeak:'',
+    '','NEXT PHASE','Position — /position'
+  ].filter(function(l){ return l!==false&&l!==undefined&&l!==null; }).join('\n');
+}
+
+function exportText(){
+  var blob=new Blob([buildExport()],{type:'text/plain'});
+  var url=URL.createObjectURL(blob);
+  var a=document.createElement('a');
+  a.href=url;a.download='stephuary-phase01-capture.txt';a.click();
+  URL.revokeObjectURL(url);
+  toast('Exported.');
+}
+
+/* ============================================================
+   COPY
+   ============================================================ */
+
+function copyText(text,btn){
+  navigator.clipboard.writeText(text||'').then(function(){
+    if(btn){ btn.textContent='Copied'; btn.classList.add('copied'); setTimeout(function(){ btn.textContent='Copy'; btn.classList.remove('copied'); },2200); }
+    toast('Copied to clipboard.');
+  }).catch(function(){
+    var t=document.createElement('textarea'); t.value=text||'';
+    document.body.appendChild(t);t.select();document.execCommand('copy');document.body.removeChild(t);
+    toast('Copied.');
   });
+}
 
-  resetBtn.addEventListener('click', function () {
-    fDo.value = '';
-    fWho.value = '';
-    fResult.value = '';
-    outputSection.classList.add('hidden');
-    frictionSection.classList.add('hidden');
-    toolSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    setTimeout(function () { fDo.focus(); }, 340);
-  });
+/* ============================================================
+   TOAST
+   ============================================================ */
 
-  // Tab through fields, Enter on last submits
-  var inputs = [fDo, fWho, fResult];
-  document.addEventListener('keydown', function (e) {
-    if (e.key !== 'Enter') { return; }
-    var idx = inputs.indexOf(document.activeElement);
-    if (idx >= 0 && idx < inputs.length - 1) {
-      inputs[idx + 1].focus();
-    } else if (idx === inputs.length - 1) {
-      buildBtn.click();
+function toast(msg){
+  var t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  clearTimeout(t._t); t._t=setTimeout(function(){ t.classList.remove('show'); },2800);
+}
+
+/* ============================================================
+   RAIL BUTTONS
+   ============================================================ */
+
+document.getElementById('rail-export').addEventListener('click',exportText);
+document.getElementById('rail-reset').addEventListener('click',hardReset);
+
+/* ============================================================
+   ENTER KEY NAV
+   ============================================================ */
+
+document.addEventListener('keydown',function(e){
+  if(e.key!=='Enter') return;
+  var active=document.activeElement;
+  if(!active||active.tagName==='TEXTAREA') return;
+  if(active.tagName==='INPUT'){
+    var btn=null;
+    switch(S.step){
+      case 1: btn=document.getElementById('s1-go'); break;
+      case 2: btn=document.getElementById('s2-go'); break;
+      case 3: btn=document.getElementById('s3-go'); break;
     }
-  });
-}());
+    if(btn) btn.click();
+  }
+});
+
+/* ============================================================
+   INIT
+   ============================================================ */
+
+window.addEventListener('load',function(){
+  restoreAll();
+  renderRail(); renderDoneStack();
+  showStep(S.step,false);
+  updatePanel();
+
+  if(S.done.length>0||S.do_) dismissOverlay();
+});
+
+})();
 </script>
 </body>
 </html>
