@@ -757,19 +757,6 @@
       margin-top: 10px;
     }
 
-    .execution-emphasis {
-      margin-top: 24px;
-      padding-top: 18px;
-      border-top: 1px solid var(--border);
-      max-width: 720px;
-      font-family: "DM Mono", monospace;
-      font-size: 10px;
-      letter-spacing: 0.11em;
-      line-height: 1.8;
-      color: var(--gold);
-      text-transform: uppercase;
-    }
-
     .execution-block {
       margin-top: 42px;
     }
@@ -869,7 +856,7 @@
 
     .execution-path-grid {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: 1fr 1fr 1fr;
       gap: 18px;
       margin-top: 26px;
     }
@@ -1159,39 +1146,12 @@
       gap: 14px;
     }
 
-    .tracker-feedback.on-track {
-      border-color: rgba(90, 173, 122, 0.42);
-      background: var(--green-soft);
-    }
-
-    .tracker-feedback.warning {
-      border-color: rgba(212, 146, 74, 0.42);
-      background: var(--amber-soft);
-    }
-
-    .tracker-feedback.low {
-      border-color: rgba(204, 102, 102, 0.42);
-      background: var(--red-soft);
-    }
-
     .tracker-dot {
       width: 8px;
       height: 8px;
       border-radius: 50%;
       flex-shrink: 0;
       background: var(--text-dim);
-    }
-
-    .tracker-feedback.on-track .tracker-dot {
-      background: var(--green);
-    }
-
-    .tracker-feedback.warning .tracker-dot {
-      background: var(--amber);
-    }
-
-    .tracker-feedback.low .tracker-dot {
-      background: var(--red);
     }
 
     .tracker-msg {
@@ -1619,9 +1579,12 @@
 
     @media (max-width: 1100px) {
       .diag-grid,
-      .products-grid,
-      .execution-path-grid {
+      .products-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .execution-path-grid {
+        grid-template-columns: 1fr;
       }
 
       .system-grid,
@@ -1656,17 +1619,14 @@
       .system-grid,
       .private-grid,
       .club-grid,
-      .footer-inner {
+      .footer-inner,
+      .execution-setup,
+      .execution-tracker-grid {
         grid-template-columns: 1fr;
       }
 
       .diag-result {
         padding: 34px 28px 38px;
-      }
-
-      .execution-setup,
-      .execution-tracker-grid {
-        grid-template-columns: 1fr;
       }
 
       .decision-row {
@@ -1720,7 +1680,6 @@
 
       .diag-grid,
       .products-grid,
-      .execution-path-grid,
       .execution-setup {
         grid-template-columns: 1fr;
       }
@@ -2168,7 +2127,6 @@
                         <option value="service">Service</option>
                         <option value="product">Product</option>
                         <option value="content">Content</option>
-                        <option value="hybrid">Hybrid</option>
                       </select>
                     </div>
                     <div class="execution-setup-row">
@@ -2180,7 +2138,7 @@
 
                 <div class="execution-block" id="paths-section">
                   <span class="execution-block-label">Revenue paths</span>
-                  <h3 class="execution-block-title" id="paths-headline">Select the path that fits</h3>
+                  <h3 class="execution-block-title">Select the path that fits</h3>
                   <div class="execution-path-grid" id="path-grid"></div>
                 </div>
 
@@ -2192,15 +2150,15 @@
                   <div class="execution-tracker-grid">
                     <div class="tracker-field">
                       <label class="tracker-label" for="t-actions">Actions today</label>
-                      <input id="t-actions" class="tracker-input" type="number" min="0" placeholder="0" />
+                      <input id="t-actions" class="tracker-input" type="number" min="0" value="0" />
                     </div>
                     <div class="tracker-field">
                       <label class="tracker-label" for="t-responses">Responses</label>
-                      <input id="t-responses" class="tracker-input" type="number" min="0" placeholder="0" />
+                      <input id="t-responses" class="tracker-input" type="number" min="0" value="0" />
                     </div>
                     <div class="tracker-field">
                       <label class="tracker-label" for="t-closes">Conversions</label>
-                      <input id="t-closes" class="tracker-input" type="number" min="0" placeholder="0" />
+                      <input id="t-closes" class="tracker-input" type="number" min="0" value="0" />
                     </div>
                   </div>
 
@@ -2380,16 +2338,6 @@
                     <p class="product-note">This is where scattered effort becomes a defined move.</p>
                     <p class="product-price">$1,500</p>
                     <a href="/founder-diagnostic" class="btn-blue">Get my path →</a>
-                  </article>
-
-                  <article class="product-card">
-                    <p class="product-tag">Playbooks</p>
-                    <h3 class="product-title">Use what already works.</h3>
-                    <p class="product-body">
-                      Revenue directions, models, and starting points designed to help you move
-                      faster with less blind experimentation.
-                    </p>
-                    <a href="/playbooks" class="btn-blue">View Playbooks →</a>
                   </article>
                 </div>
               </div>
@@ -2584,7 +2532,6 @@
             <li><a href="/focused-review">Focused Review</a></li>
             <li><a href="/snapshot">Snapshot</a></li>
             <li><a href="/founder-diagnostic">Founder Diagnostic</a></li>
-            <li><a href="/playbooks">Playbooks</a></li>
             <li><a href="/club">5% Club</a></li>
             <li><a href="mailto:hello@stephuary.com">Contact</a></li>
           </ul>
@@ -2695,386 +2642,216 @@
         });
       });
 
-      var paths = {
-        service: [
-          {
-            featured: true,
-            title: "Direct Outreach to Anchor Clients",
-            income: "$4k – $12k / month",
-            speed: "fast",
-            difficulty: "medium",
-            summary: "Target 3–5 clients who can each pay $1k–$4k monthly for a defined service. Close with a direct conversation, not a funnel.",
-            requires: ["Defined service with a clear deliverable", "LinkedIn or email list of 100+ warm contacts", "One-page offer description"],
-            daily: ["Send 15–25 targeted outreach messages", "Follow up every open thread within 24 hours", "Book 2 discovery calls per week minimum"],
-            tiers: [
-              { label: "Entry", price: "$500–$1k", note: "single deliverable" },
-              { label: "Retainer", price: "$2k–$4k", note: "monthly scope" },
-              { label: "Strategic", price: "$5k–$10k", note: "embedded advisory" }
-            ],
-            metrics: [
-              { name: "Reply rate", val: "8–15%" },
-              { name: "Call rate", val: "20–35% of replies" },
-              { name: "Closes", val: "1 per 60–100 messages" }
-            ],
-            constraints: ["Outreach must run daily, 5 days per week", "Every message must be personalized", "No templates sent verbatim"],
-            failure: ["Stopping outreach after one close", "Sending generic messages at volume", "Not following up more than once"],
-            steps: ["Write the one-sentence result you deliver", "Identify 50 specific people who need it", "Send 15 messages today"]
-          },
-          {
-            featured: false,
-            title: "Productized Service at Fixed Scope",
-            income: "$3k – $9k / month",
-            speed: "medium",
-            difficulty: "low",
-            summary: "Package a repeatable service into a fixed price, fixed scope offer. Sell the same thing to multiple clients without custom scoping each time.",
-            requires: ["A service you have completed more than 3 times", "Defined deliverables with a fixed timeline", "One-paragraph description of the offer"],
-            daily: ["Post one piece of content showing a result", "Send 5–10 targeted outreach messages", "Respond to all inquiries within 4 hours"],
-            tiers: [
-              { label: "Starter", price: "$500–$1k", note: "single output" },
-              { label: "Core", price: "$1.5k–$3k", note: "standard package" },
-              { label: "Premium", price: "$4k–$6k", note: "expanded scope" }
-            ],
-            metrics: [
-              { name: "Inbound rate", val: "3–7% of content reach" },
-              { name: "Inquiry to close", val: "25–40%" },
-              { name: "Closes", val: "2–4 per month at scale" }
-            ],
-            constraints: ["Scope cannot expand without repricing", "Deliver on the exact timeline stated", "No custom work inside the package"],
-            failure: ["Scope growing without renegotiation", "Underpricing to close faster", "Not documenting the delivery process"],
-            steps: ["Name the deliverable and write the scope in 3 sentences", "Set the price and the timeline", "Send it to 10 people today"]
-          },
-          {
-            featured: false,
-            title: "Fractional Advisory Retainer",
-            income: "$5k – $15k / month",
-            speed: "slow",
-            difficulty: "high",
-            summary: "Sell 4–8 hours per week of senior advisory time to companies who need the expertise without a full-time hire.",
-            requires: ["10+ years of verifiable expertise in one domain", "Professional network with decision-maker access", "Clear statement of what you prevent or accelerate"],
-            daily: ["Have one strategic conversation per day", "Publish one insight or observation per week", "Stay in contact with 20+ senior contacts"],
-            tiers: [
-              { label: "Light", price: "$2k–$3k", note: "4 hrs/week" },
-              { label: "Core", price: "$5k–$8k", note: "8 hrs/week" },
-              { label: "Deep", price: "$10k–$15k", note: "embedded weekly" }
-            ],
-            metrics: [
-              { name: "Referral close rate", val: "40–60%" },
-              { name: "Cold close rate", val: "5–10%" },
-              { name: "Average engagement", val: "6–18 months" }
-            ],
-            constraints: ["Consistent thought leadership visibility is required", "Cannot serve competing clients in the same vertical", "Must deliver documented insights, not hours alone"],
-            failure: ["Being available without boundaries", "Underdefining what advisory actually produces", "Stopping visibility once booked"],
-            steps: ["Write what you prevent companies from doing wrong", "Identify 5 companies in your network with that problem", "Ask for a 30-minute call this week"]
-          }
-        ],
-        product: [
-          {
-            featured: true,
-            title: "Digital Product + Community Funnel",
-            income: "$3k – $10k / month",
-            speed: "medium",
-            difficulty: "medium",
-            summary: "Sell a low-cost digital product at volume through content and community. Use that audience to sell a higher-ticket tier.",
-            requires: ["One finished digital product ready to sell", "Gumroad or equivalent payment platform", "Active presence on one platform with 500+ followers"],
-            daily: ["Post 1 piece of content that drives to the product", "Engage with 30–50 comments or replies", "Track sales and traffic source daily"],
-            tiers: [
-              { label: "Entry", price: "$27–$97", note: "digital product" },
-              { label: "Mid", price: "$197–$497", note: "expanded bundle" },
-              { label: "High", price: "$997–$2k", note: "advisory or community" }
-            ],
-            metrics: [
-              { name: "Content to click rate", val: "1–3%" },
-              { name: "Page conversion", val: "2–5%" },
-              { name: "Upsell rate", val: "10–20% of buyers" }
-            ],
-            constraints: ["Posting must be daily. Consistency is the mechanism.", "Product must deliver value in under 30 minutes", "Upsell must be offered within 48 hours of purchase"],
-            failure: ["Inconsistent content volume", "Product that overpromises and underdelivers", "No clear path from entry to next tier"],
-            steps: ["Confirm the product is listed and the checkout works", "Write 5 posts that show what the product solves", "Publish the first one today"]
-          },
-          {
-            featured: false,
-            title: "Template or Systems Library",
-            income: "$1k – $5k / month",
-            speed: "slow",
-            difficulty: "low",
-            summary: "Build a library of templates, frameworks, or systems from your own practice. Sell as a bundle. Update quarterly.",
-            requires: ["Repeatable frameworks from your own work", "Platform: Gumroad, Notion, or equivalent", "One strong lead magnet to bring buyers in"],
-            daily: ["Drive 100+ people to the product page through content", "Collect and act on buyer feedback", "Add one new template per week"],
-            tiers: [
-              { label: "Single", price: "$17–$47", note: "one template" },
-              { label: "Pack", price: "$67–$127", note: "5–10 templates" },
-              { label: "Library", price: "$197–$397", note: "full access" }
-            ],
-            metrics: [
-              { name: "Organic traffic to sales", val: "1–2%" },
-              { name: "Paid traffic to sales", val: "0.5–1.5%" },
-              { name: "Return buyer rate", val: "20–35%" }
-            ],
-            constraints: ["Templates must be immediately usable without explanation", "Library must be updated at least quarterly", "Every template needs a clear outcome statement"],
-            failure: ["Templates that require too much customization to use", "No ongoing content driving traffic", "Pricing too low to sustain the production work"],
-            steps: ["Identify the 3 most useful frameworks from your current practice", "Convert them into clean, immediately usable formats", "List the first one for sale this week"]
-          }
-        ],
-        content: [
-          {
-            featured: true,
-            title: "Newsletter + Paid Tier",
-            income: "$2k – $8k / month",
-            speed: "slow",
-            difficulty: "medium",
-            summary: "Build a free newsletter to 1k+ subscribers. Convert 3–5% to a paid tier. Grow through consistent, specific publishing.",
-            requires: ["Substack or equivalent ready to publish", "A defined niche with a specific reader", "Commitment to weekly publishing, no gaps"],
-            daily: ["Write or outline the next issue", "Share one excerpt publicly on one platform", "Engage with 10+ replies or comments from readers"],
-            tiers: [
-              { label: "Free", price: "$0", note: "list building" },
-              { label: "Paid", price: "$10–$20/mo", note: "per subscriber" },
-              { label: "Annual", price: "$100–$200", note: "discounted access" }
-            ],
-            metrics: [
-              { name: "Free to paid conversion", val: "3–8%" },
-              { name: "Open rate target", val: "40%+" },
-              { name: "Revenue at 1k subscribers", val: "$300–$1.6k/mo" }
-            ],
-            constraints: ["Publishing must run on a fixed schedule. No exceptions.", "Paid tier must contain something the free tier does not", "Growth requires active promotion, not just publishing"],
-            failure: ["Inconsistent publishing schedule", "Paid tier with no real differentiation", "No promotion strategy beyond the newsletter itself"],
-            steps: ["Define the reader and what they get from every issue", "Write and publish the first issue this week", "Set the paid tier price and write the upgrade offer"]
-          },
-          {
-            featured: false,
-            title: "Content to Consulting Pipeline",
-            income: "$5k – $18k / month",
-            speed: "medium",
-            difficulty: "medium",
-            summary: "Publish content that demonstrates expertise. Convert inbound interest into consulting engagements at $3k–$10k each.",
-            requires: ["An audience of 500+ on one platform", "A consulting offer with defined scope and price", "Booking or intake systems active and ready"],
-            daily: ["Publish one piece of content per day", "Reply to every comment and DM within 24 hours", "Reference your consulting availability once per week"],
-            tiers: [
-              { label: "Audit", price: "$1k–$2.5k", note: "one-time" },
-              { label: "Project", price: "$3k–$7k", note: "defined scope" },
-              { label: "Retainer", price: "$5k–$10k", note: "monthly" }
-            ],
-            metrics: [
-              { name: "Content to DM rate", val: "0.5–2%" },
-              { name: "DM to call rate", val: "30–50%" },
-              { name: "Call to close rate", val: "25–40%" }
-            ],
-            constraints: ["Content must show specific results, not general thinking", "Every piece of content must have a clear next step", "Response time must be under 24 hours, always"],
-            failure: ["Content that educates but does not demonstrate", "No clear offer for people ready to hire", "Slow response time losing warm leads"],
-            steps: ["Write one post this week showing a specific result you achieved", "Add one sentence at the end: how to work with you", "Set up a booking link and place it somewhere visible"]
-          }
-        ],
-        hybrid: [
-          {
-            featured: true,
-            title: "Service Anchor + Digital Product Backend",
-            income: "$6k – $20k / month",
-            speed: "medium",
-            difficulty: "high",
-            summary: "Carry 2–3 service clients at $2k–$5k/month as the primary income floor. Build a digital product in the same domain for volume and inbound.",
-            requires: ["Active service with at least 1 paying client", "A product concept that comes directly from service work", "Time blocked weekly for both streams"],
-            daily: ["Service work for existing clients first", "One piece of content per day referencing both offer types", "Track client results to feed product content"],
-            tiers: [
-              { label: "Product", price: "$27–$97", note: "entry, inbound" },
-              { label: "Service", price: "$2k–$5k", note: "core revenue floor" },
-              { label: "Bundled", price: "$8k–$15k", note: "product + service" }
-            ],
-            metrics: [
-              { name: "Service capacity", val: "3–5 clients max" },
-              { name: "Product volume needed", val: "30–100 sales/month" },
-              { name: "Combined monthly target", val: "$8k–$15k" }
-            ],
-            constraints: ["Service clients get full attention first. Products fill gaps.", "Product must not require active delivery", "Cannot scale both at the same rate initially"],
-            failure: ["Trying to grow both simultaneously at the same pace", "Service quality dropping due to product focus", "No defined boundary between service and product scope"],
-            steps: ["Identify what you do for every service client that could become a product", "Build one version of that product", "Offer it to existing clients as an add-on first"]
-          },
-          {
-            featured: false,
-            title: "Community Funnel to High-Ticket",
-            income: "$8k – $25k / month",
-            speed: "slow",
-            difficulty: "high",
-            summary: "Build a free or low-cost community around a specific topic. Sell high-ticket advisory or group programs to the top 5–10%.",
-            requires: ["A community topic with a defined, specific audience", "Platform: Circle, Slack, Discord, or Substack", "A high-ticket offer at $3k+ ready to sell"],
-            daily: ["Post one piece of value inside the community", "Have 5+ direct conversations with members", "Identify and engage top members individually"],
-            tiers: [
-              { label: "Community", price: "Free–$20/mo", note: "access" },
-              { label: "Group program", price: "$1k–$3k", note: "cohort" },
-              { label: "1:1 or advisory", price: "$5k–$15k", note: "high-ticket" }
-            ],
-            metrics: [
-              { name: "Free to paid conversion", val: "5–10%" },
-              { name: "Community to high-ticket", val: "1–3%" },
-              { name: "Monthly community needed", val: "200+ active members" }
-            ],
-            constraints: ["Community requires active moderation and curation", "High-ticket offer must be earned through trust, not pushed", "Consistent presence is non-negotiable"],
-            failure: ["Launching high-ticket before community trust is established", "Going quiet inside the community", "Community growing with no conversion path active"],
-            steps: ["Define the community topic in one sentence", "Invite 20 specific people to join this week", "Set up the free tier and write the welcome message"]
-          }
-        ]
-      };
+      var executionCards = [
+        {
+          featured: true,
+          income: "$4k – $12k / month",
+          title: "Direct Outreach to Anchor Clients",
+          speed: "Fast",
+          difficulty: "Medium difficulty",
+          summary: "Target 3–5 clients who can each pay $1k–$4k monthly for a defined service. Close with a direct conversation, not a funnel.",
+          requires: [
+            "Defined service with a clear deliverable",
+            "LinkedIn or email list of 100+ warm contacts",
+            "One-page offer description"
+          ],
+          daily: [
+            "Send 15–25 targeted outreach messages",
+            "Follow up every open thread within 24 hours",
+            "Book 2 discovery calls per week minimum"
+          ],
+          revenue: [
+            "Entry · $500–$1k · single deliverable",
+            "Retainer · $2k–$4k · monthly scope",
+            "Strategic · $5k–$10k · embedded advisory"
+          ],
+          metrics: [
+            "Reply rate · 8–15%",
+            "Call rate · 20–35% of replies",
+            "Closes · 1 per 60–100 messages"
+          ],
+          constraints: [
+            "Outreach must run daily, 5 days per week",
+            "Every message must be personalized",
+            "No templates sent verbatim"
+          ],
+          failure: [
+            "Stopping outreach after one close",
+            "Sending generic messages at volume",
+            "Not following up more than once"
+          ],
+          steps: [
+            "Write the one-sentence result you deliver",
+            "Identify 50 specific people who need it",
+            "Send 15 messages today"
+          ]
+        },
+        {
+          featured: false,
+          income: "$3k – $10k / month",
+          title: "Digital Product + Community Funnel",
+          speed: "Medium",
+          difficulty: "Medium difficulty",
+          summary: "Sell a low-cost digital product at volume through content and community. Use that audience to sell a higher-ticket tier.",
+          requires: [
+            "One finished digital product ready to sell",
+            "Payment platform ready",
+            "Active presence on one platform with 500+ followers"
+          ],
+          daily: [
+            "Post 1 piece of content that drives to the product",
+            "Engage with 30–50 comments or replies",
+            "Track sales and traffic source daily"
+          ],
+          revenue: [
+            "Entry · $27–$97 · digital product",
+            "Mid · $197–$497 · expanded bundle",
+            "High · $997–$2k · advisory or community"
+          ],
+          metrics: [
+            "Content to click rate · 1–3%",
+            "Page conversion · 2–5%",
+            "Upsell rate · 10–20% of buyers"
+          ],
+          constraints: [
+            "Posting must be daily",
+            "Product must deliver value in under 30 minutes",
+            "Upsell must be offered within 48 hours of purchase"
+          ],
+          failure: [
+            "Inconsistent content volume",
+            "Product that overpromises and underdelivers",
+            "No clear path from entry to next tier"
+          ],
+          steps: [
+            "Confirm the product is listed and checkout works",
+            "Write 5 posts that show what the product solves",
+            "Publish the first one today"
+          ]
+        },
+        {
+          featured: false,
+          income: "$2k – $8k / month",
+          title: "Newsletter + Paid Tier",
+          speed: "Slow",
+          difficulty: "Medium difficulty",
+          summary: "Build a free newsletter to 1k+ subscribers. Convert 3–5% to a paid tier. Grow through consistent, specific publishing.",
+          requires: [
+            "Newsletter platform ready to publish",
+            "A defined niche with a specific reader",
+            "Commitment to weekly publishing"
+          ],
+          daily: [
+            "Write or outline the next issue",
+            "Share one excerpt publicly on one platform",
+            "Engage with 10+ replies or comments from readers"
+          ],
+          revenue: [
+            "Free · $0 · list building",
+            "Paid · $10–$20/mo · per subscriber",
+            "Annual · $100–$200 · discounted access"
+          ],
+          metrics: [
+            "Free to paid conversion · 3–8%",
+            "Open rate target · 40%+",
+            "Revenue at 1k subscribers · $300–$1.6k/mo"
+          ],
+          constraints: [
+            "Publishing must run on a fixed schedule",
+            "Paid tier must contain something the free tier does not",
+            "Growth requires active promotion"
+          ],
+          failure: [
+            "Inconsistent publishing schedule",
+            "Paid tier with no real differentiation",
+            "No promotion strategy beyond the newsletter itself"
+          ],
+          steps: [
+            "Define the reader and what they get from every issue",
+            "Write and publish the first issue this week",
+            "Set the paid tier price and write the upgrade offer"
+          ]
+        }
+      ];
 
-      function cap(value) {
-        return value.charAt(0).toUpperCase() + value.slice(1);
-      }
-
-      function speedBadge(speed) {
-        var cls = speed === "fast" ? "badge-fast" : speed === "slow" ? "badge-slow" : "badge-medium";
-        return '<span class="badge ' + cls + '"><span class="badge-dot"></span>' + cap(speed) + "</span>";
-      }
-
-      function diffBadge(level) {
-        var cls = level === "low" ? "badge-low" : level === "high" ? "badge-high" : "badge-medium";
-        return '<span class="badge ' + cls + '">' + cap(level) + " difficulty</span>";
-      }
-
-      function cardSection(name, content) {
+      function sectionMarkup(title, items, extraClass) {
+        var listClass = extraClass ? "micro-list " + extraClass : "micro-list";
         return '<div class="path-section">' +
           '<button class="path-section-toggle" type="button">' +
-          '<span class="path-section-name">' + name + "</span>" +
+          '<span class="path-section-name">' + title + '</span>' +
           '<span class="path-section-arrow">&#9650;</span>' +
-          "</button>" +
-          '<div class="path-section-content">' + content + "</div>" +
-          "</div>";
+          '</button>' +
+          '<div class="path-section-content"><ul class="' + listClass + '">' +
+          items.map(function (item) { return "<li>" + item + "</li>"; }).join("") +
+          '</ul></div></div>';
       }
 
-      function buildCard(path) {
-        var el = document.createElement("div");
-        el.className = "path-card" + (path.featured ? " featured" : "");
-
-        var requiresHtml = path.requires.map(function (item) { return "<li>" + item + "</li>"; }).join("");
-        var dailyHtml = path.daily.map(function (item) { return "<li>" + item + "</li>"; }).join("");
-        var tiersHtml = path.tiers.map(function (item) {
-          return '<div class="tier-item"><span class="tier-label">' + item.label + '</span><span class="tier-price">' + item.price + '</span><span class="tier-note">' + item.note + "</span></div>";
-        }).join("");
-        var metricsHtml = path.metrics.map(function (item) {
-          return '<div class="metric-item"><span class="metric-name">' + item.name + '</span><span class="metric-val">' + item.val + "</span></div>";
-        }).join("");
-        var constraintsHtml = path.constraints.map(function (item) { return "<li>" + item + "</li>"; }).join("");
-        var failureHtml = path.failure.map(function (item) { return "<li>" + item + "</li>"; }).join("");
-        var stepsHtml = path.steps.map(function (item, index) {
-          return "<li><strong>" + (index + 1) + ".</strong> " + item + "</li>";
-        }).join("");
-
-        el.innerHTML =
+      function buildPathCard(card) {
+        var element = document.createElement("article");
+        element.className = "path-card" + (card.featured ? " featured" : "");
+        element.innerHTML =
           '<div class="path-card-header">' +
-          '<div class="path-income">' + path.income + "</div>" +
-          '<div class="path-title">' + path.title + "</div>" +
-          '<div class="badge-row">' + speedBadge(path.speed) + diffBadge(path.difficulty) + "</div>" +
-          '<p class="path-summary">' + path.summary + "</p>" +
-          "</div>" +
+            '<p class="path-income">' + card.income + '</p>' +
+            '<p class="path-title">' + card.title + '</p>' +
+            '<div class="badge-row">' +
+              '<span class="badge ' + (card.speed === "Fast" ? "badge-fast" : card.speed === "Slow" ? "badge-slow" : "badge-medium") + '">' +
+                (card.speed === "Fast" || card.speed === "Medium" ? '<span class="badge-dot"></span>' : '<span class="badge-dot"></span>') + card.speed +
+              '</span>' +
+              '<span class="badge badge-medium">' + card.difficulty + '</span>' +
+            '</div>' +
+            '<p class="path-summary">' + card.summary + '</p>' +
+          '</div>' +
           '<div class="path-card-body">' +
-          cardSection("Requires", '<ul class="micro-list">' + requiresHtml + "</ul>") +
-          cardSection("Daily actions", '<ul class="micro-list">' + dailyHtml + "</ul>") +
-          cardSection("Revenue model", '<div class="tier-row">' + tiersHtml + "</div>") +
-          cardSection("Expected metrics", '<div class="metric-row">' + metricsHtml + "</div>") +
-          cardSection("Constraints", '<ul class="micro-list">' + constraintsHtml + "</ul>") +
-          cardSection("Failure points", '<ul class="micro-list danger">' + failureHtml + "</ul>") +
-          cardSection("First 3 steps", '<ul class="micro-list steps">' + stepsHtml + "</ul>") +
-          "</div>" +
-          '<div class="path-card-cta"><button class="btn-blue" type="button" style="width:100%;">Run this path</button></div>';
+            sectionMarkup("Requires", card.requires) +
+            sectionMarkup("Daily actions", card.daily) +
+            sectionMarkup("Revenue model", card.revenue) +
+            sectionMarkup("Expected metrics", card.metrics) +
+            sectionMarkup("Constraints", card.constraints) +
+            sectionMarkup("Failure points", card.failure, "danger") +
+            sectionMarkup("First 3 steps", card.steps, "steps") +
+          '</div>' +
+          '<div class="path-card-cta">' +
+            '<button class="btn-blue" type="button" style="width:100%;">Run this path</button>' +
+          '</div>';
 
-        Array.prototype.slice.call(el.querySelectorAll(".path-section-toggle")).forEach(function (toggle) {
+        Array.prototype.slice.call(element.querySelectorAll(".path-section-toggle")).forEach(function (toggle) {
           toggle.addEventListener("click", function () {
-            toggle.closest(".path-section").classList.toggle("open");
+            toggle.parentNode.classList.toggle("open");
           });
         });
 
-        return el;
+        return element;
       }
 
-      function renderPaths(type) {
+      function renderExecutionCards() {
         var grid = document.getElementById("path-grid");
         if (!grid) return;
         grid.innerHTML = "";
-        var list = paths[type] || paths.service;
-        list.forEach(function (path) {
-          grid.appendChild(buildCard(path));
+        executionCards.forEach(function (card) {
+          grid.appendChild(buildPathCard(card));
         });
       }
 
-      function renderDefaultPaths() {
-        var grid = document.getElementById("path-grid");
-        if (!grid) return;
-        grid.innerHTML = "";
-        [paths.service[0], paths.product[0], paths.content[0], paths.hybrid[0]].forEach(function (path) {
-          grid.appendChild(buildCard(path));
-        });
-      }
-
-      renderDefaultPaths();
+      renderExecutionCards();
 
       var runButton = document.getElementById("run-paths-btn");
       if (runButton) {
         runButton.addEventListener("click", function () {
-          var offer = document.getElementById("s-offer").value.trim();
-          var type = document.getElementById("s-type").value;
+          var skillType = document.getElementById("s-type");
           var hint = document.getElementById("run-hint");
-          var headline = document.getElementById("paths-headline");
-          var section = document.getElementById("paths-section");
-
-          if (!type) {
+          if (skillType && !skillType.value) {
             hint.textContent = "Select a skill type to continue.";
             window.setTimeout(function () {
               hint.textContent = "";
             }, 2000);
             return;
           }
-
-          headline.textContent = offer ? "Paths for: " + offer : cap(type) + " paths";
-          renderPaths(type);
-
-          window.setTimeout(function () {
-            if (section) {
-              section.scrollIntoView({ behavior: "smooth", block: "start" });
-            }
-          }, 60);
+          var target = document.getElementById("paths-section");
+          if (target) {
+            target.scrollIntoView({ behavior: "smooth", block: "start" });
+          }
         });
       }
-
-      function evaluateTracker() {
-        var actions = parseInt(document.getElementById("t-actions").value, 10) || 0;
-        var responses = parseInt(document.getElementById("t-responses").value, 10) || 0;
-        var closes = parseInt(document.getElementById("t-closes").value, 10) || 0;
-        var feedback = document.getElementById("tracker-feedback");
-        if (!feedback) return;
-        var message = feedback.querySelector(".tracker-msg");
-
-        if (actions === 0 && responses === 0 && closes === 0) {
-          feedback.className = "tracker-feedback";
-          message.textContent = "Log your numbers. The path reads your execution.";
-          return;
-        }
-
-        var replyRate = actions > 0 ? responses / actions : 0;
-        var closeRate = responses > 0 ? closes / responses : 0;
-
-        if (actions < 10) {
-          feedback.className = "tracker-feedback low";
-          message.textContent = "Volume is too low. The path requires 15–25 actions per day. Increase output before changing anything else.";
-        } else if (replyRate < 0.05 && actions >= 15) {
-          feedback.className = "tracker-feedback warning";
-          message.textContent = "Reply rate is below 5%. Targeting is off. Change who you are reaching before you change the message.";
-        } else if (replyRate >= 0.05 && closeRate < 0.1 && responses >= 3) {
-          feedback.className = "tracker-feedback warning";
-          message.textContent = "Replies are coming in but not closing. The offer is unclear or the price is not justified. Write the outcome in one sentence.";
-        } else if (closes > 0 && closeRate >= 0.1) {
-          feedback.className = "tracker-feedback on-track";
-          message.textContent = "On track. Keep the volume up. Do not change the system while it is working.";
-        } else if (responses > 0 && closes === 0) {
-          feedback.className = "tracker-feedback warning";
-          message.textContent = "Conversations are happening but not closing. Make a direct offer in the conversation. Not a suggestion. An offer.";
-        } else {
-          feedback.className = "tracker-feedback on-track";
-          message.textContent = "Numbers look healthy. Run this volume for 7 days before drawing any conclusions.";
-        }
-      }
-
-      ["t-actions", "t-responses", "t-closes"].forEach(function (id) {
-        var input = document.getElementById(id);
-        if (input) {
-          input.addEventListener("input", evaluateTracker);
-        }
-      });
 
       window.addEventListener("resize", function () {
         collapsibles.forEach(function (shell) {
