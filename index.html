@@ -640,21 +640,23 @@
     }
 
     .system-visual {
-      margin: 28px 0 22px;
-      padding: 22px 22px 20px;
-      border: 1px solid var(--border);
+      margin: 34px 0 26px;
+      padding: 30px 34px 28px;
+      border: 1px solid rgba(196, 163, 90, 0.14);
       background:
-        linear-gradient(180deg, rgba(196, 163, 90, 0.05), rgba(196, 163, 90, 0)),
+        linear-gradient(180deg, rgba(196, 163, 90, 0.07), rgba(196, 163, 90, 0.01)),
         var(--bg-1);
-      box-shadow: var(--shadow-gold);
+      box-shadow:
+        inset 0 0 0 1px rgba(196, 163, 90, 0.04),
+        0 22px 54px rgba(196, 163, 90, 0.08);
       overflow: hidden;
     }
 
     .system-visual-label {
-      margin-bottom: 18px;
+      margin-bottom: 24px;
       font-family: "DM Mono", monospace;
       font-size: 9px;
-      letter-spacing: 0.18em;
+      letter-spacing: 0.2em;
       text-transform: uppercase;
       color: var(--gold-dim);
     }
@@ -663,18 +665,18 @@
       position: relative;
       display: grid;
       grid-template-columns: repeat(6, minmax(0, 1fr));
-      gap: 12px;
+      gap: 26px;
       align-items: start;
     }
 
     .system-track::before {
       content: "";
       position: absolute;
-      left: 32px;
-      right: 32px;
-      top: 17px;
-      height: 1px;
-      background: linear-gradient(to right, rgba(196, 163, 90, 0.64), rgba(196, 163, 90, 0.18));
+      left: 38px;
+      right: 38px;
+      top: 22px;
+      height: 2px;
+      background: linear-gradient(to right, rgba(196, 163, 90, 0.78), rgba(196, 163, 90, 0.24));
       pointer-events: none;
     }
 
@@ -685,56 +687,62 @@
       min-width: 0;
       text-decoration: none;
       color: inherit;
-      padding-top: 2px;
+      padding: 4px 0 2px;
+      border-top: 1px solid transparent;
+      transition: transform 0.24s ease, border-color 0.24s ease;
     }
 
     .system-node-inner {
       display: grid;
       justify-items: start;
-      gap: 12px;
+      gap: 16px;
     }
 
     .system-node-dot {
-      width: 10px;
-      height: 10px;
+      width: 16px;
+      height: 16px;
       border-radius: 50%;
-      border: 1px solid rgba(196, 163, 90, 0.75);
+      border: 1px solid rgba(196, 163, 90, 0.88);
       background: var(--bg);
-      box-shadow: 0 0 0 6px rgba(8, 8, 7, 0.98);
+      box-shadow:
+        0 0 0 8px rgba(8, 8, 7, 0.98),
+        inset 0 0 0 3px rgba(196, 163, 90, 0.14);
     }
 
     .system-node-name {
       font-family: "Cormorant Garamond", serif;
-      font-size: clamp(18px, 1.9vw, 24px);
-      line-height: 1.02;
+      font-size: clamp(17px, 1.7vw, 22px);
+      line-height: 1.08;
+      letter-spacing: -0.01em;
       color: var(--text-primary);
     }
 
     .system-node-desc {
-      min-height: 34px;
-      max-width: 18ch;
+      min-height: 40px;
+      max-width: 17ch;
       font-family: "DM Mono", monospace;
       font-size: 9px;
-      letter-spacing: 0.1em;
-      line-height: 1.75;
+      letter-spacing: 0.11em;
+      line-height: 1.8;
       text-transform: uppercase;
       color: var(--text-muted);
       opacity: 0;
-      transform: translateY(4px);
+      transform: translateY(6px);
       transition: opacity 0.22s ease, transform 0.22s ease, color 0.22s ease;
     }
 
     .system-node:hover,
     .system-node:focus-visible {
-      transform: translateY(-2px);
+      transform: translateY(-4px);
+      border-color: rgba(196, 163, 90, 0.22);
     }
 
     .system-node:hover .system-node-dot,
     .system-node:focus-visible .system-node-dot {
       background: var(--gold);
       box-shadow:
-        0 0 0 6px rgba(8, 8, 7, 0.98),
-        0 0 18px rgba(196, 163, 90, 0.22);
+        0 0 0 8px rgba(8, 8, 7, 0.98),
+        0 0 22px rgba(196, 163, 90, 0.2);
     }
 
     .system-node:hover .system-node-name,
@@ -860,6 +868,28 @@
       padding: 24px;
       border: 1px solid var(--border);
       background: linear-gradient(180deg, rgba(196, 163, 90, 0.03), rgba(196, 163, 90, 0)), var(--bg-1);
+      position: relative;
+    }
+
+    .execution-panel--primary {
+      grid-column: 1 / span 2;
+      padding: 28px 28px 26px;
+      border-color: rgba(196, 163, 90, 0.2);
+      background:
+        linear-gradient(180deg, rgba(196, 163, 90, 0.07), rgba(196, 163, 90, 0.015)),
+        var(--bg-1);
+      box-shadow:
+        inset 0 0 0 1px rgba(196, 163, 90, 0.04),
+        0 20px 48px rgba(0, 0, 0, 0.18);
+    }
+
+    .execution-panel--primary::before {
+      content: "";
+      position: absolute;
+      inset: 0 auto auto 0;
+      width: 100%;
+      height: 1px;
+      background: linear-gradient(to right, rgba(196, 163, 90, 0.84), rgba(196, 163, 90, 0.16));
     }
 
     .execution-panel-label {
@@ -880,11 +910,17 @@
       color: var(--text-primary);
     }
 
+    .execution-panel--primary .execution-active {
+      font-size: clamp(30px, 3.2vw, 40px);
+      line-height: 1.08;
+      max-width: 14ch;
+    }
+
     .execution-status-line {
       margin-top: 12px;
       font-family: "DM Mono", monospace;
       font-size: 10px;
-      letter-spacing: 0.12em;
+      letter-spacing: 0.16em;
       line-height: 1.8;
       color: var(--gold);
       text-transform: uppercase;
@@ -892,9 +928,9 @@
 
     .execution-progress-shell {
       margin-bottom: 16px;
-      padding: 14px 14px 12px;
-      border: 1px solid var(--border);
-      background: rgba(255, 255, 255, 0.01);
+      padding: 16px 16px 14px;
+      border: 1px solid rgba(196, 163, 90, 0.14);
+      background: rgba(255, 255, 255, 0.015);
     }
 
     .execution-progress-top {
@@ -916,7 +952,7 @@
 
     .execution-progress-bar {
       position: relative;
-      height: 2px;
+      height: 4px;
       background: rgba(244, 237, 224, 0.08);
       overflow: hidden;
     }
@@ -924,7 +960,7 @@
     .execution-progress-fill {
       width: 0;
       height: 100%;
-      background: linear-gradient(to right, rgba(196, 163, 90, 0.62), rgba(196, 163, 90, 0.92));
+      background: linear-gradient(to right, rgba(196, 163, 90, 0.62), rgba(196, 163, 90, 1));
       transition: width 0.24s ease;
     }
 
@@ -936,8 +972,8 @@
     }
 
     .execution-progress-point {
-      width: 7px;
-      height: 7px;
+      width: 9px;
+      height: 9px;
       margin: 0 auto;
       border-radius: 50%;
       border: 1px solid rgba(244, 237, 224, 0.12);
@@ -953,7 +989,8 @@
     .execution-progress-point.is-active {
       border-color: var(--gold);
       background: var(--gold);
-      transform: scale(1.08);
+      transform: scale(1.22);
+      box-shadow: 0 0 12px rgba(196, 163, 90, 0.18);
     }
 
     .day-tabs { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 16px; }
@@ -973,7 +1010,9 @@
       border-color: var(--gold);
       color: var(--gold);
       background: rgba(196, 163, 90, 0.08);
-      box-shadow: inset 0 0 0 1px rgba(196, 163, 90, 0.12);
+      box-shadow:
+        inset 0 0 0 1px rgba(196, 163, 90, 0.12),
+        0 0 0 1px rgba(196, 163, 90, 0.04);
     }
 
     .day-tab.is-complete {
@@ -1110,7 +1149,7 @@
     }
 
     .execution-path-grid.has-active .path-card {
-      opacity: 0.72;
+      opacity: 0.78;
     }
 
     .path-card {
@@ -1120,6 +1159,12 @@
       flex-direction: column;
       position: relative;
       overflow: hidden;
+      transition:
+        border-color 0.22s ease,
+        box-shadow 0.22s ease,
+        opacity 0.22s ease,
+        transform 0.22s ease,
+        background 0.22s ease;
     }
 
     .path-card:hover {
@@ -1128,7 +1173,7 @@
     }
 
     .execution-path-grid.has-active .path-card:hover {
-      opacity: 0.9;
+      opacity: 0.92;
     }
 
     .path-card.featured {
@@ -1149,12 +1194,20 @@
 
     .path-card.is-active {
       opacity: 1;
-      transform: translateY(-2px);
-      border-color: rgba(196, 163, 90, 0.82);
+      transform: translateY(-4px);
+      border-color: rgba(196, 163, 90, 0.92);
       box-shadow:
-        inset 0 0 0 1px rgba(196, 163, 90, 0.18),
-        0 18px 44px rgba(196, 163, 90, 0.08);
-      background: linear-gradient(160deg, rgba(196, 163, 90, 0.08), var(--bg-1));
+        inset 0 0 0 1px rgba(196, 163, 90, 0.22),
+        0 22px 52px rgba(196, 163, 90, 0.1);
+      background: linear-gradient(160deg, rgba(196, 163, 90, 0.11), var(--bg-1));
+    }
+
+    .path-card.is-active::after {
+      content: "";
+      position: absolute;
+      inset: 0 auto 0 0;
+      width: 2px;
+      background: linear-gradient(to bottom, rgba(196, 163, 90, 0.86), rgba(196, 163, 90, 0.22));
     }
 
     .path-card-header {
@@ -1208,6 +1261,17 @@
       font-size: 14px;
       line-height: 1.68;
       color: var(--text-secondary);
+    }
+
+    .execution-path-grid.has-active .path-card:not(.is-active) .path-summary,
+    .execution-path-grid.has-active .path-card:not(.is-active) .path-visible-line,
+    .execution-path-grid.has-active .path-card:not(.is-active) .path-section-name {
+      color: var(--text-muted);
+    }
+
+    .path-card.is-active .path-summary,
+    .path-card.is-active .path-visible-line {
+      color: var(--text-primary);
     }
 
     .path-visible-meta {
@@ -1954,29 +2018,32 @@
       .pad { padding: 60px 20px; }
       .diag-grid, .execution-setup, .execution-path-grid, .products-grid { grid-template-columns: 1fr; }
       .system-visual {
-        padding-left: 18px;
-        padding-right: 18px;
+        padding: 22px 18px 20px;
       }
       .system-track {
         display: flex;
-        gap: 22px;
+        gap: 28px;
         overflow-x: auto;
-        padding-bottom: 8px;
+        padding-bottom: 12px;
         scrollbar-width: none;
       }
       .system-track::-webkit-scrollbar { display: none; }
       .system-track::before {
         left: 20px;
         right: 20px;
-        min-width: 680px;
+        top: 22px;
+        min-width: 860px;
       }
       .system-node {
-        flex: 0 0 132px;
+        flex: 0 0 146px;
       }
       .system-node-desc {
         opacity: 1;
         transform: none;
         min-height: auto;
+      }
+      .execution-panel--primary {
+        grid-column: auto;
       }
       .diag-card { min-height: 0; padding: 26px 20px 28px; }
       .diag-result, .path-card-header, .path-section-toggle, .path-section-content, .path-card-cta, .execution-panel {
@@ -2375,7 +2442,7 @@
                     <p class="execution-panel-copy" id="objective-secondary"></p>
                   </div>
 
-                  <div class="execution-panel">
+                  <div class="execution-panel execution-panel--primary">
                     <p class="execution-panel-label">Active Path</p>
                     <p class="execution-active" id="active-path-display">No path selected yet. Choose one path and commit to it for 7 days.</p>
                     <p class="execution-status-line" id="execution-status-line">Day 1 · No path selected</p>
