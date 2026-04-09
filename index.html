@@ -639,6 +639,116 @@
       text-transform: uppercase;
     }
 
+    .system-visual {
+      margin: 28px 0 22px;
+      padding: 22px 22px 20px;
+      border: 1px solid var(--border);
+      background:
+        linear-gradient(180deg, rgba(196, 163, 90, 0.05), rgba(196, 163, 90, 0)),
+        var(--bg-1);
+      box-shadow: var(--shadow-gold);
+      overflow: hidden;
+    }
+
+    .system-visual-label {
+      margin-bottom: 18px;
+      font-family: "DM Mono", monospace;
+      font-size: 9px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--gold-dim);
+    }
+
+    .system-track {
+      position: relative;
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 12px;
+      align-items: start;
+    }
+
+    .system-track::before {
+      content: "";
+      position: absolute;
+      left: 32px;
+      right: 32px;
+      top: 17px;
+      height: 1px;
+      background: linear-gradient(to right, rgba(196, 163, 90, 0.64), rgba(196, 163, 90, 0.18));
+      pointer-events: none;
+    }
+
+    .system-node {
+      position: relative;
+      z-index: 1;
+      display: block;
+      min-width: 0;
+      text-decoration: none;
+      color: inherit;
+      padding-top: 2px;
+    }
+
+    .system-node-inner {
+      display: grid;
+      justify-items: start;
+      gap: 12px;
+    }
+
+    .system-node-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      border: 1px solid rgba(196, 163, 90, 0.75);
+      background: var(--bg);
+      box-shadow: 0 0 0 6px rgba(8, 8, 7, 0.98);
+    }
+
+    .system-node-name {
+      font-family: "Cormorant Garamond", serif;
+      font-size: clamp(18px, 1.9vw, 24px);
+      line-height: 1.02;
+      color: var(--text-primary);
+    }
+
+    .system-node-desc {
+      min-height: 34px;
+      max-width: 18ch;
+      font-family: "DM Mono", monospace;
+      font-size: 9px;
+      letter-spacing: 0.1em;
+      line-height: 1.75;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      opacity: 0;
+      transform: translateY(4px);
+      transition: opacity 0.22s ease, transform 0.22s ease, color 0.22s ease;
+    }
+
+    .system-node:hover,
+    .system-node:focus-visible {
+      transform: translateY(-2px);
+    }
+
+    .system-node:hover .system-node-dot,
+    .system-node:focus-visible .system-node-dot {
+      background: var(--gold);
+      box-shadow:
+        0 0 0 6px rgba(8, 8, 7, 0.98),
+        0 0 18px rgba(196, 163, 90, 0.22);
+    }
+
+    .system-node:hover .system-node-name,
+    .system-node:focus-visible .system-node-name {
+      color: var(--gold);
+    }
+
+    .system-node:hover .system-node-desc,
+    .system-node:focus-visible .system-node-desc {
+      opacity: 1;
+      transform: translateY(0);
+      color: var(--text-secondary);
+    }
+
     .phase-list { list-style: none; margin: 12px 0 40px; }
 
     .phase-item {
@@ -768,6 +878,82 @@
       font-size: clamp(22px, 2.4vw, 30px);
       line-height: 1.2;
       color: var(--text-primary);
+    }
+
+    .execution-status-line {
+      margin-top: 12px;
+      font-family: "DM Mono", monospace;
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      line-height: 1.8;
+      color: var(--gold);
+      text-transform: uppercase;
+    }
+
+    .execution-progress-shell {
+      margin-bottom: 16px;
+      padding: 14px 14px 12px;
+      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.01);
+    }
+
+    .execution-progress-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 10px;
+    }
+
+    .execution-progress-label,
+    .execution-progress-count {
+      font-family: "DM Mono", monospace;
+      font-size: 9px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .execution-progress-bar {
+      position: relative;
+      height: 2px;
+      background: rgba(244, 237, 224, 0.08);
+      overflow: hidden;
+    }
+
+    .execution-progress-fill {
+      width: 0;
+      height: 100%;
+      background: linear-gradient(to right, rgba(196, 163, 90, 0.62), rgba(196, 163, 90, 0.92));
+      transition: width 0.24s ease;
+    }
+
+    .execution-progress-points {
+      display: grid;
+      grid-template-columns: repeat(7, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .execution-progress-point {
+      width: 7px;
+      height: 7px;
+      margin: 0 auto;
+      border-radius: 50%;
+      border: 1px solid rgba(244, 237, 224, 0.12);
+      background: var(--bg-1);
+      transition: background-color 0.22s ease, border-color 0.22s ease, transform 0.22s ease;
+    }
+
+    .execution-progress-point.is-reached {
+      border-color: rgba(196, 163, 90, 0.6);
+      background: rgba(196, 163, 90, 0.48);
+    }
+
+    .execution-progress-point.is-active {
+      border-color: var(--gold);
+      background: var(--gold);
+      transform: scale(1.08);
     }
 
     .day-tabs { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 16px; }
@@ -923,6 +1109,10 @@
       margin-top: 22px;
     }
 
+    .execution-path-grid.has-active .path-card {
+      opacity: 0.72;
+    }
+
     .path-card {
       border: 1px solid var(--border);
       background: linear-gradient(160deg, var(--bg-1), var(--bg-2));
@@ -935,6 +1125,10 @@
     .path-card:hover {
       border-color: var(--border-gold);
       box-shadow: var(--shadow-soft);
+    }
+
+    .execution-path-grid.has-active .path-card:hover {
+      opacity: 0.9;
     }
 
     .path-card.featured {
@@ -954,6 +1148,8 @@
     }
 
     .path-card.is-active {
+      opacity: 1;
+      transform: translateY(-2px);
       border-color: rgba(196, 163, 90, 0.82);
       box-shadow:
         inset 0 0 0 1px rgba(196, 163, 90, 0.18),
@@ -1256,6 +1452,27 @@
     .tracker-feedback.on-track .tracker-msg { color: var(--green); }
     .tracker-feedback.warning .tracker-msg { color: var(--amber); }
     .tracker-feedback.low .tracker-msg { color: var(--red); }
+
+    .execution-completion {
+      margin-top: 18px;
+      padding-top: 14px;
+      border-top: 1px solid var(--border);
+      font-family: "DM Mono", monospace;
+      font-size: 10px;
+      letter-spacing: 0.11em;
+      line-height: 1.8;
+      color: var(--gold-dim);
+      text-transform: uppercase;
+      opacity: 0;
+      transform: translateY(4px);
+      pointer-events: none;
+      transition: opacity 0.22s ease, transform 0.22s ease;
+    }
+
+    .execution-completion.is-visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
 
     .decision-grid { margin-top: 22px; border-top: 1px solid var(--border); }
 
@@ -1736,6 +1953,31 @@
       .hero-rule-bottom { left: 20px; right: 20px; }
       .pad { padding: 60px 20px; }
       .diag-grid, .execution-setup, .execution-path-grid, .products-grid { grid-template-columns: 1fr; }
+      .system-visual {
+        padding-left: 18px;
+        padding-right: 18px;
+      }
+      .system-track {
+        display: flex;
+        gap: 22px;
+        overflow-x: auto;
+        padding-bottom: 8px;
+        scrollbar-width: none;
+      }
+      .system-track::-webkit-scrollbar { display: none; }
+      .system-track::before {
+        left: 20px;
+        right: 20px;
+        min-width: 680px;
+      }
+      .system-node {
+        flex: 0 0 132px;
+      }
+      .system-node-desc {
+        opacity: 1;
+        transform: none;
+        min-height: auto;
+      }
       .diag-card { min-height: 0; padding: 26px 20px 28px; }
       .diag-result, .path-card-header, .path-section-toggle, .path-section-content, .path-card-cta, .execution-panel {
         padding-left: 20px;
@@ -1759,7 +2001,7 @@
 <body>
   <div class="site">
     <nav class="nav" id="main-nav" aria-label="Primary">
-      <a href="/" class="nav-mark">Stephuary</a>
+      <a href="/index" class="nav-mark">Stephuary</a>
       <div class="nav-links">
         <a href="#system" class="nav-link">System</a>
         <a href="#products" class="nav-link">Offers</a>
@@ -1969,6 +2211,53 @@
                       Most people enter to solve one problem. They stay because the rest of the system becomes easier once the first real bottleneck is fixed.
                       Once the direction is clear and the offer exists, the next question is simple: which revenue path should run first?
                     </p>
+                    <div class="system-visual" aria-label="Stephuary phase progression">
+                      <p class="system-visual-label">Phase progression</p>
+                      <div class="system-track">
+                        <a class="system-node" href="/capture">
+                          <span class="system-node-inner">
+                            <span class="system-node-dot" aria-hidden="true"></span>
+                            <span class="system-node-name">Capture</span>
+                            <span class="system-node-desc">Extract what already exists</span>
+                          </span>
+                        </a>
+                        <a class="system-node" href="/position">
+                          <span class="system-node-inner">
+                            <span class="system-node-dot" aria-hidden="true"></span>
+                            <span class="system-node-name">Position</span>
+                            <span class="system-node-desc">Match to real demand</span>
+                          </span>
+                        </a>
+                        <a class="system-node" href="/monetize">
+                          <span class="system-node-inner">
+                            <span class="system-node-dot" aria-hidden="true"></span>
+                            <span class="system-node-name">Monetize</span>
+                            <span class="system-node-desc">Make it sellable</span>
+                          </span>
+                        </a>
+                        <a class="system-node" href="/structure">
+                          <span class="system-node-inner">
+                            <span class="system-node-dot" aria-hidden="true"></span>
+                            <span class="system-node-name">Structure</span>
+                            <span class="system-node-desc">Reduce friction</span>
+                          </span>
+                        </a>
+                        <a class="system-node" href="/automation">
+                          <span class="system-node-inner">
+                            <span class="system-node-dot" aria-hidden="true"></span>
+                            <span class="system-node-name">Automation</span>
+                            <span class="system-node-desc">Remove repetition</span>
+                          </span>
+                        </a>
+                        <a class="system-node" href="/sovereignty">
+                          <span class="system-node-inner">
+                            <span class="system-node-dot" aria-hidden="true"></span>
+                            <span class="system-node-name">Sovereignty</span>
+                            <span class="system-node-desc">Build stability and control</span>
+                          </span>
+                        </a>
+                      </div>
+                    </div>
                     <p class="system-entry-line">Everything after this works better when this is clear.</p>
                     <p class="system-bridge">Once this is defined, the next step is choosing how it produces money.</p>
                   </div>
@@ -2089,10 +2378,29 @@
                   <div class="execution-panel">
                     <p class="execution-panel-label">Active Path</p>
                     <p class="execution-active" id="active-path-display">No path selected yet. Choose one path and commit to it for 7 days.</p>
+                    <p class="execution-status-line" id="execution-status-line">Day 1 · No path selected</p>
                   </div>
 
                   <div class="execution-panel">
                     <p class="execution-panel-label">Day Progression</p>
+                    <div class="execution-progress-shell" aria-hidden="true">
+                      <div class="execution-progress-top">
+                        <span class="execution-progress-label">7-day run</span>
+                        <span class="execution-progress-count" id="execution-progress-count">Day 1 of 7</span>
+                      </div>
+                      <div class="execution-progress-bar">
+                        <div class="execution-progress-fill" id="execution-progress-fill"></div>
+                      </div>
+                      <div class="execution-progress-points">
+                        <span class="execution-progress-point" data-progress-day="1"></span>
+                        <span class="execution-progress-point" data-progress-day="2"></span>
+                        <span class="execution-progress-point" data-progress-day="3"></span>
+                        <span class="execution-progress-point" data-progress-day="4"></span>
+                        <span class="execution-progress-point" data-progress-day="5"></span>
+                        <span class="execution-progress-point" data-progress-day="6"></span>
+                        <span class="execution-progress-point" data-progress-day="7"></span>
+                      </div>
+                    </div>
                     <div class="day-tabs" id="day-tabs">
                       <button class="day-tab" type="button" data-day="1">Day 1</button>
                       <button class="day-tab" type="button" data-day="2">Day 2</button>
@@ -2191,6 +2499,8 @@
                     <div class="tracker-dot"></div>
                     <p class="tracker-msg">Your numbers determine what changes next. No guesswork.</p>
                   </div>
+
+                  <p class="execution-completion" id="execution-completion">7 days complete. Continue, refine, or change path.</p>
                 </div>
 
                 <div class="execution-block">
@@ -2471,7 +2781,7 @@
             <li><a href="/position">Position</a></li>
             <li><a href="/monetize">Monetize</a></li>
             <li><a href="/structure">Structure</a></li>
-            <li><a href="/automate">Automate</a></li>
+            <li><a href="/automation">Automate</a></li>
             <li><a href="/sovereignty">Sovereignty</a></li>
             <li><a href="/systems">Unlock</a></li>
             <li><a href="/private-access">Private Access</a></li>
@@ -2769,7 +3079,20 @@
         display.textContent = title ? "Active: " + title : "No path selected yet. Choose one path and commit to it for 7 days.";
       }
 
+      function updateStatusLine() {
+        var activePath = getActivePath();
+        var activeDay = getActiveDay();
+        var statusLine = document.getElementById("execution-status-line");
+        if (!statusLine) return;
+        statusLine.textContent = activePath ? "Day " + activeDay + " \u00b7 " + activePath : "Day " + activeDay + " \u00b7 No path selected";
+      }
+
       function updateRunButtons(title) {
+        var grid = document.getElementById("path-grid");
+        if (grid) {
+          grid.classList.toggle("has-active", !!title);
+        }
+
         Array.prototype.slice.call(document.querySelectorAll(".run-path-btn")).forEach(function (button) {
           var match = button.getAttribute("data-path-title") === title;
           button.classList.toggle("is-active", !!title && match);
@@ -2790,11 +3113,11 @@
 
         if (!activePath) {
           primary.textContent = "Choose one path first. Then today's work becomes clear.";
-          secondary.textContent = "";
+          secondary.textContent = "Day " + activeDay + " stays neutral until one path is selected and held.";
           return;
         }
 
-        primary.textContent = activePath + " · Day " + activeDay;
+        primary.textContent = "Day " + activeDay + " \u00b7 " + activePath;
         secondary.textContent = dayCopy;
       }
 
@@ -2829,6 +3152,7 @@
         var activeDay = getActiveDay();
         var activePath = getActivePath();
         var completedDays = activePath ? getCompletedDays(activePath) : {};
+        var activeDayNumber = parseInt(activeDay, 10) || 1;
 
         Array.prototype.slice.call(document.querySelectorAll(".day-tab")).forEach(function (tab) {
           var day = tab.getAttribute("data-day");
@@ -2838,6 +3162,27 @@
 
         var copy = document.getElementById("execution-day-copy");
         if (copy) copy.textContent = dayCopyMap[activeDay] || dayCopyMap["1"];
+
+        var progressFill = document.getElementById("execution-progress-fill");
+        if (progressFill) {
+          progressFill.style.width = (activeDayNumber / 7) * 100 + "%";
+        }
+
+        var progressCount = document.getElementById("execution-progress-count");
+        if (progressCount) {
+          progressCount.textContent = "Day " + activeDay + " of 7";
+        }
+
+        Array.prototype.slice.call(document.querySelectorAll(".execution-progress-point")).forEach(function (point) {
+          var pointDay = parseInt(point.getAttribute("data-progress-day"), 10) || 0;
+          point.classList.toggle("is-reached", pointDay <= activeDayNumber);
+          point.classList.toggle("is-active", pointDay === activeDayNumber);
+        });
+
+        var completion = document.getElementById("execution-completion");
+        if (completion) {
+          completion.classList.toggle("is-visible", !!activePath && activeDay === "7");
+        }
       }
 
       function renderChecklist() {
@@ -2899,6 +3244,7 @@
       function setActivePath(title) {
         safeSet(storage.activePath, title);
         updateActivePathDisplay(title);
+        updateStatusLine();
         updateRunButtons(title);
         updateObjective();
         updateTargetPriority();
@@ -2910,6 +3256,7 @@
       function setExecutionDay(day) {
         safeSet(storage.executionDay, day);
         updateDayTabs();
+        updateStatusLine();
         updateObjective();
         renderChecklist();
       }
@@ -2942,22 +3289,22 @@
 
         if (actions < 10) {
           feedback.classList.add("low");
-          message.textContent = "Volume is too low. Increase output before changing anything else.";
+          message.textContent = "Output is too low. This is a volume problem first. Raise actions before diagnosing anything else.";
         } else if (replyRate < 0.05 && actions >= 15) {
           feedback.classList.add("warning");
-          message.textContent = "Replies are too low. Targeting should change before the message changes.";
+          message.textContent = "Actions are high but replies are weak. Targeting is off. Change who sees the offer before changing the offer.";
         } else if (replyRate >= 0.05 && closeRate < 0.1 && responses >= 3) {
           feedback.classList.add("warning");
-          message.textContent = "Replies exist, but the offer is not closing. Tighten the result and price logic.";
+          message.textContent = "Replies are present but closes are weak. Offer clarity, pricing, or conversion logic is the problem now.";
         } else if (closes > 0 && closeRate >= 0.1) {
           feedback.classList.add("on-track");
-          message.textContent = "Execution is working. Keep the path steady and keep the volume up.";
+          message.textContent = "Signal is working. Keep the path stable, protect volume, and do not change direction early.";
         } else if (responses > 0 && closes === 0) {
           feedback.classList.add("warning");
-          message.textContent = "Conversations are happening. The offer needs a clearer ask and a clearer outcome.";
+          message.textContent = "Responses are coming in but nothing is converting. Tighten the ask, the outcome, and the price logic.";
         } else {
           feedback.classList.add("on-track");
-          message.textContent = "Numbers look usable. Keep running the path before making changes.";
+          message.textContent = "Numbers are usable. Keep running the path long enough to get a real signal.";
         }
       }
 
@@ -3071,6 +3418,7 @@
       renderExecutionCards();
 
       updateActivePathDisplay(getActivePath());
+      updateStatusLine();
       updateRunButtons(getActivePath());
       updateObjective();
       updateTargetPriority();
