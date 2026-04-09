@@ -16,12 +16,12 @@
   />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
     :root {
       --bg: #080807;
       --bg-1: #0d0d0b;
       --bg-2: #121210;
       --bg-3: #181614;
-      --oxblood: #2a0f12;
       --gold: #c4a35a;
       --gold-dim: #8a7040;
       --gold-line: rgba(196, 163, 90, 0.18);
@@ -39,11 +39,15 @@
       --text-dim: #6e6558;
       --text-label: #4a4540;
       --border: rgba(244, 237, 224, 0.08);
+      --border-strong: rgba(244, 237, 224, 0.12);
       --border-gold: rgba(196, 163, 90, 0.16);
       --focus: rgba(196, 163, 90, 0.85);
       --shadow-soft: 0 18px 48px rgba(0, 0, 0, 0.26);
+      --shadow-gold: 0 18px 44px rgba(196, 163, 90, 0.08);
     }
+
     html { scroll-behavior: smooth; }
+
     body {
       background: var(--bg);
       color: var(--text-primary);
@@ -53,6 +57,7 @@
       overflow-x: hidden;
       min-height: 100vh;
     }
+
     body::before {
       content: "";
       position: fixed;
@@ -60,9 +65,10 @@
       pointer-events: none;
       z-index: 0;
       background:
-        radial-gradient(ellipse 62% 86% at 84% 18%, rgba(90, 31, 36, 0.42), transparent 62%),
-        radial-gradient(ellipse 45% 60% at 0% 100%, rgba(42, 15, 18, 0.36), transparent 70%);
+        radial-gradient(ellipse 62% 86% at 84% 18%, rgba(90, 31, 36, 0.32), transparent 62%),
+        radial-gradient(ellipse 45% 60% at 0% 100%, rgba(42, 15, 18, 0.26), transparent 70%);
     }
+
     body::after {
       content: "";
       position: fixed;
@@ -72,6 +78,7 @@
       opacity: 0.025;
       background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
     }
+
     a, button, input, select {
       transition:
         color 0.22s ease,
@@ -81,17 +88,24 @@
         box-shadow 0.22s ease,
         opacity 0.22s ease;
     }
+
     a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible {
       outline: 2px solid var(--focus);
       outline-offset: 3px;
     }
+
     button, input, select { font: inherit; }
     button { background: none; border: none; color: inherit; }
+
     .site { position: relative; z-index: 1; }
-    .pad { padding: 96px 52px; }
+    .pad { padding: 90px 52px; }
     .inner { max-width: 1120px; margin: 0 auto; }
-    section { border-bottom: 1px solid var(--border); position: relative; }
+    section {
+      position: relative;
+      border-bottom: 1px solid var(--border);
+    }
     .section-copy { font-size: 15px; line-height: 1.78; color: var(--text-secondary); }
+
     .btn-blue, .btn-ghost {
       display: inline-flex;
       align-items: center;
@@ -101,6 +115,7 @@
       white-space: nowrap;
       cursor: pointer;
     }
+
     .btn-blue {
       padding: 14px 28px;
       background: var(--blue);
@@ -111,11 +126,13 @@
       text-transform: uppercase;
       box-shadow: 0 8px 28px rgba(43, 79, 212, 0.18);
     }
+
     .btn-blue:hover {
       background: var(--blue-hi);
       box-shadow: 0 10px 30px rgba(43, 79, 212, 0.28);
       transform: translateY(-1px);
     }
+
     .btn-ghost {
       padding: 12px 0;
       color: var(--text-secondary);
@@ -125,11 +142,16 @@
       text-transform: uppercase;
       border-bottom: 1px solid var(--text-label);
     }
+
     .btn-ghost:hover { color: var(--text-primary); border-color: var(--text-muted); }
+
     .cta-row { display: flex; align-items: center; gap: 28px; flex-wrap: wrap; }
+
     .nav {
       position: fixed;
-      top: 0; left: 0; right: 0;
+      top: 0;
+      left: 0;
+      right: 0;
       z-index: 20;
       display: flex;
       align-items: center;
@@ -137,10 +159,12 @@
       gap: 24px;
       padding: 20px 52px;
       border-bottom: 1px solid transparent;
-      background: linear-gradient(to bottom, rgba(8, 8, 7, 0.97) 0%, rgba(8, 8, 7, 0.78) 65%, transparent 100%);
+      background: linear-gradient(to bottom, rgba(8, 8, 7, 0.97) 0%, rgba(8, 8, 7, 0.8) 68%, transparent 100%);
       backdrop-filter: blur(8px);
     }
+
     .nav.scrolled { border-bottom-color: var(--border); }
+
     .nav-mark {
       color: var(--text-primary);
       text-decoration: none;
@@ -150,7 +174,15 @@
       text-transform: uppercase;
       flex-shrink: 0;
     }
-    .nav-links { display: flex; align-items: center; gap: 22px; flex-wrap: wrap; justify-content: flex-end; }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 22px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
     .nav-link {
       color: var(--text-dim);
       text-decoration: none;
@@ -159,17 +191,49 @@
       letter-spacing: 0.15em;
       text-transform: uppercase;
     }
+
     .nav-link:hover { color: var(--text-secondary); }
     .nav-link-gold { color: var(--gold-dim); }
     .nav-link-gold:hover { color: var(--gold); }
+
     #hero {
+      position: relative;
+      overflow: hidden;
       min-height: 100vh;
       display: flex;
       align-items: center;
       padding: 140px 52px 110px;
-      overflow: hidden;
+      background:
+        radial-gradient(circle at 50% 24%, rgba(196, 163, 90, 0.04), transparent 36%),
+        linear-gradient(180deg, rgba(9, 9, 8, 0.8) 0%, rgba(8, 8, 7, 0.74) 100%);
     }
-    .hero-inner { max-width: 820px; position: relative; }
+
+    #hero::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1;
+      background:
+        radial-gradient(circle at 50% 44%, rgba(8, 8, 7, 0.72) 0%, rgba(8, 8, 7, 0.54) 30%, rgba(8, 8, 7, 0.26) 64%, rgba(8, 8, 7, 0.16) 100%);
+    }
+
+    .hero-canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      pointer-events: none;
+      opacity: 0.95;
+    }
+
+    .hero-inner {
+      max-width: 820px;
+      position: relative;
+      z-index: 2;
+    }
+
     .hero-eyebrow {
       display: flex;
       align-items: center;
@@ -181,7 +245,14 @@
       text-transform: uppercase;
       color: var(--gold-dim);
     }
-    .hero-eyebrow::before { content: ""; width: 28px; height: 1px; background: var(--gold-dim); }
+
+    .hero-eyebrow::before {
+      content: "";
+      width: 28px;
+      height: 1px;
+      background: var(--gold-dim);
+    }
+
     .hero-headline {
       font-family: "Cormorant Garamond", serif;
       font-weight: 300;
@@ -191,6 +262,7 @@
       margin-bottom: 30px;
       max-width: 780px;
     }
+
     .hero-subhead {
       max-width: 600px;
       margin-bottom: 12px;
@@ -198,6 +270,7 @@
       line-height: 1.7;
       color: var(--text-primary);
     }
+
     .hero-detail {
       max-width: 610px;
       margin-bottom: 20px;
@@ -205,6 +278,7 @@
       line-height: 1.78;
       color: var(--text-secondary);
     }
+
     .hero-consequence {
       max-width: 620px;
       margin-bottom: 10px;
@@ -214,6 +288,7 @@
       line-height: 1.52;
       color: var(--text-muted);
     }
+
     .hero-consequence-follow {
       max-width: 620px;
       margin-bottom: 18px;
@@ -221,6 +296,7 @@
       line-height: 1.75;
       color: var(--text-secondary);
     }
+
     .hero-micro {
       max-width: 620px;
       margin-bottom: 42px;
@@ -231,6 +307,7 @@
       color: var(--gold-dim);
       text-transform: uppercase;
     }
+
     .cta-sub {
       margin-top: 14px;
       font-family: "DM Mono", monospace;
@@ -239,6 +316,7 @@
       line-height: 1.7;
       color: var(--gold);
     }
+
     .hero-rule-bottom {
       position: absolute;
       left: 52px;
@@ -246,8 +324,11 @@
       bottom: 0;
       height: 1px;
       background: linear-gradient(to right, rgba(196, 163, 90, 0.2), transparent 55%);
+      z-index: 2;
     }
+
     .collapsible-shell { display: grid; grid-template-rows: auto 1fr; }
+
     .section-toggle {
       width: 100%;
       display: flex;
@@ -257,11 +338,14 @@
       padding: 0;
       text-align: left;
       cursor: pointer;
-      margin-bottom: 34px;
+      margin-bottom: 30px;
     }
+
     .section-toggle:hover .section-toggle-label,
     .section-toggle:hover .section-toggle-cue { color: var(--text-secondary); }
+
     .section-toggle-left { min-width: 0; }
+
     .section-toggle-label {
       display: flex;
       align-items: center;
@@ -272,7 +356,15 @@
       text-transform: uppercase;
       color: var(--text-label);
     }
-    .section-toggle-label::before { content: ""; width: 20px; height: 1px; background: var(--text-label); flex-shrink: 0; }
+
+    .section-toggle-label::before {
+      content: "";
+      width: 20px;
+      height: 1px;
+      background: var(--text-label);
+      flex-shrink: 0;
+    }
+
     .section-toggle-title {
       margin-top: 12px;
       font-family: "Cormorant Garamond", serif;
@@ -282,6 +374,7 @@
       letter-spacing: -0.015em;
       color: var(--text-primary);
     }
+
     .section-toggle-cue {
       flex-shrink: 0;
       font-family: "DM Mono", monospace;
@@ -291,16 +384,21 @@
       color: var(--gold-dim);
       white-space: nowrap;
     }
+
     .section-toggle[aria-expanded="true"] .section-toggle-cue::after { content: "Close"; }
     .section-toggle[aria-expanded="false"] .section-toggle-cue::after { content: "Open"; }
-    .collapsible-content { overflow: hidden; transition: opacity 0.28s ease; }
+
+    .collapsible-content { overflow: hidden; transition: opacity 0.24s ease; }
     .collapsible-shell.is-collapsed .collapsible-content { opacity: 0.92; }
     .collapsible-shell.is-collapsed .collapsible-content-inner { visibility: hidden; }
+
     #diagnostic, #products, #proof { background: var(--bg-1); }
     #system, #club, #private { background: var(--bg); }
     #execution { background: var(--bg-2); }
+
     .diag-head { margin-bottom: 24px; max-width: 640px; }
     .diag-sub { margin-bottom: 10px; font-size: 16px; color: var(--text-primary); }
+
     .diag-context {
       font-family: "Cormorant Garamond", serif;
       font-style: italic;
@@ -308,6 +406,7 @@
       line-height: 1.6;
       color: var(--text-secondary);
     }
+
     .diag-grid {
       display: grid;
       grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -315,6 +414,7 @@
       background: var(--border);
       margin-bottom: 2px;
     }
+
     .diag-card {
       width: 100%;
       background: var(--bg-1);
@@ -326,20 +426,30 @@
       cursor: pointer;
       min-height: 250px;
     }
+
     .diag-card::before {
       content: "";
       position: absolute;
-      top: 0; left: 0; right: 0;
+      top: 0;
+      left: 0;
+      right: 0;
       height: 1px;
       background: linear-gradient(to right, var(--gold), transparent 62%);
       opacity: 0;
     }
-    .diag-card:hover { background: var(--bg-2); box-shadow: inset 0 0 0 1px rgba(196, 163, 90, 0.08); }
+
+    .diag-card:hover {
+      background: var(--bg-2);
+      box-shadow: inset 0 0 0 1px rgba(196, 163, 90, 0.08);
+    }
+
     .diag-card:hover::before, .diag-card.active::before { opacity: 1; }
+
     .diag-card.active {
       background: linear-gradient(135deg, #2a0f12 0%, #3b1519 100%);
       box-shadow: 0 14px 42px rgba(42, 15, 18, 0.55);
     }
+
     .diag-num {
       margin-bottom: 18px;
       font-family: "DM Mono", monospace;
@@ -347,7 +457,9 @@
       letter-spacing: 0.2em;
       color: var(--text-label);
     }
+
     .diag-card.active .diag-num { color: rgba(196, 163, 90, 0.6); }
+
     .diag-card-title {
       margin-bottom: 12px;
       font-family: "Cormorant Garamond", serif;
@@ -357,15 +469,18 @@
       letter-spacing: -0.01em;
       flex: 1;
     }
+
     .diag-card-sub {
       margin-bottom: 22px;
       font-size: 13px;
       line-height: 1.68;
       color: var(--text-secondary);
     }
+
     .diag-card.active .diag-card-sub { color: var(--text-primary); }
     .diag-indicator { width: 20px; height: 1px; background: var(--text-label); }
     .diag-card:hover .diag-indicator, .diag-card.active .diag-indicator { width: 32px; background: var(--gold); }
+
     .diag-result {
       background: var(--bg-2);
       border: 1px solid var(--border);
@@ -374,6 +489,7 @@
       min-height: 324px;
       position: relative;
     }
+
     .diag-result::before {
       content: "";
       position: absolute;
@@ -383,8 +499,10 @@
       background: linear-gradient(to right, var(--gold-dim), transparent 50%);
       opacity: 0.5;
     }
+
     .result-state { display: none; }
     .result-state.active { display: block; }
+
     .result-default-text {
       max-width: 520px;
       font-family: "Cormorant Garamond", serif;
@@ -393,6 +511,7 @@
       line-height: 1.55;
       color: var(--text-muted);
     }
+
     .result-label {
       margin-bottom: 14px;
       font-family: "DM Mono", monospace;
@@ -401,6 +520,7 @@
       text-transform: uppercase;
       color: var(--gold-dim);
     }
+
     .result-issue {
       margin-bottom: 10px;
       font-family: "Cormorant Garamond", serif;
@@ -409,6 +529,7 @@
       letter-spacing: -0.01em;
       color: var(--text-primary);
     }
+
     .result-start {
       margin-bottom: 16px;
       font-family: "DM Mono", monospace;
@@ -417,6 +538,7 @@
       text-transform: uppercase;
       color: var(--gold);
     }
+
     .result-why {
       max-width: 620px;
       margin-bottom: 18px;
@@ -424,6 +546,7 @@
       line-height: 1.76;
       color: var(--text-secondary);
     }
+
     .result-outcome {
       margin-bottom: 28px;
       font-family: "Cormorant Garamond", serif;
@@ -432,6 +555,7 @@
       line-height: 1.52;
       color: var(--text-primary);
     }
+
     .result-bridge {
       margin-top: 20px;
       padding-top: 18px;
@@ -443,6 +567,7 @@
       line-height: 1.7;
       color: var(--gold-dim);
     }
+
     .diag-footer-note {
       padding-top: 28px;
       font-family: "DM Mono", monospace;
@@ -451,13 +576,16 @@
       line-height: 1.8;
       color: var(--text-label);
     }
+
     .system-grid {
       display: grid;
       grid-template-columns: 1fr 1.45fr;
       gap: 82px;
       align-items: start;
     }
+
     .system-copy p + p { margin-top: 10px; }
+
     .system-meta {
       margin-top: 18px;
       font-family: "DM Mono", monospace;
@@ -466,6 +594,7 @@
       line-height: 1.8;
       color: var(--gold);
     }
+
     .system-meta-sub {
       margin-top: 14px;
       max-width: 520px;
@@ -473,6 +602,7 @@
       line-height: 1.74;
       color: var(--text-secondary);
     }
+
     .system-bridge {
       margin-top: 18px;
       max-width: 520px;
@@ -483,14 +613,17 @@
       color: var(--gold-dim);
       text-transform: uppercase;
     }
+
     .phase-list { list-style: none; margin: 12px 0 40px; }
+
     .phase-item {
       border-bottom: 1px solid var(--border);
       background: transparent;
     }
+
     .phase-toggle {
       width: 100%;
-      padding: 18px 0;
+      padding: 16px 0;
       display: flex;
       align-items: flex-start;
       justify-content: space-between;
@@ -498,7 +631,9 @@
       text-align: left;
       cursor: pointer;
     }
+
     .phase-left { min-width: 0; }
+
     .phase-name {
       display: block;
       font-family: "Cormorant Garamond", serif;
@@ -506,6 +641,7 @@
       line-height: 1.05;
       color: var(--gold);
     }
+
     .phase-summary {
       margin-top: 8px;
       font-size: 14px;
@@ -513,6 +649,7 @@
       color: var(--text-primary);
       opacity: 0.86;
     }
+
     .phase-arrow {
       flex-shrink: 0;
       margin-top: 12px;
@@ -521,6 +658,7 @@
       background: var(--text-label);
       position: relative;
     }
+
     .phase-arrow::after {
       content: "";
       position: absolute;
@@ -531,10 +669,12 @@
       background: var(--text-label);
       transition: opacity 0.2s ease;
     }
+
     .phase-item.open .phase-arrow { background: var(--gold); }
     .phase-item.open .phase-arrow::after { opacity: 0; }
-    .phase-panel { display: none; padding: 0 0 18px; }
+    .phase-panel { display: none; padding: 0 0 16px; }
     .phase-item.open .phase-panel { display: block; }
+
     .phase-link {
       display: inline-block;
       margin-top: 10px;
@@ -545,29 +685,36 @@
       color: var(--gold-dim);
       text-decoration: none;
     }
+
     .phase-link:hover { color: var(--gold); }
-    .execution-intro { max-width: 760px; margin-bottom: 32px; }
+
+    .execution-intro { max-width: 760px; margin-bottom: 28px; }
     .execution-intro p + p { margin-top: 10px; }
-    .execution-note, .execution-compare-line, .execution-routing, .checklist-preline {
+
+    .execution-note, .execution-compare-line, .execution-routing, .checklist-preline, .products-support-line {
       font-family: "DM Mono", monospace;
       font-size: 10px;
       letter-spacing: 0.1em;
       line-height: 1.8;
       text-transform: uppercase;
     }
-    .execution-note { margin-top: 20px; color: var(--gold-dim); }
+
+    .execution-note { margin-top: 18px; color: var(--gold-dim); }
     .execution-compare-line { margin-top: 6px; color: var(--text-muted); }
+
     .execution-dashboard {
       display: grid;
       grid-template-columns: 1.1fr 0.9fr;
       gap: 18px;
-      margin-bottom: 40px;
+      margin-bottom: 34px;
     }
+
     .execution-panel {
-      padding: 28px;
+      padding: 24px;
       border: 1px solid var(--border);
       background: linear-gradient(180deg, rgba(196, 163, 90, 0.03), rgba(196, 163, 90, 0)), var(--bg-1);
     }
+
     .execution-panel-label {
       margin-bottom: 10px;
       font-family: "DM Mono", monospace;
@@ -576,14 +723,18 @@
       text-transform: uppercase;
       color: var(--gold-dim);
     }
+
     .execution-panel-copy { font-size: 15px; line-height: 1.74; color: var(--text-secondary); }
+
     .execution-active {
       font-family: "Cormorant Garamond", serif;
       font-size: clamp(22px, 2.4vw, 30px);
       line-height: 1.2;
       color: var(--text-primary);
     }
-    .day-tabs { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 18px; }
+
+    .day-tabs { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 16px; }
+
     .day-tab {
       padding: 10px 14px;
       border: 1px solid var(--border);
@@ -594,18 +745,30 @@
       color: var(--text-muted);
       cursor: pointer;
     }
+
     .day-tab.is-active {
-      border-color: var(--gold-dim);
+      border-color: var(--gold);
       color: var(--gold);
-      background: rgba(196, 163, 90, 0.06);
+      background: rgba(196, 163, 90, 0.08);
+      box-shadow: inset 0 0 0 1px rgba(196, 163, 90, 0.12);
     }
+
     .day-tab.is-complete {
       border-color: rgba(90, 173, 122, 0.42);
       color: var(--green);
-      background: var(--green-soft);
+      background: rgba(90, 173, 122, 0.08);
     }
+
     .execution-day-copy { font-size: 14px; line-height: 1.72; color: var(--text-secondary); }
-    .execution-targets { list-style: none; display: flex; flex-direction: column; gap: 8px; margin-top: 14px; }
+
+    .execution-targets {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-top: 14px;
+    }
+
     .execution-targets li {
       position: relative;
       padding-left: 12px;
@@ -613,6 +776,7 @@
       line-height: 1.6;
       color: var(--text-secondary);
     }
+
     .execution-targets li::before {
       content: "";
       position: absolute;
@@ -623,8 +787,9 @@
       border-radius: 50%;
       background: var(--gold);
     }
+
     .execution-target-priority {
-      margin-top: 18px;
+      margin-top: 16px;
       font-family: "DM Mono", monospace;
       font-size: 10px;
       letter-spacing: 0.1em;
@@ -632,8 +797,10 @@
       color: var(--gold-dim);
       text-transform: uppercase;
     }
-    .execution-block { margin-top: 42px; }
-    .execution-block + .execution-block { margin-top: 52px; }
+
+    .execution-block { margin-top: 34px; }
+    .execution-block + .execution-block { margin-top: 42px; }
+
     .execution-block-label {
       display: block;
       margin-bottom: 10px;
@@ -643,6 +810,7 @@
       text-transform: uppercase;
       color: var(--gold-dim);
     }
+
     .execution-block-title {
       margin-bottom: 8px;
       font-family: "Cormorant Garamond", serif;
@@ -651,17 +819,26 @@
       line-height: 1.08;
       color: var(--text-primary);
     }
-    .execution-block-copy { max-width: 640px; font-size: 15px; line-height: 1.76; color: var(--text-secondary); }
+
+    .execution-block-copy {
+      max-width: 640px;
+      font-size: 15px;
+      line-height: 1.76;
+      color: var(--text-secondary);
+    }
+
     .execution-setup {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 18px;
-      margin-top: 22px;
-      padding: 28px;
+      margin-top: 20px;
+      padding: 24px;
       border: 1px solid var(--border);
       background: linear-gradient(180deg, rgba(196, 163, 90, 0.03), rgba(196, 163, 90, 0)), var(--bg-1);
     }
+
     .execution-field { display: flex; flex-direction: column; gap: 7px; }
+
     .execution-field-label {
       font-family: "DM Mono", monospace;
       font-size: 10px;
@@ -669,6 +846,7 @@
       text-transform: uppercase;
       color: var(--text-muted);
     }
+
     .execution-input, .execution-select, .tracker-input {
       width: 100%;
       padding: 12px 14px;
@@ -678,19 +856,36 @@
       font-size: 15px;
       font-weight: 300;
     }
+
     .execution-input::placeholder, .tracker-input::placeholder {
       color: var(--text-dim);
       font-style: italic;
     }
+
     .execution-select { appearance: none; -webkit-appearance: none; background: var(--bg-1); }
-    .execution-setup-row { grid-column: 1 / -1; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
-    .execution-hint { font-size: 13px; line-height: 1.6; color: var(--text-muted); font-style: italic; }
+
+    .execution-setup-row {
+      grid-column: 1 / -1;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .execution-hint {
+      font-size: 13px;
+      line-height: 1.6;
+      color: var(--text-muted);
+      font-style: italic;
+    }
+
     .execution-path-grid {
       display: grid;
       grid-template-columns: 1fr 1fr 1fr;
       gap: 18px;
-      margin-top: 26px;
+      margin-top: 22px;
     }
+
     .path-card {
       border: 1px solid var(--border);
       background: linear-gradient(160deg, var(--bg-1), var(--bg-2));
@@ -699,24 +894,41 @@
       position: relative;
       overflow: hidden;
     }
-    .path-card:hover { border-color: var(--border-gold); box-shadow: var(--shadow-soft); }
+
+    .path-card:hover {
+      border-color: var(--border-gold);
+      box-shadow: var(--shadow-soft);
+    }
+
     .path-card.featured {
       border-color: var(--gold-dim);
       background: linear-gradient(160deg, rgba(196, 163, 90, 0.06), var(--bg-1));
     }
+
     .path-card.featured::before {
       content: "";
       position: absolute;
-      top: 0; left: 0; right: 0;
+      top: 0;
+      left: 0;
+      right: 0;
       height: 1px;
       background: linear-gradient(to right, transparent, var(--gold), transparent);
       opacity: 0.55;
     }
+
     .path-card.is-active {
-      border-color: var(--gold);
-      box-shadow: inset 0 0 0 1px rgba(196, 163, 90, 0.18), var(--shadow-soft);
+      border-color: rgba(196, 163, 90, 0.82);
+      box-shadow:
+        inset 0 0 0 1px rgba(196, 163, 90, 0.18),
+        0 18px 44px rgba(196, 163, 90, 0.08);
+      background: linear-gradient(160deg, rgba(196, 163, 90, 0.08), var(--bg-1));
     }
-    .path-card-header { padding: 28px 28px 20px; border-bottom: 1px solid var(--border); }
+
+    .path-card-header {
+      padding: 24px 24px 18px;
+      border-bottom: 1px solid var(--border);
+    }
+
     .path-income {
       margin-bottom: 8px;
       font-family: "Cormorant Garamond", serif;
@@ -724,6 +936,7 @@
       line-height: 1.12;
       color: var(--text-primary);
     }
+
     .path-title {
       margin-bottom: 14px;
       font-family: "DM Mono", monospace;
@@ -732,7 +945,9 @@
       text-transform: uppercase;
       color: var(--text-muted);
     }
+
     .badge-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+
     .badge {
       display: inline-flex;
       align-items: center;
@@ -743,6 +958,7 @@
       letter-spacing: 0.08em;
       text-transform: uppercase;
     }
+
     .badge-dot {
       width: 5px;
       height: 5px;
@@ -750,22 +966,31 @@
       background: currentColor;
       display: inline-block;
     }
+
     .badge-fast { background: var(--green-soft); color: var(--green); }
     .badge-medium { background: var(--amber-soft); color: var(--amber); }
     .badge-slow { background: var(--red-soft); color: var(--red); }
-    .path-summary { font-size: 14px; line-height: 1.7; color: var(--text-secondary); }
-    .path-visible-meta {
-      margin-top: 14px;
-      display: grid;
-      gap: 8px;
-      padding-top: 14px;
-      border-top: 1px solid var(--border);
-    }
-    .path-visible-line {
-      font-size: 13px;
-      line-height: 1.6;
+
+    .path-summary {
+      font-size: 14px;
+      line-height: 1.68;
       color: var(--text-secondary);
     }
+
+    .path-visible-meta {
+      margin-top: 12px;
+      display: grid;
+      gap: 6px;
+      padding-top: 12px;
+      border-top: 1px solid var(--border);
+    }
+
+    .path-visible-line {
+      font-size: 13px;
+      line-height: 1.58;
+      color: var(--text-secondary);
+    }
+
     .path-visible-line strong {
       font-family: "DM Mono", monospace;
       font-size: 10px;
@@ -775,12 +1000,15 @@
       font-weight: 400;
       margin-right: 8px;
     }
+
     .path-card-body { display: flex; flex-direction: column; flex: 1; }
+
     .path-section { border-bottom: 1px solid var(--border); }
     .path-section:last-child { border-bottom: none; }
+
     .path-section-toggle {
       width: 100%;
-      padding: 13px 28px;
+      padding: 12px 24px;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -788,7 +1016,9 @@
       text-align: left;
       cursor: pointer;
     }
+
     .path-section-toggle:hover { background: rgba(255, 255, 255, 0.02); }
+
     .path-section-name {
       font-family: "DM Mono", monospace;
       font-size: 10px;
@@ -796,16 +1026,25 @@
       text-transform: uppercase;
       color: var(--text-muted);
     }
+
     .path-section-arrow {
       font-size: 10px;
       line-height: 1;
       color: var(--text-dim);
       transition: transform 0.2s ease;
     }
+
     .path-section.open .path-section-arrow { transform: rotate(180deg); }
-    .path-section-content { display: none; padding: 0 28px 18px; }
+    .path-section-content { display: none; padding: 0 24px 16px; }
     .path-section.open .path-section-content { display: block; }
-    .micro-list { list-style: none; display: flex; flex-direction: column; gap: 7px; }
+
+    .micro-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
     .micro-list li {
       position: relative;
       padding-left: 12px;
@@ -813,6 +1052,7 @@
       line-height: 1.56;
       color: var(--text-secondary);
     }
+
     .micro-list li::before {
       content: "";
       position: absolute;
@@ -824,24 +1064,51 @@
       background: var(--gold);
       opacity: 0.8;
     }
+
     .micro-list.danger li::before { background: var(--red); }
-    .path-card-cta { padding: 18px 28px 22px; border-top: 1px solid var(--border); }
+
+    .path-card-cta {
+      padding: 16px 24px 20px;
+      border-top: 1px solid var(--border);
+    }
+
     .run-path-btn.is-active {
       background: var(--gold);
       color: var(--bg);
       box-shadow: 0 8px 28px rgba(196, 163, 90, 0.18);
     }
-    .checklist-preline { margin-bottom: 10px; color: var(--gold-dim); }
-    .checklist-placeholder { font-size: 15px; line-height: 1.74; color: var(--text-secondary); }
-    .checklist-list { list-style: none; display: flex; flex-direction: column; gap: 10px; margin-top: 18px; }
+
+    .checklist-preline {
+      margin-bottom: 10px;
+      color: var(--gold-dim);
+    }
+
+    .checklist-placeholder {
+      font-size: 15px;
+      line-height: 1.74;
+      color: var(--text-secondary);
+    }
+
+    .checklist-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 14px;
+    }
+
     .checklist-item {
       display: flex;
       align-items: flex-start;
       gap: 12px;
       padding: 10px 0;
       border-bottom: 1px solid var(--border);
+      opacity: 1;
     }
+
     .checklist-item:last-child { border-bottom: none; }
+    .checklist-item.is-complete { opacity: 0.58; }
+
     .checklist-toggle {
       width: 16px;
       height: 16px;
@@ -852,23 +1119,46 @@
       cursor: pointer;
       position: relative;
     }
-    .checklist-toggle.is-complete { background: var(--gold); border-color: var(--gold); }
+
+    .checklist-toggle.is-complete {
+      background: rgba(196, 163, 90, 0.92);
+      border-color: rgba(196, 163, 90, 0.92);
+      box-shadow: 0 0 0 1px rgba(196, 163, 90, 0.12);
+    }
+
     .checklist-toggle.is-complete::after {
       content: "";
       position: absolute;
-      inset: 4px;
-      background: var(--bg);
+      left: 5px;
+      top: 2px;
+      width: 4px;
+      height: 8px;
+      border: solid var(--bg);
+      border-width: 0 1px 1px 0;
+      transform: rotate(45deg);
     }
-    .checklist-text { font-size: 14px; line-height: 1.62; color: var(--text-secondary); }
-    .checklist-text.is-complete { color: var(--text-muted); text-decoration: line-through; }
+
+    .checklist-text {
+      font-size: 14px;
+      line-height: 1.58;
+      color: var(--text-secondary);
+    }
+
+    .checklist-text.is-complete {
+      color: var(--text-muted);
+      text-decoration: line-through;
+    }
+
     .execution-tracker-grid {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 14px;
-      margin-top: 22px;
-      margin-bottom: 20px;
+      margin-top: 20px;
+      margin-bottom: 18px;
     }
+
     .tracker-field { display: flex; flex-direction: column; gap: 7px; }
+
     .tracker-label {
       font-family: "DM Mono", monospace;
       font-size: 10px;
@@ -876,12 +1166,14 @@
       text-transform: uppercase;
       color: var(--text-muted);
     }
+
     .tracker-input {
       text-align: center;
       font-family: "Cormorant Garamond", serif;
       font-size: 24px;
       font-weight: 400;
     }
+
     .tracker-feedback {
       min-height: 64px;
       padding: 16px 18px;
@@ -891,9 +1183,11 @@
       align-items: center;
       gap: 14px;
     }
+
     .tracker-feedback.on-track { border-color: rgba(90, 173, 122, 0.42); background: var(--green-soft); }
     .tracker-feedback.warning { border-color: rgba(212, 146, 74, 0.42); background: var(--amber-soft); }
     .tracker-feedback.low { border-color: rgba(204, 102, 102, 0.42); background: var(--red-soft); }
+
     .tracker-dot {
       width: 8px;
       height: 8px;
@@ -901,17 +1195,31 @@
       flex-shrink: 0;
       background: var(--text-dim);
     }
+
     .tracker-feedback.on-track .tracker-dot { background: var(--green); }
     .tracker-feedback.warning .tracker-dot { background: var(--amber); }
     .tracker-feedback.low .tracker-dot { background: var(--red); }
+
     .tracker-msg { font-size: 15px; line-height: 1.6; color: var(--text-secondary); }
     .tracker-feedback.on-track .tracker-msg { color: var(--green); }
     .tracker-feedback.warning .tracker-msg { color: var(--amber); }
     .tracker-feedback.low .tracker-msg { color: var(--red); }
-    .decision-grid { margin-top: 24px; border-top: 1px solid var(--border); }
-    .decision-row { display: grid; grid-template-columns: 220px 1fr; border-bottom: 1px solid var(--border); }
-    .decision-condition { padding: 16px 22px 16px 0; border-right: 1px solid var(--border); }
+
+    .decision-grid { margin-top: 22px; border-top: 1px solid var(--border); }
+
+    .decision-row {
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .decision-condition {
+      padding: 16px 22px 16px 0;
+      border-right: 1px solid var(--border);
+    }
+
     .decision-action { padding: 16px 0 16px 22px; }
+
     .decision-cond-label, .decision-action-label {
       display: block;
       margin-bottom: 4px;
@@ -920,13 +1228,15 @@
       letter-spacing: 0.12em;
       text-transform: uppercase;
     }
+
     .decision-cond-label { color: var(--text-dim); }
     .decision-action-label { color: var(--blue); opacity: 0.85; }
     .decision-cond-text { font-size: 15px; color: var(--text-secondary); }
     .decision-action-text { font-size: 15px; line-height: 1.7; color: var(--text-primary); }
+
     .execution-final-line {
-      margin-top: 36px;
-      padding-top: 28px;
+      margin-top: 30px;
+      padding-top: 24px;
       border-top: 1px solid var(--border);
       max-width: 720px;
       font-family: "Cormorant Garamond", serif;
@@ -934,8 +1244,20 @@
       line-height: 1.42;
       color: var(--text-secondary);
     }
-    .execution-routing { margin-top: 18px; max-width: 720px; color: var(--gold-dim); }
-    .products-intro { max-width: 700px; font-size: 15px; line-height: 1.72; color: var(--text-muted); }
+
+    .execution-routing {
+      margin-top: 16px;
+      max-width: 720px;
+      color: var(--gold-dim);
+    }
+
+    .products-intro {
+      max-width: 700px;
+      font-size: 15px;
+      line-height: 1.72;
+      color: var(--text-muted);
+    }
+
     .products-emphasis {
       display: inline-block;
       margin-top: 18px;
@@ -947,35 +1269,63 @@
       line-height: 1.8;
       color: var(--gold-dim);
     }
+
+    .products-support-line {
+      margin-top: 16px;
+      color: var(--text-muted);
+    }
+
     .products-grid {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 2px;
       background: var(--border);
-      margin-top: 38px;
+      margin-top: 34px;
     }
+
     .product-card {
       background: var(--bg-1);
-      padding: 42px 36px 44px;
+      padding: 40px 34px 42px;
       display: flex;
       flex-direction: column;
       min-height: 280px;
       position: relative;
+      border: 1px solid transparent;
     }
+
     .product-card::before {
       content: "";
       position: absolute;
-      top: 0; left: 0; right: 0;
+      top: 0;
+      left: 0;
+      right: 0;
       height: 1px;
       background: linear-gradient(to right, var(--gold), transparent 62%);
       opacity: 0;
     }
-    .product-card:hover { background: var(--bg-2); transform: translateY(-2px); box-shadow: var(--shadow-soft); z-index: 1; }
+
+    .product-card:hover {
+      background: var(--bg-2);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-soft);
+      z-index: 1;
+    }
+
     .product-card:hover::before { opacity: 1; }
+
     .product-card-primary {
       background: linear-gradient(180deg, rgba(196, 163, 90, 0.04), rgba(196, 163, 90, 0.01)), var(--bg-2);
       box-shadow: inset 0 0 0 1px var(--border-gold);
     }
+
+    .product-card.open {
+      border-color: rgba(196, 163, 90, 0.18);
+      background: linear-gradient(180deg, rgba(196, 163, 90, 0.04), rgba(196, 163, 90, 0.01)), var(--bg-2);
+      box-shadow: inset 0 0 0 1px rgba(196, 163, 90, 0.08), var(--shadow-gold);
+    }
+
+    .product-card.open .product-detail { padding-top: 16px; }
+
     .product-tag {
       margin-bottom: 18px;
       font-family: "DM Mono", monospace;
@@ -984,6 +1334,7 @@
       text-transform: uppercase;
       color: var(--gold-dim);
     }
+
     .product-title {
       margin-bottom: 10px;
       font-family: "Cormorant Garamond", serif;
@@ -991,19 +1342,22 @@
       line-height: 1.08;
       color: var(--text-primary);
     }
+
     .product-short {
       margin-bottom: 14px;
       font-size: 14px;
-      line-height: 1.7;
+      line-height: 1.68;
       color: var(--text-secondary);
       flex: 1;
     }
+
     .product-price {
       margin-bottom: 16px;
       font-family: "Cormorant Garamond", serif;
       font-size: 24px;
       color: var(--text-secondary);
     }
+
     .product-toggle {
       width: 100%;
       padding: 10px 0;
@@ -1017,9 +1371,11 @@
       border-top: 1px solid var(--border);
       margin-top: 4px;
     }
+
     .product-toggle:hover { color: var(--gold); }
-    .product-detail { display: none; padding: 12px 0 18px; }
+    .product-detail { display: none; }
     .product-card.open .product-detail { display: block; }
+
     .product-body {
       margin-bottom: 14px;
       font-size: 14px;
@@ -1027,6 +1383,7 @@
       color: var(--text-primary);
       opacity: 0.84;
     }
+
     .product-note {
       margin-bottom: 18px;
       font-family: "Cormorant Garamond", serif;
@@ -1035,6 +1392,7 @@
       line-height: 1.5;
       color: var(--text-primary);
     }
+
     .product-stack {
       margin-bottom: 18px;
       font-family: "DM Mono", monospace;
@@ -1044,14 +1402,24 @@
       color: var(--gold);
       text-transform: uppercase;
     }
+
     .club-grid, .private-grid {
       display: grid;
       grid-template-columns: 1.1fr 0.9fr;
       gap: 70px;
       align-items: center;
     }
+
     .club-copy { max-width: 620px; }
-    .club-sub { margin-top: 10px; margin-bottom: 18px; font-size: 15px; line-height: 1.76; color: var(--text-secondary); }
+
+    .club-sub {
+      margin-top: 10px;
+      margin-bottom: 18px;
+      font-size: 15px;
+      line-height: 1.76;
+      color: var(--text-secondary);
+    }
+
     .club-note, .private-micro {
       margin-top: 18px;
       padding-top: 16px;
@@ -1063,20 +1431,27 @@
       color: var(--gold-dim);
       text-transform: uppercase;
     }
+
     .club-panel {
-      padding: 36px 34px 38px;
+      padding: 34px 32px 36px;
       background: linear-gradient(180deg, rgba(196, 163, 90, 0.03), rgba(196, 163, 90, 0)), var(--bg-2);
       border: 1px solid var(--border-gold);
       box-shadow: inset 0 0 0 1px rgba(196, 163, 90, 0.03);
     }
-    .club-panel-title, .private-right-copy {
+
+    .club-panel-title {
       margin-bottom: 18px;
       font-family: "Cormorant Garamond", serif;
       font-size: clamp(26px, 2.4vw, 34px);
       line-height: 1.08;
       color: var(--gold);
     }
-    .club-list, .private-list { list-style: none; margin-bottom: 26px; }
+
+    .club-list, .private-list {
+      list-style: none;
+      margin-bottom: 26px;
+    }
+
     .club-list li, .private-list li {
       padding: 12px 0;
       border-bottom: 1px solid var(--border);
@@ -1085,12 +1460,18 @@
       color: var(--text-primary);
       opacity: 0.86;
     }
+
     .club-list li:last-child, .private-list li:last-child { border-bottom: none; }
+
     .private-right-copy {
+      font-family: "Cormorant Garamond", serif;
       font-style: italic;
+      font-size: clamp(20px, 2.1vw, 28px);
+      line-height: 1.48;
       color: var(--text-primary);
       opacity: 0.88;
     }
+
     .private-hook {
       margin-top: 24px;
       font-family: "Cormorant Garamond", serif;
@@ -1099,7 +1480,9 @@
       line-height: 1.45;
       color: var(--gold);
     }
+
     .proof-wrap { max-width: 720px; }
+
     .proof-main {
       margin-bottom: 18px;
       font-family: "Cormorant Garamond", serif;
@@ -1108,12 +1491,14 @@
       line-height: 1.45;
       color: var(--text-primary);
     }
+
     .proof-intro {
       margin-bottom: 16px;
       font-size: 15px;
       line-height: 1.75;
       color: var(--text-secondary);
     }
+
     .proof-add {
       margin-bottom: 22px;
       font-family: "Cormorant Garamond", serif;
@@ -1122,7 +1507,13 @@
       line-height: 1.56;
       color: var(--text-primary);
     }
-    .proof-list { list-style: none; margin: 0 0 26px; border-top: 1px solid var(--border); }
+
+    .proof-list {
+      list-style: none;
+      margin: 0 0 26px;
+      border-top: 1px solid var(--border);
+    }
+
     .proof-list li {
       padding: 13px 0;
       border-bottom: 1px solid var(--border);
@@ -1132,6 +1523,7 @@
       text-transform: lowercase;
       color: var(--text-dim);
     }
+
     .proof-close {
       margin-bottom: 10px;
       font-family: "Cormorant Garamond", serif;
@@ -1141,6 +1533,7 @@
       color: var(--text-primary);
       opacity: 0.88;
     }
+
     .proof-final {
       font-family: "DM Mono", monospace;
       font-size: 10px;
@@ -1149,7 +1542,12 @@
       color: var(--gold);
       line-height: 1.8;
     }
-    footer { padding: 76px 52px; border-top: 1px solid var(--border); }
+
+    footer {
+      padding: 70px 52px;
+      border-top: 1px solid var(--border);
+    }
+
     .footer-inner {
       max-width: 1120px;
       margin: 0 auto;
@@ -1158,6 +1556,7 @@
       gap: 60px;
       align-items: start;
     }
+
     .footer-mark {
       display: block;
       margin-bottom: 30px;
@@ -1167,6 +1566,7 @@
       text-transform: uppercase;
       color: var(--text-dim);
     }
+
     .footer-micro {
       font-family: "DM Mono", monospace;
       font-size: 10px;
@@ -1174,6 +1574,7 @@
       letter-spacing: 0.08em;
       color: var(--text-label);
     }
+
     .footer-col-label {
       margin-bottom: 18px;
       font-family: "DM Mono", monospace;
@@ -1182,8 +1583,10 @@
       text-transform: uppercase;
       color: var(--text-label);
     }
+
     .footer-links { list-style: none; }
     .footer-links li + li { margin-top: 2px; }
+
     .footer-links a {
       display: block;
       padding: 7px 0;
@@ -1195,35 +1598,49 @@
       text-transform: uppercase;
       color: var(--text-label);
     }
+
     .footer-links a:hover { color: var(--text-muted); }
+
     @media (max-width: 1100px) {
       .diag-grid, .products-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .execution-path-grid { grid-template-columns: 1fr; }
       .system-grid, .private-grid, .club-grid, .execution-dashboard { gap: 56px; }
     }
+
     @media (max-width: 920px) {
       .nav { padding: 18px 28px; }
       .nav-links { gap: 16px; }
       #hero { padding: 132px 28px 100px; }
       .hero-rule-bottom { left: 28px; right: 28px; }
-      .pad { padding: 82px 28px; }
-      .system-grid, .private-grid, .club-grid, .footer-inner, .execution-setup, .execution-tracker-grid, .execution-dashboard { grid-template-columns: 1fr; }
+      .pad { padding: 76px 28px; }
+      .system-grid, .private-grid, .club-grid, .footer-inner, .execution-setup, .execution-tracker-grid, .execution-dashboard {
+        grid-template-columns: 1fr;
+      }
       .diag-result { padding: 34px 28px 38px; }
       .decision-row { grid-template-columns: 1fr; }
-      .decision-condition { border-right: none; border-bottom: 1px solid var(--border); padding-right: 0; padding-bottom: 10px; }
+      .decision-condition {
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+        padding-right: 0;
+        padding-bottom: 10px;
+      }
       .decision-action { padding-left: 0; padding-top: 10px; }
-      footer { padding: 46px 28px; }
+      footer { padding: 44px 28px; }
     }
+
     @media (max-width: 720px) {
       .nav { padding: 16px 20px; align-items: flex-start; }
       .nav-links { display: none; }
       #hero { min-height: auto; padding: 118px 20px 88px; }
       .hero-headline { font-size: clamp(46px, 14vw, 78px); }
       .hero-rule-bottom { left: 20px; right: 20px; }
-      .pad { padding: 64px 20px; }
+      .pad { padding: 60px 20px; }
       .diag-grid, .products-grid, .execution-setup, .execution-path-grid { grid-template-columns: 1fr; }
       .diag-card { min-height: 0; padding: 26px 20px 28px; }
-      .diag-result, .path-card-header, .path-section-toggle, .path-section-content, .path-card-cta, .execution-panel { padding-left: 20px; padding-right: 20px; }
+      .diag-result, .path-card-header, .path-section-toggle, .path-section-content, .path-card-cta, .execution-panel {
+        padding-left: 20px;
+        padding-right: 20px;
+      }
       .execution-setup { padding: 22px 20px; }
       .product-card, .club-panel { min-height: 0; padding: 34px 24px 38px; }
       footer { padding: 36px 20px; }
@@ -1232,6 +1649,7 @@
       .section-toggle { align-items: flex-start; }
       .section-toggle-cue { padding-top: 6px; }
     }
+
     @media (prefers-reduced-motion: reduce) {
       html { scroll-behavior: auto; }
       *, *::before, *::after { animation: none !important; transition: none !important; }
@@ -1246,17 +1664,13 @@
         <a href="#diagnostic" class="nav-link">Diagnostic</a>
         <a href="#system" class="nav-link">System</a>
         <a href="#execution" class="nav-link nav-link-gold">Execution</a>
-        <a href="/capture" class="nav-link">Capture</a>
-        <a href="/position" class="nav-link nav-link-gold">Position</a>
-        <a href="#products" class="nav-link">Offers</a>
-        <a href="#club" class="nav-link nav-link-gold">5% Club</a>
-        <a href="#private" class="nav-link">Private Access</a>
         <a href="/systems" class="nav-link nav-link-gold">Unlock</a>
       </div>
     </nav>
 
     <main>
       <section id="hero" aria-labelledby="hero-title">
+        <canvas class="hero-canvas" id="hero-canvas" aria-hidden="true"></canvas>
         <div class="hero-inner">
           <p class="hero-eyebrow">Decision System</p>
           <h1 class="hero-headline" id="hero-title">
@@ -1315,36 +1729,28 @@
                   <button class="diag-card" type="button" data-state="1" aria-pressed="false">
                     <p class="diag-num">01</p>
                     <p class="diag-card-title">I know things. I just do not know what to sell.</p>
-                    <p class="diag-card-sub">
-                      You have skills, perspective, experience, or ideas, but nothing defined enough for someone to buy yet.
-                    </p>
+                    <p class="diag-card-sub">You have skills, perspective, experience, or ideas, but nothing defined enough for someone to buy yet.</p>
                     <span class="diag-indicator" aria-hidden="true"></span>
                   </button>
 
                   <button class="diag-card" type="button" data-state="2" aria-pressed="false">
                     <p class="diag-num">02</p>
                     <p class="diag-card-title">I know what I do. I cannot find who needs it.</p>
-                    <p class="diag-card-sub">
-                      You have something real. You have not yet connected it to a specific problem, buyer type, or set of real clients who would pay for it.
-                    </p>
+                    <p class="diag-card-sub">You have something real. You have not yet connected it to a specific problem, buyer type, or set of real clients who would pay for it.</p>
                     <span class="diag-indicator" aria-hidden="true"></span>
                   </button>
 
                   <button class="diag-card" type="button" data-state="3" aria-pressed="false">
                     <p class="diag-num">03</p>
                     <p class="diag-card-title">I already have something, but it is not converting.</p>
-                    <p class="diag-card-sub">
-                      You have an offer, service, page, or direction, but it is not landing clearly enough to make consistent money.
-                    </p>
+                    <p class="diag-card-sub">You have an offer, service, page, or direction, but it is not landing clearly enough to make consistent money.</p>
                     <span class="diag-indicator" aria-hidden="true"></span>
                   </button>
 
                   <button class="diag-card" type="button" data-state="4" aria-pressed="false">
                     <p class="diag-num">04</p>
                     <p class="diag-card-title">I need direct help fixing what is off.</p>
-                    <p class="diag-card-sub">
-                      You want correction, positioning, or strategic clarity with stronger support and less trial and error.
-                    </p>
+                    <p class="diag-card-sub">You want correction, positioning, or strategic clarity with stronger support and less trial and error.</p>
                     <span class="diag-indicator" aria-hidden="true"></span>
                   </button>
                 </div>
@@ -1774,6 +2180,7 @@
               <div class="collapsible-content-inner">
                 <p class="products-intro">The system is primary. These are supporting tools for specific decisions.</p>
                 <p class="products-emphasis">System first. Everything else exists to sharpen, accelerate, or clarify what is blocking money, movement, or decision-making.</p>
+                <p class="products-support-line">Use support only when something breaks or is unclear.</p>
 
                 <div class="products-grid">
                   <article class="product-card product-card-primary open">
@@ -2085,9 +2492,11 @@
       function safeGet(key) {
         try { return window.localStorage.getItem(key); } catch (error) { return null; }
       }
+
       function safeSet(key, value) {
         try { window.localStorage.setItem(key, value); } catch (error) {}
       }
+
       function safeJsonGet(key, fallback) {
         try {
           var value = window.localStorage.getItem(key);
@@ -2096,6 +2505,7 @@
           return fallback;
         }
       }
+
       function safeJsonSet(key, value) {
         try { window.localStorage.setItem(key, JSON.stringify(value)); } catch (error) {}
       }
@@ -2118,115 +2528,31 @@
 
       var checklistLibrary = {
         "Direct Outreach to Anchor Clients": {
-          "1": [
-            "Define the exact outcome you deliver",
-            "Identify 25 target people",
-            "Send first 10 messages"
-          ],
-          "2": [
-            "Send 10 more messages",
-            "Follow up on yesterday’s messages",
-            "Log replies"
-          ],
-          "3": [
-            "Review response rate",
-            "Identify whether targeting or message is weak",
-            "Send next 10 messages"
-          ],
-          "4": [
-            "Continue outreach volume",
-            "Follow up on open threads",
-            "Book at least 1 conversation"
-          ],
-          "5": [
-            "Review which messages performed best",
-            "Tighten outcome statement",
-            "Send next 10 messages"
-          ],
-          "6": [
-            "Review close rate from conversations",
-            "Adjust offer only if needed",
-            "Keep volume steady"
-          ],
-          "7": [
-            "Review weekly numbers",
-            "Decide whether to continue, refine, or replace path",
-            "Set next week’s target list"
-          ]
+          "1": ["Define the exact outcome you deliver", "Identify 25 target people", "Send first 10 messages"],
+          "2": ["Send 10 more messages", "Follow up on yesterday’s messages", "Log replies"],
+          "3": ["Review response rate", "Identify whether targeting or message is weak", "Send next 10 messages"],
+          "4": ["Continue outreach volume", "Follow up on open threads", "Book at least 1 conversation"],
+          "5": ["Review which messages performed best", "Tighten outcome statement", "Send next 10 messages"],
+          "6": ["Review close rate from conversations", "Adjust offer only if needed", "Keep volume steady"],
+          "7": ["Review weekly numbers", "Decide whether to continue, refine, or replace path", "Set next week’s target list"]
         },
         "Digital Product + Community Funnel": {
-          "1": [
-            "Confirm the product and checkout are live",
-            "Define what problem it solves",
-            "Draft first promotion post"
-          ],
-          "2": [
-            "Publish first content",
-            "Share the offer",
-            "Track clicks and sales"
-          ],
-          "3": [
-            "Publish second content piece",
-            "Review clicks and sales",
-            "Identify weak part of funnel"
-          ],
-          "4": [
-            "Improve product page clarity",
-            "Publish another promotional asset",
-            "Reply to all interest signals"
-          ],
-          "5": [
-            "Review what content got the most attention",
-            "Push the strongest angle again",
-            "Track conversion"
-          ],
-          "6": [
-            "Review conversion rate",
-            "Tighten entry offer or page if needed",
-            "Publish again"
-          ],
-          "7": [
-            "Review weekly traffic, sales, and response",
-            "Decide what stays",
-            "Set next week’s publishing plan"
-          ]
+          "1": ["Confirm the product and checkout are live", "Define what problem it solves", "Draft first promotion post"],
+          "2": ["Publish first content", "Share the offer", "Track clicks and sales"],
+          "3": ["Publish second content piece", "Review clicks and sales", "Identify weak part of funnel"],
+          "4": ["Improve product page clarity", "Publish another promotional asset", "Reply to all interest signals"],
+          "5": ["Review what content got the most attention", "Push the strongest angle again", "Track conversion"],
+          "6": ["Review conversion rate", "Tighten entry offer or page if needed", "Publish again"],
+          "7": ["Review weekly traffic, sales, and response", "Decide what stays", "Set next week’s publishing plan"]
         },
         "Newsletter + Paid Tier": {
-          "1": [
-            "Define the reader clearly",
-            "Draft the next issue",
-            "Set paid tier offer"
-          ],
-          "2": [
-            "Publish free issue",
-            "Promote excerpt publicly",
-            "Track opens and clicks"
-          ],
-          "3": [
-            "Review engagement",
-            "Identify what got attention",
-            "Draft paid offer language"
-          ],
-          "4": [
-            "Publish follow-up content",
-            "Promote the newsletter again",
-            "Track subscriber growth"
-          ],
-          "5": [
-            "Review free-to-paid signals",
-            "Improve upgrade message",
-            "Draft next issue"
-          ],
-          "6": [
-            "Publish again or schedule next issue",
-            "Review paid conversion",
-            "Improve call to upgrade"
-          ],
-          "7": [
-            "Review subscriber growth and paid conversion",
-            "Decide whether message, offer, or consistency is the issue",
-            "Set next week’s publishing plan"
-          ]
+          "1": ["Define the reader clearly", "Draft the next issue", "Set paid tier offer"],
+          "2": ["Publish free issue", "Promote excerpt publicly", "Track opens and clicks"],
+          "3": ["Review engagement", "Identify what got attention", "Draft paid offer language"],
+          "4": ["Publish follow-up content", "Promote the newsletter again", "Track subscriber growth"],
+          "5": ["Review free-to-paid signals", "Improve upgrade message", "Draft next issue"],
+          "6": ["Publish again or schedule next issue", "Review paid conversion", "Improve call to upgrade"],
+          "7": ["Review subscriber growth and paid conversion", "Decide whether message, offer, or consistency is the issue", "Set next week’s publishing plan"]
         }
       };
 
@@ -2240,31 +2566,11 @@
           summary: "Target 3–5 clients who can each pay $1k–$4k monthly for a defined service. Close with a direct conversation, not a funnel.",
           outcome: "Defined service with a clear deliverable",
           channel: "Direct outreach and follow-up",
-          requires: [
-            "Defined service with a clear deliverable",
-            "LinkedIn or email list of 100+ warm contacts",
-            "One-page offer description"
-          ],
-          daily: [
-            "Send 15–25 targeted outreach messages",
-            "Follow up every open thread within 24 hours",
-            "Book 2 discovery calls per week minimum"
-          ],
-          metrics: [
-            "Reply rate · 8–15%",
-            "Call rate · 20–35% of replies",
-            "Closes · 1 per 60–100 messages"
-          ],
-          constraints: [
-            "Outreach must run daily, 5 days per week",
-            "Every message must be personalized",
-            "No templates sent verbatim"
-          ],
-          failure: [
-            "Stopping outreach after one close",
-            "Sending generic messages at volume",
-            "Not following up more than once"
-          ]
+          requires: ["Defined service with a clear deliverable", "LinkedIn or email list of 100+ warm contacts", "One-page offer description"],
+          daily: ["Send 15–25 targeted outreach messages", "Follow up every open thread within 24 hours", "Book 2 discovery calls per week minimum"],
+          metrics: ["Reply rate · 8–15%", "Call rate · 20–35% of replies", "Closes · 1 per 60–100 messages"],
+          constraints: ["Outreach must run daily, 5 days per week", "Every message must be personalized", "No templates sent verbatim"],
+          failure: ["Stopping outreach after one close", "Sending generic messages at volume", "Not following up more than once"]
         },
         {
           featured: false,
@@ -2275,31 +2581,11 @@
           summary: "Sell a low-cost digital product at volume through content and community. Use that audience to sell a higher-ticket tier.",
           outcome: "Finished digital product ready to sell",
           channel: "Content, community, and funnel conversion",
-          requires: [
-            "One finished digital product ready to sell",
-            "Payment platform ready",
-            "Active presence on one platform with 500+ followers"
-          ],
-          daily: [
-            "Post 1 piece of content that drives to the product",
-            "Engage with 30–50 comments or replies",
-            "Track sales and traffic source daily"
-          ],
-          metrics: [
-            "Content to click rate · 1–3%",
-            "Page conversion · 2–5%",
-            "Upsell rate · 10–20% of buyers"
-          ],
-          constraints: [
-            "Posting must be daily",
-            "Product must deliver value in under 30 minutes",
-            "Upsell must be offered within 48 hours of purchase"
-          ],
-          failure: [
-            "Inconsistent content volume",
-            "Product that overpromises and underdelivers",
-            "No clear path from entry to next tier"
-          ]
+          requires: ["One finished digital product ready to sell", "Payment platform ready", "Active presence on one platform with 500+ followers"],
+          daily: ["Post 1 piece of content that drives to the product", "Engage with 30–50 comments or replies", "Track sales and traffic source daily"],
+          metrics: ["Content to click rate · 1–3%", "Page conversion · 2–5%", "Upsell rate · 10–20% of buyers"],
+          constraints: ["Posting must be daily", "Product must deliver value in under 30 minutes", "Upsell must be offered within 48 hours of purchase"],
+          failure: ["Inconsistent content volume", "Product that overpromises and underdelivers", "No clear path from entry to next tier"]
         },
         {
           featured: false,
@@ -2310,31 +2596,11 @@
           summary: "Build a free newsletter to 1k+ subscribers. Convert 3–5% to a paid tier. Grow through consistent, specific publishing.",
           outcome: "Defined reader and paid tier angle",
           channel: "Publishing and paid subscriber conversion",
-          requires: [
-            "Newsletter platform ready to publish",
-            "A defined niche with a specific reader",
-            "Commitment to weekly publishing"
-          ],
-          daily: [
-            "Write or outline the next issue",
-            "Share one excerpt publicly on one platform",
-            "Engage with 10+ replies or comments from readers"
-          ],
-          metrics: [
-            "Free to paid conversion · 3–8%",
-            "Open rate target · 40%+",
-            "Revenue at 1k subscribers · $300–$1.6k/mo"
-          ],
-          constraints: [
-            "Publishing must run on a fixed schedule",
-            "Paid tier must contain something the free tier does not",
-            "Growth requires active promotion"
-          ],
-          failure: [
-            "Inconsistent publishing schedule",
-            "Paid tier with no real differentiation",
-            "No promotion strategy beyond the newsletter itself"
-          ]
+          requires: ["Newsletter platform ready to publish", "A defined niche with a specific reader", "Commitment to weekly publishing"],
+          daily: ["Write or outline the next issue", "Share one excerpt publicly on one platform", "Engage with 10+ replies or comments from readers"],
+          metrics: ["Free to paid conversion · 3–8%", "Open rate target · 40%+", "Revenue at 1k subscribers · $300–$1.6k/mo"],
+          constraints: ["Publishing must run on a fixed schedule", "Paid tier must contain something the free tier does not", "Growth requires active promotion"],
+          failure: ["Inconsistent publishing schedule", "Paid tier with no real differentiation", "No promotion strategy beyond the newsletter itself"]
         }
       ];
 
@@ -2342,9 +2608,9 @@
         var listClass = extraClass ? "micro-list " + extraClass : "micro-list";
         return '<div class="path-section">' +
           '<button class="path-section-toggle" type="button">' +
-          '<span class="path-section-name">' + title + '</span>' +
+          '<span class="path-section-name">' + title + "</span>" +
           '<span class="path-section-arrow">&#9650;</span>' +
-          '</button>' +
+          "</button>" +
           '<div class="path-section-content"><ul class="' + listClass + '">' +
           items.map(function (item) { return "<li>" + item + "</li>"; }).join("") +
           "</ul></div></div>";
@@ -2362,25 +2628,25 @@
         element.setAttribute("data-path-title", card.title);
         element.innerHTML =
           '<div class="path-card-header">' +
-            '<p class="path-income">' + card.income + '</p>' +
-            '<p class="path-title">' + card.title + '</p>' +
+            '<p class="path-income">' + card.income + "</p>" +
+            '<p class="path-title">' + card.title + "</p>" +
             '<div class="badge-row">' +
-              '<span class="badge ' + pathBadgeClass(card.speed) + '"><span class="badge-dot"></span>' + card.speed + '</span>' +
-              '<span class="badge badge-medium">' + card.difficulty + '</span>' +
-            '</div>' +
-            '<p class="path-summary">' + card.summary + '</p>' +
+              '<span class="badge ' + pathBadgeClass(card.speed) + '"><span class="badge-dot"></span>' + card.speed + "</span>" +
+              '<span class="badge badge-medium">' + card.difficulty + "</span>" +
+            "</div>" +
+            '<p class="path-summary">' + card.summary + "</p>" +
             '<div class="path-visible-meta">' +
-              '<p class="path-visible-line"><strong>Outcome</strong>' + card.outcome + '</p>' +
-              '<p class="path-visible-line"><strong>Channel</strong>' + card.channel + '</p>' +
-            '</div>' +
-          '</div>' +
+              '<p class="path-visible-line"><strong>Outcome</strong>' + card.outcome + "</p>" +
+              '<p class="path-visible-line"><strong>Channel</strong>' + card.channel + "</p>" +
+            "</div>" +
+          "</div>" +
           '<div class="path-card-body">' +
             sectionMarkup("Requires", card.requires) +
             sectionMarkup("Daily actions", card.daily) +
             sectionMarkup("Metrics", card.metrics) +
             sectionMarkup("Constraints", card.constraints) +
             sectionMarkup("Failure points", card.failure, "danger") +
-          '</div>' +
+          "</div>" +
           '<div class="path-card-cta">' +
             '<button class="btn-blue run-path-btn" type="button" data-path-title="' + card.title + '" style="width:100%;">Run this path</button>' +
           "</div>";
@@ -2424,6 +2690,7 @@
           button.classList.toggle("is-active", !!title && match);
           button.textContent = match ? "Running now" : "Run this path";
         });
+
         Array.prototype.slice.call(document.querySelectorAll(".path-card")).forEach(function (card) {
           card.classList.toggle("is-active", card.getAttribute("data-path-title") === title);
         });
@@ -2435,11 +2702,13 @@
         var primary = document.getElementById("objective-primary");
         var secondary = document.getElementById("objective-secondary");
         var dayCopy = dayCopyMap[activeDay] || dayCopyMap["1"];
+
         if (!activePath) {
           primary.textContent = "Choose one path first. Then today's work becomes clear.";
           secondary.textContent = "";
           return;
         }
+
         primary.textContent = activePath + " · Day " + activeDay;
         secondary.textContent = dayCopy;
       }
@@ -2455,15 +2724,18 @@
         var activePath = getActivePath();
         var streakDisplay = document.getElementById("streak-display");
         if (!streakDisplay) return;
+
         if (!activePath) {
           streakDisplay.textContent = "Current streak: 0 / 7 days";
           safeSet(storage.executionStreak, "0");
           return;
         }
+
         var completedDays = getCompletedDays(activePath);
         var streak = Object.keys(completedDays).filter(function (day) {
           return completedDays[day];
         }).length;
+
         safeSet(storage.executionStreak, String(streak));
         streakDisplay.textContent = "Current streak: " + streak + " / 7 days";
       }
@@ -2472,11 +2744,13 @@
         var activeDay = getActiveDay();
         var activePath = getActivePath();
         var completedDays = activePath ? getCompletedDays(activePath) : {};
+
         Array.prototype.slice.call(document.querySelectorAll(".day-tab")).forEach(function (tab) {
           var day = tab.getAttribute("data-day");
           tab.classList.toggle("is-active", day === activeDay);
           tab.classList.toggle("is-complete", !!completedDays[day]);
         });
+
         var copy = document.getElementById("execution-day-copy");
         if (copy) copy.textContent = dayCopyMap[activeDay] || dayCopyMap["1"];
       }
@@ -2484,25 +2758,30 @@
       function renderChecklist() {
         var container = document.getElementById("checklist-container");
         if (!container) return;
+
         var activePath = getActivePath();
         var activeDay = getActiveDay();
+
         if (!activePath || !checklistLibrary[activePath]) {
           container.innerHTML = '<p class="checklist-placeholder">Choose a path to unlock today&#39;s checklist.</p>';
           return;
         }
+
         var checklistState = getChecklistState();
         var pathState = checklistState[activePath] || { days: {}, completedDays: {} };
         var dayState = pathState.days[activeDay] || {};
         var items = checklistLibrary[activePath][activeDay] || [];
         var html = '<ul class="checklist-list">';
+
         items.forEach(function (item, index) {
           var isComplete = !!dayState[index];
           html +=
-            '<li class="checklist-item">' +
-            '<button class="checklist-toggle' + (isComplete ? ' is-complete' : '') + '" type="button" data-check-index="' + index + '"></button>' +
-            '<span class="checklist-text' + (isComplete ? ' is-complete' : '') + '">' + item + "</span>" +
+            '<li class="checklist-item' + (isComplete ? ' is-complete' : '') + '">' +
+              '<button class="checklist-toggle' + (isComplete ? ' is-complete' : '') + '" type="button" data-check-index="' + index + '"></button>' +
+              '<span class="checklist-text' + (isComplete ? ' is-complete' : '') + '">' + item + "</span>" +
             "</li>";
         });
+
         html += "</ul>";
         container.innerHTML = html;
 
@@ -2512,8 +2791,10 @@
             var state = getChecklistState();
             var currentPath = getActivePath();
             var currentDay = getActiveDay();
+
             if (!state[currentPath]) state[currentPath] = { days: {}, completedDays: {} };
             if (!state[currentPath].days[currentDay]) state[currentPath].days[currentDay] = {};
+
             state[currentPath].days[currentDay][index] = !state[currentPath].days[currentDay][index];
 
             var allComplete = (checklistLibrary[currentPath][currentDay] || []).every(function (_, itemIndex) {
@@ -2522,6 +2803,7 @@
 
             state[currentPath].completedDays[currentDay] = allComplete;
             safeJsonSet(storage.executionChecklist, state);
+
             renderChecklist();
             updateDayTabs();
             updateStreak();
@@ -2605,6 +2887,82 @@
         evaluateTracker();
       }
 
+      function initHeroCanvas() {
+        var canvas = document.getElementById("hero-canvas");
+        var hero = document.getElementById("hero");
+        if (!canvas || !hero) return;
+        var ctx = canvas.getContext("2d");
+        if (!ctx) return;
+
+        var particles = [];
+        var count = 62;
+        var dpr = Math.min(window.devicePixelRatio || 1, 2);
+        var width = 0;
+        var height = 0;
+        var reducedMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+        function resize() {
+          width = hero.clientWidth;
+          height = hero.clientHeight;
+          canvas.width = Math.floor(width * dpr);
+          canvas.height = Math.floor(height * dpr);
+          canvas.style.width = width + "px";
+          canvas.style.height = height + "px";
+          ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+          if (!particles.length) createParticles();
+        }
+
+        function createParticles() {
+          particles = [];
+          for (var i = 0; i < count; i += 1) {
+            particles.push({
+              x: Math.random() * width,
+              y: Math.random() * height,
+              r: 0.8 + Math.random() * 2.6,
+              vx: -0.05 + Math.random() * 0.1,
+              vy: -0.08 + Math.random() * 0.14,
+              alpha: 0.035 + Math.random() * 0.05,
+              drift: Math.random() * Math.PI * 2
+            });
+          }
+        }
+
+        function step() {
+          ctx.clearRect(0, 0, width, height);
+          for (var i = 0; i < particles.length; i += 1) {
+            var p = particles[i];
+            p.drift += 0.0025;
+            p.x += p.vx + Math.sin(p.drift) * 0.03;
+            p.y += p.vy + Math.cos(p.drift * 0.8) * 0.025;
+
+            if (p.x < -20) p.x = width + 20;
+            if (p.x > width + 20) p.x = -20;
+            if (p.y < -20) p.y = height + 20;
+            if (p.y > height + 20) p.y = -20;
+
+            var gradient = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r * 6);
+            gradient.addColorStop(0, "rgba(232, 214, 173," + p.alpha + ")");
+            gradient.addColorStop(1, "rgba(232, 214, 173,0)");
+            ctx.fillStyle = gradient;
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.r * 6, 0, Math.PI * 2);
+            ctx.fill();
+          }
+
+          if (!reducedMotion) {
+            window.requestAnimationFrame(step);
+          }
+        }
+
+        resize();
+        if (reducedMotion) {
+          step();
+        } else {
+          step();
+        }
+        window.addEventListener("resize", resize);
+      }
+
       renderExecutionCards();
 
       updateActivePathDisplay(getActivePath());
@@ -2615,6 +2973,7 @@
       renderChecklist();
       updateStreak();
       restoreTracker();
+      initHeroCanvas();
 
       Array.prototype.slice.call(document.querySelectorAll(".run-path-btn")).forEach(function (button) {
         button.addEventListener("click", function () {
