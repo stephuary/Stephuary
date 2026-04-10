@@ -764,6 +764,7 @@
   </div>
 </div>
 
+<script src="/stephuary-result.js"></script>
 <script>
 (function(){
   var STORAGE_KEY = 'stephuary_sovereignty_p05_v1';
@@ -1246,6 +1247,17 @@
   function showSummary() {
     state.currentStep = 11;
     saveStorage();
+    try {
+      var p01raw = localStorage.getItem(P01_KEY);
+      var p01 = p01raw ? JSON.parse(p01raw) : null;
+      var bits = p01 && p01.bits ? p01.bits : null;
+      if (window.StephuaryResult && typeof window.StephuaryResult.buildFromPhase01 === 'function') {
+        var resultObj = window.StephuaryResult.buildFromPhase01(bits);
+        localStorage.setItem('stephuary_result_v1', JSON.stringify(resultObj));
+        window.location.replace('/results');
+        return;
+      }
+    } catch (err) {}
     document.getElementById('flow').style.display = 'none';
     document.getElementById('summary').style.display = 'flex';
     buildSummaryOutputs(state.bits.map(function(x) { return x; }));

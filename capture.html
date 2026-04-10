@@ -8,22 +8,23 @@
   <meta name="description" content="Phase 01 diagnostic. How you perceive, respond, and where avoidance sits." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Lato:wght@300;400&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet" />
 
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg:          #0a0a08;
+      --bg:          #0b0f0b;
       --surface:     #111110;
-      --border:      #2a2a26;
+      --border:      rgba(43, 79, 212, 0.2);
       --border-dim:  #1c1c19;
-      --gold:        #c4a35a;
+      --blue:        #2b4fd4;
+      --gold:        #c8a951;
       --gold-dim:    #8a6f3a;
-      --selected-bg: rgba(196,163,90,0.09);
-      --text:        #f5f0e8;
-      --text-dim:    #7a7870;
-      --text-mid:    #c8c0b0;
+      --selected-bg: rgba(200, 169, 81, 0.09);
+      --text:        #f4f2ee;
+      --text-dim:    rgba(244, 242, 238, 0.52);
+      --text-mid:    rgba(244, 242, 238, 0.72);
       --serif:       'Cormorant Garamond', Georgia, serif;
       --sans:        'Lato', system-ui, sans-serif;
       --radius:      2px;
@@ -55,9 +56,10 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 12px 24px;
-      background: rgba(10, 10, 8, 0.96);
-      border-bottom: 1px solid var(--border-dim);
+      padding: 12px 48px;
+      background: rgba(11, 15, 11, 0.97);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
     }
     .global-nav a {
       font-size: 10px;
@@ -649,6 +651,9 @@
       .rail { order: 1; }
     }
 
+    @media (max-width: 720px) {
+      .global-nav { padding-left: 24px; padding-right: 24px; }
+    }
     @media (max-width: 480px) {
       body { padding: 0 12px 80px; }
       .step-instruction { font-size: 24px; }
@@ -804,9 +809,11 @@
   </div>
 </div>
 
+<script src="/stephuary-result.js"></script>
 <script>
 (function(){
   const STORAGE_KEY = 'stephuary_capture_p01_v2';
+  const RESULT_KEY = 'stephuary_result_v1';
   const TOTAL_Q = 10;
   const RAIL_LABELS = ['Detection','Response','Signal','Perception','Standards','Failure','Expression','Execution','Environment','Avoidance','Results'];
 
@@ -1357,6 +1364,14 @@
   function showSummary() {
     state.currentStep = 11;
     saveStorage();
+    try {
+      if (window.StephuaryResult && typeof window.StephuaryResult.buildFromPhase01 === 'function') {
+        var resultObj = window.StephuaryResult.buildFromPhase01(state.bits);
+        localStorage.setItem(RESULT_KEY, JSON.stringify(resultObj));
+        window.location.replace('/results');
+        return;
+      }
+    } catch (err) {}
     document.getElementById('flow').style.display = 'none';
     document.getElementById('summary').style.display = 'flex';
     document.getElementById('live-status').textContent = 'Phase 01 complete.';
@@ -1469,6 +1484,7 @@
     try {
       localStorage.removeItem(STORAGE_KEY);
       localStorage.removeItem('capture_complete');
+      localStorage.removeItem(RESULT_KEY);
     } catch (e) {}
     state.bits = Array(TOTAL_Q).fill(null);
     state.currentStep = 1;
@@ -1526,6 +1542,7 @@
     try {
       localStorage.removeItem('capture_complete');
       localStorage.removeItem(STORAGE_KEY);
+      localStorage.removeItem(RESULT_KEY);
     } catch (e) {}
     state.bits = Array(TOTAL_Q).fill(null);
     state.currentStep = 1;

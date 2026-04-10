@@ -16,8 +16,9 @@
       --white: #f4f2ee;
       --muted: rgba(244, 242, 238, 0.52);
       --faint: rgba(244, 242, 238, 0.14);
-      --line: rgba(43, 79, 212, 0.22);
       --line-soft: rgba(244, 242, 238, 0.08);
+      --line-blue: rgba(43, 79, 212, 0.2);
+      --line: rgba(43, 79, 212, 0.2);
       --surface: rgba(15, 22, 28, 0.65);
     }
     html { scroll-behavior: smooth; }
@@ -35,15 +36,15 @@
       from { opacity: 0; transform: translateY(10px); }
       to { opacity: 1; transform: translateY(0); }
     }
-    .wrap { max-width: 680px; margin: 0 auto; padding: 0 28px; }
-    .wrap-wide { max-width: 820px; margin: 0 auto; padding: 0 28px; }
-    .rule { height: 1px; background: var(--line); margin: 0 28px; max-width: calc(820px + 56px); margin-left: auto; margin-right: auto; }
+    .wrap { max-width: 680px; margin: 0 auto; padding: 0 48px; }
+    .wrap-wide { max-width: 820px; margin: 0 auto; padding: 0 48px; }
+    .rule { height: 1px; background: var(--line-blue); margin: 0 48px; max-width: calc(820px + 96px); margin-left: auto; margin-right: auto; }
 
     .top-bar {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 28px 28px 0;
+      padding: 28px 48px 0;
       max-width: 900px;
       margin: 0 auto;
     }
@@ -132,7 +133,7 @@
       color: var(--white);
       max-width: 560px;
       padding-top: 8px;
-      border-top: 1px solid var(--line);
+      border-top: 1px solid var(--line-blue);
     }
 
     .type-pill {
@@ -326,7 +327,7 @@
       background: var(--blue);
       color: #0b0f0b;
     }
-    .btn-primary:hover { filter: brightness(1.12); transform: translateY(-1px); }
+    .btn-primary:hover { filter: brightness(1.14); transform: scale(1.02); box-shadow: 0 0 24px rgba(43, 79, 212, 0.4); }
     .btn-ghost {
       background: transparent;
       color: var(--muted);
@@ -395,6 +396,10 @@
     }
     .foot-link:hover { color: var(--gold); }
 
+    @media (max-width: 720px) {
+      .wrap, .wrap-wide, .top-bar { padding-left: 22px; padding-right: 22px; }
+      .rule { margin-left: 22px; margin-right: 22px; }
+    }
     @media (max-width: 520px) {
       body { font-size: 17px; }
       .body-text, .bullet-list li { font-size: 16px; }
@@ -466,14 +471,12 @@
     <section class="play-wrap">
       <div class="wrap-wide">
         <p class="sec-label">Go deeper on this</p>
-        <h2 class="sec-h2" style="margin-bottom: 22px;">Relevant playbooks</h2>
         <div class="play-grid" id="playGrid"></div>
       </div>
     </section>
 
     <section class="block alt">
       <div class="wrap-wide">
-        <p class="sec-label">Support</p>
         <div class="help-box">
           <h2 class="sec-h2" style="margin-bottom: 12px;">If you want help applying this</h2>
           <p class="help-body">If you want another set of eyes on this, there are a few ways to do that.</p>
@@ -482,7 +485,7 @@
             <li>Snapshot</li>
             <li>Ongoing Advisory</li>
           </ul>
-          <a href="/request-access" class="btn btn-primary">Request access →</a>
+          <a href="/private-access" class="btn btn-primary">Request access →</a>
         </div>
       </div>
     </section>
@@ -495,7 +498,8 @@
 
   <script>
 (function () {
-  var STORAGE_KEY = 'stephuary_diagnostic_result';
+  var STORAGE_KEY = 'stephuary_result_v1';
+  var LEGACY_KEYS = ['stephuary_diagnostic_result'];
 
   var PLAYBOOK_META = {
     'Execution': {
@@ -729,9 +733,10 @@
 
   function playbookHref(name, mode) {
     var meta = PLAYBOOK_META[name];
-    var slug = meta ? meta.slug : 'general';
-    if (mode === 'open') return '/playbooks/' + slug;
-    return '/playbooks/' + slug + '?download=1';
+    if (!meta) return '/playbooks';
+    var hash = '#pb-' + meta.slug;
+    if (mode === 'open') return '/playbooks' + hash;
+    return '/playbooks?download=1' + hash;
   }
 
   function renderPlaybooks(names) {
@@ -755,15 +760,53 @@
 
   function loadResult() {
     var raw = null;
+    var fromLegacy = false;
     try {
       raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) {
+        for (var i = 0; i < LEGACY_KEYS.length; i++) {
+          raw = localStorage.getItem(LEGACY_KEYS[i]);
+          if (raw) {
+            fromLegacy = true;
+            break;
+          }
+        }
+      }
     } catch (e) {}
-    if (!raw) return null;
+    if (!raw) return { data: null, fromLegacy: false };
     try {
-      return JSON.parse(raw);
+      return { data: JSON.parse(raw), fromLegacy: fromLegacy };
     } catch (e) {
-      return null;
+      return { data: null, fromLegacy: false };
     }
+  }
+
+  function normalizeData(data) {
+    if (!data || typeof data !== 'object' || Array.isArray(data)) return null;
+    var v = data.result_version;
+    if (!v || !RESULT_VERSIONS[v]) {
+      data.result_version = 'mixed_general';
+    }
+    if (!data.signals || typeof data.signals !== 'object') {
+      data.signals = {
+        detection: '',
+        response: '',
+        processing: '',
+        awareness: '',
+        standards: '',
+        timing: '',
+        impact: '',
+        approach: ''
+      };
+    }
+    if (data.type_primary === undefined) data.type_primary = '';
+    if (data.type_secondary === undefined) data.type_secondary = '';
+    if (data.block === undefined) data.block = '';
+    if (data.environment === undefined) data.environment = '';
+    if (!data.playbooks || !data.playbooks.length) {
+      data.playbooks = RESULT_VERSIONS[data.result_version].playbooks.slice();
+    }
+    return data;
   }
 
   function resolveVersion(data) {
@@ -795,7 +838,9 @@
     sigEl.innerHTML = '';
     sigEl.hidden = true;
     if (data.signals && typeof data.signals === 'object') {
-      var keys = Object.keys(data.signals);
+      var keys = Object.keys(data.signals).filter(function (k) {
+        return String(data.signals[k] || '').trim();
+      });
       if (keys.length) {
         sigEl.hidden = false;
         keys.forEach(function (k) {
@@ -814,14 +859,20 @@
     renderBulletList(document.getElementById('doNow'), version.doThisNow);
     renderActions(document.getElementById('actionSteps'), version.doThisNow);
 
-    var names = version.playbooks.slice();
+    var names = (data.playbooks && data.playbooks.length ? data.playbooks : version.playbooks).slice();
     renderPlaybooks(names);
   }
 
-  var data = loadResult();
-  if (!data || typeof data !== 'object') {
+  var loaded = loadResult();
+  var data = normalizeData(loaded.data);
+  if (!data) {
     showMissing();
     return;
+  }
+  if (loaded.fromLegacy) {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    } catch (e) {}
   }
 
   var version = resolveVersion(data);
