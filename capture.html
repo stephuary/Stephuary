@@ -1,1 +1,1560 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Phase 01 · Capture · Stephuary</title>
+  <meta name="description" content="Phase 01 diagnostic. How you perceive, respond, and where avoidance sits." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Lato:wght@300;400&display=swap" rel="stylesheet" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:          #0a0a08;
+      --surface:     #111110;
+      --border:      #2a2a26;
+      --border-dim:  #1c1c19;
+      --gold:        #c4a35a;
+      --gold-dim:    #8a6f3a;
+      --selected-bg: rgba(196,163,90,0.09);
+      --text:        #f5f0e8;
+      --text-dim:    #7a7870;
+      --text-mid:    #c8c0b0;
+      --serif:       'Cormorant Garamond', Georgia, serif;
+      --sans:        'Lato', system-ui, sans-serif;
+      --radius:      2px;
+      --trans:       200ms ease;
+    }
+
+    html {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      font-weight: 300;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 52px 16px 100px;
+    }
+
+    .global-nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 200;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 24px;
+      background: rgba(10, 10, 8, 0.96);
+      border-bottom: 1px solid var(--border-dim);
+    }
+    .global-nav a {
+      font-size: 10px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      text-decoration: none;
+      color: var(--text-dim);
+    }
+    .global-nav a:hover { color: var(--text-mid); }
+    .global-nav .gn-logo { color: var(--gold); }
+    .global-nav .gn-links { display: flex; gap: 18px; flex-wrap: wrap; }
+
+    #landing {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      text-align: center;
+      max-width: 520px;
+      width: 100%;
+      padding: 60px 0;
+    }
+
+    .landing-wordmark {
+      font-size: 10px;
+      letter-spacing: 0.32em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 28px;
+    }
+
+    .landing-phase {
+      font-size: 10px;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin-bottom: 36px;
+    }
+
+    .landing-title {
+      font-family: var(--serif);
+      font-size: clamp(36px, 6.5vw, 56px);
+      font-weight: 300;
+      line-height: 1.12;
+      margin-bottom: 20px;
+    }
+
+    .landing-title em {
+      font-style: italic;
+      color: var(--text-mid);
+    }
+
+    .landing-time {
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold-dim);
+      margin-bottom: 28px;
+    }
+
+    .landing-leave {
+      text-align: left;
+      align-self: stretch;
+      max-width: 380px;
+      margin: 0 auto 40px;
+    }
+
+    .landing-leave p {
+      font-size: 12px;
+      color: var(--text-dim);
+      letter-spacing: 0.06em;
+      margin-bottom: 12px;
+    }
+
+    .landing-leave ul {
+      list-style: none;
+      font-size: 13px;
+      color: var(--text-mid);
+      line-height: 1.85;
+    }
+
+    .landing-leave li {
+      padding-left: 14px;
+      position: relative;
+      margin-bottom: 6px;
+    }
+
+    .landing-leave li::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0.55em;
+      width: 4px;
+      height: 4px;
+      background: var(--gold-dim);
+      border-radius: 50%;
+      opacity: 0.7;
+    }
+
+    .landing-actions {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      width: 100%;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--sans);
+      font-weight: 300;
+      font-size: 11px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      padding: 14px 36px;
+      border: 1px solid var(--gold);
+      background: transparent;
+      color: var(--gold);
+      cursor: pointer;
+      transition: background var(--trans), color var(--trans), border-color var(--trans);
+      border-radius: var(--radius);
+      min-height: 48px;
+      text-decoration: none;
+    }
+
+    .btn:hover:not(:disabled) {
+      background: var(--gold);
+      color: var(--bg);
+    }
+
+    .btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      border-color: #383832;
+      color: #383832;
+      background: transparent;
+    }
+
+    .btn-ghost {
+      border-color: var(--border-dim);
+      color: var(--text-dim);
+      font-size: 10px;
+      padding: 12px 22px;
+    }
+
+    .btn-ghost:hover:not(:disabled) {
+      border-color: var(--border);
+      color: var(--text-mid);
+      background: transparent;
+    }
+
+    .btn-start {
+      background: var(--gold);
+      color: var(--bg);
+      border-color: var(--gold);
+      font-size: 11px;
+      padding: 16px 48px;
+    }
+
+    .btn-start:hover {
+      background: #d4b36a;
+      border-color: #d4b36a;
+      color: var(--bg);
+    }
+
+    .btn-terminal {
+      background: var(--gold);
+      color: var(--bg);
+      border-color: var(--gold);
+    }
+
+    .btn-terminal:hover:not(:disabled) {
+      background: #d4b36a;
+      border-color: #d4b36a;
+      color: var(--bg);
+    }
+
+    #flow-wrap {
+      display: none;
+      width: 100%;
+      max-width: 1180px;
+      padding-top: 44px;
+    }
+
+    .capture-layout {
+      display: grid;
+      grid-template-columns: 112px minmax(0, 1fr) minmax(220px, 280px);
+      gap: 28px 32px;
+      align-items: start;
+      width: 100%;
+    }
+
+    .rail {
+      position: sticky;
+      top: 72px;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      padding-top: 8px;
+    }
+
+    .rail-item {
+      font-size: 9px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      padding: 10px 0;
+      border-left: 2px solid var(--border-dim);
+      padding-left: 12px;
+      transition: color var(--trans), border-color var(--trans);
+      line-height: 1.35;
+    }
+
+    .rail-item.done {
+      color: var(--text-mid);
+      border-left-color: rgba(196,163,90,0.35);
+    }
+
+    .rail-item.active {
+      color: var(--gold);
+      border-left-color: var(--gold);
+    }
+
+    .main-col {
+      min-width: 0;
+      max-width: 580px;
+      justify-self: center;
+      width: 100%;
+    }
+
+    .live-panel {
+      position: sticky;
+      top: 72px;
+      border: 1px solid var(--border);
+      border-top: 2px solid var(--gold);
+      background: var(--surface);
+      padding: 0;
+      max-height: calc(100vh - 100px);
+      overflow-y: auto;
+    }
+
+    .live-panel-head {
+      font-size: 10px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--gold);
+      padding: 18px 20px 12px;
+      border-bottom: 1px solid var(--border-dim);
+    }
+
+    .live-field {
+      padding: 14px 20px;
+      border-bottom: 1px solid var(--border-dim);
+    }
+
+    .live-field:last-child { border-bottom: none; }
+
+    .live-label {
+      font-size: 9px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin-bottom: 8px;
+    }
+
+    .live-value {
+      font-size: 12px;
+      color: var(--text-mid);
+      line-height: 1.65;
+    }
+
+    .progress-bar-wrap {
+      width: 100%;
+      margin-bottom: 40px;
+    }
+
+    .progress-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .progress-label {
+      font-size: 10px;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+    }
+
+    .progress-count {
+      font-family: var(--serif);
+      font-size: 13px;
+      color: var(--gold);
+    }
+
+    .progress-track {
+      width: 100%;
+      height: 2px;
+      background: var(--border-dim);
+      border-radius: 1px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: var(--gold);
+      border-radius: 1px;
+      transition: width 450ms cubic-bezier(0.4,0,0.2,1);
+    }
+
+    .step {
+      display: none;
+      flex-direction: column;
+      width: 100%;
+      animation: stepIn 280ms ease forwards;
+    }
+
+    .step.active { display: flex; }
+
+    @keyframes stepIn {
+      from { opacity: 0; transform: translateY(14px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .step-header { margin-bottom: 36px; }
+
+    .step-instruction {
+      font-family: var(--serif);
+      font-size: clamp(26px, 4.5vw, 40px);
+      font-weight: 300;
+      line-height: 1.15;
+      margin-bottom: 12px;
+    }
+
+    .step-directive {
+      font-size: 14px;
+      font-weight: 300;
+      color: var(--text-mid);
+      line-height: 1.7;
+    }
+
+    .step-micro {
+      font-size: 11px;
+      color: var(--text-dim);
+      letter-spacing: 0.04em;
+      margin-top: 10px;
+      line-height: 1.7;
+    }
+
+    .option-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .option-item {
+      display: flex;
+      align-items: center;
+      padding: 18px 20px;
+      border: 1px solid var(--border);
+      cursor: pointer;
+      transition: border-color var(--trans), background var(--trans), color var(--trans);
+      border-radius: var(--radius);
+      font-size: 14px;
+      font-weight: 300;
+      color: var(--text-mid);
+      letter-spacing: 0.015em;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+      line-height: 1.45;
+    }
+
+    .option-item:hover {
+      border-color: var(--gold-dim);
+      color: var(--text);
+    }
+
+    .option-item.selected {
+      border-color: var(--gold);
+      color: var(--text);
+      background: var(--selected-bg);
+    }
+
+    .option-item.selected::after {
+      content: '';
+      display: block;
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--gold);
+      margin-left: auto;
+      flex-shrink: 0;
+    }
+
+    .option-item.dim { pointer-events: none; opacity: 0.45; }
+
+    .nav-row {
+      display: flex;
+      gap: 12px;
+      margin-top: 36px;
+      align-items: center;
+    }
+
+    #summary {
+      display: none;
+      flex-direction: column;
+      width: 100%;
+      max-width: 640px;
+      padding-top: 32px;
+      animation: stepIn 400ms ease forwards;
+      margin: 0 auto;
+    }
+
+    .summary-phase-tag {
+      font-size: 10px;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 18px;
+    }
+
+    .summary-title {
+      font-family: var(--serif);
+      font-size: clamp(30px, 5.5vw, 48px);
+      font-weight: 300;
+      line-height: 1.1;
+      margin-bottom: 12px;
+    }
+
+    .summary-sub {
+      font-size: 13px;
+      color: var(--text-dim);
+      letter-spacing: 0.04em;
+      margin-bottom: 36px;
+    }
+
+    .result-section {
+      margin-bottom: 32px;
+    }
+
+    .result-h {
+      font-size: 10px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 12px;
+    }
+
+    .result-archetype {
+      font-family: var(--serif);
+      font-size: clamp(26px, 4vw, 34px);
+      font-weight: 300;
+      line-height: 1.2;
+      margin-bottom: 8px;
+    }
+
+    .result-body {
+      font-size: 14px;
+      color: var(--text-mid);
+      line-height: 1.85;
+    }
+
+    .result-body p { margin-bottom: 12px; }
+    .result-body p:last-child { margin-bottom: 0; }
+
+    .result-list {
+      list-style: none;
+      margin-top: 8px;
+    }
+
+    .result-list li {
+      font-size: 14px;
+      color: var(--text-mid);
+      line-height: 1.75;
+      padding-left: 14px;
+      position: relative;
+      margin-bottom: 8px;
+    }
+
+    .result-list li::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0.55em;
+      width: 4px;
+      height: 4px;
+      background: var(--gold-dim);
+      border-radius: 50%;
+      opacity: 0.75;
+    }
+
+    .result-direction {
+      border: 1px solid var(--border);
+      border-top: 2px solid var(--gold);
+      padding: 22px 24px;
+      margin: 28px 0;
+    }
+
+    .result-direction p {
+      font-family: var(--serif);
+      font-size: 18px;
+      font-weight: 300;
+      color: var(--text);
+      line-height: 1.45;
+    }
+
+    .action-primary {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+
+    .copy-confirm {
+      font-size: 11px;
+      color: var(--gold);
+      letter-spacing: 0.1em;
+      margin-bottom: 24px;
+      min-height: 18px;
+      opacity: 0;
+      transition: opacity 300ms ease;
+    }
+
+    .copy-confirm.visible { opacity: 1; }
+
+    .action-secondary {
+      padding-top: 20px;
+      border-top: 1px solid var(--border-dim);
+    }
+
+    .capture-footer {
+      margin-top: 44px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border-dim);
+      width: 100%;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px 20px;
+      justify-content: center;
+    }
+
+    .capture-footer a {
+      font-size: 9px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      text-decoration: none;
+    }
+
+    .capture-footer a:hover { color: var(--text-mid); }
+
+    @media (max-width: 960px) {
+      .capture-layout {
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
+      .rail {
+        position: relative;
+        top: 0;
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 8px 12px;
+        padding: 0 0 8px;
+        border-bottom: 1px solid var(--border-dim);
+      }
+      .rail-item {
+        border-left: none;
+        padding-left: 0;
+        padding: 4px 0;
+        font-size: 8px;
+      }
+      .rail-item::after {
+        content: '·';
+        margin-left: 8px;
+        color: var(--border);
+      }
+      .rail-item:last-child::after { content: none; }
+      .live-panel {
+        position: relative;
+        top: 0;
+        max-height: none;
+        order: 3;
+      }
+      .main-col { order: 2; }
+      .rail { order: 1; }
+    }
+
+    @media (max-width: 480px) {
+      body { padding: 0 12px 80px; }
+      .step-instruction { font-size: 24px; }
+      .nav-row { flex-direction: column-reverse; align-items: stretch; }
+      .nav-row .btn { justify-content: center; }
+      .action-primary { flex-direction: column; }
+      .action-primary .btn { justify-content: center; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="global-nav" aria-label="Main">
+  <a href="/" class="gn-logo">Stephuary</a>
+  <div class="gn-links">
+    <a href="/analysis">Diagnostic</a>
+    <a href="/system">Extended Layer</a>
+    <a href="/pricing">Pricing</a>
+  </div>
+</nav>
+
+<section id="landing">
+  <p class="landing-wordmark">Stephuary</p>
+  <p class="landing-phase">Capture · Phase 01</p>
+  <h1 class="landing-title">You do not need more ideas.<br><em>You need to see how you actually operate.</em></h1>
+  <p class="landing-time">3–5 minutes</p>
+  <div class="landing-leave">
+    <p>You will leave with:</p>
+    <ul>
+      <li>how you think</li>
+      <li>where you hesitate</li>
+      <li>where you are underused or misused</li>
+      <li>what is holding you in place</li>
+    </ul>
+  </div>
+  <div class="landing-actions">
+    <button type="button" class="btn btn-start" id="btnBegin">Begin Phase 01</button>
+    <button type="button" class="btn btn-ghost" id="btnSkip">Already in progress, skip</button>
+  </div>
+</section>
+
+<div id="flow-wrap">
+  <div class="capture-layout">
+    <aside class="rail" id="rail" aria-hidden="true"></aside>
+
+    <div class="main-col">
+      <div id="flow">
+        <div class="progress-bar-wrap">
+          <div class="progress-meta">
+            <span class="progress-label">Capture</span>
+            <span class="progress-count" id="progressCount">Step 1 of 10</span>
+          </div>
+          <div class="progress-track">
+            <div class="progress-fill" id="progressFill" style="width:10%"></div>
+          </div>
+        </div>
+        <div id="steps-root"></div>
+      </div>
+
+      <div id="summary">
+        <p class="summary-phase-tag">Capture · Phase 01</p>
+        <h2 class="summary-title">Phase 01 complete</h2>
+        <p class="summary-sub">This is what the diagnostic observed.</p>
+
+        <div class="result-section">
+          <p class="result-h">1. You are</p>
+          <p class="result-archetype" id="out-archetype"></p>
+        </div>
+
+        <div class="result-section">
+          <p class="result-h">2. Core Read</p>
+          <div class="result-body" id="out-core"></div>
+        </div>
+
+        <div class="result-section">
+          <p class="result-h">3. What You Actually Do</p>
+          <ul class="result-list" id="out-do"></ul>
+        </div>
+
+        <div class="result-section">
+          <p class="result-h">4. Expression Style</p>
+          <div class="result-body" id="out-expression"></div>
+        </div>
+
+        <div class="result-section">
+          <p class="result-h">5. Environment Diagnosis</p>
+          <div class="result-body" id="out-environment"></div>
+        </div>
+
+        <div class="result-section">
+          <p class="result-h">6. Avoidance Pattern</p>
+          <div class="result-body" id="out-avoidance"></div>
+        </div>
+
+        <div class="result-section">
+          <p class="result-h">7. Cost</p>
+          <ul class="result-list" id="out-cost"></ul>
+        </div>
+
+        <div class="result-direction">
+          <p class="result-h" style="margin-bottom:10px">8. Direction</p>
+          <p id="out-direction"></p>
+        </div>
+
+        <div class="action-primary">
+          <a href="/monetize" class="btn btn-terminal">Enter Phase 02 · Position</a>
+          <button type="button" class="btn" id="btnCopy">Copy All</button>
+          <button type="button" class="btn" id="btnExport">Export</button>
+        </div>
+        <p class="copy-confirm" id="copyConfirm">Copied to clipboard.</p>
+
+        <div class="action-secondary">
+          <button type="button" class="btn btn-ghost" id="btnReset">Reset</button>
+        </div>
+
+        <footer class="capture-footer">
+          <a href="/">Home</a>
+          <a href="/system">System</a>
+          <a href="/pricing">Pricing</a>
+          <a href="/monetize">Phase 02</a>
+          <a href="/analysis">Diagnostic</a>
+        </footer>
+      </div>
+    </div>
+
+    <aside class="live-panel" id="livePanel" aria-live="polite">
+      <div class="live-panel-head">Live Read</div>
+      <div class="live-field">
+        <div class="live-label">You notice</div>
+        <div class="live-value" id="live-notice">Waiting.</div>
+      </div>
+      <div class="live-field">
+        <div class="live-label">You tend to do</div>
+        <div class="live-value" id="live-do">Waiting.</div>
+      </div>
+      <div class="live-field">
+        <div class="live-label">You tend to hold back</div>
+        <div class="live-value" id="live-hold">Waiting.</div>
+      </div>
+      <div class="live-field">
+        <div class="live-label">Your environment</div>
+        <div class="live-value" id="live-env">Waiting.</div>
+      </div>
+      <div class="live-field">
+        <div class="live-label">Your current bottleneck</div>
+        <div class="live-value" id="live-bottleneck">Waiting.</div>
+      </div>
+      <div class="live-field">
+        <div class="live-label">Phase status</div>
+        <div class="live-value" id="live-status">Not started.</div>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<script>
+(function(){
+  const STORAGE_KEY = 'stephuary_capture_p01_v2';
+  const TOTAL_Q = 10;
+  const RAIL_LABELS = ['Detection','Response','Signal','Perception','Standards','Failure','Expression','Execution','Environment','Avoidance','Results'];
+
+  const ARCHETYPES = [
+    'Pattern Suppressor',
+    'Unspoken Operator',
+    'Wrong Environment Operator',
+    'Live Stabilizer',
+    'Aware but Idle',
+    'Precision Refiner',
+    'System Rebuilder'
+  ];
+
+  const QUESTIONS = [
+    {
+      instruction: 'When you enter a new space, what happens first?',
+      micro: 'Before you think.',
+      a: { text: 'You register what feels off, even if no one reacts', bit: 0 },
+      b: { text: 'You immediately see how it could be improved', bit: 1 }
+    },
+    {
+      instruction: 'When something is clearly wrong:',
+      micro: 'What you actually do.',
+      a: { text: 'You break down why it is happening', bit: 0 },
+      b: { text: 'You adjust something immediately', bit: 1 }
+    },
+    {
+      instruction: 'What happens more often?',
+      micro: 'One happens first.',
+      a: { text: 'You catch specific details others miss', bit: 0 },
+      b: { text: 'You connect patterns others do not see', bit: 1 }
+    },
+    {
+      instruction: 'In conversation:',
+      micro: 'What you notice automatically.',
+      a: { text: 'You take what is said at face value', bit: 0 },
+      b: { text: 'You track what is meant underneath', bit: 1 }
+    },
+    {
+      instruction: 'When something is considered good:',
+      micro: 'Your real reaction.',
+      a: { text: 'You register that it works', bit: 0 },
+      b: { text: 'You immediately see what is missing', bit: 1 }
+    },
+    {
+      instruction: 'When something fails:',
+      micro: 'First internal reaction.',
+      a: { text: 'It should have been prevented', bit: 0 },
+      b: { text: 'It should have been handled better', bit: 1 }
+    },
+    {
+      instruction: 'When you notice something important:',
+      micro: 'Answer honestly.',
+      a: { text: 'You hold it because it would disrupt something', bit: 0 },
+      b: { text: 'You say it even if it changes the dynamic', bit: 1 }
+    },
+    {
+      instruction: 'When acting on something:',
+      micro: 'What actually happens.',
+      a: { text: 'You hesitate until you feel certain', bit: 0 },
+      b: { text: 'You move before certainty and adjust', bit: 1 }
+    },
+    {
+      instruction: 'In most environments you are in:',
+      micro: 'Overall pattern.',
+      a: { text: 'Your environment does not require what you are best at', bit: 0 },
+      b: { text: 'Your environment depends on how you think', bit: 1 }
+    },
+    {
+      instruction: 'Which is more true:',
+      micro: 'No defending.',
+      a: { text: 'You already know what to do but avoid acting', bit: 0 },
+      b: { text: 'You are still searching for direction', bit: 1 }
+    }
+  ];
+
+  function scoreArchetype(bits) {
+    const s = {};
+    ARCHETYPES.forEach(function(a){ s[a] = 0; });
+
+    function w(step, choice, table) {
+      var k = choice === 0 ? 'a' : 'b';
+      if (table[step] && table[step][k]) {
+        Object.keys(table[step][k]).forEach(function(name) {
+          s[name] += table[step][k][name];
+        });
+      }
+    }
+
+    var T = [
+      { a: { 'Unspoken Operator': 2, 'Pattern Suppressor': 1 }, b: { 'Precision Refiner': 2, 'System Rebuilder': 1 } },
+      { a: { 'System Rebuilder': 3, 'Precision Refiner': 1 }, b: { 'Live Stabilizer': 3 } },
+      { a: { 'Precision Refiner': 3 }, b: { 'System Rebuilder': 3 } },
+      { a: { 'Live Stabilizer': 1 }, b: { 'Unspoken Operator': 2, 'Pattern Suppressor': 1 } },
+      { a: { 'Live Stabilizer': 2 }, b: { 'Precision Refiner': 3 } },
+      { a: { 'System Rebuilder': 3 }, b: { 'Live Stabilizer': 2 } },
+      { a: { 'Unspoken Operator': 3, 'Pattern Suppressor': 2 }, b: { 'Live Stabilizer': 2 } },
+      { a: { 'Aware but Idle': 3, 'Pattern Suppressor': 1 }, b: { 'Live Stabilizer': 3 } },
+      { a: { 'Wrong Environment Operator': 4 }, b: { 'Live Stabilizer': 2, 'Precision Refiner': 1 } },
+      { a: { 'Aware but Idle': 3 }, b: { 'System Rebuilder': 2, 'Precision Refiner': 1 } }
+    ];
+
+    for (var i = 0; i < TOTAL_Q; i++) {
+      var tbl = {};
+      tbl[i] = T[i];
+      w(i, bits[i], tbl);
+    }
+
+    var best = ARCHETYPES[0];
+    var max = -1;
+    ARCHETYPES.forEach(function(a) {
+      if (s[a] > max) { max = s[a]; best = a; }
+    });
+    var tie = ARCHETYPES.filter(function(a) { return s[a] === max; });
+    if (tie.length > 1) {
+      if (bits[6] === 0) best = tie.indexOf('Unspoken Operator') >= 0 ? 'Unspoken Operator' : tie[0];
+      else if (bits[8] === 0) best = 'Wrong Environment Operator';
+      else if (bits[9] === 0) best = tie.indexOf('Aware but Idle') >= 0 ? 'Aware but Idle' : tie[0];
+      else best = tie[0];
+    }
+    return best;
+  }
+
+  const COPY_BLOCKS = {
+    'Pattern Suppressor': {
+      core: function(bits) {
+        return '<p>What you see often outpaces what you say. You read friction early, then contain it so the room stays stable. The gap is between recognition and external alignment: the signal is internal first.</p>';
+      },
+      doLines: function(bits) {
+        return [
+          'Mismatch and cost before others name them.',
+          bits[1] === 0 ? 'You dissect before you intervene.' : 'You change conditions before you explain them.',
+          bits[7] === 0 ? 'Timing waits on an internal green light.' : 'You ship and correct in motion.'
+        ];
+      },
+      expression: function(bits) {
+        return bits[6] === 0
+          ? 'You default to containment. Important reads stay partial so the surface stays smooth. That is suppression as control, not cowardice.'
+          : 'You force the read into the room when it matters. Cost is visible, but so is the truth.';
+      },
+      environment: function(bits) {
+        return bits[8] === 0
+          ? 'The contexts you are in rarely ask for your sharpest read. You are useful, but not for the thing you do best.'
+          : 'What you are good at is structurally load-bearing where you operate.';
+      },
+      avoidance: function(bits) {
+        return bits[9] === 0
+          ? 'You already know the move. You delay because naming it makes it real and binds you.'
+          : 'You are still mapping. The stall is uncertainty dressed as research.';
+      },
+      cost: function(bits) {
+        return [
+          'Signal compresses until it leaks as tension or cynicism.',
+          'Others experience your standard as silence, not clarity.',
+          'You carry corrections nobody asked for yet.'
+        ];
+      }
+    },
+    'Unspoken Operator': {
+      core: function(bits) {
+        return '<p>You run a live model of intent underneath language. You act on that model quietly. The gap is visibility: your work is real before it is seen.</p>';
+      },
+      doLines: function(bits) {
+        return [
+          'Subtext, pace, and unstated stakes before content.',
+          bits[1] === 0 ? 'You stabilize by explaining the frame.' : 'You stabilize by changing one lever.',
+          bits[7] === 0 ? 'You wait for permission that never comes.' : 'You move and tolerate mess.'
+        ];
+      },
+      expression: function(bits) {
+        return 'You optimize for continuity. Speaking the full read risks rupture, so you trade precision in the room for predictability.';
+      },
+      environment: function(bits) {
+        return bits[8] === 0
+          ? 'People use your judgment without giving you authority. You are upstream of credit.'
+          : 'Your thinking is explicitly relied on. The risk is volume, not invisibility.';
+      },
+      avoidance: function(bits) {
+        return bits[9] === 0
+          ? 'You avoid the moment that makes your read public and therefore accountable.'
+          : 'You keep searching because committing closes other paths you still see.';
+      },
+      cost: function(bits) {
+        return [
+          'Your clearest work happens where it cannot be cited.',
+          'Resentment stacks when outcomes improve without your line being visible.',
+          'You get recruited for execution, not for the read that made execution possible.'
+        ];
+      }
+    },
+    'Wrong Environment Operator': {
+      core: function(bits) {
+        return '<p>Your strengths are real; the fit is not. You see well, then spend energy translating yourself into a shape the room rewards. The gap is fit, not talent.</p>';
+      },
+      doLines: function(bits) {
+        return [
+          bits[2] === 0 ? 'You prove value through granularity.' : 'You prove value through synthesis.',
+          bits[1] === 0 ? 'You explain the mismatch in analysis.' : 'You patch what is in front of you.',
+          bits[7] === 0 ? 'You slow until the context feels legitimate.' : 'You ship anyway and absorb friction.'
+        ];
+      },
+      expression: function(bits) {
+        return bits[6] === 0
+          ? 'You swallow the critique of fit because it sounds like complaining.'
+          : 'You say the fit problem out loud. That reads as disruptive even when it is accurate.';
+      },
+      environment: function(bits) {
+        return 'Reward structures and incentives point away from what you are strongest at. You are not confused. You are miscast.';
+      },
+      avoidance: function(bits) {
+        return bits[9] === 0
+          ? 'You avoid leaving because the next context is not guaranteed. Staying is the known failure mode.'
+          : 'You avoid choosing a lane because every lane here is the wrong room.';
+      },
+      cost: function(bits) {
+        return [
+          'Skill applied in the wrong frame reads as effort with thin returns.',
+          'You normalize underuse until it feels like personality.',
+          'Your résumé grows; your leverage does not.'
+        ];
+      }
+    },
+    'Live Stabilizer': {
+      core: function(bits) {
+        return '<p>You move reality first and narrate second. You prefer adjustment to prolonged diagnosis. The gap shows up when speed outruns alignment: you fix what is urgent, not always what is structural.</p>';
+      },
+      doLines: function(bits) {
+        return [
+          'What is broken in front of you before what is broken in theory.',
+          bits[1] === 1 ? 'Intervention before full proof.' : 'A clean causal map before you touch anything.',
+          bits[7] === 1 ? 'Early motion, then correction.' : 'Measured motion after an internal threshold.'
+        ];
+      },
+      expression: function(bits) {
+        return bits[6] === 1
+          ? 'You verbalize tension when silence would compound cost. You accept a shifted dynamic as part of the fix.'
+          : 'You sometimes eat the disruption quietly to keep throughput high. Speed becomes silence.';
+      },
+      environment: function(bits) {
+        return bits[8] === 1
+          ? 'The environment pulls on how you think. That can scale you or burn you, but it is not wasted.'
+          : 'Even when you move fast, the room does not ask for your best gear. You compensate with effort.';
+      },
+      avoidance: function(bits) {
+        return bits[9] === 1
+          ? 'You keep options open because closing one feels like error. Search replaces commitment.'
+          : 'You know the move and still buffer. The stall is rarely ignorance.';
+      },
+      cost: function(bits) {
+        return [
+          'You win battles and inherit systems that still fail quietly.',
+          'People learn to depend on rescue, not prevention.',
+          'Your standard for "handled" is higher than the room\'s.'
+        ];
+      }
+    },
+    'Aware but Idle': {
+      core: function(bits) {
+        return '<p>The read is often early and accurate. Action lags behind recognition. The gap is not blindness. It is the step between knowing and carrying cost in public.</p>';
+      },
+      doLines: function(bits) {
+        return [
+          bits[3] === 1 ? 'You track intent underneath speech.' : 'You work from stated terms.',
+          bits[7] === 0 ? 'You wait for certainty that matches your internal bar.' : 'You move and revise, but inconsistently.',
+          bits[1] === 0 ? 'You model the problem in detail before you touch it.' : 'You touch it, then think harder than the room asked for.'
+        ];
+      },
+      expression: function(bits) {
+        return bits[6] === 0
+          ? 'You protect the current equilibrium. Naming the read feels like aggression, so you keep it private.'
+          : 'When you speak, it lands hard because it was queued too long.';
+      },
+      environment: function(bits) {
+        return bits[8] === 0
+          ? 'The room does not require your best contribution. Awareness becomes private, not leveraged.'
+          : 'The room uses your thinking, but your pace and certainty still do not match.';
+      },
+      avoidance: function(bits) {
+        return 'You treat knowing as partial credit. Acting would collapse ambiguity you still use as shelter.';
+      },
+      cost: function(bits) {
+        return [
+          'You accumulate accurate critiques nobody hears.',
+          'Time passes while the internal case gets stronger and the external one never starts.',
+          'You mistake hesitation for discernment.'
+        ];
+      }
+    },
+    'Precision Refiner': {
+      core: function(bits) {
+        return '<p>You see the delta between acceptable and complete. You improve before you declare. The gap is stopping power: refinement can delay shipping what is already enough.</p>';
+      },
+      doLines: function(bits) {
+        return [
+          bits[2] === 0 ? 'Specific faults and gaps others skim.' : 'Structural gaps across cases.',
+          bits[5] === 0 ? 'You fault prevention first.' : 'You fault response quality first.',
+          bits[7] === 0 ? 'You hold until the work matches the internal bar.' : 'You release early, then tighten in passes.'
+        ];
+      },
+      expression: function(bits) {
+        return bits[6] === 0
+          ? 'You keep refinements to yourself until the cost of speaking feels lower than the cost of error.'
+          : 'You surface gaps directly. Some people experience that as never satisfied.';
+      },
+      environment: function(bits) {
+        return bits[8] === 1
+          ? 'Quality of thinking is load-bearing. You are not decorative detail; you are part of the mechanism.'
+          : 'The environment rewards "fine" while you see the missing five percent. That is isolating.';
+      },
+      avoidance: function(bits) {
+        return bits[9] === 1
+          ? 'You search for a cleaner frame instead of committing to an imperfect one.'
+          : 'You know what to ship and still negotiate with your own standard.';
+      },
+      cost: function(bits) {
+        return [
+          'Work stays internal while the window moves.',
+          'Others experience your standard as delay, not care.',
+          'You win on correctness and lose on timing.'
+        ];
+      }
+    },
+    'System Rebuilder': {
+      core: function(bits) {
+        return '<p>You reach for cause, structure, and prevention. You want the failure mode named so it cannot repeat. The gap is speed: full maps take longer than the room often gives you.</p>';
+      },
+      doLines: function(bits) {
+        return [
+          'Chains and prerequisites before vibes.',
+          bits[1] === 0 ? 'Analysis before motion.' : 'Quick patch, then a rebuild plan underneath.',
+          bits[3] === 1 ? 'You read intent as data.' : 'You take inputs literally and fix the object level.'
+        ];
+      },
+      expression: function(bits) {
+        return bits[6] === 0
+          ? 'You hold the systemic read so individuals do not feel accused. That protects feelings, not outcomes.'
+          : 'You say the structural issue even when it implicates people. That is often correct and rarely soft.';
+      },
+      environment: function(bits) {
+        return bits[8] === 0
+          ? 'The environment wants motion, not architecture. Your strength reads as friction.'
+          : 'The environment needs how you think. Build and repair are actually valued.';
+      },
+      avoidance: function(bits) {
+        return bits[9] === 1
+          ? 'You keep modeling because models feel safer than bets.'
+          : 'You know the fix and avoid the political price of installing it.';
+      },
+      cost: function(bits) {
+        return [
+          'You see recurring failure while others move on.',
+          'You become the person who "makes things heavy."',
+          'You fix systems that credit someone else\'s urgency.'
+        ];
+      }
+    }
+  };
+
+  function updateLivePanel(stepIndex, bits) {
+    var n = stepIndex + 1;
+    function el(id, t) { document.getElementById(id).textContent = t; }
+
+    var notice = 'Waiting.';
+    if (bits[0] !== null && bits[0] !== undefined) {
+      notice = bits[0] === 0 ? 'Friction and misalignment before consensus.' : 'Improvement vectors before comfort.';
+      if (bits[2] !== null && bits[2] !== undefined && n >= 3) {
+        notice = (bits[2] === 0 ? 'Fine grain. ' : 'Cross-pattern. ') + notice;
+      }
+      if (bits[3] !== null && bits[3] !== undefined && n >= 4) {
+        notice += bits[3] === 0 ? ' Stated terms first.' : ' Subtext tracked automatically.';
+      }
+    }
+
+    var doing = 'Waiting.';
+    if (bits[1] !== null && bits[1] !== undefined && n >= 2) {
+      doing = bits[1] === 0 ? 'Cause and structure before motion.' : 'Motion before full proof.';
+      if (bits[4] !== null && bits[4] !== undefined && n >= 5) {
+        doing += bits[4] === 0 ? ' You accept "works" as a baseline.' : ' "Works" still looks incomplete to you.';
+      }
+      if (bits[5] !== null && bits[5] !== undefined && n >= 6) {
+        doing += bits[5] === 0 ? ' Failure reads as a design miss.' : ' Failure reads as handling quality.';
+      }
+    }
+
+    var hold = 'Waiting.';
+    if (bits[6] !== null && bits[6] !== undefined && n >= 7) {
+      hold = bits[6] === 0 ? 'Important reads held to protect the room.' : 'Important reads pushed into the room.';
+    }
+
+    var env = 'Waiting.';
+    if (bits[8] !== null && bits[8] !== undefined && n >= 9) {
+      env = bits[8] === 0 ? 'Your strongest gear is not what the context pulls for.' : 'How you think is structurally used.';
+    }
+
+    var bot = 'Waiting.';
+    if (bits[9] !== null && bits[9] !== undefined && n >= 10) {
+      bot = bits[9] === 0 ? 'Knowing without motion.' : 'Open search without closure.';
+    }
+
+    el('live-notice', notice);
+    el('live-do', doing);
+    el('live-hold', hold);
+    el('live-env', env);
+    el('live-bottleneck', bot);
+    el('live-status', 'Step ' + n + ' of ' + TOTAL_Q + ' · In progress');
+  }
+
+  function resetLiveWaiting() {
+    ['live-notice','live-do','live-hold','live-env','live-bottleneck'].forEach(function(id) {
+      document.getElementById(id).textContent = 'Waiting.';
+    });
+    document.getElementById('live-status').textContent = 'Not started.';
+  }
+
+  var state = {
+    bits: Array(TOTAL_Q).fill(null),
+    currentStep: 1,
+    answers: []
+  };
+
+  function saveStorage() {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({
+        bits: state.bits,
+        currentStep: state.currentStep,
+        ts: Date.now()
+      }));
+    } catch (e) {}
+  }
+
+  function loadStorage() {
+    try {
+      var raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return null;
+      return JSON.parse(raw);
+    } catch (e) { return null; }
+  }
+
+  function buildRail() {
+    var rail = document.getElementById('rail');
+    rail.innerHTML = '';
+    RAIL_LABELS.forEach(function(label, i) {
+      var d = document.createElement('div');
+      d.className = 'rail-item';
+      d.textContent = (i + 1) + ' ' + label;
+      d.dataset.idx = i;
+      rail.appendChild(d);
+    });
+  }
+
+  function updateRail() {
+    var items = document.querySelectorAll('.rail-item');
+    var phase = state.currentStep;
+    items.forEach(function(el, i) {
+      el.classList.remove('active', 'done');
+      if (i === 10) {
+        if (phase === 11) el.classList.add('active');
+      } else if (i + 1 < phase) el.classList.add('done');
+      else if (i + 1 === phase) el.classList.add('active');
+    });
+  }
+
+  function buildSteps() {
+    var root = document.getElementById('steps-root');
+    root.innerHTML = '';
+    QUESTIONS.forEach(function(q, idx) {
+      var stepNum = idx + 1;
+      var div = document.createElement('div');
+      div.className = 'step' + (stepNum === 1 ? ' active' : '');
+      div.id = 'step-' + stepNum;
+      div.innerHTML =
+        '<div class="step-header">' +
+          '<div class="step-instruction"></div>' +
+          '<div class="step-directive"></div>' +
+          '<div class="step-micro"></div>' +
+        '</div>' +
+        '<div class="option-list">' +
+          '<div class="option-item" data-bit="0" tabindex="0" role="button"></div>' +
+          '<div class="option-item" data-bit="1" tabindex="0" role="button"></div>' +
+        '</div>' +
+        '<div class="nav-row">' +
+          (stepNum > 1 ? '<button type="button" class="btn btn-ghost" data-back="' + stepNum + '">Back</button>' : '') +
+        '</div>';
+
+      div.querySelector('.step-instruction').textContent = q.instruction;
+      div.querySelector('.step-directive').textContent = '';
+      div.querySelector('.step-micro').textContent = q.micro;
+      var opts = div.querySelectorAll('.option-item');
+      opts[0].textContent = q.a.text;
+      opts[1].textContent = q.b.text;
+
+      opts.forEach(function(opt) {
+        opt.addEventListener('click', function() {
+          if (opt.classList.contains('dim')) return;
+          var bit = parseInt(opt.getAttribute('data-bit'), 10);
+          opts.forEach(function(o) { o.classList.remove('selected'); });
+          opt.classList.add('selected');
+          state.bits[idx] = bit;
+          saveStorage();
+          updateLivePanel(idx, state.bits);
+
+          opts.forEach(function(o) { o.classList.add('dim'); });
+          setTimeout(function() {
+            if (idx === TOTAL_Q - 1) {
+              showSummary();
+            } else {
+              goTo(stepNum + 1);
+            }
+          }, 520);
+        });
+      });
+
+      var backBtn = div.querySelector('[data-back]');
+      if (backBtn) {
+        backBtn.addEventListener('click', function() {
+          goTo(stepNum - 1);
+        });
+      }
+
+      root.appendChild(div);
+    });
+  }
+
+  function goTo(n) {
+    state.currentStep = n;
+    saveStorage();
+    for (var i = 1; i <= TOTAL_Q; i++) {
+      var s = document.getElementById('step-' + i);
+      if (s) s.classList.toggle('active', i === n);
+    }
+    document.getElementById('progressCount').textContent = 'Step ' + n + ' of ' + TOTAL_Q;
+    document.getElementById('progressFill').style.width = (n / TOTAL_Q * 100) + '%';
+
+    var cur = document.getElementById('step-' + n);
+    if (cur) {
+      cur.querySelectorAll('.option-item').forEach(function(o) {
+        o.classList.remove('dim', 'selected');
+        var bit = parseInt(o.getAttribute('data-bit'), 10);
+        if (state.bits[n - 1] === bit) o.classList.add('selected');
+      });
+    }
+
+    updateLivePanel(n - 1, state.bits);
+    updateRail();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function showSummary() {
+    state.currentStep = 11;
+    saveStorage();
+    document.getElementById('flow').style.display = 'none';
+    document.getElementById('summary').style.display = 'flex';
+    document.getElementById('live-status').textContent = 'Phase 01 complete.';
+
+    var bits = state.bits.map(function(b) { return b == null ? 0 : b; });
+    var arch = scoreArchetype(bits);
+    var block = COPY_BLOCKS[arch];
+
+    document.getElementById('out-archetype').textContent = arch;
+
+    document.getElementById('out-core').innerHTML = block.core(bits);
+
+    var ul = document.getElementById('out-do');
+    ul.innerHTML = '';
+    block.doLines(bits).forEach(function(line) {
+      var li = document.createElement('li');
+      li.textContent = line;
+      ul.appendChild(li);
+    });
+
+    document.getElementById('out-expression').innerHTML = '<p>' + block.expression(bits) + '</p>';
+    document.getElementById('out-environment').innerHTML = '<p>' + block.environment(bits) + '</p>';
+    document.getElementById('out-avoidance').innerHTML = '<p>' + block.avoidance(bits) + '</p>';
+
+    var cul = document.getElementById('out-cost');
+    cul.innerHTML = '';
+    block.cost(bits).forEach(function(line) {
+      var li = document.createElement('li');
+      li.textContent = line;
+      cul.appendChild(li);
+    });
+
+    document.getElementById('out-direction').textContent =
+      'The issue is not ability. It is where and how it is used.';
+
+    try {
+      localStorage.setItem('capture_complete', 'true');
+    } catch (e) {}
+
+    updateRail();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function exportText() {
+    var bits = state.bits.map(function(b) { return b == null ? 0 : b; });
+    var arch = scoreArchetype(bits);
+    var block = COPY_BLOCKS[arch];
+    var lines = [
+      'Stephuary · Phase 01 · Capture',
+      '',
+      '1. You are',
+      arch,
+      '',
+      '2. Core Read',
+      block.core(bits).replace(/<[^>]+>/g, '').trim(),
+      '',
+      '3. What You Actually Do',
+      block.doLines(bits).map(function(l) { return '- ' + l; }).join('\n'),
+      '',
+      '4. Expression Style',
+      block.expression(bits),
+      '',
+      '5. Environment Diagnosis',
+      block.environment(bits),
+      '',
+      '6. Avoidance Pattern',
+      block.avoidance(bits),
+      '',
+      '7. Cost',
+      block.cost(bits).map(function(l) { return '- ' + l; }).join('\n'),
+      '',
+      '8. Direction',
+      'The issue is not ability. It is where and how it is used.'
+    ];
+    return lines.join('\n');
+  }
+
+  function copyAll() {
+    var text = exportText();
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(flash);
+    } else {
+      var ta = Object.assign(document.createElement('textarea'), { value: text });
+      ta.style.cssText = 'position:fixed;opacity:0;';
+      document.body.appendChild(ta);
+      ta.focus(); ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      flash();
+    }
+  }
+
+  function flash() {
+    var el = document.getElementById('copyConfirm');
+    el.classList.add('visible');
+    setTimeout(function() { el.classList.remove('visible'); }, 2800);
+  }
+
+  function doExport() {
+    var text = exportText();
+    var blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'stephuary-phase-01-capture.txt';
+    a.click();
+    URL.revokeObjectURL(a.href);
+  }
+
+  function resetAll() {
+    try {
+      localStorage.removeItem(STORAGE_KEY);
+      localStorage.removeItem('capture_complete');
+    } catch (e) {}
+    state.bits = Array(TOTAL_Q).fill(null);
+    state.currentStep = 1;
+    state.answers = [];
+    document.getElementById('summary').style.display = 'none';
+    document.getElementById('flow').style.display = 'block';
+    document.querySelectorAll('.step').forEach(function(s, i) {
+      s.classList.toggle('active', i === 0);
+      s.querySelectorAll('.option-item').forEach(function(o) {
+        o.classList.remove('selected', 'dim');
+      });
+    });
+    goTo(1);
+    resetLiveWaiting();
+    document.getElementById('flow-wrap').style.display = 'block';
+    document.getElementById('landing').style.display = 'none';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function startFlow(skipLanding) {
+    document.getElementById('landing').style.display = 'none';
+    document.getElementById('flow-wrap').style.display = 'block';
+    if (!document.getElementById('step-1')) {
+      buildRail();
+      buildSteps();
+    }
+    goTo(state.currentStep > 0 && state.currentStep <= TOTAL_Q ? state.currentStep : 1);
+    if (!skipLanding) resetLiveWaiting();
+  }
+
+  function resumeFromStorage() {
+    var d = loadStorage();
+    if (!d || !d.bits) return false;
+    state.bits = d.bits;
+    while (state.bits.length < TOTAL_Q) state.bits.push(null);
+    state.currentStep = d.currentStep || 1;
+    var firstEmpty = state.bits.indexOf(null);
+    if (firstEmpty === -1) {
+      document.getElementById('landing').style.display = 'none';
+      document.getElementById('flow-wrap').style.display = 'block';
+      if (!document.getElementById('step-1')) {
+        buildRail();
+        buildSteps();
+      }
+      showSummary();
+      return true;
+    }
+    state.currentStep = firstEmpty + 1;
+    startFlow(true);
+    updateLivePanel(state.currentStep - 1, state.bits);
+    return true;
+  }
+
+  document.getElementById('btnBegin').addEventListener('click', function() {
+    try {
+      localStorage.removeItem('capture_complete');
+      localStorage.removeItem(STORAGE_KEY);
+    } catch (e) {}
+    state.bits = Array(TOTAL_Q).fill(null);
+    state.currentStep = 1;
+    saveStorage();
+    startFlow(false);
+  });
+
+  document.getElementById('btnSkip').addEventListener('click', function() {
+    if (resumeFromStorage()) return;
+    startFlow(false);
+  });
+
+  document.getElementById('btnCopy').addEventListener('click', copyAll);
+  document.getElementById('btnExport').addEventListener('click', doExport);
+  document.getElementById('btnReset').addEventListener('click', resetAll);
+
+  window.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter' && e.target.classList && e.target.classList.contains('option-item')) {
+      e.target.click();
+    }
+  });
+
+  (function() {
+    var st = loadStorage();
+    if (st && st.bits && st.bits.some(function(b) { return b !== null && b !== undefined; })) {
+      document.getElementById('btnSkip').textContent = 'Resume where you left off';
+    }
+  })();
+})();
+</script>
+</body>
+</html>
