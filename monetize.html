@@ -1,2309 +1,1243 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Monetize — Stephuary</title>
-<meta name="description" content="Phase 03 — Turn a positioned direction into a clear offer someone can buy quickly." />
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet" />
-<style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-
-:root{
-  --bg-0:#0a0a08;
-  --bg-1:#10100d;
-  --bg-2:#151510;
-  --bg-3:#191913;
-  --panel:rgba(18,18,15,0.94);
-  --panel-soft:rgba(23,23,19,0.82);
-  --line:rgba(196,163,90,0.22);
-  --line-soft:rgba(196,163,90,0.10);
-  --gold:#c4a35a;
-  --gold-soft:rgba(196,163,90,0.14);
-  --blue:#2b4fd4;
-  --blue-hover:#355fe4;
-  --text:#f4ede0;
-  --text-dim:#ccc3b4;
-  --text-soft:#9d9587;
-  --warn:#b85c38;
-  --warn-soft:rgba(184,92,56,0.16);
-  --warn-line:rgba(184,92,56,0.26);
-  --ok:#7f9a56;
-  --ok-soft:rgba(127,154,86,0.14);
-  --shadow:0 12px 44px rgba(0,0,0,0.28);
-  --radius:2px;
-  --serif:"Cormorant Garamond", Georgia, serif;
-  --sans:"Lato", system-ui, sans-serif;
-  --content:760px;
-  --rail:228px;
-  --notes:328px;
-  --shell-gap:28px;
-}
-
-html,body{
-  min-height:100%;
-  background:
-    radial-gradient(circle at top left, rgba(196,163,90,0.05), transparent 26%),
-    linear-gradient(180deg, #0a0a08 0%, #0d0d0a 100%);
-  color:var(--text);
-  font-family:var(--sans);
-  font-weight:300;
-  font-size:18px;
-  line-height:1.6;
-}
-
-body{
-  min-height:100vh;
-  overflow-x:hidden;
-  padding-top:72px;
-}
-
-a{color:inherit;text-decoration:none}
-button,input,textarea{font:inherit}
-
-.phase-nav{
-  position:fixed;
-  top:0;
-  left:0;
-  right:0;
-  z-index:60;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:20px;
-  padding:18px 24px;
-  border-bottom:1px solid var(--line-soft);
-  background:linear-gradient(180deg, rgba(10,10,8,0.96), rgba(10,10,8,0.84));
-  backdrop-filter:blur(8px);
-}
-
-.phase-nav-mark{
-  font-family:var(--serif);
-  font-size:20px;
-  line-height:1;
-  letter-spacing:0.08em;
-  text-transform:uppercase;
-  color:var(--text);
-}
-
-.phase-nav-home{
-  font-size:10px;
-  letter-spacing:0.16em;
-  text-transform:uppercase;
-  color:var(--gold);
-}
-
-.shell{
-  min-height:100vh;
-  display:grid;
-  grid-template-columns:var(--rail) minmax(0,var(--content)) var(--notes);
-  gap:var(--shell-gap);
-  align-items:start;
-  max-width:calc(var(--rail) + var(--content) + var(--notes) + (var(--shell-gap) * 2) + 80px);
-  margin:0 auto;
-  padding:28px 24px 80px;
-}
-
-.left-rail{
-  position:sticky;
-  top:24px;
-  align-self:start;
-}
-
-.center{
-  min-width:0;
-}
-
-.right-notes{
-  position:sticky;
-  top:24px;
-  align-self:start;
-}
-
-.rail-card,
-.notes-card,
-.panel,
-.output-card,
-.entry-card{
-  border:1px solid var(--line-soft);
-  background:linear-gradient(180deg, rgba(17,17,13,0.96), rgba(20,20,16,0.98));
-  box-shadow:var(--shadow);
-  border-radius:var(--radius);
-}
-
-.rail-card{
-  padding:22px 18px;
-}
-
-.notes-card{
-  padding:22px 20px;
-}
-
-.entry-overlay{
-  position:fixed;
-  inset:0;
-  z-index:50;
-  background:
-    linear-gradient(180deg, rgba(8,8,6,0.94), rgba(8,8,6,0.96)),
-    radial-gradient(circle at 20% 10%, rgba(196,163,90,0.08), transparent 35%);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  padding:20px;
-  transition:opacity 220ms ease, visibility 220ms ease;
-}
-
-.entry-overlay.hidden{
-  opacity:0;
-  visibility:hidden;
-  pointer-events:none;
-}
-
-.entry-card{
-  width:min(920px,100%);
-  padding:34px 28px 28px;
-  display:grid;
-  grid-template-columns:minmax(0,1.25fr) minmax(280px,0.75fr);
-  gap:24px;
-  border-color:var(--line);
-}
-
-.label,
-.kicker{
-  display:inline-block;
-  font-size:10px;
-  letter-spacing:0.18em;
-  text-transform:uppercase;
-  color:var(--gold);
-  font-weight:400;
-}
-
-.entry-label{margin-bottom:16px}
-
-h1{
-  font-family:var(--serif);
-  font-weight:400;
-  font-size:clamp(42px,7vw,70px);
-  line-height:1.02;
-  letter-spacing:-0.015em;
-  margin-bottom:16px;
-}
-
-h2{
-  font-family:var(--serif);
-  font-weight:400;
-  font-size:clamp(28px,4vw,38px);
-  line-height:1.08;
-  letter-spacing:-0.01em;
-  margin-bottom:14px;
-}
-
-h3{
-  font-family:var(--serif);
-  font-weight:400;
-  font-size:clamp(20px,3vw,28px);
-  line-height:1.15;
-  margin-bottom:10px;
-}
-
-p{
-  color:var(--text-dim);
-  max-width:60ch;
-}
-
-.entry-copy p{
-  font-size:18px;
-  max-width:34ch;
-}
-
-.entry-points{
-  list-style:none;
-  display:flex;
-  flex-direction:column;
-  gap:11px;
-  margin-top:18px;
-}
-
-.entry-points li,
-.bullet-list li,
-.logic-list li{
-  position:relative;
-  padding-left:16px;
-  color:var(--text-dim);
-}
-
-.entry-points li::before,
-.bullet-list li::before,
-.logic-list li::before{
-  content:"";
-  width:4px;
-  height:4px;
-  border-radius:50%;
-  background:var(--gold);
-  position:absolute;
-  left:0;
-  top:11px;
-}
-
-.entry-aside{
-  border:1px solid var(--line-soft);
-  padding:20px 18px;
-  background:rgba(196,163,90,0.04);
-}
-
-.entry-aside .mini{
-  font-size:12px;
-  color:var(--text-soft);
-  margin-bottom:10px;
-  text-transform:uppercase;
-  letter-spacing:0.12em;
-}
-
-.entry-aside .aside-text{
-  font-family:var(--serif);
-  font-size:24px;
-  line-height:1.24;
-  color:var(--text);
-}
-
-.entry-actions{
-  margin-top:22px;
-  display:flex;
-  flex-wrap:wrap;
-  gap:12px;
-}
-
-.btn{
-  min-height:50px;
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  border-radius:var(--radius);
-  border:1px solid var(--line);
-  padding:14px 20px;
-  text-transform:uppercase;
-  letter-spacing:0.14em;
-  font-size:11px;
-  font-weight:400;
-  background:transparent;
-  color:var(--text);
-  cursor:pointer;
-  transition:border-color 140ms ease, background 140ms ease, color 140ms ease, transform 100ms ease;
-}
-
-.btn:hover{border-color:var(--gold);color:var(--text)}
-.btn:active{transform:scale(0.98)}
-
-.btn-primary{
-  background:var(--blue);
-  border-color:var(--blue);
-  color:#fff;
-}
-
-.btn-primary:hover{
-  background:var(--blue-hover);
-  border-color:var(--blue-hover);
-  color:#fff;
-}
-
-.btn-soft{
-  background:rgba(196,163,90,0.06);
-}
-
-.link-inline{
-  display:inline-flex;
-  align-items:center;
-  font-size:11px;
-  letter-spacing:0.12em;
-  text-transform:uppercase;
-  color:var(--text-soft);
-  border-bottom:1px solid transparent;
-  padding-bottom:2px;
-  transition:color 140ms ease,border-color 140ms ease;
-}
-
-.link-inline:hover{
-  color:var(--text);
-  border-color:var(--line);
-}
-
-.rail-top{
-  padding-bottom:18px;
-  border-bottom:1px solid var(--line-soft);
-  margin-bottom:18px;
-}
-
-.rail-phase{
-  font-size:11px;
-  color:var(--text-soft);
-  letter-spacing:0.12em;
-  text-transform:uppercase;
-  margin-bottom:8px;
-}
-
-.rail-title{
-  font-family:var(--serif);
-  font-size:32px;
-  line-height:1;
-  margin-bottom:10px;
-}
-
-.rail-sub{
-  font-size:14px;
-  color:var(--text-soft);
-  line-height:1.55;
-}
-
-.rail-progress{
-  display:flex;
-  flex-direction:column;
-  gap:10px;
-  margin-bottom:20px;
-}
-
-.progress-item{
-  display:flex;
-  gap:12px;
-  align-items:flex-start;
-  padding:10px 0;
-  border-bottom:1px solid rgba(196,163,90,0.06);
-}
-
-.progress-item:last-child{border-bottom:none}
-
-.progress-num{
-  width:24px;
-  flex:0 0 24px;
-  font-size:10px;
-  color:var(--text-soft);
-  letter-spacing:0.1em;
-  text-transform:uppercase;
-  padding-top:2px;
-}
-
-.progress-copy{
-  min-width:0;
-}
-
-.progress-copy strong{
-  display:block;
-  font-size:13px;
-  color:var(--text);
-  font-weight:400;
-  letter-spacing:0.01em;
-}
-
-.progress-copy span{
-  display:block;
-  font-size:12px;
-  color:var(--text-soft);
-  line-height:1.45;
-  margin-top:2px;
-}
-
-.progress-item.active .progress-num,
-.progress-item.active .progress-copy strong{color:var(--gold)}
-
-.progress-item.complete .progress-copy strong{color:var(--text)}
-.progress-item.complete .progress-num{color:var(--ok)}
-
-.rail-actions{
-  display:flex;
-  flex-direction:column;
-  gap:10px;
-  padding-top:16px;
-  border-top:1px solid var(--line-soft);
-}
-
-.main-stack{
-  display:flex;
-  flex-direction:column;
-  gap:24px;
-}
-
-.hero{
-  padding:30px 28px 26px;
-  border:1px solid var(--line-soft);
-  background:
-    linear-gradient(180deg, rgba(18,18,14,0.98), rgba(16,16,12,0.98)),
-    radial-gradient(circle at top right, rgba(196,163,90,0.06), transparent 28%);
-  box-shadow:var(--shadow);
-}
-
-.hero .label{margin-bottom:14px}
-
-.hero-sub{
-  font-size:18px;
-  color:var(--text-dim);
-  max-width:42ch;
-  margin-bottom:20px;
-}
-
-.hero-grid{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:1px;
-  background:var(--line-soft);
-  border:1px solid var(--line-soft);
-  margin-top:22px;
-}
-
-.hero-cell{
-  background:rgba(10,10,8,0.7);
-  padding:16px 16px 14px;
-}
-
-.hero-cell .small{
-  display:block;
-  font-size:10px;
-  letter-spacing:0.14em;
-  text-transform:uppercase;
-  color:var(--text-soft);
-  margin-bottom:6px;
-}
-
-.hero-cell .value{
-  font-size:15px;
-  color:var(--text);
-  line-height:1.45;
-}
-
-.panel{
-  padding:28px 26px;
-}
-
-.panel-top{
-  display:flex;
-  justify-content:space-between;
-  align-items:flex-start;
-  gap:16px;
-  margin-bottom:18px;
-}
-
-.step-meta{
-  font-size:10px;
-  letter-spacing:0.18em;
-  text-transform:uppercase;
-  color:var(--gold);
-  font-weight:400;
-}
-
-.step-body{
-  display:flex;
-  flex-direction:column;
-  gap:18px;
-}
-
-.field-grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:18px 16px;
-}
-
-.field{
-  display:flex;
-  flex-direction:column;
-  gap:7px;
-}
-
-.field.full{grid-column:1/-1}
-
-.field-label{
-  font-size:15px;
-  font-weight:400;
-  color:var(--text);
-}
-
-.field-hint{
-  font-size:12px;
-  color:var(--text-soft);
-  font-style:italic;
-  line-height:1.45;
-}
-
-.field input,
-.field textarea{
-  width:100%;
-  background:transparent;
-  border:1px solid var(--line);
-  color:var(--text);
-  padding:14px 15px;
-  border-radius:var(--radius);
-  outline:none;
-  transition:border-color 160ms ease, background 160ms ease;
-}
-
-.field textarea{
-  min-height:112px;
-  resize:vertical;
-}
-
-.field input:focus,
-.field textarea:focus{
-  border-color:var(--gold);
-  background:rgba(196,163,90,0.035);
-}
-
-.field input::placeholder,
-.field textarea::placeholder{
-  color:var(--text-soft);
-}
-
-.step-actions{
-  display:flex;
-  flex-wrap:wrap;
-  gap:10px;
-  align-items:center;
-}
-
-.inline-note{
-  font-size:13px;
-  color:var(--text-soft);
-  max-width:none;
-}
-
-.logic-list,
-.bullet-list{
-  list-style:none;
-  display:flex;
-  flex-direction:column;
-  gap:8px;
-}
-
-.toggle-row{
-  display:flex;
-  flex-direction:column;
-  gap:12px;
-}
-
-.check-card{
-  display:flex;
-  justify-content:space-between;
-  gap:16px;
-  align-items:flex-start;
-  padding:14px 16px;
-  border:1px solid var(--line-soft);
-  background:rgba(10,10,8,0.42);
-}
-
-.check-card.pass{
-  border-color:rgba(127,154,86,0.32);
-  background:var(--ok-soft);
-}
-
-.check-card.fail{
-  border-color:var(--warn-line);
-  background:var(--warn-soft);
-}
-
-.check-copy{
-  min-width:0;
-}
-
-.check-copy strong{
-  display:block;
-  font-size:15px;
-  color:var(--text);
-  font-weight:400;
-  margin-bottom:3px;
-}
-
-.check-copy span{
-  display:block;
-  font-size:13px;
-  color:var(--text-soft);
-  line-height:1.45;
-}
-
-.toggle{
-  display:flex;
-  border:1px solid var(--line);
-  border-radius:var(--radius);
-  overflow:hidden;
-  flex:0 0 auto;
-}
-
-.toggle button{
-  border:none;
-  background:transparent;
-  color:var(--text-soft);
-  font-size:10px;
-  letter-spacing:0.1em;
-  text-transform:uppercase;
-  padding:9px 14px;
-  cursor:pointer;
-  transition:background 140ms ease,color 140ms ease;
-}
-
-.toggle button.active-yes{
-  background:rgba(127,154,86,0.16);
-  color:var(--ok);
-}
-
-.toggle button.active-no{
-  background:rgba(184,92,56,0.16);
-  color:var(--warn);
-}
-
-.version-grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:12px;
-}
-
-.version-card{
-  border:1px solid var(--line-soft);
-  background:rgba(10,10,8,0.48);
-  padding:18px 16px;
-  cursor:pointer;
-  transition:border-color 140ms ease,background 140ms ease;
-}
-
-.version-card:hover{
-  border-color:var(--line);
-}
-
-.version-card.selected{
-  border-color:var(--gold);
-  background:rgba(196,163,90,0.06);
-}
-
-.version-label{
-  display:block;
-  font-size:10px;
-  color:var(--gold);
-  letter-spacing:0.16em;
-  text-transform:uppercase;
-  margin-bottom:6px;
-}
-
-.version-name{
-  font-family:var(--serif);
-  font-size:24px;
-  color:var(--text);
-  line-height:1.1;
-  margin-bottom:6px;
-}
-
-.version-desc{
-  font-size:13px;
-  color:var(--text-soft);
-  line-height:1.45;
-}
-
-.version-preview{
-  margin-top:12px;
-  padding-top:12px;
-  border-top:1px solid var(--line-soft);
-  font-size:14px;
-  color:var(--text-dim);
-  line-height:1.55;
-}
-
-.output-card{
-  padding:30px 28px;
-  border-color:var(--line);
-  background:
-    linear-gradient(180deg, rgba(18,18,14,0.98), rgba(17,17,13,0.98)),
-    radial-gradient(circle at top right, rgba(196,163,90,0.08), transparent 28%);
-  position:relative;
-  overflow:hidden;
-}
-
-.output-card::before{
-  content:"";
-  position:absolute;
-  top:0;
-  left:0;
-  right:0;
-  height:1px;
-  background:linear-gradient(90deg, transparent, var(--gold), transparent);
-  opacity:0.65;
-}
-
-.output-header{
-  display:flex;
-  justify-content:space-between;
-  align-items:flex-start;
-  gap:16px;
-  margin-bottom:20px;
-}
-
-.output-tag{
-  display:inline-block;
-  font-size:10px;
-  letter-spacing:0.18em;
-  text-transform:uppercase;
-  color:var(--gold);
-  font-weight:400;
-  margin-bottom:12px;
-}
-
-.output-headline{
-  font-family:var(--serif);
-  font-size:clamp(30px,4vw,44px);
-  line-height:1.08;
-  color:var(--text);
-  max-width:12ch;
-}
-
-.output-tools{
-  display:flex;
-  flex-wrap:wrap;
-  gap:10px;
-}
-
-.mini-btn{
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  min-height:38px;
-  padding:10px 12px;
-  border:1px solid var(--line);
-  font-size:10px;
-  letter-spacing:0.12em;
-  text-transform:uppercase;
-  color:var(--text-soft);
-  background:transparent;
-  cursor:pointer;
-}
-
-.mini-btn:hover{
-  border-color:var(--gold);
-  color:var(--text);
-}
-
-.artifact-grid{
-  display:grid;
-  grid-template-columns:1.15fr 0.85fr;
-  gap:24px;
-}
-
-.artifact-block{
-  display:flex;
-  flex-direction:column;
-  gap:16px;
-}
-
-.statement{
-  font-family:var(--serif);
-  font-size:clamp(24px,3.2vw,34px);
-  line-height:1.24;
-  color:var(--text);
-  padding-bottom:18px;
-  border-bottom:1px solid var(--line-soft);
-}
-
-.detail-grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:1px;
-  background:var(--line-soft);
-  border:1px solid var(--line-soft);
-}
-
-.detail-cell{
-  background:rgba(10,10,8,0.7);
-  padding:14px 15px;
-}
-
-.detail-cell.wide{grid-column:1/-1}
-
-.detail-label{
-  display:block;
-  font-size:10px;
-  letter-spacing:0.14em;
-  text-transform:uppercase;
-  color:var(--text-soft);
-  margin-bottom:5px;
-}
-
-.detail-value{
-  font-size:15px;
-  color:var(--text);
-  line-height:1.45;
-}
-
-.price-value{
-  color:var(--gold);
-  font-family:var(--serif);
-  font-size:24px;
-}
-
-.artifact-subsection{
-  border-top:1px solid var(--line-soft);
-  padding-top:16px;
-}
-
-.artifact-subsection:first-child{
-  border-top:none;
-  padding-top:0;
-}
-
-.artifact-subsection .sub-label{
-  display:block;
-  font-size:10px;
-  letter-spacing:0.14em;
-  text-transform:uppercase;
-  color:var(--text-soft);
-  margin-bottom:8px;
-}
-
-.artifact-subsection .sub-text{
-  font-size:15px;
-  color:var(--text-dim);
-  line-height:1.58;
-}
-
-.metric-list{
-  list-style:none;
-  display:flex;
-  flex-direction:column;
-  gap:10px;
-}
-
-.metric-list li{
-  padding:10px 12px;
-  border:1px solid var(--line-soft);
-  background:rgba(10,10,8,0.44);
-}
-
-.metric-list strong{
-  display:block;
-  font-size:11px;
-  letter-spacing:0.12em;
-  text-transform:uppercase;
-  color:var(--text-soft);
-  font-weight:400;
-  margin-bottom:5px;
-}
-
-.metric-list span{
-  display:block;
-  font-size:14px;
-  color:var(--text-dim);
-  line-height:1.5;
-}
-
-.warn-box{
-  border:1px solid var(--warn-line);
-  background:var(--warn-soft);
-  padding:18px 16px;
-}
-
-.warn-box .warn-label{
-  display:block;
-  font-size:10px;
-  letter-spacing:0.14em;
-  text-transform:uppercase;
-  color:var(--warn);
-  margin-bottom:8px;
-  font-weight:400;
-}
-
-.warn-box .warn-text{
-  font-size:14px;
-  color:var(--text-dim);
-  line-height:1.55;
-}
-
-.bridge{
-  border:1px solid var(--line);
-  background:linear-gradient(180deg, rgba(196,163,90,0.06), rgba(196,163,90,0.03));
-  padding:24px 22px;
-}
-
-.bridge-title{
-  font-family:var(--serif);
-  font-size:30px;
-  line-height:1.08;
-  margin-bottom:10px;
-}
-
-.bridge-text{
-  font-size:16px;
-  color:var(--text-dim);
-  max-width:none;
-  margin-bottom:16px;
-}
-
-.bridge-actions{
-  display:flex;
-  flex-wrap:wrap;
-  gap:10px;
-}
-
-.notes-title{
-  font-size:10px;
-  letter-spacing:0.18em;
-  text-transform:uppercase;
-  color:var(--gold);
-  margin-bottom:12px;
-}
-
-.notes-head{
-  font-family:var(--serif);
-  font-size:30px;
-  line-height:1;
-  margin-bottom:14px;
-}
-
-.notes-list{
-  display:flex;
-  flex-direction:column;
-  gap:10px;
-  margin-bottom:18px;
-}
-
-.note-item{
-  padding:12px 12px 11px;
-  border:1px solid var(--line-soft);
-  background:rgba(10,10,8,0.46);
-}
-
-.note-item .name{
-  display:block;
-  font-size:10px;
-  letter-spacing:0.12em;
-  text-transform:uppercase;
-  color:var(--text-soft);
-  margin-bottom:5px;
-}
-
-.note-item .val{
-  display:block;
-  font-size:14px;
-  color:var(--text);
-  line-height:1.45;
-}
-
-.note-item.empty .val{color:var(--text-soft)}
-
-.notes-actions{
-  display:flex;
-  flex-wrap:wrap;
-  gap:8px;
-  padding-top:16px;
-  border-top:1px solid var(--line-soft);
-}
-
-.phase-footer{
-  border-top:1px solid var(--line-soft);
-  padding-top:18px;
-  display:flex;
-  flex-wrap:wrap;
-  gap:10px 16px;
-}
-
-.phase-footer a{
-  font-size:11px;
-  letter-spacing:0.1em;
-  text-transform:uppercase;
-  color:var(--text-soft);
-  transition:color 140ms ease;
-}
-
-.phase-footer a:hover{color:var(--text)}
-
-.status-badge{
-  display:inline-flex;
-  align-items:center;
-  gap:8px;
-  font-size:10px;
-  letter-spacing:0.13em;
-  text-transform:uppercase;
-  color:var(--text-soft);
-  border:1px solid var(--line-soft);
-  padding:8px 10px;
-}
-
-.status-dot{
-  width:6px;
-  height:6px;
-  border-radius:50%;
-  background:var(--gold);
-}
-
-.hidden{display:none !important}
-
-@media (max-width:1200px){
-  .shell{
-    grid-template-columns:220px minmax(0,1fr);
-    max-width:1080px;
-  }
-  .right-notes{
-    position:static;
-    grid-column:1 / -1;
-    order:3;
-  }
-  .center{order:2}
-}
-
-@media (max-width:860px){
-  .shell{
-    grid-template-columns:1fr;
-    padding:18px 16px 72px;
-    gap:18px;
-  }
-  .left-rail,
-  .right-notes{
-    position:static;
-  }
-  .entry-card{
-    grid-template-columns:1fr;
-    padding:28px 20px 22px;
-  }
-  .hero,
-  .panel,
-  .output-card,
-  .rail-card,
-  .notes-card{
-    padding:22px 18px;
-  }
-  .hero-grid,
-  .field-grid,
-  .artifact-grid,
-  .version-grid{
-    grid-template-columns:1fr;
-  }
-  .detail-grid{
-    grid-template-columns:1fr;
-  }
-  .panel-top,
-  .output-header,
-  .check-card{
-    flex-direction:column;
-    align-items:flex-start;
-  }
-  .toggle{
-    width:100%;
-  }
-  .toggle button{
-    flex:1;
-  }
-  .btn{
-    width:100%;
-  }
-  .mini-btn{
-    flex:1;
-  }
-}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Phase 02 · Position · Stephuary</title>
+  <meta name="description" content="Phase 02. Value translation diagnostic. Where instinct meets market." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=Lato:wght@300;400&display=swap" rel="stylesheet" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:          #0a0a08;
+      --surface:     #111110;
+      --border:      #2a2a26;
+      --border-dim:  #1c1c19;
+      --gold:        #c4a35a;
+      --gold-dim:    #8a6f3a;
+      --selected-bg: rgba(196,163,90,0.09);
+      --text:        #f5f0e8;
+      --text-dim:    #7a7870;
+      --text-mid:    #c8c0b0;
+      --serif:       'Cormorant Garamond', Georgia, serif;
+      --sans:        'Lato', system-ui, sans-serif;
+      --radius:      2px;
+      --trans:       200ms ease;
+    }
+
+    html {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      font-weight: 300;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 0 16px 100px;
+    }
+
+    #locked {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      text-align: center;
+      max-width: 480px;
+      width: 100%;
+      padding: 60px 0;
+    }
+
+    .locked-phase {
+      font-size: 10px;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 36px;
+    }
+
+    .locked-headline {
+      font-family: var(--serif);
+      font-size: clamp(30px, 6vw, 48px);
+      font-weight: 300;
+      line-height: 1.12;
+      margin-bottom: 20px;
+    }
+
+    .locked-headline em { font-style: italic; color: var(--text-mid); }
+
+    .locked-body {
+      font-size: 13px;
+      color: var(--text-dim);
+      line-height: 1.8;
+      margin-bottom: 36px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--sans);
+      font-weight: 300;
+      font-size: 11px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      padding: 14px 36px;
+      border: 1px solid var(--gold);
+      background: transparent;
+      color: var(--gold);
+      cursor: pointer;
+      transition: background var(--trans), color var(--trans);
+      border-radius: var(--radius);
+      min-height: 48px;
+      text-decoration: none;
+    }
+
+    .btn:hover { background: var(--gold); color: var(--bg); }
+
+    .btn-solid {
+      background: var(--gold);
+      color: var(--bg);
+      border-color: var(--gold);
+    }
+
+    .btn-solid:hover { background: #d4b36a; border-color: #d4b36a; }
+
+    .btn-ghost {
+      border-color: var(--border-dim);
+      color: var(--text-dim);
+      font-size: 10px;
+      padding: 12px 22px;
+    }
+
+    .btn-ghost:hover {
+      border-color: var(--border);
+      color: var(--text-mid);
+      background: transparent;
+    }
+
+    #flow-wrap {
+      display: none;
+      width: 100%;
+      max-width: 1180px;
+      padding-top: 44px;
+    }
+
+    .top-nav {
+      width: 100%;
+      max-width: 1180px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 28px 0 0;
+      margin-bottom: 0;
+    }
+
+    .nav-brand {
+      font-size: 10px;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      text-decoration: none;
+    }
+
+    .nav-brand:hover { color: var(--text-mid); }
+
+    .nav-phase {
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold);
+    }
+
+    .capture-layout {
+      display: grid;
+      grid-template-columns: 112px minmax(0, 1fr) minmax(220px, 280px);
+      gap: 28px 32px;
+      align-items: start;
+      width: 100%;
+    }
+
+    .rail {
+      position: sticky;
+      top: 72px;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      padding-top: 8px;
+    }
+
+    .rail-item {
+      font-size: 9px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      padding: 10px 0;
+      border-left: 2px solid var(--border-dim);
+      padding-left: 12px;
+      transition: color var(--trans), border-color var(--trans);
+      line-height: 1.35;
+    }
+
+    .rail-item.done {
+      color: var(--text-mid);
+      border-left-color: rgba(196,163,90,0.35);
+    }
+
+    .rail-item.active {
+      color: var(--gold);
+      border-left-color: var(--gold);
+    }
+
+    .main-col {
+      min-width: 0;
+      max-width: 580px;
+      justify-self: center;
+      width: 100%;
+    }
+
+    .live-panel {
+      position: sticky;
+      top: 72px;
+      border: 1px solid var(--border);
+      border-top: 2px solid var(--gold);
+      background: var(--surface);
+      max-height: calc(100vh - 100px);
+      overflow-y: auto;
+    }
+
+    .live-panel-head {
+      font-size: 10px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--gold);
+      padding: 18px 20px 12px;
+      border-bottom: 1px solid var(--border-dim);
+    }
+
+    .live-field {
+      padding: 14px 20px;
+      border-bottom: 1px solid var(--border-dim);
+    }
+
+    .live-field:last-child { border-bottom: none; }
+
+    .live-label {
+      font-size: 9px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin-bottom: 8px;
+    }
+
+    .live-value {
+      font-size: 12px;
+      color: var(--text-mid);
+      line-height: 1.65;
+    }
+
+    .instinct-block {
+      border: 1px solid var(--border);
+      border-top: 2px solid var(--gold);
+      padding: 28px 24px;
+      margin-bottom: 40px;
+      background: rgba(17,17,16,0.6);
+    }
+
+    .instinct-kicker {
+      font-size: 10px;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 16px;
+    }
+
+    .instinct-h2 {
+      font-family: var(--serif);
+      font-size: clamp(22px, 3.5vw, 30px);
+      font-weight: 300;
+      line-height: 1.2;
+      margin-bottom: 14px;
+    }
+
+    .instinct-sub {
+      font-size: 14px;
+      color: var(--text-mid);
+      line-height: 1.75;
+      margin-bottom: 24px;
+    }
+
+    .instinct-rows { margin-bottom: 20px; }
+
+    .instinct-row {
+      font-size: 13px;
+      color: var(--text-mid);
+      line-height: 1.7;
+      margin-bottom: 10px;
+      padding-left: 0;
+    }
+
+    .instinct-row strong {
+      color: var(--text);
+      font-weight: 400;
+    }
+
+    .instinct-reality {
+      font-size: 13px;
+      color: var(--text-dim);
+      line-height: 1.75;
+      padding-top: 16px;
+      border-top: 1px solid var(--border-dim);
+    }
+
+    .instinct-reality p { margin-bottom: 8px; }
+    .instinct-reality p:last-child { margin-bottom: 0; }
+
+    #flow { width: 100%; }
+
+    .progress-bar-wrap { width: 100%; margin-bottom: 40px; }
+
+    .progress-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .progress-label {
+      font-size: 10px;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+    }
+
+    .progress-count {
+      font-family: var(--serif);
+      font-size: 13px;
+      color: var(--gold);
+    }
+
+    .progress-track {
+      width: 100%;
+      height: 2px;
+      background: var(--border-dim);
+      border-radius: 1px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: var(--gold);
+      border-radius: 1px;
+      transition: width 450ms cubic-bezier(0.4,0,0.2,1);
+    }
+
+    .step {
+      display: none;
+      flex-direction: column;
+      width: 100%;
+      animation: stepIn 280ms ease forwards;
+    }
+
+    .step.active { display: flex; }
+
+    @keyframes stepIn {
+      from { opacity: 0; transform: translateY(14px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .step-header { margin-bottom: 36px; }
+
+    .step-instruction {
+      font-family: var(--serif);
+      font-size: clamp(24px, 4.5vw, 38px);
+      font-weight: 300;
+      line-height: 1.15;
+      margin-bottom: 10px;
+    }
+
+    .step-micro {
+      font-size: 11px;
+      color: var(--text-dim);
+      letter-spacing: 0.04em;
+      margin-top: 8px;
+      line-height: 1.7;
+    }
+
+    .option-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .option-item {
+      display: flex;
+      align-items: center;
+      padding: 18px 20px;
+      border: 1px solid var(--border);
+      cursor: pointer;
+      transition: border-color var(--trans), background var(--trans), color var(--trans);
+      border-radius: var(--radius);
+      font-size: 14px;
+      font-weight: 300;
+      color: var(--text-mid);
+      line-height: 1.45;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .option-item:hover {
+      border-color: var(--gold-dim);
+      color: var(--text);
+    }
+
+    .option-item.selected {
+      border-color: var(--gold);
+      color: var(--text);
+      background: var(--selected-bg);
+    }
+
+    .option-item.selected::after {
+      content: '';
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--gold);
+      margin-left: auto;
+      flex-shrink: 0;
+    }
+
+    .option-item.dim { pointer-events: none; opacity: 0.45; }
+
+    .nav-row {
+      display: flex;
+      gap: 12px;
+      margin-top: 36px;
+      align-items: center;
+    }
+
+    #summary {
+      display: none;
+      flex-direction: column;
+      width: 100%;
+      max-width: 640px;
+      padding-top: 32px;
+      margin: 0 auto;
+      animation: stepIn 400ms ease forwards;
+    }
+
+    .summary-phase-tag {
+      font-size: 10px;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 16px;
+    }
+
+    .summary-title {
+      font-family: var(--serif);
+      font-size: clamp(28px, 5vw, 44px);
+      font-weight: 300;
+      line-height: 1.1;
+      margin-bottom: 10px;
+    }
+
+    .summary-sub {
+      font-size: 13px;
+      color: var(--text-dim);
+      margin-bottom: 36px;
+      line-height: 1.7;
+    }
+
+    .diag-section {
+      margin-bottom: 28px;
+    }
+
+    .diag-h {
+      font-size: 10px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 12px;
+    }
+
+    .diag-body {
+      font-size: 14px;
+      color: var(--text-mid);
+      line-height: 1.85;
+    }
+
+    .diag-body p { margin-bottom: 12px; }
+    .diag-body p:last-child { margin-bottom: 0; }
+
+    .diag-list {
+      list-style: none;
+      margin-top: 8px;
+    }
+
+    .diag-list li {
+      font-size: 14px;
+      color: var(--text-mid);
+      line-height: 1.75;
+      padding-left: 14px;
+      position: relative;
+      margin-bottom: 8px;
+    }
+
+    .diag-list li::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0.55em;
+      width: 4px;
+      height: 4px;
+      background: var(--gold-dim);
+      border-radius: 50%;
+      opacity: 0.75;
+    }
+
+    .hard-truth {
+      border: 1px solid var(--border);
+      border-top: 2px solid var(--gold);
+      padding: 22px 24px;
+      margin: 0;
+    }
+
+    .hard-truth p {
+      font-size: 14px;
+      color: var(--text-mid);
+      line-height: 1.8;
+      margin-bottom: 10px;
+    }
+
+    .hard-truth p:last-child { margin-bottom: 0; }
+
+    .position-line {
+      font-family: var(--serif);
+      font-size: clamp(17px, 2.5vw, 21px);
+      font-weight: 300;
+      line-height: 1.45;
+      color: var(--text);
+      padding: 20px 0;
+      border-bottom: 1px solid var(--border-dim);
+      margin-bottom: 8px;
+    }
+
+    .action-primary {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+
+    .copy-confirm {
+      font-size: 11px;
+      color: var(--gold);
+      letter-spacing: 0.1em;
+      margin-bottom: 24px;
+      min-height: 18px;
+      opacity: 0;
+      transition: opacity 300ms ease;
+    }
+
+    .copy-confirm.visible { opacity: 1; }
+
+    .action-secondary {
+      padding-top: 20px;
+      border-top: 1px solid var(--border-dim);
+    }
+
+    .capture-footer {
+      margin-top: 40px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border-dim);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px 18px;
+      justify-content: center;
+      width: 100%;
+    }
+
+    .capture-footer a {
+      font-size: 9px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      text-decoration: none;
+    }
+
+    @media (max-width: 960px) {
+      .capture-layout {
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
+      .rail {
+        position: relative;
+        top: 0;
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 8px 12px;
+        padding: 0 0 8px;
+        border-bottom: 1px solid var(--border-dim);
+      }
+      .rail-item {
+        border-left: none;
+        padding-left: 0;
+        padding: 4px 0;
+        font-size: 8px;
+      }
+      .rail-item::after {
+        content: '·';
+        margin-left: 8px;
+        color: var(--border);
+      }
+      .rail-item:last-child::after { content: none; }
+      .live-panel {
+        position: relative;
+        top: 0;
+        max-height: none;
+        order: 3;
+      }
+      .main-col { order: 2; }
+      .rail { order: 1; }
+    }
+
+    @media (max-width: 480px) {
+      .step-instruction { font-size: 22px; }
+      .nav-row { flex-direction: column-reverse; align-items: stretch; }
+      .nav-row .btn { justify-content: center; }
+      .action-primary { flex-direction: column; }
+      .instinct-block { padding: 22px 18px; }
+    }
+  </style>
 </head>
 <body>
 
-<nav class="phase-nav" aria-label="Phase navigation">
-  <a href="/index" class="phase-nav-mark">Stephuary</a>
-  <a href="/index" class="phase-nav-home">Back to Home</a>
-</nav>
+<div id="locked">
+  <p class="locked-phase">Phase 02 · Position</p>
+  <h1 class="locked-headline">This layer is a<br><em>reality filter.</em></h1>
+  <p class="locked-body">Complete Phase 01 first, or unlock full system access.</p>
+  <a href="/capture" class="btn">Phase 01 · Capture</a>
+  <p style="margin-top:28px;font-size:11px;color:var(--text-dim);letter-spacing:0.12em;text-transform:uppercase">Or</p>
+  <a href="/pricing#checkout" class="btn btn-solid" style="margin-top:16px">Enter System</a>
+</div>
 
-<div class="entry-overlay" id="entry-overlay" aria-hidden="false">
-  <div class="entry-card">
-    <div class="entry-copy">
-      <span class="label entry-label">Stephuary · Phase 03</span>
-      <h1>Monetize</h1>
-      <p>This is where positioned direction becomes a purchasable offer.</p>
-      <ul class="entry-points">
-        <li>You are not building a service menu.</li>
-        <li>You are building one decision someone can say yes to.</li>
-        <li>You leave with one buyer, one outcome, one usable price, one version to test, and one clear move into Structure.</li>
-      </ul>
-      <div class="entry-actions">
-        <button class="btn btn-primary" type="button" id="enter-phase">Enter Phase 03</button>
-        <a class="btn btn-soft" href="/position">Back to Position</a>
+<div id="flow-wrap">
+  <div class="top-nav">
+    <a href="/" class="nav-brand">Stephuary</a>
+    <span class="nav-phase">Phase 02 · Position</span>
+  </div>
+
+  <div class="capture-layout">
+    <aside class="rail" id="rail" aria-hidden="true"></aside>
+
+    <div class="main-col">
+      <section class="instinct-block" id="instinctBlock">
+        <p class="instinct-kicker">Instinct profile</p>
+        <h2 class="instinct-h2">This is where your instincts either translate into value or disappear.</h2>
+        <p class="instinct-sub">You do not need new skills. You need alignment between how you think and where it is applied.</p>
+        <div class="instinct-rows" id="instinctRows"></div>
+        <div class="instinct-reality">
+          <p>Most people with this profile either:</p>
+          <p><strong>become extremely valuable</strong> or <strong>stay overlooked</strong>.</p>
+          <p>The difference is positioning.</p>
+        </div>
+      </section>
+
+      <div id="flow">
+        <div class="progress-bar-wrap">
+          <div class="progress-meta">
+            <span class="progress-label">Position</span>
+            <span class="progress-count" id="progressCount">Step 1 of 10</span>
+          </div>
+          <div class="progress-track">
+            <div class="progress-fill" id="progressFill" style="width:10%"></div>
+          </div>
+        </div>
+
+        <div id="steps-root"></div>
+      </div>
+
+      <div id="summary">
+        <p class="summary-phase-tag">Phase 02 · Position</p>
+        <h2 class="summary-title">Position diagnostic complete</h2>
+        <p class="summary-sub">This is what showed up when instinct was compared to market reality.</p>
+
+        <div class="diag-section">
+          <p class="diag-h">1. Position summary</p>
+          <div class="diag-body" id="out-s1"></div>
+        </div>
+
+        <div class="diag-section">
+          <p class="diag-h">2. Where you have value</p>
+          <div class="diag-body" id="out-s2"></div>
+        </div>
+
+        <div class="diag-section">
+          <p class="diag-h">3. Misalignment</p>
+          <div class="diag-body" id="out-s3"></div>
+        </div>
+
+        <div class="diag-section">
+          <p class="diag-h">4. Market reality</p>
+          <div class="diag-body" id="out-s4"></div>
+        </div>
+
+        <div class="diag-section">
+          <p class="diag-h">5. Position shift</p>
+          <p class="position-line" id="out-s5"></p>
+        </div>
+
+        <div class="diag-section">
+          <p class="diag-h">6. Hard truth</p>
+          <div class="hard-truth" id="out-s6" style="margin-top:12px">
+            <p>You are not stuck because you lack ability.</p>
+            <p>You are stuck because:</p>
+            <p>your value is not clearly positioned<br>or you are applying it where it is not paid</p>
+          </div>
+        </div>
+
+        <div class="diag-section">
+          <p class="diag-h">7. Next step</p>
+          <div class="diag-body" id="out-s7"></div>
+        </div>
+
+        <div class="action-primary">
+          <a href="/structure" class="btn btn-solid">Enter Phase 03 · Structure</a>
+          <button type="button" class="btn" id="btnCopy">Copy All</button>
+          <button type="button" class="btn" id="btnExport">Export</button>
+        </div>
+        <p class="copy-confirm" id="copyConfirm">Copied to clipboard.</p>
+
+        <div class="action-secondary">
+          <button type="button" class="btn btn-ghost" id="btnReset">Reset</button>
+        </div>
+
+        <footer class="capture-footer">
+          <a href="/">Home</a>
+          <a href="/system">System</a>
+          <a href="/capture">Phase 01</a>
+          <a href="/structure">Phase 03</a>
+        </footer>
       </div>
     </div>
-    <aside class="entry-aside">
-      <div class="mini">What happens here</div>
-      <p class="aside-text">Define the buyer. Tighten the result. Set the delivery. Price the decision. Find the friction. Lock the version. Route it forward.</p>
+
+    <aside class="live-panel" id="livePanel" aria-live="polite">
+      <div class="live-panel-head">Live Read</div>
+      <div class="live-field">
+        <div class="live-label">You are currently positioned as</div>
+        <div class="live-value" id="live-pos">Waiting.</div>
+      </div>
+      <div class="live-field">
+        <div class="live-label">Your work is</div>
+        <div class="live-value" id="live-pull">Waiting.</div>
+      </div>
+      <div class="live-field">
+        <div class="live-label">Your problem is</div>
+        <div class="live-value" id="live-prob">Waiting.</div>
+      </div>
+      <div class="live-field">
+        <div class="live-label">Your buyer is</div>
+        <div class="live-value" id="live-buyer">Waiting.</div>
+      </div>
+      <div class="live-field">
+        <div class="live-label">Your value is</div>
+        <div class="live-value" id="live-val">Waiting.</div>
+      </div>
     </aside>
   </div>
 </div>
 
-<div class="shell">
-  <aside class="left-rail">
-    <div class="rail-card">
-      <div class="rail-top">
-        <div class="rail-phase">Phase 03</div>
-        <div class="rail-title">Monetize</div>
-        <p class="rail-sub">Turn a positioned direction into a clear offer someone can buy quickly.</p>
-      </div>
-
-      <div class="rail-progress" id="rail-progress">
-        <div class="progress-item" data-step="1">
-          <div class="progress-num">01</div>
-          <div class="progress-copy"><strong>Buyer</strong><span>Define who this is actually for.</span></div>
-        </div>
-        <div class="progress-item" data-step="2">
-          <div class="progress-num">02</div>
-          <div class="progress-copy"><strong>Outcome</strong><span>Name one result, not a bundle.</span></div>
-        </div>
-        <div class="progress-item" data-step="3">
-          <div class="progress-num">03</div>
-          <div class="progress-copy"><strong>Delivery</strong><span>Make the scope and format legible.</span></div>
-        </div>
-        <div class="progress-item" data-step="4">
-          <div class="progress-num">04</div>
-          <div class="progress-copy"><strong>Pricing</strong><span>Set one usable price.</span></div>
-        </div>
-        <div class="progress-item" data-step="5">
-          <div class="progress-num">05</div>
-          <div class="progress-copy"><strong>Friction</strong><span>Find what is weakening the offer.</span></div>
-        </div>
-        <div class="progress-item" data-step="6">
-          <div class="progress-num">06</div>
-          <div class="progress-copy"><strong>Versions</strong><span>Choose the version to test first.</span></div>
-        </div>
-        <div class="progress-item" data-step="7">
-          <div class="progress-num">07</div>
-          <div class="progress-copy"><strong>Lock + Route</strong><span>Move this into Structure.</span></div>
-        </div>
-      </div>
-
-      <div class="rail-actions">
-        <button class="btn btn-soft" type="button" id="save-phase">Save phase</button>
-        <button class="btn btn-soft" type="button" id="reset-phase">Reset phase</button>
-        <a class="btn" href="/systems">Back to systems</a>
-      </div>
-    </div>
-  </aside>
-
-  <main class="center">
-    <div class="main-stack">
-
-      <section class="hero">
-        <span class="label">Monetize · Phase 03</span>
-        <h1>Make the offer clear enough to buy.</h1>
-        <p class="hero-sub">The point is not to describe everything you can do. The point is to define one offer that feels specific, credible, and easy to say yes to.</p>
-
-        <div class="hero-grid">
-          <div class="hero-cell">
-            <span class="small">Output</span>
-            <div class="value">One clear offer someone can repeat back correctly.</div>
-          </div>
-          <div class="hero-cell">
-            <span class="small">Test</span>
-            <div class="value">One version you can put in front of a buyer immediately.</div>
-          </div>
-          <div class="hero-cell">
-            <span class="small">Next</span>
-            <div class="value">Structure defines how this gets delivered, organized, and repeated.</div>
-          </div>
-        </div>
-      </section>
-
-      <section class="panel" id="step-1">
-        <div class="panel-top">
-          <div>
-            <div class="step-meta">Step 01</div>
-            <h2>Buyer</h2>
-          </div>
-          <div class="status-badge"><span class="status-dot"></span><span>Define exactly who this is for</span></div>
-        </div>
-        <div class="step-body">
-          <p>Not a category. A situation. A person in a specific moment with a specific problem.</p>
-          <div class="field-grid">
-            <div class="field full">
-              <label class="field-label" for="buyer">Who is this for?</label>
-              <span class="field-hint">Not “founders.” Try “service founders who get interest but no committed buyers.”</span>
-              <input id="buyer" type="text" maxlength="160" placeholder="Service founders who get interest but no committed buyers" autocomplete="off" />
-            </div>
-            <div class="field">
-              <label class="field-label" for="buyerStage">What moment are they in?</label>
-              <span class="field-hint">What is happening right before they would buy this?</span>
-              <input id="buyerStage" type="text" maxlength="120" placeholder="They have a skill, but the offer still feels vague" autocomplete="off" />
-            </div>
-            <div class="field">
-              <label class="field-label" for="buyerPain">What is the friction they already feel?</label>
-              <span class="field-hint">State the visible consequence, not a personality trait.</span>
-              <input id="buyerPain" type="text" maxlength="120" placeholder="People ask what they sell and they over-explain" autocomplete="off" />
-            </div>
-          </div>
-          <div class="step-actions">
-            <button class="btn btn-primary" type="button" data-next="2">Continue to outcome</button>
-          </div>
-        </div>
-      </section>
-
-      <section class="panel" id="step-2">
-        <div class="panel-top">
-          <div>
-            <div class="step-meta">Step 02</div>
-            <h2>Outcome</h2>
-          </div>
-          <div class="status-badge"><span class="status-dot"></span><span>Define one result, not a bundle</span></div>
-        </div>
-        <div class="step-body">
-          <p>This phase gets weaker the moment the result turns into a list.</p>
-          <div class="field-grid">
-            <div class="field full">
-              <label class="field-label" for="outcome">What concrete result do they get?</label>
-              <span class="field-hint">One change they can picture. Not strategy, confidence, clarity, and momentum all at once.</span>
-              <textarea id="outcome" maxlength="260" placeholder="A clear offer they can say in one sentence and test this week"></textarea>
-            </div>
-            <div class="field">
-              <label class="field-label" for="proofWindow">When do they get it?</label>
-              <span class="field-hint">Use one time frame the buyer can hold onto.</span>
-              <input id="proofWindow" type="text" maxlength="80" placeholder="Within 7 days" autocomplete="off" />
-            </div>
-            <div class="field">
-              <label class="field-label" for="afterState">What changes after?</label>
-              <span class="field-hint">What can they now do that they could not do before?</span>
-              <input id="afterState" type="text" maxlength="120" placeholder="They can explain the offer, price it, and test it without rambling" autocomplete="off" />
-            </div>
-          </div>
-          <div class="step-actions">
-            <button class="btn btn-primary" type="button" data-next="3">Continue to delivery</button>
-          </div>
-        </div>
-      </section>
-
-      <section class="panel" id="step-3">
-        <div class="panel-top">
-          <div>
-            <div class="step-meta">Step 03</div>
-            <h2>Delivery</h2>
-          </div>
-          <div class="status-badge"><span class="status-dot"></span><span>Define the format and scope clearly</span></div>
-        </div>
-        <div class="step-body">
-          <p>People trust offers that feel bounded.</p>
-          <div class="field-grid">
-            <div class="field">
-              <label class="field-label" for="delivery">How is this delivered?</label>
-              <span class="field-hint">Call the format exactly what it is.</span>
-              <input id="delivery" type="text" maxlength="140" placeholder="One 90-minute working session plus written offer draft" autocomplete="off" />
-            </div>
-            <div class="field">
-              <label class="field-label" for="timeline">What is the timeline?</label>
-              <span class="field-hint">What length of commitment is required?</span>
-              <input id="timeline" type="text" maxlength="80" placeholder="One week" autocomplete="off" />
-            </div>
-            <div class="field full">
-              <label class="field-label" for="scope">What is included?</label>
-              <span class="field-hint">Name the actual pieces, not vague process language.</span>
-              <textarea id="scope" maxlength="260" placeholder="Buyer definition, one core outcome, priced offer statement, friction check, and test version"></textarea>
-            </div>
-          </div>
-          <div class="step-actions">
-            <button class="btn btn-primary" type="button" data-next="4">Continue to pricing</button>
-          </div>
-        </div>
-      </section>
-
-      <section class="panel" id="step-4">
-        <div class="panel-top">
-          <div>
-            <div class="step-meta">Step 04</div>
-            <h2>Pricing</h2>
-          </div>
-          <div class="status-badge"><span class="status-dot"></span><span>Set one price and test whether it matches</span></div>
-        </div>
-        <div class="step-body">
-          <p>A usable price is more valuable than a range you are afraid to say out loud.</p>
-          <div class="field-grid">
-            <div class="field">
-              <label class="field-label" for="price">What is the price?</label>
-              <span class="field-hint">Use one number. No range.</span>
-              <input id="price" type="text" maxlength="40" placeholder="750" autocomplete="off" />
-            </div>
-            <div class="field">
-              <label class="field-label" for="pricingReason">Why does this price make sense?</label>
-              <span class="field-hint">State the logic in one line.</span>
-              <input id="pricingReason" type="text" maxlength="120" placeholder="It removes the ambiguity blocking the next sale" autocomplete="off" />
-            </div>
-          </div>
-          <div class="step-actions">
-            <button class="btn btn-primary" type="button" id="generate-offer">Generate offer artifact</button>
-            <span class="inline-note">This will build the offer, classify the type, and open the friction check.</span>
-          </div>
-        </div>
-      </section>
-
-      <section class="output-card hidden" id="artifact-section">
-        <div class="output-header">
-          <div>
-            <span class="output-tag">Offer artifact</span>
-            <div class="output-headline">One thing someone can buy.</div>
-          </div>
-          <div class="output-tools">
-            <button class="mini-btn" type="button" id="copy-output">Copy output</button>
-            <button class="mini-btn" type="button" id="export-output">Export output</button>
-          </div>
-        </div>
-
-        <div class="artifact-grid">
-          <div class="artifact-block">
-            <div class="statement" id="primary-statement"></div>
-
-            <div class="detail-grid">
-              <div class="detail-cell">
-                <span class="detail-label">Buyer</span>
-                <div class="detail-value" id="detail-buyer"></div>
-              </div>
-              <div class="detail-cell">
-                <span class="detail-label">Buyer type</span>
-                <div class="detail-value" id="detail-buyer-type"></div>
-              </div>
-              <div class="detail-cell">
-                <span class="detail-label">Result</span>
-                <div class="detail-value" id="detail-result"></div>
-              </div>
-              <div class="detail-cell">
-                <span class="detail-label">Offer type</span>
-                <div class="detail-value" id="detail-offer-type"></div>
-              </div>
-              <div class="detail-cell">
-                <span class="detail-label">Delivery</span>
-                <div class="detail-value" id="detail-delivery"></div>
-              </div>
-              <div class="detail-cell">
-                <span class="detail-label">Timeline</span>
-                <div class="detail-value" id="detail-timeline"></div>
-              </div>
-              <div class="detail-cell wide">
-                <span class="detail-label">Price</span>
-                <div class="detail-value price-value" id="detail-price"></div>
-              </div>
-            </div>
-
-            <div class="artifact-subsection">
-              <span class="sub-label">Short spoken version</span>
-              <div class="sub-text" id="spoken-version"></div>
-            </div>
-
-            <div class="artifact-subsection">
-              <span class="sub-label">Premium version</span>
-              <div class="sub-text" id="premium-version"></div>
-            </div>
-
-            <div class="artifact-subsection">
-              <span class="sub-label">Simple version</span>
-              <div class="sub-text" id="simple-version"></div>
-            </div>
-
-            <div class="artifact-subsection">
-              <span class="sub-label">Public post version</span>
-              <div class="sub-text" id="public-version"></div>
-            </div>
-
-            <div class="artifact-subsection">
-              <span class="sub-label">Simple waitlist or page version</span>
-              <div class="sub-text" id="waitlist-version"></div>
-            </div>
-          </div>
-
-          <div class="artifact-block">
-            <div class="artifact-subsection">
-              <span class="sub-label">Price logic</span>
-              <div class="sub-text" id="price-logic"></div>
-            </div>
-
-            <div class="artifact-subsection">
-              <span class="sub-label">Friction summary</span>
-              <div class="sub-text" id="friction-summary-initial"></div>
-            </div>
-
-            <div class="artifact-subsection">
-              <span class="sub-label">Strongest test path</span>
-              <div class="sub-text" id="test-path"></div>
-            </div>
-
-            <div class="artifact-subsection">
-              <span class="sub-label">Expected first move</span>
-              <div class="sub-text" id="first-move"></div>
-            </div>
-
-            <div class="artifact-subsection">
-              <span class="sub-label">Revenue math examples</span>
-              <ul class="metric-list" id="revenue-math"></ul>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section class="panel hidden" id="step-5">
-        <div class="panel-top">
-          <div>
-            <div class="step-meta">Step 05</div>
-            <h2>Friction</h2>
-          </div>
-          <div class="status-badge"><span class="status-dot"></span><span>Identify the weak point</span></div>
-        </div>
-        <div class="step-body">
-          <p>Do not fix everything. Find the first place the offer starts to wobble.</p>
-
-          <div class="toggle-row">
-            <div class="check-card" id="check-specific">
-              <div class="check-copy">
-                <strong>Is the result specific enough to picture?</strong>
-                <span>The buyer should immediately understand what changes.</span>
-              </div>
-              <div class="toggle">
-                <button type="button" data-check="specific" data-val="yes">Yes</button>
-                <button type="button" data-check="specific" data-val="no">No</button>
-              </div>
-            </div>
-
-            <div class="check-card" id="check-situational">
-              <div class="check-copy">
-                <strong>Is the buyer situationally defined?</strong>
-                <span>This should feel like a real moment, not a broad audience label.</span>
-              </div>
-              <div class="toggle">
-                <button type="button" data-check="situational" data-val="yes">Yes</button>
-                <button type="button" data-check="situational" data-val="no">No</button>
-              </div>
-            </div>
-
-            <div class="check-card" id="check-trust">
-              <div class="check-copy">
-                <strong>Is the delivery clear enough to trust?</strong>
-                <span>The buyer should know what happens after paying.</span>
-              </div>
-              <div class="toggle">
-                <button type="button" data-check="trust" data-val="yes">Yes</button>
-                <button type="button" data-check="trust" data-val="no">No</button>
-              </div>
-            </div>
-
-            <div class="check-card" id="check-pricefit">
-              <div class="check-copy">
-                <strong>Does the price feel justified by the outcome?</strong>
-                <span>The number and the promise should feel proportionate.</span>
-              </div>
-              <div class="toggle">
-                <button type="button" data-check="pricefit" data-val="yes">Yes</button>
-                <button type="button" data-check="pricefit" data-val="no">No</button>
-              </div>
-            </div>
-
-            <div class="check-card" id="check-collapsed">
-              <div class="check-copy">
-                <strong>Does this sound like one offer?</strong>
-                <span>If it sounds like multiple offers collapsed together, it will create hesitation.</span>
-              </div>
-              <div class="toggle">
-                <button type="button" data-check="collapsed" data-val="yes">Yes</button>
-                <button type="button" data-check="collapsed" data-val="no">No</button>
-              </div>
-            </div>
-          </div>
-
-          <div class="warn-box" id="friction-box">
-            <span class="warn-label">Current friction read</span>
-            <div class="warn-text" id="friction-box-text">Complete the friction check to see where the offer is weakening.</div>
-          </div>
-
-          <div class="step-actions">
-            <button class="btn btn-primary" type="button" data-next="6">Continue to versions</button>
-          </div>
-        </div>
-      </section>
-
-      <section class="panel hidden" id="step-6">
-        <div class="panel-top">
-          <div>
-            <div class="step-meta">Step 06</div>
-            <h2>Offer versions</h2>
-          </div>
-          <div class="status-badge"><span class="status-dot"></span><span>Generate multiple usable versions</span></div>
-        </div>
-        <div class="step-body">
-          <p>Choose the version that gives you the cleanest test, not the most elaborate presentation.</p>
-
-          <div class="version-grid" id="version-grid">
-            <div class="version-card" data-version="direct">
-              <span class="version-label">Version A</span>
-              <div class="version-name">Direct</div>
-              <div class="version-desc">For warm outreach, DMs, emails, or actual conversations.</div>
-              <div class="version-preview" id="version-preview-direct"></div>
-            </div>
-
-            <div class="version-card" data-version="premium">
-              <span class="version-label">Version B</span>
-              <div class="version-name">Premium</div>
-              <div class="version-desc">For a private page, deck, or higher-trust environment.</div>
-              <div class="version-preview" id="version-preview-premium"></div>
-            </div>
-
-            <div class="version-card" data-version="simple">
-              <span class="version-label">Version C</span>
-              <div class="version-name">Lower-friction</div>
-              <div class="version-desc">For a smaller first yes when the full offer feels heavy.</div>
-              <div class="version-preview" id="version-preview-simple"></div>
-            </div>
-
-            <div class="version-card" data-version="public">
-              <span class="version-label">Version D</span>
-              <div class="version-name">Public post</div>
-              <div class="version-desc">For testing the sentence in public without building a funnel first.</div>
-              <div class="version-preview" id="version-preview-public"></div>
-            </div>
-
-            <div class="version-card" data-version="waitlist">
-              <span class="version-label">Version E</span>
-              <div class="version-name">Waitlist / page</div>
-              <div class="version-desc">For one page, one CTA, one source of traffic.</div>
-              <div class="version-preview" id="version-preview-waitlist"></div>
-            </div>
-          </div>
-
-          <div class="step-actions">
-            <button class="btn btn-primary" type="button" data-next="7">Lock and route</button>
-          </div>
-        </div>
-      </section>
-
-      <section class="bridge hidden" id="step-7">
-        <div class="step-meta" style="margin-bottom:10px;">Step 07</div>
-        <div class="bridge-title">Lock the offer. Route it forward.</div>
-        <p class="bridge-text" id="bridge-copy">
-          This offer now needs structure. Structure will define how it is delivered, organized, and repeated. If this still feels unclear, refine Monetize first. If it feels sharp enough to test, move it forward.
-        </p>
-        <div class="bridge-actions">
-          <a class="btn btn-primary" href="/structure" id="to-structure">Continue to Structure</a>
-          <button class="btn btn-soft" type="button" id="refine-first">Refine Monetize first</button>
-        </div>
-      </section>
-
-      <footer class="phase-footer">
-        <a href="/systems">systems</a>
-        <a href="/capture">Capture</a>
-        <a href="/position">Position</a>
-        <a href="/monetize">Monetize</a>
-        <a href="/structure">Structure</a>
-        <a href="/automation">Automation</a>
-        <a href="/sovereignty">Sovereignty</a>
-        <a href="/private-access">Private Access</a>
-      </footer>
-
-    </div>
-  </main>
-
-  <aside class="right-notes">
-    <div class="notes-card">
-      <div class="notes-title">Live output</div>
-      <div class="notes-head">Offer notes</div>
-
-      <div class="notes-list">
-        <div class="note-item empty" id="note-buyer-wrap">
-          <span class="name">Buyer</span>
-          <span class="val" id="note-buyer">Not defined yet</span>
-        </div>
-        <div class="note-item empty" id="note-result-wrap">
-          <span class="name">Result</span>
-          <span class="val" id="note-result">Not defined yet</span>
-        </div>
-        <div class="note-item empty" id="note-delivery-wrap">
-          <span class="name">Delivery</span>
-          <span class="val" id="note-delivery">Not defined yet</span>
-        </div>
-        <div class="note-item empty" id="note-timeline-wrap">
-          <span class="name">Timeline</span>
-          <span class="val" id="note-timeline">Not defined yet</span>
-        </div>
-        <div class="note-item empty" id="note-price-wrap">
-          <span class="name">Price</span>
-          <span class="val" id="note-price">Not defined yet</span>
-        </div>
-        <div class="note-item empty" id="note-offer-type-wrap">
-          <span class="name">Offer type</span>
-          <span class="val" id="note-offer-type">Waiting for artifact</span>
-        </div>
-        <div class="note-item empty" id="note-friction-wrap">
-          <span class="name">Friction</span>
-          <span class="val" id="note-friction">Waiting for check</span>
-        </div>
-        <div class="note-item empty" id="note-version-wrap">
-          <span class="name">Chosen test version</span>
-          <span class="val" id="note-version">Not selected yet</span>
-        </div>
-        <div class="note-item empty" id="note-next-wrap">
-          <span class="name">Next move</span>
-          <span class="val" id="note-next">Complete the phase and route into Structure</span>
-        </div>
-      </div>
-
-      <div class="notes-actions">
-        <button class="mini-btn" type="button" id="copy-summary">Copy summary</button>
-        <button class="mini-btn" type="button" id="resume-progress">Resume progress</button>
-      </div>
-    </div>
-  </aside>
-</div>
-
 <script>
 (function(){
-  'use strict';
+  var STORAGE_KEY = 'stephuary_monetize_p02_v1';
+  var P01_KEY = 'stephuary_capture_p01_v2';
+  var PROFILE_KEY = 'stephuary_p01_profile';
+  var TOTAL_Q = 10;
+  var RAIL_LABELS = ['Value','Proximity','Translation','Demand','Money','Specificity','Buyer','Outcome','Honesty','Misalignment','Results'];
 
-  var STORAGE_KEY = 'stephuary_monetize_phase_03_v2';
-
-  var state = {
-    overlayDismissed: false,
-    currentStep: 1,
-    artifactBuilt: false,
-    inputs: {
-      buyer: '',
-      buyerStage: '',
-      buyerPain: '',
-      outcome: '',
-      proofWindow: '',
-      afterState: '',
-      delivery: '',
-      timeline: '',
-      scope: '',
-      price: '',
-      pricingReason: ''
-    },
-    checks: {
-      specific: null,
-      situational: null,
-      trust: null,
-      pricefit: null,
-      collapsed: null
-    },
-    selectedVersion: '',
-    derived: {
-      offerType: '',
-      buyerType: '',
-      priceFormatted: '',
-      frictionSummary: '',
-      testPath: '',
-      firstMove: '',
-      versions: {}
-    }
-  };
-
-  var fields = [
-    'buyer','buyerStage','buyerPain','outcome','proofWindow','afterState','delivery','timeline','scope','price','pricingReason'
+  var QUESTIONS = [
+    { instruction: 'When people come to you, what are they actually responding to?', a: 'They can clearly explain the value I bring', b: 'They like me, but cannot clearly define what I do' },
+    { instruction: 'The problems you notice most are:', a: 'Problems people already pay to solve', b: 'Problems people do not usually pay to fix' },
+    { instruction: 'When you explain what you do:', a: 'People understand immediately', b: 'I have to explain it multiple times' },
+    { instruction: 'Right now your ability is:', a: 'Being pulled from you', b: 'Something you have to offer or push' },
+    { instruction: 'When money enters the conversation:', a: 'It feels expected', b: 'It feels unclear or uncomfortable' },
+    { instruction: 'The problem you solve is:', a: 'Specific and repeatable', b: 'Broad or hard to define' },
+    { instruction: 'The person you help is:', a: 'Easy to identify', b: 'Hard to define or too broad' },
+    { instruction: 'The result of your work is:', a: 'Clear and visible', b: 'Subtle or hard to measure' },
+    { instruction: 'Right now you are:', a: 'Solving a real paid problem', b: 'Trying to turn something into value' },
+    { instruction: 'What is more true?', a: 'You are under-positioned', b: 'You are overestimating your value' }
   ];
 
-  var els = {
-    overlay: document.getElementById('entry-overlay'),
-    enterPhase: document.getElementById('enter-phase'),
-    savePhase: document.getElementById('save-phase'),
-    resetPhase: document.getElementById('reset-phase'),
-    generateOffer: document.getElementById('generate-offer'),
-    artifactSection: document.getElementById('artifact-section'),
-    step5: document.getElementById('step-5'),
-    step6: document.getElementById('step-6'),
-    step7: document.getElementById('step-7'),
-    frictionBoxText: document.getElementById('friction-box-text'),
-    copyOutput: document.getElementById('copy-output'),
-    exportOutput: document.getElementById('export-output'),
-    copySummary: document.getElementById('copy-summary'),
-    resumeProgress: document.getElementById('resume-progress'),
-    toStructure: document.getElementById('to-structure'),
-    refineFirst: document.getElementById('refine-first')
+  var state = {
+    bits: Array(TOTAL_Q).fill(null),
+    currentStep: 1
   };
 
-  function $(id){ return document.getElementById(id); }
-
-  function safeText(v, fallback){
-    var val = (v || '').trim();
-    return val ? val : fallback;
+  function loadP01Profile() {
+    try {
+      var j = localStorage.getItem(PROFILE_KEY);
+      if (j) return JSON.parse(j);
+    } catch (e) {}
+    try {
+      var raw = localStorage.getItem(P01_KEY);
+      if (!raw) return null;
+      var d = JSON.parse(raw);
+      if (!d.bits || d.bits.indexOf(null) >= 0) return null;
+      return deriveProfileFromP01Bits(d.bits);
+    } catch (e) { return null; }
   }
 
-  function setNote(id, value){
-    var el = $('note-' + id);
-    var wrap = $('note-' + id + '-wrap');
-    if (!el || !wrap) return;
-    var empty = !value || /Not defined yet|Waiting|Not selected yet/.test(value);
-    el.textContent = value;
-    wrap.classList.toggle('empty', empty);
+  function deriveProfileFromP01Bits(bits) {
+    var notice = bits[0] === 0 ? 'Friction and misalignment before consensus.' : 'Improvement vectors before comfort.';
+    notice = (bits[2] === 0 ? 'Fine grain. ' : 'Cross-pattern. ') + notice;
+    notice += bits[3] === 0 ? ' Stated terms first.' : ' Subtext tracked automatically.';
+    var correct =
+      (bits[5] === 0 ? 'You correct by preventing recurrence.' : 'You correct by improving how it is handled.') +
+      ' ' +
+      (bits[6] === 0 ? 'You often hold the correction.' : 'You put the correction in the room.');
+    var sensitivity =
+      bits[8] === 0
+        ? 'Your strongest gear is not what the context pulls for.'
+        : 'How you think is structurally used.';
+    var operate =
+      (bits[1] === 0 ? 'Cause and structure before motion.' : 'Motion before full proof.') +
+      ' ' +
+      (bits[7] === 0 ? 'You hesitate until certainty.' : 'You move before certainty and adjust.');
+    return { notice: notice.trim(), correct: correct.trim(), sensitivity: sensitivity.trim(), operate: operate.trim() };
   }
 
-  function formatPrice(raw){
-    var cleaned = String(raw || '').replace(/[^0-9.,]/g, '');
-    if (!cleaned) return '';
-    var num = parseFloat(cleaned.replace(/,/g, ''));
-    if (isNaN(num)) return '';
-    return '$' + num.toLocaleString('en-US', { minimumFractionDigits:0, maximumFractionDigits:0 });
-  }
-
-  function numericPrice(raw){
-    var cleaned = String(raw || '').replace(/[^0-9.]/g, '');
-    var num = parseFloat(cleaned);
-    return isNaN(num) ? 0 : num;
-  }
-
-  function lowerFirst(str){
-    str = String(str || '').trim();
-    if (!str) return '';
-    return str.charAt(0).toLowerCase() + str.slice(1);
-  }
-
-  function upperFirst(str){
-    str = String(str || '').trim();
-    if (!str) return '';
-    return str.charAt(0).toUpperCase() + str.slice(1);
-  }
-
-  function saveState(){
-    try{
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-    }catch(e){}
-  }
-
-  function loadState(){
-    try{
-      var raw = localStorage.getItem(STORAGE_KEY);
-      if (!raw) return false;
-      var parsed = JSON.parse(raw);
-      if (!parsed || typeof parsed !== 'object') return false;
-      state = parsed;
-      return true;
-    }catch(e){
-      return false;
+  function renderInstinctProfile() {
+    var p = loadP01Profile();
+    var host = document.getElementById('instinctRows');
+    if (!host) return;
+    if (!p) {
+      host.innerHTML =
+        '<p class="instinct-row"><strong>You naturally:</strong></p>' +
+        '<p class="instinct-row">Complete Phase 01 to populate this block from your diagnostic.</p>';
+      return;
     }
+    host.innerHTML =
+      '<p class="instinct-row"><strong>Notice:</strong> ' + escapeHtml(p.notice) + '</p>' +
+      '<p class="instinct-row"><strong>Correct:</strong> ' + escapeHtml(p.correct) + '</p>' +
+      '<p class="instinct-row"><strong>Are sensitive to:</strong> ' + escapeHtml(p.sensitivity) + '</p>' +
+      '<p class="instinct-row"><strong>Operate:</strong> ' + escapeHtml(p.operate) + '</p>';
   }
 
-  function resetState(){
-    state = {
-      overlayDismissed: false,
-      currentStep: 1,
-      artifactBuilt: false,
-      inputs: {
-        buyer: '',
-        buyerStage: '',
-        buyerPain: '',
-        outcome: '',
-        proofWindow: '',
-        afterState: '',
-        delivery: '',
-        timeline: '',
-        scope: '',
-        price: '',
-        pricingReason: ''
-      },
-      checks: {
-        specific: null,
-        situational: null,
-        trust: null,
-        pricefit: null,
-        collapsed: null
-      },
-      selectedVersion: '',
-      derived: {
-        offerType: '',
-        buyerType: '',
-        priceFormatted: '',
-        frictionSummary: '',
-        testPath: '',
-        firstMove: '',
-        versions: {}
+  function escapeHtml(s) {
+    var d = document.createElement('div');
+    d.textContent = s;
+    return d.innerHTML;
+  }
+
+  function panelFromBits(b) {
+    function has(i) { return b[i] !== null && b[i] !== undefined; }
+
+    var pos = 'Waiting.';
+    if (has(0) && has(2) && has(5) && has(6)) {
+      var clearScore = (b[0] === 0 ? 1 : 0) + (b[2] === 0 ? 1 : 0) + (b[5] === 0 ? 1 : 0) + (b[6] === 0 ? 1 : 0);
+      pos = clearScore >= 3 ? 'clear' : 'unclear';
+    } else if (has(0)) {
+      pos = b[0] === 0 ? 'leaning clear' : 'leaning unclear';
+    }
+
+    var pull = 'Waiting.';
+    if (has(3)) pull = b[3] === 0 ? 'pulled' : 'pushed';
+
+    var prob = 'Waiting.';
+    if (has(1) && has(5)) {
+      prob = b[1] === 0 && b[5] === 0 ? 'monetizable' : 'non-monetizable';
+    } else if (has(1)) {
+      prob = b[1] === 0 ? 'leaning monetizable' : 'leaning non-monetizable';
+    }
+
+    var buyer = 'Waiting.';
+    if (has(6)) buyer = b[6] === 0 ? 'defined' : 'undefined';
+
+    var val = 'Waiting.';
+    if (has(0) && has(2) && has(7)) {
+      var vs = (b[0] === 0 ? 1 : 0) + (b[2] === 0 ? 1 : 0) + (b[7] === 0 ? 1 : 0);
+      val = vs >= 2 ? 'obvious' : 'misunderstood';
+    } else if (has(0)) {
+      val = b[0] === 0 ? 'leaning obvious' : 'leaning misunderstood';
+    }
+
+    return { pos: pos, pull: pull, prob: prob, buyer: buyer, val: val };
+  }
+
+  function updateLivePanel() {
+    var p = panelFromBits(state.bits);
+    document.getElementById('live-pos').textContent = p.pos;
+    document.getElementById('live-pull').textContent = p.pull;
+    document.getElementById('live-prob').textContent = p.prob;
+    document.getElementById('live-buyer').textContent = p.buyer;
+    document.getElementById('live-val').textContent = p.val;
+  }
+
+  function saveStorage() {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({ bits: state.bits, currentStep: state.currentStep, ts: Date.now() }));
+    } catch (e) {}
+  }
+
+  function loadStorage() {
+    try {
+      var raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return null;
+      return JSON.parse(raw);
+    } catch (e) { return null; }
+  }
+
+  function buildRail() {
+    var rail = document.getElementById('rail');
+    rail.innerHTML = '';
+    RAIL_LABELS.forEach(function(label, i) {
+      var d = document.createElement('div');
+      d.className = 'rail-item';
+      d.textContent = (i + 1) + ' ' + label;
+      rail.appendChild(d);
+    });
+  }
+
+  function updateRail() {
+    var phase = state.currentStep;
+    var items = document.querySelectorAll('.rail-item');
+    items.forEach(function(el, i) {
+      el.classList.remove('active', 'done');
+      if (i === 10) {
+        if (phase === 11) el.classList.add('active');
+      } else if (i + 1 < phase) el.classList.add('done');
+      else if (i + 1 === phase) el.classList.add('active');
+    });
+  }
+
+  function buildSteps() {
+    var root = document.getElementById('steps-root');
+    root.innerHTML = '';
+    QUESTIONS.forEach(function(q, idx) {
+      var stepNum = idx + 1;
+      var div = document.createElement('div');
+      div.className = 'step' + (stepNum === 1 ? ' active' : '');
+      div.id = 'step-' + stepNum;
+      div.innerHTML =
+        '<div class="step-header">' +
+          '<div class="step-instruction"></div>' +
+          '<div class="step-micro">Choose one.</div>' +
+        '</div>' +
+        '<div class="option-list">' +
+          '<div class="option-item" data-bit="0" tabindex="0" role="button"></div>' +
+          '<div class="option-item" data-bit="1" tabindex="0" role="button"></div>' +
+        '</div>' +
+        '<div class="nav-row">' +
+          (stepNum > 1 ? '<button type="button" class="btn btn-ghost" data-back="' + stepNum + '">Back</button>' : '') +
+        '</div>';
+
+      div.querySelector('.step-instruction').textContent = q.instruction;
+      var opts = div.querySelectorAll('.option-item');
+      opts[0].textContent = q.a;
+      opts[1].textContent = q.b;
+
+      opts.forEach(function(opt) {
+        opt.addEventListener('click', function() {
+          if (opt.classList.contains('dim')) return;
+          var bit = parseInt(opt.getAttribute('data-bit'), 10);
+          opts.forEach(function(o) { o.classList.remove('selected'); });
+          opt.classList.add('selected');
+          state.bits[idx] = bit;
+          saveStorage();
+          updateLivePanel();
+          opts.forEach(function(o) { o.classList.add('dim'); });
+          setTimeout(function() {
+            if (idx === TOTAL_Q - 1) showSummary();
+            else goTo(stepNum + 1);
+          }, 480);
+        });
+      });
+
+      var backBtn = div.querySelector('[data-back]');
+      if (backBtn) {
+        backBtn.addEventListener('click', function() { goTo(stepNum - 1); });
       }
-    };
-    try{ localStorage.removeItem(STORAGE_KEY); }catch(e){}
-    renderAll();
+
+      root.appendChild(div);
+    });
+  }
+
+  function goTo(n) {
+    state.currentStep = n;
+    saveStorage();
+    for (var i = 1; i <= TOTAL_Q; i++) {
+      var s = document.getElementById('step-' + i);
+      if (s) s.classList.toggle('active', i === n);
+    }
+    document.getElementById('progressCount').textContent = 'Step ' + n + ' of ' + TOTAL_Q;
+    document.getElementById('progressFill').style.width = (n / TOTAL_Q * 100) + '%';
+
+    var cur = document.getElementById('step-' + n);
+    if (cur) {
+      cur.querySelectorAll('.option-item').forEach(function(o) {
+        o.classList.remove('dim', 'selected');
+        var bit = parseInt(o.getAttribute('data-bit'), 10);
+        if (state.bits[n - 1] === bit) o.classList.add('selected');
+      });
+    }
+    updateLivePanel();
+    updateRail();
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  function updateProgress(){
-    var items = document.querySelectorAll('.progress-item');
-    items.forEach(function(item){
-      var step = Number(item.getAttribute('data-step'));
-      item.classList.remove('active','complete');
-      if (step === state.currentStep) item.classList.add('active');
-      if (step < state.currentStep) item.classList.add('complete');
-    });
+  function finalPanelLabels(b) {
+    var clearScore = (b[0] === 0 ? 1 : 0) + (b[2] === 0 ? 1 : 0) + (b[5] === 0 ? 1 : 0) + (b[6] === 0 ? 1 : 0);
+    var positioned = clearScore >= 3 ? 'clear' : 'unclear';
+    var pulled = b[3] === 0 ? 'pulled' : 'pushed';
+    var monet = b[1] === 0 && b[5] === 0 ? 'monetizable' : 'non-monetizable';
+    var buyer = b[6] === 0 ? 'defined' : 'undefined';
+    var vs = (b[0] === 0 ? 1 : 0) + (b[2] === 0 ? 1 : 0) + (b[7] === 0 ? 1 : 0);
+    var valueL = vs >= 2 ? 'obvious' : 'misunderstood';
+    return { positioned: positioned, pulled: pulled, monet: monet, buyer: buyer, valueL: valueL };
   }
 
-  function showToStep(step){
-    state.currentStep = Math.max(1, Math.min(7, step));
-    if (state.currentStep >= 5 && state.artifactBuilt){
-      els.step5.classList.remove('hidden');
+  function buildOutputs(b, profile) {
+    var f = finalPanelLabels(b);
+    var p = profile || loadP01Profile() || {};
+
+    var s1 =
+      '<p>You are <strong>' +
+      f.positioned +
+      '</strong> in how your value is understood.</p>' +
+      '<p>Your work is currently <strong>' +
+      f.pulled +
+      '</strong>, which affects consistency of demand.</p>';
+
+    var payLine = b[1] === 0 ? 'do' : 'do not';
+    var s2 =
+      '<p>You are strongest when:</p><ul class="diag-list">' +
+      '<li>' +
+      (p.notice ? p.notice : 'Your detection pattern from Phase 01 applies.') +
+      '</li>' +
+      '<li>' +
+      (p.operate ? p.operate : 'Your timing and approach favor a specific kind of move.') +
+      '</li></ul>' +
+      '<p>These are problems people <strong>' +
+      payLine +
+      '</strong> pay to solve at the level you described.</p>';
+
+    var s3 =
+      '<p>You are currently:</p><ul class="diag-list">' +
+      '<li>' +
+      (b[5] === 0 ? 'specific on the problem' : 'broad or fuzzy on the problem') +
+      '</li>' +
+      '<li>' +
+      (b[6] === 0 ? 'clear on who the buyer is' : 'unclear on who the buyer is') +
+      '</li>' +
+      '<li>' +
+      (b[3] === 0 ? 'being pulled' : 'pushing into the market') +
+      '</li></ul>';
+
+    var present =
+      b[2] === 0 && b[0] === 0
+        ? 'a tight story: what you do reads fast.'
+        : b[2] === 1
+          ? 'a story that still needs repetition before it lands.'
+          : 'a value story that depends on context to make sense.';
+
+    var s4 =
+      '<p>People pay for clear outcomes and specific problems.</p>' +
+      '<p>You currently present: ' +
+      present +
+      '</p>';
+
+    var buyerNoun = b[6] === 0 ? 'a buyer you can name' : 'a buyer you still need to narrow';
+    var probNoun =
+      b[1] === 0 && b[5] === 0
+        ? 'a specific problem with existing budgets'
+        : b[1] === 1
+          ? 'a problem that is real but not usually bought'
+          : 'a problem that still needs sharper edges';
+    var method = p.operate ? p.operate : 'the way you naturally think and move';
+
+    var s5 =
+      'I help ' +
+      buyerNoun +
+      ' solve ' +
+      probNoun +
+      ' by ' +
+      method +
+      '.';
+
+    var s7 =
+      '<p>Now that you can see where your value actually exists:</p>' +
+      '<p>The next step is structuring it so people can pay for it.</p>';
+
+    document.getElementById('out-s1').innerHTML = s1;
+    document.getElementById('out-s2').innerHTML = s2;
+    document.getElementById('out-s3').innerHTML = s3;
+    document.getElementById('out-s4').innerHTML = s4;
+    document.getElementById('out-s5').textContent = s5;
+    document.getElementById('out-s7').innerHTML = s7;
+
+    document.getElementById('live-pos').textContent = f.positioned;
+    document.getElementById('live-pull').textContent = f.pulled;
+    document.getElementById('live-prob').textContent = f.monet;
+    document.getElementById('live-buyer').textContent = f.buyer;
+    document.getElementById('live-val').textContent = f.valueL;
+  }
+
+  function showSummary() {
+    state.currentStep = 11;
+    saveStorage();
+    document.getElementById('flow').style.display = 'none';
+    document.getElementById('summary').style.display = 'flex';
+
+    var b = state.bits.map(function(x) { return x; });
+    buildOutputs(b, loadP01Profile());
+    updateRail();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function exportText() {
+    var b = state.bits.map(function(x) { return x; });
+    var f = finalPanelLabels(b);
+    var profile = loadP01Profile();
+    var el5 = document.getElementById('out-s5');
+    var lines = [
+      'Stephuary · Phase 02 · Position',
+      '',
+      'Instinct profile (Phase 01)',
+      profile ? 'Notice: ' + profile.notice : '(complete Phase 01 for full profile)',
+      '',
+      '1. Position summary',
+      document.getElementById('out-s1').innerText.trim(),
+      '',
+      '2. Where you have value',
+      document.getElementById('out-s2').innerText.trim(),
+      '',
+      '3. Misalignment',
+      document.getElementById('out-s3').innerText.trim(),
+      '',
+      '4. Market reality',
+      document.getElementById('out-s4').innerText.trim(),
+      '',
+      '5. Position shift',
+      el5 ? el5.textContent.trim() : '',
+      '',
+      '6. Hard truth',
+      document.getElementById('out-s6').innerText.trim(),
+      '',
+      '7. Next step',
+      document.getElementById('out-s7').innerText.trim(),
+      '',
+      'Live panel snapshot',
+      'Positioned: ' + f.positioned,
+      'Work: ' + f.pulled,
+      'Problem: ' + f.monet,
+      'Buyer: ' + f.buyer,
+      'Value: ' + f.valueL
+    ];
+    return lines.join('\n');
+  }
+
+  function copyAll() {
+    var text = exportText();
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(flash);
+    } else {
+      var ta = Object.assign(document.createElement('textarea'), { value: text });
+      ta.style.cssText = 'position:fixed;opacity:0;';
+      document.body.appendChild(ta);
+      ta.focus();
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      flash();
     }
-    if (state.currentStep >= 6 && state.artifactBuilt){
-      els.step6.classList.remove('hidden');
-    }
-    if (state.currentStep >= 7 && state.artifactBuilt){
-      els.step7.classList.remove('hidden');
-    }
-    updateProgress();
-    saveState();
   }
 
-  function classifyOfferType(){
-    var d = (state.inputs.delivery + ' ' + state.inputs.scope + ' ' + state.inputs.outcome).toLowerCase();
-
-    if (/audit|review|diagnostic|assessment/.test(d)) return 'Diagnostic';
-    if (/sprint|intensive|week|days/.test(d)) return 'Sprint';
-    if (/advisory|consult|session|call|strategy/.test(d)) return 'Advisory';
-    if (/workshop|training|group/.test(d)) return 'Workshop';
-    if (/done-for-you|done for you|build|write|implement|set up/.test(d)) return 'Done-for-you';
-    if (/template|download|resource|kit|guide/.test(d)) return 'Productized service';
-    return 'Advisory';
+  function flash() {
+    var el = document.getElementById('copyConfirm');
+    el.classList.add('visible');
+    setTimeout(function() { el.classList.remove('visible'); }, 2800);
   }
 
-  function classifyBuyerType(){
-    var text = (state.inputs.buyer + ' ' + state.inputs.buyerStage + ' ' + state.inputs.buyerPain).toLowerCase();
-    if (/founder|business owner|operator|consultant|freelancer|service/.test(text)) return 'Operator in active decision mode';
-    if (/creator|writer|coach|artist/.test(text)) return 'Independent builder with conversion friction';
-    if (/team|company|brand|agency/.test(text)) return 'Business buyer with operational need';
-    return 'Situational buyer with a live problem';
+  function doExport() {
+    var blob = new Blob([exportText()], { type: 'text/plain;charset=utf-8' });
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'stephuary-phase-02-position.txt';
+    a.click();
+    URL.revokeObjectURL(a.href);
   }
 
-  function getFrictionResult(){
-    var failures = [];
-    if (state.checks.specific === 'no') failures.push('unclear result');
-    if (state.checks.situational === 'no') failures.push('weak buyer definition');
-    if (state.checks.trust === 'no') failures.push('weak delivery framing');
-    if (state.checks.pricefit === 'no') failures.push('price mismatch');
-    if (state.checks.collapsed === 'no') failures.push('too much complexity');
-
-    if (!failures.length){
-      return 'No major friction has been flagged yet. The offer reads as specific, contained, and testable.';
-    }
-
-    if (failures.length === 1){
-      return 'The main friction is ' + failures[0] + '. Fix that first before changing the rest of the offer.';
-    }
-
-    return 'The offer is carrying multiple points of friction: ' + failures.join(', ') + '. Start with the first weak point that affects comprehension, not the most emotional one.';
-  }
-
-  function chooseTestPath(){
-    var friction = getFrictionResult().toLowerCase();
-    if (/price mismatch|too much complexity/.test(friction)) return 'Test the lower-friction version first. Reduce resistance before asking for a larger yes.';
-    if (/weak buyer definition|unclear result/.test(friction)) return 'Test the direct version first with three real buyers. The fastest feedback will come from actual conversation.';
-    if (/weak delivery framing/.test(friction)) return 'Test the waitlist or page version first so the delivery structure is visible before the buyer speaks to you.';
-    return 'Test the direct version first with warm buyers who can respond quickly.';
-  }
-
-  function chooseFirstMove(){
-    var version = state.selectedVersion || 'direct';
-    var buyer = safeText(state.inputs.buyer, 'the buyer');
-    if (version === 'direct') return 'Send the direct version to three ' + lowerFirst(buyer) + ' this week.';
-    if (version === 'premium') return 'Put the premium version on a private page or deck and use it in one higher-trust conversation.';
-    if (version === 'simple') return 'Lead with the lower-friction version first, then upsell into the full offer once the buyer understands the result.';
-    if (version === 'public') return 'Post the public version once, exactly as written, and measure replies rather than likes.';
-    return 'Build one page with one CTA and drive one source of traffic to it before making anything else.';
-  }
-
-  function buildVersions(){
-    var buyer = lowerFirst(state.inputs.buyer);
-    var outcome = lowerFirst(state.inputs.outcome);
-    var delivery = lowerFirst(state.inputs.delivery);
-    var timeline = lowerFirst(state.inputs.timeline);
-    var price = state.derived.priceFormatted;
-    var offerType = state.derived.offerType.toLowerCase();
-
-    return {
-      direct: 'For ' + price + ', I help ' + buyer + ' get ' + outcome + ' through ' + delivery + ' in ' + timeline + '.',
-      premium: 'A ' + offerType + ' for ' + buyer + ' who need ' + outcome + ' without building another confusing offer around it. Delivered through ' + delivery + ' over ' + timeline + '. ' + price + '.',
-      simple: 'A focused first step for ' + buyer + ' who need ' + outcome + '. Clear delivery. Clear price. No extra layers. ' + price + '.',
-      public: 'If you already know what you do but people still do not understand what they are buying, I am offering a ' + offerType + ' for ' + buyer + ' to get ' + outcome + ' in ' + timeline + '. ' + price + '.',
-      waitlist: upperFirst(state.inputs.outcome) + ' for ' + buyer + '. Delivered through ' + delivery + '. ' + timeline + '. ' + price + '.'
-    };
-  }
-
-  function buildRevenueMath(priceNum){
-    var targets = [1, 3, 5];
-    var labels = ['One sale', 'Three sales', 'Five sales'];
-    return targets.map(function(mult, i){
-      var total = priceNum * mult;
-      return '<li><strong>' + labels[i] + '</strong><span>' + formatPrice(String(total)) + ' from ' + mult + ' buyer' + (mult > 1 ? 's' : '') + ' at the current price.</span></li>';
-    }).join('');
-  }
-
-  function validateCoreFields(){
-    var required = ['buyer','buyerStage','buyerPain','outcome','proofWindow','afterState','delivery','timeline','scope','price','pricingReason'];
-    for (var i=0;i<required.length;i++){
-      var key = required[i];
-      if (!String(state.inputs[key] || '').trim()){
-        var field = $(key);
-        if (field) {
-          field.focus();
-          field.scrollIntoView({ behavior:'smooth', block:'center' });
-        }
-        return false;
-      }
-    }
-    return true;
-  }
-
-  function collectInputs(){
-    fields.forEach(function(key){
-      var field = $(key);
-      if (field) state.inputs[key] = field.value.trim();
-    });
-    state.derived.priceFormatted = formatPrice(state.inputs.price);
-    state.derived.offerType = classifyOfferType();
-    state.derived.buyerType = classifyBuyerType();
-  }
-
-  function renderInputValues(){
-    fields.forEach(function(key){
-      var field = $(key);
-      if (field) field.value = state.inputs[key] || '';
-    });
-  }
-
-  function renderNotes(){
-    setNote('buyer', safeText(state.inputs.buyer, 'Not defined yet'));
-    setNote('result', safeText(state.inputs.outcome, 'Not defined yet'));
-    setNote('delivery', safeText(state.inputs.delivery, 'Not defined yet'));
-    setNote('timeline', safeText(state.inputs.timeline, 'Not defined yet'));
-    setNote('price', safeText(state.derived.priceFormatted, 'Not defined yet'));
-    setNote('offer-type', safeText(state.derived.offerType, 'Waiting for artifact'));
-    setNote('friction', safeText(state.derived.frictionSummary, 'Waiting for check'));
-    setNote('version', state.selectedVersion ? upperFirst(state.selectedVersion === 'public' ? 'public post' : state.selectedVersion === 'waitlist' ? 'waitlist / page' : state.selectedVersion === 'simple' ? 'lower-friction' : state.selectedVersion) : 'Not selected yet');
-    setNote('next', safeText(state.derived.firstMove, 'Complete the phase and route into Structure'));
-  }
-
-  function renderArtifact(){
-    if (!state.artifactBuilt){
-      els.artifactSection.classList.add('hidden');
-      return;
-    }
-
-    var buyer = lowerFirst(state.inputs.buyer);
-    var outcome = lowerFirst(state.inputs.outcome);
-    var delivery = lowerFirst(state.inputs.delivery);
-    var timeline = lowerFirst(state.inputs.timeline);
-    var price = state.derived.priceFormatted;
-    var statement = 'I help ' + buyer + ' get ' + outcome + ' through ' + delivery + ' in ' + timeline + ' for ' + price + '.';
-
-    $('primary-statement').textContent = upperFirst(statement);
-    $('detail-buyer').textContent = upperFirst(state.inputs.buyer);
-    $('detail-buyer-type').textContent = state.derived.buyerType;
-    $('detail-result').textContent = upperFirst(state.inputs.outcome);
-    $('detail-offer-type').textContent = state.derived.offerType;
-    $('detail-delivery').textContent = upperFirst(state.inputs.delivery);
-    $('detail-timeline').textContent = upperFirst(state.inputs.timeline);
-    $('detail-price').textContent = price;
-
-    $('spoken-version').textContent = 'This is for ' + buyer + ' who need ' + outcome + '. It happens through ' + delivery + ' over ' + timeline + '. The price is ' + price + '.';
-    $('premium-version').textContent = state.derived.versions.premium || '';
-    $('simple-version').textContent = state.derived.versions.simple || '';
-    $('public-version').textContent = state.derived.versions.public || '';
-    $('waitlist-version').textContent = state.derived.versions.waitlist || '';
-    $('price-logic').textContent = 'The current price is ' + price + ' because ' + lowerFirst(state.inputs.pricingReason) + '.';
-    $('friction-summary-initial').textContent = state.derived.frictionSummary || 'Run the friction check after building the artifact.';
-    $('test-path').textContent = state.derived.testPath || '';
-    $('first-move').textContent = state.derived.firstMove || '';
-    $('revenue-math').innerHTML = buildRevenueMath(numericPrice(state.inputs.price));
-
-    els.artifactSection.classList.remove('hidden');
-    renderVersionPreviews();
-  }
-
-  function renderVersionPreviews(){
-    var versions = state.derived.versions || {};
-    $('version-preview-direct').textContent = versions.direct || 'Generate the offer artifact first.';
-    $('version-preview-premium').textContent = versions.premium || 'Generate the offer artifact first.';
-    $('version-preview-simple').textContent = versions.simple || 'Generate the offer artifact first.';
-    $('version-preview-public').textContent = versions.public || 'Generate the offer artifact first.';
-    $('version-preview-waitlist').textContent = versions.waitlist || 'Generate the offer artifact first.';
-  }
-
-  function renderChecks(){
-    Object.keys(state.checks).forEach(function(key){
-      var card = $('check-' + key);
-      if (!card) return;
-      card.classList.remove('pass','fail');
-      if (state.checks[key] === 'yes') card.classList.add('pass');
-      if (state.checks[key] === 'no') card.classList.add('fail');
-
-      var buttons = card.querySelectorAll('button[data-check]');
-      buttons.forEach(function(btn){
-        btn.classList.remove('active-yes','active-no');
-        if (btn.getAttribute('data-val') === state.checks[key]){
-          btn.classList.add(state.checks[key] === 'yes' ? 'active-yes' : 'active-no');
-        }
+  function resetAll() {
+    try {
+      localStorage.removeItem(STORAGE_KEY);
+    } catch (e) {}
+    state.bits = Array(TOTAL_Q).fill(null);
+    state.currentStep = 1;
+    document.getElementById('summary').style.display = 'none';
+    document.getElementById('flow').style.display = 'block';
+    document.querySelectorAll('.step').forEach(function(s, i) {
+      s.classList.toggle('active', i === 0);
+      s.querySelectorAll('.option-item').forEach(function(o) {
+        o.classList.remove('selected', 'dim');
       });
     });
-
-    $('friction-box-text').textContent = state.derived.frictionSummary || 'Complete the friction check to see where the offer is weakening.';
+    goTo(1);
+    document.getElementById('live-pos').textContent = 'Waiting.';
+    document.getElementById('live-pull').textContent = 'Waiting.';
+    document.getElementById('live-prob').textContent = 'Waiting.';
+    document.getElementById('live-buyer').textContent = 'Waiting.';
+    document.getElementById('live-val').textContent = 'Waiting.';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  function renderSelectedVersion(){
-    var cards = document.querySelectorAll('.version-card');
-    cards.forEach(function(card){
-      card.classList.toggle('selected', card.getAttribute('data-version') === state.selectedVersion);
-    });
-  }
+  document.getElementById('btnCopy').addEventListener('click', copyAll);
+  document.getElementById('btnExport').addEventListener('click', doExport);
+  document.getElementById('btnReset').addEventListener('click', resetAll);
 
-  function buildArtifact(){
-    collectInputs();
-    if (!validateCoreFields()){
-      var original = els.generateOffer.textContent;
-      els.generateOffer.textContent = 'Complete every field first';
-      setTimeout(function(){ els.generateOffer.textContent = original; }, 1400);
-      return;
-    }
-
-    state.artifactBuilt = true;
-    state.overlayDismissed = true;
-    state.derived.offerType = classifyOfferType();
-    state.derived.buyerType = classifyBuyerType();
-    state.derived.priceFormatted = formatPrice(state.inputs.price);
-    state.derived.versions = buildVersions();
-    state.derived.frictionSummary = 'Offer built. Run the friction check to identify the first weak point.';
-    state.derived.testPath = chooseTestPath();
-    state.derived.firstMove = state.selectedVersion ? chooseFirstMove() : 'Choose the version you want to test first.';
-    showToStep(5);
-    renderAll();
-
-    setTimeout(function(){
-      els.artifactSection.scrollIntoView({ behavior:'smooth', block:'start' });
-    }, 40);
-  }
-
-  function setCheck(key, val){
-    state.checks[key] = val;
-    state.derived.frictionSummary = getFrictionResult();
-    state.derived.testPath = chooseTestPath();
-    state.derived.firstMove = state.selectedVersion ? chooseFirstMove() : 'Choose the version you want to test first.';
-    renderAll();
-    saveState();
-  }
-
-  function selectVersion(version){
-    state.selectedVersion = version;
-    state.derived.firstMove = chooseFirstMove();
-    renderAll();
-    saveState();
-  }
-
-  function outputText(){
-    var parts = [];
-    parts.push('MONETIZE — PHASE 03');
-    parts.push('');
-    parts.push('Primary offer statement');
-    parts.push($('primary-statement').textContent);
-    parts.push('');
-    parts.push('Buyer');
-    parts.push($('detail-buyer').textContent);
-    parts.push('');
-    parts.push('Buyer type');
-    parts.push($('detail-buyer-type').textContent);
-    parts.push('');
-    parts.push('Offer type');
-    parts.push($('detail-offer-type').textContent);
-    parts.push('');
-    parts.push('Delivery');
-    parts.push($('detail-delivery').textContent);
-    parts.push('');
-    parts.push('Timeline');
-    parts.push($('detail-timeline').textContent);
-    parts.push('');
-    parts.push('Price');
-    parts.push($('detail-price').textContent);
-    parts.push('');
-    parts.push('Short spoken version');
-    parts.push($('spoken-version').textContent);
-    parts.push('');
-    parts.push('Premium version');
-    parts.push($('premium-version').textContent);
-    parts.push('');
-    parts.push('Simple version');
-    parts.push($('simple-version').textContent);
-    parts.push('');
-    parts.push('Public post version');
-    parts.push($('public-version').textContent);
-    parts.push('');
-    parts.push('Waitlist/page version');
-    parts.push($('waitlist-version').textContent);
-    parts.push('');
-    parts.push('Price logic');
-    parts.push($('price-logic').textContent);
-    parts.push('');
-    parts.push('Friction summary');
-    parts.push(state.derived.frictionSummary || '');
-    parts.push('');
-    parts.push('Strongest test path');
-    parts.push(state.derived.testPath || '');
-    parts.push('');
-    parts.push('Expected first move');
-    parts.push(state.derived.firstMove || '');
-    return parts.join('\n');
-  }
-
-  function copyText(text, button){
-    if (!navigator.clipboard) return;
-    navigator.clipboard.writeText(text).then(function(){
-      if (!button) return;
-      var original = button.textContent;
-      button.textContent = 'Copied';
-      setTimeout(function(){ button.textContent = original; }, 1100);
-    });
-  }
-
-  function exportTextFile(){
-    var blob = new Blob([outputText()], { type:'text/plain;charset=utf-8' });
-    var url = URL.createObjectURL(blob);
-    var a = document.createElement('a');
-    a.href = url;
-    a.download = 'monetize-phase-03-output.txt';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    setTimeout(function(){ URL.revokeObjectURL(url); }, 1000);
-  }
-
-  function renderOverlay(){
-    if (state.overlayDismissed){
-      els.overlay.classList.add('hidden');
-      els.overlay.setAttribute('aria-hidden', 'true');
-    } else {
-      els.overlay.classList.remove('hidden');
-      els.overlay.setAttribute('aria-hidden', 'false');
-    }
-  }
-
-  function renderSections(){
-    if (state.artifactBuilt){
-      els.step5.classList.remove('hidden');
-      if (state.currentStep >= 6) els.step6.classList.remove('hidden');
-      if (state.currentStep >= 7) els.step7.classList.remove('hidden');
-    } else {
-      els.step5.classList.add('hidden');
-      els.step6.classList.add('hidden');
-      els.step7.classList.add('hidden');
-    }
-  }
-
-  function renderAll(){
-    collectInputs();
-    renderOverlay();
-    renderInputValues();
-    renderSections();
-    renderArtifact();
-    renderChecks();
-    renderSelectedVersion();
-    renderNotes();
-    updateProgress();
-
-    $('bridge-copy').textContent = state.selectedVersion
-      ? 'This offer now needs structure. Structure will define how it is delivered, organized, and repeated. Your current test version is ' + (state.selectedVersion === 'public' ? 'the public post version' : state.selectedVersion === 'waitlist' ? 'the waitlist / page version' : state.selectedVersion === 'simple' ? 'the lower-friction version' : 'the ' + state.selectedVersion + ' version') + '. If this still feels unclear, refine Monetize first. If it feels sharp enough to test, move it forward.'
-      : 'This offer now needs structure. Structure will define how it is delivered, organized, and repeated. If this still feels unclear, refine Monetize first. If it feels sharp enough to test, move it forward.';
-    saveState();
-  }
-
-  fields.forEach(function(key){
-    var field = $(key);
-    if (!field) return;
-    field.addEventListener('input', function(){
-      state.inputs[key] = field.value.trim();
-      if (key === 'price') state.derived.priceFormatted = formatPrice(field.value.trim());
-      renderNotes();
-      saveState();
-    });
-  });
-
-  document.querySelectorAll('[data-next]').forEach(function(btn){
-    btn.addEventListener('click', function(){
-      var next = Number(btn.getAttribute('data-next'));
-      showToStep(next);
-      var target = $('step-' + next) || els.step5 || els.step6 || els.step7;
-      if (target) target.scrollIntoView({ behavior:'smooth', block:'start' });
-    });
-  });
-
-  document.querySelectorAll('button[data-check]').forEach(function(btn){
-    btn.addEventListener('click', function(){
-      setCheck(btn.getAttribute('data-check'), btn.getAttribute('data-val'));
-    });
-  });
-
-  document.querySelectorAll('.version-card').forEach(function(card){
-    card.addEventListener('click', function(){
-      selectVersion(card.getAttribute('data-version'));
-    });
-  });
-
-  els.enterPhase.addEventListener('click', function(){
-    state.overlayDismissed = true;
-    renderOverlay();
-    saveState();
-  });
-
-  els.savePhase.addEventListener('click', function(){
-    collectInputs();
-    saveState();
-    var original = els.savePhase.textContent;
-    els.savePhase.textContent = 'Saved';
-    setTimeout(function(){ els.savePhase.textContent = original; }, 1000);
-  });
-
-  els.resetPhase.addEventListener('click', function(){
-    resetState();
-  });
-
-  els.generateOffer.addEventListener('click', buildArtifact);
-
-  els.copyOutput.addEventListener('click', function(){
-    copyText(outputText(), els.copyOutput);
-  });
-
-  els.copySummary.addEventListener('click', function(){
-    var summary = [
-      'Buyer: ' + safeText(state.inputs.buyer, 'Not defined yet'),
-      'Result: ' + safeText(state.inputs.outcome, 'Not defined yet'),
-      'Delivery: ' + safeText(state.inputs.delivery, 'Not defined yet'),
-      'Timeline: ' + safeText(state.inputs.timeline, 'Not defined yet'),
-      'Price: ' + safeText(state.derived.priceFormatted, 'Not defined yet'),
-      'Offer type: ' + safeText(state.derived.offerType, 'Waiting for artifact'),
-      'Friction: ' + safeText(state.derived.frictionSummary, 'Waiting for check'),
-      'Chosen version: ' + (state.selectedVersion ? state.selectedVersion : 'Not selected yet'),
-      'Next move: ' + safeText(state.derived.firstMove, 'Complete the phase and route into Structure')
-    ].join('\n');
-    copyText(summary, els.copySummary);
-  });
-
-  els.exportOutput.addEventListener('click', exportTextFile);
-
-  els.resumeProgress.addEventListener('click', function(){
-    renderAll();
-    var targetId = state.currentStep <= 4 ? 'step-' + state.currentStep : state.currentStep === 5 ? 'step-5' : state.currentStep === 6 ? 'step-6' : 'step-7';
-    var target = $(targetId);
-    if (target) target.scrollIntoView({ behavior:'smooth', block:'start' });
-  });
-
-  els.refineFirst.addEventListener('click', function(){
-    showToStep(1);
-    $('step-1').scrollIntoView({ behavior:'smooth', block:'start' });
-  });
-
-  document.addEventListener('keydown', function(e){
-    if (e.key === 'Escape' && !state.overlayDismissed){
-      state.overlayDismissed = true;
-      renderOverlay();
-      saveState();
+  window.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter' && e.target.classList && e.target.classList.contains('option-item')) {
+      e.target.click();
     }
   });
 
-  loadState();
-  if (!state.derived) {
-    state.derived = { offerType:'', buyerType:'', priceFormatted:'', frictionSummary:'', testPath:'', firstMove:'', versions:{} };
-  }
-  if (!state.inputs) {
-    state.inputs = { buyer:'', buyerStage:'', buyerPain:'', outcome:'', proofWindow:'', afterState:'', delivery:'', timeline:'', scope:'', price:'', pricingReason:'' };
-  }
-  if (!state.checks) {
-    state.checks = { specific:null, situational:null, trust:null, pricefit:null, collapsed:null };
-  }
-  if (!state.selectedVersion) state.selectedVersion = '';
-  if (!state.currentStep) state.currentStep = 1;
-
-  collectInputs();
-  if (state.inputs.price) state.derived.priceFormatted = formatPrice(state.inputs.price);
-  if (state.artifactBuilt){
-    state.derived.offerType = classifyOfferType();
-    state.derived.buyerType = classifyBuyerType();
-    state.derived.versions = buildVersions();
-    if (!state.derived.frictionSummary) state.derived.frictionSummary = getFrictionResult();
-    if (!state.derived.testPath) state.derived.testPath = chooseTestPath();
-    if (!state.derived.firstMove) state.derived.firstMove = state.selectedVersion ? chooseFirstMove() : 'Choose the version you want to test first.';
-  }
-
-  renderAll();
-}());
+  (function initUnlock() {
+    var unlocked = false;
+    try {
+      if (localStorage.getItem('archive_unlocked') === 'true') unlocked = true;
+      if (localStorage.getItem('capture_complete') === 'true') unlocked = true;
+    } catch (err) {}
+    if (unlocked) {
+      document.getElementById('locked').style.display = 'none';
+      document.getElementById('flow-wrap').style.display = 'block';
+      buildRail();
+      buildSteps();
+      renderInstinctProfile();
+      var d = loadStorage();
+      if (d && d.bits && d.bits.some(function(b) { return b !== null && b !== undefined; })) {
+        state.bits = d.bits.slice();
+        while (state.bits.length < TOTAL_Q) state.bits.push(null);
+        var fe = state.bits.indexOf(null);
+        if (fe === -1) {
+          showSummary();
+        } else {
+          goTo(fe + 1);
+        }
+      } else {
+        goTo(1);
+      }
+    }
+  })();
+})();
 </script>
 </body>
 </html>
