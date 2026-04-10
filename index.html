@@ -1,423 +1,1386 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Stephuary · Diagnostic</title>
-<meta name="description" content="A short diagnostic. See where the value is, what is in your way, and what to do next. About 10 minutes. Free.">
-<meta property="og:title" content="Stephuary · Diagnostic">
-<meta property="og:description" content="See where the value is, what is in your way, and what to do next. Free. No account required.">
-<meta property="og:type" content="website">
-<meta property="og:url" content="https://www.stephuary.com">
-<meta name="twitter:card" content="summary_large_image">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
-<style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --bg:#0b0f0b;
-  --blue:#2b4fd4;
-  --gold:#c8a951;
-  --white:#f4f2ee;
-  --muted:rgba(244,242,238,0.52);
-  --faint:rgba(244,242,238,0.14);
-  --line-soft:rgba(244,242,238,0.08);
-  --line-blue:rgba(43,79,212,0.2);
-}
-html{scroll-behavior:smooth;scroll-padding-top:56px}
-body{background:var(--bg);color:var(--white);font-family:'Lato',sans-serif;font-weight:300;font-size:16px;line-height:1.72;overflow-x:hidden}
-.wrap{max-width:720px;margin:0 auto;padding:0 48px}
-.wrap-wide{max-width:820px;margin:0 auto;padding:0 48px}
-.rule{height:1px;background:var(--line-blue);margin:0 48px}
-@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
-@keyframes segmentPulse{0%{opacity:1}50%{opacity:0.5}100%{opacity:1}}
-.fu{opacity:1;transform:translateY(0);transition:opacity 0.65s ease,transform 0.65s ease}
-.fu.on{opacity:1;transform:translateY(0)}
-.lbl{font-size:10px;letter-spacing:0.38em;color:var(--blue);text-transform:uppercase;margin-bottom:28px;font-weight:400;font-family:'Lato',sans-serif}
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Stephuary - Build something that makes money.</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=DM+Mono:wght@300;400&family=Lato:wght@300;400&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-.btn-primary{display:inline-block;font-family:'Lato',sans-serif;font-weight:700;font-size:11px;letter-spacing:0.24em;text-transform:uppercase;text-decoration:none;color:#0b0f0b;background:var(--blue);padding:16px 44px;cursor:pointer;border:none;transition:filter 0.3s,letter-spacing 0.3s,transform 0.2s,box-shadow 0.2s;white-space:nowrap}
-.btn-primary:hover{filter:brightness(1.14);letter-spacing:0.3em;transform:scale(1.02);box-shadow:0 0 24px rgba(43,79,212,0.4)}
+    :root {
+      --bg:            #080807;
+      --bg-1:          #0d0d0b;
+      --bg-2:          #121210;
+      --bg-3:          #181614;
+      --oxblood:       #2a0f12;
+      --oxblood-acc:   #5a1f24;
+      --oxblood-faint: rgba(42,15,18,0.65);
+      --gold:          #c4a35a;
+      --gold-dim:      #8a7040;
+      --gold-faint:    rgba(196,163,90,0.08);
+      --gold-line:     rgba(196,163,90,0.18);
+      --blue:          #2b4fd4;
+      --blue-hi:       #3a5ee0;
+      --phase-blue:    #3b82f6;
+      --text-primary:  #f4ede0;
+      --text-secondary:#d2c7b8;
+      --text-muted:    #a89f92;
+      --text-dim:      #6e6558;
+      --text-label:    #4a4540;
+      --border:        rgba(244,237,224,0.07);
+      --border-gold:   rgba(196,163,90,0.15);
+    }
 
-.sticky-bar{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(11,15,11,0.97);backdrop-filter:blur(12px);border-bottom:1px solid var(--line-blue);padding:12px 48px;display:flex;justify-content:space-between;align-items:center;transform:translateY(-100%);transition:transform 0.4s ease 0.04s}
-.sticky-bar.visible{transform:translateY(0)}
-.sticky-logo{font-size:10px;letter-spacing:0.3em;color:var(--gold);text-transform:uppercase;font-family:'Lato',sans-serif;min-width:100px;text-decoration:none}
-.sticky-progress{display:flex;flex-direction:column;align-items:center;gap:5px;flex:1;padding:0 24px}
-.sticky-segments{display:flex;gap:3px;align-items:center;flex-wrap:wrap;justify-content:center}
-.sticky-segment{width:28px;height:3px;background:var(--line-soft);transition:background 0.4s ease}
-.sticky-segment.filled{background:var(--blue)}
-.sticky-segment.pulse{animation:segmentPulse 0.6s ease 1}
-.sticky-counter{font-size:9px;letter-spacing:0.2em;color:var(--faint);text-transform:uppercase;font-family:'Lato',sans-serif;transition:color 0.4s;text-align:center}
-.sticky-counter.active{color:var(--muted)}
-.sticky-right{display:flex;align-items:center;justify-content:flex-end;min-width:120px}
-.sticky-cta{font-family:'Lato',sans-serif;font-weight:700;font-size:10px;letter-spacing:0.2em;text-transform:uppercase;text-decoration:none;color:#0b0f0b;background:var(--blue);padding:10px 20px;transition:filter 0.3s,transform 0.2s,box-shadow 0.2s;white-space:nowrap}
-.sticky-cta:hover{filter:brightness(1.14);transform:scale(1.02);box-shadow:0 0 16px rgba(43,79,212,0.35)}
+    html { scroll-behavior: smooth; }
 
-#hero{min-height:100vh;display:flex;align-items:center;padding:100px 0 80px;background:linear-gradient(160deg,#0b0f0b 0%,#0d1a1a 55%,#0b1520 100%)}
-.hero-eyebrow{font-size:10px;letter-spacing:0.36em;color:var(--gold);text-transform:uppercase;margin-bottom:24px;font-family:'Lato',sans-serif;opacity:0;animation:fadeUp 0.4s ease forwards 0.1s}
-.hero-h1{font-family:'Cormorant Garamond',serif;font-weight:300;font-size:clamp(36px,5.4vw,72px);line-height:1.08;letter-spacing:-0.015em;max-width:680px;margin-bottom:18px;color:var(--white);opacity:0;animation:fadeUp 0.6s ease forwards 0.2s}
-.hero-benefit{font-size:17px;color:var(--muted);line-height:1.68;max-width:540px;margin-bottom:32px;opacity:0;animation:fadeUp 0.5s ease forwards 0.35s}
-.hero-cta-group{display:flex;flex-direction:column;align-items:flex-start;gap:10px;margin-bottom:12px;opacity:0;animation:fadeUp 0.5s ease forwards 0.5s}
-.hero-free{font-size:13px;color:var(--muted);letter-spacing:0.06em;opacity:0;animation:fadeUp 0.45s ease forwards 0.58s}
-.hero-micro{font-size:11px;letter-spacing:0.14em;color:var(--faint);text-transform:uppercase;font-family:'Lato',sans-serif;opacity:0;animation:fadeUp 0.4s ease forwards 0.65s}
+    body {
+      background: var(--bg);
+      color: var(--text-primary);
+      font-family: 'Lato', sans-serif;
+      font-weight: 300;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
 
-#problem{padding:64px 0;background:#0b1520}
-.problem-open{font-size:15px;color:var(--muted);line-height:1.72;margin-bottom:20px;max-width:560px}
-.problem-list{list-style:none;max-width:560px}
-.problem-list li{font-size:15px;color:var(--muted);line-height:1.72;padding-left:18px;position:relative;margin-bottom:10px}
-.problem-list li::before{content:"";position:absolute;left:0;top:0.62em;width:5px;height:5px;background:var(--blue);border-radius:50%;opacity:0.65}
-.problem-close{font-size:15px;color:var(--white);margin-top:22px;max-width:520px;line-height:1.68;font-weight:400}
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+      opacity: 0.025;
+      pointer-events: none;
+      z-index: 0;
+    }
 
-#what-happens{padding:64px 0}
-.section-h2{font-family:'Cormorant Garamond',serif;font-size:clamp(24px,3vw,36px);font-weight:300;line-height:1.2;color:var(--white);margin-bottom:18px;max-width:640px}
-.section-body{font-size:15px;color:var(--muted);line-height:1.78;max-width:560px;margin-bottom:16px}
-.what-list{list-style:none;margin-top:6px;max-width:560px}
-.what-list li{font-size:15px;color:var(--muted);line-height:1.72;padding-left:18px;position:relative;margin-bottom:9px}
-.what-list li::before{content:"";position:absolute;left:0;top:0.62em;width:5px;height:5px;background:var(--blue);border-radius:50%;opacity:0.65}
-.what-after{font-size:15px;color:var(--white);margin-top:20px;max-width:520px;line-height:1.68}
+    .page-main { position: relative; z-index: 1; }
 
-#walk-away{padding:64px 0;background:#0b1520}
-.walk-list{list-style:none;max-width:540px}
-.walk-list li{font-size:15px;color:var(--muted);line-height:1.72;padding-left:18px;position:relative;margin-bottom:10px}
-.walk-list li::before{content:"";position:absolute;left:0;top:0.62em;width:5px;height:5px;background:var(--blue);border-radius:50%;opacity:0.65}
+    /* SCROLL REVEAL */
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: all 0.8s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
 
-#how-it-works{padding:64px 0;scroll-margin-top:52px}
-.how-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:2px;background:var(--line-blue)}
-.how-step{background:#0b1520;padding:28px 22px;min-height:1px}
-.how-step[data-step]{scroll-margin-top:64px}
-.how-n{font-size:10px;letter-spacing:0.3em;color:var(--blue);font-family:'Lato',sans-serif;margin-bottom:10px}
-.how-title{font-family:'Cormorant Garamond',serif;font-size:clamp(17px,1.9vw,20px);font-weight:300;color:var(--white);margin-bottom:8px;line-height:1.25}
-.how-body{font-size:14px;color:var(--muted);line-height:1.72}
+    /* NAV */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 200;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      padding: 20px 52px;
+      background: linear-gradient(to bottom, rgba(8,8,7,0.98) 0%, transparent 100%);
+      border-bottom: 1px solid transparent;
+      transition: border-color 0.3s;
+    }
+    nav.scrolled { border-bottom-color: var(--border); }
 
-#grounding{padding:56px 0;background:#0b1520}
-.grounding-box{max-width:560px;padding:28px 24px;border:1px solid var(--line-blue);background:rgba(43,79,212,0.04)}
-.grounding-body{font-size:15px;color:var(--muted);line-height:1.75}
-.grounding-body p{margin-bottom:12px}
-.grounding-body p:last-child{margin-bottom:0}
+    .nav-mark {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-size: 17px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--text-primary);
+      text-decoration: none;
+      flex-shrink: 0;
+    }
 
-#cta-block{padding:56px 0;text-align:left}
-.cta-block-inner{max-width:560px}
-.cta-free-note{font-size:15px;color:var(--muted);margin-top:12px;letter-spacing:0.04em}
+    .nav-primary, .nav-secondary {
+      display: flex;
+      align-items: center;
+      gap: 22px;
+    }
+    .nav-secondary {
+      padding-left: 18px;
+      border-left: 1px solid var(--border);
+    }
 
-#filter{padding:56px 0;background:#0b1520}
-.filter-h2{font-family:'Cormorant Garamond',serif;font-size:clamp(22px,2.8vw,32px);font-weight:300;color:var(--white);margin-bottom:16px;max-width:560px}
-.filter-list{list-style:none;max-width:520px}
-.filter-list li{font-size:15px;color:var(--muted);line-height:1.72;padding-left:18px;position:relative;margin-bottom:10px}
-.filter-list li::before{content:"";position:absolute;left:0;top:0.62em;width:5px;height:5px;background:var(--blue);border-radius:50%;opacity:0.65}
+    .nav-link {
+      font-family: 'DM Mono', monospace;
+      font-size: 9px;
+      font-weight: 300;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      text-decoration: none;
+      transition: color 0.22s, opacity 0.22s;
+      white-space: nowrap;
+    }
+    .nav-link:hover { color: var(--text-secondary); opacity: 1; }
+    .nav-link-gold { color: var(--gold-dim); }
+    .nav-link-gold:hover { color: var(--gold); }
 
-#system-preview{padding:56px 0}
-.phase-rows{max-width:520px;border:1px solid var(--line-blue);border-top:2px solid var(--blue)}
-.phase-row{display:flex;justify-content:space-between;align-items:baseline;gap:16px;padding:14px 20px;border-bottom:1px solid var(--line-soft)}
-.phase-row:last-child{border-bottom:none}
-.phase-name{font-size:11px;letter-spacing:0.22em;color:var(--blue);text-transform:uppercase;font-family:'Lato',sans-serif;min-width:72px}
-.phase-desc{font-size:14px;color:var(--muted);line-height:1.5;text-align:right}
+    section { border-bottom: 1px solid var(--border); }
+    .pad { padding: 0 52px; }
+    .inner { max-width: 1100px; margin: 0 auto; }
 
-#final{padding:72px 0 64px;text-align:center}
-.final-ctas{display:flex;flex-direction:column;align-items:center;gap:10px}
+    /* HERO — animated gradient */
+    #hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      padding: 140px 52px 110px;
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(270deg, #0a0a0a, #0d1b2a, #0a0a0a);
+      background-size: 600% 600%;
+      animation: gradientShift 18s ease infinite;
+    }
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
 
-#all-explored{display:none;margin-top:36px;padding:24px 28px;border:1px solid var(--line-blue);background:rgba(43,79,212,0.04);text-align:center;max-width:640px;margin-left:auto;margin-right:auto}
-#all-explored.show{display:block}
-.explored-line{font-family:'Cormorant Garamond',serif;font-size:clamp(18px,2.4vw,24px);font-weight:300;color:var(--white);margin-bottom:8px}
-.explored-sub{font-size:13px;color:var(--muted);margin-bottom:18px}
+    #hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 60% 80% at 80% 50%, var(--oxblood) 0%, transparent 70%);
+      opacity: 0.35;
+      pointer-events: none;
+      z-index: 0;
+    }
 
-.site-footer{padding:36px 48px;border-top:1px solid var(--line-blue);display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-start;gap:20px}
-.footer-logo{font-size:10px;letter-spacing:0.3em;color:var(--gold);text-transform:uppercase;font-family:'Lato',sans-serif;text-decoration:none}
-.footer-col{display:flex;flex-direction:column;align-items:flex-end;gap:10px;text-align:right;max-width:360px}
-.footer-links{display:flex;gap:18px;flex-wrap:wrap;justify-content:flex-end}
-.footer-links a{font-size:10px;letter-spacing:0.18em;color:var(--faint);text-transform:uppercase;font-family:'Lato',sans-serif;text-decoration:none;transition:color 0.3s}
-.footer-links a:hover{color:var(--muted)}
-.footer-club{font-size:11px;color:rgba(244,242,238,0.42);line-height:1.55;letter-spacing:0.02em}
-.footer-club a{color:var(--gold);text-decoration:none;border-bottom:1px solid rgba(200,169,81,0.35)}
-.footer-club a:hover{color:var(--white)}
+    .hero-bg-word {
+      position: absolute;
+      top: 50%;
+      right: -20px;
+      transform: translateY(-50%);
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-style: italic;
+      font-size: clamp(140px, 20vw, 300px);
+      color: transparent;
+      -webkit-text-stroke: 1px rgba(196,163,90,0.05);
+      pointer-events: none;
+      user-select: none;
+      white-space: nowrap;
+      line-height: 1;
+      z-index: 0;
+    }
 
-@media(max-width:720px){
-  .wrap,.wrap-wide{padding:0 22px}
-  .rule{margin:0 22px}
-  #hero{padding:88px 0 64px}
-  .sticky-bar{padding:10px 20px}
-  .sticky-progress{padding:0 12px}
-  .sticky-segment{width:22px}
-  .site-footer{padding:28px 22px;flex-direction:column;align-items:flex-start}
-  .footer-col{align-items:flex-start;text-align:left}
-  .footer-links{justify-content:flex-start}
-  #problem,#what-happens,#walk-away,#how-it-works,#grounding,#cta-block,#filter,#system-preview{padding:52px 0}
-  #final{padding:56px 0 52px}
-  body{font-size:17px;line-height:1.74}
-  .problem-list li,.what-list li,.walk-list li,.filter-list li,.section-body{font-size:16px}
-  .hero-benefit{font-size:17px}
-}
-@media(max-width:480px){
-  .grounding-box{padding:22px 18px}
-  .phase-row{flex-direction:column;align-items:flex-start;gap:6px}
-  .phase-desc{text-align:left}
-}
-</style>
+    .hero-inner {
+      max-width: 780px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-eyebrow {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      font-weight: 300;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--gold-dim);
+      margin-bottom: 32px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .hero-eyebrow::before {
+      content: '';
+      display: block;
+      width: 28px;
+      height: 1px;
+      background: var(--gold-dim);
+    }
+
+    .hero-headline {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-size: clamp(54px, 8vw, 106px);
+      line-height: 0.93;
+      letter-spacing: -0.02em;
+      color: var(--text-primary);
+      margin-bottom: 32px;
+    }
+
+    .hero-sub {
+      font-size: 16px;
+      color: var(--text-secondary);
+      line-height: 1.8;
+      margin-bottom: 12px;
+      max-width: 520px;
+    }
+
+    .hero-detail {
+      font-size: 15px;
+      color: var(--text-secondary);
+      line-height: 1.75;
+      margin-bottom: 36px;
+      max-width: 500px;
+    }
+
+    .btn-hero {
+      display: inline-block;
+      background: var(--blue);
+      color: #fff;
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      font-weight: 400;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      text-decoration: none;
+      padding: 12px 24px;
+      border: none;
+      cursor: pointer;
+      transition: background 0.22s, box-shadow 0.22s;
+    }
+    .btn-hero:hover {
+      background: var(--blue-hi);
+      box-shadow: 0 4px 20px rgba(43,79,212,0.28);
+    }
+
+    .cta-sub {
+      margin-top: 14px;
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      font-weight: 300;
+      letter-spacing: 0.12em;
+      color: var(--gold-dim);
+      line-height: 1.6;
+    }
+
+    .hero-rule-bottom {
+      position: absolute;
+      bottom: 0; left: 52px; right: 52px;
+      height: 1px;
+      background: linear-gradient(to right, rgba(196,163,90,0.2), transparent 55%);
+      transform: scaleX(0);
+      transform-origin: left;
+      animation: ruleIn 1.1s ease 0.6s forwards;
+    }
+    @keyframes ruleIn { to { transform: scaleX(1); } }
+
+    /* COLLAPSIBLE SECTIONS */
+    .section {
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+    }
+    .page-main .section:nth-child(odd) { background: var(--bg); }
+    .page-main .section:nth-child(even) { background: var(--bg-1); }
+
+    .section-header {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      grid-template-rows: auto auto;
+      gap: 8px 24px;
+      padding: 28px 52px;
+      text-align: left;
+      cursor: pointer;
+      transition: background 0.25s;
+      align-items: start;
+    }
+    .section-header:hover { background: rgba(196,163,90,0.03); }
+    .section-header:focus-visible { outline: 1px solid var(--gold-line); outline-offset: -1px; }
+
+    .section-header h2 {
+      grid-column: 1;
+      grid-row: 1;
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-size: clamp(26px, 3.2vw, 38px);
+      letter-spacing: -0.02em;
+      color: var(--text-primary);
+    }
+
+    .section-header .preview {
+      grid-column: 1;
+      grid-row: 2;
+      font-size: 14px;
+      color: var(--text-muted);
+      line-height: 1.5;
+      max-width: 520px;
+    }
+
+    .section-chevron {
+      grid-column: 2;
+      grid-row: 1 / span 2;
+      align-self: center;
+      width: 10px;
+      height: 10px;
+      border-right: 1px solid var(--text-label);
+      border-bottom: 1px solid var(--text-label);
+      transform: rotate(45deg);
+      transition: transform 0.4s cubic-bezier(0.22,1,0.36,1);
+      flex-shrink: 0;
+    }
+    .section.open .section-chevron { transform: rotate(225deg); }
+
+    .section-content {
+      max-height: 0;
+      overflow: hidden;
+      opacity: 0;
+      transition: max-height 0.6s ease, opacity 0.4s ease;
+    }
+    .section.open .section-content {
+      max-height: 10000px;
+      opacity: 1;
+    }
+
+    .section-body {
+      padding: 0 52px 40px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    /* Reality pattern */
+    #section-reality { position: relative; overflow: hidden; }
+    .reality-visual {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.12;
+      z-index: 0;
+    }
+    .reality-visual svg { width: 100%; height: 100%; }
+    .reality-path {
+      fill: none;
+      stroke: var(--gold-dim);
+      stroke-width: 0.8;
+      stroke-dasharray: 8 12;
+      animation: pathLoop 14s linear infinite;
+    }
+    @keyframes pathLoop {
+      to { stroke-dashoffset: -120; }
+    }
+
+    .reality-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 48px;
+      align-items: start;
+      position: relative;
+      z-index: 1;
+    }
+    .reality-statement {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(20px, 2.2vw, 30px);
+      font-weight: 300;
+      line-height: 1.35;
+      color: var(--text-secondary);
+    }
+    .reality-note {
+      font-size: 15px;
+      color: var(--text-muted);
+      line-height: 1.7;
+      padding-top: 12px;
+      border-top: 1px solid var(--border);
+      margin-top: 20px;
+    }
+
+    #diagnostic-inner { position: relative; }
+    #diagnostic-inner::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 100%;
+      background: radial-gradient(ellipse 50% 60% at 0% 100%, var(--oxblood-faint), transparent 70%);
+      pointer-events: none;
+    }
+
+    .diag-head { margin-bottom: 36px; position: relative; z-index: 1; }
+    .diag-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-size: clamp(28px, 3.5vw, 44px);
+      line-height: 1.05;
+      color: var(--text-primary);
+      margin-bottom: 10px;
+    }
+    .diag-sub { font-size: 15px; color: var(--text-secondary); margin-bottom: 0; }
+
+    .diag-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 2px;
+      background: var(--border);
+      margin-bottom: 2px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .diag-card {
+      background: var(--bg-1);
+      padding: 32px 24px 36px;
+      display: flex;
+      flex-direction: column;
+      cursor: pointer;
+      position: relative;
+      transition: background 0.25s, box-shadow 0.22s;
+      border: none;
+      text-align: left;
+      color: inherit;
+      font-family: inherit;
+    }
+    .diag-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(to right, var(--gold), transparent 60%);
+      opacity: 0;
+      transition: opacity 0.25s;
+    }
+    .diag-card:hover {
+      background: var(--bg-2);
+      box-shadow: inset 0 0 0 1px rgba(196,163,90,0.08);
+    }
+    .diag-card:hover::before { opacity: 0.5; }
+    .diag-card.active {
+      background: var(--oxblood);
+      border: 1px solid var(--oxblood-acc);
+      box-shadow: 0 4px 24px rgba(42,15,18,0.4);
+    }
+    .diag-card.active::before { opacity: 1; }
+
+    .diag-num {
+      font-family: 'DM Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.2em;
+      color: var(--text-label);
+      margin-bottom: 14px;
+    }
+    .diag-card.active .diag-num { color: rgba(196,163,90,0.55); }
+
+    .diag-card-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-size: clamp(18px, 1.6vw, 22px);
+      color: var(--text-primary);
+      line-height: 1.15;
+      margin-bottom: 10px;
+      flex: 1;
+    }
+    .diag-card-sub {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-bottom: 18px;
+    }
+    .diag-card.active .diag-card-sub { color: var(--text-primary); }
+
+    .diag-indicator {
+      width: 20px;
+      height: 1px;
+      background: var(--text-label);
+      transition: width 0.25s, background 0.25s;
+    }
+    .diag-card:hover .diag-indicator { width: 32px; background: var(--gold-dim); }
+    .diag-card.active .diag-indicator { width: 32px; background: var(--gold); }
+
+    .diag-result {
+      background: var(--bg-2);
+      border: 1px solid var(--border);
+      border-top: none;
+      padding: 36px 32px 40px;
+      position: relative;
+      z-index: 1;
+      min-height: 180px;
+    }
+    .diag-result::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(to right, var(--gold-dim), transparent 50%);
+      opacity: 0.5;
+    }
+
+    .result-state { display: none; animation: fadeResult 0.4s ease forwards; }
+    .result-state.active { display: block; }
+    @keyframes fadeResult {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: none; }
+    }
+
+    .result-default-text {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-style: italic;
+      font-size: clamp(17px, 1.8vw, 22px);
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    .result-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold-dim);
+      margin-bottom: 12px;
+    }
+    .result-issue {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-size: clamp(20px, 2.2vw, 28px);
+      color: var(--text-primary);
+      line-height: 1.1;
+      margin-bottom: 8px;
+    }
+    .result-start {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 14px;
+    }
+    .result-why {
+      font-size: 15px;
+      color: var(--text-secondary);
+      line-height: 1.65;
+      max-width: 520px;
+      margin-bottom: 16px;
+    }
+    .result-bridge {
+      margin-top: 20px;
+      padding-top: 18px;
+      border-top: 1px solid var(--border);
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.08em;
+      color: var(--gold-dim);
+      line-height: 1.65;
+    }
+    .result-links {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      line-height: 1.8;
+    }
+    .result-links a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      border-bottom: 1px solid var(--border);
+      transition: color 0.2s, border-color 0.2s;
+    }
+    .result-links a:hover { color: var(--gold); border-color: var(--gold-line); }
+
+    .what-get-simple {
+      margin-top: 32px;
+      padding-top: 28px;
+      border-top: 1px solid var(--border);
+    }
+    .what-get-simple h3 {
+      font-family: 'DM Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--text-label);
+      margin-bottom: 14px;
+    }
+    .what-get-simple ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+    .what-get-simple li {
+      font-size: 15px;
+      color: var(--text-secondary);
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .what-get-simple li:last-child { border-bottom: none; }
+
+    .how-plain {
+      font-size: 15px;
+      color: var(--text-secondary);
+      line-height: 1.75;
+      max-width: 560px;
+    }
+
+    /* PHASE LINE */
+    .phase-line-wrap { position: relative; padding: 20px 0 36px; }
+
+    .phase-line {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      border-left: 1px solid rgba(255,255,255,0.2);
+      padding-left: 20px;
+    }
+
+    .phase {
+      position: relative;
+    }
+    .phase::before {
+      content: '';
+      position: absolute;
+      left: -9px;
+      top: 8px;
+      width: 12px;
+      height: 12px;
+      background: var(--phase-blue);
+      border-radius: 50%;
+      opacity: 0.3;
+      transition: opacity 0.4s ease;
+    }
+    .phase.active::before {
+      opacity: 1;
+    }
+
+    .phase-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(16px, 1.5vw, 20px);
+      color: var(--gold-dim);
+      margin-bottom: 6px;
+      letter-spacing: -0.01em;
+    }
+    .phase.active .phase-name { color: var(--gold); }
+    .phase-desc {
+      font-size: 14px;
+      color: var(--text-muted);
+      line-height: 1.45;
+    }
+    .phase.active .phase-desc { color: var(--text-secondary); }
+
+    @media (min-width: 961px) {
+      .phase-line {
+        flex-direction: row;
+        flex-wrap: nowrap;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 12px;
+        border-left: none;
+        padding-left: 0;
+        padding-top: 24px;
+        border-top: 1px solid rgba(255,255,255,0.12);
+        position: relative;
+      }
+      .phase-line::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: linear-gradient(to right, var(--gold-line), var(--border), var(--gold-line));
+      }
+      .phase {
+        flex: 1;
+        min-width: 0;
+        text-align: center;
+        padding-top: 8px;
+      }
+      .phase::before {
+        left: 50%;
+        top: -6px;
+        transform: translateX(-50%);
+      }
+      .phase.active::before {
+        transform: translateX(-50%);
+        box-shadow: 0 0 16px rgba(59,130,246,0.45);
+      }
+    }
+
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+      background: var(--border);
+      margin-top: 8px;
+    }
+    .product-card {
+      background: var(--bg-1);
+      padding: 28px 24px 32px;
+      display: flex;
+      flex-direction: column;
+      transition: background 0.25s, box-shadow 0.25s;
+    }
+    .product-card:hover { background: var(--bg-2); box-shadow: inset 0 0 0 1px rgba(196,163,90,0.06); }
+    .product-tag {
+      font-family: 'DM Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--text-label);
+      margin-bottom: 12px;
+    }
+    .product-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(18px, 1.8vw, 20px);
+      color: var(--text-primary);
+      margin-bottom: 8px;
+    }
+    .product-body {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.65;
+      margin-bottom: 14px;
+      flex: 1;
+    }
+    .product-meta {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+    }
+    .link-quiet {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      text-decoration: none;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 2px;
+      align-self: flex-start;
+      transition: color 0.2s, border-color 0.2s;
+    }
+    .link-quiet:hover { color: var(--gold); border-color: var(--gold-line); }
+    .product-card.club-card .product-title { color: var(--gold); }
+
+    .private-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 48px;
+      align-items: start;
+    }
+    .section-private .section-inner-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-size: clamp(28px, 3.5vw, 44px);
+      line-height: 1.05;
+      margin-bottom: 16px;
+    }
+    .gold-rule {
+      display: block;
+      width: 36px;
+      height: 1px;
+      background: linear-gradient(to right, var(--gold), transparent);
+      margin: 0 0 20px;
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.6s ease;
+    }
+    .gold-rule.visible { transform: scaleX(1); }
+    .private-list {
+      list-style: none;
+      margin: 0 0 20px;
+    }
+    .private-list li {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.06em;
+      color: var(--text-secondary);
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+      line-height: 1.45;
+    }
+    .private-list li:last-child { border-bottom: none; }
+    .private-right-text {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: clamp(17px, 1.8vw, 22px);
+      color: var(--text-secondary);
+      line-height: 1.5;
+      margin-bottom: 6px;
+    }
+    .private-hook {
+      font-style: italic;
+      font-size: clamp(15px, 1.5vw, 18px);
+      color: var(--gold-dim);
+      margin-top: 16px;
+    }
+
+    .proof-quote {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: clamp(20px, 2.2vw, 28px);
+      color: var(--text-primary);
+      line-height: 1.35;
+      margin-bottom: 16px;
+    }
+    .proof-list { list-style: none; margin: 12px 0 16px; }
+    .proof-list li {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.08em;
+      color: var(--text-dim);
+      padding: 6px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .proof-list li:last-child { border-bottom: none; }
+    .proof-close {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: clamp(16px, 1.6vw, 20px);
+      color: var(--text-secondary);
+    }
+
+    #closing {
+      padding: 100px 52px 120px;
+      text-align: center;
+      border-bottom: none;
+      background: var(--bg);
+    }
+    .closing-h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-size: clamp(28px, 4vw, 48px);
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+      color: var(--text-primary);
+      max-width: 560px;
+      margin: 0 auto 32px;
+    }
+    .btn-close {
+      display: inline-block;
+      background: var(--blue);
+      color: #fff;
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      font-weight: 400;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      text-decoration: none;
+      padding: 12px 24px;
+      transition: background 0.22s, box-shadow 0.22s;
+    }
+    .btn-close:hover {
+      background: var(--blue-hi);
+      box-shadow: 0 4px 20px rgba(43,79,212,0.28);
+    }
+
+    footer {
+      padding: 56px 52px;
+      border-top: 1px solid var(--border);
+      background: var(--bg-1);
+    }
+    .footer-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+      align-items: start;
+    }
+    .footer-mark {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-size: 16px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      display: block;
+      margin-bottom: 10px;
+    }
+    .footer-micro {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.08em;
+      color: var(--text-label);
+      line-height: 1.8;
+    }
+    .footer-col-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--text-label);
+      margin-bottom: 18px;
+    }
+    .footer-links { list-style: none; }
+    .footer-links a {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      font-weight: 300;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-label);
+      text-decoration: none;
+      padding: 7px 0;
+      border-bottom: 1px solid var(--border);
+      transition: color 0.2s;
+      display: block;
+    }
+    .footer-links a:last-child { border-bottom: none; }
+    .footer-links a:hover { color: var(--text-muted); }
+
+    @media (max-width: 960px) {
+      nav { padding: 18px 28px; }
+      .nav-secondary { display: none; }
+      #hero { padding: 130px 28px 100px; }
+      .hero-rule-bottom { left: 28px; right: 28px; }
+      .section-header, .section-body { padding-left: 28px; padding-right: 28px; }
+      .pad { padding: 0 28px; }
+      .reality-grid { grid-template-columns: 1fr; }
+      .diag-grid { grid-template-columns: repeat(2, 1fr); }
+      .products-grid { grid-template-columns: repeat(2, 1fr); }
+      .private-inner { grid-template-columns: 1fr; }
+      footer { padding: 44px 28px; }
+      .footer-inner { grid-template-columns: 1fr; gap: 40px; }
+      #closing { padding: 80px 28px 100px; }
+    }
+
+    @media (max-width: 640px) {
+      nav { padding: 16px 20px; }
+      .nav-primary { display: none; }
+      #hero { padding: 120px 20px 90px; }
+      .hero-rule-bottom { left: 20px; right: 20px; }
+      .section-header, .section-body { padding-left: 20px; padding-right: 20px; }
+      .diag-grid { grid-template-columns: 1fr; }
+      .products-grid { grid-template-columns: 1fr; }
+      .diag-card { padding: 28px 20px 32px; }
+      footer { padding: 36px 20px; }
+    }
+  </style>
 </head>
 <body>
 
-<div class="sticky-bar" id="stickyBar">
-  <a href="/" class="sticky-logo">Stephuary</a>
-  <div class="sticky-progress">
-    <div class="sticky-segments" id="stickySegments">
-      <div class="sticky-segment" data-seg="1"></div>
-      <div class="sticky-segment" data-seg="2"></div>
-      <div class="sticky-segment" data-seg="3"></div>
-      <div class="sticky-segment" data-seg="4"></div>
-      <div class="sticky-segment" data-seg="5"></div>
+  <nav id="main-nav">
+    <a href="/" class="nav-mark">Stephuary</a>
+    <div class="nav-primary">
+      <a href="/systems" class="nav-link">Systems</a>
+      <a href="/playbooks" class="nav-link">Playbooks</a>
+      <a href="/pricing" class="nav-link">Pricing</a>
+      <a href="/club" class="nav-link nav-link-gold">5% Club</a>
+      <a href="/access" class="nav-link">Private Access</a>
     </div>
-    <div class="sticky-counter" id="stickyCounter">how it works below</div>
-  </div>
-  <div class="sticky-right">
-    <a href="/capture" class="sticky-cta" id="stickyCta">Start Diagnostic →</a>
-  </div>
-</div>
-
-<section id="hero">
-  <div class="wrap">
-    <div class="hero-eyebrow">Stephuary</div>
-    <h1 class="hero-h1">You’ve tried to figure out how to turn what you know into money and keep hitting a wall.</h1>
-    <p class="hero-benefit">You’ll see exactly where the value is, what’s getting in your way, and what to do next.</p>
-    <div class="hero-cta-group">
-      <a href="/capture" class="btn-primary" id="heroPrimaryCta">Start Diagnostic →</a>
-      <span class="hero-free">Free</span>
+    <div class="nav-secondary">
+      <a href="/books" class="nav-link">Books</a>
+      <a href="/snapshot" class="nav-link">Snapshot</a>
+      <a href="/focused-review" class="nav-link">Focused Review</a>
+      <a href="/founder-diagnostic" class="nav-link">Founder Diagnostic</a>
+      <a href="https://stephuary.substack.com" class="nav-link nav-link-gold" target="_blank" rel="noopener">Substack</a>
+      <a href="https://onlysometimesclub.com" class="nav-link nav-link-gold" target="_blank" rel="noopener">OSC</a>
+      <a href="https://github.com/stephuary/Stephuary" class="nav-link" target="_blank" rel="noopener">GitHub</a>
     </div>
-    <p class="hero-micro">Takes about 10 minutes</p>
-  </div>
-</section>
+  </nav>
 
-<div class="rule"></div>
-
-<section id="problem">
-  <div class="wrap-wide">
-    <p class="problem-open fu">You’ve had moments where something almost worked.</p>
-    <ul class="problem-list fu" style="transition-delay:.06s">
-      <li>You started something, then stopped because it didn’t feel clear enough.</li>
-      <li>You changed direction halfway through and lost momentum.</li>
-      <li>You kept researching instead of committing.</li>
-      <li>You rewrote the same idea over and over and still didn’t land it.</li>
-      <li>You saw other people making money doing something similar and thought, “I could do that,” but didn’t move.</li>
-    </ul>
-    <p class="problem-close fu" style="transition-delay:.1s">So small gaps never close.</p>
-  </div>
-</section>
-
-<div class="rule"></div>
-
-<section id="what-happens">
-  <div class="wrap-wide">
-    <h2 class="section-h2 fu">What happens here</h2>
-    <p class="section-body fu" style="transition-delay:.05s">You go through a short set of questions.</p>
-    <p class="section-body fu" style="transition-delay:.07s">Each answer tracks something specific:</p>
-    <ul class="what-list fu" style="transition-delay:.09s">
-      <li>what you notice first when something feels off</li>
-      <li>how you decide what’s worth acting on</li>
-      <li>where you hesitate or second guess</li>
-      <li>how you respond when something isn’t working</li>
-    </ul>
-    <p class="section-body fu" style="transition-delay:.11s">As you move through it, your answers start forming a clear pattern.</p>
-    <p class="what-after fu" style="transition-delay:.13s">By the end, you’re not guessing anymore. You can see how you operate.</p>
-  </div>
-</section>
-
-<div class="rule"></div>
-
-<section id="walk-away">
-  <div class="wrap-wide">
-    <h2 class="section-h2 fu">What you walk away with</h2>
-    <p class="section-body fu" style="transition-delay:.05s">You leave with:</p>
-    <ul class="walk-list fu" style="transition-delay:.08s">
-      <li>what you’re actually good at in a way you can explain and use</li>
-      <li>where that has real demand right now</li>
-      <li>one direction that makes sense to move on immediately</li>
-      <li>the exact point where you’ve been slowing yourself down</li>
-      <li>what to stop doing</li>
-      <li>what to focus on next</li>
-    </ul>
-  </div>
-</section>
-
-<div class="rule"></div>
-
-<section id="how-it-works">
-  <div class="wrap-wide">
-    <div class="lbl fu">How it works</div>
-    <div class="how-grid fu" style="transition-delay:.06s">
-      <div class="how-step" data-step="1">
-        <div class="how-n">1</div>
-        <div class="how-title">Five sections</div>
-        <div class="how-body">You move through five short sections.</div>
-      </div>
-      <div class="how-step" data-step="2">
-        <div class="how-n">2</div>
-        <div class="how-title">Two options</div>
-        <div class="how-body">Each question gives you two options.</div>
-      </div>
-      <div class="how-step" data-step="3">
-        <div class="how-n">3</div>
-        <div class="how-title">Your pick</div>
-        <div class="how-body">You choose what fits you best.</div>
-      </div>
-      <div class="how-step" data-step="4">
-        <div class="how-n">4</div>
-        <div class="how-title">Live read</div>
-        <div class="how-body">Your answers build your result in real time.</div>
-      </div>
-      <div class="how-step" data-step="5">
-        <div class="how-n">5</div>
-        <div class="how-title">No setup</div>
-        <div class="how-body">Nothing to set up. Nothing to prepare.</div>
+  <section id="hero">
+    <div class="hero-bg-word" aria-hidden="true">System</div>
+    <div class="hero-inner">
+      <p class="hero-eyebrow reveal">Build income. Build independence.</p>
+      <h1 class="hero-headline reveal">Build something<br>that makes money.</h1>
+      <p class="hero-sub reveal">
+        Stephuary is a $39 system.<br>
+        Five phases. Figure out what to sell, fix what fails, build something that runs.
+      </p>
+      <p class="hero-detail reveal">
+        Start where you are.<br>
+        Act without guessing.
+      </p>
+      <div class="reveal">
+        <a href="/capture" class="btn-hero">Run diagnostic →</a>
+        <p class="cta-sub">$39 &middot; full system &middot; all five phases included</p>
       </div>
     </div>
-    <div id="all-explored">
-      <div class="explored-line">You’ve seen how it works.</div>
-      <div class="explored-sub">Start when you’re ready.</div>
-      <a href="/capture" class="btn-primary">Start Diagnostic →</a>
-    </div>
-  </div>
-</section>
+    <div class="hero-rule-bottom"></div>
+  </section>
 
-<div class="rule"></div>
+  <main class="page-main">
 
-<section id="grounding">
-  <div class="wrap-wide">
-    <div class="grounding-box fu">
-      <div class="grounding-body">
-        <p>Go through it once.</p>
-        <p>You’ll know exactly how useful it is by the end.</p>
+    <div class="section" id="section-reality">
+      <div class="section-header reveal" role="button" tabindex="0" aria-expanded="false" id="hdr-reality">
+        <h2>Reality</h2>
+        <p class="preview">You've seen the pattern. This names it.</p>
+        <span class="section-chevron" aria-hidden="true"></span>
+      </div>
+      <div class="section-content">
+        <div class="section-body">
+          <div class="reality-visual" aria-hidden="true">
+            <svg viewBox="0 0 400 200" preserveAspectRatio="none">
+              <path class="reality-path" d="M0,100 Q100,40 200,100 T400,100" />
+              <path class="reality-path" d="M0,120 Q120,160 200,120 T400,130" opacity="0.6" />
+            </svg>
+          </div>
+          <div class="reality-grid">
+            <p class="reality-statement reveal">You stop. You restart. You hesitate. The loop repeats.</p>
+            <div>
+              <p class="reality-note reveal">Naming the loop is the first step. The diagnostic is a short read on how you think and decide.</p>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
-  </div>
-</section>
 
-<div class="rule"></div>
-
-<section id="cta-block">
-  <div class="wrap-wide">
-    <div class="cta-block-inner fu">
-      <a href="/capture" class="btn-primary">Start Diagnostic →</a>
-      <p class="cta-free-note">Free</p>
+    <div class="section" id="section-diagnostic">
+      <div class="section-header reveal" role="button" tabindex="0" aria-expanded="false" id="hdr-diagnostic">
+        <h2>What happens</h2>
+        <p class="preview">A short read on how you think and decide.</p>
+        <span class="section-chevron" aria-hidden="true"></span>
+      </div>
+      <div class="section-content">
+        <div class="section-body">
+          <div id="diagnostic-inner">
+            <div class="diag-head">
+              <h2 class="diag-title reveal">Pick what fits.</h2>
+              <p class="diag-sub reveal">Four entry points. One system behind them.</p>
+            </div>
+            <div class="diag-grid">
+              <button type="button" class="diag-card reveal" data-state="1" aria-pressed="false">
+                <p class="diag-num">01</p>
+                <p class="diag-card-title">I don't know what to sell.</p>
+                <p class="diag-card-sub">Skills or experience, nothing clearly defined yet.</p>
+                <span class="diag-indicator"></span>
+              </button>
+              <button type="button" class="diag-card reveal" data-state="2" aria-pressed="false">
+                <p class="diag-num">02</p>
+                <p class="diag-card-title">I have something but it's not making money.</p>
+                <p class="diag-card-sub">Offers or content tried; not converting.</p>
+                <span class="diag-indicator"></span>
+              </button>
+              <button type="button" class="diag-card reveal" data-state="3" aria-pressed="false">
+                <p class="diag-num">03</p>
+                <p class="diag-card-title">I need a proven way to make money.</p>
+                <p class="diag-card-sub">You want paths that already work.</p>
+                <span class="diag-indicator"></span>
+              </button>
+              <button type="button" class="diag-card reveal" data-state="4" aria-pressed="false">
+                <p class="diag-num">04</p>
+                <p class="diag-card-title">I need direct help.</p>
+                <p class="diag-card-sub">Clarity or correction without doing it alone.</p>
+                <span class="diag-indicator"></span>
+              </button>
+            </div>
+            <div class="diag-result reveal" id="diag-result">
+              <div class="result-state active" id="state-0">
+                <p class="result-default-text">Pick a card. You'll see where to enter the system.</p>
+              </div>
+              <div class="result-state" id="state-1">
+                <p class="result-label">Starting point</p>
+                <p class="result-issue">No clear offer yet.</p>
+                <p class="result-start">Suggested: Capture</p>
+                <p class="result-why">If it isn't clear, no one buys.</p>
+                <p class="result-links">Continue: <a href="/capture">Capture</a></p>
+                <p class="result-bridge">Full system ($39). You enter at the phase that fits.</p>
+              </div>
+              <div class="result-state" id="state-2">
+                <p class="result-label">Starting point</p>
+                <p class="result-issue">Offer isn't landing clearly enough to convert.</p>
+                <p class="result-start">Suggested: Diagnostic flow</p>
+                <p class="result-why">If people don't get it fast, they don't buy.</p>
+                <p class="result-links">Continue: <a href="/capture">Diagnostic</a></p>
+                <p class="result-bridge">Full system ($39). You enter at the phase that fits.</p>
+              </div>
+              <div class="result-state" id="state-3">
+                <p class="result-label">Starting point</p>
+                <p class="result-issue">You need a path that already works.</p>
+                <p class="result-start">Suggested: Playbooks</p>
+                <p class="result-why">You need a model you can use now.</p>
+                <p class="result-links">Continue: <a href="/playbooks">Playbooks</a></p>
+                <p class="result-bridge">Full system ($39). You enter at the phase that fits.</p>
+              </div>
+              <div class="result-state" id="state-4">
+                <p class="result-label">Starting point</p>
+                <p class="result-issue">You need direct help.</p>
+                <p class="result-start">Suggested: Pricing</p>
+                <p class="result-why">Match support to the situation.</p>
+                <p class="result-links">Continue: <a href="/pricing">Pricing</a></p>
+                <p class="result-bridge">Full system ($39). You enter at the phase that fits.</p>
+              </div>
+            </div>
+            <div class="what-get-simple">
+              <h3 class="reveal">What you get</h3>
+              <ul>
+                <li class="reveal">Clear direction</li>
+                <li class="reveal">A named entry point</li>
+                <li class="reveal">Next steps without noise</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-  </div>
-</section>
 
-<div class="rule"></div>
-
-<section id="filter">
-  <div class="wrap-wide">
-    <h2 class="filter-h2 fu">This is for you if:</h2>
-    <ul class="filter-list fu" style="transition-delay:.06s">
-      <li>you want to make money from something you already know or can do</li>
-      <li>you’re tired of thinking about it without a next step</li>
-      <li>you’re willing to answer honestly instead of picking what sounds good</li>
-    </ul>
-  </div>
-</section>
-
-<div class="rule"></div>
-
-<section id="system-preview">
-  <div class="wrap-wide">
-    <div class="lbl fu">System</div>
-    <div class="phase-rows fu" style="transition-delay:.06s">
-      <div class="phase-row"><span class="phase-name">Phase 01</span><span class="phase-desc">How you think</span></div>
-      <div class="phase-row"><span class="phase-name">Phase 02</span><span class="phase-desc">Where your value fits</span></div>
-      <div class="phase-row"><span class="phase-name">Phase 03</span><span class="phase-desc">How it turns into income</span></div>
-      <div class="phase-row"><span class="phase-name">Phase 04</span><span class="phase-desc">What proves it works</span></div>
-      <div class="phase-row"><span class="phase-name">Phase 05</span><span class="phase-desc">How to make it stable</span></div>
+    <div class="section" id="section-how">
+      <div class="section-header reveal" role="button" tabindex="0" aria-expanded="false" id="hdr-how">
+        <h2>How it works</h2>
+        <p class="preview">Five short sections. Live output.</p>
+        <span class="section-chevron" aria-hidden="true"></span>
+      </div>
+      <div class="section-content">
+        <div class="section-body">
+          <p class="how-plain reveal">You run the diagnostic. You get a read. The system maps Capture through Sovereignty. You choose depth. You act from one path, not ten.</p>
+        </div>
+      </div>
     </div>
-  </div>
-</section>
 
-<div class="rule"></div>
-
-<section id="final">
-  <div class="wrap">
-    <div class="final-ctas fu">
-      <a href="/capture" class="btn-primary">Start Diagnostic →</a>
-      <span class="hero-free" style="opacity:0.9">Free</span>
+    <div class="section" id="section-system">
+      <div class="section-header reveal" role="button" tabindex="0" aria-expanded="false" id="hdr-system">
+        <h2>System</h2>
+        <p class="preview">Five layers. One path.</p>
+        <span class="section-chevron" aria-hidden="true"></span>
+      </div>
+      <div class="section-content">
+        <div class="section-body">
+          <p class="how-plain reveal" style="margin-bottom:28px;">One payment. Five phases. You don't buy fragments. You get the full system and start where you are.</p>
+          <div class="phase-line-wrap">
+            <div class="phase-line" id="phase-line">
+              <div class="phase reveal" data-phase="0">
+                <div class="phase-name">Capture</div>
+                <div class="phase-desc">Extract what you know</div>
+              </div>
+              <div class="phase reveal" data-phase="1">
+                <div class="phase-name">Monetize</div>
+                <div class="phase-desc">Make it sell</div>
+              </div>
+              <div class="phase reveal" data-phase="2">
+                <div class="phase-name">Structure</div>
+                <div class="phase-desc">Runs without you</div>
+              </div>
+              <div class="phase reveal" data-phase="3">
+                <div class="phase-name">Automation</div>
+                <div class="phase-desc">Cut repetition</div>
+              </div>
+              <div class="phase reveal" data-phase="4">
+                <div class="phase-name">Sovereignty</div>
+                <div class="phase-desc">Holds under pressure</div>
+              </div>
+            </div>
+          </div>
+          <p class="result-links reveal" style="margin-top:16px;"><a href="/systems">Open the system overview →</a></p>
+        </div>
+      </div>
     </div>
-  </div>
-</section>
 
-<footer class="site-footer">
-  <a href="/" class="footer-logo">Stephuary</a>
-  <div class="footer-col">
-    <nav class="footer-links" aria-label="Footer">
-      <a href="/capture">Diagnostic</a>
-      <a href="/system">System</a>
-      <a href="/contact">Contact</a>
-    </nav>
-    <p class="footer-club">🔒 <a href="/club">.5% Club</a> · Private access opens after completion.</p>
-  </div>
-</footer>
+    <div class="section" id="section-options">
+      <div class="section-header reveal" role="button" tabindex="0" aria-expanded="false" id="hdr-options">
+        <h2>Beyond the system</h2>
+        <p class="preview">Books, reviews, snapshots. Optional.</p>
+        <span class="section-chevron" aria-hidden="true"></span>
+      </div>
+      <div class="section-content">
+        <div class="section-body">
+          <div class="products-grid">
+            <div class="product-card reveal">
+              <p class="product-tag">Books</p>
+              <h3 class="product-title">Start small.</h3>
+              <p class="product-body">Short reads. Same-day use.</p>
+              <p class="product-meta">Most $1 · Ownership $28</p>
+              <a href="/books" class="link-quiet">Books →</a>
+            </div>
+            <div class="product-card reveal">
+              <p class="product-tag">Focused Review</p>
+              <h3 class="product-title">One issue.</h3>
+              <p class="product-body">One problem. Next steps.</p>
+              <p class="product-meta">$197</p>
+              <a href="/focused-review" class="link-quiet">Focused review →</a>
+            </div>
+            <div class="product-card reveal">
+              <p class="product-tag">Snapshot</p>
+              <h3 class="product-title">Full picture.</h3>
+              <p class="product-body">What isn't working. Where money is.</p>
+              <p class="product-meta">$750</p>
+              <a href="/snapshot" class="link-quiet">Snapshot →</a>
+            </div>
+            <div class="product-card reveal">
+              <p class="product-tag">Founder Diagnostic</p>
+              <h3 class="product-title">Revenue path.</h3>
+              <p class="product-body">From what you already have.</p>
+              <p class="product-meta">$1,500</p>
+              <a href="/founder-diagnostic" class="link-quiet">Founder diagnostic →</a>
+            </div>
+            <div class="product-card reveal">
+              <p class="product-tag">Playbooks</p>
+              <h3 class="product-title">Paths that work.</h3>
+              <p class="product-body">Pick the problem. Use the playbook.</p>
+              <p class="product-meta">&nbsp;</p>
+              <a href="/playbooks" class="link-quiet">Playbooks →</a>
+            </div>
+            <div class="product-card reveal club-card">
+              <p class="product-tag">5% Club</p>
+              <h3 class="product-title">Signal.</h3>
+              <p class="product-body">Private layer. Judgment and placement.</p>
+              <p class="product-meta">&nbsp;</p>
+              <a href="/club" class="link-quiet">5% Club →</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
 
-<script>
-var exploredSteps = new Set();
-var totalSteps = 5;
+    <div class="section section-private" id="section-private">
+      <div class="section-header reveal" role="button" tabindex="0" aria-expanded="false" id="hdr-private">
+        <h2>Private access</h2>
+        <p class="preview">Correction, positioning, revenue architecture. When it fits.</p>
+        <span class="section-chevron" aria-hidden="true"></span>
+      </div>
+      <div class="section-content">
+        <div class="section-body">
+          <div class="private-inner">
+            <div>
+              <h3 class="section-inner-title reveal">Private Access</h3>
+              <span class="gold-rule" id="private-rule"></span>
+              <ul class="private-list">
+                <li class="reveal">Correction: wrong decisions stopped before they get worse</li>
+                <li class="reveal">Positioning: where you should operate</li>
+                <li class="reveal">Market level: local to national</li>
+                <li class="reveal">Offer structure: what to build, what to stop</li>
+                <li class="reveal">Revenue architecture: how it pays</li>
+              </ul>
+              <p class="result-links reveal"><a href="/access">Request access →</a></p>
+            </div>
+            <div>
+              <p class="private-right-text reveal">Not always open.</p>
+              <p class="private-right-text reveal">Requests reviewed.</p>
+              <p class="private-right-text reveal">Not all accepted.</p>
+              <p class="private-hook reveal">It changes what you do and where you operate.</p>
+              <p class="proof-quote reveal" style="margin-top:32px;">I booked my first advisory retainer before I had:</p>
+              <ul class="proof-list">
+                <li class="reveal">a real email list</li>
+                <li class="reveal">a website</li>
+                <li class="reveal">a logo</li>
+              </ul>
+              <p class="proof-close reveal">This is how it worked.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
 
-(function(){
-  var io = new IntersectionObserver(function(entries){
-    entries.forEach(function(e){
-      if(e.isIntersecting){e.target.classList.add('on');io.unobserve(e.target);}
-    });
-  },{threshold:0.06,rootMargin:'0px 0px -12px 0px'});
-  document.querySelectorAll('.fu').forEach(function(el){io.observe(el);});
-})();
+  </main>
 
-(function(){
-  var bar = document.getElementById('stickyBar');
-  var hero = document.getElementById('hero');
-  var timer = null;
-  var obs = new IntersectionObserver(function(entries){
-    if(!entries[0].isIntersecting){
-      timer = setTimeout(function(){ bar.classList.add('visible'); }, 40);
-    } else {
-      clearTimeout(timer);
-      bar.classList.remove('visible');
-    }
-  },{threshold:0});
-  obs.observe(hero);
-})();
+  <section id="closing">
+    <h2 class="closing-h2 reveal">You'll know if it fits once you go through it.</h2>
+    <a href="/capture" class="btn-close reveal">Begin here →</a>
+  </section>
 
-function markStepSeen(stepNum){
-  if(exploredSteps.has(stepNum)) return;
-  exploredSteps.add(stepNum);
-  var seg = document.querySelector('.sticky-segment[data-seg="'+stepNum+'"]');
-  if(seg){
-    seg.classList.add('filled');
-    if(exploredSteps.size === totalSteps){
-      setTimeout(function(){ seg.classList.add('pulse'); }, 80);
-    }
-  }
-  var counter = document.getElementById('stickyCounter');
-  if(counter){
-    counter.textContent = exploredSteps.size + ' of 5 seen';
-    counter.classList.add('active');
-  }
-  if(exploredSteps.size === totalSteps){
-    var allExplored = document.getElementById('all-explored');
-    if(allExplored){ allExplored.classList.add('show'); }
-  }
-}
+  <footer>
+    <div class="footer-inner">
+      <div>
+        <span class="footer-mark">Stephuary</span>
+        <p class="footer-micro">Built to be used.<br>Not watched.</p>
+      </div>
+      <div>
+        <p class="footer-col-label">Connect</p>
+        <ul class="footer-links">
+          <li><a href="https://stephuary.substack.com" target="_blank" rel="noopener">Substack</a></li>
+          <li><a href="https://github.com/stephuary/Stephuary" target="_blank" rel="noopener">GitHub</a></li>
+        </ul>
+      </div>
+    </div>
+  </footer>
 
-(function(){
-  var steps = document.querySelectorAll('.how-step[data-step]');
-  if(!steps.length) return;
-  var io = new IntersectionObserver(function(entries){
-    entries.forEach(function(en){
-      if(en.isIntersecting){
-        var s = en.target.getAttribute('data-step');
-        if(s) markStepSeen(parseInt(s, 10));
+  <script>
+    (function () {
+      var mainNav = document.getElementById('main-nav');
+      window.addEventListener('scroll', function () {
+        mainNav.classList.toggle('scrolled', window.scrollY > 60);
+      }, { passive: true });
+
+      var observer = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+          }
+        });
+      }, { threshold: 0.08, rootMargin: '0px 0px -24px 0px' });
+
+      document.querySelectorAll('.reveal').forEach(function (el) {
+        observer.observe(el);
+      });
+
+      document.querySelectorAll('.section-header').forEach(function (header) {
+        function toggleSection() {
+          var section = header.parentElement;
+          document.querySelectorAll('.section').forEach(function (s) {
+            if (s !== section) {
+              s.classList.remove('open');
+              var h = s.querySelector('.section-header');
+              if (h) h.setAttribute('aria-expanded', 'false');
+            }
+          });
+          section.classList.toggle('open');
+          header.setAttribute('aria-expanded', section.classList.contains('open') ? 'true' : 'false');
+          if (section.classList.contains('open')) {
+            section.querySelectorAll('.reveal:not(.visible)').forEach(function (el, i) {
+              window.setTimeout(function () {
+                el.classList.add('visible');
+              }, 40 * i);
+            });
+            if (section.id === 'section-system') {
+              window.requestAnimationFrame(function () {
+                window.dispatchEvent(new Event('scroll'));
+              });
+            }
+          }
+        }
+        header.addEventListener('click', toggleSection);
+        header.addEventListener('keydown', function (e) {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            toggleSection();
+          }
+        });
+      });
+
+      var scrollPhaseIdx = 0;
+      function syncPhaseScroll() {
+        var track = document.getElementById('section-system');
+        if (!track || !track.classList.contains('open')) return;
+        var inner = track.querySelector('.phase-line-wrap');
+        if (!inner) return;
+        var rect = inner.getBoundingClientRect();
+        var h = window.innerHeight;
+        if (rect.bottom < 0 || rect.top > h) return;
+        var t = Math.max(0, Math.min(1, (h * 0.45 - rect.top) / Math.max(rect.height, 1)));
+        scrollPhaseIdx = Math.min(4, Math.max(0, Math.floor(t * 5)));
+        document.querySelectorAll('.phase').forEach(function (n) {
+          var idx = parseInt(n.getAttribute('data-phase'), 10);
+          n.classList.toggle('active', idx === scrollPhaseIdx);
+        });
       }
-    });
-  },{threshold:0.22,rootMargin:'0px 0px -8% 0px'});
-  steps.forEach(function(el){ io.observe(el); });
-})();
 
-document.querySelectorAll('a[href="/capture"]').forEach(function(a){
-  a.addEventListener('click', function(){
-    try { sessionStorage.setItem('stephuary_diagnostic_started', '1'); } catch(e) {}
-  });
-});
-</script>
+      window.addEventListener('scroll', syncPhaseScroll, { passive: true });
+
+      document.querySelectorAll('.phase').forEach(function (phase) {
+        phase.addEventListener('mouseenter', function () {
+          document.querySelectorAll('.phase').forEach(function (p) { p.classList.remove('active'); });
+          phase.classList.add('active');
+        });
+        phase.addEventListener('mouseleave', function () {
+          syncPhaseScroll();
+        });
+      });
+
+      var cards = document.querySelectorAll('.diag-card');
+      var states = document.querySelectorAll('.result-state');
+      cards.forEach(function (card) {
+        card.addEventListener('click', function () {
+          var target = card.dataset.state;
+          cards.forEach(function (c) {
+            c.classList.remove('active');
+            c.setAttribute('aria-pressed', 'false');
+          });
+          card.classList.add('active');
+          card.setAttribute('aria-pressed', 'true');
+          states.forEach(function (s) { s.classList.remove('active'); });
+          var ts = document.getElementById('state-' + target);
+          if (ts) ts.classList.add('active');
+          if (window.innerWidth < 768) {
+            document.getElementById('diag-result').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          }
+        });
+      });
+
+      var pr = document.getElementById('private-rule');
+      if (pr) {
+        var ior = new IntersectionObserver(function (entries) {
+          entries.forEach(function (e) {
+            if (e.isIntersecting) {
+              e.target.classList.add('visible');
+              ior.unobserve(e.target);
+            }
+          });
+        }, { threshold: 0.2 });
+        ior.observe(pr);
+      }
+    })();
+  </script>
 </body>
 </html>
