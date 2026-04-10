@@ -11,7 +11,7 @@
 <style>
 
 /* ============================================================
-   TOKENS — exact match with Position page
+   TOKENS
    ============================================================ */
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -146,9 +146,16 @@ textarea, input, select { font-family: 'Lato', sans-serif; }
 .entry-headline {
   font-family: 'Cormorant Garamond', serif; font-weight: 300;
   font-size: clamp(24px,3.2vw,40px); color: rgba(244,240,232,0.92);
-  line-height: 1.22; letter-spacing: -0.01em; margin-bottom: 20px;
+  line-height: 1.22; letter-spacing: -0.01em; margin-bottom: 14px;
 }
 .entry-headline em { font-style: italic; color: var(--gold); }
+
+.entry-time-tag {
+  display: inline-block; margin-bottom: 28px;
+  font-family: 'DM Mono', monospace; font-size: 9px;
+  letter-spacing: 0.18em; color: rgba(196,163,90,0.32); text-transform: uppercase;
+  border: 1px solid rgba(196,163,90,0.1); padding: 5px 14px; border-radius: 1px;
+}
 
 .entry-sub {
   display: block; margin-bottom: 6px;
@@ -327,34 +334,91 @@ textarea, input, select { font-family: 'Lato', sans-serif; }
 }
 
 /* ============================================================
-   FIELDS
+   CHOICE BUTTONS
    ============================================================ */
 
-.fw { margin-bottom: 22px; }
-
-.fl {
-  display: block; margin-bottom: 8px;
-  font-family: 'DM Mono', monospace; font-size: 8px;
-  letter-spacing: 0.2em; color: rgba(196,163,90,0.36); text-transform: uppercase;
+.choice-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 8px;
+  margin-bottom: 32px;
 }
 
-.fl-sub {
-  display: block; margin-bottom: 8px; margin-top: -4px;
-  font-family: 'DM Mono', monospace; font-size: 8px;
-  letter-spacing: 0.1em; color: rgba(196,163,90,0.2);
-}
-
-.fi, .fta {
-  width: 100%; background: rgba(196,163,90,0.04);
+.choice-btn {
+  display: flex; align-items: flex-start; gap: 16px;
+  padding: 22px 24px;
+  background: rgba(196,163,90,0.04);
   border: 1px solid rgba(196,163,90,0.11);
-  color: var(--white); padding: 13px 16px;
-  font-size: 13px; font-weight: 300; font-family: 'Lato', sans-serif;
-  line-height: 1.5; outline: none; border-radius: 1px;
-  transition: border-color 0.18s;
+  color: var(--white);
+  text-align: left;
+  cursor: none;
+  transition: background 0.16s ease, border-color 0.16s ease, transform 0.14s ease;
+  border-radius: 1px;
+  position: relative;
+  overflow: hidden;
 }
-.fi:focus, .fta:focus { border-color: rgba(196,163,90,0.38); }
-.fi::placeholder, .fta::placeholder { color: rgba(196,163,90,0.2); font-style: italic; }
-.fta { resize: vertical; min-height: 90px; }
+
+.choice-btn::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: rgba(196,163,90,0.06);
+  opacity: 0;
+  transition: opacity 0.14s;
+}
+
+.choice-btn:hover { border-color: rgba(196,163,90,0.3); background: rgba(196,163,90,0.07); }
+.choice-btn:hover::after { opacity: 1; }
+.choice-btn:active { transform: scale(0.985); }
+
+.choice-btn.selected {
+  border-color: var(--gold);
+  background: rgba(196,163,90,0.1);
+}
+.choice-btn.selected .choice-letter { color: var(--bg-dark); background: var(--gold); border-color: var(--gold); }
+
+.choice-letter {
+  width: 24px; height: 24px; border-radius: 50%;
+  border: 1px solid rgba(196,163,90,0.24);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'DM Mono', monospace; font-size: 9px;
+  color: rgba(196,163,90,0.5); flex-shrink: 0;
+  transition: all 0.16s;
+}
+
+.choice-text {
+  font-size: 13px; font-weight: 300; line-height: 1.6;
+  color: var(--text-2);
+  padding-top: 2px;
+}
+
+.choice-btn:hover .choice-text { color: var(--white); }
+.choice-btn.selected .choice-text { color: var(--white); }
+
+/* ============================================================
+   PROGRESS TRACK
+   ============================================================ */
+
+.q-progress-track {
+  height: 1px;
+  background: var(--line);
+  margin-bottom: 44px;
+  position: relative;
+  overflow: hidden;
+}
+
+.q-progress-fill {
+  position: absolute; left: 0; top: 0; height: 100%;
+  background: var(--gold);
+  transition: width 0.4s cubic-bezier(0.16,1,0.3,1);
+}
+
+.q-progress-label {
+  font-family: 'DM Mono', monospace; font-size: 8px;
+  letter-spacing: 0.2em; color: rgba(196,163,90,0.26); text-transform: uppercase;
+  margin-bottom: 10px;
+  display: flex; justify-content: space-between;
+}
 
 /* ============================================================
    SEPARATOR
@@ -392,34 +456,7 @@ textarea, input, select { font-family: 'Lato', sans-serif; }
 }
 
 /* ============================================================
-   FRICTION BLOCK
-   ============================================================ */
-
-.friction-block {
-  border: 1px solid rgba(184,92,56,0.22); border-top: 2px solid var(--terra);
-  background: rgba(184,92,56,0.04); padding: 20px 24px; margin-top: 20px;
-}
-.friction-lbl {
-  font-family: 'DM Mono', monospace; font-size: 8px;
-  letter-spacing: 0.22em; color: var(--terra); text-transform: uppercase;
-  margin-bottom: 14px;
-}
-.friction-item { margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid rgba(184,92,56,0.12); }
-.friction-item:last-child { margin-bottom: 0; padding-bottom: 0; border-bottom: none; }
-.friction-tag-el {
-  display: inline-block; font-family: 'DM Mono', monospace; font-size: 8px;
-  letter-spacing: 0.14em; text-transform: uppercase; color: var(--terra);
-  border: 1px solid rgba(184,92,56,0.3); padding: 3px 9px; margin-bottom: 8px;
-  border-radius: 1px;
-}
-.friction-what { font-size: 13px; color: var(--text-2); line-height: 1.6; margin-bottom: 6px; }
-.friction-fix-line {
-  font-family: 'DM Mono', monospace; font-size: 9px;
-  letter-spacing: 0.08em; color: rgba(184,92,56,0.6); line-height: 1.6;
-}
-
-/* ============================================================
-   OUTPUT ARTIFACT (Step 05-07)
+   ARTIFACT BLOCK
    ============================================================ */
 
 .artifact-block {
@@ -443,23 +480,26 @@ textarea, input, select { font-family: 'Lato', sans-serif; }
   margin-bottom: 4px;
 }
 .artifact-val { font-size: 13px; color: var(--text-2); line-height: 1.6; }
+.artifact-val.strong {
+  font-family: 'Cormorant Garamond', serif; font-size: 15px; color: var(--white);
+}
 
 /* ============================================================
-   DIRECTION BLOCK (Step 06)
+   DIMENSION TAGS
    ============================================================ */
 
-.direction-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 18px; }
-.direction-cell { background: rgba(196,163,90,0.04); border: 1px solid var(--line); padding: 16px 18px; }
-.direction-cell-lbl {
-  font-family: 'DM Mono', monospace; font-size: 8px;
-  letter-spacing: 0.16em; color: rgba(196,163,90,0.26); text-transform: uppercase;
-  margin-bottom: 8px;
+.dim-tag-row {
+  display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px;
 }
-.direction-cell-val { font-size: 13px; color: var(--text-2); line-height: 1.6; }
-.direction-cell.full { grid-column: span 2; }
+.dim-tag {
+  font-family: 'DM Mono', monospace; font-size: 8px;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--gold-dim); border: 1px solid rgba(196,163,90,0.18);
+  padding: 4px 10px; border-radius: 1px;
+}
 
 /* ============================================================
-   COMPLETION STATE (Step 07)
+   COMPLETION STATE
    ============================================================ */
 
 .completion-block {
@@ -587,6 +627,13 @@ textarea, input, select { font-family: 'Lato', sans-serif; }
   from { opacity: 0; transform: translateY(10px); }
   to   { opacity: 1; transform: translateY(0); }
 }
+@keyframes choiceReveal {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.choice-btn { animation: choiceReveal 0.22s cubic-bezier(0.16,1,0.3,1) both; }
+.choice-btn:nth-child(2) { animation-delay: 0.06s; }
 
 /* ============================================================
    MOBILE
@@ -605,10 +652,9 @@ textarea, input, select { font-family: 'Lato', sans-serif; }
   #main-panel { padding: 32px 24px; }
   #out-panel { position: static; height: auto; border-left: none; border-top: 1px solid var(--line); }
   #site-header { padding: 18px 24px; }
-  .direction-grid { grid-template-columns: 1fr; }
-  .direction-cell.full { grid-column: span 1; }
   #entry-overlay { padding: 32px 24px; }
   .step-title { font-size: 28px; }
+  .choice-grid { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 560px) {
@@ -634,16 +680,17 @@ textarea, input, select { font-family: 'Lato', sans-serif; }
     <span class="entry-wordmark">Stephuary</span>
     <span class="entry-phase-tag">Capture · Phase 01</span>
     <h1 class="entry-headline">
-      Your idea is not unclear.<br>
-      It is <em>not defined enough to use.</em>
+      Your instincts are already working.<br>
+      This surfaces <em>what they are.</em>
     </h1>
+    <div class="entry-time-tag">3–5 minutes</div>
     <span class="entry-sub">You will leave with:</span>
     <div class="entry-outputs">
-      <span>one locked core statement</span>
-      <span>one audience direction</span>
-      <span>one result direction</span>
-      <span>one spoken version</span>
-      <span>one clear next move</span>
+      <span>a CEI profile summary</span>
+      <span>your detection signature</span>
+      <span>your correction instinct</span>
+      <span>your sensitivity map</span>
+      <span>one clear direction</span>
     </div>
     <button class="entry-start-btn" id="entry-start">Begin Phase 01</button>
     <button class="entry-skip" id="entry-skip">Already in progress — skip</button>
@@ -669,13 +716,17 @@ textarea, input, select { font-family: 'Lato', sans-serif; }
   <nav id="left-rail" aria-label="Phase steps">
     <div class="rail-label">Steps</div>
     <ol class="step-nav">
-      <li class="step-nav-item" data-step="1" tabindex="0"><span class="snav-num">1</span><span class="snav-name">Extract</span></li>
-      <li class="step-nav-item" data-step="2" tabindex="0"><span class="snav-num">2</span><span class="snav-name">Audience</span></li>
-      <li class="step-nav-item" data-step="3" tabindex="0"><span class="snav-num">3</span><span class="snav-name">Result</span></li>
-      <li class="step-nav-item" data-step="4" tabindex="0"><span class="snav-num">4</span><span class="snav-name">Pressure</span></li>
-      <li class="step-nav-item" data-step="5" tabindex="0"><span class="snav-num">5</span><span class="snav-name">Lock</span></li>
-      <li class="step-nav-item" data-step="6" tabindex="0"><span class="snav-num">6</span><span class="snav-name">Direction</span></li>
-      <li class="step-nav-item" data-step="7" tabindex="0"><span class="snav-num">7</span><span class="snav-name">Move</span></li>
+      <li class="step-nav-item" data-step="1" tabindex="0"><span class="snav-num">1</span><span class="snav-name">Entry</span></li>
+      <li class="step-nav-item" data-step="2" tabindex="0"><span class="snav-num">2</span><span class="snav-name">Response</span></li>
+      <li class="step-nav-item" data-step="3" tabindex="0"><span class="snav-num">3</span><span class="snav-name">Detail</span></li>
+      <li class="step-nav-item" data-step="4" tabindex="0"><span class="snav-num">4</span><span class="snav-name">Reading</span></li>
+      <li class="step-nav-item" data-step="5" tabindex="0"><span class="snav-num">5</span><span class="snav-name">Standards</span></li>
+      <li class="step-nav-item" data-step="6" tabindex="0"><span class="snav-num">6</span><span class="snav-name">Recovery</span></li>
+      <li class="step-nav-item" data-step="7" tabindex="0"><span class="snav-num">7</span><span class="snav-name">Timing</span></li>
+      <li class="step-nav-item" data-step="8" tabindex="0"><span class="snav-num">8</span><span class="snav-name">Impact</span></li>
+      <li class="step-nav-item" data-step="9" tabindex="0"><span class="snav-num">9</span><span class="snav-name">Friction</span></li>
+      <li class="step-nav-item" data-step="10" tabindex="0"><span class="snav-num">10</span><span class="snav-name">Approach</span></li>
+      <li class="step-nav-item" data-step="11" tabindex="0"><span class="snav-num">11</span><span class="snav-name">Profile</span></li>
     </ol>
     <div class="rail-divider"></div>
     <button class="rail-btn" id="rail-export">Export text</button>
@@ -687,274 +738,252 @@ textarea, input, select { font-family: 'Lato', sans-serif; }
 
     <div id="done-stack"></div>
 
-    <!-- STEP 1 — EXTRACT -->
-    <section class="step-card" id="step-1" aria-label="Step 1: Extract">
-      <div class="step-tag">Step 01</div>
-      <h2 class="step-title">What do you actually do?</h2>
-      <p class="step-instr">Not what you want to do. Not the refined version. Write what you actually do right now, as plainly as possible.</p>
+    <!-- STEP 1 — ENTRY -->
+    <section class="step-card" id="step-1" aria-label="Step 1: Entry">
+      <div class="step-tag">Step 01 · 10 of 10</div>
+      <div class="q-progress-label"><span>Question 1 of 10</span><span id="q1-pct">0%</span></div>
+      <div class="q-progress-track"><div class="q-progress-fill" id="q1-fill" style="width:0%"></div></div>
 
-      <div class="fw">
-        <label class="fl" for="f-do">What you do</label>
-        <span class="fl-sub">Format: I help [someone] do [something]</span>
-        <input type="text" class="fi" id="f-do"
-          placeholder="I help ___ do ___" maxlength="200" autocomplete="off">
-      </div>
+      <h2 class="step-title">You walk into a space for the first time. What do you notice first?</h2>
+      <p class="step-instr">No right answer. Go with the one that is more true more often.</p>
 
-      <div class="fw">
-        <label class="fl" for="f-versions">Other versions you have tried</label>
-        <span class="fl-sub">Optional. List any other ways you have said this — separated by line breaks.</span>
-        <textarea class="fta" id="f-versions" placeholder="Version 1&#10;Version 2&#10;Version 3" style="min-height:100px"></textarea>
-      </div>
-
-      <div class="sep"></div>
-
-      <div class="ab" id="s1-preview" style="display:none">
-        <div class="ab-lbl">Raw statement</div>
-        <div class="ab-row">
-          <div class="ab-val em" id="s1-preview-text">—</div>
-        </div>
-        <div class="ab-row" id="s1-versions-area" style="display:none">
-          <div class="ab-key">Other versions</div>
-          <div class="ab-val" id="s1-versions-text">—</div>
-        </div>
-      </div>
-
-      <div class="btn-row">
-        <button class="btn-p" id="s1-go">Continue to Audience →</button>
+      <div class="choice-grid">
+        <button class="choice-btn" data-q="1" data-val="detection" data-dim="detection">
+          <span class="choice-letter">A</span>
+          <span class="choice-text">What feels off, even if you can't explain it</span>
+        </button>
+        <button class="choice-btn" data-q="1" data-val="elevation" data-dim="detection">
+          <span class="choice-letter">B</span>
+          <span class="choice-text">What could be improved or elevated</span>
+        </button>
       </div>
     </section>
 
-    <!-- STEP 2 — AUDIENCE -->
-    <section class="step-card" id="step-2" aria-label="Step 2: Audience">
-      <div class="step-tag">Step 02</div>
-      <h2 class="step-title">Who is this actually for?</h2>
-      <p class="step-instr">Not everyone. Not anyone who needs it. Name the specific type of person who would get immediate value from this.</p>
+    <!-- STEP 2 — RESPONSE -->
+    <section class="step-card" id="step-2" aria-label="Step 2: Response">
+      <div class="step-tag">Step 02 · 10 of 10</div>
+      <div class="q-progress-label"><span>Question 2 of 10</span><span id="q2-pct">10%</span></div>
+      <div class="q-progress-track"><div class="q-progress-fill" id="q2-fill" style="width:10%"></div></div>
 
-      <div class="fw">
-        <label class="fl" for="f-who">Audience</label>
-        <span class="fl-sub">Format: People who ___</span>
-        <input type="text" class="fi" id="f-who"
-          placeholder="People who ___" maxlength="160" autocomplete="off">
-      </div>
+      <h2 class="step-title">When something feels off, what do you usually do?</h2>
+      <p class="step-instr">Think about what you actually do, not what you think you should do.</p>
 
-      <div class="fw">
-        <label class="fl" for="f-who-not">Who this is not for</label>
-        <span class="fl-sub">Optional but useful. Naming the exclusion sharpens the inclusion.</span>
-        <input type="text" class="fi" id="f-who-not"
-          placeholder="This is not for ___" maxlength="160" autocomplete="off">
-      </div>
-
-      <div class="fw">
-        <label class="fl" for="f-who-why">Why this person specifically</label>
-        <span class="fl-sub">What is it about them that makes this relevant? What are they dealing with?</span>
-        <textarea class="fta" id="f-who-why" placeholder="They are dealing with ___ / They need ___ because ___"></textarea>
-      </div>
-
-      <div class="btn-row">
-        <button class="btn-p" id="s2-go">Continue to Result →</button>
-        <button class="btn-g" id="s2-back">Back</button>
+      <div class="choice-grid">
+        <button class="choice-btn" data-q="2" data-val="analysis" data-dim="adaptation">
+          <span class="choice-letter">A</span>
+          <span class="choice-text">Break down what's causing it</span>
+        </button>
+        <button class="choice-btn" data-q="2" data-val="adaptation" data-dim="adaptation">
+          <span class="choice-letter">B</span>
+          <span class="choice-text">Adjust something immediately</span>
+        </button>
       </div>
     </section>
 
-    <!-- STEP 3 — RESULT -->
-    <section class="step-card" id="step-3" aria-label="Step 3: Result">
-      <div class="step-tag">Step 03</div>
-      <h2 class="step-title">What changes for them?</h2>
-      <p class="step-instr">Not a feeling. Not a vague improvement. What is specifically different after working with you?</p>
+    <!-- STEP 3 — DETAIL -->
+    <section class="step-card" id="step-3" aria-label="Step 3: Detail">
+      <div class="step-tag">Step 03 · 10 of 10</div>
+      <div class="q-progress-label"><span>Question 3 of 10</span><span id="q3-pct">20%</span></div>
+      <div class="q-progress-track"><div class="q-progress-fill" id="q3-fill" style="width:20%"></div></div>
 
-      <div class="fw">
-        <label class="fl" for="f-result">The result</label>
-        <span class="fl-sub">Format: So they can ___</span>
-        <input type="text" class="fi" id="f-result"
-          placeholder="So they can ___" maxlength="160" autocomplete="off">
-      </div>
+      <h2 class="step-title">Which happens more often?</h2>
+      <p class="step-instr">Both happen. One happens first.</p>
 
-      <div class="fw">
-        <label class="fl" for="f-result-before">What is true before</label>
-        <span class="fl-sub">What is their situation before they work with you?</span>
-        <input type="text" class="fi" id="f-result-before"
-          placeholder="Before: ___" maxlength="160" autocomplete="off">
-      </div>
-
-      <div class="fw">
-        <label class="fl" for="f-result-after">What is true after</label>
-        <span class="fl-sub">What is measurably or meaningfully different?</span>
-        <input type="text" class="fi" id="f-result-after"
-          placeholder="After: ___" maxlength="160" autocomplete="off">
-      </div>
-
-      <div class="btn-row">
-        <button class="btn-p" id="s3-go">Continue to Pressure Test →</button>
-        <button class="btn-g" id="s3-back">Back</button>
+      <div class="choice-grid">
+        <button class="choice-btn" data-q="3" data-val="detail" data-dim="detail">
+          <span class="choice-letter">A</span>
+          <span class="choice-text">You notice details others ignore</span>
+        </button>
+        <button class="choice-btn" data-q="3" data-val="pattern" data-dim="detail">
+          <span class="choice-letter">B</span>
+          <span class="choice-text">You notice patterns others don't connect</span>
+        </button>
       </div>
     </section>
 
-    <!-- STEP 4 — PRESSURE TEST -->
-    <section class="step-card" id="step-4" aria-label="Step 4: Pressure Test">
-      <div class="step-tag">Step 04</div>
-      <h2 class="step-title">Where this currently breaks</h2>
-      <p class="step-instr">This is not criticism. This is diagnosis. Every weak statement has a specific problem. Identifying it is the only way to fix it.</p>
+    <!-- STEP 4 — READING -->
+    <section class="step-card" id="step-4" aria-label="Step 4: Reading">
+      <div class="step-tag">Step 04 · 10 of 10</div>
+      <div class="q-progress-label"><span>Question 4 of 10</span><span id="q4-pct">30%</span></div>
+      <div class="q-progress-track"><div class="q-progress-fill" id="q4-fill" style="width:30%"></div></div>
 
-      <div class="ab">
-        <div class="ab-lbl">Statement under review</div>
-        <div class="ab-val em" id="s4-statement">—</div>
-      </div>
+      <h2 class="step-title">In conversation, what do you pick up on more?</h2>
+      <p class="step-instr">The version you notice without trying.</p>
 
-      <div id="s4-friction-area" style="margin-top:20px"></div>
-
-      <div class="sep"></div>
-
-      <div class="ab" id="s4-clean-area" style="display:none">
-        <div class="ab-lbl">No critical issues found</div>
-        <div class="ab-row">
-          <div class="ab-val">The statement is specific enough to move forward. You can still refine in the next step.</div>
-        </div>
-      </div>
-
-      <div class="btn-row">
-        <button class="btn-p" id="s4-go">Continue to Lock Statement →</button>
-        <button class="btn-g" id="s4-back">Back</button>
+      <div class="choice-grid">
+        <button class="choice-btn" data-q="4" data-val="surface" data-dim="subtext">
+          <span class="choice-letter">A</span>
+          <span class="choice-text">What someone is saying</span>
+        </button>
+        <button class="choice-btn" data-q="4" data-val="subtext" data-dim="subtext">
+          <span class="choice-letter">B</span>
+          <span class="choice-text">What they actually mean</span>
+        </button>
       </div>
     </section>
 
-    <!-- STEP 5 — LOCK -->
-    <section class="step-card" id="step-5" aria-label="Step 5: Lock Statement">
-      <div class="step-tag">Step 05</div>
-      <h2 class="step-title">Lock the statement</h2>
-      <p class="step-instr">This is the version that does not change. Edit it until every word is accurate and none could be removed without losing meaning.</p>
+    <!-- STEP 5 — STANDARDS -->
+    <section class="step-card" id="step-5" aria-label="Step 5: Standards">
+      <div class="step-tag">Step 05 · 10 of 10</div>
+      <div class="q-progress-label"><span>Question 5 of 10</span><span id="q5-pct">40%</span></div>
+      <div class="q-progress-track"><div class="q-progress-fill" id="q5-fill" style="width:40%"></div></div>
 
-      <div class="artifact-block" id="s5-assembled">
-        <div class="artifact-lbl">Assembled statement</div>
-        <div class="artifact-primary" id="s5-assembled-text">—</div>
-        <div class="artifact-row">
-          <div class="artifact-key">Audience</div>
-          <div class="artifact-val" id="s5-audience">—</div>
-        </div>
-        <div class="artifact-row">
-          <div class="artifact-key">Result</div>
-          <div class="artifact-val" id="s5-result">—</div>
-        </div>
-        <div class="artifact-row" id="s5-before-after-wrap" style="display:none">
-          <div class="artifact-key">Before / After</div>
-          <div class="artifact-val" id="s5-before-after">—</div>
-        </div>
-      </div>
+      <h2 class="step-title">When something is well done, what stands out?</h2>
+      <p class="step-instr">Your instinct, not your judgment.</p>
 
-      <div class="sep"></div>
-
-      <div class="fw" style="margin-top:0">
-        <label class="fl" for="f-locked">Your locked statement</label>
-        <span class="fl-sub">Edit the assembled version above until it is exactly right. Then copy it here.</span>
-        <textarea class="fta" id="f-locked" placeholder="The final, locked version of your core statement..." style="min-height:80px"></textarea>
-      </div>
-
-      <div class="fw">
-        <label class="fl" for="f-spoken">Spoken version</label>
-        <span class="fl-sub">How you would say it out loud in under 10 seconds when someone asks what you do.</span>
-        <input type="text" class="fi" id="f-spoken"
-          placeholder="When someone asks what you do..." maxlength="200" autocomplete="off">
-      </div>
-
-      <div class="btn-row">
-        <button class="btn-c" id="copy-statement">Copy Statement</button>
-      </div>
-
-      <div class="btn-row">
-        <button class="btn-p" id="s5-go">Continue to Direction →</button>
-        <button class="btn-g" id="s5-back">Back</button>
+      <div class="choice-grid">
+        <button class="choice-btn" data-q="5" data-val="standards-right" data-dim="standards">
+          <span class="choice-letter">A</span>
+          <span class="choice-text">What they did right</span>
+        </button>
+        <button class="choice-btn" data-q="5" data-val="standards-missed" data-dim="standards">
+          <span class="choice-letter">B</span>
+          <span class="choice-text">What they still missed</span>
+        </button>
       </div>
     </section>
 
-    <!-- STEP 6 — DIRECTION -->
-    <section class="step-card" id="step-6" aria-label="Step 6: Clarify Direction">
-      <div class="step-tag">Step 06</div>
-      <h2 class="step-title">What this is pointing toward</h2>
-      <p class="step-instr">Your statement is a signal. It tells you what kind of work this is, who it is actually for, and what it rules out. Name it clearly.</p>
+    <!-- STEP 6 — RECOVERY -->
+    <section class="step-card" id="step-6" aria-label="Step 6: Recovery">
+      <div class="step-tag">Step 06 · 10 of 10</div>
+      <div class="q-progress-label"><span>Question 6 of 10</span><span id="q6-pct">50%</span></div>
+      <div class="q-progress-track"><div class="q-progress-fill" id="q6-fill" style="width:50%"></div></div>
 
-      <div class="fw">
-        <label class="fl" for="f-category">Category of work</label>
-        <span class="fl-sub">What type of work is this closest to? Advisory, consulting, coaching, done-for-you, training, creative, operational...</span>
-        <input type="text" class="fi" id="f-category"
-          placeholder="e.g. Strategic advisory, operational consulting, done-for-you..." maxlength="160" autocomplete="off">
-      </div>
+      <h2 class="step-title">When people have a bad experience:</h2>
+      <p class="step-instr">Which thought comes first?</p>
 
-      <div class="fw">
-        <label class="fl" for="f-buyer">Buyer direction</label>
-        <span class="fl-sub">What type of buyer does this most naturally lead to? Individual, small team, company, founder...</span>
-        <input type="text" class="fi" id="f-buyer"
-          placeholder="e.g. Independent operators with existing revenue, founders..." maxlength="160" autocomplete="off">
-      </div>
-
-      <div class="fw">
-        <label class="fl" for="f-not">What this is not</label>
-        <span class="fl-sub">Naming the boundaries keeps the direction clean.</span>
-        <textarea class="fta" id="f-not" placeholder="This is not ___&#10;This does not include ___&#10;This is not for people who ___" style="min-height:80px"></textarea>
-      </div>
-
-      <div class="fw">
-        <label class="fl" for="f-still-weak">What is still weak or vague</label>
-        <span class="fl-sub">Optional. If something still feels off, name it here so Position can address it.</span>
-        <textarea class="fta" id="f-still-weak" placeholder="The part I am still uncertain about is ___" style="min-height:70px"></textarea>
-      </div>
-
-      <div id="s6-direction-output" style="display:none">
-        <div class="direction-grid">
-          <div class="direction-cell full" id="dc-statement"></div>
-          <div class="direction-cell" id="dc-category"></div>
-          <div class="direction-cell" id="dc-buyer"></div>
-          <div class="direction-cell full" id="dc-not"></div>
-          <div class="direction-cell full" id="dc-weak" style="display:none"></div>
-        </div>
-      </div>
-
-      <div class="btn-row">
-        <button class="btn-p" id="s6-go">Continue to Move Forward →</button>
-        <button class="btn-g" id="s6-back">Back</button>
+      <div class="choice-grid">
+        <button class="choice-btn" data-q="6" data-val="prevention" data-dim="recovery">
+          <span class="choice-letter">A</span>
+          <span class="choice-text">It could have been prevented</span>
+        </button>
+        <button class="choice-btn" data-q="6" data-val="recovery" data-dim="recovery">
+          <span class="choice-letter">B</span>
+          <span class="choice-text">It could have been handled better</span>
+        </button>
       </div>
     </section>
 
-    <!-- STEP 7 — MOVE -->
-    <section class="step-card" id="step-7" aria-label="Step 7: Move Forward">
-      <div class="step-tag">Step 07</div>
+    <!-- STEP 7 — TIMING -->
+    <section class="step-card" id="step-7" aria-label="Step 7: Timing">
+      <div class="step-tag">Step 07 · 10 of 10</div>
+      <div class="q-progress-label"><span>Question 7 of 10</span><span id="q7-pct">60%</span></div>
+      <div class="q-progress-track"><div class="q-progress-fill" id="q7-fill" style="width:60%"></div></div>
+
+      <h2 class="step-title">Which feels more like you?</h2>
+      <p class="step-instr">Not what you prefer. What you actually do.</p>
+
+      <div class="choice-grid">
+        <button class="choice-btn" data-q="7" data-val="predictive" data-dim="reactive">
+          <span class="choice-letter">A</span>
+          <span class="choice-text">You see issues before they happen</span>
+        </button>
+        <button class="choice-btn" data-q="7" data-val="reactive" data-dim="reactive">
+          <span class="choice-letter">B</span>
+          <span class="choice-text">You fix things while they're happening</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- STEP 8 — IMPACT -->
+    <section class="step-card" id="step-8" aria-label="Step 8: Impact">
+      <div class="step-tag">Step 08 · 10 of 10</div>
+      <div class="q-progress-label"><span>Question 8 of 10</span><span id="q8-pct">70%</span></div>
+      <div class="q-progress-track"><div class="q-progress-fill" id="q8-fill" style="width:70%"></div></div>
+
+      <h2 class="step-title">When you help someone:</h2>
+      <p class="step-instr">What tends to shift?</p>
+
+      <div class="choice-grid">
+        <button class="choice-btn" data-q="8" data-val="perception" data-dim="execution">
+          <span class="choice-letter">A</span>
+          <span class="choice-text">You change how they see things</span>
+        </button>
+        <button class="choice-btn" data-q="8" data-val="execution" data-dim="execution">
+          <span class="choice-letter">B</span>
+          <span class="choice-text">You improve what they're doing</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- STEP 9 — FRICTION -->
+    <section class="step-card" id="step-9" aria-label="Step 9: Friction">
+      <div class="step-tag">Step 09 · 10 of 10</div>
+      <div class="q-progress-label"><span>Question 9 of 10</span><span id="q9-pct">80%</span></div>
+      <div class="q-progress-track"><div class="q-progress-fill" id="q9-fill" style="width:80%"></div></div>
+
+      <h2 class="step-title">What bothers you more?</h2>
+      <p class="step-instr">The thing you notice without choosing to.</p>
+
+      <div class="choice-grid">
+        <button class="choice-btn" data-q="9" data-val="function" data-dim="feeling">
+          <span class="choice-letter">A</span>
+          <span class="choice-text">Looks good but doesn't work</span>
+        </button>
+        <button class="choice-btn" data-q="9" data-val="feeling" data-dim="feeling">
+          <span class="choice-letter">B</span>
+          <span class="choice-text">Works but feels off</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- STEP 10 — APPROACH -->
+    <section class="step-card" id="step-10" aria-label="Step 10: Approach">
+      <div class="step-tag">Step 10 · 10 of 10</div>
+      <div class="q-progress-label"><span>Question 10 of 10</span><span id="q10-pct">90%</span></div>
+      <div class="q-progress-track"><div class="q-progress-fill" id="q10-fill" style="width:90%"></div></div>
+
+      <h2 class="step-title">Which is more natural?</h2>
+      <p class="step-instr">The move you make without thinking about it.</p>
+
+      <div class="choice-grid">
+        <button class="choice-btn" data-q="10" data-val="refinement" data-dim="reinvention">
+          <span class="choice-letter">A</span>
+          <span class="choice-text">Refine what exists</span>
+        </button>
+        <button class="choice-btn" data-q="10" data-val="reinvention" data-dim="reinvention">
+          <span class="choice-letter">B</span>
+          <span class="choice-text">Reimagine completely</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- STEP 11 — PROFILE -->
+    <section class="step-card" id="step-11" aria-label="Step 11: CEI Profile">
+      <div class="step-tag">Step 11</div>
       <h2 class="step-title">Phase 01 complete</h2>
-      <p class="step-instr">You now have a defined statement, a clear audience, a real result, and a direction. The next job is placing that direction in the real world.</p>
+      <p class="step-instr">This is what the system observed. Your instincts, not your self-perception.</p>
 
       <div class="completion-block">
         <div class="completion-icon">✓</div>
-        <div class="completion-headline" id="s7-statement-display">—</div>
-        <p class="completion-sub">This statement is now locked. Position takes it into the market.</p>
+        <div class="completion-headline">Your CEI Profile</div>
+        <p class="completion-sub" id="s11-profile-summary">—</p>
       </div>
 
       <div class="artifact-block" style="margin-top:24px">
-        <div class="artifact-lbl">Phase 01 Artifact</div>
+        <div class="artifact-lbl">Phase 01 Artifact — CEI Signal Map</div>
+        <div class="artifact-primary" id="s11-profile-full">—</div>
         <div class="artifact-row">
-          <div class="artifact-key">Core Statement</div>
-          <div class="artifact-val strong" id="s7-locked">—</div>
-        </div>
-        <div class="artifact-row">
-          <div class="artifact-key">Spoken Version</div>
-          <div class="artifact-val" id="s7-spoken">—</div>
+          <div class="artifact-key">You notice</div>
+          <div class="artifact-val" id="s11-notice">—</div>
         </div>
         <div class="artifact-row">
-          <div class="artifact-key">Audience</div>
-          <div class="artifact-val" id="s7-audience">—</div>
+          <div class="artifact-key">You correct</div>
+          <div class="artifact-val" id="s11-correct">—</div>
         </div>
         <div class="artifact-row">
-          <div class="artifact-key">Result</div>
-          <div class="artifact-val" id="s7-result">—</div>
+          <div class="artifact-key">You are sensitive to</div>
+          <div class="artifact-val" id="s11-sensitive">—</div>
         </div>
         <div class="artifact-row">
-          <div class="artifact-key">Work Category</div>
-          <div class="artifact-val" id="s7-category">—</div>
+          <div class="artifact-key">Your timing</div>
+          <div class="artifact-val" id="s11-timing">—</div>
         </div>
         <div class="artifact-row">
-          <div class="artifact-key">Buyer Direction</div>
-          <div class="artifact-val" id="s7-buyer">—</div>
+          <div class="artifact-key">Your approach</div>
+          <div class="artifact-val" id="s11-approach">—</div>
         </div>
-        <div class="artifact-row" id="s7-weak-row" style="display:none">
-          <div class="artifact-key">Still Needs Work</div>
-          <div class="artifact-val" id="s7-weak">—</div>
-        </div>
+        <div class="dim-tag-row" id="s11-dim-tags"></div>
       </div>
 
       <div class="btn-row" style="margin-top:20px">
@@ -966,7 +995,7 @@ textarea, input, select { font-family: 'Lato', sans-serif; }
 
       <div class="phase-gate">
         <div class="phase-gate-lbl">Next Phase</div>
-        <p>Now that this is defined, it needs to be positioned in the real world. Position takes your statement and finds where it solves a problem people already pay to fix.</p>
+        <p>Your signal map is the foundation. Position takes it into the market — matching your instinct signature to the specific problems people already pay to fix.</p>
         <a href="/position" class="btn-p">Enter Phase 02 — Position →</a>
       </div>
 
@@ -979,14 +1008,13 @@ textarea, input, select { font-family: 'Lato', sans-serif; }
 
   <!-- RIGHT OUTPUT PANEL -->
   <aside id="out-panel" aria-label="Live output">
-    <div class="out-panel-lbl">Live Notes</div>
-    <div class="out-sec"><div class="out-key">Core Statement</div><div class="out-val statement empty" id="o-statement">—</div></div>
-    <div class="out-sec"><div class="out-key">Audience</div><div class="out-val empty" id="o-audience">—</div></div>
-    <div class="out-sec"><div class="out-key">Result</div><div class="out-val empty" id="o-result">—</div></div>
-    <div class="out-sec"><div class="out-key">Work Category</div><div class="out-val empty" id="o-category">—</div></div>
-    <div class="out-sec"><div class="out-key">Buyer Direction</div><div class="out-val empty" id="o-buyer">—</div></div>
-    <div class="out-sec"><div class="out-key">Friction Summary</div><div class="out-val empty" id="o-friction">—</div></div>
-    <div class="out-sec"><div class="out-key">Phase Status</div><div class="out-val empty" id="o-status">In progress</div></div>
+    <div class="out-panel-lbl">Live Observations</div>
+    <div class="out-sec"><div class="out-key">You notice</div><div class="out-val statement empty" id="o-notice">—</div></div>
+    <div class="out-sec"><div class="out-key">You tend to correct</div><div class="out-val empty" id="o-correct">—</div></div>
+    <div class="out-sec"><div class="out-key">You are sensitive to</div><div class="out-val empty" id="o-sensitive">—</div></div>
+    <div class="out-sec"><div class="out-key">Your timing</div><div class="out-val empty" id="o-timing">—</div></div>
+    <div class="out-sec"><div class="out-key">Your approach</div><div class="out-val empty" id="o-approach">—</div></div>
+    <div class="out-sec"><div class="out-key">Phase Status</div><div class="out-val empty" id="o-status">Not started</div></div>
   </aside>
 
 </div><!-- /app-shell -->
@@ -1016,37 +1044,241 @@ if (!mob) {
 }
 
 /* ============================================================
-   STATE + PERSISTENCE
+   STATE
    ============================================================ */
 
-var KEY = 'sth_cap_v1';
+var KEY = 'sth_cap_v2';
+
 var DEF = {
-  step:1, done:[],
-  do_:'',versions:'',
-  who:'',whoNot:'',whyWho:'',
-  result:'',before_:'',after_:'',
-  locked:'',spoken:'',
-  category:'',buyer:'',notWhat:'',stillWeak:''
+  step: 1,
+  done: [],
+  answers: {
+    /* q: selected value */
+  }
 };
 
 var S = (function(){
   try {
     var r = localStorage.getItem(KEY);
     if (!r) return JSON.parse(JSON.stringify(DEF));
-    return Object.assign({},DEF,JSON.parse(r));
+    return Object.assign({}, DEF, JSON.parse(r));
   } catch(e){ return JSON.parse(JSON.stringify(DEF)); }
 })();
 
-function save(){ try{ localStorage.setItem(KEY,JSON.stringify(S)); }catch(e){} }
+if (!S.answers) S.answers = {};
+
+function save(){ try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} }
 
 function hardReset(){
   if(!confirm('Reset all Phase 01 progress? This cannot be undone.')) return;
   localStorage.removeItem(KEY);
-  S=JSON.parse(JSON.stringify(DEF));
-  restoreAll();
-  showStep(1,false);
+  S = JSON.parse(JSON.stringify(DEF));
+  renderRail(); renderDoneStack();
+  showStep(1, false);
   updatePanel();
   toast('Phase 01 reset.');
+}
+
+/* ============================================================
+   DIMENSION MAPPINGS
+   ============================================================ */
+
+/* For each question, what does each answer mean in plain language */
+var Q_DIMS = {
+  1: { detection:   'what's wrong before it's visible',
+       elevation:   'what could be better' },
+  2: { analysis:    'by breaking it apart',
+       adaptation:  'by adjusting in real time' },
+  3: { detail:      'isolated details others skip',
+       pattern:     'patterns others don't connect' },
+  4: { surface:     'the stated message',
+       subtext:     'what's underneath the words' },
+  5: { 'standards-right':   'what was done well',
+       'standards-missed':  'what was still left undone' },
+  6: { prevention:  'upstream — before it happens',
+       recovery:    'in the moment — during recovery' },
+  7: { predictive:  'before problems surface',
+       reactive:    'while problems are live' },
+  8: { perception:  'how people see their situation',
+       execution:   'how they operate within it' },
+  9: { function:    'function failure underneath good form',
+       feeling:     'experience failure underneath working function' },
+  10:{ refinement:  'by refining what's there',
+      reinvention:  'by reconceiving it entirely' }
+};
+
+/* Output panel language — updates progressively */
+function getNoticeText(){
+  var a1 = S.answers[1]; var a3 = S.answers[3]; var a4 = S.answers[4];
+  var parts = [];
+  if (a1 === 'detection') parts.push('what feels wrong before it has a name');
+  else if (a1 === 'elevation') parts.push('what could be elevated');
+  if (a3 === 'detail') parts.push('details others walk past');
+  else if (a3 === 'pattern') parts.push('patterns others don\'t connect');
+  if (a4 === 'subtext') parts.push('what people mean underneath what they say');
+  if (!parts.length) return null;
+  return parts.join(', ');
+}
+
+function getCorrectText(){
+  var a2 = S.answers[2]; var a6 = S.answers[6]; var a7 = S.answers[7];
+  var parts = [];
+  if (a2 === 'analysis') parts.push('by diagnosing root cause');
+  else if (a2 === 'adaptation') parts.push('through immediate adjustment');
+  if (a6 === 'prevention') parts.push('upstream — before failure happens');
+  else if (a6 === 'recovery') parts.push('in recovery, while the experience is still active');
+  if (a7 === 'predictive') parts.push('predictively');
+  else if (a7 === 'reactive') parts.push('reactively, in real time');
+  if (!parts.length) return null;
+  return parts.join(', ');
+}
+
+function getSensitiveText(){
+  var a5 = S.answers[5]; var a9 = S.answers[9];
+  var parts = [];
+  if (a5 === 'standards-missed') parts.push('gaps in otherwise good execution');
+  else if (a5 === 'standards-right') parts.push('what makes something work well');
+  if (a9 === 'feeling') parts.push('experiential dissonance — when it works but doesn\'t feel right');
+  else if (a9 === 'function') parts.push('functional breakdown underneath good form');
+  if (!parts.length) return null;
+  return parts.join(', ');
+}
+
+function getTimingText(){
+  var a7 = S.answers[7];
+  if (!a7) return null;
+  return a7 === 'predictive' ? 'Before — you see it coming' : 'During — you respond as it happens';
+}
+
+function getApproachText(){
+  var a8 = S.answers[8]; var a10 = S.answers[10];
+  var parts = [];
+  if (a8 === 'perception') parts.push('shifting how people see');
+  else if (a8 === 'execution') parts.push('improving how people operate');
+  if (a10 === 'refinement') parts.push('refining what exists');
+  else if (a10 === 'reinvention') parts.push('reconceiving from the ground up');
+  if (!parts.length) return null;
+  return parts.join(', ');
+}
+
+/* ============================================================
+   PROFILE GENERATION
+   ============================================================ */
+
+function buildProfile(){
+  var a = S.answers;
+  var lines = [];
+
+  /* Detection line */
+  if (a[1] === 'detection') {
+    lines.push('You notice what others miss before it becomes visible.');
+  } else if (a[1] === 'elevation') {
+    lines.push('You see the gap between what exists and what it could be.');
+  }
+
+  /* Response + timing */
+  if (a[2] === 'analysis' && a[7] === 'predictive') {
+    lines.push('You diagnose problems upstream — before they surface as complaints.');
+  } else if (a[2] === 'adaptation' && a[7] === 'reactive') {
+    lines.push('You correct experiences in real time, adjusting without disrupting.');
+  } else if (a[2] === 'analysis' && a[7] === 'reactive') {
+    lines.push('You understand what caused the failure while it\'s still happening.');
+  } else if (a[2] === 'adaptation' && a[7] === 'predictive') {
+    lines.push('You adjust early, before the problem requires intervention.');
+  }
+
+  /* Pattern vs detail */
+  if (a[3] === 'detail') {
+    lines.push('Your attention is granular — you catch what others decide isn\'t worth noticing.');
+  } else if (a[3] === 'pattern') {
+    lines.push('You connect signals across a system — the issue is never just the thing itself.');
+  }
+
+  /* Subtext */
+  if (a[4] === 'subtext') {
+    lines.push('In conversation, you hear what isn\'t being said.');
+  }
+
+  /* Standards */
+  if (a[5] === 'standards-missed') {
+    lines.push('Your standards are high enough that even good work reveals its gaps to you.');
+  } else if (a[5] === 'standards-right') {
+    lines.push('You recognize genuine quality — and hold it as the reference point.');
+  }
+
+  /* Function vs feeling */
+  if (a[9] === 'feeling') {
+    lines.push('You hold sensitivity to both function and feeling — something can work and still fail.');
+  } else if (a[9] === 'function') {
+    lines.push('You notice when the surface is polished and the structure underneath isn\'t solid.');
+  }
+
+  /* Approach */
+  if (a[8] === 'perception' && a[10] === 'reinvention') {
+    lines.push('You work at the level of how things are understood — and are willing to rebuild when needed.');
+  } else if (a[8] === 'execution' && a[10] === 'refinement') {
+    lines.push('You improve operations from the inside — precise, not disruptive.');
+  } else if (a[8] === 'perception' && a[10] === 'refinement') {
+    lines.push('You shift perspective while preserving what already works.');
+  } else if (a[8] === 'execution' && a[10] === 'reinvention') {
+    lines.push('You operate at the level of execution — and don\'t hesitate to reimagine the whole.');
+  }
+
+  return lines.filter(Boolean).join(' ');
+}
+
+function buildShortSummary(){
+  var a = S.answers;
+  var notice = a[1] === 'detection' ? 'what others miss before it\'s visible' : 'what could be elevated';
+  var correct = a[2] === 'analysis' ? 'through diagnosis' : 'through immediate adjustment';
+  var timing  = a[7] === 'predictive' ? 'before problems surface' : 'while they\'re happening';
+  var feel    = a[9] === 'feeling' ? 'both function and feeling' : 'function beneath the surface';
+  return 'You notice ' + notice + ', correct ' + timing + ' ' + correct + ', and hold sensitivity to ' + feel + '.';
+}
+
+function buildDimTags(){
+  var a = S.answers;
+  var tags = [];
+  if (a[1] === 'detection') tags.push('Detection');
+  if (a[1] === 'elevation') tags.push('Elevation');
+  if (a[2] === 'analysis')  tags.push('Analysis');
+  if (a[2] === 'adaptation') tags.push('Adaptation');
+  if (a[3] === 'detail')    tags.push('Detail');
+  if (a[3] === 'pattern')   tags.push('Pattern');
+  if (a[4] === 'subtext')   tags.push('Subtext');
+  if (a[5] === 'standards-missed') tags.push('High Standards');
+  if (a[6] === 'prevention') tags.push('Prevention');
+  if (a[6] === 'recovery')   tags.push('Recovery');
+  if (a[7] === 'predictive') tags.push('Predictive');
+  if (a[7] === 'reactive')   tags.push('Reactive');
+  if (a[8] === 'perception') tags.push('Perception');
+  if (a[8] === 'execution')  tags.push('Execution');
+  if (a[9] === 'feeling')    tags.push('Feeling');
+  if (a[9] === 'function')   tags.push('Function');
+  if (a[10] === 'refinement')  tags.push('Refinement');
+  if (a[10] === 'reinvention') tags.push('Reinvention');
+  return tags;
+}
+
+function syncProfile(){
+  var profile = buildProfile();
+  var summary = buildShortSummary();
+  var tags = buildDimTags();
+
+  setText('s11-profile-summary', summary || '—');
+  setText('s11-profile-full', profile || '—');
+  setText('s11-notice', getNoticeText() || '—');
+  setText('s11-correct', getCorrectText() || '—');
+  setText('s11-sensitive', getSensitiveText() || '—');
+  setText('s11-timing', getTimingText() || '—');
+  setText('s11-approach', getApproachText() || '—');
+
+  var tagRow = document.getElementById('s11-dim-tags');
+  if (tagRow) {
+    tagRow.innerHTML = tags.map(function(t){
+      return '<span class="dim-tag">' + esc(t) + '</span>';
+    }).join('');
+  }
 }
 
 /* ============================================================
@@ -1056,60 +1288,75 @@ function hardReset(){
 var overlay = document.getElementById('entry-overlay');
 
 function dismissOverlay(){
-  overlay.style.transition='opacity 0.5s ease';
-  overlay.style.opacity='0';
-  overlay.style.pointerEvents='none';
-  setTimeout(function(){ overlay.style.display='none'; },500);
+  overlay.style.transition = 'opacity 0.5s ease';
+  overlay.style.opacity = '0';
+  overlay.style.pointerEvents = 'none';
+  setTimeout(function(){ overlay.style.display = 'none'; }, 500);
   document.getElementById('app-shell').classList.add('visible');
 }
 
-document.getElementById('entry-start').addEventListener('click',dismissOverlay);
-document.getElementById('entry-skip').addEventListener('click',dismissOverlay);
+document.getElementById('entry-start').addEventListener('click', dismissOverlay);
+document.getElementById('entry-skip').addEventListener('click', dismissOverlay);
 
 /* ============================================================
    NAVIGATION
    ============================================================ */
 
-var LABELS=['Extract','Audience','Result','Pressure Test','Lock','Direction','Move Forward'];
+var LABELS = ['Entry','Response','Detail','Reading','Standards','Recovery','Timing','Impact','Friction','Approach','Profile'];
 
-function showStep(n,animate){
-  S.step=n; save();
+function showStep(n, animate){
+  S.step = n; save();
   document.querySelectorAll('.step-card').forEach(function(c){ c.classList.remove('active'); });
-  var card=document.getElementById('step-'+n);
-  if(card){ card.classList.add('active'); if(animate!==false) setTimeout(function(){ card.scrollIntoView({behavior:'smooth',block:'start'}); },60); }
+  var card = document.getElementById('step-' + n);
+  if (card) {
+    card.classList.add('active');
+    if (animate !== false) setTimeout(function(){ card.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 60);
+  }
   renderRail(); renderDoneStack();
 }
 
 function completeStep(n){
-  if(S.done.indexOf(n)<0) S.done.push(n);
-  save(); showStep(n+1,true); updatePanel();
+  if (S.done.indexOf(n) < 0) S.done.push(n);
+  save();
+  if (n < 10) {
+    showStep(n + 1, true);
+  } else {
+    /* All 10 questions done — go to profile */
+    syncProfile();
+    showStep(11, true);
+  }
+  updatePanel();
 }
 
 function renderRail(){
   document.querySelectorAll('.step-nav-item').forEach(function(el){
-    var n=parseInt(el.dataset.step);
-    el.classList.toggle('active',n===S.step);
-    el.classList.toggle('done',S.done.indexOf(n)>-1);
+    var n = parseInt(el.dataset.step);
+    el.classList.toggle('active', n === S.step);
+    el.classList.toggle('done', S.done.indexOf(n) > -1);
   });
 }
 
 var STEP_SUMS = [
-  function(){ return S.do_?S.do_.substring(0,55):''; },
-  function(){ return S.who?S.who.substring(0,55):''; },
-  function(){ return S.result?S.result.substring(0,55):''; },
-  function(){ return 'Pressure test complete'; },
-  function(){ return S.locked?S.locked.substring(0,55):'Statement locked'; },
-  function(){ return S.category?S.category.substring(0,55):'Direction mapped'; },
-  function(){ return 'Phase 01 complete'; }
+  function(){ var a = S.answers[1]; return a ? (a === 'detection' ? 'Notices what's off' : 'Notices what could be elevated') : ''; },
+  function(){ var a = S.answers[2]; return a ? (a === 'analysis' ? 'Breaks it down' : 'Adjusts immediately') : ''; },
+  function(){ var a = S.answers[3]; return a ? (a === 'detail' ? 'Detail-oriented' : 'Pattern-oriented') : ''; },
+  function(){ var a = S.answers[4]; return a ? (a === 'surface' ? 'Reads the stated' : 'Reads the subtext') : ''; },
+  function(){ var a = S.answers[5]; return a ? (a === 'standards-right' ? 'Notices what works' : 'Notices the gap') : ''; },
+  function(){ var a = S.answers[6]; return a ? (a === 'prevention' ? 'Prevention focus' : 'Recovery focus') : ''; },
+  function(){ var a = S.answers[7]; return a ? (a === 'predictive' ? 'Predictive' : 'Reactive') : ''; },
+  function(){ var a = S.answers[8]; return a ? (a === 'perception' ? 'Shifts perception' : 'Improves execution') : ''; },
+  function(){ var a = S.answers[9]; return a ? (a === 'function' ? 'Function sensitive' : 'Feeling sensitive') : ''; },
+  function(){ var a = S.answers[10]; return a ? (a === 'refinement' ? 'Refines' : 'Reimagines') : ''; },
+  function(){ return 'CEI Profile complete'; }
 ];
 
 function renderDoneStack(){
-  var stack=document.getElementById('done-stack');
-  var sorted=S.done.slice().sort(function(a,b){ return a-b; });
-  if(!sorted.length){ stack.innerHTML=''; return; }
-  stack.innerHTML=sorted.map(function(n){
-    var lbl=LABELS[n-1]||'Step '+n;
-    var s=STEP_SUMS[n-1]?STEP_SUMS[n-1]():'';
+  var stack = document.getElementById('done-stack');
+  var sorted = S.done.slice().sort(function(a,b){ return a-b; });
+  if (!sorted.length){ stack.innerHTML = ''; return; }
+  stack.innerHTML = sorted.map(function(n){
+    var lbl = LABELS[n-1] || 'Step ' + n;
+    var s = STEP_SUMS[n-1] ? STEP_SUMS[n-1]() : '';
     return '<div class="done-card" onclick="gotoStep('+n+')">'
       +'<div class="done-card-l"><div class="done-check">✓</div>'
       +'<div><div class="done-lbl">'+esc(lbl)+'</div><div class="done-summ">'+esc(s)+'</div></div></div>'
@@ -1117,319 +1364,95 @@ function renderDoneStack(){
   }).join('');
 }
 
-window.gotoStep=function(n){ showStep(n,true); };
+window.gotoStep = function(n){ showStep(n, true); };
 
 document.querySelectorAll('.step-nav-item').forEach(function(el){
-  el.addEventListener('click',function(){ showStep(parseInt(el.dataset.step),true); });
-  el.addEventListener('keydown',function(e){ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); showStep(parseInt(el.dataset.step),true); } });
+  el.addEventListener('click', function(){ showStep(parseInt(el.dataset.step), true); });
+  el.addEventListener('keydown', function(e){
+    if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); showStep(parseInt(el.dataset.step), true); }
+  });
 });
 
 /* ============================================================
-   FIELD BINDING
+   CHOICE INTERACTION
    ============================================================ */
 
-function bind(id,key,cb){
-  var el=document.getElementById(id); if(!el) return;
-  el.value=S[key]||'';
-  el.addEventListener('input',function(){ S[key]=el.value; save(); if(cb) cb(); updatePanel(); });
-}
+function attachChoiceHandlers(){
+  document.querySelectorAll('.choice-btn').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var q = parseInt(btn.dataset.q);
+      var val = btn.dataset.val;
 
-function setText(id,v){ var el=document.getElementById(id); if(el) el.textContent=v||''; }
-function show(id){ var el=document.getElementById(id); if(el) el.style.display=''; }
-function hide(id){ var el=document.getElementById(id); if(el) el.style.display='none'; }
-function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+      /* Mark selected in UI */
+      var siblings = document.querySelectorAll('.choice-btn[data-q="'+q+'"]');
+      siblings.forEach(function(s){ s.classList.remove('selected'); });
+      btn.classList.add('selected');
 
-/* ============================================================
-   RESTORE
-   ============================================================ */
+      /* Store answer */
+      S.answers[q] = val;
+      save();
 
-function restoreAll(){
-  bind('f-do','do_',function(){ updateS1Preview(); buildAssembled(); runPressureTest(); });
-  bind('f-versions','versions',function(){ updateS1Preview(); });
-  bind('f-who','who',function(){ buildAssembled(); runPressureTest(); updatePanel(); });
-  bind('f-who-not','whoNot');
-  bind('f-who-why','whyWho');
-  bind('f-result','result',function(){ buildAssembled(); runPressureTest(); updatePanel(); });
-  bind('f-result-before','before_');
-  bind('f-result-after','after_');
-  bind('f-locked','locked',function(){ updatePanel(); syncStep7(); });
-  bind('f-spoken','spoken',function(){ updatePanel(); syncStep7(); });
-  bind('f-category','category',function(){ buildDirection(); syncStep7(); updatePanel(); });
-  bind('f-buyer','buyer',function(){ buildDirection(); syncStep7(); updatePanel(); });
-  bind('f-not','notWhat',function(){ buildDirection(); syncStep7(); });
-  bind('f-still-weak','stillWeak',function(){ buildDirection(); syncStep7(); updatePanel(); });
+      /* Update panel */
+      updatePanel();
 
-  updateS1Preview();
-  buildAssembled();
-  runPressureTest();
-  buildDirection();
-  syncStep7();
+      /* Auto-progress after brief delay */
+      setTimeout(function(){
+        completeStep(q);
+      }, 360);
+    });
+  });
 }
 
 /* ============================================================
-   STEP 1 — EXTRACT
+   HELPERS
    ============================================================ */
 
-function updateS1Preview(){
-  var val=S.do_||'';
-  var prev=document.getElementById('s1-preview');
-  if(prev) prev.style.display=val?'':'none';
-  setText('s1-preview-text',val||'—');
-
-  var vWrap=document.getElementById('s1-versions-area');
-  if(vWrap) vWrap.style.display=S.versions?'':'none';
-  setText('s1-versions-text',S.versions||'');
+function setText(id, v){
+  var el = document.getElementById(id);
+  if (el) el.textContent = v || '';
 }
 
-document.getElementById('s1-go').addEventListener('click',function(){
-  if(!S.do_.trim()){ toast('Enter what you actually do.'); return; }
-  completeStep(1);
-});
-
-/* ============================================================
-   STEP 2 — AUDIENCE
-   ============================================================ */
-
-document.getElementById('s2-go').addEventListener('click',function(){
-  if(!S.who.trim()){ toast('Define who this is for.'); return; }
-  completeStep(2);
-});
-document.getElementById('s2-back').addEventListener('click',function(){ showStep(1,true); });
-
-/* ============================================================
-   STEP 3 — RESULT
-   ============================================================ */
-
-document.getElementById('s3-go').addEventListener('click',function(){
-  if(!S.result.trim()){ toast('Define what changes for them.'); return; }
-  completeStep(3);
-});
-document.getElementById('s3-back').addEventListener('click',function(){ showStep(2,true); });
-
-/* ============================================================
-   STEP 4 — PRESSURE TEST
-   ============================================================ */
-
-var VAGUE_WORDS=['everyone','everything','businesses','companies','success','growth','people','anyone','improve','enhance','better','help','support','assist','provide'];
-var ACTIVITY_WORDS=['doing','creating','making','building','producing','delivering','offering','providing'];
-var ABSTRACT=['clarity','transformation','change','growth','impact','results','value','potential','journey','process'];
-
-function runPressureTest(){
-  var combined=buildRawStatement();
-  setText('s4-statement',combined||'—');
-
-  var doVal=S.do_||'';
-  var whoVal=S.who||'';
-  var resVal=S.result||'';
-  var combined2=(doVal+' '+whoVal+' '+resVal).toLowerCase();
-
-  var issues=[];
-
-  /* Too broad */
-  if(VAGUE_WORDS.some(function(w){ return combined2.indexOf(' '+w+' ')>-1||combined2.indexOf(w+' ')===0; })){
-    issues.push({ tag:'Too broad', what:'One or more words in this statement could apply to almost any service. This prevents it from attracting the right people.', fix:'Replace the broad word with the specific version. Who specifically? What specifically changes?' });
-  }
-
-  /* Too short = not specific enough */
-  if(doVal.trim().split(/\s+/).length<5){
-    issues.push({ tag:'Under-defined', what:'The statement does not have enough specificity to be usable. It reads like a category, not a direction.', fix:'Extend it. What specifically do you do, for whom, using what approach or through what method?' });
-  }
-
-  /* Abstract result */
-  if(ABSTRACT.some(function(w){ return resVal.toLowerCase().indexOf(w)>-1; })){
-    issues.push({ tag:'Abstract outcome', what:'The result is described in terms that are difficult to visualize or verify. Clarity and transformation are feelings, not outcomes.', fix:'Replace with something observable. What specifically is different? What can they do, build, earn, or stop worrying about?' });
-  }
-
-  /* Audience too broad */
-  if(!whoVal||whoVal.trim().split(/\s+/).length<=3){
-    issues.push({ tag:'Audience not defined', what:'The audience is either missing or so general that no specific person would feel it was written for them.', fix:'Name the type of person more specifically. What do they do? What stage are they at? What are they dealing with?' });
-  }
-
-  /* Activity not result */
-  if(doVal&&ACTIVITY_WORDS.some(function(w){ return doVal.toLowerCase().indexOf(w)>-1; })&&!resVal){
-    issues.push({ tag:'Activity without result', what:'The statement describes what you do, not what changes. Activity is not a value proposition.', fix:'Add the result. What does the person get, achieve, or stop experiencing because of this work?' });
-  }
-
-  /* Multiple audiences */
-  var andCount=(doVal+whoVal).toLowerCase().split(' and ').length-1;
-  if(andCount>=2){
-    issues.push({ tag:'Too many audiences or directions', what:'The statement is trying to include multiple things at once. When this is for multiple people with different problems, it works for none of them.', fix:'Choose one. Which buyer is most likely to pay? Start there. Position can refine further.' });
-  }
-
-  var area=document.getElementById('s4-friction-area');
-  var clean=document.getElementById('s4-clean-area');
-
-  if(issues.length===0){
-    if(area) area.innerHTML='';
-    if(clean) clean.style.display='';
-  } else {
-    if(clean) clean.style.display='none';
-    if(area){
-      area.innerHTML='<div class="friction-block"><div class="friction-lbl">Friction identified</div>'
-        +issues.map(function(i){
-          return '<div class="friction-item">'
-            +'<span class="friction-tag-el">'+esc(i.tag)+'</span>'
-            +'<p class="friction-what">'+esc(i.what)+'</p>'
-            +'<p class="friction-fix">Fix: '+esc(i.fix)+'</p>'
-            +'</div>';
-        }).join('')+'</div>';
-    }
-  }
-
-  /* Update friction panel output */
-  var fricSum=issues.length===0?'No critical issues':issues.map(function(i){ return i.tag; }).join(', ');
-  setOut('o-friction',fricSum,issues.length>0);
+function esc(s){
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
 
-document.getElementById('s4-go').addEventListener('click',function(){
-  completeStep(4); buildAssembled();
-});
-document.getElementById('s4-back').addEventListener('click',function(){ showStep(3,true); });
-
-/* ============================================================
-   STEP 5 — LOCK
-   ============================================================ */
-
-function buildAssembled(){
-  var raw=buildRawStatement();
-  setText('s5-assembled-text',raw||'—');
-
-  var whoClean=S.who?S.who.replace(/^people who\s*/i,''):'';
-  setText('s5-audience',whoClean||'—');
-
-  var resClean=S.result?S.result.replace(/^so they can\s*/i,''):'';
-  setText('s5-result',resClean||'—');
-
-  var baf=document.getElementById('s5-before-after-wrap');
-  if(S.before_&&S.after_){
-    if(baf) baf.style.display='';
-    setText('s5-before-after','Before: '+S.before_+' / After: '+S.after_);
-  } else {
-    if(baf) baf.style.display='none';
-  }
-
-  /* Auto-fill locked if empty */
-  var lockedEl=document.getElementById('f-locked');
-  if(lockedEl&&!lockedEl.value&&raw){
-    lockedEl.value=raw;
-    S.locked=raw; save();
-  }
+function setOut(id, val){
+  var el = document.getElementById(id); if (!el) return;
+  if (val){ el.textContent = val; el.classList.remove('empty'); el.style.color = ''; }
+  else { el.textContent = '—'; el.classList.add('empty'); el.style.color = ''; }
 }
-
-function buildRawStatement(){
-  var doClean=(S.do_||'').replace(/^i help\s+/i,'').replace(/^help\s+/i,'');
-  var whoClean=(S.who||'').replace(/^people who\s+/i,'').replace(/^who\s+/i,'');
-  var resClean=(S.result||'').replace(/^so they can\s+/i,'').replace(/^so\s+/i,'');
-  if(!doClean) return '';
-  var s='I help '+doClean;
-  if(whoClean) s+=' for people who '+whoClean;
-  if(resClean) s+=' so they can '+resClean;
-  s=s.charAt(0).toUpperCase()+s.slice(1);
-  if(s[s.length-1]!=='.') s+='.';
-  return s;
-}
-
-document.getElementById('copy-statement').addEventListener('click',function(){
-  var el=document.getElementById('f-locked');
-  var text=el?el.value:S.locked;
-  copyText(text,document.getElementById('copy-statement'));
-});
-
-document.getElementById('s5-go').addEventListener('click',function(){
-  if(!S.locked.trim()){ toast('Lock your statement before continuing.'); return; }
-  completeStep(5); syncStep7();
-});
-document.getElementById('s5-back').addEventListener('click',function(){ showStep(4,true); });
-
-/* ============================================================
-   STEP 6 — DIRECTION
-   ============================================================ */
-
-function buildDirection(){
-  var area=document.getElementById('s6-direction-output');
-  if(!S.category&&!S.buyer&&!S.notWhat){ if(area) area.style.display='none'; return; }
-  if(area) area.style.display='';
-
-  var stmt=S.locked||buildRawStatement();
-  var dc=document.getElementById('dc-statement');
-  if(dc){ dc.innerHTML='<div class="direction-cell-lbl">Core Statement</div><div class="direction-cell-val"><em style="font-family:Cormorant Garamond,serif;font-style:italic;font-size:15px;color:var(--white)">'+esc(stmt)+'</em></div>'; }
-
-  buildDC('dc-category','Work Category',S.category);
-  buildDC('dc-buyer','Buyer Direction',S.buyer);
-  buildDC('dc-not','What This Is Not',S.notWhat);
-
-  var weakRow=document.getElementById('dc-weak');
-  if(S.stillWeak){ if(weakRow){ weakRow.style.display=''; buildDC('dc-weak','Still Needs Work',S.stillWeak); } }
-  else { if(weakRow) weakRow.style.display='none'; }
-}
-
-function buildDC(id,label,val){
-  var el=document.getElementById(id); if(!el) return;
-  if(!val){ el.style.display='none'; return; }
-  el.style.display='';
-  el.innerHTML='<div class="direction-cell-lbl">'+esc(label)+'</div><div class="direction-cell-val">'+esc(val)+'</div>';
-}
-
-document.getElementById('s6-go').addEventListener('click',function(){
-  if(!S.category.trim()&&!S.buyer.trim()){ toast('Name the work category or buyer direction before continuing.'); return; }
-  buildDirection(); completeStep(6); syncStep7();
-});
-document.getElementById('s6-back').addEventListener('click',function(){ showStep(5,true); });
-
-/* ============================================================
-   STEP 7 — SYNC + COMPLETE
-   ============================================================ */
-
-function syncStep7(){
-  var stmt=S.locked||buildRawStatement();
-  setText('s7-statement-display',stmt||'Your statement will appear here.');
-  setText('s7-locked',S.locked||stmt||'—');
-  setText('s7-spoken',S.spoken||'—');
-  var whoClean=(S.who||'').replace(/^people who\s*/i,'');
-  setText('s7-audience',whoClean||'—');
-  var resClean=(S.result||'').replace(/^so they can\s*/i,'');
-  setText('s7-result',resClean||'—');
-  setText('s7-category',S.category||'—');
-  setText('s7-buyer',S.buyer||'—');
-  var weakRow=document.getElementById('s7-weak-row');
-  if(S.stillWeak){ if(weakRow) weakRow.style.display=''; setText('s7-weak',S.stillWeak); }
-  else { if(weakRow) weakRow.style.display='none'; }
-}
-
-document.getElementById('copy-artifact').addEventListener('click',function(){
-  copyText(buildExport(),document.getElementById('copy-artifact'));
-});
-document.getElementById('export-btn').addEventListener('click',exportText);
-document.getElementById('btn-reset-p').addEventListener('click',hardReset);
 
 /* ============================================================
    OUTPUT PANEL
    ============================================================ */
 
-function setOut(id,val,warn){
-  var el=document.getElementById(id); if(!el) return;
-  if(val&&val!=='—'){ el.textContent=val; el.classList.remove('empty'); }
-  else { el.textContent='—'; el.classList.add('empty'); }
-  el.style.color=warn?'var(--terra)':'';
+function updatePanel(){
+  setOut('o-notice', getNoticeText());
+  setOut('o-correct', getCorrectText());
+  setOut('o-sensitive', getSensitiveText());
+  setOut('o-timing', getTimingText());
+  setOut('o-approach', getApproachText());
+
+  var statEl = document.getElementById('o-status');
+  if (statEl){
+    var done = S.done.length;
+    if (done >= 10){
+      statEl.textContent = 'Complete'; statEl.style.color = 'var(--gold)'; statEl.classList.remove('empty');
+    } else if (done > 0){
+      statEl.textContent = done + ' of 10 answered'; statEl.style.color = ''; statEl.classList.remove('empty');
+    } else {
+      statEl.textContent = 'Not started'; statEl.classList.add('empty'); statEl.style.color = '';
+    }
+  }
 }
 
-function updatePanel(){
-  var stmt=S.locked||buildRawStatement();
-  setOut('o-statement',stmt||null);
-  var whoClean=(S.who||'').replace(/^people who\s*/i,'');
-  setOut('o-audience',whoClean||null);
-  var resClean=(S.result||'').replace(/^so they can\s*/i,'');
-  setOut('o-result',resClean||null);
-  setOut('o-category',S.category||null);
-  setOut('o-buyer',S.buyer||null);
-  var stepsTotal=7;
-  var stepsD=S.done.length;
-  var statEl=document.getElementById('o-status');
-  if(statEl){
-    if(stepsD>=7){ statEl.textContent='Complete'; statEl.style.color='var(--gold)'; statEl.classList.remove('empty'); }
-    else if(stepsD>0){ statEl.textContent='Step '+S.step+' of '+stepsTotal; statEl.style.color=''; statEl.classList.remove('empty'); }
-    else { statEl.textContent='Not started'; statEl.classList.add('empty'); statEl.style.color=''; }
-  }
+/* Restore selected state visually on load */
+function restoreSelections(){
+  Object.keys(S.answers).forEach(function(q){
+    var val = S.answers[q];
+    var btn = document.querySelector('.choice-btn[data-q="'+q+'"][data-val="'+val+'"]');
+    if (btn) btn.classList.add('selected');
+  });
 }
 
 /* ============================================================
@@ -1437,45 +1460,38 @@ function updatePanel(){
    ============================================================ */
 
 function buildExport(){
-  var stmt=S.locked||buildRawStatement();
-  var whoClean=(S.who||'').replace(/^people who\s*/i,'');
-  var resClean=(S.result||'').replace(/^so they can\s*/i,'');
+  var profile = buildProfile();
+  var summary = buildShortSummary();
   return [
-    'STEPHUARY — CAPTURE · PHASE 01','================================','',
-    'CORE STATEMENT',stmt||'(incomplete)','',
-    'SPOKEN VERSION',S.spoken||'(incomplete)','',
-    'AUDIENCE',whoClean||'(incomplete)','',
-    'RESULT',resClean||'(incomplete)','',
-    S.before_?'BEFORE\n'+S.before_:'',
-    S.after_?'AFTER\n'+S.after_:'',
-    'WORK CATEGORY',S.category||'(incomplete)','',
-    'BUYER DIRECTION',S.buyer||'(incomplete)','',
-    S.notWhat?'WHAT THIS IS NOT\n'+S.notWhat:'',
-    S.stillWeak?'STILL NEEDS WORK\n'+S.stillWeak:'',
-    '','NEXT PHASE','Position — /position'
-  ].filter(function(l){ return l!==false&&l!==undefined&&l!==null; }).join('\n');
+    'STEPHUARY — CAPTURE · PHASE 01', '================================', '',
+    'CEI PROFILE SUMMARY', summary || '(incomplete)', '',
+    'FULL PROFILE', profile || '(incomplete)', '',
+    'YOU NOTICE', getNoticeText() || '—', '',
+    'YOU CORRECT', getCorrectText() || '—', '',
+    'YOU ARE SENSITIVE TO', getSensitiveText() || '—', '',
+    'YOUR TIMING', getTimingText() || '—', '',
+    'YOUR APPROACH', getApproachText() || '—', '',
+    'DIMENSION TAGS', buildDimTags().join(', ') || '—', '',
+    'NEXT PHASE', 'Position — /position'
+  ].join('\n');
 }
 
 function exportText(){
-  var blob=new Blob([buildExport()],{type:'text/plain'});
-  var url=URL.createObjectURL(blob);
-  var a=document.createElement('a');
-  a.href=url;a.download='stephuary-phase01-capture.txt';a.click();
+  var blob = new Blob([buildExport()], { type: 'text/plain' });
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url; a.download = 'stephuary-phase01-capture.txt'; a.click();
   URL.revokeObjectURL(url);
   toast('Exported.');
 }
 
-/* ============================================================
-   COPY
-   ============================================================ */
-
-function copyText(text,btn){
+function copyText(text, btn){
   navigator.clipboard.writeText(text||'').then(function(){
-    if(btn){ btn.textContent='Copied'; btn.classList.add('copied'); setTimeout(function(){ btn.textContent='Copy'; btn.classList.remove('copied'); },2200); }
+    if (btn){ btn.textContent = 'Copied'; btn.classList.add('copied'); setTimeout(function(){ btn.textContent = 'Copy All'; btn.classList.remove('copied'); }, 2200); }
     toast('Copied to clipboard.');
   }).catch(function(){
-    var t=document.createElement('textarea'); t.value=text||'';
-    document.body.appendChild(t);t.select();document.execCommand('copy');document.body.removeChild(t);
+    var t = document.createElement('textarea'); t.value = text || '';
+    document.body.appendChild(t); t.select(); document.execCommand('copy'); document.body.removeChild(t);
     toast('Copied.');
   });
 }
@@ -1485,48 +1501,39 @@ function copyText(text,btn){
    ============================================================ */
 
 function toast(msg){
-  var t=document.getElementById('toast');
-  t.textContent=msg; t.classList.add('show');
-  clearTimeout(t._t); t._t=setTimeout(function(){ t.classList.remove('show'); },2800);
+  var t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(t._t); t._t = setTimeout(function(){ t.classList.remove('show'); }, 2800);
 }
 
 /* ============================================================
-   RAIL BUTTONS
+   EVENT BINDINGS
    ============================================================ */
 
-document.getElementById('rail-export').addEventListener('click',exportText);
-document.getElementById('rail-reset').addEventListener('click',hardReset);
-
-/* ============================================================
-   ENTER KEY NAV
-   ============================================================ */
-
-document.addEventListener('keydown',function(e){
-  if(e.key!=='Enter') return;
-  var active=document.activeElement;
-  if(!active||active.tagName==='TEXTAREA') return;
-  if(active.tagName==='INPUT'){
-    var btn=null;
-    switch(S.step){
-      case 1: btn=document.getElementById('s1-go'); break;
-      case 2: btn=document.getElementById('s2-go'); break;
-      case 3: btn=document.getElementById('s3-go'); break;
-    }
-    if(btn) btn.click();
-  }
+document.getElementById('rail-export').addEventListener('click', exportText);
+document.getElementById('rail-reset').addEventListener('click', hardReset);
+document.getElementById('copy-artifact').addEventListener('click', function(){
+  copyText(buildExport(), document.getElementById('copy-artifact'));
 });
+document.getElementById('export-btn').addEventListener('click', exportText);
+document.getElementById('btn-reset-p').addEventListener('click', hardReset);
 
 /* ============================================================
    INIT
    ============================================================ */
 
-window.addEventListener('load',function(){
-  restoreAll();
+window.addEventListener('load', function(){
+  attachChoiceHandlers();
+  restoreSelections();
   renderRail(); renderDoneStack();
-  showStep(S.step,false);
+  showStep(S.step, false);
   updatePanel();
 
-  if(S.done.length>0||S.do_) dismissOverlay();
+  /* If already has progress, skip overlay */
+  if (S.done.length > 0 || Object.keys(S.answers).length > 0) dismissOverlay();
+
+  /* If all done, sync profile */
+  if (S.done.length >= 10) syncProfile();
 });
 
 })();
