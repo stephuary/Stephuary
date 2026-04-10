@@ -51,22 +51,18 @@
       background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
       opacity: 0.025;
       pointer-events: none;
-      z-index: 300;
+      z-index: 0;
     }
 
+    .page-main { position: relative; z-index: 1; }
+
     /* REVEAL */
-    .reveal {
+    .reveal-io {
       opacity: 0;
-      transform: translateY(18px);
-      transition: opacity 0.85s cubic-bezier(0.22,1,0.36,1),
-                  transform 0.85s cubic-bezier(0.22,1,0.36,1);
+      transform: translateY(14px);
+      transition: opacity 0.75s cubic-bezier(0.22,1,0.36,1), transform 0.75s cubic-bezier(0.22,1,0.36,1);
     }
-    .reveal.visible { opacity: 1; transform: none; }
-    .d1 { transition-delay: 0.10s; }
-    .d2 { transition-delay: 0.20s; }
-    .d3 { transition-delay: 0.32s; }
-    .d4 { transition-delay: 0.44s; }
-    .d5 { transition-delay: 0.56s; }
+    .reveal-io.visible { opacity: 1; transform: none; }
 
     /* NAV */
     nav {
@@ -113,114 +109,20 @@
       text-transform: uppercase;
       color: var(--text-dim);
       text-decoration: none;
-      transition: color 0.22s;
+      transition: color 0.22s, opacity 0.22s;
       white-space: nowrap;
     }
-    .nav-link:hover { color: var(--text-secondary); }
+    .nav-link:hover { color: var(--text-secondary); opacity: 1; }
     .nav-link-gold { color: var(--gold-dim); }
     .nav-link-gold:hover { color: var(--gold); }
     .nav-link-em { color: var(--text-muted); }
     .nav-link-em:hover { color: var(--text-primary); }
 
-    /* SHARED */
     section { border-bottom: 1px solid var(--border); }
-    .pad { padding: 100px 52px; }
+    .pad { padding: 0 52px; }
     .inner { max-width: 1100px; margin: 0 auto; }
 
-    .eyebrow {
-      font-family: 'DM Mono', monospace;
-      font-size: 9px;
-      font-weight: 300;
-      letter-spacing: 0.22em;
-      text-transform: uppercase;
-      color: var(--text-label);
-      margin-bottom: 44px;
-      display: flex;
-      align-items: center;
-      gap: 14px;
-    }
-    .eyebrow::before {
-      content: '';
-      display: block;
-      width: 20px;
-      height: 1px;
-      background: var(--text-label);
-      flex-shrink: 0;
-    }
-
-    .section-title {
-      font-family: 'Cormorant Garamond', serif;
-      font-weight: 300;
-      font-size: clamp(34px, 4.5vw, 54px);
-      line-height: 1.05;
-      letter-spacing: -0.01em;
-      color: var(--text-primary);
-    }
-
-    .gold-rule {
-      display: block;
-      width: 36px;
-      height: 1px;
-      background: linear-gradient(to right, var(--gold), transparent);
-      margin: 32px 0;
-    }
-
-    /* BUTTONS */
-    .btn-blue {
-      display: inline-block;
-      background: var(--blue);
-      color: #fff;
-      font-family: 'DM Mono', monospace;
-      font-size: 11px;
-      font-weight: 400;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      text-decoration: none;
-      padding: 14px 28px;
-      border: none;
-      cursor: pointer;
-      transition: background 0.22s, box-shadow 0.22s;
-      white-space: nowrap;
-    }
-    .btn-blue:hover {
-      background: var(--blue-hi);
-      box-shadow: 0 4px 24px rgba(43,79,212,0.3);
-    }
-
-    .btn-ghost {
-      display: inline-block;
-      font-family: 'DM Mono', monospace;
-      font-size: 10px;
-      font-weight: 300;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: var(--text-dim);
-      text-decoration: none;
-      border-bottom: 1px solid var(--text-label);
-      padding-bottom: 2px;
-      transition: color 0.22s, border-color 0.22s;
-    }
-    .btn-ghost:hover { color: var(--text-secondary); border-color: var(--text-muted); }
-
-    .cta-row {
-      display: flex;
-      align-items: center;
-      gap: 28px;
-      flex-wrap: wrap;
-    }
-
-    /* price sub-line under hero CTA */
-    .cta-sub {
-      margin-top: 14px;
-      font-family: 'DM Mono', monospace;
-      font-size: 10px;
-      font-weight: 300;
-      letter-spacing: 0.14em;
-      color: var(--gold);
-      line-height: 1.6;
-    }
-
-    /* S1: HERO */
+    /* HERO */
     #hero {
       min-height: 100vh;
       display: flex;
@@ -230,13 +132,30 @@
       overflow: hidden;
     }
 
+    .hero-ambient {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 70% 40%, rgba(43,79,212,0.12) 0%, transparent 55%),
+        radial-gradient(ellipse 60% 50% at 20% 80%, rgba(196,163,90,0.06) 0%, transparent 50%),
+        linear-gradient(125deg, #050508 0%, #080807 40%, #0a0c12 100%);
+      animation: heroShift 28s ease-in-out infinite alternate;
+    }
+    @keyframes heroShift {
+      0% { filter: hue-rotate(0deg); opacity: 1; }
+      100% { filter: hue-rotate(8deg); opacity: 0.92; }
+    }
+
     #hero::before {
       content: '';
       position: absolute;
       inset: 0;
       background: radial-gradient(ellipse 60% 80% at 80% 50%, var(--oxblood) 0%, transparent 70%);
-      opacity: 0.5;
+      opacity: 0.45;
       pointer-events: none;
+      z-index: 0;
     }
 
     .hero-bg-word {
@@ -254,6 +173,7 @@
       user-select: none;
       white-space: nowrap;
       line-height: 1;
+      z-index: 0;
     }
 
     .hero-inner {
@@ -304,8 +224,38 @@
       font-size: 15px;
       color: var(--text-secondary);
       line-height: 1.75;
-      margin-bottom: 44px;
+      margin-bottom: 36px;
       max-width: 500px;
+    }
+
+    .btn-hero {
+      display: inline-block;
+      background: var(--blue);
+      color: #fff;
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      font-weight: 400;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      text-decoration: none;
+      padding: 12px 24px;
+      border: none;
+      cursor: pointer;
+      transition: background 0.22s, box-shadow 0.22s;
+    }
+    .btn-hero:hover {
+      background: var(--blue-hi);
+      box-shadow: 0 4px 20px rgba(43,79,212,0.28);
+    }
+
+    .cta-sub {
+      margin-top: 14px;
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      font-weight: 300;
+      letter-spacing: 0.12em;
+      color: var(--gold-dim);
+      line-height: 1.6;
     }
 
     .hero-rule-bottom {
@@ -313,14 +263,142 @@
       bottom: 0; left: 52px; right: 52px;
       height: 1px;
       background: linear-gradient(to right, rgba(196,163,90,0.2), transparent 55%);
+      transform: scaleX(0);
+      transform-origin: left;
+      animation: ruleIn 1.1s ease 0.6s forwards;
+    }
+    @keyframes ruleIn { to { transform: scaleX(1); } }
+
+    /* FOLDS */
+    .fold {
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+    }
+    .page-main .fold:nth-child(odd) { background: var(--bg); }
+    .page-main .fold:nth-child(even) { background: var(--bg-1); }
+
+    .fold-head {
+      width: 100%;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      grid-template-rows: auto auto;
+      gap: 8px 24px;
+      padding: 28px 52px;
+      text-align: left;
+      cursor: pointer;
+      border: none;
+      background: transparent;
+      color: inherit;
+      font-family: inherit;
+      transition: background 0.25s;
+      align-items: start;
+    }
+    .fold-head:hover { background: rgba(196,163,90,0.03); }
+    .fold-head:focus-visible { outline: 1px solid var(--gold-line); outline-offset: -1px; }
+
+    .fold-title {
+      grid-column: 1;
+      grid-row: 1;
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-size: clamp(26px, 3.2vw, 38px);
+      letter-spacing: -0.02em;
+      color: var(--text-primary);
     }
 
-    /* S2: DIAGNOSTIC */
-    #diagnostic {
-      background: var(--bg-1);
-      position: relative;
+    .fold-preview {
+      grid-column: 1;
+      grid-row: 2;
+      font-size: 14px;
+      color: var(--text-muted);
+      line-height: 1.5;
+      max-width: 520px;
     }
-    #diagnostic::before {
+
+    .fold-chevron {
+      grid-column: 2;
+      grid-row: 1 / span 2;
+      align-self: center;
+      width: 10px;
+      height: 10px;
+      border-right: 1px solid var(--text-label);
+      border-bottom: 1px solid var(--text-label);
+      transform: rotate(45deg);
+      transition: transform 0.4s cubic-bezier(0.22,1,0.36,1);
+      flex-shrink: 0;
+      margin-top: 0;
+    }
+    .fold.open .fold-chevron { transform: rotate(225deg); }
+
+    .fold-panel {
+      display: grid;
+      grid-template-rows: 0fr;
+      transition: grid-template-rows 0.5s cubic-bezier(0.22,1,0.36,1);
+    }
+    .fold.open .fold-panel { grid-template-rows: 1fr; }
+
+    .fold-panel-inner {
+      overflow: hidden;
+      min-height: 0;
+      opacity: 0;
+      transition: opacity 0.4s ease 0.05s;
+    }
+    .fold.open .fold-panel-inner { opacity: 1; }
+
+    .fold-body {
+      padding: 0 52px 40px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    /* Reality pattern */
+    #fold-reality { position: relative; overflow: hidden; }
+    .reality-visual {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.12;
+      z-index: 0;
+    }
+    .reality-visual svg { width: 100%; height: 100%; }
+    .reality-path {
+      fill: none;
+      stroke: var(--gold-dim);
+      stroke-width: 0.8;
+      stroke-dasharray: 8 12;
+      animation: pathLoop 14s linear infinite;
+    }
+    @keyframes pathLoop {
+      to { stroke-dashoffset: -120; }
+    }
+
+    .reality-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 48px;
+      align-items: start;
+      position: relative;
+      z-index: 1;
+    }
+    .reality-statement {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(20px, 2.2vw, 30px);
+      font-weight: 300;
+      line-height: 1.35;
+      color: var(--text-secondary);
+    }
+    .reality-note {
+      font-size: 15px;
+      color: var(--text-muted);
+      line-height: 1.7;
+      padding-top: 12px;
+      border-top: 1px solid var(--border);
+      margin-top: 20px;
+    }
+
+    /* Diagnostic inside fold */
+    #diagnostic-inner { position: relative; }
+    #diagnostic-inner::before {
       content: '';
       position: absolute;
       top: 0; left: 0; right: 0;
@@ -329,32 +407,16 @@
       pointer-events: none;
     }
 
-    .diag-head { margin-bottom: 52px; }
-
+    .diag-head { margin-bottom: 36px; position: relative; z-index: 1; }
     .diag-title {
       font-family: 'Cormorant Garamond', serif;
       font-weight: 300;
-      font-size: clamp(38px, 5vw, 62px);
-      line-height: 1;
-      letter-spacing: -0.015em;
+      font-size: clamp(28px, 3.5vw, 44px);
+      line-height: 1.05;
       color: var(--text-primary);
-      margin-bottom: 12px;
+      margin-bottom: 10px;
     }
-
-    .diag-sub {
-      font-size: 15px;
-      color: var(--text-secondary);
-      margin-bottom: 8px;
-    }
-
-    .diag-context {
-      font-family: 'Cormorant Garamond', serif;
-      font-weight: 300;
-      font-style: italic;
-      font-size: clamp(16px, 1.8vw, 20px);
-      color: var(--text-muted);
-      line-height: 1.5;
-    }
+    .diag-sub { font-size: 15px; color: var(--text-secondary); margin-bottom: 0; }
 
     .diag-grid {
       display: grid;
@@ -362,11 +424,13 @@
       gap: 2px;
       background: var(--border);
       margin-bottom: 2px;
+      position: relative;
+      z-index: 1;
     }
 
     .diag-card {
       background: var(--bg-1);
-      padding: 40px 32px 44px;
+      padding: 32px 24px 36px;
       display: flex;
       flex-direction: column;
       cursor: pointer;
@@ -390,8 +454,7 @@
       background: var(--bg-2);
       box-shadow: inset 0 0 0 1px rgba(196,163,90,0.08);
     }
-    .diag-card:hover::before { opacity: 0.6; }
-
+    .diag-card:hover::before { opacity: 0.5; }
     .diag-card.active {
       background: var(--oxblood);
       border: 1px solid var(--oxblood-acc);
@@ -404,26 +467,24 @@
       font-size: 9px;
       letter-spacing: 0.2em;
       color: var(--text-label);
-      margin-bottom: 18px;
+      margin-bottom: 14px;
     }
     .diag-card.active .diag-num { color: rgba(196,163,90,0.55); }
 
     .diag-card-title {
       font-family: 'Cormorant Garamond', serif;
       font-weight: 300;
-      font-size: clamp(19px, 1.8vw, 24px);
+      font-size: clamp(18px, 1.6vw, 22px);
       color: var(--text-primary);
       line-height: 1.15;
-      letter-spacing: -0.01em;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
       flex: 1;
     }
-
     .diag-card-sub {
       font-size: 13px;
       color: var(--text-secondary);
-      line-height: 1.65;
-      margin-bottom: 24px;
+      line-height: 1.6;
+      margin-bottom: 18px;
     }
     .diag-card.active .diag-card-sub { color: var(--text-primary); }
 
@@ -436,15 +497,14 @@
     .diag-card:hover .diag-indicator { width: 32px; background: var(--gold-dim); }
     .diag-card.active .diag-indicator { width: 32px; background: var(--gold); }
 
-    /* result panel */
     .diag-result {
       background: var(--bg-2);
       border: 1px solid var(--border);
       border-top: none;
-      padding: 44px 48px 48px;
+      padding: 36px 32px 40px;
       position: relative;
-      overflow: hidden;
-      min-height: 220px;
+      z-index: 1;
+      min-height: 180px;
     }
     .diag-result::before {
       content: '';
@@ -455,12 +515,8 @@
       opacity: 0.5;
     }
 
-    .result-state {
-      display: none;
-      animation: fadeResult 0.4s ease forwards;
-    }
+    .result-state { display: none; animation: fadeResult 0.4s ease forwards; }
     .result-state.active { display: block; }
-
     @keyframes fadeResult {
       from { opacity: 0; transform: translateY(8px); }
       to   { opacity: 1; transform: none; }
@@ -470,7 +526,7 @@
       font-family: 'Cormorant Garamond', serif;
       font-weight: 300;
       font-style: italic;
-      font-size: clamp(18px, 2vw, 24px);
+      font-size: clamp(17px, 1.8vw, 22px);
       color: var(--text-muted);
       line-height: 1.5;
     }
@@ -481,304 +537,355 @@
       letter-spacing: 0.2em;
       text-transform: uppercase;
       color: var(--gold-dim);
-      margin-bottom: 14px;
+      margin-bottom: 12px;
     }
-
     .result-issue {
       font-family: 'Cormorant Garamond', serif;
       font-weight: 300;
-      font-size: clamp(22px, 2.5vw, 32px);
+      font-size: clamp(20px, 2.2vw, 28px);
       color: var(--text-primary);
       line-height: 1.1;
-      letter-spacing: -0.01em;
-      margin-bottom: 10px;
+      margin-bottom: 8px;
     }
-
     .result-start {
       font-family: 'DM Mono', monospace;
       font-size: 10px;
-      letter-spacing: 0.14em;
+      letter-spacing: 0.12em;
       text-transform: uppercase;
       color: var(--gold);
-      margin-bottom: 16px;
+      margin-bottom: 14px;
     }
-
     .result-why {
       font-size: 15px;
       color: var(--text-secondary);
-      line-height: 1.7;
-      max-width: 540px;
-      margin-bottom: 28px;
+      line-height: 1.65;
+      max-width: 520px;
+      margin-bottom: 16px;
     }
-
-    /* conversion bridge below CTA in result */
     .result-bridge {
       margin-top: 20px;
-      padding-top: 20px;
+      padding-top: 18px;
       border-top: 1px solid var(--border);
       font-family: 'DM Mono', monospace;
       font-size: 10px;
-      letter-spacing: 0.1em;
+      letter-spacing: 0.08em;
       color: var(--gold-dim);
-      line-height: 1.7;
+      line-height: 1.65;
     }
-
-    .diag-footer-note {
-      padding-top: 28px;
+    .result-links {
       font-family: 'DM Mono', monospace;
       font-size: 10px;
-      letter-spacing: 0.1em;
-      color: var(--text-label);
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
       line-height: 1.8;
     }
-
-    /* S3: SYSTEM */
-    #system { background: var(--bg); }
-
-    .two-col {
-      display: grid;
-      grid-template-columns: 1fr 1.5fr;
-      gap: 80px;
-      align-items: start;
-    }
-
-    .system-copy p {
-      font-size: 15px;
+    .result-links a {
       color: var(--text-secondary);
-      line-height: 1.75;
-      margin-bottom: 10px;
-    }
-
-    .phase-list { list-style: none; margin: 28px 0 40px; }
-    .phase-list li {
-      display: flex;
-      align-items: flex-start;
-      gap: 16px;
-      padding: 15px 0;
+      text-decoration: none;
       border-bottom: 1px solid var(--border);
+      transition: color 0.2s, border-color 0.2s;
     }
-    .phase-list li:last-child { border-bottom: none; }
+    .result-links a:hover { color: var(--gold); border-color: var(--gold-line); }
 
-    .phase-name {
-      font-family: 'Cormorant Garamond', serif;
-      font-weight: 300;
-      font-size: 20px;
-      color: var(--gold);
-      min-width: 120px;
-      letter-spacing: -0.01em;
-    }
-
-    .phase-desc {
-      font-size: 14px;
-      color: var(--text-secondary);
-      line-height: 1.5;
-      padding-top: 2px;
-    }
-
-    /* products intro bridge */
-    .products-bridge {
-      font-size: 14px;
-      color: var(--text-muted);
-      line-height: 1.7;
-      margin-bottom: 0;
-      padding-top: 12px;
+    .what-get-simple {
+      margin-top: 32px;
+      padding-top: 28px;
       border-top: 1px solid var(--border);
-      margin-top: 8px;
     }
-
-    /* S4: PRODUCTS */
-    #products {
-      background: var(--bg-1);
-      position: relative;
-    }
-    #products::before {
-      content: '';
-      position: absolute;
-      top: 0; right: 0;
-      width: 40%;
-      height: 100%;
-      background: radial-gradient(ellipse 80% 60% at 100% 0%, var(--oxblood-faint), transparent 70%);
-      pointer-events: none;
-    }
-
-    .products-intro {
-      font-size: 15px;
-      color: var(--text-muted);
-      line-height: 1.7;
-      max-width: 580px;
-      margin-bottom: 0;
-    }
-
-    .products-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 2px;
-      background: var(--border);
-      margin-top: 40px;
-      position: relative;
-      z-index: 1;
-    }
-
-    .product-card {
-      background: var(--bg-1);
-      padding: 44px 38px 48px;
-      display: flex;
-      flex-direction: column;
-      position: relative;
-      transition: background 0.25s, box-shadow 0.25s, transform 0.25s;
-    }
-    .product-card:hover {
-      background: var(--bg-2);
-      box-shadow: 0 8px 32px rgba(0,0,0,0.3);
-      transform: translateY(-2px);
-      z-index: 2;
-    }
-    .product-card::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 1px;
-      background: linear-gradient(to right, var(--gold), transparent 60%);
-      opacity: 0;
-      transition: opacity 0.25s;
-    }
-    .product-card:hover::before { opacity: 1; }
-
-    .product-tag {
+    .what-get-simple h3 {
       font-family: 'DM Mono', monospace;
       font-size: 9px;
       letter-spacing: 0.2em;
       text-transform: uppercase;
       color: var(--text-label);
-      margin-bottom: 18px;
+      margin-bottom: 14px;
+    }
+    .what-get-simple ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+    .what-get-simple li {
+      font-size: 15px;
+      color: var(--text-secondary);
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .what-get-simple li:last-child { border-bottom: none; }
+
+    /* How it works fold */
+    .how-plain {
+      font-size: 15px;
+      color: var(--text-secondary);
+      line-height: 1.75;
+      max-width: 560px;
     }
 
-    .product-title {
+    /* Phase track */
+    .phase-track-wrap {
+      position: relative;
+      padding: 20px 0 36px;
+    }
+    .phase-track {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 8px;
+      position: relative;
+      max-width: 100%;
+    }
+    .phase-track::before {
+      content: '';
+      position: absolute;
+      top: 18px;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(to right, var(--gold-line), var(--border), var(--gold-line));
+      z-index: 0;
+    }
+
+    .phase-node {
+      flex: 1;
+      min-width: 0;
+      text-align: center;
+      position: relative;
+      z-index: 1;
+      padding: 0 4px;
+      transition: transform 0.35s ease, filter 0.35s ease;
+    }
+    .phase-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--bg-2);
+      border: 1px solid var(--gold-line);
+      margin: 0 auto 12px;
+      transition: background 0.35s, border-color 0.35s, box-shadow 0.35s, transform 0.35s;
+    }
+    .phase-node.active .phase-dot {
+      background: rgba(196,163,90,0.25);
+      border-color: var(--gold);
+      box-shadow: 0 0 20px rgba(196,163,90,0.25);
+      transform: scale(1.15);
+    }
+    .phase-node.active {
+      transform: translateY(-2px);
+    }
+    .phase-name {
       font-family: 'Cormorant Garamond', serif;
-      font-weight: 300;
-      font-size: clamp(22px, 2.2vw, 30px);
-      color: var(--text-primary);
+      font-size: clamp(14px, 1.3vw, 18px);
+      color: var(--gold-dim);
+      margin-bottom: 6px;
       letter-spacing: -0.01em;
-      line-height: 1.1;
+    }
+    .phase-node.active .phase-name { color: var(--gold); }
+    .phase-desc {
+      font-size: 14px;
+      color: var(--text-muted);
+      line-height: 1.45;
+    }
+    .phase-node.active .phase-desc { color: var(--text-secondary); }
+
+    .phase-track-vertical {
+      display: none;
+      flex-direction: column;
+      gap: 0;
+      border-left: 1px solid var(--border);
+      padding-left: 20px;
+      margin-left: 8px;
+    }
+    .phase-track-vertical .phase-node {
+      text-align: left;
+      padding: 16px 0 16px 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    .phase-track-vertical .phase-node:last-child { border-bottom: none; }
+    .phase-track-vertical .phase-dot {
+      position: absolute;
+      left: -28px;
+      top: 22px;
+      margin: 0;
+    }
+    .phase-track-vertical .phase-node { position: relative; }
+
+    /* Products grid - quiet links */
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+      background: var(--border);
+      margin-top: 8px;
+    }
+    .product-card {
+      background: var(--bg-1);
+      padding: 28px 24px 32px;
+      display: flex;
+      flex-direction: column;
+      transition: background 0.25s, box-shadow 0.25s;
+    }
+    .product-card:hover { background: var(--bg-2); box-shadow: inset 0 0 0 1px rgba(196,163,90,0.06); }
+    .product-tag {
+      font-family: 'DM Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--text-label);
       margin-bottom: 12px;
     }
-
+    .product-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(18px, 1.8vw, 20px);
+      color: var(--text-primary);
+      margin-bottom: 8px;
+    }
     .product-body {
       font-size: 14px;
       color: var(--text-secondary);
-      line-height: 1.75;
+      line-height: 1.65;
+      margin-bottom: 14px;
       flex: 1;
-      margin-bottom: 28px;
     }
-
-    .product-price {
-      font-family: 'Cormorant Garamond', serif;
-      font-weight: 300;
-      font-size: 22px;
-      color: var(--text-secondary);
-      margin-bottom: 20px;
+    .product-meta {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 12px;
     }
-
-    .product-card.club-card .product-tag { color: var(--gold-dim); }
+    .link-quiet {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      text-decoration: none;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 2px;
+      align-self: flex-start;
+      transition: color 0.2s, border-color 0.2s;
+    }
+    .link-quiet:hover { color: var(--gold); border-color: var(--gold-line); }
     .product-card.club-card .product-title { color: var(--gold); }
 
-    /* S5: PRIVATE ACCESS */
-    #private {
-      background: var(--bg);
-      position: relative;
-    }
-    #private::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: radial-gradient(ellipse 50% 70% at 100% 50%, var(--oxblood-faint), transparent 65%);
-      pointer-events: none;
-    }
-
+    /* Private fold */
     .private-inner {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 80px;
-      align-items: center;
-      position: relative;
-      z-index: 1;
+      gap: 48px;
+      align-items: start;
     }
-
+    .fold-private .section-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-size: clamp(28px, 3.5vw, 44px);
+      line-height: 1.05;
+      margin-bottom: 16px;
+    }
+    .gold-rule {
+      display: block;
+      width: 36px;
+      height: 1px;
+      background: linear-gradient(to right, var(--gold), transparent);
+      margin: 0 0 20px;
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.6s ease;
+    }
+    .gold-rule.visible { transform: scaleX(1); }
     .private-list {
       list-style: none;
-      margin: 20px 0 36px;
+      margin: 0 0 20px;
     }
     .private-list li {
       font-family: 'DM Mono', monospace;
       font-size: 11px;
-      letter-spacing: 0.08em;
+      letter-spacing: 0.06em;
       color: var(--text-secondary);
       padding: 10px 0;
       border-bottom: 1px solid var(--border);
-      line-height: 1.5;
+      line-height: 1.45;
     }
     .private-list li:last-child { border-bottom: none; }
-
     .private-right-text {
       font-family: 'Cormorant Garamond', serif;
-      font-weight: 300;
       font-style: italic;
-      font-size: clamp(18px, 2vw, 26px);
+      font-size: clamp(17px, 1.8vw, 22px);
       color: var(--text-secondary);
-      line-height: 1.55;
+      line-height: 1.5;
       margin-bottom: 6px;
     }
-
     .private-hook {
-      font-family: 'Cormorant Garamond', serif;
-      font-weight: 400;
       font-style: italic;
-      font-size: clamp(16px, 1.6vw, 20px);
-      color: var(--gold);
-      margin-top: 20px;
-      line-height: 1.4;
+      font-size: clamp(15px, 1.5vw, 18px);
+      color: var(--gold-dim);
+      margin-top: 16px;
     }
-
-    /* S6: PROOF */
-    #proof { background: var(--bg-1); }
-
-    .proof-inner { max-width: 640px; }
 
     .proof-quote {
       font-family: 'Cormorant Garamond', serif;
-      font-weight: 300;
       font-style: italic;
-      font-size: clamp(22px, 2.8vw, 34px);
+      font-size: clamp(20px, 2.2vw, 28px);
       color: var(--text-primary);
       line-height: 1.35;
-      margin-bottom: 28px;
+      margin-bottom: 16px;
     }
-
-    .proof-list { list-style: none; margin: 16px 0 28px; }
+    .proof-list { list-style: none; margin: 12px 0 16px; }
     .proof-list li {
       font-family: 'DM Mono', monospace;
-      font-size: 11px;
+      font-size: 10px;
       letter-spacing: 0.08em;
       color: var(--text-dim);
-      padding: 9px 0;
+      padding: 6px 0;
       border-bottom: 1px solid var(--border);
     }
     .proof-list li:last-child { border-bottom: none; }
-
     .proof-close {
       font-family: 'Cormorant Garamond', serif;
-      font-weight: 400;
       font-style: italic;
-      font-size: clamp(18px, 2vw, 24px);
+      font-size: clamp(16px, 1.6vw, 20px);
       color: var(--text-secondary);
+    }
+
+    /* CLOSING */
+    #closing {
+      padding: 100px 52px 120px;
+      text-align: center;
+      border-bottom: none;
+      background: var(--bg);
+    }
+    .closing-h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-size: clamp(28px, 4vw, 48px);
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+      color: var(--text-primary);
+      max-width: 560px;
+      margin: 0 auto 32px;
+    }
+    .btn-close {
+      display: inline-block;
+      background: var(--blue);
+      color: #fff;
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      font-weight: 400;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      text-decoration: none;
+      padding: 12px 24px;
+      transition: background 0.22s, box-shadow 0.22s;
+    }
+    .btn-close:hover {
+      background: var(--blue-hi);
+      box-shadow: 0 4px 20px rgba(43,79,212,0.28);
     }
 
     /* FOOTER */
     footer {
       padding: 56px 52px;
       border-top: 1px solid var(--border);
+      background: var(--bg-1);
     }
-
     .footer-inner {
       max-width: 1100px;
       margin: 0 auto;
@@ -787,7 +894,6 @@
       gap: 60px;
       align-items: start;
     }
-
     .footer-mark {
       font-family: 'Cormorant Garamond', serif;
       font-weight: 300;
@@ -798,16 +904,13 @@
       display: block;
       margin-bottom: 10px;
     }
-
     .footer-micro {
       font-family: 'DM Mono', monospace;
       font-size: 10px;
-      font-weight: 300;
       letter-spacing: 0.08em;
       color: var(--text-label);
       line-height: 1.8;
     }
-
     .footer-col-label {
       font-family: 'DM Mono', monospace;
       font-size: 9px;
@@ -816,7 +919,6 @@
       color: var(--text-label);
       margin-bottom: 18px;
     }
-
     .footer-links { list-style: none; }
     .footer-links a {
       font-family: 'DM Mono', monospace;
@@ -834,23 +936,22 @@
     .footer-links a:last-child { border-bottom: none; }
     .footer-links a:hover { color: var(--text-muted); }
 
-    /* RESPONSIVE */
-    @media (max-width: 1060px) {
-      .diag-grid { grid-template-columns: repeat(2, 1fr); }
-      .products-grid { grid-template-columns: repeat(2, 1fr); }
-    }
-
     @media (max-width: 960px) {
       nav { padding: 18px 28px; }
       .nav-secondary { display: none; }
       #hero { padding: 130px 28px 100px; }
       .hero-rule-bottom { left: 28px; right: 28px; }
-      .pad { padding: 80px 28px; }
-      .two-col { grid-template-columns: 1fr; gap: 48px; }
-      .private-inner { grid-template-columns: 1fr; gap: 44px; }
-      .diag-result { padding: 36px 28px 40px; }
+      .fold-head, .fold-body { padding-left: 28px; padding-right: 28px; }
+      .pad { padding: 0 28px; }
+      .reality-grid { grid-template-columns: 1fr; }
+      .diag-grid { grid-template-columns: repeat(2, 1fr); }
+      .products-grid { grid-template-columns: repeat(2, 1fr); }
+      .private-inner { grid-template-columns: 1fr; }
+      .phase-track { display: none; }
+      .phase-track-vertical { display: flex; }
       footer { padding: 44px 28px; }
       .footer-inner { grid-template-columns: 1fr; gap: 40px; }
+      #closing { padding: 80px 28px 100px; }
     }
 
     @media (max-width: 640px) {
@@ -858,380 +959,325 @@
       .nav-primary { display: none; }
       #hero { padding: 120px 20px 90px; }
       .hero-rule-bottom { left: 20px; right: 20px; }
-      .pad { padding: 64px 20px; }
+      .fold-head, .fold-body { padding-left: 20px; padding-right: 20px; }
       .diag-grid { grid-template-columns: 1fr; }
       .products-grid { grid-template-columns: 1fr; }
-      .diag-card { padding: 32px 24px 36px; }
-      .product-card { padding: 36px 24px 40px; }
-      .diag-result { padding: 32px 20px 36px; }
+      .diag-card { padding: 28px 20px 32px; }
       footer { padding: 36px 20px; }
     }
   </style>
 </head>
 <body>
 
-  <!-- NAV -->
   <nav id="main-nav">
     <a href="/index" class="nav-mark">Stephuary</a>
-
     <div class="nav-primary">
-      <a href="/capture"           class="nav-link nav-link-em">Diagnostic</a>
-      <a href="/systems"            class="nav-link">Systems</a>
-      <a href="/playbooks"          class="nav-link">Playbooks</a>
-      <a href="/pricing"            class="nav-link">Pricing</a>
-      <a href="/club"               class="nav-link nav-link-gold">5% Club</a>
-      <a href="/access"     class="nav-link">Private Access</a>
+      <a href="/capture" class="nav-link">Diagnostic</a>
+      <a href="/systems" class="nav-link">Systems</a>
+      <a href="/playbooks" class="nav-link">Playbooks</a>
+      <a href="/pricing" class="nav-link">Pricing</a>
+      <a href="/club" class="nav-link nav-link-gold">5% Club</a>
+      <a href="/access" class="nav-link">Private Access</a>
     </div>
-
     <div class="nav-secondary">
-      <a href="/books"              class="nav-link">Books</a>
-      <a href="/snapshot"           class="nav-link">Snapshot</a>
-      <a href="/focused-review"     class="nav-link">Focused Review</a>
+      <a href="/books" class="nav-link">Books</a>
+      <a href="/snapshot" class="nav-link">Snapshot</a>
+      <a href="/focused-review" class="nav-link">Focused Review</a>
       <a href="/founder-diagnostic" class="nav-link">Founder Diagnostic</a>
       <a href="https://grownspaghetti.substack.com" class="nav-link nav-link-gold" target="_blank" rel="noopener">Substack</a>
-      <a href="https://onlysometimesclub.com"       class="nav-link nav-link-gold" target="_blank" rel="noopener">OSC</a>
-      <a href="https://github.com/stephuary/Stephuary" class="nav-link"           target="_blank" rel="noopener">GitHub</a>
+      <a href="https://onlysometimesclub.com" class="nav-link nav-link-gold" target="_blank" rel="noopener">OSC</a>
+      <a href="https://github.com/stephuary/Stephuary" class="nav-link" target="_blank" rel="noopener">GitHub</a>
     </div>
   </nav>
 
-  <!-- S1: HERO -->
   <section id="hero">
+    <div class="hero-ambient" aria-hidden="true"></div>
     <div class="hero-bg-word" aria-hidden="true">System</div>
     <div class="hero-inner">
-
-      <p class="hero-eyebrow reveal">Build income. Build independence.</p>
-
-      <h1 class="hero-headline reveal d1">Build something<br>that makes money.</h1>
-
-      <p class="hero-sub reveal d2">
+      <p class="hero-eyebrow reveal-io">Build income. Build independence.</p>
+      <h1 class="hero-headline reveal-io">Build something<br>that makes money.</h1>
+      <p class="hero-sub reveal-io">
         Stephuary is a $39 system.<br>
-        It gives you all five phases to figure out what to sell, fix what isn't working, and build something that runs.
+        Five phases. Figure out what to sell, fix what fails, build something that runs.
       </p>
-
-      <p class="hero-detail reveal d3">
+      <p class="hero-detail reveal-io">
         Start where you are.<br>
-        Keep going without guessing.
+        Act without guessing.
       </p>
-
-      <div class="reveal d4">
-        <div class="cta-row">
-          <a href="#diagnostic" class="btn-blue">Start here →</a>
-          <a href="#system"     class="btn-ghost">See how it works →</a>
-        </div>
+      <div class="reveal-io">
+        <a href="/capture" class="btn-hero">Run diagnostic →</a>
         <p class="cta-sub">$39 &middot; full system &middot; all five phases included</p>
       </div>
-
     </div>
     <div class="hero-rule-bottom"></div>
   </section>
 
-  <!-- S2: DIAGNOSTIC -->
-  <section id="diagnostic">
-    <div class="pad">
-      <div class="inner">
+  <main class="page-main">
 
-        <div class="diag-head reveal">
-          <h2 class="diag-title">Start here.</h2>
-          <p class="diag-sub">Pick what actually applies to you.</p>
-          <p class="diag-context">
-            Most people try to fix everything.<br>
-            That's why nothing actually changes.<br>
-            This shows you where to start.
-          </p>
-        </div>
-
-        <div class="diag-grid reveal d1">
-
-          <button class="diag-card" data-state="1" aria-pressed="false">
-            <p class="diag-num">01</p>
-            <p class="diag-card-title">I don't know what to sell.</p>
-            <p class="diag-card-sub">You have skills or experience but nothing clearly defined yet.</p>
-            <span class="diag-indicator"></span>
-          </button>
-
-          <button class="diag-card" data-state="2" aria-pressed="false">
-            <p class="diag-num">02</p>
-            <p class="diag-card-title">I have something but it's not making money.</p>
-            <p class="diag-card-sub">You've tried offers, content, or services but it's not converting.</p>
-            <span class="diag-indicator"></span>
-          </button>
-
-          <button class="diag-card" data-state="3" aria-pressed="false">
-            <p class="diag-num">03</p>
-            <p class="diag-card-title">I need a proven way to make money.</p>
-            <p class="diag-card-sub">You don't want to guess. You want paths that already work.</p>
-            <span class="diag-indicator"></span>
-          </button>
-
-          <button class="diag-card" data-state="4" aria-pressed="false">
-            <p class="diag-num">04</p>
-            <p class="diag-card-title">I need direct help.</p>
-            <p class="diag-card-sub">You want clarity, positioning, or correction without figuring it out yourself.</p>
-            <span class="diag-indicator"></span>
-          </button>
-
-        </div>
-
-        <div class="diag-result reveal d2" id="diag-result">
-
-          <div class="result-state active" id="state-0">
-            <p class="result-default-text">
-              Pick what fits.<br><br>
-              This shows you where to start inside the system.<br>
-              You don't need to fix everything.<br>
-              You just need the right entry point.
-            </p>
+    <div class="fold" id="fold-reality" data-fold>
+      <button type="button" class="fold-head" aria-expanded="false" id="btn-reality">
+        <span class="fold-title">Reality</span>
+        <span class="fold-preview">You've seen the pattern. This names it.</span>
+        <span class="fold-chevron" aria-hidden="true"></span>
+      </button>
+      <div class="fold-panel"><div class="fold-panel-inner">
+        <div class="fold-body">
+          <div class="reality-visual" aria-hidden="true">
+            <svg viewBox="0 0 400 200" preserveAspectRatio="none">
+              <path class="reality-path" d="M0,100 Q100,40 200,100 T400,100" />
+              <path class="reality-path" d="M0,120 Q120,160 200,120 T400,130" opacity="0.6" />
+            </svg>
           </div>
-
-          <div class="result-state" id="state-1">
-            <p class="result-label">Starting point</p>
-            <p class="result-issue">You don't have a clear offer yet.</p>
-            <p class="result-start">Start with: Capture</p>
-            <p class="result-why">
-              If it's not clear, no one's buying it.<br>
-              That's why nothing's really landing yet.
-            </p>
-            <a href="/capture" class="btn-blue">Go to Capture →</a>
-            <p class="result-bridge">All paths lead into the full Stephuary system ($39).<br>You'll enter at the phase that matches your situation.</p>
-          </div>
-
-          <div class="result-state" id="state-2">
-            <p class="result-label">Starting point</p>
-            <p class="result-issue">Your offer isn't landing clearly enough to convert.</p>
-            <p class="result-start">Start with: Diagnostic</p>
-            <p class="result-why">
-              If people don't get it fast, they don't buy.<br>
-              That's why your effort isn't turning into money.
-            </p>
-            <a href="/capture" class="btn-blue">Run diagnostic →</a>
-            <p class="result-bridge">All paths lead into the full Stephuary system ($39).<br>You'll enter at the phase that matches your situation.</p>
-          </div>
-
-          <div class="result-state" id="state-3">
-            <p class="result-label">Starting point</p>
-            <p class="result-issue">You need a path that already works.</p>
-            <p class="result-start">Start with: Playbooks</p>
-            <p class="result-why">
-              You don't need more ideas.<br>
-              You need a model you can use now.
-            </p>
-            <a href="/playbooks" class="btn-blue">See Playbooks →</a>
-            <p class="result-bridge">All paths lead into the full Stephuary system ($39).<br>You'll enter at the phase that matches your situation.</p>
-          </div>
-
-          <div class="result-state" id="state-4">
-            <p class="result-label">Starting point</p>
-            <p class="result-issue">You need direct help.</p>
-            <p class="result-start">Start with: Pricing</p>
-            <p class="result-why">
-              You don't need to keep guessing your way through this.<br>
-              You need the right level of support.
-            </p>
-            <a href="/pricing" class="btn-blue">View Options →</a>
-            <p class="result-bridge">All paths lead into the full Stephuary system ($39).<br>You'll enter at the phase that matches your situation.</p>
-          </div>
-
-        </div>
-
-        <p class="diag-footer-note reveal d3">
-          You don't need to figure everything out.<br>
-          You need to start in the right place.
-        </p>
-
-      </div>
-    </div>
-  </section>
-
-  <!-- S3: SYSTEM -->
-  <section id="system">
-    <div class="pad">
-      <div class="inner">
-        <p class="eyebrow reveal">The system</p>
-        <div class="two-col">
-
-          <div class="reveal">
-            <h2 class="section-title">Stephuary is the full system.</h2>
-            <span class="gold-rule"></span>
-            <div class="system-copy">
-              <p>One payment. Five phases. Clear next steps.</p>
-              <p>You don't buy one piece at a time. You get the full system and start where you are.</p>
+          <div class="reality-grid">
+            <p class="reality-statement">You stop. You restart. You hesitate. The loop repeats.</p>
+            <div>
+              <p class="reality-note">Naming the loop is the first step. The diagnostic is a short read on how you think and decide.</p>
             </div>
           </div>
-
-          <div class="reveal d1">
-            <ul class="phase-list">
-              <li>
-                <span class="phase-name">Capture</span>
-                <span class="phase-desc">Extract what you know into something usable</span>
-              </li>
-              <li>
-                <span class="phase-name">Monetize</span>
-                <span class="phase-desc">Turn what you have into something that sells</span>
-              </li>
-              <li>
-                <span class="phase-name">Structure</span>
-                <span class="phase-desc">Build it so it runs without you managing every part</span>
-              </li>
-              <li>
-                <span class="phase-name">Automation</span>
-                <span class="phase-desc">Remove yourself from the repetitive parts</span>
-              </li>
-              <li>
-                <span class="phase-name">Sovereignty</span>
-                <span class="phase-desc">Make it stable enough to hold under pressure</span>
-              </li>
-            </ul>
-            <a href="/systems" class="btn-blue">Get the system → $39</a>
-          </div>
-
         </div>
-      </div>
+      </div></div>
     </div>
+
+    <div class="fold" id="fold-diagnostic" data-fold>
+      <button type="button" class="fold-head" aria-expanded="false" id="btn-diagnostic">
+        <span class="fold-title">What happens</span>
+        <span class="fold-preview">A short read on how you think and decide.</span>
+        <span class="fold-chevron" aria-hidden="true"></span>
+      </button>
+      <div class="fold-panel"><div class="fold-panel-inner">
+        <div class="fold-body">
+          <div id="diagnostic-inner">
+            <div class="diag-head reveal-io">
+              <h2 class="diag-title">Pick what fits.</h2>
+              <p class="diag-sub">Four entry points. One system behind them.</p>
+            </div>
+            <div class="diag-grid reveal-io">
+              <button type="button" class="diag-card" data-state="1" aria-pressed="false">
+                <p class="diag-num">01</p>
+                <p class="diag-card-title">I don't know what to sell.</p>
+                <p class="diag-card-sub">Skills or experience, nothing clearly defined yet.</p>
+                <span class="diag-indicator"></span>
+              </button>
+              <button type="button" class="diag-card" data-state="2" aria-pressed="false">
+                <p class="diag-num">02</p>
+                <p class="diag-card-title">I have something but it's not making money.</p>
+                <p class="diag-card-sub">Offers or content tried; not converting.</p>
+                <span class="diag-indicator"></span>
+              </button>
+              <button type="button" class="diag-card" data-state="3" aria-pressed="false">
+                <p class="diag-num">03</p>
+                <p class="diag-card-title">I need a proven way to make money.</p>
+                <p class="diag-card-sub">You want paths that already work.</p>
+                <span class="diag-indicator"></span>
+              </button>
+              <button type="button" class="diag-card" data-state="4" aria-pressed="false">
+                <p class="diag-num">04</p>
+                <p class="diag-card-title">I need direct help.</p>
+                <p class="diag-card-sub">Clarity or correction without doing it alone.</p>
+                <span class="diag-indicator"></span>
+              </button>
+            </div>
+            <div class="diag-result reveal-io" id="diag-result">
+              <div class="result-state active" id="state-0">
+                <p class="result-default-text">Pick a card. You'll see where to enter the system.</p>
+              </div>
+              <div class="result-state" id="state-1">
+                <p class="result-label">Starting point</p>
+                <p class="result-issue">No clear offer yet.</p>
+                <p class="result-start">Suggested: Capture</p>
+                <p class="result-why">If it isn't clear, no one buys.</p>
+                <p class="result-links">Continue: <a href="/capture">Capture</a></p>
+                <p class="result-bridge">Full system ($39). You enter at the phase that fits.</p>
+              </div>
+              <div class="result-state" id="state-2">
+                <p class="result-label">Starting point</p>
+                <p class="result-issue">Offer isn't landing clearly enough to convert.</p>
+                <p class="result-start">Suggested: Diagnostic flow</p>
+                <p class="result-why">If people don't get it fast, they don't buy.</p>
+                <p class="result-links">Continue: <a href="/capture">Diagnostic</a></p>
+                <p class="result-bridge">Full system ($39). You enter at the phase that fits.</p>
+              </div>
+              <div class="result-state" id="state-3">
+                <p class="result-label">Starting point</p>
+                <p class="result-issue">You need a path that already works.</p>
+                <p class="result-start">Suggested: Playbooks</p>
+                <p class="result-why">You need a model you can use now.</p>
+                <p class="result-links">Continue: <a href="/playbooks">Playbooks</a></p>
+                <p class="result-bridge">Full system ($39). You enter at the phase that fits.</p>
+              </div>
+              <div class="result-state" id="state-4">
+                <p class="result-label">Starting point</p>
+                <p class="result-issue">You need direct help.</p>
+                <p class="result-start">Suggested: Pricing</p>
+                <p class="result-why">Match support to the situation.</p>
+                <p class="result-links">Continue: <a href="/pricing">Pricing</a></p>
+                <p class="result-bridge">Full system ($39). You enter at the phase that fits.</p>
+              </div>
+            </div>
+            <div class="what-get-simple reveal-io">
+              <h3>What you get</h3>
+              <ul>
+                <li>Clear direction</li>
+                <li>A named entry point</li>
+                <li>Next steps without noise</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div></div>
+    </div>
+
+    <div class="fold" id="fold-how" data-fold>
+      <button type="button" class="fold-head" aria-expanded="false" id="btn-how">
+        <span class="fold-title">How it works</span>
+        <span class="fold-preview">Five short sections. Live output.</span>
+        <span class="fold-chevron" aria-hidden="true"></span>
+      </button>
+      <div class="fold-panel"><div class="fold-panel-inner">
+        <div class="fold-body">
+          <p class="how-plain">You run the diagnostic. You get a read. The system maps Capture through Sovereignty. You choose depth. You act from one path, not ten.</p>
+        </div>
+      </div></div>
+    </div>
+
+    <div class="fold" id="fold-system" data-fold>
+      <button type="button" class="fold-head" aria-expanded="false" id="btn-system">
+        <span class="fold-title">System</span>
+        <span class="fold-preview">Five layers. One path.</span>
+        <span class="fold-chevron" aria-hidden="true"></span>
+      </button>
+      <div class="fold-panel"><div class="fold-panel-inner">
+        <div class="fold-body">
+          <p class="how-plain" style="margin-bottom:28px;">One payment. Five phases. You don't buy fragments. You get the full system and start where you are.</p>
+          <div class="phase-track-wrap">
+            <div class="phase-track" id="phase-track-h">
+              <div class="phase-node" data-phase="0"><div class="phase-dot"></div><div class="phase-name">Capture</div><div class="phase-desc">Extract what you know</div></div>
+              <div class="phase-node" data-phase="1"><div class="phase-dot"></div><div class="phase-name">Monetize</div><div class="phase-desc">Make it sell</div></div>
+              <div class="phase-node" data-phase="2"><div class="phase-dot"></div><div class="phase-name">Structure</div><div class="phase-desc">Runs without you</div></div>
+              <div class="phase-node" data-phase="3"><div class="phase-dot"></div><div class="phase-name">Automation</div><div class="phase-desc">Cut repetition</div></div>
+              <div class="phase-node" data-phase="4"><div class="phase-dot"></div><div class="phase-name">Sovereignty</div><div class="phase-desc">Holds under pressure</div></div>
+            </div>
+            <div class="phase-track-vertical" id="phase-track-v">
+              <div class="phase-node" data-phase="0"><div class="phase-dot"></div><div class="phase-name">Capture</div><div class="phase-desc">Extract what you know</div></div>
+              <div class="phase-node" data-phase="1"><div class="phase-dot"></div><div class="phase-name">Monetize</div><div class="phase-desc">Make it sell</div></div>
+              <div class="phase-node" data-phase="2"><div class="phase-dot"></div><div class="phase-name">Structure</div><div class="phase-desc">Runs without you</div></div>
+              <div class="phase-node" data-phase="3"><div class="phase-dot"></div><div class="phase-name">Automation</div><div class="phase-desc">Cut repetition</div></div>
+              <div class="phase-node" data-phase="4"><div class="phase-dot"></div><div class="phase-name">Sovereignty</div><div class="phase-desc">Holds under pressure</div></div>
+            </div>
+          </div>
+          <p class="result-links" style="margin-top:16px;"><a href="/systems">Open the system overview →</a></p>
+        </div>
+      </div></div>
+    </div>
+
+    <div class="fold" id="fold-options" data-fold>
+      <button type="button" class="fold-head" aria-expanded="false" id="btn-options">
+        <span class="fold-title">Beyond the system</span>
+        <span class="fold-preview">Books, reviews, snapshots. Optional.</span>
+        <span class="fold-chevron" aria-hidden="true"></span>
+      </button>
+      <div class="fold-panel"><div class="fold-panel-inner">
+        <div class="fold-body">
+          <div class="products-grid">
+            <div class="product-card">
+              <p class="product-tag">Books</p>
+              <h3 class="product-title">Start small.</h3>
+              <p class="product-body">Short reads. Same-day use.</p>
+              <p class="product-meta">Most $1 · Ownership $28</p>
+              <a href="/books" class="link-quiet">Books →</a>
+            </div>
+            <div class="product-card">
+              <p class="product-tag">Focused Review</p>
+              <h3 class="product-title">One issue.</h3>
+              <p class="product-body">One problem. Next steps.</p>
+              <p class="product-meta">$197</p>
+              <a href="/focused-review" class="link-quiet">Focused review →</a>
+            </div>
+            <div class="product-card">
+              <p class="product-tag">Snapshot</p>
+              <h3 class="product-title">Full picture.</h3>
+              <p class="product-body">What isn't working. Where money is.</p>
+              <p class="product-meta">$750</p>
+              <a href="/snapshot" class="link-quiet">Snapshot →</a>
+            </div>
+            <div class="product-card">
+              <p class="product-tag">Founder Diagnostic</p>
+              <h3 class="product-title">Revenue path.</h3>
+              <p class="product-body">From what you already have.</p>
+              <p class="product-meta">$1,500</p>
+              <a href="/founder-diagnostic" class="link-quiet">Founder diagnostic →</a>
+            </div>
+            <div class="product-card">
+              <p class="product-tag">Playbooks</p>
+              <h3 class="product-title">Paths that work.</h3>
+              <p class="product-body">Pick the problem. Use the playbook.</p>
+              <p class="product-meta">&nbsp;</p>
+              <a href="/playbooks" class="link-quiet">Playbooks →</a>
+            </div>
+            <div class="product-card club-card">
+              <p class="product-tag">5% Club</p>
+              <h3 class="product-title">Signal.</h3>
+              <p class="product-body">Private layer. Judgment and placement.</p>
+              <p class="product-meta">&nbsp;</p>
+              <a href="/club" class="link-quiet">5% Club →</a>
+            </div>
+          </div>
+        </div>
+      </div></div>
+    </div>
+
+    <div class="fold fold-private" id="fold-private" data-fold>
+      <button type="button" class="fold-head" aria-expanded="false" id="btn-private">
+        <span class="fold-title">Private access</span>
+        <span class="fold-preview">Correction, positioning, revenue architecture. When it fits.</span>
+        <span class="fold-chevron" aria-hidden="true"></span>
+      </button>
+      <div class="fold-panel"><div class="fold-panel-inner">
+        <div class="fold-body">
+          <div class="private-inner">
+            <div>
+              <h2 class="section-title">Private Access</h2>
+              <span class="gold-rule" id="private-rule"></span>
+              <ul class="private-list">
+                <li>Correction: wrong decisions stopped before they get worse</li>
+                <li>Positioning: where you should operate</li>
+                <li>Market level: local to national</li>
+                <li>Offer structure: what to build, what to stop</li>
+                <li>Revenue architecture: how it pays</li>
+              </ul>
+              <p class="result-links"><a href="/access">Request access →</a></p>
+            </div>
+            <div>
+              <p class="private-right-text">Not always open.</p>
+              <p class="private-right-text">Requests reviewed.</p>
+              <p class="private-right-text">Not all accepted.</p>
+              <p class="private-hook">It changes what you do and where you operate.</p>
+              <p class="proof-quote" style="margin-top:32px;">I booked my first advisory retainer before I had:</p>
+              <ul class="proof-list">
+                <li>a real email list</li>
+                <li>a website</li>
+                <li>a logo</li>
+              </ul>
+              <p class="proof-close">This is how it worked.</p>
+            </div>
+          </div>
+        </div>
+      </div></div>
+    </div>
+
+  </main>
+
+  <section id="closing">
+    <h2 class="closing-h2">You'll know if it fits once you go through it.</h2>
+    <a href="/capture" class="btn-close">Begin here →</a>
   </section>
 
-  <!-- S4: PRODUCTS -->
-  <section id="products">
-    <div class="pad">
-      <div class="inner">
-        <p class="eyebrow reveal">Go deeper</p>
-        <p class="products-intro reveal d1">Everything starts with the system. These are optional add-ons when you need them.</p>
-
-        <div class="products-grid">
-
-          <div class="product-card reveal">
-            <p class="product-tag">Books</p>
-            <h3 class="product-title">Start small.</h3>
-            <p class="product-body">
-              Low-cost systems that solve one problem fast.<br>
-              Read in under an hour.<br>
-              Apply the same day.
-            </p>
-            <p class="product-price">Most books $1 &middot; Ownership $28</p>
-            <a href="/books" class="btn-blue">View books →</a>
-          </div>
-
-          <div class="product-card reveal d1">
-            <p class="product-tag">Focused Review</p>
-            <h3 class="product-title">Fix one thing fast.</h3>
-            <p class="product-body">
-              You bring one problem.<br>
-              You leave with what to do next.
-            </p>
-            <p class="product-price">$197</p>
-            <a href="/focused-review" class="btn-blue">Get a focused review →</a>
-          </div>
-
-          <div class="product-card reveal d2">
-            <p class="product-tag">Snapshot</p>
-            <h3 class="product-title">See the full picture.</h3>
-            <p class="product-body">
-              48-hour diagnostic of what isn't working<br>
-              and where your money is.
-            </p>
-            <p class="product-price">$750</p>
-            <a href="/snapshot" class="btn-blue">Get snapshot →</a>
-          </div>
-
-          <div class="product-card reveal d3">
-            <p class="product-tag">Founder Diagnostic</p>
-            <h3 class="product-title">Get a revenue path.</h3>
-            <p class="product-body">
-              A clear way to make money<br>
-              from what you already have.
-            </p>
-            <p class="product-price">$1,500</p>
-            <a href="/founder-diagnostic" class="btn-blue">Get my path →</a>
-          </div>
-
-          <div class="product-card reveal d4">
-            <p class="product-tag">Playbooks</p>
-            <h3 class="product-title">Paths that already work.</h3>
-            <p class="product-body">
-              Proven income paths you can use directly.<br>
-              No guessing. No blank page.
-            </p>
-            <a href="/playbooks" class="btn-blue">View playbooks →</a>
-          </div>
-
-          <div class="product-card club-card reveal d5">
-            <p class="product-tag">5% Club</p>
-            <h3 class="product-title">Think better.</h3>
-            <p class="product-body">
-              Private intelligence, signal, and positioning<br>
-              for people who want better judgment.
-            </p>
-            <a href="/club" class="btn-blue">Enter →</a>
-          </div>
-
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- S5: PRIVATE ACCESS -->
-  <section id="private">
-    <div class="pad">
-      <div class="inner">
-        <p class="eyebrow reveal">For people building something serious</p>
-        <div class="private-inner">
-
-          <div class="reveal">
-            <h2 class="section-title">Private Access.</h2>
-            <span class="gold-rule"></span>
-            <ul class="private-list">
-              <li>Correction: wrong decisions stopped before they get worse</li>
-              <li>Positioning: where you should actually be operating</li>
-              <li>Market level: local, regional, or national recalibration</li>
-              <li>Offer structure: what to build and what to stop building</li>
-              <li>Revenue architecture: how it actually makes money</li>
-            </ul>
-            <a href="/access" class="btn-blue">Request access →</a>
-          </div>
-
-          <div class="reveal d1">
-            <p class="private-right-text">Not always open.</p>
-            <p class="private-right-text">Requests are reviewed.</p>
-            <p class="private-right-text">Not all are accepted.</p>
-            <p class="private-hook">
-              It changes what you do and where you operate.
-            </p>
-          </div>
-
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- S6: PROOF -->
-  <section id="proof">
-    <div class="pad">
-      <div class="inner">
-        <p class="eyebrow reveal">Not theory</p>
-        <div class="proof-inner reveal d1">
-          <p class="proof-quote">I booked my first advisory retainer before I had:</p>
-          <ul class="proof-list">
-            <li>a real email list</li>
-            <li>a website</li>
-            <li>a logo</li>
-          </ul>
-          <p class="proof-close">This is how it worked.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- FOOTER -->
   <footer>
     <div class="footer-inner">
-
       <div>
         <span class="footer-mark">Stephuary</span>
-        <p class="footer-micro">
-          Built to be used.<br>
-          Not watched.
-        </p>
+        <p class="footer-micro">Built to be used.<br>Not watched.</p>
       </div>
-
       <div>
         <p class="footer-col-label">System</p>
         <ul class="footer-links">
@@ -1249,64 +1295,119 @@
           <li><a href="mailto:hello@stephuary.com">Contact</a></li>
         </ul>
       </div>
-
       <div>
         <p class="footer-col-label">External</p>
         <ul class="footer-links">
           <li><a href="https://grownspaghetti.substack.com" target="_blank" rel="noopener">Substack</a></li>
-          <li><a href="https://onlysometimesclub.com"       target="_blank" rel="noopener">Only Sometimes Club</a></li>
+          <li><a href="https://onlysometimesclub.com" target="_blank" rel="noopener">Only Sometimes Club</a></li>
           <li><a href="https://github.com/stephuary/Stephuary" target="_blank" rel="noopener">GitHub</a></li>
         </ul>
       </div>
-
     </div>
   </footer>
 
   <script>
-    // Scroll reveal
-    const io = new IntersectionObserver((entries) => {
-      entries.forEach(e => {
-        if (e.isIntersecting) {
-          e.target.classList.add('visible');
-          io.unobserve(e.target);
-        }
-      });
-    }, { threshold: 0.07, rootMargin: '0px 0px -28px 0px' });
-    document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+    (function () {
+      var mainNav = document.getElementById('main-nav');
+      window.addEventListener('scroll', function () {
+        mainNav.classList.toggle('scrolled', window.scrollY > 60);
+      }, { passive: true });
 
-    // Nav border on scroll
-    const mainNav = document.getElementById('main-nav');
-    window.addEventListener('scroll', () => {
-      mainNav.classList.toggle('scrolled', window.scrollY > 60);
-    }, { passive: true });
-
-    // Diagnostic card interaction
-    const cards = document.querySelectorAll('.diag-card');
-    const states = document.querySelectorAll('.result-state');
-
-    cards.forEach(card => {
-      card.addEventListener('click', () => {
-        const target = card.dataset.state;
-
-        cards.forEach(c => {
-          c.classList.remove('active');
-          c.setAttribute('aria-pressed', 'false');
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (e.isIntersecting) {
+            e.target.classList.add('visible');
+            io.unobserve(e.target);
+          }
         });
-        card.classList.add('active');
-        card.setAttribute('aria-pressed', 'true');
+      }, { threshold: 0.08, rootMargin: '0px 0px -24px 0px' });
+      document.querySelectorAll('.reveal-io').forEach(function (el) { io.observe(el); });
 
-        states.forEach(s => s.classList.remove('active'));
-        const targetState = document.getElementById('state-' + target);
-        if (targetState) targetState.classList.add('active');
+      var folds = document.querySelectorAll('.fold[data-fold]');
+      var singleOpen = true;
 
-        if (window.innerWidth < 768) {
-          document.getElementById('diag-result').scrollIntoView({
-            behavior: 'smooth', block: 'nearest'
-          });
-        }
+      folds.forEach(function (fold) {
+        var btn = fold.querySelector('.fold-head');
+        var panel = fold.querySelector('.fold-panel');
+        if (panel) panel.style.display = 'grid';
+
+        btn.addEventListener('click', function () {
+          var opening = !fold.classList.contains('open');
+          if (singleOpen && opening) {
+            folds.forEach(function (f) {
+              if (f === fold) return;
+              f.classList.remove('open');
+              f.querySelector('.fold-head').setAttribute('aria-expanded', 'false');
+            });
+          }
+          fold.classList.toggle('open');
+          btn.setAttribute('aria-expanded', fold.classList.contains('open') ? 'true' : 'false');
+          if (fold.classList.contains('open')) {
+            fold.querySelectorAll('.reveal-io:not(.visible)').forEach(function (el, i) {
+              window.setTimeout(function () { el.classList.add('visible'); }, 40 * i);
+            });
+            if (fold.id === 'fold-system') {
+              window.requestAnimationFrame(function () {
+                window.dispatchEvent(new Event('scroll'));
+              });
+            }
+          }
+        });
       });
-    });
-  </script>
 
+      var cards = document.querySelectorAll('.diag-card');
+      var states = document.querySelectorAll('.result-state');
+      cards.forEach(function (card) {
+        card.addEventListener('click', function () {
+          var target = card.dataset.state;
+          cards.forEach(function (c) {
+            c.classList.remove('active');
+            c.setAttribute('aria-pressed', 'false');
+          });
+          card.classList.add('active');
+          card.setAttribute('aria-pressed', 'true');
+          states.forEach(function (s) { s.classList.remove('active'); });
+          var ts = document.getElementById('state-' + target);
+          if (ts) ts.classList.add('active');
+          if (window.innerWidth < 768) {
+            document.getElementById('diag-result').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          }
+        });
+      });
+
+      var track = document.getElementById('fold-system');
+      function syncPhaseActive(idx) {
+        document.querySelectorAll('.phase-node').forEach(function (n) {
+          n.classList.toggle('active', parseInt(n.getAttribute('data-phase'), 10) === idx);
+        });
+      }
+      if (track) {
+        window.addEventListener('scroll', function () {
+          if (!track.classList.contains('open')) return;
+          var inner = track.querySelector('.phase-track-wrap');
+          if (!inner) return;
+          var rect = inner.getBoundingClientRect();
+          var h = window.innerHeight;
+          if (rect.bottom < 0 || rect.top > h) return;
+          var t = Math.max(0, Math.min(1, (h * 0.45 - rect.top) / Math.max(rect.height, 1)));
+          var idx = Math.min(4, Math.max(0, Math.floor(t * 5)));
+          syncPhaseActive(idx);
+        }, { passive: true });
+      }
+
+      var pr = document.getElementById('private-rule');
+      if (pr) {
+        var ior = new IntersectionObserver(function (entries) {
+          entries.forEach(function (e) {
+            if (e.isIntersecting) {
+              e.target.classList.add('visible');
+              ior.unobserve(e.target);
+            }
+          });
+        }, { threshold: 0.2 });
+        ior.observe(pr);
+      }
+    })();
+  </script>
 </body>
 </html>
