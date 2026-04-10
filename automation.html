@@ -1,2110 +1,1303 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Automation — Stephuary</title>
-<meta name="description" content="Phase 05 — Remove repeated friction, recurring decisions, and avoidable manual work so progress keeps moving." />
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet" />
-<style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-
-:root{
-  --bg-0:#0a0a08;
-  --bg-1:#10100d;
-  --bg-2:#151510;
-  --bg-3:#191913;
-  --line:rgba(196,163,90,0.22);
-  --line-soft:rgba(196,163,90,0.10);
-  --gold:#c4a35a;
-  --gold-soft:rgba(196,163,90,0.14);
-  --blue:#2b4fd4;
-  --blue-hover:#355fe4;
-  --text:#f4ede0;
-  --text-dim:#ccc3b4;
-  --text-soft:#9d9587;
-  --warn:#b85c38;
-  --warn-soft:rgba(184,92,56,0.16);
-  --warn-line:rgba(184,92,56,0.26);
-  --ok:#7f9a56;
-  --ok-soft:rgba(127,154,86,0.14);
-  --shadow:0 12px 44px rgba(0,0,0,0.28);
-  --radius:2px;
-  --serif:"Cormorant Garamond", Georgia, serif;
-  --sans:"Lato", system-ui, sans-serif;
-  --content:760px;
-  --rail:228px;
-  --notes:328px;
-  --shell-gap:28px;
-}
-
-html,body{
-  min-height:100%;
-  background:
-    radial-gradient(circle at top left, rgba(196,163,90,0.05), transparent 26%),
-    linear-gradient(180deg, #0a0a08 0%, #0d0d0a 100%);
-  color:var(--text);
-  font-family:var(--sans);
-  font-weight:300;
-  font-size:18px;
-  line-height:1.6;
-}
-
-body{
-  min-height:100vh;
-  overflow-x:hidden;
-  padding-top:72px;
-}
-
-a{color:inherit;text-decoration:none}
-button,input,textarea{font:inherit}
-
-.phase-nav{
-  position:fixed;
-  top:0;
-  left:0;
-  right:0;
-  z-index:60;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:20px;
-  padding:18px 24px;
-  border-bottom:1px solid var(--line-soft);
-  background:linear-gradient(180deg, rgba(10,10,8,0.96), rgba(10,10,8,0.84));
-  backdrop-filter:blur(8px);
-}
-
-.phase-nav-mark{
-  font-family:var(--serif);
-  font-size:20px;
-  line-height:1;
-  letter-spacing:0.08em;
-  text-transform:uppercase;
-  color:var(--text);
-}
-
-.phase-nav-home{
-  font-size:10px;
-  letter-spacing:0.16em;
-  text-transform:uppercase;
-  color:var(--gold);
-}
-
-.shell{
-  min-height:100vh;
-  display:grid;
-  grid-template-columns:var(--rail) minmax(0,var(--content)) var(--notes);
-  gap:var(--shell-gap);
-  align-items:start;
-  max-width:calc(var(--rail) + var(--content) + var(--notes) + (var(--shell-gap) * 2) + 80px);
-  margin:0 auto;
-  padding:28px 24px 80px;
-}
-
-.left-rail{
-  position:sticky;
-  top:24px;
-  align-self:start;
-}
-
-.center{
-  min-width:0;
-}
-
-.right-notes{
-  position:sticky;
-  top:24px;
-  align-self:start;
-}
-
-.rail-card,
-.notes-card,
-.panel,
-.output-card,
-.entry-card{
-  border:1px solid var(--line-soft);
-  background:linear-gradient(180deg, rgba(17,17,13,0.96), rgba(20,20,16,0.98));
-  box-shadow:var(--shadow);
-  border-radius:var(--radius);
-}
-
-.rail-card{padding:22px 18px}
-.notes-card{padding:22px 20px}
-
-.entry-overlay{
-  position:fixed;
-  inset:0;
-  z-index:50;
-  background:
-    linear-gradient(180deg, rgba(8,8,6,0.94), rgba(8,8,6,0.96)),
-    radial-gradient(circle at 20% 10%, rgba(196,163,90,0.08), transparent 35%);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  padding:20px;
-  transition:opacity 220ms ease, visibility 220ms ease;
-}
-
-.entry-overlay.hidden{
-  opacity:0;
-  visibility:hidden;
-  pointer-events:none;
-}
-
-.entry-card{
-  width:min(940px,100%);
-  padding:34px 28px 28px;
-  display:grid;
-  grid-template-columns:minmax(0,1.25fr) minmax(280px,0.75fr);
-  gap:24px;
-  border-color:var(--line);
-}
-
-.label{
-  display:inline-block;
-  font-size:10px;
-  letter-spacing:0.18em;
-  text-transform:uppercase;
-  color:var(--gold);
-  font-weight:400;
-}
-
-.entry-label{margin-bottom:16px}
-
-h1{
-  font-family:var(--serif);
-  font-weight:400;
-  font-size:clamp(42px,7vw,70px);
-  line-height:1.02;
-  letter-spacing:-0.015em;
-  margin-bottom:16px;
-}
-
-h2{
-  font-family:var(--serif);
-  font-weight:400;
-  font-size:clamp(28px,4vw,38px);
-  line-height:1.08;
-  letter-spacing:-0.01em;
-  margin-bottom:14px;
-}
-
-h3{
-  font-family:var(--serif);
-  font-weight:400;
-  font-size:clamp(20px,3vw,28px);
-  line-height:1.15;
-  margin-bottom:10px;
-}
-
-p{
-  color:var(--text-dim);
-  max-width:60ch;
-}
-
-.entry-copy p{
-  font-size:18px;
-  max-width:35ch;
-}
-
-.entry-points{
-  list-style:none;
-  display:flex;
-  flex-direction:column;
-  gap:11px;
-  margin-top:18px;
-}
-
-.entry-points li,
-.bullet-list li{
-  position:relative;
-  padding-left:16px;
-  color:var(--text-dim);
-}
-
-.entry-points li::before,
-.bullet-list li::before{
-  content:"";
-  width:4px;
-  height:4px;
-  border-radius:50%;
-  background:var(--gold);
-  position:absolute;
-  left:0;
-  top:11px;
-}
-
-.entry-aside{
-  border:1px solid var(--line-soft);
-  padding:20px 18px;
-  background:rgba(196,163,90,0.04);
-}
-
-.entry-aside .mini{
-  font-size:12px;
-  color:var(--text-soft);
-  margin-bottom:10px;
-  text-transform:uppercase;
-  letter-spacing:0.12em;
-}
-
-.entry-aside .aside-text{
-  font-family:var(--serif);
-  font-size:24px;
-  line-height:1.24;
-  color:var(--text);
-}
-
-.entry-actions{
-  margin-top:22px;
-  display:flex;
-  flex-wrap:wrap;
-  gap:12px;
-}
-
-.btn{
-  min-height:50px;
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  border-radius:var(--radius);
-  border:1px solid var(--line);
-  padding:14px 20px;
-  text-transform:uppercase;
-  letter-spacing:0.14em;
-  font-size:11px;
-  font-weight:400;
-  background:transparent;
-  color:var(--text);
-  cursor:pointer;
-  transition:border-color 140ms ease, background 140ms ease, color 140ms ease, transform 100ms ease;
-}
-
-.btn:hover{border-color:var(--gold);color:var(--text)}
-.btn:active{transform:scale(0.98)}
-
-.btn-primary{
-  background:var(--blue);
-  border-color:var(--blue);
-  color:#fff;
-}
-
-.btn-primary:hover{
-  background:var(--blue-hover);
-  border-color:var(--blue-hover);
-  color:#fff;
-}
-
-.btn-soft{
-  background:rgba(196,163,90,0.06);
-}
-
-.rail-top{
-  padding-bottom:18px;
-  border-bottom:1px solid var(--line-soft);
-  margin-bottom:18px;
-}
-
-.rail-phase{
-  font-size:11px;
-  color:var(--text-soft);
-  letter-spacing:0.12em;
-  text-transform:uppercase;
-  margin-bottom:8px;
-}
-
-.rail-title{
-  font-family:var(--serif);
-  font-size:32px;
-  line-height:1;
-  margin-bottom:10px;
-}
-
-.rail-sub{
-  font-size:14px;
-  color:var(--text-soft);
-  line-height:1.55;
-}
-
-.rail-progress{
-  display:flex;
-  flex-direction:column;
-  gap:10px;
-  margin-bottom:20px;
-}
-
-.progress-item{
-  display:flex;
-  gap:12px;
-  align-items:flex-start;
-  padding:10px 0;
-  border-bottom:1px solid rgba(196,163,90,0.06);
-}
-
-.progress-item:last-child{border-bottom:none}
-
-.progress-num{
-  width:24px;
-  flex:0 0 24px;
-  font-size:10px;
-  color:var(--text-soft);
-  letter-spacing:0.1em;
-  text-transform:uppercase;
-  padding-top:2px;
-}
-
-.progress-copy{
-  min-width:0;
-}
-
-.progress-copy strong{
-  display:block;
-  font-size:13px;
-  color:var(--text);
-  font-weight:400;
-  letter-spacing:0.01em;
-}
-
-.progress-copy span{
-  display:block;
-  font-size:12px;
-  color:var(--text-soft);
-  line-height:1.45;
-  margin-top:2px;
-}
-
-.progress-item.active .progress-num,
-.progress-item.active .progress-copy strong{color:var(--gold)}
-
-.progress-item.complete .progress-copy strong{color:var(--text)}
-.progress-item.complete .progress-num{color:var(--ok)}
-
-.rail-actions{
-  display:flex;
-  flex-direction:column;
-  gap:10px;
-  padding-top:16px;
-  border-top:1px solid var(--line-soft);
-}
-
-.main-stack{
-  display:flex;
-  flex-direction:column;
-  gap:24px;
-}
-
-.hero{
-  padding:30px 28px 26px;
-  border:1px solid var(--line-soft);
-  background:
-    linear-gradient(180deg, rgba(18,18,14,0.98), rgba(16,16,12,0.98)),
-    radial-gradient(circle at top right, rgba(196,163,90,0.06), transparent 28%);
-  box-shadow:var(--shadow);
-}
-
-.hero .label{margin-bottom:14px}
-
-.hero-sub{
-  font-size:18px;
-  color:var(--text-dim);
-  max-width:44ch;
-  margin-bottom:20px;
-}
-
-.hero-grid{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:1px;
-  background:var(--line-soft);
-  border:1px solid var(--line-soft);
-  margin-top:22px;
-}
-
-.hero-cell{
-  background:rgba(10,10,8,0.7);
-  padding:16px 16px 14px;
-}
-
-.hero-cell .small{
-  display:block;
-  font-size:10px;
-  letter-spacing:0.14em;
-  text-transform:uppercase;
-  color:var(--text-soft);
-  margin-bottom:6px;
-}
-
-.hero-cell .value{
-  font-size:15px;
-  color:var(--text);
-  line-height:1.45;
-}
-
-.panel{
-  padding:28px 26px;
-}
-
-.panel-top{
-  display:flex;
-  justify-content:space-between;
-  align-items:flex-start;
-  gap:16px;
-  margin-bottom:18px;
-}
-
-.step-meta{
-  font-size:10px;
-  letter-spacing:0.18em;
-  text-transform:uppercase;
-  color:var(--gold);
-  font-weight:400;
-}
-
-.step-body{
-  display:flex;
-  flex-direction:column;
-  gap:18px;
-}
-
-.field-grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:18px 16px;
-}
-
-.field{
-  display:flex;
-  flex-direction:column;
-  gap:7px;
-}
-
-.field.full{grid-column:1/-1}
-
-.field-label{
-  font-size:15px;
-  font-weight:400;
-  color:var(--text);
-}
-
-.field-hint{
-  font-size:12px;
-  color:var(--text-soft);
-  font-style:italic;
-  line-height:1.45;
-}
-
-.field input,
-.field textarea{
-  width:100%;
-  background:transparent;
-  border:1px solid var(--line);
-  color:var(--text);
-  padding:14px 15px;
-  border-radius:var(--radius);
-  outline:none;
-  transition:border-color 160ms ease, background 160ms ease;
-}
-
-.field textarea{
-  min-height:112px;
-  resize:vertical;
-}
-
-.field input:focus,
-.field textarea:focus{
-  border-color:var(--gold);
-  background:rgba(196,163,90,0.035);
-}
-
-.field input::placeholder,
-.field textarea::placeholder{
-  color:var(--text-soft);
-}
-
-.step-actions{
-  display:flex;
-  flex-wrap:wrap;
-  gap:10px;
-  align-items:center;
-}
-
-.inline-note{
-  font-size:13px;
-  color:var(--text-soft);
-  max-width:none;
-}
-
-.status-badge{
-  display:inline-flex;
-  align-items:center;
-  gap:8px;
-  font-size:10px;
-  letter-spacing:0.13em;
-  text-transform:uppercase;
-  color:var(--text-soft);
-  border:1px solid var(--line-soft);
-  padding:8px 10px;
-}
-
-.status-dot{
-  width:6px;
-  height:6px;
-  border-radius:50%;
-  background:var(--gold);
-}
-
-.chips{
-  display:flex;
-  flex-wrap:wrap;
-  gap:8px;
-}
-
-.chip{
-  background:transparent;
-  border:1px solid var(--line);
-  color:var(--text-dim);
-  padding:9px 12px;
-  font-size:11px;
-  letter-spacing:0.1em;
-  text-transform:uppercase;
-  cursor:pointer;
-  transition:border-color 140ms ease, color 140ms ease, background 140ms ease;
-}
-
-.chip:hover{
-  border-color:var(--gold);
-  color:var(--text);
-  background:rgba(196,163,90,0.05);
-}
-
-.chip.active{
-  border-color:var(--gold);
-  color:var(--text);
-  background:rgba(196,163,90,0.07);
-}
-
-.output-card{
-  padding:30px 28px;
-  border-color:var(--line);
-  background:
-    linear-gradient(180deg, rgba(18,18,14,0.98), rgba(17,17,13,0.98)),
-    radial-gradient(circle at top right, rgba(196,163,90,0.08), transparent 28%);
-  position:relative;
-  overflow:hidden;
-}
-
-.output-card::before{
-  content:"";
-  position:absolute;
-  top:0;
-  left:0;
-  right:0;
-  height:1px;
-  background:linear-gradient(90deg, transparent, var(--gold), transparent);
-  opacity:0.65;
-}
-
-.output-header{
-  display:flex;
-  justify-content:space-between;
-  align-items:flex-start;
-  gap:16px;
-  margin-bottom:20px;
-}
-
-.output-tag{
-  display:inline-block;
-  font-size:10px;
-  letter-spacing:0.18em;
-  text-transform:uppercase;
-  color:var(--gold);
-  font-weight:400;
-  margin-bottom:12px;
-}
-
-.output-headline{
-  font-family:var(--serif);
-  font-size:clamp(30px,4vw,44px);
-  line-height:1.08;
-  color:var(--text);
-  max-width:13ch;
-}
-
-.output-tools{
-  display:flex;
-  flex-wrap:wrap;
-  gap:10px;
-}
-
-.mini-btn{
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  min-height:38px;
-  padding:10px 12px;
-  border:1px solid var(--line);
-  font-size:10px;
-  letter-spacing:0.12em;
-  text-transform:uppercase;
-  color:var(--text-soft);
-  background:transparent;
-  cursor:pointer;
-}
-
-.mini-btn:hover{
-  border-color:var(--gold);
-  color:var(--text);
-}
-
-.artifact-grid{
-  display:grid;
-  grid-template-columns:1.15fr 0.85fr;
-  gap:24px;
-}
-
-.artifact-block{
-  display:flex;
-  flex-direction:column;
-  gap:16px;
-}
-
-.statement{
-  font-family:var(--serif);
-  font-size:clamp(24px,3.2vw,34px);
-  line-height:1.24;
-  color:var(--text);
-  padding-bottom:18px;
-  border-bottom:1px solid var(--line-soft);
-}
-
-.detail-grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:1px;
-  background:var(--line-soft);
-  border:1px solid var(--line-soft);
-}
-
-.detail-cell{
-  background:rgba(10,10,8,0.7);
-  padding:14px 15px;
-}
-
-.detail-cell.wide{grid-column:1/-1}
-
-.detail-label{
-  display:block;
-  font-size:10px;
-  letter-spacing:0.14em;
-  text-transform:uppercase;
-  color:var(--text-soft);
-  margin-bottom:5px;
-}
-
-.detail-value{
-  font-size:15px;
-  color:var(--text);
-  line-height:1.45;
-}
-
-.artifact-subsection{
-  border-top:1px solid var(--line-soft);
-  padding-top:16px;
-}
-
-.artifact-subsection:first-child{
-  border-top:none;
-  padding-top:0;
-}
-
-.artifact-subsection .sub-label{
-  display:block;
-  font-size:10px;
-  letter-spacing:0.14em;
-  text-transform:uppercase;
-  color:var(--text-soft);
-  margin-bottom:8px;
-}
-
-.artifact-subsection .sub-text{
-  font-size:15px;
-  color:var(--text-dim);
-  line-height:1.58;
-}
-
-.sequence-list,
-.matrix-list{
-  list-style:none;
-  display:flex;
-  flex-direction:column;
-  gap:10px;
-}
-
-.sequence-list li,
-.matrix-list li{
-  padding:10px 12px;
-  border:1px solid var(--line-soft);
-  background:rgba(10,10,8,0.44);
-}
-
-.sequence-list strong,
-.matrix-list strong{
-  display:block;
-  font-size:11px;
-  letter-spacing:0.12em;
-  text-transform:uppercase;
-  color:var(--text-soft);
-  font-weight:400;
-  margin-bottom:5px;
-}
-
-.sequence-list span,
-.matrix-list span{
-  display:block;
-  font-size:14px;
-  color:var(--text-dim);
-  line-height:1.5;
-}
-
-.bridge{
-  border:1px solid var(--line);
-  background:linear-gradient(180deg, rgba(196,163,90,0.06), rgba(196,163,90,0.03));
-  padding:24px 22px;
-}
-
-.bridge-title{
-  font-family:var(--serif);
-  font-size:30px;
-  line-height:1.08;
-  margin-bottom:10px;
-}
-
-.bridge-text{
-  font-size:16px;
-  color:var(--text-dim);
-  max-width:none;
-  margin-bottom:16px;
-}
-
-.bridge-actions{
-  display:flex;
-  flex-wrap:wrap;
-  gap:10px;
-}
-
-.notes-title{
-  font-size:10px;
-  letter-spacing:0.18em;
-  text-transform:uppercase;
-  color:var(--gold);
-  margin-bottom:12px;
-}
-
-.notes-head{
-  font-family:var(--serif);
-  font-size:30px;
-  line-height:1;
-  margin-bottom:14px;
-}
-
-.notes-list{
-  display:flex;
-  flex-direction:column;
-  gap:10px;
-  margin-bottom:18px;
-}
-
-.note-item{
-  padding:12px 12px 11px;
-  border:1px solid var(--line-soft);
-  background:rgba(10,10,8,0.46);
-}
-
-.note-item .name{
-  display:block;
-  font-size:10px;
-  letter-spacing:0.12em;
-  text-transform:uppercase;
-  color:var(--text-soft);
-  margin-bottom:5px;
-}
-
-.note-item .val{
-  display:block;
-  font-size:14px;
-  color:var(--text);
-  line-height:1.45;
-}
-
-.note-item.empty .val{color:var(--text-soft)}
-
-.notes-actions{
-  display:flex;
-  flex-wrap:wrap;
-  gap:8px;
-  padding-top:16px;
-  border-top:1px solid var(--line-soft);
-}
-
-.phase-footer{
-  border-top:1px solid var(--line-soft);
-  padding-top:18px;
-  display:flex;
-  flex-wrap:wrap;
-  gap:10px 16px;
-}
-
-.phase-footer a{
-  font-size:11px;
-  letter-spacing:0.1em;
-  text-transform:uppercase;
-  color:var(--text-soft);
-  transition:color 140ms ease;
-}
-
-.phase-footer a:hover{color:var(--text)}
-
-.hidden{display:none !important}
-
-@media (max-width:1200px){
-  .shell{
-    grid-template-columns:220px minmax(0,1fr);
-    max-width:1080px;
-  }
-  .right-notes{
-    position:static;
-    grid-column:1 / -1;
-    order:3;
-  }
-  .center{order:2}
-}
-
-@media (max-width:860px){
-  .shell{
-    grid-template-columns:1fr;
-    padding:18px 16px 72px;
-    gap:18px;
-  }
-  .left-rail,
-  .right-notes{
-    position:static;
-  }
-  .entry-card{
-    grid-template-columns:1fr;
-    padding:28px 20px 22px;
-  }
-  .hero,
-  .panel,
-  .output-card,
-  .rail-card,
-  .notes-card{
-    padding:22px 18px;
-  }
-  .hero-grid,
-  .field-grid,
-  .artifact-grid{
-    grid-template-columns:1fr;
-  }
-  .detail-grid{
-    grid-template-columns:1fr;
-  }
-  .panel-top,
-  .output-header{
-    flex-direction:column;
-    align-items:flex-start;
-  }
-  .btn{
-    width:100%;
-  }
-  .mini-btn{
-    flex:1;
-  }
-}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Phase 04 · Validation · Stephuary</title>
+  <meta name="description" content="Phase 04. Real-world validation. Response is the only proof." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=Lato:wght@300;400&display=swap" rel="stylesheet" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:          #0a0a08;
+      --surface:     #111110;
+      --border:      #2a2a26;
+      --border-dim:  #1c1c19;
+      --gold:        #c4a35a;
+      --gold-dim:    #8a6f3a;
+      --selected-bg: rgba(196,163,90,0.09);
+      --text:        #f5f0e8;
+      --text-dim:    #7a7870;
+      --text-mid:    #c8c0b0;
+      --serif:       'Cormorant Garamond', Georgia, serif;
+      --sans:        'Lato', system-ui, sans-serif;
+      --radius:      2px;
+      --trans:       200ms ease;
+    }
+
+    html {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      font-weight: 300;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 0 16px 100px;
+    }
+
+    #locked {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      text-align: center;
+      max-width: 480px;
+      width: 100%;
+      padding: 60px 0;
+    }
+
+    .locked-phase {
+      font-size: 10px;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 36px;
+    }
+
+    .locked-headline {
+      font-family: var(--serif);
+      font-size: clamp(30px, 6vw, 48px);
+      font-weight: 300;
+      line-height: 1.12;
+      margin-bottom: 20px;
+    }
+
+    .locked-headline em { font-style: italic; color: var(--text-mid); }
+
+    .locked-body {
+      font-size: 13px;
+      color: var(--text-dim);
+      line-height: 1.8;
+      margin-bottom: 36px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--sans);
+      font-weight: 300;
+      font-size: 11px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      padding: 14px 36px;
+      border: 1px solid var(--gold);
+      background: transparent;
+      color: var(--gold);
+      cursor: pointer;
+      transition: background var(--trans), color var(--trans);
+      border-radius: var(--radius);
+      min-height: 48px;
+      text-decoration: none;
+    }
+
+    .btn:hover { background: var(--gold); color: var(--bg); }
+
+    .btn-solid {
+      background: var(--gold);
+      color: var(--bg);
+      border-color: var(--gold);
+    }
+
+    .btn-solid:hover { background: #d4b36a; border-color: #d4b36a; }
+
+    .btn-ghost {
+      border-color: var(--border-dim);
+      color: var(--text-dim);
+      font-size: 10px;
+      padding: 12px 22px;
+    }
+
+    .btn-ghost:hover {
+      border-color: var(--border);
+      color: var(--text-mid);
+      background: transparent;
+    }
+
+    #flow-wrap {
+      display: none;
+      width: 100%;
+      max-width: 1180px;
+      padding-top: 44px;
+    }
+
+    .top-nav {
+      width: 100%;
+      max-width: 1180px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 28px 0 0;
+    }
+
+    .nav-brand {
+      font-size: 10px;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      text-decoration: none;
+    }
+
+    .nav-brand:hover { color: var(--text-mid); }
+
+    .nav-phase {
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold);
+    }
+
+    .capture-layout {
+      display: grid;
+      grid-template-columns: 112px minmax(0, 1fr) minmax(220px, 280px);
+      gap: 28px 32px;
+      align-items: start;
+      width: 100%;
+    }
+
+    .rail {
+      position: sticky;
+      top: 72px;
+      display: flex;
+      flex-direction: column;
+      padding-top: 8px;
+    }
+
+    .rail-item {
+      font-size: 9px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      padding: 10px 0;
+      border-left: 2px solid var(--border-dim);
+      padding-left: 12px;
+      transition: color var(--trans), border-color var(--trans);
+      line-height: 1.35;
+    }
+
+    .rail-item.done {
+      color: var(--text-mid);
+      border-left-color: rgba(196,163,90,0.35);
+    }
+
+    .rail-item.active {
+      color: var(--gold);
+      border-left-color: var(--gold);
+    }
+
+    .main-col {
+      min-width: 0;
+      max-width: 580px;
+      justify-self: center;
+      width: 100%;
+    }
+
+    .live-panel {
+      position: sticky;
+      top: 72px;
+      border: 1px solid var(--border);
+      border-top: 2px solid var(--gold);
+      background: var(--surface);
+      max-height: calc(100vh - 100px);
+      overflow-y: auto;
+    }
+
+    .live-panel-head {
+      font-size: 10px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--gold);
+      padding: 18px 20px 12px;
+      border-bottom: 1px solid var(--border-dim);
+    }
+
+    .live-field {
+      padding: 14px 20px;
+      border-bottom: 1px solid var(--border-dim);
+    }
+
+    .live-field:last-child { border-bottom: none; }
+
+    .live-label {
+      font-size: 9px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin-bottom: 8px;
+    }
+
+    .live-value {
+      font-size: 12px;
+      color: var(--text-mid);
+      line-height: 1.65;
+    }
+
+    .instinct-block {
+      border: 1px solid var(--border);
+      border-top: 2px solid var(--gold);
+      padding: 28px 24px;
+      margin-bottom: 40px;
+      background: rgba(17,17,16,0.6);
+    }
+
+    .instinct-kicker {
+      font-size: 10px;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 16px;
+    }
+
+    .instinct-h2 {
+      font-family: var(--serif);
+      font-size: clamp(22px, 3.5vw, 30px);
+      font-weight: 300;
+      line-height: 1.2;
+      margin-bottom: 14px;
+    }
+
+    .instinct-sub {
+      font-size: 14px;
+      color: var(--text-mid);
+      line-height: 1.75;
+      margin-bottom: 24px;
+    }
+
+    .instinct-row {
+      font-size: 13px;
+      color: var(--text-mid);
+      line-height: 1.7;
+      margin-bottom: 12px;
+    }
+
+    .instinct-row strong { color: var(--text); font-weight: 400; }
+
+    .instinct-reality {
+      font-size: 13px;
+      color: var(--text-dim);
+      line-height: 1.75;
+      padding-top: 16px;
+      border-top: 1px solid var(--border-dim);
+    }
+
+    .instinct-reality p { margin-bottom: 6px; }
+
+    #flow { width: 100%; }
+
+    .progress-bar-wrap { width: 100%; margin-bottom: 40px; }
+
+    .progress-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .progress-label {
+      font-size: 10px;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+    }
+
+    .progress-count {
+      font-family: var(--serif);
+      font-size: 13px;
+      color: var(--gold);
+    }
+
+    .progress-track {
+      width: 100%;
+      height: 2px;
+      background: var(--border-dim);
+      border-radius: 1px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: var(--gold);
+      border-radius: 1px;
+      transition: width 450ms cubic-bezier(0.4,0,0.2,1);
+    }
+
+    .step {
+      display: none;
+      flex-direction: column;
+      width: 100%;
+      animation: stepIn 280ms ease forwards;
+    }
+
+    .step.active { display: flex; }
+
+    @keyframes stepIn {
+      from { opacity: 0; transform: translateY(14px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .step-header { margin-bottom: 32px; }
+
+    .step-adaptive {
+      font-size: 11px;
+      color: var(--gold-dim);
+      letter-spacing: 0.06em;
+      margin-bottom: 14px;
+      line-height: 1.5;
+      max-width: 520px;
+    }
+
+    .step-instruction {
+      font-family: var(--serif);
+      font-size: clamp(24px, 4.5vw, 38px);
+      font-weight: 300;
+      line-height: 1.15;
+      margin-bottom: 8px;
+    }
+
+    .step-micro {
+      font-size: 11px;
+      color: var(--text-dim);
+      margin-top: 8px;
+      line-height: 1.7;
+    }
+
+    .option-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .option-item {
+      display: flex;
+      align-items: center;
+      padding: 18px 20px;
+      border: 1px solid var(--border);
+      cursor: pointer;
+      transition: border-color var(--trans), background var(--trans), color var(--trans);
+      border-radius: var(--radius);
+      font-size: 14px;
+      font-weight: 300;
+      color: var(--text-mid);
+      line-height: 1.45;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .option-item:hover {
+      border-color: var(--gold-dim);
+      color: var(--text);
+    }
+
+    .option-item.selected {
+      border-color: var(--gold);
+      color: var(--text);
+      background: var(--selected-bg);
+    }
+
+    .option-item.selected::after {
+      content: '';
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--gold);
+      margin-left: auto;
+      flex-shrink: 0;
+    }
+
+    .option-item.dim { pointer-events: none; opacity: 0.45; }
+
+    .nav-row {
+      display: flex;
+      gap: 12px;
+      margin-top: 36px;
+      align-items: center;
+    }
+
+    #summary {
+      display: none;
+      flex-direction: column;
+      width: 100%;
+      max-width: 640px;
+      padding-top: 32px;
+      margin: 0 auto;
+      animation: stepIn 400ms ease forwards;
+    }
+
+    .summary-phase-tag {
+      font-size: 10px;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 16px;
+    }
+
+    .summary-title {
+      font-family: var(--serif);
+      font-size: clamp(28px, 5vw, 44px);
+      font-weight: 300;
+      line-height: 1.1;
+      margin-bottom: 10px;
+    }
+
+    .summary-sub {
+      font-size: 13px;
+      color: var(--text-dim);
+      margin-bottom: 36px;
+      line-height: 1.7;
+    }
+
+    .diag-section { margin-bottom: 26px; }
+
+    .diag-h {
+      font-size: 10px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 12px;
+    }
+
+    .diag-body {
+      font-size: 14px;
+      color: var(--text-mid);
+      line-height: 1.85;
+    }
+
+    .diag-body p { margin-bottom: 10px; }
+
+    .diag-list {
+      list-style: none;
+      margin-top: 8px;
+    }
+
+    .diag-list li {
+      font-size: 14px;
+      color: var(--text-mid);
+      line-height: 1.75;
+      padding-left: 14px;
+      position: relative;
+      margin-bottom: 8px;
+    }
+
+    .diag-list li::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0.55em;
+      width: 4px;
+      height: 4px;
+      background: var(--gold-dim);
+      border-radius: 50%;
+      opacity: 0.75;
+    }
+
+    .hard-truth-block {
+      border: 1px solid var(--border);
+      border-top: 2px solid var(--gold);
+      padding: 22px 24px;
+      margin-top: 8px;
+    }
+
+    .hard-truth-block p {
+      font-size: 14px;
+      color: var(--text-mid);
+      line-height: 1.8;
+      margin-bottom: 10px;
+    }
+
+    .reality-pointer {
+      font-size: 15px;
+      color: var(--text);
+      margin-top: 12px;
+    }
+
+    .action-primary {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+
+    .copy-confirm {
+      font-size: 11px;
+      color: var(--gold);
+      letter-spacing: 0.1em;
+      margin-bottom: 24px;
+      min-height: 18px;
+      opacity: 0;
+      transition: opacity 300ms ease;
+    }
+
+    .copy-confirm.visible { opacity: 1; }
+
+    .action-secondary {
+      padding-top: 20px;
+      border-top: 1px solid var(--border-dim);
+    }
+
+    .capture-footer {
+      margin-top: 40px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border-dim);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px 18px;
+      justify-content: center;
+      width: 100%;
+    }
+
+    .capture-footer a {
+      font-size: 9px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      text-decoration: none;
+    }
+
+    @media (max-width: 960px) {
+      .capture-layout {
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
+      .rail {
+        position: relative;
+        top: 0;
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 8px 12px;
+        padding: 0 0 8px;
+        border-bottom: 1px solid var(--border-dim);
+      }
+      .rail-item {
+        border-left: none;
+        padding-left: 0;
+        padding: 4px 0;
+        font-size: 8px;
+      }
+      .rail-item::after {
+        content: '·';
+        margin-left: 8px;
+        color: var(--border);
+      }
+      .rail-item:last-child::after { content: none; }
+      .live-panel {
+        position: relative;
+        top: 0;
+        max-height: none;
+        order: 3;
+      }
+      .main-col { order: 2; }
+      .rail { order: 1; }
+    }
+
+    @media (max-width: 480px) {
+      .step-instruction { font-size: 22px; }
+      .nav-row { flex-direction: column-reverse; align-items: stretch; }
+      .nav-row .btn { justify-content: center; }
+      .action-primary { flex-direction: column; }
+      .instinct-block { padding: 22px 18px; }
+    }
+  </style>
 </head>
 <body>
 
-<nav class="phase-nav" aria-label="Phase navigation">
-  <a href="/index" class="phase-nav-mark">Stephuary</a>
-  <a href="/index" class="phase-nav-home">Back to Home</a>
-</nav>
+<div id="locked">
+  <p class="locked-phase">Phase 04 · Validation</p>
+  <h1 class="locked-headline">Nothing is proven<br><em>until someone responds.</em></h1>
+  <p class="locked-body">Complete Phase 03, or unlock full system access.</p>
+  <a href="/structure" class="btn">Phase 03 · Structure</a>
+  <p style="margin-top:28px;font-size:11px;color:var(--text-dim);letter-spacing:0.12em;text-transform:uppercase">Or</p>
+  <a href="/pricing#checkout" class="btn btn-solid" style="margin-top:16px">Enter System</a>
+</div>
 
-<div class="entry-overlay" id="entry-overlay" aria-hidden="false">
-  <div class="entry-card">
-    <div class="entry-copy">
-      <span class="label entry-label">Stephuary · Phase 05</span>
-      <h1>Automation</h1>
-      <p>This is where repeated friction, recurring decisions, and avoidable manual work get removed so progress can keep moving.</p>
-      <ul class="entry-points">
-        <li>This is not a tech stack page.</li>
-        <li>This is not a directory of apps.</li>
-        <li>This is the leverage phase where stable sequences stop depending on constant presence, repeated admin, and repeated decisions.</li>
-      </ul>
-      <div class="entry-actions">
-        <button class="btn btn-primary" type="button" id="enter-phase">Enter Phase 05</button>
-        <a class="btn btn-soft" href="/structure">Back to Structure</a>
+<div id="flow-wrap">
+  <div class="top-nav">
+    <a href="/" class="nav-brand">Stephuary</a>
+    <span class="nav-phase">Phase 04 · Validation</span>
+  </div>
+
+  <div class="capture-layout">
+    <aside class="rail" id="rail" aria-hidden="true"></aside>
+
+    <div class="main-col">
+      <section class="instinct-block" id="bridgeBlock">
+        <p class="instinct-kicker">Value → Validation</p>
+        <h2 class="instinct-h2">You now have something real.</h2>
+        <p class="instinct-sub">Most people stop here. They build, adjust, think, refine. But nothing is proven until someone responds.</p>
+        <div id="bridgeRows"></div>
+        <div class="instinct-reality">
+          <p>If no one responds:</p>
+          <p><strong>it is not validated</strong></p>
+          <p><strong>it is not real</strong></p>
+          <p><strong>it does not grow</strong></p>
+        </div>
+      </section>
+
+      <div id="flow">
+        <div class="progress-bar-wrap">
+          <div class="progress-meta">
+            <span class="progress-label">Validation</span>
+            <span class="progress-count" id="progressCount">Step 1 of 10</span>
+          </div>
+          <div class="progress-track">
+            <div class="progress-fill" id="progressFill" style="width:10%"></div>
+          </div>
+        </div>
+        <div id="steps-root"></div>
+      </div>
+
+      <div id="summary">
+        <p class="summary-phase-tag">Phase 04 · Validation</p>
+        <h2 class="summary-title">Validation diagnostic complete</h2>
+        <p class="summary-sub">Contact with reality. Not comfort.</p>
+
+        <div class="diag-section">
+          <p class="diag-h">1. Validation status</p>
+          <div class="diag-body" id="out-1"></div>
+        </div>
+
+        <div class="diag-section">
+          <p class="diag-h">2. What is real</p>
+          <div class="diag-body" id="out-2"></div>
+        </div>
+
+        <div class="diag-section">
+          <p class="diag-h">3. What this means</p>
+          <div class="diag-body" id="out-3"></div>
+        </div>
+
+        <div class="diag-section">
+          <p class="diag-h">4. Your next test</p>
+          <div class="diag-body" id="out-4"></div>
+        </div>
+
+        <div class="diag-section">
+          <p class="diag-h">5. Simple validation method</p>
+          <div class="diag-body" id="out-5"></div>
+        </div>
+
+        <div class="diag-section">
+          <p class="diag-h">6. Hard truth</p>
+          <div class="hard-truth-block" id="out-6">
+            <p>Nothing is real until someone responds.</p>
+            <p>Not:</p>
+            <p>your idea<br>your system<br>your positioning</p>
+            <p>Only:</p>
+            <p class="reality-pointer">👉 response</p>
+          </div>
+        </div>
+
+        <div class="diag-section">
+          <p class="diag-h">7. Blocking pattern</p>
+          <div class="diag-body" id="out-7"></div>
+        </div>
+
+        <div class="diag-section">
+          <p class="diag-h">8. Next move</p>
+          <div class="diag-body" id="out-8"></div>
+        </div>
+
+        <div class="action-primary">
+          <a href="/sovereignty" class="btn btn-solid">Enter Phase 05 · Expansion</a>
+          <button type="button" class="btn" id="btnCopy">Copy All</button>
+          <button type="button" class="btn" id="btnExport">Export</button>
+        </div>
+        <p class="copy-confirm" id="copyConfirm">Copied to clipboard.</p>
+
+        <div class="action-secondary">
+          <button type="button" class="btn btn-ghost" id="btnReset">Reset</button>
+        </div>
+
+        <footer class="capture-footer">
+          <a href="/">Home</a>
+          <a href="/system">System</a>
+          <a href="/structure">Phase 03</a>
+          <a href="/sovereignty">Phase 05</a>
+        </footer>
       </div>
     </div>
-    <aside class="entry-aside">
-      <div class="mini">What happens here</div>
-      <p class="aside-text">Name the repeated tasks. Identify friction. Find recurring decisions. Separate what should automate now, template first, stay manual, or be removed entirely. Then route leverage into Sovereignty.</p>
+
+    <aside class="live-panel" id="livePanel" aria-live="polite">
+      <div class="live-panel-head">Live Read</div>
+      <div class="live-field">
+        <div class="live-label">You are currently</div>
+        <div class="live-value" id="live-test">Waiting.</div>
+      </div>
+      <div class="live-field">
+        <div class="live-label">Your offer is</div>
+        <div class="live-value" id="live-exp">Waiting.</div>
+      </div>
+      <div class="live-field">
+        <div class="live-label">Your response is</div>
+        <div class="live-value" id="live-resp">Waiting.</div>
+      </div>
+      <div class="live-field">
+        <div class="live-label">Your behavior is</div>
+        <div class="live-value" id="live-beh">Waiting.</div>
+      </div>
+      <div class="live-field">
+        <div class="live-label">Your validation status</div>
+        <div class="live-value" id="live-val">Waiting.</div>
+      </div>
     </aside>
   </div>
 </div>
 
-<div class="shell">
-  <aside class="left-rail">
-    <div class="rail-card">
-      <div class="rail-top">
-        <div class="rail-phase">Phase 05</div>
-        <div class="rail-title">Automation</div>
-        <p class="rail-sub">Remove repeated friction, recurring decisions, and avoidable manual work so progress keeps moving.</p>
-      </div>
-
-      <div class="rail-progress" id="rail-progress">
-        <div class="progress-item" data-step="1">
-          <div class="progress-num">01</div>
-          <div class="progress-copy"><strong>Repeated tasks</strong><span>Identify what keeps recurring.</span></div>
-        </div>
-        <div class="progress-item" data-step="2">
-          <div class="progress-num">02</div>
-          <div class="progress-copy"><strong>Friction points</strong><span>Find where manual work slows progress.</span></div>
-        </div>
-        <div class="progress-item" data-step="3">
-          <div class="progress-num">03</div>
-          <div class="progress-copy"><strong>Decision load</strong><span>Name the decisions happening too often.</span></div>
-        </div>
-        <div class="progress-item" data-step="4">
-          <div class="progress-num">04</div>
-          <div class="progress-copy"><strong>Categorize</strong><span>Automate now, template first, leave manual, remove entirely.</span></div>
-        </div>
-        <div class="progress-item" data-step="5">
-          <div class="progress-num">05</div>
-          <div class="progress-copy"><strong>Tool logic</strong><span>Map what kind of system handles each task.</span></div>
-        </div>
-        <div class="progress-item" data-step="6">
-          <div class="progress-num">06</div>
-          <div class="progress-copy"><strong>Automation order</strong><span>Define what gets automated first and why.</span></div>
-        </div>
-        <div class="progress-item" data-step="7">
-          <div class="progress-num">07</div>
-          <div class="progress-copy"><strong>System summary</strong><span>Produce the practical automation map.</span></div>
-        </div>
-        <div class="progress-item" data-step="8">
-          <div class="progress-num">08</div>
-          <div class="progress-copy"><strong>Route to Sovereignty</strong><span>Turn leverage into stability and control.</span></div>
-        </div>
-      </div>
-
-      <div class="rail-actions">
-        <button class="btn btn-soft" type="button" id="save-phase">Save phase</button>
-        <button class="btn btn-soft" type="button" id="reset-phase">Reset phase</button>
-        <a class="btn" href="/systems">Back to systems</a>
-      </div>
-    </div>
-  </aside>
-
-  <main class="center">
-    <div class="main-stack">
-
-      <section class="hero">
-        <span class="label">Automation · Phase 05</span>
-        <h1>Remove the repeated drag.</h1>
-        <p class="hero-sub">The point is not to pile on more software. The point is to remove recurring admin, recurring decisions, recurring friction, and work that should no longer depend on you doing it manually every time.</p>
-
-        <div class="hero-grid">
-          <div class="hero-cell">
-            <span class="small">Output</span>
-            <div class="value">A practical automation path with a real first stack or sequence.</div>
-          </div>
-          <div class="hero-cell">
-            <span class="small">Logic</span>
-            <div class="value">Separate what should automate now, template first, stay manual, or be removed entirely.</div>
-          </div>
-          <div class="hero-cell">
-            <span class="small">Next</span>
-            <div class="value">Sovereignty is where leverage becomes stability, resilience, and less dependence on chaos.</div>
-          </div>
-        </div>
-      </section>
-
-      <section class="panel" id="step-1">
-        <div class="panel-top">
-          <div>
-            <div class="step-meta">Step 01</div>
-            <h2>Repeated tasks</h2>
-          </div>
-          <div class="status-badge"><span class="status-dot"></span><span>Identify tasks that recur</span></div>
-        </div>
-        <div class="step-body">
-          <p>Automation starts with repetition. If it does not repeat, it probably does not belong here yet.</p>
-          <div class="field-grid">
-            <div class="field full">
-              <label class="field-label" for="repeatedTasks">What keeps happening over and over?</label>
-              <span class="field-hint">Use commas. Think of actual repeated tasks, not broad roles.</span>
-              <textarea id="repeatedTasks" maxlength="340" placeholder="welcome emails, intake collection, payment confirmation, session reminders, client follow-ups, summary delivery"></textarea>
-            </div>
-            <div class="field">
-              <label class="field-label" for="taskFrequency">How often do these tasks recur?</label>
-              <span class="field-hint">Weekly, daily, every sale, every client, every launch.</span>
-              <input id="taskFrequency" type="text" maxlength="100" placeholder="Every client and every sale" autocomplete="off" />
-            </div>
-            <div class="field">
-              <label class="field-label" for="taskTrigger">What usually triggers them?</label>
-              <span class="field-hint">Payment, inquiry, booking, publishing, something else.</span>
-              <input id="taskTrigger" type="text" maxlength="120" placeholder="Payment received or form submitted" autocomplete="off" />
-            </div>
-          </div>
-          <div class="chips" id="task-chips">
-            <button class="chip" type="button" data-insert="welcome emails">Welcome emails</button>
-            <button class="chip" type="button" data-insert="follow-ups">Follow-ups</button>
-            <button class="chip" type="button" data-insert="content publishing">Content publishing</button>
-            <button class="chip" type="button" data-insert="client reminders">Client reminders</button>
-            <button class="chip" type="button" data-insert="payment confirmations">Payment confirmations</button>
-          </div>
-          <div class="step-actions">
-            <button class="btn btn-primary" type="button" data-next="2">Continue to friction points</button>
-          </div>
-        </div>
-      </section>
-
-      <section class="panel" id="step-2">
-        <div class="panel-top">
-          <div>
-            <div class="step-meta">Step 02</div>
-            <h2>Friction points</h2>
-          </div>
-          <div class="status-badge"><span class="status-dot"></span><span>Identify where manual work slows progress</span></div>
-        </div>
-        <div class="step-body">
-          <p>The problem is not effort. The problem is repeated drag.</p>
-          <div class="field-grid">
-            <div class="field full">
-              <label class="field-label" for="frictionPoints">Where is the repeated friction?</label>
-              <span class="field-hint">Use commas. Name the actual places work gets stuck or repeated.</span>
-              <textarea id="frictionPoints" maxlength="320" placeholder="rewriting the same emails, remembering who needs follow-up, manually sending reminders, manually moving payment status"></textarea>
-            </div>
-            <div class="field">
-              <label class="field-label" for="slowestArea">What is the slowest area?</label>
-              <span class="field-hint">Where is progress actually getting delayed?</span>
-              <input id="slowestArea" type="text" maxlength="120" placeholder="The gap between payment and client onboarding" autocomplete="off" />
-            </div>
-            <div class="field">
-              <label class="field-label" for="adminWeight">What is the manual admin load?</label>
-              <span class="field-hint">What percentage of effort feels administrative?</span>
-              <input id="adminWeight" type="text" maxlength="60" placeholder="Around 40%" autocomplete="off" />
-            </div>
-          </div>
-          <div class="step-actions">
-            <button class="btn btn-primary" type="button" data-next="3">Continue to decision load</button>
-          </div>
-        </div>
-      </section>
-
-      <section class="panel" id="step-3">
-        <div class="panel-top">
-          <div>
-            <div class="step-meta">Step 03</div>
-            <h2>Decision load</h2>
-          </div>
-          <div class="status-badge"><span class="status-dot"></span><span>Identify decisions that happen too often</span></div>
-        </div>
-        <div class="step-body">
-          <p>Automation becomes useful when repeated judgment is separated from repeated choice-making.</p>
-          <div class="field-grid">
-            <div class="field full">
-              <label class="field-label" for="decisionLoad">What decisions keep getting remade?</label>
-              <span class="field-hint">Use commas. Think of small repeated decisions, not strategic calls.</span>
-              <textarea id="decisionLoad" maxlength="320" placeholder="what email to send, when to follow up, what reminder timing to use, what intake questions to ask, what summary format to use"></textarea>
-            </div>
-            <div class="field">
-              <label class="field-label" for="trueJudgment">What genuinely needs judgment?</label>
-              <span class="field-hint">What should stay human because context matters?</span>
-              <input id="trueJudgment" type="text" maxlength="140" placeholder="Live analysis, nuanced client responses, final strategic decisions" autocomplete="off" />
-            </div>
-            <div class="field">
-              <label class="field-label" for="falseDecisions">What feels like a decision but should not be?</label>
-              <span class="field-hint">What should already be standardized?</span>
-              <input id="falseDecisions" type="text" maxlength="140" placeholder="Reminder timing, file naming, summary structure" autocomplete="off" />
-            </div>
-          </div>
-          <div class="step-actions">
-            <button class="btn btn-primary" type="button" data-next="4">Continue to categorize</button>
-          </div>
-        </div>
-      </section>
-
-      <section class="panel" id="step-4">
-        <div class="panel-top">
-          <div>
-            <div class="step-meta">Step 04</div>
-            <h2>Categorize</h2>
-          </div>
-          <div class="status-badge"><span class="status-dot"></span><span>Separate what should happen with the work</span></div>
-        </div>
-        <div class="step-body">
-          <p>Not everything should be automated. Some work should be templated first. Some should stay manual. Some should disappear entirely.</p>
-          <div class="field-grid">
-            <div class="field">
-              <label class="field-label" for="automateNow">Automate now</label>
-              <span class="field-hint">What is repeated, clear, and stable enough right now?</span>
-              <textarea id="automateNow" maxlength="220" placeholder="payment confirmations, reminder sends, intake delivery"></textarea>
-            </div>
-            <div class="field">
-              <label class="field-label" for="templateFirst">Template first</label>
-              <span class="field-hint">What is not stable enough to automate yet, but should be standardized first?</span>
-              <textarea id="templateFirst" maxlength="220" placeholder="welcome emails, session summaries, follow-up messages"></textarea>
-            </div>
-            <div class="field">
-              <label class="field-label" for="leaveManual">Leave manual</label>
-              <span class="field-hint">What should stay manual because quality depends on judgment?</span>
-              <textarea id="leaveManual" maxlength="220" placeholder="client analysis, custom recommendations, nuanced responses"></textarea>
-            </div>
-            <div class="field">
-              <label class="field-label" for="removeEntirely">Remove entirely</label>
-              <span class="field-hint">What should stop instead of being automated?</span>
-              <textarea id="removeEntirely" maxlength="220" placeholder="duplicate status updates, unnecessary admin checks, custom formatting every time"></textarea>
-            </div>
-          </div>
-          <div class="step-actions">
-            <button class="btn btn-primary" type="button" data-next="5">Continue to tool logic</button>
-          </div>
-        </div>
-      </section>
-
-      <section class="panel" id="step-5">
-        <div class="panel-top">
-          <div>
-            <div class="step-meta">Step 05</div>
-            <h2>Tool logic</h2>
-          </div>
-          <div class="status-badge"><span class="status-dot"></span><span>Map what kind of system handles each task</span></div>
-        </div>
-        <div class="step-body">
-          <p>Tools are secondary. Logic comes first. The point is to match the work to the right kind of system.</p>
-          <div class="field-grid">
-            <div class="field full">
-              <label class="field-label" for="toolLogic">Map the task types to the kind of system they need</label>
-              <span class="field-hint">Use commas. Example: intake form for onboarding, scheduling for calls, email sequence for reminders.</span>
-              <textarea id="toolLogic" maxlength="340" placeholder="intake/form for client onboarding, scheduling for calls, payment for purchase confirmation, email sequence for reminders, template for summaries, AI assist for first-draft writing"></textarea>
-            </div>
-            <div class="field">
-              <label class="field-label" for="stackConstraint">What is the constraint?</label>
-              <span class="field-hint">What limits the system right now?</span>
-              <input id="stackConstraint" type="text" maxlength="140" placeholder="Need fewer moving parts and low-maintenance setup" autocomplete="off" />
-            </div>
-            <div class="field">
-              <label class="field-label" for="toolSprawl">What should be avoided?</label>
-              <span class="field-hint">Name the kind of complexity that would make this worse.</span>
-              <input id="toolSprawl" type="text" maxlength="140" placeholder="Too many disconnected apps and manual syncing" autocomplete="off" />
-            </div>
-          </div>
-          <div class="step-actions">
-            <button class="btn btn-primary" type="button" data-next="6">Continue to automation order</button>
-          </div>
-        </div>
-      </section>
-
-      <section class="panel" id="step-6">
-        <div class="panel-top">
-          <div>
-            <div class="step-meta">Step 06</div>
-            <h2>Automation order</h2>
-          </div>
-          <div class="status-badge"><span class="status-dot"></span><span>Define what gets automated first and why</span></div>
-        </div>
-        <div class="step-body">
-          <p>Automation gets expensive when order is wrong. The first win should remove real drag, not create more setup.</p>
-          <div class="field-grid">
-            <div class="field full">
-              <label class="field-label" for="priorityOrder">What is the automation priority order?</label>
-              <span class="field-hint">Use commas. Put the highest-leverage sequence first.</span>
-              <textarea id="priorityOrder" maxlength="320" placeholder="payment trigger to welcome, intake delivery, reminder sequence, follow-up sequence, summary template flow"></textarea>
-            </div>
-            <div class="field">
-              <label class="field-label" for="doNow">What should happen now?</label>
-              <span class="field-hint">What gives the cleanest immediate leverage?</span>
-              <input id="doNow" type="text" maxlength="140" placeholder="Automate the payment-to-welcome-to-intake flow" autocomplete="off" />
-            </div>
-            <div class="field">
-              <label class="field-label" for="doLater">What should happen later?</label>
-              <span class="field-hint">What should wait until the process is stronger?</span>
-              <input id="doLater" type="text" maxlength="140" placeholder="Content distribution and deeper CRM automations" autocomplete="off" />
-            </div>
-          </div>
-          <div class="step-actions">
-            <button class="btn btn-primary" type="button" id="generate-automation">Generate automation map</button>
-            <span class="inline-note">This will build the automation logic, detect over-automation risk, and open the final system summary.</span>
-          </div>
-        </div>
-      </section>
-
-      <section class="output-card hidden" id="artifact-section">
-        <div class="output-header">
-          <div>
-            <span class="output-tag">Automation map</span>
-            <div class="output-headline">Leverage without extra chaos.</div>
-          </div>
-          <div class="output-tools">
-            <button class="mini-btn" type="button" id="copy-output">Copy output</button>
-            <button class="mini-btn" type="button" id="export-output">Export output</button>
-          </div>
-        </div>
-
-        <div class="artifact-grid">
-          <div class="artifact-block">
-            <div class="statement" id="primary-automation"></div>
-
-            <div class="detail-grid">
-              <div class="detail-cell">
-                <span class="detail-label">Repeated tasks</span>
-                <div class="detail-value" id="detail-repeated"></div>
-              </div>
-              <div class="detail-cell">
-                <span class="detail-label">Primary friction</span>
-                <div class="detail-value" id="detail-friction"></div>
-              </div>
-              <div class="detail-cell">
-                <span class="detail-label">First move</span>
-                <div class="detail-value" id="detail-first-move"></div>
-              </div>
-              <div class="detail-cell">
-                <span class="detail-label">Leverage read</span>
-                <div class="detail-value" id="detail-leverage-read"></div>
-              </div>
-              <div class="detail-cell wide">
-                <span class="detail-label">Recommended automation path</span>
-                <div class="detail-value" id="detail-path"></div>
-              </div>
-            </div>
-
-            <div class="artifact-subsection">
-              <span class="sub-label">Repeated task list</span>
-              <ul class="sequence-list" id="repeated-task-list"></ul>
-            </div>
-
-            <div class="artifact-subsection">
-              <span class="sub-label">Automation candidate list</span>
-              <ul class="sequence-list" id="automation-candidate-list"></ul>
-            </div>
-
-            <div class="artifact-subsection">
-              <span class="sub-label">Keep manual list</span>
-              <ul class="sequence-list" id="keep-manual-list"></ul>
-            </div>
-
-            <div class="artifact-subsection">
-              <span class="sub-label">Priority order</span>
-              <ul class="sequence-list" id="priority-order-list"></ul>
-            </div>
-          </div>
-
-          <div class="artifact-block">
-            <div class="artifact-subsection">
-              <span class="sub-label">Do now / do later logic</span>
-              <div class="sub-text" id="do-logic"></div>
-            </div>
-
-            <div class="artifact-subsection">
-              <span class="sub-label">Operational leverage summary</span>
-              <div class="sub-text" id="leverage-summary"></div>
-            </div>
-
-            <div class="artifact-subsection">
-              <span class="sub-label">What not to automate yet</span>
-              <div class="sub-text" id="not-yet-summary"></div>
-            </div>
-
-            <div class="artifact-subsection">
-              <span class="sub-label">First implementation map</span>
-              <div class="sub-text" id="implementation-map"></div>
-            </div>
-
-            <div class="artifact-subsection">
-              <span class="sub-label">Logic layer</span>
-              <ul class="matrix-list" id="logic-layer-list"></ul>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section class="panel hidden" id="step-7">
-        <div class="panel-top">
-          <div>
-            <div class="step-meta">Step 07</div>
-            <h2>System summary</h2>
-          </div>
-          <div class="status-badge"><span class="status-dot"></span><span>Produce the practical automation map</span></div>
-        </div>
-        <div class="step-body">
-          <p>This is the practical version. Not everything. The first version that removes real drag.</p>
-          <div class="field-grid">
-            <div class="field full">
-              <label class="field-label" for="systemSummary">What is the first automation stack or sequence?</label>
-              <span class="field-hint">If left blank, this will be built from your priority order and tool logic.</span>
-              <textarea id="systemSummary" maxlength="320" placeholder="payment trigger → welcome email → intake form → reminder sequence → follow-up status"></textarea>
-            </div>
-          </div>
-          <div class="step-actions">
-            <button class="btn btn-primary" type="button" data-next="8">Continue to Sovereignty bridge</button>
-          </div>
-        </div>
-      </section>
-
-      <section class="bridge hidden" id="step-8">
-        <div class="step-meta" style="margin-bottom:10px;">Step 08</div>
-        <div class="bridge-title">Route leverage into Sovereignty.</div>
-        <p class="bridge-text" id="bridge-copy">
-          Automation is not the end. Sovereignty is where the system becomes stable, resilient, and less dependent on chaos, constant presence, or repeated firefighting.
-        </p>
-        <div class="bridge-actions">
-          <a class="btn btn-primary" href="/sovereignty">Continue to Sovereignty</a>
-          <button class="btn btn-soft" type="button" id="refine-first">Refine Automation first</button>
-        </div>
-      </section>
-
-      <footer class="phase-footer">
-        <a href="/systems">systems</a>
-        <a href="/capture">Capture</a>
-        <a href="/position">Position</a>
-        <a href="/monetize">Monetize</a>
-        <a href="/structure">Structure</a>
-        <a href="/automation">Automation</a>
-        <a href="/sovereignty">Sovereignty</a>
-        <a href="/private-access">Private Access</a>
-      </footer>
-
-    </div>
-  </main>
-
-  <aside class="right-notes">
-    <div class="notes-card">
-      <div class="notes-title">Live output</div>
-      <div class="notes-head">Automation notes</div>
-
-      <div class="notes-list">
-        <div class="note-item empty" id="note-repeated-wrap">
-          <span class="name">Repeated tasks</span>
-          <span class="val" id="note-repeated">Not defined yet</span>
-        </div>
-        <div class="note-item empty" id="note-friction-wrap">
-          <span class="name">Friction</span>
-          <span class="val" id="note-friction">Not defined yet</span>
-        </div>
-        <div class="note-item empty" id="note-decisions-wrap">
-          <span class="name">Decision load</span>
-          <span class="val" id="note-decisions">Not defined yet</span>
-        </div>
-        <div class="note-item empty" id="note-automate-wrap">
-          <span class="name">Automate now</span>
-          <span class="val" id="note-automate">Not defined yet</span>
-        </div>
-        <div class="note-item empty" id="note-manual-wrap">
-          <span class="name">Keep manual</span>
-          <span class="val" id="note-manual">Not defined yet</span>
-        </div>
-        <div class="note-item empty" id="note-remove-wrap">
-          <span class="name">Remove entirely</span>
-          <span class="val" id="note-remove">Not defined yet</span>
-        </div>
-        <div class="note-item empty" id="note-priority-wrap">
-          <span class="name">Priority order</span>
-          <span class="val" id="note-priority">Not defined yet</span>
-        </div>
-        <div class="note-item empty" id="note-path-wrap">
-          <span class="name">Automation path</span>
-          <span class="val" id="note-path">Waiting for map</span>
-        </div>
-        <div class="note-item empty" id="note-notyet-wrap">
-          <span class="name">Not yet</span>
-          <span class="val" id="note-notyet">Waiting for logic</span>
-        </div>
-        <div class="note-item empty" id="note-next-wrap">
-          <span class="name">Next move</span>
-          <span class="val" id="note-next">Build the first automation map and route it into Sovereignty</span>
-        </div>
-      </div>
-
-      <div class="notes-actions">
-        <button class="mini-btn" type="button" id="copy-summary">Copy summary</button>
-        <button class="mini-btn" type="button" id="resume-progress">Resume progress</button>
-      </div>
-    </div>
-  </aside>
-</div>
-
 <script>
 (function(){
-  'use strict';
+  var STORAGE_KEY = 'stephuary_validation_p04_v1';
+  var P03_KEY = 'stephuary_structure_p03_v1';
+  var PROFILE_KEY = 'stephuary_p01_profile';
+  var P02_KEY = 'stephuary_monetize_p02_v1';
+  var P01_KEY = 'stephuary_capture_p01_v2';
+  var TOTAL_Q = 10;
+  var RAIL_LABELS = ['Readiness','Exposure','Response','Outreach','Rejection','Feedback','Speed','Proof','Avoidance','Reality','Results'];
 
-  var STORAGE_KEY = 'stephuary_automation_phase_05_v2';
-
-  var state = {
-    overlayDismissed: false,
-    currentStep: 1,
-    artifactBuilt: false,
-    inputs: {
-      repeatedTasks: '',
-      taskFrequency: '',
-      taskTrigger: '',
-      frictionPoints: '',
-      slowestArea: '',
-      adminWeight: '',
-      decisionLoad: '',
-      trueJudgment: '',
-      falseDecisions: '',
-      automateNow: '',
-      templateFirst: '',
-      leaveManual: '',
-      removeEntirely: '',
-      toolLogic: '',
-      stackConstraint: '',
-      toolSprawl: '',
-      priorityOrder: '',
-      doNow: '',
-      doLater: '',
-      systemSummary: ''
-    },
-    derived: {
-      repeatedList: [],
-      candidateList: [],
-      manualList: [],
-      priorityList: [],
-      leverageRead: '',
-      automationPath: '',
-      doLogic: '',
-      leverageSummary: '',
-      notYetSummary: '',
-      implementationMap: '',
-      logicLayer: [],
-      nextMove: ''
-    }
-  };
-
-  var fields = [
-    'repeatedTasks','taskFrequency','taskTrigger',
-    'frictionPoints','slowestArea','adminWeight',
-    'decisionLoad','trueJudgment','falseDecisions',
-    'automateNow','templateFirst','leaveManual','removeEntirely',
-    'toolLogic','stackConstraint','toolSprawl',
-    'priorityOrder','doNow','doLater','systemSummary'
+  var QUESTIONS = [
+    { instruction: 'Are you ready to put this in front of someone today?', a: 'Yes', b: 'No' },
+    { instruction: 'Right now, your offer has been:', a: 'Seen by real people', b: 'Only seen by you' },
+    { instruction: 'When you share what you do:', a: 'People respond or engage', b: 'There is little or no response' },
+    { instruction: 'Have you directly offered this to someone?', a: 'Yes', b: 'No' },
+    { instruction: 'When people don\'t respond:', a: 'You adjust and try again', b: 'You hesitate or stop' },
+    { instruction: 'When you get feedback:', a: 'You use it to refine quickly', b: 'You overthink or delay' },
+    { instruction: 'You tend to:', a: 'Test quickly', b: 'Wait until it feels ready' },
+    { instruction: 'Right now, you have:', a: 'Some level of proof', b: 'No real proof yet' },
+    { instruction: 'Be honest:', a: 'You are taking action', b: 'You are still preparing' },
+    { instruction: 'If no one buys or responds:', a: 'You will adjust and continue', b: 'You will question everything' }
   ];
 
-  var els = {
-    overlay: document.getElementById('entry-overlay'),
-    enterPhase: document.getElementById('enter-phase'),
-    savePhase: document.getElementById('save-phase'),
-    resetPhase: document.getElementById('reset-phase'),
-    generateAutomation: document.getElementById('generate-automation'),
-    artifactSection: document.getElementById('artifact-section'),
-    step7: document.getElementById('step-7'),
-    step8: document.getElementById('step-8'),
-    copyOutput: document.getElementById('copy-output'),
-    exportOutput: document.getElementById('export-output'),
-    copySummary: document.getElementById('copy-summary'),
-    resumeProgress: document.getElementById('resume-progress'),
-    refineFirst: document.getElementById('refine-first')
+  var ADAPTIVE = [
+    'You already have something usable.',
+    'This is where most people hesitate.',
+    'Clarity is not your issue anymore.',
+    'Execution is now the only variable.',
+    'Response is the only metric that counts.',
+    'Private work is not validation.',
+    'Silence is data. Use it.',
+    'Speed beats polish in the test.',
+    'Proof is external, not internal.',
+    'Avoidance looks like preparation.'
+  ];
+
+  var state = {
+    bits: Array(TOTAL_Q).fill(null),
+    currentStep: 1
   };
 
-  function $(id){ return document.getElementById(id); }
-
-  function safeText(v, fallback){
-    var val = (v || '').trim();
-    return val ? val : fallback;
+  function loadP01Profile() {
+    try {
+      var j = localStorage.getItem(PROFILE_KEY);
+      if (j) return JSON.parse(j);
+    } catch (e) {}
+    return null;
   }
 
-  function setNote(id, value){
-    var el = $('note-' + id);
-    var wrap = $('note-' + id + '-wrap');
-    if (!el || !wrap) return;
-    var empty = !value || /Not defined yet|Waiting/.test(value);
-    el.textContent = value;
-    wrap.classList.toggle('empty', empty);
+  function deriveP01FromBits(bits) {
+    var operate =
+      (bits[1] === 0 ? 'Cause and structure before motion.' : 'Motion before full proof.') +
+      ' ' +
+      (bits[7] === 0 ? 'You hesitate until certainty.' : 'You move before certainty and adjust.');
+    return { operate: operate.trim() };
   }
 
-  function splitList(value){
-    return String(value || '')
-      .split(',')
-      .map(function(item){ return item.trim(); })
-      .filter(Boolean);
+  function loadP2Bits() {
+    try {
+      var raw = localStorage.getItem(P02_KEY);
+      if (!raw) return null;
+      return JSON.parse(raw).bits;
+    } catch (e) { return null; }
   }
 
-  function upperFirst(str){
-    str = String(str || '').trim();
-    if (!str) return '';
-    return str.charAt(0).toUpperCase() + str.slice(1);
+  function p2Complete(bits) {
+    return bits && bits.length >= 10 && bits.indexOf(null) < 0;
   }
 
-  function lowerFirst(str){
-    str = String(str || '').trim();
-    if (!str) return '';
-    return str.charAt(0).toLowerCase() + str.slice(1);
+  function loadP3Bits() {
+    try {
+      var raw = localStorage.getItem(P03_KEY);
+      if (!raw) return null;
+      return JSON.parse(raw).bits;
+    } catch (e) { return null; }
   }
 
-  function saveState(){
-    try{
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-    }catch(e){}
+  function p3Complete(bits) {
+    return bits && bits.length >= 10 && bits.indexOf(null) < 0;
   }
 
-  function loadState(){
-    try{
-      var raw = localStorage.getItem(STORAGE_KEY);
-      if (!raw) return false;
-      var parsed = JSON.parse(raw);
-      if (!parsed || typeof parsed !== 'object') return false;
-      state = parsed;
-      return true;
-    }catch(e){
-      return false;
+  function buildP3OfferAndEntry() {
+    var p3 = loadP3Bits();
+    var p1 = loadP01Profile() || (function() {
+      try {
+        var raw = localStorage.getItem(P01_KEY);
+        if (!raw) return null;
+        var d = JSON.parse(raw);
+        if (!d.bits || d.bits.indexOf(null) >= 0) return null;
+        return deriveP01FromBits(d.bits);
+      } catch (e) { return null; }
+    })();
+    var p2 = loadP2Bits();
+
+    if (!p3Complete(p3)) {
+      return {
+        offer: 'Complete Phase 03 to generate your offer line here.',
+        entry: 'Complete Phase 03 to show your entry offer options.'
+      };
     }
+
+    var b = p3;
+    var buyerN =
+      p2 && p2Complete(p2)
+        ? p2[6] === 0
+          ? 'someone you can already describe'
+          : 'someone you still need to name precisely'
+        : 'your buyer (finish Phase 02 to tighten this)';
+    var probN =
+      p2 && p2Complete(p2)
+        ? p2[1] === 0 && p2[5] === 0
+          ? 'a concrete, paid problem'
+          : 'a problem that still needs a paid shape'
+        : 'the problem Phase 02 pointed at';
+    var method = p1 && p1.operate ? p1.operate : p1 && p1.correct ? p1.correct : 'how you already think and move';
+    var offer =
+      'I help ' +
+      buyerN +
+      ' solve ' +
+      probN +
+      ' so they can ' +
+      (b[1] === 0 ? 'see a clear after-state' : 'get a defined outcome') +
+      ', by ' +
+      method +
+      '.';
+
+    var examples = [];
+    if (b[4] === 0) examples.push('a 60-minute breakdown with a written takeaway');
+    else examples.push('a 48-hour audit with three concrete fixes');
+    if (b[2] === 1) examples.push('a targeted correction on one layer only');
+    else examples.push('one diagnostic session that names the bottleneck');
+    var entry =
+      'Start with one of these shapes: ' +
+      examples.join('; ') +
+      '; one clear outcome the client can recognize.';
+
+    return { offer: offer, entry: entry };
   }
 
-  function resetState(){
-    state = {
-      overlayDismissed: false,
-      currentStep: 1,
-      artifactBuilt: false,
-      inputs: {
-        repeatedTasks: '',
-        taskFrequency: '',
-        taskTrigger: '',
-        frictionPoints: '',
-        slowestArea: '',
-        adminWeight: '',
-        decisionLoad: '',
-        trueJudgment: '',
-        falseDecisions: '',
-        automateNow: '',
-        templateFirst: '',
-        leaveManual: '',
-        removeEntirely: '',
-        toolLogic: '',
-        stackConstraint: '',
-        toolSprawl: '',
-        priorityOrder: '',
-        doNow: '',
-        doLater: '',
-        systemSummary: ''
-      },
-      derived: {
-        repeatedList: [],
-        candidateList: [],
-        manualList: [],
-        priorityList: [],
-        leverageRead: '',
-        automationPath: '',
-        doLogic: '',
-        leverageSummary: '',
-        notYetSummary: '',
-        implementationMap: '',
-        logicLayer: [],
-        nextMove: ''
+  function renderBridge() {
+    var o = buildP3OfferAndEntry();
+    var host = document.getElementById('bridgeRows');
+    if (!host) return;
+    host.innerHTML =
+      '<p class="instinct-row"><strong>Your offer:</strong><br>' +
+      escapeHtml(o.offer) +
+      '</p>' +
+      '<p class="instinct-row"><strong>Your entry point:</strong><br>' +
+      escapeHtml(o.entry) +
+      '</p>';
+  }
+
+  function escapeHtml(s) {
+    var d = document.createElement('div');
+    d.textContent = s;
+    return d.innerHTML;
+  }
+
+  function adaptiveLine(idx) {
+    var extra = (idx + (loadP3Bits() && p3Complete(loadP3Bits()) ? 1 : 0)) % ADAPTIVE.length;
+    return ADAPTIVE[extra];
+  }
+
+  function panelFromBits(b) {
+    function has(i) { return b[i] !== null && b[i] !== undefined; }
+
+    var test = 'Waiting.';
+    if (has(0)) test = b[0] === 0 ? 'testing' : 'not testing';
+
+    var exp = 'Waiting.';
+    if (has(1)) exp = b[1] === 0 ? 'exposed' : 'hidden';
+
+    var resp = 'Waiting.';
+    if (has(2)) resp = b[2] === 0 ? 'active' : 'silent';
+
+    var beh = 'Waiting.';
+    if (has(4) && has(8)) {
+      var act = (b[4] === 0 ? 1 : 0) + (b[8] === 0 ? 1 : 0);
+      beh = act >= 1 ? 'action' : 'avoidance';
+    } else if (has(8)) {
+      beh = b[8] === 0 ? 'leaning action' : 'leaning avoidance';
+    }
+
+    var val = 'Waiting.';
+    if (has(1) && has(2) && has(3) && has(7)) {
+      var sc = 0;
+      if (b[1] === 0) sc += 2;
+      if (b[2] === 0) sc += 2;
+      if (b[3] === 0) sc += 2;
+      if (b[7] === 0) sc += 1;
+      val = sc >= 5 ? 'real' : 'unproven';
+    } else if (has(1)) {
+      val = b[1] === 0 ? 'leaning real' : 'unproven';
+    }
+
+    return { test: test, exp: exp, resp: resp, beh: beh, val: val };
+  }
+
+  function updateLivePanel() {
+    var p = panelFromBits(state.bits);
+    document.getElementById('live-test').textContent = p.test;
+    document.getElementById('live-exp').textContent = p.exp;
+    document.getElementById('live-resp').textContent = p.resp;
+    document.getElementById('live-beh').textContent = p.beh;
+    document.getElementById('live-val').textContent = p.val;
+  }
+
+  function saveStorage() {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({ bits: state.bits, currentStep: state.currentStep, ts: Date.now() }));
+    } catch (e) {}
+  }
+
+  function loadStorage() {
+    try {
+      var raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return null;
+      return JSON.parse(raw);
+    } catch (e) { return null; }
+  }
+
+  function buildRail() {
+    var rail = document.getElementById('rail');
+    rail.innerHTML = '';
+    RAIL_LABELS.forEach(function(label, i) {
+      var d = document.createElement('div');
+      d.className = 'rail-item';
+      d.textContent = (i + 1) + ' ' + label;
+      rail.appendChild(d);
+    });
+  }
+
+  function updateRail() {
+    var phase = state.currentStep;
+    var items = document.querySelectorAll('.rail-item');
+    items.forEach(function(el, i) {
+      el.classList.remove('active', 'done');
+      if (i === 10) {
+        if (phase === 11) el.classList.add('active');
+      } else if (i + 1 < phase) el.classList.add('done');
+      else if (i + 1 === phase) el.classList.add('active');
+    });
+  }
+
+  function validationTier(b) {
+    var sc = 0;
+    if (b[1] === 0) sc += 2;
+    if (b[2] === 0) sc += 2;
+    if (b[3] === 0) sc += 2;
+    if (b[7] === 0) sc += 1;
+    if (b[0] === 0) sc += 1;
+    if (sc >= 6) return 'validated';
+    if (sc >= 3) return 'partially validated';
+    return 'untested';
+  }
+
+  function buildSummaryOutputs(b) {
+    var tier = validationTier(b);
+
+    document.getElementById('out-1').innerHTML =
+      '<p>Your offer is currently: <strong>' + tier + '</strong>.</p>';
+
+    var works = [];
+    var notWorks = [];
+    if (b[2] === 0) works.push('responses or engagement when you share');
+    else notWorks.push('silence or weak signal when you share');
+    if (b[1] === 0) works.push('real eyes on the offer');
+    else notWorks.push('the work still mostly private');
+    if (b[7] === 0) works.push('some external proof');
+    else notWorks.push('proof still thin or internal');
+    if (works.length === 0) works.push('readiness to test if you move');
+    document.getElementById('out-2').innerHTML =
+      '<p>Right now what works: ' + works.join('; ') + '.</p>' +
+      '<p>What does not: ' + (notWorks.length ? notWorks.join('; ') : 'nothing obvious yet') + '.</p>';
+
+    document.getElementById('out-3').innerHTML =
+      '<p>If people respond: <strong>you have signal</strong>.</p>' +
+      '<p>If they do not: <strong>you need adjustment, not reinvention</strong>.</p>';
+
+    var person =
+      b[1] === 0
+        ? 'someone who already saw your work or knows your name'
+        : 'one person who fits the buyer you named earlier';
+    var format = b[6] === 0 ? 'a short post or one direct message' : 'one calendar invite and a one-page summary';
+    var hours = b[6] === 0 ? '24' : '72';
+    document.getElementById('out-4').innerHTML =
+      '<p>You should:</p>' +
+      '<p>show this to <strong>' +
+      person +
+      '</strong><br>in <strong>' +
+      format +
+      '</strong><br>within <strong>' +
+      hours +
+      ' hours</strong>.</p>';
+
+    document.getElementById('out-5').innerHTML =
+      '<ul class="diag-list">' +
+      '<li>send 5 direct messages with the same clear ask</li>' +
+      '<li>post 1 clear offer with one outcome and one price or next step</li>' +
+      '<li>ask 3 people directly: would you pay for this, yes or no</li>' +
+      '</ul>';
+
+    document.getElementById('out-7').innerHTML =
+      '<p>You are currently:</p><ul class="diag-list">' +
+      (b[1] === 1 ? '<li>avoiding exposure</li>' : '') +
+      (b[5] === 1 ? '<li>overthinking feedback</li>' : '') +
+      (b[4] === 1 ? '<li>hesitating after silence</li>' : '') +
+      '</ul>' +
+      (b[1] === 0 && b[5] === 0 && b[4] === 0
+        ? '<p>No single blocking pattern dominated. Keep testing.</p>'
+        : '');
+
+    document.getElementById('out-8').innerHTML =
+      '<p>Do this:</p><ul class="diag-list">' +
+      '<li>put your offer in front of real people</li>' +
+      '<li>observe response</li>' +
+      '<li>adjust immediately</li>' +
+      '</ul>';
+
+    var fin = panelFromBits(b);
+    document.getElementById('live-test').textContent = fin.test;
+    document.getElementById('live-exp').textContent = fin.exp;
+    document.getElementById('live-resp').textContent = fin.resp;
+    document.getElementById('live-beh').textContent = fin.beh;
+    document.getElementById('live-val').textContent = fin.val;
+  }
+
+  function buildSteps() {
+    var root = document.getElementById('steps-root');
+    root.innerHTML = '';
+    QUESTIONS.forEach(function(q, idx) {
+      var stepNum = idx + 1;
+      var div = document.createElement('div');
+      div.className = 'step' + (stepNum === 1 ? ' active' : '');
+      div.id = 'step-' + stepNum;
+      div.innerHTML =
+        '<div class="step-header">' +
+          '<div class="step-adaptive"></div>' +
+          '<div class="step-instruction"></div>' +
+          '<div class="step-micro">Choose one.</div>' +
+        '</div>' +
+        '<div class="option-list">' +
+          '<div class="option-item" data-bit="0" tabindex="0" role="button"></div>' +
+          '<div class="option-item" data-bit="1" tabindex="0" role="button"></div>' +
+        '</div>' +
+        '<div class="nav-row">' +
+          (stepNum > 1 ? '<button type="button" class="btn btn-ghost" data-back="' + stepNum + '">Back</button>' : '') +
+        '</div>';
+
+      div.querySelector('.step-adaptive').textContent = adaptiveLine(idx);
+      div.querySelector('.step-instruction').textContent = q.instruction;
+      var opts = div.querySelectorAll('.option-item');
+      opts[0].textContent = q.a;
+      opts[1].textContent = q.b;
+
+      opts.forEach(function(opt) {
+        opt.addEventListener('click', function() {
+          if (opt.classList.contains('dim')) return;
+          var bit = parseInt(opt.getAttribute('data-bit'), 10);
+          opts.forEach(function(o) { o.classList.remove('selected'); });
+          opt.classList.add('selected');
+          state.bits[idx] = bit;
+          saveStorage();
+          updateLivePanel();
+          opts.forEach(function(o) { o.classList.add('dim'); });
+          setTimeout(function() {
+            if (idx === TOTAL_Q - 1) showSummary();
+            else goTo(stepNum + 1);
+          }, 480);
+        });
+      });
+
+      var backBtn = div.querySelector('[data-back]');
+      if (backBtn) {
+        backBtn.addEventListener('click', function() { goTo(stepNum - 1); });
       }
-    };
-    try{ localStorage.removeItem(STORAGE_KEY); }catch(e){}
-    renderAll();
+
+      root.appendChild(div);
+    });
+  }
+
+  function goTo(n) {
+    state.currentStep = n;
+    saveStorage();
+    for (var i = 1; i <= TOTAL_Q; i++) {
+      var s = document.getElementById('step-' + i);
+      if (s) s.classList.toggle('active', i === n);
+    }
+    document.getElementById('progressCount').textContent = 'Step ' + n + ' of ' + TOTAL_Q;
+    document.getElementById('progressFill').style.width = (n / TOTAL_Q * 100) + '%';
+
+    var cur = document.getElementById('step-' + n);
+    if (cur) {
+      cur.querySelectorAll('.option-item').forEach(function(o) {
+        o.classList.remove('dim', 'selected');
+        var bit = parseInt(o.getAttribute('data-bit'), 10);
+        if (state.bits[n - 1] === bit) o.classList.add('selected');
+      });
+      var ad = cur.querySelector('.step-adaptive');
+      if (ad) ad.textContent = adaptiveLine(n - 1);
+    }
+    updateLivePanel();
+    updateRail();
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  function updateProgress(){
-    var items = document.querySelectorAll('.progress-item');
-    items.forEach(function(item){
-      var step = Number(item.getAttribute('data-step'));
-      item.classList.remove('active','complete');
-      if (step === state.currentStep) item.classList.add('active');
-      if (step < state.currentStep) item.classList.add('complete');
-    });
+  function showSummary() {
+    state.currentStep = 11;
+    saveStorage();
+    document.getElementById('flow').style.display = 'none';
+    document.getElementById('summary').style.display = 'flex';
+    buildSummaryOutputs(state.bits.map(function(x) { return x; }));
+    updateRail();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  function showToStep(step){
-    state.currentStep = Math.max(1, Math.min(8, step));
-    if (state.currentStep >= 7 && state.artifactBuilt){
-      els.step7.classList.remove('hidden');
-    }
-    if (state.currentStep >= 8 && state.artifactBuilt){
-      els.step8.classList.remove('hidden');
-    }
-    updateProgress();
-    saveState();
-  }
-
-  function collectInputs(){
-    fields.forEach(function(key){
-      var field = $(key);
-      if (field) state.inputs[key] = field.value.trim();
-    });
-  }
-
-  function renderInputValues(){
-    fields.forEach(function(key){
-      var field = $(key);
-      if (field) field.value = state.inputs[key] || '';
-    });
-  }
-
-  function validateCoreFields(){
-    var required = [
-      'repeatedTasks','taskFrequency','taskTrigger',
-      'frictionPoints','slowestArea','adminWeight',
-      'decisionLoad','trueJudgment','falseDecisions',
-      'automateNow','templateFirst','leaveManual','removeEntirely',
-      'toolLogic','stackConstraint','toolSprawl',
-      'priorityOrder','doNow','doLater'
+  function exportText() {
+    var lines = [
+      'Stephuary · Phase 04 · Validation',
+      '',
+      'Bridge (Phase 3)',
+      document.getElementById('bridgeRows').innerText.trim(),
+      '',
+      '1. Validation status',
+      document.getElementById('out-1').innerText.trim(),
+      '',
+      '2. What is real',
+      document.getElementById('out-2').innerText.trim(),
+      '',
+      '3. What this means',
+      document.getElementById('out-3').innerText.trim(),
+      '',
+      '4. Your next test',
+      document.getElementById('out-4').innerText.trim(),
+      '',
+      '5. Simple validation method',
+      document.getElementById('out-5').innerText.trim(),
+      '',
+      '6. Hard truth',
+      document.getElementById('out-6').innerText.trim(),
+      '',
+      '7. Blocking pattern',
+      document.getElementById('out-7').innerText.trim(),
+      '',
+      '8. Next move',
+      document.getElementById('out-8').innerText.trim()
     ];
-    for (var i=0;i<required.length;i++){
-      var key = required[i];
-      if (!String(state.inputs[key] || '').trim()){
-        var field = $(key);
-        if (field){
-          field.focus();
-          field.scrollIntoView({ behavior:'smooth', block:'center' });
-        }
-        return false;
-      }
-    }
-    return true;
+    return lines.join('\n');
   }
 
-  function buildLeverageRead(){
-    var repeatedCount = splitList(state.inputs.repeatedTasks).length;
-    var frictionCount = splitList(state.inputs.frictionPoints).length;
-    var decisionCount = splitList(state.inputs.decisionLoad).length;
-    var admin = String(state.inputs.adminWeight || '').toLowerCase();
-
-    if (repeatedCount >= 5 || frictionCount >= 4 || /40|50|60|70|80/.test(admin)){
-      return 'There is enough repeated operational drag here that automation can remove real weight quickly.';
-    }
-    if (decisionCount >= 5){
-      return 'The biggest problem is repeated decision-making. Standardization should happen before deep automation.';
-    }
-    return 'The automation opportunity is present, but only if the first move stays narrow and stable.';
-  }
-
-  function buildAutomationPath(){
-    var doNow = lowerFirst(state.inputs.doNow);
-    var toolLogic = lowerFirst(state.inputs.toolLogic);
-    var priority = lowerFirst(state.inputs.priorityOrder);
-    return 'Start with ' + doNow + '. Support it with ' + toolLogic + '. Build in the order of ' + priority + '.';
-  }
-
-  function buildDoLogic(){
-    return 'Do now: ' + lowerFirst(state.inputs.doNow) + '. Do later: ' + lowerFirst(state.inputs.doLater) + '. The rule is simple. Automate the stable sequence that already repeats. Delay the parts that are still changing, still unclear, or still too dependent on judgment.';
-  }
-
-  function buildLeverageSummary(){
-    return 'Operational leverage comes from removing repeated admin around ' + lowerFirst(state.inputs.frictionPoints) + '. This is not about speed for its own sake. It is about protecting forward motion from repeated drag and unnecessary decision-making.';
-  }
-
-  function buildNotYetSummary(){
-    var parts = [];
-    if (state.inputs.templateFirst) parts.push('anything that still needs templates first, like ' + lowerFirst(state.inputs.templateFirst));
-    if (state.inputs.leaveManual) parts.push('work that should stay manual, like ' + lowerFirst(state.inputs.leaveManual));
-    if (state.inputs.doLater) parts.push('later-stage automation, like ' + lowerFirst(state.inputs.doLater));
-
-    if (!parts.length){
-      return 'Do not automate unstable, unclear, or high-judgment work yet.';
-    }
-    return 'Do not automate ' + parts.join(', ') + ' yet.';
-  }
-
-  function buildImplementationMap(){
-    var summary = safeText(state.inputs.systemSummary, '');
-    if (summary){
-      return upperFirst(summary) + '.';
-    }
-    return 'Use the first priority sequence as the implementation map: ' + lowerFirst(state.inputs.priorityOrder) + '.';
-  }
-
-  function buildLogicLayer(){
-    var list = [];
-    var automateNowCount = splitList(state.inputs.automateNow).length;
-    var removeCount = splitList(state.inputs.removeEntirely).length;
-    var falseDecisionCount = splitList(state.inputs.falseDecisions).length;
-    var repeatedCount = splitList(state.inputs.repeatedTasks).length;
-    var toolLogicCount = splitList(state.inputs.toolLogic).length;
-
-    if (automateNowCount > repeatedCount && repeatedCount > 0){
-      list.push({ label:'Automating too early', value:'More tasks are marked for automation than there are clearly repeated tasks. Narrow the scope before building more.' });
-    }
-
-    if (state.inputs.templateFirst){
-      list.push({ label:'Automating weak processes', value:'Anything listed under template first should be standardized before it is automated.' });
-    }
-
-    if (toolLogicCount >= 6){
-      list.push({ label:'Unnecessary tools', value:'The system may be drifting toward tool sprawl. Keep the stack tighter than the problem, not bigger than it.' });
-    }
-
-    if (removeCount > 0){
-      list.push({ label:'Work that should be removed', value:'Some work is better deleted than automated. Anything under remove entirely should not get a system built around it.' });
-    }
-
-    if (falseDecisionCount >= 3){
-      list.push({ label:'Decision overload', value:'There are too many repeated choices happening inside routine work. Standardization will create more leverage than adding features.' });
-    }
-
-    if (String(state.inputs.adminWeight || '').match(/40|50|60|70|80|90/)){
-      list.push({ label:'Too much manual admin', value:'A large share of effort is being spent on administration. That is the clearest place to remove friction first.' });
-    }
-
-    if (!list.length){
-      list.push({ label:'Leverage path is coherent', value:'The first automation move is narrow enough, stable enough, and clear enough to implement without adding false complexity.' });
-    }
-
-    return list;
-  }
-
-  function buildLists(){
-    state.derived.repeatedList = splitList(state.inputs.repeatedTasks).map(function(item, idx){
-      return { label:'Task ' + String(idx + 1).padStart(2,'0'), value:upperFirst(item) };
-    });
-
-    var candidates = splitList(state.inputs.automateNow).concat(splitList(state.inputs.templateFirst));
-    state.derived.candidateList = candidates.map(function(item, idx){
-      return { label:'Candidate ' + String(idx + 1).padStart(2,'0'), value:upperFirst(item) };
-    });
-
-    state.derived.manualList = splitList(state.inputs.leaveManual).map(function(item, idx){
-      return { label:'Manual ' + String(idx + 1).padStart(2,'0'), value:upperFirst(item) };
-    });
-
-    state.derived.priorityList = splitList(state.inputs.priorityOrder).map(function(item, idx){
-      return { label:'Priority ' + String(idx + 1).padStart(2,'0'), value:upperFirst(item) };
-    });
-  }
-
-  function renderList(id, items){
-    var el = $(id);
-    if (!el) return;
-    el.innerHTML = '';
-    items.forEach(function(item){
-      var li = document.createElement('li');
-      li.innerHTML = '<strong>' + item.label + '</strong><span>' + item.value + '</span>';
-      el.appendChild(li);
-    });
-  }
-
-  function renderArtifact(){
-    if (!state.artifactBuilt){
-      els.artifactSection.classList.add('hidden');
-      return;
-    }
-
-    $('primary-automation').textContent =
-      'Automation should remove repeated friction around ' +
-      lowerFirst(state.inputs.repeatedTasks) +
-      ' without automating unstable judgment, weak processes, or work that should simply be removed.';
-
-    $('detail-repeated').textContent = upperFirst(state.inputs.repeatedTasks);
-    $('detail-friction').textContent = upperFirst(state.inputs.frictionPoints);
-    $('detail-first-move').textContent = upperFirst(state.inputs.doNow);
-    $('detail-leverage-read').textContent = state.derived.leverageRead;
-    $('detail-path').textContent = state.derived.automationPath;
-
-    renderList('repeated-task-list', state.derived.repeatedList);
-    renderList('automation-candidate-list', state.derived.candidateList);
-    renderList('keep-manual-list', state.derived.manualList);
-    renderList('priority-order-list', state.derived.priorityList);
-
-    $('do-logic').textContent = state.derived.doLogic;
-    $('leverage-summary').textContent = state.derived.leverageSummary;
-    $('not-yet-summary').textContent = state.derived.notYetSummary;
-    $('implementation-map').textContent = state.derived.implementationMap;
-    renderList('logic-layer-list', state.derived.logicLayer);
-
-    els.artifactSection.classList.remove('hidden');
-  }
-
-  function renderSections(){
-    if (state.artifactBuilt){
-      els.step7.classList.remove('hidden');
-      if (state.currentStep >= 8) els.step8.classList.remove('hidden');
+  function copyAll() {
+    var text = exportText();
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(flash);
     } else {
-      els.step7.classList.add('hidden');
-      els.step8.classList.add('hidden');
+      var ta = Object.assign(document.createElement('textarea'), { value: text });
+      ta.style.cssText = 'position:fixed;opacity:0;';
+      document.body.appendChild(ta);
+      ta.focus();
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      flash();
     }
   }
 
-  function renderNotes(){
-    setNote('repeated', safeText(state.inputs.repeatedTasks, 'Not defined yet'));
-    setNote('friction', safeText(state.inputs.frictionPoints, 'Not defined yet'));
-    setNote('decisions', safeText(state.inputs.decisionLoad, 'Not defined yet'));
-    setNote('automate', safeText(state.inputs.automateNow, 'Not defined yet'));
-    setNote('manual', safeText(state.inputs.leaveManual, 'Not defined yet'));
-    setNote('remove', safeText(state.inputs.removeEntirely, 'Not defined yet'));
-    setNote('priority', safeText(state.inputs.priorityOrder, 'Not defined yet'));
-    setNote('path', safeText(state.derived.automationPath, 'Waiting for map'));
-    setNote('notyet', safeText(state.derived.notYetSummary, 'Waiting for logic'));
-    setNote('next', safeText(state.derived.nextMove, 'Build the first automation map and route it into Sovereignty'));
+  function flash() {
+    var el = document.getElementById('copyConfirm');
+    el.classList.add('visible');
+    setTimeout(function() { el.classList.remove('visible'); }, 2800);
   }
 
-  function outputText(){
-    var parts = [];
-    parts.push('AUTOMATION — PHASE 05');
-    parts.push('');
-    parts.push('Repeated tasks');
-    parts.push($('detail-repeated').textContent);
-    parts.push('');
-    parts.push('Primary friction');
-    parts.push($('detail-friction').textContent);
-    parts.push('');
-    parts.push('First move');
-    parts.push($('detail-first-move').textContent);
-    parts.push('');
-    parts.push('Leverage read');
-    parts.push($('detail-leverage-read').textContent);
-    parts.push('');
-    parts.push('Recommended automation path');
-    parts.push($('detail-path').textContent);
-    parts.push('');
-    parts.push('Do now / do later logic');
-    parts.push(state.derived.doLogic || '');
-    parts.push('');
-    parts.push('Operational leverage summary');
-    parts.push(state.derived.leverageSummary || '');
-    parts.push('');
-    parts.push('What not to automate yet');
-    parts.push(state.derived.notYetSummary || '');
-    parts.push('');
-    parts.push('First implementation map');
-    parts.push(state.derived.implementationMap || '');
-    return parts.join('\n');
-  }
-
-  function copyText(text, button){
-    if (!navigator.clipboard) return;
-    navigator.clipboard.writeText(text).then(function(){
-      if (!button) return;
-      var original = button.textContent;
-      button.textContent = 'Copied';
-      setTimeout(function(){ button.textContent = original; }, 1100);
-    });
-  }
-
-  function exportTextFile(){
-    var blob = new Blob([outputText()], { type:'text/plain;charset=utf-8' });
-    var url = URL.createObjectURL(blob);
+  function doExport() {
+    var blob = new Blob([exportText()], { type: 'text/plain;charset=utf-8' });
     var a = document.createElement('a');
-    a.href = url;
-    a.download = 'automation-phase-05-output.txt';
-    document.body.appendChild(a);
+    a.href = URL.createObjectURL(blob);
+    a.download = 'stephuary-phase-04-validation.txt';
     a.click();
-    document.body.removeChild(a);
-    setTimeout(function(){ URL.revokeObjectURL(url); }, 1000);
+    URL.revokeObjectURL(a.href);
   }
 
-  function renderOverlay(){
-    if (state.overlayDismissed){
-      els.overlay.classList.add('hidden');
-      els.overlay.setAttribute('aria-hidden', 'true');
+  function resetAll() {
+    try {
+      localStorage.removeItem(STORAGE_KEY);
+    } catch (e) {}
+    state.bits = Array(TOTAL_Q).fill(null);
+    state.currentStep = 1;
+    document.getElementById('summary').style.display = 'none';
+    document.getElementById('flow').style.display = 'block';
+    document.querySelectorAll('.step').forEach(function(s, i) {
+      s.classList.toggle('active', i === 0);
+      s.querySelectorAll('.option-item').forEach(function(o) {
+        o.classList.remove('selected', 'dim');
+      });
+    });
+    goTo(1);
+    document.getElementById('live-test').textContent = 'Waiting.';
+    document.getElementById('live-exp').textContent = 'Waiting.';
+    document.getElementById('live-resp').textContent = 'Waiting.';
+    document.getElementById('live-beh').textContent = 'Waiting.';
+    document.getElementById('live-val').textContent = 'Waiting.';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  document.getElementById('btnCopy').addEventListener('click', copyAll);
+  document.getElementById('btnExport').addEventListener('click', doExport);
+  document.getElementById('btnReset').addEventListener('click', resetAll);
+
+  window.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter' && e.target.classList && e.target.classList.contains('option-item')) {
+      e.target.click();
+    }
+  });
+
+  function initUnlock() {
+    var unlocked = false;
+    try {
+      if (localStorage.getItem('archive_unlocked') === 'true') unlocked = true;
+      if (localStorage.getItem('capture_complete') === 'true') unlocked = true;
+    } catch (err) {}
+    if (!unlocked) return;
+
+    document.getElementById('locked').style.display = 'none';
+    document.getElementById('flow-wrap').style.display = 'block';
+    buildRail();
+    buildSteps();
+    renderBridge();
+
+    var d = loadStorage();
+    if (d && d.bits && d.bits.some(function(b) { return b !== null && b !== undefined; })) {
+      state.bits = d.bits.slice();
+      while (state.bits.length < TOTAL_Q) state.bits.push(null);
+      var fe = state.bits.indexOf(null);
+      if (fe === -1) {
+        showSummary();
+      } else {
+        goTo(fe + 1);
+      }
     } else {
-      els.overlay.classList.remove('hidden');
-      els.overlay.setAttribute('aria-hidden', 'false');
+      goTo(1);
     }
   }
 
-  function buildArtifact(){
-    collectInputs();
-    if (!validateCoreFields()){
-      var original = els.generateAutomation.textContent;
-      els.generateAutomation.textContent = 'Complete every field first';
-      setTimeout(function(){ els.generateAutomation.textContent = original; }, 1400);
-      return;
-    }
-
-    state.artifactBuilt = true;
-    state.overlayDismissed = true;
-
-    buildLists();
-    state.derived.leverageRead = buildLeverageRead();
-    state.derived.automationPath = buildAutomationPath();
-    state.derived.doLogic = buildDoLogic();
-    state.derived.leverageSummary = buildLeverageSummary();
-    state.derived.notYetSummary = buildNotYetSummary();
-    state.derived.implementationMap = buildImplementationMap();
-    state.derived.logicLayer = buildLogicLayer();
-    state.derived.nextMove = 'Implement the first narrow automation sequence, then route stability into Sovereignty.';
-
-    showToStep(7);
-    renderAll();
-
-    setTimeout(function(){
-      els.artifactSection.scrollIntoView({ behavior:'smooth', block:'start' });
-    }, 40);
-  }
-
-  function renderAll(){
-    collectInputs();
-    renderOverlay();
-    renderInputValues();
-    renderSections();
-    renderArtifact();
-    renderNotes();
-    updateProgress();
-
-    $('bridge-copy').textContent =
-      'Automation is not the end. Sovereignty is where the system becomes stable, resilient, and less dependent on chaos, constant presence, or repeated firefighting. The work you automate here should reduce drag, protect consistency, and create a business that does not collapse every time your attention shifts.';
-    saveState();
-  }
-
-  fields.forEach(function(key){
-    var field = $(key);
-    if (!field) return;
-    field.addEventListener('input', function(){
-      state.inputs[key] = field.value.trim();
-      renderNotes();
-      saveState();
-    });
-  });
-
-  document.querySelectorAll('[data-next]').forEach(function(btn){
-    btn.addEventListener('click', function(){
-      var next = Number(btn.getAttribute('data-next'));
-      showToStep(next);
-      var target = $('step-' + next) || els.step7 || els.step8;
-      if (target) target.scrollIntoView({ behavior:'smooth', block:'start' });
-    });
-  });
-
-  document.querySelectorAll('#task-chips .chip').forEach(function(chip){
-    chip.addEventListener('click', function(){
-      var current = $('repeatedTasks').value.trim();
-      var value = chip.getAttribute('data-insert') || '';
-      if (!value) return;
-      $('repeatedTasks').value = current ? current + ', ' + value : value;
-      state.inputs.repeatedTasks = $('repeatedTasks').value.trim();
-      chip.classList.add('active');
-      renderNotes();
-      saveState();
-    });
-  });
-
-  els.enterPhase.addEventListener('click', function(){
-    state.overlayDismissed = true;
-    renderOverlay();
-    saveState();
-  });
-
-  els.savePhase.addEventListener('click', function(){
-    collectInputs();
-    saveState();
-    var original = els.savePhase.textContent;
-    els.savePhase.textContent = 'Saved';
-    setTimeout(function(){ els.savePhase.textContent = original; }, 1000);
-  });
-
-  els.resetPhase.addEventListener('click', function(){
-    resetState();
-  });
-
-  els.generateAutomation.addEventListener('click', buildArtifact);
-
-  els.copyOutput.addEventListener('click', function(){
-    copyText(outputText(), els.copyOutput);
-  });
-
-  els.copySummary.addEventListener('click', function(){
-    var summary = [
-      'Repeated tasks: ' + safeText(state.inputs.repeatedTasks, 'Not defined yet'),
-      'Friction: ' + safeText(state.inputs.frictionPoints, 'Not defined yet'),
-      'Decision load: ' + safeText(state.inputs.decisionLoad, 'Not defined yet'),
-      'Automate now: ' + safeText(state.inputs.automateNow, 'Not defined yet'),
-      'Keep manual: ' + safeText(state.inputs.leaveManual, 'Not defined yet'),
-      'Remove entirely: ' + safeText(state.inputs.removeEntirely, 'Not defined yet'),
-      'Priority order: ' + safeText(state.inputs.priorityOrder, 'Not defined yet'),
-      'Automation path: ' + safeText(state.derived.automationPath, 'Waiting for map'),
-      'Not yet: ' + safeText(state.derived.notYetSummary, 'Waiting for logic'),
-      'Next move: ' + safeText(state.derived.nextMove, 'Build the first automation map and route it into Sovereignty')
-    ].join('\n');
-    copyText(summary, els.copySummary);
-  });
-
-  els.exportOutput.addEventListener('click', exportTextFile);
-
-  els.resumeProgress.addEventListener('click', function(){
-    renderAll();
-    var targetId = state.currentStep <= 6 ? 'step-' + state.currentStep : state.currentStep === 7 ? 'step-7' : 'step-8';
-    var target = $(targetId);
-    if (target) target.scrollIntoView({ behavior:'smooth', block:'start' });
-  });
-
-  els.refineFirst.addEventListener('click', function(){
-    showToStep(1);
-    $('step-1').scrollIntoView({ behavior:'smooth', block:'start' });
-  });
-
-  document.addEventListener('keydown', function(e){
-    if (e.key === 'Escape' && !state.overlayDismissed){
-      state.overlayDismissed = true;
-      renderOverlay();
-      saveState();
-    }
-  });
-
-  loadState();
-
-  if (!state.inputs) {
-    state.inputs = {
-      repeatedTasks: '',
-      taskFrequency: '',
-      taskTrigger: '',
-      frictionPoints: '',
-      slowestArea: '',
-      adminWeight: '',
-      decisionLoad: '',
-      trueJudgment: '',
-      falseDecisions: '',
-      automateNow: '',
-      templateFirst: '',
-      leaveManual: '',
-      removeEntirely: '',
-      toolLogic: '',
-      stackConstraint: '',
-      toolSprawl: '',
-      priorityOrder: '',
-      doNow: '',
-      doLater: '',
-      systemSummary: ''
-    };
-  }
-
-  if (!state.derived) {
-    state.derived = {
-      repeatedList: [],
-      candidateList: [],
-      manualList: [],
-      priorityList: [],
-      leverageRead: '',
-      automationPath: '',
-      doLogic: '',
-      leverageSummary: '',
-      notYetSummary: '',
-      implementationMap: '',
-      logicLayer: [],
-      nextMove: ''
-    };
-  }
-
-  if (!state.currentStep) state.currentStep = 1;
-
-  if (state.artifactBuilt){
-    buildLists();
-    state.derived.leverageRead = buildLeverageRead();
-    state.derived.automationPath = buildAutomationPath();
-    state.derived.doLogic = buildDoLogic();
-    state.derived.leverageSummary = buildLeverageSummary();
-    state.derived.notYetSummary = buildNotYetSummary();
-    state.derived.implementationMap = buildImplementationMap();
-    state.derived.logicLayer = buildLogicLayer();
-    if (!state.derived.nextMove) state.derived.nextMove = 'Implement the first narrow automation sequence, then route stability into Sovereignty.';
-  }
-
-  renderAll();
-}());
+  initUnlock();
+})();
 </script>
 </body>
 </html>
