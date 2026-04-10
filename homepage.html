@@ -24,6 +24,7 @@
       --gold-line:     rgba(196,163,90,0.18);
       --blue:          #2b4fd4;
       --blue-hi:       #3a5ee0;
+      --phase-blue:    #3b82f6;
       --text-primary:  #f4ede0;
       --text-secondary:#d2c7b8;
       --text-muted:    #a89f92;
@@ -56,13 +57,16 @@
 
     .page-main { position: relative; z-index: 1; }
 
-    /* REVEAL */
-    .reveal-io {
+    /* SCROLL REVEAL */
+    .reveal {
       opacity: 0;
-      transform: translateY(14px);
-      transition: opacity 0.75s cubic-bezier(0.22,1,0.36,1), transform 0.75s cubic-bezier(0.22,1,0.36,1);
+      transform: translateY(30px);
+      transition: all 0.8s ease;
     }
-    .reveal-io.visible { opacity: 1; transform: none; }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
 
     /* NAV */
     nav {
@@ -115,14 +119,12 @@
     .nav-link:hover { color: var(--text-secondary); opacity: 1; }
     .nav-link-gold { color: var(--gold-dim); }
     .nav-link-gold:hover { color: var(--gold); }
-    .nav-link-em { color: var(--text-muted); }
-    .nav-link-em:hover { color: var(--text-primary); }
 
     section { border-bottom: 1px solid var(--border); }
     .pad { padding: 0 52px; }
     .inner { max-width: 1100px; margin: 0 auto; }
 
-    /* HERO */
+    /* HERO — animated gradient */
     #hero {
       min-height: 100vh;
       display: flex;
@@ -130,22 +132,14 @@
       padding: 140px 52px 110px;
       position: relative;
       overflow: hidden;
+      background: linear-gradient(270deg, #0a0a0a, #0d1b2a, #0a0a0a);
+      background-size: 600% 600%;
+      animation: gradientShift 18s ease infinite;
     }
-
-    .hero-ambient {
-      position: absolute;
-      inset: 0;
-      pointer-events: none;
-      z-index: 0;
-      background:
-        radial-gradient(ellipse 80% 60% at 70% 40%, rgba(43,79,212,0.12) 0%, transparent 55%),
-        radial-gradient(ellipse 60% 50% at 20% 80%, rgba(196,163,90,0.06) 0%, transparent 50%),
-        linear-gradient(125deg, #050508 0%, #080807 40%, #0a0c12 100%);
-      animation: heroShift 28s ease-in-out infinite alternate;
-    }
-    @keyframes heroShift {
-      0% { filter: hue-rotate(0deg); opacity: 1; }
-      100% { filter: hue-rotate(8deg); opacity: 0.92; }
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
     }
 
     #hero::before {
@@ -153,7 +147,7 @@
       position: absolute;
       inset: 0;
       background: radial-gradient(ellipse 60% 80% at 80% 50%, var(--oxblood) 0%, transparent 70%);
-      opacity: 0.45;
+      opacity: 0.35;
       pointer-events: none;
       z-index: 0;
     }
@@ -269,16 +263,15 @@
     }
     @keyframes ruleIn { to { transform: scaleX(1); } }
 
-    /* FOLDS */
-    .fold {
+    /* COLLAPSIBLE SECTIONS */
+    .section {
       background: var(--bg);
       border-bottom: 1px solid var(--border);
     }
-    .page-main .fold:nth-child(odd) { background: var(--bg); }
-    .page-main .fold:nth-child(even) { background: var(--bg-1); }
+    .page-main .section:nth-child(odd) { background: var(--bg); }
+    .page-main .section:nth-child(even) { background: var(--bg-1); }
 
-    .fold-head {
-      width: 100%;
+    .section-header {
       display: grid;
       grid-template-columns: 1fr auto;
       grid-template-rows: auto auto;
@@ -286,17 +279,13 @@
       padding: 28px 52px;
       text-align: left;
       cursor: pointer;
-      border: none;
-      background: transparent;
-      color: inherit;
-      font-family: inherit;
       transition: background 0.25s;
       align-items: start;
     }
-    .fold-head:hover { background: rgba(196,163,90,0.03); }
-    .fold-head:focus-visible { outline: 1px solid var(--gold-line); outline-offset: -1px; }
+    .section-header:hover { background: rgba(196,163,90,0.03); }
+    .section-header:focus-visible { outline: 1px solid var(--gold-line); outline-offset: -1px; }
 
-    .fold-title {
+    .section-header h2 {
       grid-column: 1;
       grid-row: 1;
       font-family: 'Cormorant Garamond', serif;
@@ -306,7 +295,7 @@
       color: var(--text-primary);
     }
 
-    .fold-preview {
+    .section-header .preview {
       grid-column: 1;
       grid-row: 2;
       font-size: 14px;
@@ -315,7 +304,7 @@
       max-width: 520px;
     }
 
-    .fold-chevron {
+    .section-chevron {
       grid-column: 2;
       grid-row: 1 / span 2;
       align-self: center;
@@ -326,33 +315,28 @@
       transform: rotate(45deg);
       transition: transform 0.4s cubic-bezier(0.22,1,0.36,1);
       flex-shrink: 0;
-      margin-top: 0;
     }
-    .fold.open .fold-chevron { transform: rotate(225deg); }
+    .section.open .section-chevron { transform: rotate(225deg); }
 
-    .fold-panel {
-      display: grid;
-      grid-template-rows: 0fr;
-      transition: grid-template-rows 0.5s cubic-bezier(0.22,1,0.36,1);
-    }
-    .fold.open .fold-panel { grid-template-rows: 1fr; }
-
-    .fold-panel-inner {
+    .section-content {
+      max-height: 0;
       overflow: hidden;
-      min-height: 0;
       opacity: 0;
-      transition: opacity 0.4s ease 0.05s;
+      transition: max-height 0.6s ease, opacity 0.4s ease;
     }
-    .fold.open .fold-panel-inner { opacity: 1; }
+    .section.open .section-content {
+      max-height: 10000px;
+      opacity: 1;
+    }
 
-    .fold-body {
+    .section-body {
       padding: 0 52px 40px;
       max-width: 1100px;
       margin: 0 auto;
     }
 
     /* Reality pattern */
-    #fold-reality { position: relative; overflow: hidden; }
+    #section-reality { position: relative; overflow: hidden; }
     .reality-visual {
       position: absolute;
       inset: 0;
@@ -396,7 +380,6 @@
       margin-top: 20px;
     }
 
-    /* Diagnostic inside fold */
     #diagnostic-inner { position: relative; }
     #diagnostic-inner::before {
       content: '';
@@ -613,7 +596,6 @@
     }
     .what-get-simple li:last-child { border-bottom: none; }
 
-    /* How it works fold */
     .how-plain {
       font-size: 15px;
       color: var(--text-secondary);
@@ -621,95 +603,90 @@
       max-width: 560px;
     }
 
-    /* Phase track */
-    .phase-track-wrap {
-      position: relative;
-      padding: 20px 0 36px;
-    }
-    .phase-track {
+    /* PHASE LINE */
+    .phase-line-wrap { position: relative; padding: 20px 0 36px; }
+
+    .phase-line {
       display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 8px;
-      position: relative;
-      max-width: 100%;
-    }
-    .phase-track::before {
-      content: '';
-      position: absolute;
-      top: 18px;
-      left: 0;
-      right: 0;
-      height: 1px;
-      background: linear-gradient(to right, var(--gold-line), var(--border), var(--gold-line));
-      z-index: 0;
+      flex-direction: column;
+      gap: 20px;
+      border-left: 1px solid rgba(255,255,255,0.2);
+      padding-left: 20px;
     }
 
-    .phase-node {
-      flex: 1;
-      min-width: 0;
-      text-align: center;
+    .phase {
       position: relative;
-      z-index: 1;
-      padding: 0 4px;
-      transition: transform 0.35s ease, filter 0.35s ease;
     }
-    .phase-dot {
+    .phase::before {
+      content: '';
+      position: absolute;
+      left: -9px;
+      top: 8px;
       width: 12px;
       height: 12px;
+      background: var(--phase-blue);
       border-radius: 50%;
-      background: var(--bg-2);
-      border: 1px solid var(--gold-line);
-      margin: 0 auto 12px;
-      transition: background 0.35s, border-color 0.35s, box-shadow 0.35s, transform 0.35s;
+      opacity: 0.3;
+      transition: opacity 0.4s ease;
     }
-    .phase-node.active .phase-dot {
-      background: rgba(196,163,90,0.25);
-      border-color: var(--gold);
-      box-shadow: 0 0 20px rgba(196,163,90,0.25);
-      transform: scale(1.15);
+    .phase.active::before {
+      opacity: 1;
     }
-    .phase-node.active {
-      transform: translateY(-2px);
-    }
+
     .phase-name {
       font-family: 'Cormorant Garamond', serif;
-      font-size: clamp(14px, 1.3vw, 18px);
+      font-size: clamp(16px, 1.5vw, 20px);
       color: var(--gold-dim);
       margin-bottom: 6px;
       letter-spacing: -0.01em;
     }
-    .phase-node.active .phase-name { color: var(--gold); }
+    .phase.active .phase-name { color: var(--gold); }
     .phase-desc {
       font-size: 14px;
       color: var(--text-muted);
       line-height: 1.45;
     }
-    .phase-node.active .phase-desc { color: var(--text-secondary); }
+    .phase.active .phase-desc { color: var(--text-secondary); }
 
-    .phase-track-vertical {
-      display: none;
-      flex-direction: column;
-      gap: 0;
-      border-left: 1px solid var(--border);
-      padding-left: 20px;
-      margin-left: 8px;
+    @media (min-width: 961px) {
+      .phase-line {
+        flex-direction: row;
+        flex-wrap: nowrap;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 12px;
+        border-left: none;
+        padding-left: 0;
+        padding-top: 24px;
+        border-top: 1px solid rgba(255,255,255,0.12);
+        position: relative;
+      }
+      .phase-line::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: linear-gradient(to right, var(--gold-line), var(--border), var(--gold-line));
+      }
+      .phase {
+        flex: 1;
+        min-width: 0;
+        text-align: center;
+        padding-top: 8px;
+      }
+      .phase::before {
+        left: 50%;
+        top: -6px;
+        transform: translateX(-50%);
+      }
+      .phase.active::before {
+        transform: translateX(-50%);
+        box-shadow: 0 0 16px rgba(59,130,246,0.45);
+      }
     }
-    .phase-track-vertical .phase-node {
-      text-align: left;
-      padding: 16px 0 16px 8px;
-      border-bottom: 1px solid var(--border);
-    }
-    .phase-track-vertical .phase-node:last-child { border-bottom: none; }
-    .phase-track-vertical .phase-dot {
-      position: absolute;
-      left: -28px;
-      top: 22px;
-      margin: 0;
-    }
-    .phase-track-vertical .phase-node { position: relative; }
 
-    /* Products grid - quiet links */
     .products-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -766,14 +743,13 @@
     .link-quiet:hover { color: var(--gold); border-color: var(--gold-line); }
     .product-card.club-card .product-title { color: var(--gold); }
 
-    /* Private fold */
     .private-inner {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 48px;
       align-items: start;
     }
-    .fold-private .section-title {
+    .section-private .section-inner-title {
       font-family: 'Cormorant Garamond', serif;
       font-weight: 300;
       font-size: clamp(28px, 3.5vw, 44px);
@@ -845,7 +821,6 @@
       color: var(--text-secondary);
     }
 
-    /* CLOSING */
     #closing {
       padding: 100px 52px 120px;
       text-align: center;
@@ -880,7 +855,6 @@
       box-shadow: 0 4px 20px rgba(43,79,212,0.28);
     }
 
-    /* FOOTER */
     footer {
       padding: 56px 52px;
       border-top: 1px solid var(--border);
@@ -890,7 +864,7 @@
       max-width: 1100px;
       margin: 0 auto;
       display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
+      grid-template-columns: 1fr 1fr;
       gap: 60px;
       align-items: start;
     }
@@ -941,14 +915,12 @@
       .nav-secondary { display: none; }
       #hero { padding: 130px 28px 100px; }
       .hero-rule-bottom { left: 28px; right: 28px; }
-      .fold-head, .fold-body { padding-left: 28px; padding-right: 28px; }
+      .section-header, .section-body { padding-left: 28px; padding-right: 28px; }
       .pad { padding: 0 28px; }
       .reality-grid { grid-template-columns: 1fr; }
       .diag-grid { grid-template-columns: repeat(2, 1fr); }
       .products-grid { grid-template-columns: repeat(2, 1fr); }
       .private-inner { grid-template-columns: 1fr; }
-      .phase-track { display: none; }
-      .phase-track-vertical { display: flex; }
       footer { padding: 44px 28px; }
       .footer-inner { grid-template-columns: 1fr; gap: 40px; }
       #closing { padding: 80px 28px 100px; }
@@ -959,7 +931,7 @@
       .nav-primary { display: none; }
       #hero { padding: 120px 20px 90px; }
       .hero-rule-bottom { left: 20px; right: 20px; }
-      .fold-head, .fold-body { padding-left: 20px; padding-right: 20px; }
+      .section-header, .section-body { padding-left: 20px; padding-right: 20px; }
       .diag-grid { grid-template-columns: 1fr; }
       .products-grid { grid-template-columns: 1fr; }
       .diag-card { padding: 28px 20px 32px; }
@@ -972,7 +944,6 @@
   <nav id="main-nav">
     <a href="/index" class="nav-mark">Stephuary</a>
     <div class="nav-primary">
-      <a href="/capture" class="nav-link">Diagnostic</a>
       <a href="/systems" class="nav-link">Systems</a>
       <a href="/playbooks" class="nav-link">Playbooks</a>
       <a href="/pricing" class="nav-link">Pricing</a>
@@ -984,27 +955,26 @@
       <a href="/snapshot" class="nav-link">Snapshot</a>
       <a href="/focused-review" class="nav-link">Focused Review</a>
       <a href="/founder-diagnostic" class="nav-link">Founder Diagnostic</a>
-      <a href="https://grownspaghetti.substack.com" class="nav-link nav-link-gold" target="_blank" rel="noopener">Substack</a>
+      <a href="https://stephuary.substack.com" class="nav-link nav-link-gold" target="_blank" rel="noopener">Substack</a>
       <a href="https://onlysometimesclub.com" class="nav-link nav-link-gold" target="_blank" rel="noopener">OSC</a>
       <a href="https://github.com/stephuary/Stephuary" class="nav-link" target="_blank" rel="noopener">GitHub</a>
     </div>
   </nav>
 
   <section id="hero">
-    <div class="hero-ambient" aria-hidden="true"></div>
     <div class="hero-bg-word" aria-hidden="true">System</div>
     <div class="hero-inner">
-      <p class="hero-eyebrow reveal-io">Build income. Build independence.</p>
-      <h1 class="hero-headline reveal-io">Build something<br>that makes money.</h1>
-      <p class="hero-sub reveal-io">
+      <p class="hero-eyebrow reveal">Build income. Build independence.</p>
+      <h1 class="hero-headline reveal">Build something<br>that makes money.</h1>
+      <p class="hero-sub reveal">
         Stephuary is a $39 system.<br>
         Five phases. Figure out what to sell, fix what fails, build something that runs.
       </p>
-      <p class="hero-detail reveal-io">
+      <p class="hero-detail reveal">
         Start where you are.<br>
         Act without guessing.
       </p>
-      <div class="reveal-io">
+      <div class="reveal">
         <a href="/capture" class="btn-hero">Run diagnostic →</a>
         <p class="cta-sub">$39 &middot; full system &middot; all five phases included</p>
       </div>
@@ -1014,14 +984,14 @@
 
   <main class="page-main">
 
-    <div class="fold" id="fold-reality" data-fold>
-      <button type="button" class="fold-head" aria-expanded="false" id="btn-reality">
-        <span class="fold-title">Reality</span>
-        <span class="fold-preview">You've seen the pattern. This names it.</span>
-        <span class="fold-chevron" aria-hidden="true"></span>
-      </button>
-      <div class="fold-panel"><div class="fold-panel-inner">
-        <div class="fold-body">
+    <div class="section" id="section-reality">
+      <div class="section-header reveal" role="button" tabindex="0" aria-expanded="false" id="hdr-reality">
+        <h2>Reality</h2>
+        <p class="preview">You've seen the pattern. This names it.</p>
+        <span class="section-chevron" aria-hidden="true"></span>
+      </div>
+      <div class="section-content">
+        <div class="section-body">
           <div class="reality-visual" aria-hidden="true">
             <svg viewBox="0 0 400 200" preserveAspectRatio="none">
               <path class="reality-path" d="M0,100 Q100,40 200,100 T400,100" />
@@ -1029,55 +999,55 @@
             </svg>
           </div>
           <div class="reality-grid">
-            <p class="reality-statement">You stop. You restart. You hesitate. The loop repeats.</p>
+            <p class="reality-statement reveal">You stop. You restart. You hesitate. The loop repeats.</p>
             <div>
-              <p class="reality-note">Naming the loop is the first step. The diagnostic is a short read on how you think and decide.</p>
+              <p class="reality-note reveal">Naming the loop is the first step. The diagnostic is a short read on how you think and decide.</p>
             </div>
           </div>
         </div>
-      </div></div>
+      </div>
     </div>
 
-    <div class="fold" id="fold-diagnostic" data-fold>
-      <button type="button" class="fold-head" aria-expanded="false" id="btn-diagnostic">
-        <span class="fold-title">What happens</span>
-        <span class="fold-preview">A short read on how you think and decide.</span>
-        <span class="fold-chevron" aria-hidden="true"></span>
-      </button>
-      <div class="fold-panel"><div class="fold-panel-inner">
-        <div class="fold-body">
+    <div class="section" id="section-diagnostic">
+      <div class="section-header reveal" role="button" tabindex="0" aria-expanded="false" id="hdr-diagnostic">
+        <h2>What happens</h2>
+        <p class="preview">A short read on how you think and decide.</p>
+        <span class="section-chevron" aria-hidden="true"></span>
+      </div>
+      <div class="section-content">
+        <div class="section-body">
           <div id="diagnostic-inner">
-            <div class="diag-head reveal-io">
-              <h2 class="diag-title">Pick what fits.</h2>
-              <p class="diag-sub">Four entry points. One system behind them.</p>
+            <div class="diag-head">
+              <h2 class="diag-title reveal">Pick what fits.</h2>
+              <p class="diag-sub reveal">Four entry points. One system behind them.</p>
             </div>
-            <div class="diag-grid reveal-io">
-              <button type="button" class="diag-card" data-state="1" aria-pressed="false">
+            <div class="diag-grid">
+              <button type="button" class="diag-card reveal" data-state="1" aria-pressed="false">
                 <p class="diag-num">01</p>
                 <p class="diag-card-title">I don't know what to sell.</p>
                 <p class="diag-card-sub">Skills or experience, nothing clearly defined yet.</p>
                 <span class="diag-indicator"></span>
               </button>
-              <button type="button" class="diag-card" data-state="2" aria-pressed="false">
+              <button type="button" class="diag-card reveal" data-state="2" aria-pressed="false">
                 <p class="diag-num">02</p>
                 <p class="diag-card-title">I have something but it's not making money.</p>
                 <p class="diag-card-sub">Offers or content tried; not converting.</p>
                 <span class="diag-indicator"></span>
               </button>
-              <button type="button" class="diag-card" data-state="3" aria-pressed="false">
+              <button type="button" class="diag-card reveal" data-state="3" aria-pressed="false">
                 <p class="diag-num">03</p>
                 <p class="diag-card-title">I need a proven way to make money.</p>
                 <p class="diag-card-sub">You want paths that already work.</p>
                 <span class="diag-indicator"></span>
               </button>
-              <button type="button" class="diag-card" data-state="4" aria-pressed="false">
+              <button type="button" class="diag-card reveal" data-state="4" aria-pressed="false">
                 <p class="diag-num">04</p>
                 <p class="diag-card-title">I need direct help.</p>
                 <p class="diag-card-sub">Clarity or correction without doing it alone.</p>
                 <span class="diag-indicator"></span>
               </button>
             </div>
-            <div class="diag-result reveal-io" id="diag-result">
+            <div class="diag-result reveal" id="diag-result">
               <div class="result-state active" id="state-0">
                 <p class="result-default-text">Pick a card. You'll see where to enter the system.</p>
               </div>
@@ -1114,107 +1084,115 @@
                 <p class="result-bridge">Full system ($39). You enter at the phase that fits.</p>
               </div>
             </div>
-            <div class="what-get-simple reveal-io">
-              <h3>What you get</h3>
+            <div class="what-get-simple">
+              <h3 class="reveal">What you get</h3>
               <ul>
-                <li>Clear direction</li>
-                <li>A named entry point</li>
-                <li>Next steps without noise</li>
+                <li class="reveal">Clear direction</li>
+                <li class="reveal">A named entry point</li>
+                <li class="reveal">Next steps without noise</li>
               </ul>
             </div>
           </div>
         </div>
-      </div></div>
+      </div>
     </div>
 
-    <div class="fold" id="fold-how" data-fold>
-      <button type="button" class="fold-head" aria-expanded="false" id="btn-how">
-        <span class="fold-title">How it works</span>
-        <span class="fold-preview">Five short sections. Live output.</span>
-        <span class="fold-chevron" aria-hidden="true"></span>
-      </button>
-      <div class="fold-panel"><div class="fold-panel-inner">
-        <div class="fold-body">
-          <p class="how-plain">You run the diagnostic. You get a read. The system maps Capture through Sovereignty. You choose depth. You act from one path, not ten.</p>
+    <div class="section" id="section-how">
+      <div class="section-header reveal" role="button" tabindex="0" aria-expanded="false" id="hdr-how">
+        <h2>How it works</h2>
+        <p class="preview">Five short sections. Live output.</p>
+        <span class="section-chevron" aria-hidden="true"></span>
+      </div>
+      <div class="section-content">
+        <div class="section-body">
+          <p class="how-plain reveal">You run the diagnostic. You get a read. The system maps Capture through Sovereignty. You choose depth. You act from one path, not ten.</p>
         </div>
-      </div></div>
+      </div>
     </div>
 
-    <div class="fold" id="fold-system" data-fold>
-      <button type="button" class="fold-head" aria-expanded="false" id="btn-system">
-        <span class="fold-title">System</span>
-        <span class="fold-preview">Five layers. One path.</span>
-        <span class="fold-chevron" aria-hidden="true"></span>
-      </button>
-      <div class="fold-panel"><div class="fold-panel-inner">
-        <div class="fold-body">
-          <p class="how-plain" style="margin-bottom:28px;">One payment. Five phases. You don't buy fragments. You get the full system and start where you are.</p>
-          <div class="phase-track-wrap">
-            <div class="phase-track" id="phase-track-h">
-              <div class="phase-node" data-phase="0"><div class="phase-dot"></div><div class="phase-name">Capture</div><div class="phase-desc">Extract what you know</div></div>
-              <div class="phase-node" data-phase="1"><div class="phase-dot"></div><div class="phase-name">Monetize</div><div class="phase-desc">Make it sell</div></div>
-              <div class="phase-node" data-phase="2"><div class="phase-dot"></div><div class="phase-name">Structure</div><div class="phase-desc">Runs without you</div></div>
-              <div class="phase-node" data-phase="3"><div class="phase-dot"></div><div class="phase-name">Automation</div><div class="phase-desc">Cut repetition</div></div>
-              <div class="phase-node" data-phase="4"><div class="phase-dot"></div><div class="phase-name">Sovereignty</div><div class="phase-desc">Holds under pressure</div></div>
-            </div>
-            <div class="phase-track-vertical" id="phase-track-v">
-              <div class="phase-node" data-phase="0"><div class="phase-dot"></div><div class="phase-name">Capture</div><div class="phase-desc">Extract what you know</div></div>
-              <div class="phase-node" data-phase="1"><div class="phase-dot"></div><div class="phase-name">Monetize</div><div class="phase-desc">Make it sell</div></div>
-              <div class="phase-node" data-phase="2"><div class="phase-dot"></div><div class="phase-name">Structure</div><div class="phase-desc">Runs without you</div></div>
-              <div class="phase-node" data-phase="3"><div class="phase-dot"></div><div class="phase-name">Automation</div><div class="phase-desc">Cut repetition</div></div>
-              <div class="phase-node" data-phase="4"><div class="phase-dot"></div><div class="phase-name">Sovereignty</div><div class="phase-desc">Holds under pressure</div></div>
+    <div class="section" id="section-system">
+      <div class="section-header reveal" role="button" tabindex="0" aria-expanded="false" id="hdr-system">
+        <h2>System</h2>
+        <p class="preview">Five layers. One path.</p>
+        <span class="section-chevron" aria-hidden="true"></span>
+      </div>
+      <div class="section-content">
+        <div class="section-body">
+          <p class="how-plain reveal" style="margin-bottom:28px;">One payment. Five phases. You don't buy fragments. You get the full system and start where you are.</p>
+          <div class="phase-line-wrap">
+            <div class="phase-line" id="phase-line">
+              <div class="phase reveal" data-phase="0">
+                <div class="phase-name">Capture</div>
+                <div class="phase-desc">Extract what you know</div>
+              </div>
+              <div class="phase reveal" data-phase="1">
+                <div class="phase-name">Monetize</div>
+                <div class="phase-desc">Make it sell</div>
+              </div>
+              <div class="phase reveal" data-phase="2">
+                <div class="phase-name">Structure</div>
+                <div class="phase-desc">Runs without you</div>
+              </div>
+              <div class="phase reveal" data-phase="3">
+                <div class="phase-name">Automation</div>
+                <div class="phase-desc">Cut repetition</div>
+              </div>
+              <div class="phase reveal" data-phase="4">
+                <div class="phase-name">Sovereignty</div>
+                <div class="phase-desc">Holds under pressure</div>
+              </div>
             </div>
           </div>
-          <p class="result-links" style="margin-top:16px;"><a href="/systems">Open the system overview →</a></p>
+          <p class="result-links reveal" style="margin-top:16px;"><a href="/systems">Open the system overview →</a></p>
         </div>
-      </div></div>
+      </div>
     </div>
 
-    <div class="fold" id="fold-options" data-fold>
-      <button type="button" class="fold-head" aria-expanded="false" id="btn-options">
-        <span class="fold-title">Beyond the system</span>
-        <span class="fold-preview">Books, reviews, snapshots. Optional.</span>
-        <span class="fold-chevron" aria-hidden="true"></span>
-      </button>
-      <div class="fold-panel"><div class="fold-panel-inner">
-        <div class="fold-body">
+    <div class="section" id="section-options">
+      <div class="section-header reveal" role="button" tabindex="0" aria-expanded="false" id="hdr-options">
+        <h2>Beyond the system</h2>
+        <p class="preview">Books, reviews, snapshots. Optional.</p>
+        <span class="section-chevron" aria-hidden="true"></span>
+      </div>
+      <div class="section-content">
+        <div class="section-body">
           <div class="products-grid">
-            <div class="product-card">
+            <div class="product-card reveal">
               <p class="product-tag">Books</p>
               <h3 class="product-title">Start small.</h3>
               <p class="product-body">Short reads. Same-day use.</p>
               <p class="product-meta">Most $1 · Ownership $28</p>
               <a href="/books" class="link-quiet">Books →</a>
             </div>
-            <div class="product-card">
+            <div class="product-card reveal">
               <p class="product-tag">Focused Review</p>
               <h3 class="product-title">One issue.</h3>
               <p class="product-body">One problem. Next steps.</p>
               <p class="product-meta">$197</p>
               <a href="/focused-review" class="link-quiet">Focused review →</a>
             </div>
-            <div class="product-card">
+            <div class="product-card reveal">
               <p class="product-tag">Snapshot</p>
               <h3 class="product-title">Full picture.</h3>
               <p class="product-body">What isn't working. Where money is.</p>
               <p class="product-meta">$750</p>
               <a href="/snapshot" class="link-quiet">Snapshot →</a>
             </div>
-            <div class="product-card">
+            <div class="product-card reveal">
               <p class="product-tag">Founder Diagnostic</p>
               <h3 class="product-title">Revenue path.</h3>
               <p class="product-body">From what you already have.</p>
               <p class="product-meta">$1,500</p>
               <a href="/founder-diagnostic" class="link-quiet">Founder diagnostic →</a>
             </div>
-            <div class="product-card">
+            <div class="product-card reveal">
               <p class="product-tag">Playbooks</p>
               <h3 class="product-title">Paths that work.</h3>
               <p class="product-body">Pick the problem. Use the playbook.</p>
               <p class="product-meta">&nbsp;</p>
               <a href="/playbooks" class="link-quiet">Playbooks →</a>
             </div>
-            <div class="product-card club-card">
+            <div class="product-card reveal club-card">
               <p class="product-tag">5% Club</p>
               <h3 class="product-title">Signal.</h3>
               <p class="product-body">Private layer. Judgment and placement.</p>
@@ -1223,53 +1201,53 @@
             </div>
           </div>
         </div>
-      </div></div>
+      </div>
     </div>
 
-    <div class="fold fold-private" id="fold-private" data-fold>
-      <button type="button" class="fold-head" aria-expanded="false" id="btn-private">
-        <span class="fold-title">Private access</span>
-        <span class="fold-preview">Correction, positioning, revenue architecture. When it fits.</span>
-        <span class="fold-chevron" aria-hidden="true"></span>
-      </button>
-      <div class="fold-panel"><div class="fold-panel-inner">
-        <div class="fold-body">
+    <div class="section section-private" id="section-private">
+      <div class="section-header reveal" role="button" tabindex="0" aria-expanded="false" id="hdr-private">
+        <h2>Private access</h2>
+        <p class="preview">Correction, positioning, revenue architecture. When it fits.</p>
+        <span class="section-chevron" aria-hidden="true"></span>
+      </div>
+      <div class="section-content">
+        <div class="section-body">
           <div class="private-inner">
             <div>
-              <h2 class="section-title">Private Access</h2>
+              <h3 class="section-inner-title reveal">Private Access</h3>
               <span class="gold-rule" id="private-rule"></span>
               <ul class="private-list">
-                <li>Correction: wrong decisions stopped before they get worse</li>
-                <li>Positioning: where you should operate</li>
-                <li>Market level: local to national</li>
-                <li>Offer structure: what to build, what to stop</li>
-                <li>Revenue architecture: how it pays</li>
+                <li class="reveal">Correction: wrong decisions stopped before they get worse</li>
+                <li class="reveal">Positioning: where you should operate</li>
+                <li class="reveal">Market level: local to national</li>
+                <li class="reveal">Offer structure: what to build, what to stop</li>
+                <li class="reveal">Revenue architecture: how it pays</li>
               </ul>
-              <p class="result-links"><a href="/access">Request access →</a></p>
+              <p class="result-links reveal"><a href="/access">Request access →</a></p>
             </div>
             <div>
-              <p class="private-right-text">Not always open.</p>
-              <p class="private-right-text">Requests reviewed.</p>
-              <p class="private-right-text">Not all accepted.</p>
-              <p class="private-hook">It changes what you do and where you operate.</p>
-              <p class="proof-quote" style="margin-top:32px;">I booked my first advisory retainer before I had:</p>
+              <p class="private-right-text reveal">Not always open.</p>
+              <p class="private-right-text reveal">Requests reviewed.</p>
+              <p class="private-right-text reveal">Not all accepted.</p>
+              <p class="private-hook reveal">It changes what you do and where you operate.</p>
+              <p class="proof-quote reveal" style="margin-top:32px;">I booked my first advisory retainer before I had:</p>
               <ul class="proof-list">
-                <li>a real email list</li>
-                <li>a website</li>
-                <li>a logo</li>
+                <li class="reveal">a real email list</li>
+                <li class="reveal">a website</li>
+                <li class="reveal">a logo</li>
               </ul>
-              <p class="proof-close">This is how it worked.</p>
+              <p class="proof-close reveal">This is how it worked.</p>
             </div>
           </div>
         </div>
-      </div></div>
+      </div>
     </div>
 
   </main>
 
   <section id="closing">
-    <h2 class="closing-h2">You'll know if it fits once you go through it.</h2>
-    <a href="/capture" class="btn-close">Begin here →</a>
+    <h2 class="closing-h2 reveal">You'll know if it fits once you go through it.</h2>
+    <a href="/capture" class="btn-close reveal">Begin here →</a>
   </section>
 
   <footer>
@@ -1279,27 +1257,9 @@
         <p class="footer-micro">Built to be used.<br>Not watched.</p>
       </div>
       <div>
-        <p class="footer-col-label">System</p>
+        <p class="footer-col-label">Connect</p>
         <ul class="footer-links">
-          <li><a href="/capture">Diagnostic</a></li>
-          <li><a href="/capture">Capture</a></li>
-          <li><a href="/systems">Systems</a></li>
-          <li><a href="/books">Books</a></li>
-          <li><a href="/playbooks">Playbooks</a></li>
-          <li><a href="/snapshot">Snapshot</a></li>
-          <li><a href="/focused-review">Focused Review</a></li>
-          <li><a href="/founder-diagnostic">Founder Diagnostic</a></li>
-          <li><a href="/club">5% Club</a></li>
-          <li><a href="/access">Private Access</a></li>
-          <li><a href="/pricing">Pricing</a></li>
-          <li><a href="mailto:hello@stephuary.com">Contact</a></li>
-        </ul>
-      </div>
-      <div>
-        <p class="footer-col-label">External</p>
-        <ul class="footer-links">
-          <li><a href="https://grownspaghetti.substack.com" target="_blank" rel="noopener">Substack</a></li>
-          <li><a href="https://onlysometimesclub.com" target="_blank" rel="noopener">Only Sometimes Club</a></li>
+          <li><a href="https://stephuary.substack.com" target="_blank" rel="noopener">Substack</a></li>
           <li><a href="https://github.com/stephuary/Stephuary" target="_blank" rel="noopener">GitHub</a></li>
         </ul>
       </div>
@@ -1313,45 +1273,78 @@
         mainNav.classList.toggle('scrolled', window.scrollY > 60);
       }, { passive: true });
 
-      var io = new IntersectionObserver(function (entries) {
-        entries.forEach(function (e) {
-          if (e.isIntersecting) {
-            e.target.classList.add('visible');
-            io.unobserve(e.target);
+      var observer = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
           }
         });
       }, { threshold: 0.08, rootMargin: '0px 0px -24px 0px' });
-      document.querySelectorAll('.reveal-io').forEach(function (el) { io.observe(el); });
 
-      var folds = document.querySelectorAll('.fold[data-fold]');
-      var singleOpen = true;
+      document.querySelectorAll('.reveal').forEach(function (el) {
+        observer.observe(el);
+      });
 
-      folds.forEach(function (fold) {
-        var btn = fold.querySelector('.fold-head');
-        var panel = fold.querySelector('.fold-panel');
-        if (panel) panel.style.display = 'grid';
-
-        btn.addEventListener('click', function () {
-          var opening = !fold.classList.contains('open');
-          if (singleOpen && opening) {
-            folds.forEach(function (f) {
-              if (f === fold) return;
-              f.classList.remove('open');
-              f.querySelector('.fold-head').setAttribute('aria-expanded', 'false');
+      document.querySelectorAll('.section-header').forEach(function (header) {
+        function toggleSection() {
+          var section = header.parentElement;
+          document.querySelectorAll('.section').forEach(function (s) {
+            if (s !== section) {
+              s.classList.remove('open');
+              var h = s.querySelector('.section-header');
+              if (h) h.setAttribute('aria-expanded', 'false');
+            }
+          });
+          section.classList.toggle('open');
+          header.setAttribute('aria-expanded', section.classList.contains('open') ? 'true' : 'false');
+          if (section.classList.contains('open')) {
+            section.querySelectorAll('.reveal:not(.visible)').forEach(function (el, i) {
+              window.setTimeout(function () {
+                el.classList.add('visible');
+              }, 40 * i);
             });
-          }
-          fold.classList.toggle('open');
-          btn.setAttribute('aria-expanded', fold.classList.contains('open') ? 'true' : 'false');
-          if (fold.classList.contains('open')) {
-            fold.querySelectorAll('.reveal-io:not(.visible)').forEach(function (el, i) {
-              window.setTimeout(function () { el.classList.add('visible'); }, 40 * i);
-            });
-            if (fold.id === 'fold-system') {
+            if (section.id === 'section-system') {
               window.requestAnimationFrame(function () {
                 window.dispatchEvent(new Event('scroll'));
               });
             }
           }
+        }
+        header.addEventListener('click', toggleSection);
+        header.addEventListener('keydown', function (e) {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            toggleSection();
+          }
+        });
+      });
+
+      var scrollPhaseIdx = 0;
+      function syncPhaseScroll() {
+        var track = document.getElementById('section-system');
+        if (!track || !track.classList.contains('open')) return;
+        var inner = track.querySelector('.phase-line-wrap');
+        if (!inner) return;
+        var rect = inner.getBoundingClientRect();
+        var h = window.innerHeight;
+        if (rect.bottom < 0 || rect.top > h) return;
+        var t = Math.max(0, Math.min(1, (h * 0.45 - rect.top) / Math.max(rect.height, 1)));
+        scrollPhaseIdx = Math.min(4, Math.max(0, Math.floor(t * 5)));
+        document.querySelectorAll('.phase').forEach(function (n) {
+          var idx = parseInt(n.getAttribute('data-phase'), 10);
+          n.classList.toggle('active', idx === scrollPhaseIdx);
+        });
+      }
+
+      window.addEventListener('scroll', syncPhaseScroll, { passive: true });
+
+      document.querySelectorAll('.phase').forEach(function (phase) {
+        phase.addEventListener('mouseenter', function () {
+          document.querySelectorAll('.phase').forEach(function (p) { p.classList.remove('active'); });
+          phase.classList.add('active');
+        });
+        phase.addEventListener('mouseleave', function () {
+          syncPhaseScroll();
         });
       });
 
@@ -1374,26 +1367,6 @@
           }
         });
       });
-
-      var track = document.getElementById('fold-system');
-      function syncPhaseActive(idx) {
-        document.querySelectorAll('.phase-node').forEach(function (n) {
-          n.classList.toggle('active', parseInt(n.getAttribute('data-phase'), 10) === idx);
-        });
-      }
-      if (track) {
-        window.addEventListener('scroll', function () {
-          if (!track.classList.contains('open')) return;
-          var inner = track.querySelector('.phase-track-wrap');
-          if (!inner) return;
-          var rect = inner.getBoundingClientRect();
-          var h = window.innerHeight;
-          if (rect.bottom < 0 || rect.top > h) return;
-          var t = Math.max(0, Math.min(1, (h * 0.45 - rect.top) / Math.max(rect.height, 1)));
-          var idx = Math.min(4, Math.max(0, Math.floor(t * 5)));
-          syncPhaseActive(idx);
-        }, { passive: true });
-      }
 
       var pr = document.getElementById('private-rule');
       if (pr) {
