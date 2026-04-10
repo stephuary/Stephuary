@@ -60,13 +60,18 @@
     /* SCROLL REVEAL */
     .reveal {
       opacity: 0;
-      transform: translateY(30px);
-      transition: all 0.8s ease;
+      transform: translateY(22px);
+      transition: opacity 0.75s cubic-bezier(0.22, 1, 0.36, 1), transform 0.75s cubic-bezier(0.22, 1, 0.36, 1);
     }
     .reveal.visible {
       opacity: 1;
       transform: translateY(0);
     }
+    .hero-inner .reveal:nth-child(1) { transition-delay: 0.05s; }
+    .hero-inner .reveal:nth-child(2) { transition-delay: 0.12s; }
+    .hero-inner .reveal:nth-child(3) { transition-delay: 0.19s; }
+    .hero-inner .reveal:nth-child(4) { transition-delay: 0.26s; }
+    .hero-inner .reveal:nth-child(5) { transition-delay: 0.33s; }
 
     /* NAV */
     nav {
@@ -124,7 +129,7 @@
     .pad { padding: 0 52px; }
     .inner { max-width: 1100px; margin: 0 auto; }
 
-    /* HERO — animated gradient */
+    /* HERO — animated gradient (blue / black / gold, subtle) */
     #hero {
       min-height: 100vh;
       display: flex;
@@ -132,9 +137,9 @@
       padding: 140px 52px 110px;
       position: relative;
       overflow: hidden;
-      background: linear-gradient(270deg, #0a0a0a, #0d1b2a, #0a0a0a);
+      background: linear-gradient(270deg, #060606, #0d1b2a, #12100a, #0d1b2a, #060606);
       background-size: 600% 600%;
-      animation: gradientShift 18s ease infinite;
+      animation: gradientShift 22s ease infinite;
     }
     @keyframes gradientShift {
       0% { background-position: 0% 50%; }
@@ -227,19 +232,19 @@
       background: var(--blue);
       color: #fff;
       font-family: 'DM Mono', monospace;
-      font-size: 10px;
+      font-size: 9px;
       font-weight: 400;
       letter-spacing: 0.14em;
       text-transform: uppercase;
       text-decoration: none;
-      padding: 12px 24px;
+      padding: 10px 20px;
       border: none;
       cursor: pointer;
-      transition: background 0.22s, box-shadow 0.22s;
+      transition: background 0.28s ease, box-shadow 0.28s ease, opacity 0.2s ease;
     }
     .btn-hero:hover {
       background: var(--blue-hi);
-      box-shadow: 0 4px 20px rgba(43,79,212,0.28);
+      box-shadow: 0 2px 18px rgba(43,79,212,0.22);
     }
 
     .cta-sub {
@@ -268,8 +273,6 @@
       background: var(--bg);
       border-bottom: 1px solid var(--border);
     }
-    .page-main .section:nth-child(odd) { background: var(--bg); }
-    .page-main .section:nth-child(even) { background: var(--bg-1); }
 
     .section-header {
       display: grid;
@@ -279,10 +282,14 @@
       padding: 28px 52px;
       text-align: left;
       cursor: pointer;
-      transition: background 0.25s;
+      transition: background 0.3s ease, box-shadow 0.3s ease;
       align-items: start;
     }
     .section-header:hover { background: rgba(196,163,90,0.03); }
+    .section.open .section-header {
+      background: rgba(196,163,90,0.045);
+      box-shadow: inset 0 1px 0 rgba(196,163,90,0.08);
+    }
     .section-header:focus-visible { outline: 1px solid var(--gold-line); outline-offset: -1px; }
 
     .section-header h2 {
@@ -322,7 +329,7 @@
       max-height: 0;
       overflow: hidden;
       opacity: 0;
-      transition: max-height 0.6s ease, opacity 0.4s ease;
+      transition: max-height 0.65s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.45s ease;
     }
     .section.open .section-content {
       max-height: 10000px;
@@ -354,6 +361,10 @@
     }
     @keyframes pathLoop {
       to { stroke-dashoffset: -120; }
+    }
+    .reality-path-branch {
+      stroke-dasharray: 4 10;
+      animation: pathLoop 18s linear infinite;
     }
 
     .reality-grid {
@@ -570,31 +581,30 @@
     }
     .result-links a:hover { color: var(--gold); border-color: var(--gold-line); }
 
-    .what-get-simple {
-      margin-top: 32px;
-      padding-top: 28px;
-      border-top: 1px solid var(--border);
+    .what-split {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 40px;
+      align-items: stretch;
+      max-width: 800px;
     }
-    .what-get-simple h3 {
-      font-family: 'DM Mono', monospace;
-      font-size: 9px;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--text-label);
-      margin-bottom: 14px;
-    }
-    .what-get-simple ul {
-      list-style: none;
-      margin: 0;
-      padding: 0;
-    }
-    .what-get-simple li {
-      font-size: 15px;
+    .what-lead {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(20px, 2.2vw, 30px);
+      font-weight: 300;
+      line-height: 1.38;
       color: var(--text-secondary);
-      padding: 8px 0;
-      border-bottom: 1px solid var(--border);
     }
-    .what-get-simple li:last-child { border-bottom: none; }
+    .what-rail {
+      width: 1px;
+      background: linear-gradient(to bottom, var(--gold-line), rgba(196,163,90,0.05) 70%, transparent);
+      min-height: 100px;
+      opacity: 0.85;
+    }
+    @media (max-width: 640px) {
+      .what-split { grid-template-columns: 1fr; }
+      .what-rail { width: 100%; height: 1px; min-height: 0; background: linear-gradient(to right, var(--gold-line), transparent); }
+    }
 
     .how-plain {
       font-size: 15px;
@@ -616,6 +626,10 @@
 
     .phase {
       position: relative;
+      transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.35s ease;
+    }
+    .phase.active {
+      transform: translateY(-2px);
     }
     .phase::before {
       content: '';
@@ -680,6 +694,9 @@
         left: 50%;
         top: -6px;
         transform: translateX(-50%);
+      }
+      .phase.active {
+        transform: translateY(-4px) scale(1.02);
       }
       .phase.active::before {
         transform: translateX(-50%);
@@ -842,17 +859,17 @@
       background: var(--blue);
       color: #fff;
       font-family: 'DM Mono', monospace;
-      font-size: 10px;
+      font-size: 9px;
       font-weight: 400;
       letter-spacing: 0.14em;
       text-transform: uppercase;
       text-decoration: none;
-      padding: 12px 24px;
-      transition: background 0.22s, box-shadow 0.22s;
+      padding: 10px 20px;
+      transition: background 0.28s ease, box-shadow 0.28s ease;
     }
     .btn-close:hover {
       background: var(--blue-hi);
-      box-shadow: 0 4px 20px rgba(43,79,212,0.28);
+      box-shadow: 0 2px 18px rgba(43,79,212,0.22);
     }
 
     footer {
@@ -996,12 +1013,13 @@
             <svg viewBox="0 0 400 200" preserveAspectRatio="none">
               <path class="reality-path" d="M0,100 Q100,40 200,100 T400,100" />
               <path class="reality-path" d="M0,120 Q120,160 200,120 T400,130" opacity="0.6" />
+              <path class="reality-path reality-path-branch" d="M200,100 L200,40 L280,40 L280,160 L200,160" opacity="0.35" />
             </svg>
           </div>
           <div class="reality-grid">
             <p class="reality-statement reveal">You stop. You restart. You hesitate. The loop repeats.</p>
             <div>
-              <p class="reality-note reveal">Naming the loop is the first step. The diagnostic is a short read on how you think and decide.</p>
+              <p class="reality-note reveal">Name the loop first. The diagnostic reads how you decide.</p>
             </div>
           </div>
         </div>
@@ -1084,14 +1102,22 @@
                 <p class="result-bridge">Full system ($39). You enter at the phase that fits.</p>
               </div>
             </div>
-            <div class="what-get-simple">
-              <h3 class="reveal">What you get</h3>
-              <ul>
-                <li class="reveal">Clear direction</li>
-                <li class="reveal">A named entry point</li>
-                <li class="reveal">Next steps without noise</li>
-              </ul>
-            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section" id="section-what-you-get">
+      <div class="section-header reveal" role="button" tabindex="0" aria-expanded="false" id="hdr-what-you-get">
+        <h2>What you get</h2>
+        <p class="preview">Clear direction and next steps.</p>
+        <span class="section-chevron" aria-hidden="true"></span>
+      </div>
+      <div class="section-content">
+        <div class="section-body">
+          <div class="what-split">
+            <p class="what-lead reveal">A named read. One entry point. No extra layers.</p>
+            <div class="what-rail reveal" aria-hidden="true"></div>
           </div>
         </div>
       </div>
@@ -1118,7 +1144,7 @@
       </div>
       <div class="section-content">
         <div class="section-body">
-          <p class="how-plain reveal" style="margin-bottom:28px;">One payment. Five phases. You don't buy fragments. You get the full system and start where you are.</p>
+          <p class="how-plain reveal" style="margin-bottom:28px;">One payment. Five phases. Full system. Start where you are.</p>
           <div class="phase-line-wrap">
             <div class="phase-line" id="phase-line">
               <div class="phase reveal" data-phase="0">
@@ -1143,7 +1169,6 @@
               </div>
             </div>
           </div>
-          <p class="result-links reveal" style="margin-top:16px;"><a href="/systems">Open the system overview →</a></p>
         </div>
       </div>
     </div>
@@ -1217,13 +1242,10 @@
               <h3 class="section-inner-title reveal">Private Access</h3>
               <span class="gold-rule" id="private-rule"></span>
               <ul class="private-list">
-                <li class="reveal">Correction: wrong decisions stopped before they get worse</li>
-                <li class="reveal">Positioning: where you should operate</li>
-                <li class="reveal">Market level: local to national</li>
-                <li class="reveal">Offer structure: what to build, what to stop</li>
-                <li class="reveal">Revenue architecture: how it pays</li>
+                <li class="reveal">Correction before bad calls stack</li>
+                <li class="reveal">Positioning and offer structure</li>
+                <li class="reveal">Revenue architecture</li>
               </ul>
-              <p class="result-links reveal"><a href="/access">Request access →</a></p>
             </div>
             <div>
               <p class="private-right-text reveal">Not always open.</p>
@@ -1247,7 +1269,7 @@
 
   <section id="closing">
     <h2 class="closing-h2 reveal">You'll know if it fits once you go through it.</h2>
-    <a href="/capture" class="btn-close reveal">Begin here →</a>
+    <a href="/capture" class="btn-close">Begin here →</a>
   </section>
 
   <footer>
