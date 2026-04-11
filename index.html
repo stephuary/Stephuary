@@ -237,9 +237,9 @@
       min-height: -webkit-fill-available;
       /* Fallback if canvas is late or unavailable — avoids flat black */
       background:
-        radial-gradient(ellipse 120% 80% at 50% 20%, rgba(59, 13, 13, 0.45) 0%, transparent 55%),
-        radial-gradient(ellipse 90% 60% at 80% 90%, rgba(25, 45, 110, 0.35) 0%, transparent 50%),
-        linear-gradient(160deg, #060606 0%, #0f0a0a 40%, #080a12 70%, #060606 100%);
+        radial-gradient(ellipse 120% 85% at 50% 18%, rgba(72, 14, 14, 0.52) 0%, transparent 58%),
+        radial-gradient(ellipse 95% 65% at 82% 88%, rgba(28, 48, 118, 0.42) 0%, transparent 52%),
+        linear-gradient(160deg, #050505 0%, #120a0a 38%, #070a14 72%, #040406 100%);
     }
 
     .hero-canvas-wrap {
@@ -286,8 +286,8 @@
       min-height: 100dvh;
       display: flex;
       flex-direction: column;
-      justify-content: center;
-      padding: 100px 40px 48px;
+      justify-content: flex-start;
+      padding: 92px 40px 0;
       width: 100%;
     }
 
@@ -322,6 +322,20 @@
       position: relative;
       z-index: 2;
       will-change: transform;
+      flex: 0 0 auto;
+      padding-top: clamp(8px, 3vh, 40px);
+    }
+
+    /* Lower third: live system entry — anchored, not floating mid-hero */
+    .hero-leak-dock {
+      margin-top: auto;
+      width: 100%;
+      max-width: 820px;
+      margin-left: auto;
+      margin-right: auto;
+      padding: 20px 0 28px;
+      position: relative;
+      z-index: 2;
     }
 
     .hero-kicker {
@@ -433,11 +447,24 @@
       box-shadow: 0 0 24px rgba(198, 161, 91, 0.12);
     }
 
-    /* Live leak check — entry */
+    /* Live leak check — entry (system strip in hero lower third) */
     .hero-leak-entry {
-      margin-top: 28px;
-      padding-top: 24px;
-      border-top: 1px solid rgba(244, 237, 224, 0.06);
+      margin-top: 0;
+      padding: 16px 20px 18px;
+      border: 1px solid rgba(244, 237, 224, 0.09);
+      border-radius: 3px;
+      background: linear-gradient(165deg, rgba(10, 9, 8, 0.72) 0%, rgba(4, 4, 5, 0.88) 100%);
+      box-shadow:
+        0 0 0 1px rgba(58, 107, 255, 0.07),
+        0 20px 56px rgba(0, 0, 0, 0.45),
+        inset 0 1px 0 rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      animation: leakDockGlow 7s ease-in-out infinite;
+    }
+    @keyframes leakDockGlow {
+      0%, 100% { box-shadow: 0 0 0 1px rgba(58, 107, 255, 0.07), 0 20px 56px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.05); }
+      50% { box-shadow: 0 0 0 1px rgba(58, 107, 255, 0.14), 0 24px 64px rgba(0, 0, 0, 0.5), 0 0 40px rgba(58, 107, 255, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.06); }
     }
     .leak-trigger {
       display: inline-flex;
@@ -447,13 +474,15 @@
       font-size: 9px;
       letter-spacing: 0.2em;
       text-transform: uppercase;
-      color: var(--text-3);
+      color: var(--text-2);
       background: none;
       border: none;
       padding: 0 0 4px;
       cursor: pointer;
       position: relative;
       transition: color 0.25s ease;
+      width: 100%;
+      justify-content: flex-start;
     }
     .leak-trigger::after {
       content: '';
@@ -462,29 +491,30 @@
       bottom: 0;
       width: 100%;
       height: 1px;
-      background: var(--blue);
-      transform: scaleX(0.35);
+      background: linear-gradient(90deg, var(--blue), rgba(58, 107, 255, 0.25));
+      transform: scaleX(0.45);
       transform-origin: left;
       transition: transform 0.35s ease, box-shadow 0.35s ease;
     }
     .leak-trigger:hover {
-      color: var(--text-2);
+      color: var(--text);
     }
     .leak-trigger:hover::after {
       transform: scaleX(1);
-      box-shadow: 0 0 12px var(--blue-soft);
+      box-shadow: 0 0 16px rgba(58, 107, 255, 0.35);
     }
     .leak-trigger__dot {
-      width: 6px;
-      height: 6px;
+      width: 7px;
+      height: 7px;
       border-radius: 50%;
-      background: var(--blue);
-      box-shadow: 0 0 12px var(--blue-glow);
+      background: radial-gradient(circle at 35% 35%, rgba(255, 255, 255, 0.35), var(--blue));
+      box-shadow: 0 0 14px var(--blue-glow), 0 0 28px rgba(58, 107, 255, 0.25);
       animation: leakPulse 2.2s ease-in-out infinite;
+      flex-shrink: 0;
     }
     @keyframes leakPulse {
-      0%, 100% { opacity: 0.55; transform: scale(1); }
-      50% { opacity: 1; transform: scale(1.15); }
+      0%, 100% { opacity: 0.65; transform: scale(1); }
+      50% { opacity: 1; transform: scale(1.12); }
     }
 
     /* Leak overlay */
@@ -1082,9 +1112,24 @@
     .foot-links a:hover::after { transform: scaleX(1); }
     .foot-links a:hover { color: var(--text-2); }
 
+    @media (max-width: 767px) {
+      #hero {
+        min-height: min(100dvh, 820px);
+      }
+      .hero-content {
+        padding: 80px 20px 0;
+      }
+      .hero-leak-dock {
+        padding: 12px 0 22px;
+      }
+      .hero-leak-entry {
+        padding: 14px 16px 16px;
+      }
+    }
+
     @media (max-width: 640px) {
       nav#main-nav { padding: 14px 20px; }
-      .hero-content { padding: 88px 20px 36px; }
+      .hero-content { padding-top: 76px; }
       #proof, #system, .phase-head-wrap, .connector-wrap, .phase-rail { padding-left: 20px; padding-right: 20px; }
       #diagnostic { padding: 28px 20px 40px; }
       footer { padding: 28px 20px 36px; }
@@ -1143,6 +1188,8 @@
               <a href="/systems" class="btn btn--ghost" data-cursor data-cursor-label="View">See all phases</a>
               <p class="resume-pill" id="home-resume"><a href="/capture" id="home-resume-link" data-cursor data-cursor-label="Open">Continue where you left off</a></p>
             </div>
+          </div>
+          <div class="hero-leak-dock">
             <div class="hero-leak-entry" id="hero-leak-entry">
               <button type="button" class="leak-trigger" id="leak-open" data-cursor data-cursor-label="Open" aria-haspopup="dialog" aria-controls="leak-overlay">
                 <span class="leak-trigger__dot" aria-hidden="true"></span>
@@ -1385,36 +1432,55 @@
     (function () {
       gsap.registerPlugin(ScrollTrigger);
 
-      /* Hero immersive: gradient canvas, particles, sweep, grain (overlay CSS), cursor glow */
+      /* Hero immersive: layered depth particles, faint arcs, gradient, sweep, parallax */
       (function heroImmersive() {
         var container = document.querySelector('.hero-container');
         var heroEl = document.getElementById('hero');
         var canvas = document.getElementById('hero-canvas');
+        var canvasWrap = document.getElementById('hero-canvas-wrap');
         if (!container || !canvas) return;
 
         var ctx = canvas.getContext('2d', { alpha: false });
         if (!ctx) return;
-
-        var isNarrow = window.matchMedia('(max-width: 767px)').matches;
-        var particleCount = isNarrow ? 24 : 40;
 
         var width = 300;
         var height = 300;
         var t = 0;
         var particles = [];
 
+        function makeParticle(layer, w, h) {
+          var cfg = {
+            far: { rMin: 0.18, rMax: 0.85, sp: 0.028, a: 0.048 },
+            mid: { rMin: 0.45, rMax: 1.45, sp: 0.065, a: 0.11 },
+            near: { rMin: 0.9, rMax: 2.35, sp: 0.042, a: 0.19 }
+          };
+          var c = cfg[layer];
+          var bright = layer === 'near' && Math.random() < 0.28;
+          var baseA = bright ? Math.min(0.38, c.a * 1.75) : c.a;
+          return {
+            layer: layer,
+            x: Math.random() * w,
+            y: Math.random() * h,
+            r: c.rMin + Math.random() * (c.rMax - c.rMin),
+            dx: (Math.random() - 0.5) * c.sp,
+            dy: (Math.random() - 0.5) * c.sp,
+            alpha: baseA,
+            twinkle: bright ? 0.35 + Math.random() * 0.5 : 0
+          };
+        }
+
         function initParticles() {
           var w = Math.max(1, width);
           var h = Math.max(1, height);
-          particles = Array.from({ length: particleCount }).map(function () {
-            return {
-              x: Math.random() * w,
-              y: Math.random() * h,
-              r: Math.random() * 1.5 + 0.5,
-              dx: (Math.random() - 0.5) * 0.2,
-              dy: (Math.random() - 0.5) * 0.2
-            };
-          });
+          var narrow = window.matchMedia('(max-width: 767px)').matches;
+          var nFar = narrow ? 42 : 68;
+          var nMid = narrow ? 32 : 52;
+          var nNear = narrow ? 11 : 18;
+          particles = [];
+          var i;
+          for (i = 0; i < nFar; i++) particles.push(makeParticle('far', w, h));
+          for (i = 0; i < nMid; i++) particles.push(makeParticle('mid', w, h));
+          for (i = 0; i < nNear; i++) particles.push(makeParticle('near', w, h));
         }
 
         function measure() {
@@ -1460,23 +1526,52 @@
         window.addEventListener('load', resize, { passive: true });
 
         function draw() {
-          t += 0.002;
+          t += 0.00165;
+          var ox = 0.62 + Math.sin(t * 0.85) * 0.14;
+          var bl = 0.58 + Math.cos(t * 0.72) * 0.14;
           var grad = ctx.createLinearGradient(0, 0, width, height);
-          grad.addColorStop(0, '#0a0a0a');
-          grad.addColorStop(0.4, 'rgba(120, 0, 0, ' + (0.6 + Math.sin(t) * 0.1) + ')');
-          grad.addColorStop(0.7, 'rgba(20, 40, 120, ' + (0.6 + Math.cos(t) * 0.1) + ')');
-          grad.addColorStop(1, '#0a0a0a');
+          grad.addColorStop(0, '#060608');
+          grad.addColorStop(0.36, 'rgba(118, 12, 12, ' + ox + ')');
+          grad.addColorStop(0.63, 'rgba(22, 48, 132, ' + bl + ')');
+          grad.addColorStop(1, '#050508');
           ctx.fillStyle = grad;
           ctx.fillRect(0, 0, width, height);
+
+          var ap = t * 0.38;
+          ctx.save();
+          ctx.lineWidth = 1;
+          ctx.globalAlpha = 0.042;
+          ctx.strokeStyle = 'rgba(58, 107, 255, 0.95)';
+          ctx.beginPath();
+          if (typeof ctx.ellipse === 'function') {
+            ctx.ellipse(width * 0.27, height * 0.54, width * 0.44, height * 0.36, ap * 0.14, 0.15, Math.PI * 1.32);
+          } else {
+            ctx.arc(width * 0.35, height * 0.5, width * 0.35, 0.2, Math.PI * 1.2);
+          }
+          ctx.stroke();
+          ctx.globalAlpha = 0.036;
+          ctx.strokeStyle = 'rgba(140, 36, 36, 0.9)';
+          ctx.beginPath();
+          if (typeof ctx.ellipse === 'function') {
+            ctx.ellipse(width * 0.74, height * 0.4, width * 0.34, height * 0.29, -ap * 0.11, -0.08, Math.PI * 1.48);
+          } else {
+            ctx.arc(width * 0.68, height * 0.42, width * 0.28, -0.1, Math.PI * 1.35);
+          }
+          ctx.stroke();
+          ctx.restore();
 
           particles.forEach(function (p) {
             p.x += p.dx;
             p.y += p.dy;
-            if (p.x < 0 || p.x > width) p.dx *= -1;
-            if (p.y < 0 || p.y > height) p.dy *= -1;
+            if (p.x < -6 || p.x > width + 6) p.dx *= -1;
+            if (p.y < -6 || p.y > height + 6) p.dy *= -1;
+            var a = p.alpha;
+            if (p.twinkle) {
+              a *= 0.82 + 0.18 * Math.sin(t * 2.2 + p.x * 0.008 + p.y * 0.006);
+            }
             ctx.beginPath();
             ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-            ctx.fillStyle = 'rgba(255,255,255,0.15)';
+            ctx.fillStyle = 'rgba(255,255,255,' + a + ')';
             ctx.fill();
           });
 
@@ -1484,17 +1579,24 @@
         }
         draw();
 
+        function scheduleSweep() {
+          window.setTimeout(function () {
+            lightSweep();
+            scheduleSweep();
+          }, 8000 + Math.random() * 4000);
+        }
+
         function lightSweep() {
           var sweep = document.createElement('div');
           sweep.setAttribute('aria-hidden', 'true');
           sweep.style.position = 'absolute';
           sweep.style.top = '0';
-          sweep.style.left = '-50%';
-          sweep.style.width = '50%';
+          sweep.style.left = '-55%';
+          sweep.style.width = '55%';
           sweep.style.height = '100%';
           sweep.style.background =
-            'linear-gradient(90deg, transparent, rgba(255,255,255,0.06), transparent)';
-          sweep.style.transform = 'skewX(-20deg)';
+            'linear-gradient(90deg, transparent, rgba(255,255,255,0.055), transparent)';
+          sweep.style.transform = 'skewX(-18deg)';
           sweep.style.zIndex = '1';
           sweep.style.pointerEvents = 'none';
           var heroContent = container.querySelector('.hero-content');
@@ -1505,20 +1607,35 @@
           }
           sweep.animate(
             [
-              { transform: 'translateX(0) skewX(-20deg)' },
-              { transform: 'translateX(300%) skewX(-20deg)' }
+              { transform: 'translateX(0) skewX(-18deg)' },
+              { transform: 'translateX(290%) skewX(-18deg)' }
             ],
             {
-              duration: 4000,
-              easing: 'ease-in-out'
+              duration: 4200,
+              easing: 'cubic-bezier(0.45, 0, 0.2, 1)'
             }
           );
           window.setTimeout(function () {
             if (sweep.parentNode) sweep.parentNode.removeChild(sweep);
-          }, 4000);
+          }, 4300);
         }
-        window.setInterval(lightSweep, 10000);
-        window.setTimeout(lightSweep, 3500);
+        scheduleSweep();
+        window.setTimeout(lightSweep, 2800);
+
+        if (canvasWrap && typeof gsap !== 'undefined') {
+          try {
+            gsap.to(canvasWrap, {
+              y: 32,
+              ease: 'none',
+              scrollTrigger: {
+                trigger: '#hero',
+                start: 'top top',
+                end: 'bottom top',
+                scrub: 0.75
+              }
+            });
+          } catch (e1) {}
+        }
 
         var finePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
         if (finePointer) {
@@ -1850,7 +1967,7 @@
       }
       tlHero.from('#hero-lead', { opacity: 0, y: 16, duration: 0.65 }, 0.22);
       tlHero.from('#hero-actions', { opacity: 0, y: 12, duration: 0.55 }, 0.36);
-      tlHero.from('#hero-leak-entry', { opacity: 0, y: 10, duration: 0.5 }, 0.42);
+      tlHero.from('.hero-leak-dock', { opacity: 0, y: 16, duration: 0.55 }, 0.42);
 
       var heroLineIndex = 0;
       function advanceHeroLine() {
@@ -1871,9 +1988,11 @@
       }
 
       var heroParallax = document.getElementById('hero-parallax');
-      if (heroParallax) {
-        gsap.to(heroParallax, {
-          y: 48,
+      var heroLeakDock = document.querySelector('.hero-leak-dock');
+      function heroParallaxTween(el) {
+        if (!el) return;
+        gsap.to(el, {
+          y: 44,
           ease: 'none',
           scrollTrigger: {
             trigger: '#hero',
@@ -1883,6 +2002,8 @@
           }
         });
       }
+      heroParallaxTween(heroParallax);
+      heroParallaxTween(heroLeakDock);
 
       var proofPath = document.getElementById('proof-line-path');
       if (proofPath) {
