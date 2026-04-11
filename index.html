@@ -224,6 +224,7 @@
       overflow: hidden;
       min-height: 100vh;
       min-height: 100dvh;
+      min-height: -webkit-fill-available;
       padding: 0;
     }
 
@@ -233,6 +234,7 @@
       overflow: hidden;
       min-height: 100vh;
       min-height: 100dvh;
+      min-height: -webkit-fill-available;
       /* Fallback if canvas is late or unavailable — avoids flat black */
       background:
         radial-gradient(ellipse 120% 80% at 50% 20%, rgba(59, 13, 13, 0.45) 0%, transparent 55%),
@@ -245,6 +247,10 @@
       inset: 0;
       z-index: 0;
       pointer-events: none;
+      /* Ensure fill when parent height is min-* only */
+      min-height: 100%;
+      min-height: 100vh;
+      min-height: 100dvh;
     }
 
     #hero-canvas {
@@ -252,6 +258,7 @@
       width: 100%;
       height: 100%;
       vertical-align: top;
+      opacity: 1;
     }
 
     .hero-overlay {
@@ -303,9 +310,6 @@
     }
 
     @media (max-width: 767px) {
-      .hero-canvas-wrap {
-        display: none !important;
-      }
       .cursor-glow {
         display: none !important;
       }
@@ -1096,7 +1100,7 @@
   </div>
 
   <div class="page">
-    <!-- Routes: /room-01..05 → room HTML files; /systems, /pricing, /playbooks, /capture, /access (vercel.json) -->
+    <!-- Phases: 1=/capture 2=/monetize 3=/structure 4=/automation 5=/sovereignty (vercel.json) -->
     <nav id="main-nav">
       <a href="/" class="nav-mark" data-cursor data-cursor-label="View">Stephuary</a>
       <div class="nav-links">
@@ -1129,9 +1133,9 @@
             </div>
             <p class="hero-lead" id="hero-lead">This is a short diagnostic that shows you what’s not working, what it’s costing you, and what to change first.</p>
             <div class="hero-actions" id="hero-actions">
-              <a href="/room-01" class="btn btn--pri" data-cursor data-cursor-label="Enter">Enter the system</a>
+              <a href="/capture" class="btn btn--pri" data-cursor data-cursor-label="Enter">Enter the system</a>
               <a href="/systems" class="btn btn--ghost" data-cursor data-cursor-label="View">See all phases</a>
-              <p class="resume-pill" id="home-resume"><a href="/room-01" id="home-resume-link" data-cursor data-cursor-label="Open">Continue where you left off</a></p>
+              <p class="resume-pill" id="home-resume"><a href="/capture" id="home-resume-link" data-cursor data-cursor-label="Open">Continue where you left off</a></p>
             </div>
             <div class="hero-leak-entry" id="hero-leak-entry">
               <button type="button" class="leak-trigger" id="leak-open" data-cursor data-cursor-label="Open" aria-haspopup="dialog" aria-controls="leak-overlay">
@@ -1228,7 +1232,7 @@
       </div>
 
       <div class="phase-rail" id="phase-rail" role="list">
-        <a class="phase-card" href="/room-01" role="listitem" data-cursor data-cursor-label="Open">
+        <a class="phase-card" href="/capture" role="listitem" data-cursor data-cursor-label="Open">
           <span class="phase-card__num">Phase 1</span>
           <span class="phase-card__name">Extraction</span>
           <span class="phase-card__outcome">Find and measure one active loss.</span>
@@ -1239,7 +1243,7 @@
             </ul>
           </div>
         </a>
-        <a class="phase-card" href="/room-02" role="listitem" data-cursor data-cursor-label="Open">
+        <a class="phase-card" href="/monetize" role="listitem" data-cursor data-cursor-label="Open">
           <span class="phase-card__num">Phase 2</span>
           <span class="phase-card__name">Redirection</span>
           <span class="phase-card__outcome">Move that time or money into something useful.</span>
@@ -1250,7 +1254,7 @@
             </ul>
           </div>
         </a>
-        <a class="phase-card" href="/room-03" role="listitem" data-cursor data-cursor-label="Open">
+        <a class="phase-card" href="/structure" role="listitem" data-cursor data-cursor-label="Open">
           <span class="phase-card__num">Phase 3</span>
           <span class="phase-card__name">Build</span>
           <span class="phase-card__outcome">Turn it into something that produces value.</span>
@@ -1261,7 +1265,7 @@
             </ul>
           </div>
         </a>
-        <a class="phase-card" href="/room-04" role="listitem" data-cursor data-cursor-label="Open">
+        <a class="phase-card" href="/automation" role="listitem" data-cursor data-cursor-label="Open">
           <span class="phase-card__num">Phase 4</span>
           <span class="phase-card__name">Automation</span>
           <span class="phase-card__outcome">Reduce manual effort and repetition.</span>
@@ -1272,7 +1276,7 @@
             </ul>
           </div>
         </a>
-        <a class="phase-card" href="/room-05" role="listitem" data-cursor data-cursor-label="Open">
+        <a class="phase-card" href="/sovereignty" role="listitem" data-cursor data-cursor-label="Open">
           <span class="phase-card__num">Phase 5</span>
           <span class="phase-card__name">Sovereignty</span>
           <span class="phase-card__outcome">Stabilize what you built so it holds.</span>
@@ -1361,7 +1365,7 @@
         <p class="leak-verdict" id="leak-verdict"></p>
         <p class="leak-action-line" id="leak-action-line">Remove one source. Set one boundary. This week.</p>
         <div class="leak-actions" id="leak-actions-block">
-          <a href="/room-01" class="btn btn--pri" id="leak-goto-phase" data-cursor data-cursor-label="Enter">Open Step 1</a>
+          <a href="/capture" class="btn btn--pri" id="leak-goto-phase" data-cursor data-cursor-label="Enter">Open Step 1</a>
           <button type="button" class="btn btn--ghost" id="leak-goto-phases" data-cursor data-cursor-label="View">See all phases</button>
         </div>
       </div>
@@ -1376,51 +1380,46 @@
     (function () {
       gsap.registerPlugin(ScrollTrigger);
 
-      /* Hero immersive: gradient canvas, particles, sweep, grain (overlay CSS), parallax, cursor glow */
+      /* Hero immersive: gradient canvas, particles, sweep, grain (overlay CSS), cursor glow */
       (function heroImmersive() {
         var container = document.querySelector('.hero-container');
-        var wrap = document.getElementById('hero-canvas-wrap');
+        var heroEl = document.getElementById('hero');
         var canvas = document.getElementById('hero-canvas');
         if (!container || !canvas) return;
 
-        var isMobile = window.matchMedia('(max-width: 767px)').matches;
-        var ctx = canvas.getContext('2d');
-        if (isMobile) {
-          if (wrap) wrap.style.display = 'none';
-          return;
-        }
-        if (!ctx) {
-          if (wrap) wrap.style.display = 'none';
-          return;
-        }
+        var ctx = canvas.getContext('2d', { alpha: false });
+        if (!ctx) return;
+
+        var isNarrow = window.matchMedia('(max-width: 767px)').matches;
+        var particleCount = isNarrow ? 24 : 40;
 
         var width = 300;
         var height = 300;
         var t = 0;
         var particles = [];
-        var parallaxTarget = wrap || canvas;
 
         function initParticles() {
           var w = Math.max(1, width);
           var h = Math.max(1, height);
-          particles = Array.from({ length: 48 }).map(function () {
+          particles = Array.from({ length: particleCount }).map(function () {
             return {
               x: Math.random() * w,
               y: Math.random() * h,
-              r: Math.random() * 1.2 + 0.35,
-              dx: (Math.random() - 0.5) * 0.1,
-              dy: (Math.random() - 0.5) * 0.1
+              r: Math.random() * 1.5 + 0.5,
+              dx: (Math.random() - 0.5) * 0.2,
+              dy: (Math.random() - 0.5) * 0.2
             };
           });
         }
 
         function measure() {
-          var rect = container.getBoundingClientRect();
+          var el = heroEl || container;
+          var rect = el.getBoundingClientRect();
           var w = Math.floor(rect.width);
           var h = Math.floor(rect.height);
           if (w < 2 || h < 2) {
             w = Math.max(2, Math.floor(window.innerWidth));
-            h = Math.max(2, Math.floor(window.innerHeight * 0.92));
+            h = Math.max(2, Math.floor(window.innerHeight));
           }
           return { w: w, h: h };
         }
@@ -1442,11 +1441,12 @@
         resize();
         window.addEventListener('resize', resize, { passive: true });
 
-        if (typeof ResizeObserver !== 'undefined' && container) {
+        if (typeof ResizeObserver !== 'undefined') {
           var ro = new ResizeObserver(function () {
             resize();
           });
           ro.observe(container);
+          if (heroEl) ro.observe(heroEl);
         }
 
         requestAnimationFrame(function () {
@@ -1455,14 +1455,12 @@
         window.addEventListener('load', resize, { passive: true });
 
         function draw() {
-          t += 0.001;
-          var ox = 0.42 + Math.sin(t * 0.7) * 0.06;
-          var bl = 0.4 + Math.cos(t * 0.55) * 0.06;
+          t += 0.002;
           var grad = ctx.createLinearGradient(0, 0, width, height);
-          grad.addColorStop(0, '#080808');
-          grad.addColorStop(0.35, 'rgba(75, 18, 18, ' + ox + ')');
-          grad.addColorStop(0.68, 'rgba(28, 48, 115, ' + bl + ')');
-          grad.addColorStop(1, '#07070a');
+          grad.addColorStop(0, '#0a0a0a');
+          grad.addColorStop(0.4, 'rgba(120, 0, 0, ' + (0.6 + Math.sin(t) * 0.1) + ')');
+          grad.addColorStop(0.7, 'rgba(20, 40, 120, ' + (0.6 + Math.cos(t) * 0.1) + ')');
+          grad.addColorStop(1, '#0a0a0a');
           ctx.fillStyle = grad;
           ctx.fillRect(0, 0, width, height);
 
@@ -1473,26 +1471,13 @@
             if (p.y < 0 || p.y > height) p.dy *= -1;
             ctx.beginPath();
             ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-            ctx.fillStyle = 'rgba(255,255,255,0.1)';
+            ctx.fillStyle = 'rgba(255,255,255,0.15)';
             ctx.fill();
           });
 
           requestAnimationFrame(draw);
         }
         draw();
-
-        try {
-          gsap.to(parallaxTarget, {
-            y: 22,
-            ease: 'none',
-            scrollTrigger: {
-              trigger: '#hero',
-              start: 'top top',
-              end: 'bottom top',
-              scrub: 1.1
-            }
-          });
-        } catch (e) {}
 
         function lightSweep() {
           var sweep = document.createElement('div');
@@ -1503,8 +1488,8 @@
           sweep.style.width = '50%';
           sweep.style.height = '100%';
           sweep.style.background =
-            'linear-gradient(90deg, transparent, rgba(255,255,255,0.045), transparent)';
-          sweep.style.transform = 'skewX(-18deg)';
+            'linear-gradient(90deg, transparent, rgba(255,255,255,0.06), transparent)';
+          sweep.style.transform = 'skewX(-20deg)';
           sweep.style.zIndex = '1';
           sweep.style.pointerEvents = 'none';
           var heroContent = container.querySelector('.hero-content');
@@ -1515,19 +1500,19 @@
           }
           sweep.animate(
             [
-              { transform: 'translateX(0) skewX(-18deg)' },
-              { transform: 'translateX(320%) skewX(-18deg)' }
+              { transform: 'translateX(0) skewX(-20deg)' },
+              { transform: 'translateX(300%) skewX(-20deg)' }
             ],
             {
-              duration: 7000,
-              easing: 'cubic-bezier(0.45, 0, 0.2, 1)'
+              duration: 4000,
+              easing: 'ease-in-out'
             }
           );
           window.setTimeout(function () {
             if (sweep.parentNode) sweep.parentNode.removeChild(sweep);
-          }, 7200);
+          }, 4000);
         }
-        window.setInterval(lightSweep, 12000);
+        window.setInterval(lightSweep, 10000);
         window.setTimeout(lightSweep, 3500);
 
         var finePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;

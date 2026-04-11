@@ -9,18 +9,18 @@
   var ROOM_ORDER = ['01', '02', '03', '04', '05'];
   var ROOM_PHASE = { '01': 1, '02': 2, '03': 3, '04': 4, '05': 5 };
   var PHASE_PATH = {
-    1: '/room-01',
-    2: '/room-02',
-    3: '/room-03',
-    4: '/room-04',
-    5: '/room-05'
+    1: '/capture',
+    2: '/monetize',
+    3: '/structure',
+    4: '/automation',
+    5: '/sovereignty'
   };
   var ROOM_PATH = {
-    '01': '/room-01',
-    '02': '/room-02',
-    '03': '/room-03',
-    '04': '/room-04',
-    '05': '/room-05'
+    '01': '/capture',
+    '02': '/monetize',
+    '03': '/structure',
+    '04': '/automation',
+    '05': '/sovereignty'
   };
 
   function defaultState() {
