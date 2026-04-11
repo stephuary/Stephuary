@@ -1227,6 +1227,7 @@
       </div>
       <p class="translate-line">You swap in a cheaper way to get the same job done — or you snap back.</p>
       <p class="consequence-line">No swap, no stick. The leak returns on the first hard day.</p>
+      <div id="sys-response-replace" class="sys-response" style="display:none;"></div>
       <button type="button" class="btn-continue" id="btn-5">Continue</button>
     </section>
 
@@ -1277,6 +1278,7 @@
       <table class="elim-table" id="elim-table"></table>
       <p class="translate-line">“Remove” or “limit” cuts a channel built to pull money and attention.</p>
       <p class="consequence-line">If you don’t remove anything, nothing changes.</p>
+      <div id="sys-response-elim" class="sys-response" style="display:none;"></div>
       <button type="button" class="btn-continue" id="btn-8">Continue</button>
     </section>
 
@@ -1389,7 +1391,7 @@
         means: 'Money leaves on autopilot while your attention stays elsewhere.',
         why: 'Small charges compound because nothing forces a monthly review.',
         continues: 'You pay for tools and content you do not use.',
-        fix: 'Cancel one subscription today. List the rest on paper.'
+        fix: 'Cancel one subscription before you close this room.'
       }
     },
     convenience: {
@@ -1400,7 +1402,7 @@
         means: 'You are buying speed and escape from small daily friction.',
         why: 'Fees stack because each choice feels small at the moment.',
         continues: 'The monthly total quietly rivals a real bill.',
-        fix: 'Batch errands one day. Delete one delivery app.'
+        fix: 'Delete one delivery app off your phone tonight.'
       }
     },
     social_impulse: {
@@ -1411,7 +1413,7 @@
         means: 'Social pressure and impulse share one wallet.',
         why: 'You pay to belong, escape, or keep up in the moment.',
         continues: 'The leak shows up as “fun,” not as a line item.',
-        fix: 'Set a cash cap before you leave. One “no” per week.'
+        fix: 'Set a hard cash cap in your notes before the next outing.'
       }
     },
     screen: {
@@ -1422,7 +1424,7 @@
         means: 'Hours leave first; money follows through fatigue spending.',
         why: 'Screens fill gaps you do not name as time.',
         continues: 'You trade sleep and focus for cheap stimulation.',
-        fix: 'Phone out of bedroom. One app deleted tonight.'
+        fix: 'Charge the phone outside the bedroom tonight.'
       }
     },
     spread: {
@@ -1433,7 +1435,7 @@
         means: 'No category looks guilty, so none get cut.',
         why: 'Diffuse spending avoids one clear decision.',
         continues: 'You stay busy managing leaks instead of removing one.',
-        fix: 'Pick one category. Cut 15% there only.'
+        fix: 'Cut 15% in your highest non-fixed category this month.'
       }
     },
     tight: {
@@ -1444,7 +1446,7 @@
         means: 'You are not bleeding — but drift still costs you.',
         why: 'Even small leaks steal compounding room.',
         continues: 'Comfort with “fine” blocks the next upgrade.',
-        fix: 'Remove one recurring line anyway. Proof you can cut.'
+        fix: 'Remove one recurring line you already forgot you pay.'
       }
     }
   };
@@ -1720,7 +1722,7 @@
       means: pi,
       why: 'Stress makes you grab the first lever — scroll, order, impulse.',
       continues: 'The chain stays invisible until you name the sequence.',
-      fix: 'Change one pair only this week — cook once, or wait before impulse.'
+      fix: 'Break the chain at one pair tonight — the first move you already named.'
     });
     document.getElementById('btn-2').disabled = false;
   }
@@ -1759,7 +1761,7 @@
       means: 'One “night out” is several costs plus recovery — not one receipt.',
       why: 'You underestimate because you only remember the fun line item.',
       continues: 'Monthly outings multiply what felt like exceptions.',
-      fix: 'Cut one outing next month or downgrade the band once.'
+      fix: 'Downgrade one band on the very next outing you already planned.'
     });
 
     document.getElementById('btn-3').disabled = false;
@@ -1789,6 +1791,35 @@
     });
     html += '</div></div>';
     container.innerHTML = html;
+    container.querySelectorAll('input[name="altpick"]').forEach(function (inp) {
+      inp.addEventListener('change', updateReplaceSys);
+    });
+    var noteEl = document.getElementById('alt-note');
+    if (noteEl) {
+      noteEl.removeEventListener('input', updateReplaceSys);
+      noteEl.addEventListener('input', updateReplaceSys);
+    }
+    updateReplaceSys();
+  }
+
+  function updateReplaceSys() {
+    syncAlternatives();
+    var picks = state.alternatives.picks;
+    var note = state.alternatives.note;
+    var el = document.getElementById('sys-response-replace');
+    if (!el) return;
+    if (picks.length === 0 && !note) {
+      el.style.display = 'none';
+      return;
+    }
+    fillSysResponse('sys-response-replace', {
+      means: picks.length
+        ? 'Swap paths marked: ' + picks.join(' · ') + '.'
+        : 'A note exists without a checked swap — the note must become one action.',
+      why: 'Swaps that stay in your head snap back under stress.',
+      continues: 'The next hard day routes money to the old habit.',
+      fix: 'Execute the smallest checked swap before the next spend trigger hits.'
+    });
   }
 
   function syncAlternatives() {
@@ -1831,7 +1862,7 @@
       means: 'You are locking a new yearly run rate — not hoping harder.',
       why: 'Cuts work when they hit named categories, not motivation.',
       continues: 'At zero shift, the first room’s number stays your life.',
-      fix: 'Hit remove or -20% on your worst line before you leave this screen.'
+      fix: 'Hit remove on your worst line before you leave this screen.'
     });
   }
 
@@ -1935,10 +1966,30 @@
       sel.addEventListener('change', function () {
         var i = parseInt(sel.getAttribute('data-idx'), 10);
         state.eliminationChoices[PLATFORMS[i]] = sel.value;
+        updateElimSys();
       });
     });
     PLATFORMS.forEach(function (p) {
       if (!state.eliminationChoices[p]) state.eliminationChoices[p] = 'keep';
+    });
+    updateElimSys();
+  }
+
+  function updateElimSys() {
+    var rm = 0;
+    var lim = 0;
+    var kp = 0;
+    PLATFORMS.forEach(function (p) {
+      var v = state.eliminationChoices[p] || 'keep';
+      if (v === 'remove') rm++;
+      else if (v === 'limit') lim++;
+      else kp++;
+    });
+    fillSysResponse('sys-response-elim', {
+      means: 'The table shows ' + rm + ' removes, ' + lim + ' limits, ' + kp + ' keeps.',
+      why: 'Keeps preserve the old pull — removes and limits are the only rows that cut exposure.',
+      continues: 'All-keep reads as “decide later” in real life.',
+      fix: 'Execute one remove row before you open the highest-spend app today.'
     });
   }
 

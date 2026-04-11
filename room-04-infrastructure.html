@@ -378,6 +378,17 @@
       cursor: not-allowed;
     }
 
+    .sys-response {
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid var(--line);
+      font-size: 13px;
+      line-height: 1.55;
+      color: var(--muted);
+    }
+    .sys-response .sys-line { margin: 0 0 8px; }
+    .sys-response strong { color: var(--cream); font-weight: 400; }
+
     .btn-secondary {
       background: transparent;
       color: var(--muted);
@@ -579,6 +590,7 @@
         <p class="translate-line">Translate: Your income risk has a shape — you stop fixing random edges while cash or delivery stay blind.</p>
         <p class="consequence-line">Consequence: If you skip this, you optimize tools while invoices, handoffs, or coverage still fail under load.</p>
       </div>
+      <div id="sys-response-r4-1" class="sys-response" style="display:none;"></div>
       <button type="button" class="btn-continue" id="btn-1" disabled>Continue</button>
     </section>
 
@@ -597,6 +609,7 @@
         <h4>This connects to what you saw earlier</h4>
         <p>Rooms 01–03 handled money, direction, and transactions. This is <strong>operational stability</strong>: you are sequencing what keeps income and delivery moving when volume, deadlines, or surprises hit.</p>
       </div>
+      <div id="sys-response-r4-2" class="sys-response" style="display:none;"></div>
       <button type="button" class="btn-continue" id="btn-2" disabled>Continue</button>
     </section>
 
@@ -610,6 +623,7 @@
         <p class="output-label">Gaps before you deepen the stack</p>
         <ul class="output-body" id="out-human-list" style="list-style:disc;padding-left:1.2em;margin:0;"></ul>
       </div>
+      <div id="sys-response-r4-3" class="sys-response" style="display:none;"></div>
       <button type="button" class="btn-continue" id="btn-3" disabled>Continue</button>
     </section>
 
@@ -623,6 +637,7 @@
         <p class="output-label">Stack layers not yet functional</p>
         <p class="output-body" id="out-domain-gaps">—</p>
       </div>
+      <div id="sys-response-r4-4" class="sys-response" style="display:none;"></div>
       <button type="button" class="btn-continue" id="btn-4" disabled>Continue</button>
     </section>
 
@@ -639,6 +654,7 @@
         <p class="translate-line">Translate: This is the layer where lost money shows up first if you ignore it.</p>
         <p class="consequence-line">Consequence: If this stays unaddressed, every new tool avoids the real failure mode — and revenue still stalls.</p>
       </div>
+      <div id="sys-response-r4-5" class="sys-response" style="display:none;"></div>
       <button type="button" class="btn-continue" id="btn-5" disabled>Continue</button>
     </section>
 
@@ -670,6 +686,7 @@
         <h4>This connects to what you saw earlier</h4>
         <p>Coverage is part of the <strong>Continuity Stack</strong>: when you drop, someone can hold comms or delay — so delivery and payment do not silently stop.</p>
       </div>
+      <div id="sys-response-r4-6" class="sys-response" style="display:none;"></div>
       <button type="button" class="btn-continue" id="btn-6" disabled>Continue</button>
     </section>
 
@@ -681,6 +698,7 @@
       <div class="ops-block">
         <ol class="action-list" id="first-actions-list"></ol>
       </div>
+      <div id="sys-response-r4-7" class="sys-response" style="display:none;"></div>
       <button type="button" class="btn-continue" id="btn-7">Continue</button>
     </section>
 
@@ -694,6 +712,7 @@
         <p class="output-label">Pace</p>
         <p class="output-body" id="out-timeline-line">—</p>
       </div>
+      <div id="sys-response-r4-8" class="sys-response" style="display:none;"></div>
       <button type="button" class="btn-continue" id="btn-8" disabled>Continue</button>
     </section>
 
@@ -869,6 +888,25 @@
       .replace(/"/g, '&quot;');
   }
 
+  function fillSysResponse(containerId, sys) {
+    var el = document.getElementById(containerId);
+    if (!el || !sys) return;
+    el.style.display = 'block';
+    el.innerHTML =
+      '<p class="sys-line"><strong>This means:</strong> ' +
+      escapeHtml(sys.means) +
+      '</p>' +
+      '<p class="sys-line"><strong>This is why:</strong> ' +
+      escapeHtml(sys.why) +
+      '</p>' +
+      '<p class="sys-line"><strong>If this continues:</strong> ' +
+      escapeHtml(sys.continues) +
+      '</p>' +
+      '<p class="sys-line"><strong>Fix:</strong> ' +
+      escapeHtml(sys.fix) +
+      '</p>';
+  }
+
   function setProgress() {
     var el = document.getElementById('progress-text');
     if (el) el.textContent = 'Room 04 · Operational Stability · ' + (currentStep + 1) + ' / ' + totalSteps;
@@ -880,7 +918,17 @@
       p.classList.toggle('active', parseInt(p.getAttribute('data-step'), 10) === n);
     });
     setProgress();
-    if (n === 7) renderFirstActions();
+    if (n === 7) {
+      renderFirstActions();
+      fillSysResponse('sys-response-r4-7', {
+        means: state.firstActions[0]
+          ? 'Your first move is: ' + state.firstActions[0]
+          : 'Actions are still generating from your inputs.',
+        why: 'Order beats speed — wrong order burns client trust and calendar.',
+        continues: 'You restart the plan every time you skip the first move.',
+        fix: 'Complete action #1 before you add tools, hires, or scope.'
+      });
+    }
     if (n === 12) renderSummary();
   }
 
@@ -917,6 +965,12 @@
           'Start here: <strong>' + escapeHtml(s.path) + '</strong>';
         document.getElementById('out-situation').style.display = 'block';
         document.getElementById('btn-1').disabled = false;
+        fillSysResponse('sys-response-r4-1', {
+          means: 'You are running: ' + state.situation,
+          why: 'Income and delivery fail in patterns tied to load — not to “being disorganized.”',
+          continues: 'Money breaks when the layer you skip is the one this load stresses.',
+          fix: 'Follow the orientation line on screen as the sequence — do not skip ahead.'
+        });
       });
     });
   }
@@ -944,6 +998,12 @@
         document.getElementById('out-phase-body').textContent = p.body;
         document.getElementById('out-phase').style.display = 'block';
         document.getElementById('btn-2').disabled = false;
+        fillSysResponse('sys-response-r4-2', {
+          means: 'You placed yourself in: ' + state.currentPhase,
+          why: 'Later phases look like progress while earlier ones stay hollow.',
+          continues: 'Clients see missed invoices and missed dates — not your internal story.',
+          fix: 'Hold work inside this phase definition until your calendar matches it.'
+        });
       });
     });
   }
@@ -1006,6 +1066,15 @@
         });
         document.getElementById('out-human').style.display = 'block';
         document.getElementById('btn-3').disabled = false;
+        fillSysResponse('sys-response-r4-3', {
+          means:
+            state.urgentNeeds.length > 0
+              ? 'Before depth, these gaps stay open: ' + state.urgentNeeds.join(' · ')
+              : 'Rails check recorded — no gap list.',
+          why: 'Depth without rails moves invoices and delivery into improvisation.',
+          continues: 'New tools hide the same gap until payroll or a client forces it.',
+          fix: 'Close the first gap on the list this week — top item, not the most interesting.'
+        });
       });
     });
   }
@@ -1095,6 +1164,14 @@
       : gapText;
     document.getElementById('out-domains').style.display = 'block';
     document.getElementById('btn-4').disabled = false;
+    fillSysResponse('sys-response-r4-4', {
+      means: missing.length
+        ? 'The Continuity Stack is not functional at: ' + gapText + '.'
+        : 'All five layers are marked functional — maintenance is the job now.',
+      why: 'A weak layer routes failure into invoices, ship dates, or silence — not into “software.”',
+      continues: 'You ship slower while the break stays unnamed.',
+      fix: 'Move the weakest layer to functional before you deepen anything else.'
+    });
   }
 
   function initPriority() {
@@ -1117,6 +1194,12 @@
         document.getElementById('out-priority-line').textContent = 'Your first priority is: ' + pr.label + '.';
         document.getElementById('out-priority').style.display = 'block';
         document.getElementById('btn-5').disabled = false;
+        fillSysResponse('sys-response-r4-5', {
+          means: 'Under pressure, income breaks first at: ' + pr.label + '.',
+          why: 'This layer is the choke point — not the noisiest problem on your desk.',
+          continues: 'Every new tool avoids this failure mode while revenue still stalls.',
+          fix: 'Spend the next working block only on this vulnerability — name one concrete move.'
+        });
       });
     });
   }
@@ -1147,6 +1230,15 @@
     document.getElementById('out-cohort-line').textContent = cohortNextStep();
     document.getElementById('out-cohort').style.display = 'block';
     document.getElementById('btn-6').disabled = false;
+    fillSysResponse('sys-response-r4-6', {
+      means:
+        'Coverage status is ' +
+        st +
+        (names.length ? ' with ' + names.length + ' named contact(s).' : ' — names still required on paper.'),
+      why: 'A contact in your head does not answer email when you vanish.',
+      continues: 'Deadlines slip with no one authorized to speak for you.',
+      fix: cohortNextStep()
+    });
   }
 
   function domainWeak(key) {
@@ -1235,6 +1327,12 @@
         document.getElementById('out-timeline-line').textContent = t.summary;
         document.getElementById('out-timeline').style.display = 'block';
         document.getElementById('btn-8').disabled = false;
+        fillSysResponse('sys-response-r4-8', {
+          means: 'You committed to pace: ' + t.label + '.',
+          why: 'A pace you abandon becomes debt — debt shows up as missed dates.',
+          continues: 'The written plan stays fiction.',
+          fix: 'Put the first checkpoint from this pace on your calendar today.'
+        });
       });
     });
   }

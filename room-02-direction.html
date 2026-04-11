@@ -747,6 +747,7 @@
         <p class="translate-line">This is the real pool you are splitting. Nothing below works if this is fake.</p>
         <p class="consequence-line">If you skip this, you will cut the wrong line or block time you do not have.</p>
       </div>
+      <div id="sys-response-r2-1" class="sys-response" style="display:none;"></div>
       <button type="button" class="btn-continue" id="btn-1" disabled>Continue</button>
     </section>
 
@@ -769,7 +770,7 @@
         <h4>System diagnosis</h4>
         <p id="alloc-diagnosis-text" style="margin:0;font-size:14px;line-height:1.55;color:var(--text-secondary);">—</p>
       </div>
-      <div id="sys-response-alloc" class="sys-response" style="display:none;"></div>
+      <div id="sys-response-r2-2" class="sys-response" style="display:none;"></div>
       <div class="alloc-sliders-wrap" id="alloc-sliders-wrap">
         <p class="subhead">Time — maintain / build / multiply (= 100%)</p>
         <div class="slider-row">
@@ -829,6 +830,7 @@
         <p class="translate-line">This is what gets resources first.</p>
         <p class="consequence-line">If you split this across multiple priorities, you go back to drift.</p>
       </div>
+      <div id="sys-response-r2-3" class="sys-response" style="display:none;"></div>
       <button type="button" class="btn-continue" id="btn-3" disabled>Continue</button>
     </section>
 
@@ -859,6 +861,7 @@
         <p class="translate-line">This is what stops feeding the wrong system.</p>
         <p class="consequence-line">If nothing stops, your priority is fake.</p>
       </div>
+      <div id="sys-response-r2-4" class="sys-response" style="display:none;"></div>
       <button type="button" class="btn-continue" id="btn-4" disabled>Continue</button>
     </section>
 
@@ -907,6 +910,7 @@
       </div>
       <p class="translate-line">This is the shift between how you are living and how you say you want to move.</p>
       <p class="consequence-line">If the revised version looks the same, nothing changes.</p>
+      <div id="sys-response-r2-5" class="sys-response" style="display:none;"></div>
       <button type="button" class="btn-continue" id="btn-5">Continue</button>
     </section>
 
@@ -928,6 +932,7 @@
       <p class="truth-line" style="border-left-color:var(--gold-line);margin-top:8px;">This is what your current system produces.</p>
       <p class="truth-line">If nothing changes, this is what continues.</p>
       <p class="pattern-result" id="sys-interpret" style="font-size:18px;margin-top:12px;">—</p>
+      <div id="sys-response-r2-6" class="sys-response" style="display:none;"></div>
       <button type="button" class="btn-continue" id="btn-6">Continue</button>
     </section>
 
@@ -940,6 +945,7 @@
         <button type="button" id="btn-sys-change">Change this system</button>
       </div>
       <div id="decision-msg" class="decision-msg" style="display:none;"></div>
+      <div id="sys-response-r2-7" class="sys-response" style="display:none;"></div>
       <button type="button" class="btn-continue" id="btn-7" disabled>Choose above to continue</button>
     </section>
 
@@ -950,6 +956,7 @@
       <pre class="weekly-pre" id="weekly-generated" aria-live="polite"></pre>
       <p class="translate-line">This is your weekly operating plan.</p>
       <p class="consequence-line">If this does not show up in your week, Room 02 did nothing.</p>
+      <div id="sys-response-r2-8" class="sys-response" style="display:none;"></div>
       <button type="button" class="btn-continue" id="btn-8">Apply this and continue →</button>
     </section>
 
@@ -1106,7 +1113,15 @@ Reduce anything that is not building or multiplying.</pre>
         applyDecisionUi(state.systemChoice);
       }
     }
-    if (n === 8) renderWeeklyPlan();
+    if (n === 8) {
+      renderWeeklyPlan();
+      fillSysResponse('sys-response-r2-8', {
+        means: 'The weekly plan on screen is hours, money shift, stop, and one finish line.',
+        why: 'Text without calendar placement dies in the inbox.',
+        continues: 'Room 02 completes nothing in your real week.',
+        fix: 'Schedule the first line of the plan before you tap continue.'
+      });
+    }
     if (n === 13) renderBridgePanel();
     if (n === 14) renderSummary();
   }
@@ -1180,11 +1195,11 @@ Reduce anything that is not building or multiplying.</pre>
     else if (mc.m >= 55) msg = 'Money is parked in maintain — you are buying safety, not progress.';
     else msg = 'Split is workable — the failure mode is drift, not math.';
     t.textContent = msg;
-    fillSysResponse('sys-response-alloc', {
-      means: 'These percentages describe who gets fed when you are tired.',
-      why: 'Defaults favor maintain and comfort unless you force build.',
-      continues: 'Nothing compounds if build and multiply stay starved.',
-      fix: 'Lock one non-negotiable block for build this week.'
+    fillSysResponse('sys-response-r2-2', {
+      means: msg,
+      why: 'Allocation is who gets fed when discipline drops — not what you wish you valued.',
+      continues: 'Drift restores the old split by Wednesday.',
+      fix: 'Put one build block on the calendar before you adjust sliders again.'
     });
   }
 
@@ -1206,6 +1221,17 @@ Reduce anything that is not building or multiplying.</pre>
     document.getElementById('out-obligations-short').textContent = short;
     document.getElementById('out-resources-block').style.display = 'block';
     document.getElementById('btn-1').disabled = false;
+    fillSysResponse('sys-response-r2-1', {
+      means:
+        'You are operating from ' +
+        fmtMoney(inc) +
+        ' / month, ' +
+        hrs +
+        ' h / week, with obligations named in writing.',
+      why: 'This pool is the ceiling for every choice below — fiction here breaks the whole room.',
+      continues: 'You defend the wrong expense or schedule hours you do not have.',
+      fix: 'Re-enter these three fields when income or hours change — not when you feel motivated.'
+    });
   }
 
   function updateStackBar(which, m, b, x) {
@@ -1279,6 +1305,7 @@ Reduce anything that is not building or multiplying.</pre>
     document.getElementById('rev-sl-pct-x').textContent = String(x);
     updateStackBar('rev', m, b, x);
     state.timeRev = { m: m, b: b, x: x };
+    updateRevSys();
   }
 
   function syncRevMoneySliders() {
@@ -1297,6 +1324,41 @@ Reduce anything that is not building or multiplying.</pre>
     document.getElementById('rev-money-sl-pct-x').textContent = String(x);
     updateStackBar('revMoney', m, b, x);
     state.moneyRev = { m: m, b: b, x: x };
+    updateRevSys();
+  }
+
+  function updateRevSys() {
+    var tr = state.timeRev;
+    var mr = state.moneyRev;
+    var tc = state.timeCur;
+    var mc = state.moneyCur;
+    var unchanged =
+      tr.m === tc.m &&
+      tr.b === tc.b &&
+      tr.x === tc.x &&
+      mr.m === mc.m &&
+      mr.b === mc.b &&
+      mr.x === mc.x;
+    fillSysResponse('sys-response-r2-5', {
+      means: unchanged
+        ? 'Revised time and money match current — no shift is committed yet.'
+        : 'Revised time is M ' +
+          tr.m +
+          '% / B ' +
+          tr.b +
+          '% / X ' +
+          tr.x +
+          '% — money is M ' +
+          mr.m +
+          '% / B ' +
+          mr.b +
+          '% / X ' +
+          mr.x +
+          '%.',
+      why: 'The calendar and card still run the old split until you move real blocks.',
+      continues: 'You repeat the same week while the paper says “revised.”',
+      fix: 'Move one calendar block and one spending line to match this revised split.'
+    });
   }
 
   function initRevSlidersFromCurrent() {
@@ -1339,7 +1401,14 @@ Reduce anything that is not building or multiplying.</pre>
     document.getElementById('sys-line-cur-money').textContent = lineAlloc('Money', state.moneyCur);
     document.getElementById('sys-line-rev-time').textContent = lineAlloc('Time', state.timeRev);
     document.getElementById('sys-line-rev-money').textContent = lineAlloc('Money', state.moneyRev);
-    document.getElementById('sys-interpret').textContent = interpretSystem();
+    var interp = interpretSystem();
+    document.getElementById('sys-interpret').textContent = interp;
+    fillSysResponse('sys-response-r2-6', {
+      means: interp,
+      why: 'The split produces a weekly lifestyle whether you name it or not.',
+      continues: 'You keep the outcome you keep funding.',
+      fix: 'Run your week from the revised numbers — or come back and move the sliders again.'
+    });
   }
 
   function computePriority() {
@@ -1353,6 +1422,12 @@ Reduce anything that is not building or multiplying.</pre>
     document.getElementById('out-value-line').textContent = el.value;
     document.getElementById('out-value-block').style.display = 'block';
     document.getElementById('btn-3').disabled = false;
+    fillSysResponse('sys-response-r2-3', {
+      means: 'Priority is locked to: ' + el.value + '.',
+      why: 'Split priorities split hours and dollars — drift returns immediately.',
+      continues: 'Everything feels urgent — nothing finishes.',
+      fix: 'Spend the first protected block this week only on this priority.'
+    });
   }
 
   function stopLabel() {
@@ -1378,6 +1453,12 @@ Reduce anything that is not building or multiplying.</pre>
     document.getElementById('out-stop-line').textContent = show;
     document.getElementById('out-stop-block').style.display = 'block';
     document.getElementById('btn-4').disabled = false;
+    fillSysResponse('sys-response-r2-4', {
+      means: 'This category stops feeding the system: ' + show + '.',
+      why: 'Without a named stop, “priority” stays a label — not a trade.',
+      continues: 'Old leaks eat the hours you reallocated on paper.',
+      fix: 'Delete or downgrade that line from this week’s calendar or card today.'
+    });
   }
 
   function moneyShiftSentence() {
@@ -1475,6 +1556,18 @@ Reduce anything that is not building or multiplying.</pre>
       document.getElementById('btn-7').textContent = 'Apply changes and continue →';
     }
     document.getElementById('btn-7').disabled = false;
+    fillSysResponse('sys-response-r2-7', {
+      means:
+        choice === 'keep'
+          ? 'You are choosing to keep the current allocation result.'
+          : 'You are choosing to change the system — not to feel different.',
+      why: 'Mood passes — the split stays until real time and money move.',
+      continues: 'You resent the same week you refuse to reallocate.',
+      fix:
+        choice === 'keep'
+          ? 'Own this outcome — stop arguing with the numbers you just kept.'
+          : 'Delete one low-value block this week to fund the build line you drew.'
+    });
   }
 
   function buildInterpretation() {
@@ -1533,15 +1626,6 @@ Reduce anything that is not building or multiplying.</pre>
     addSec('What stops', '<p>' + escapeHtml(stopLabel()) + '</p>');
     addSec('Decision', '<p>' + escapeHtml(state.systemChoice === 'keep' ? 'Keep this system' : 'Change this system') + '</p>');
     addSec('This week', '<pre class="copy-block" style="white-space:pre-wrap;">' + escapeHtml(state.weeklyPlanText) + '</pre>');
-  }
-
-  function escapeHtml(s) {
-    if (!s) return '';
-    return String(s)
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;');
   }
 
   function buildSummaryPlainText() {

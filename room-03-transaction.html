@@ -365,6 +365,35 @@
       align-items: center;
       margin-top: 12px;
     }
+    .sys-response {
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border-soft);
+      font-size: 13px;
+      line-height: 1.55;
+      color: var(--text-secondary);
+    }
+    .sys-response .sys-line { margin: 0 0 8px; }
+    .sys-response strong { color: var(--cream); font-weight: 400; }
+    .send-consequence {
+      font-size: 14px;
+      color: var(--text-muted);
+      line-height: 1.55;
+      margin: 16px 0 12px;
+      padding: 14px;
+      border-left: 2px solid var(--gold-line);
+      padding-left: 14px;
+    }
+    .money-path-preview {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin: 12px 0 8px;
+      padding: 14px;
+      background: rgba(7, 6, 5, 0.45);
+      border: 1px solid var(--border-soft);
+      border-radius: var(--radius-sm);
+    }
     .msg-builder.msg-sent .msg-preview-body { color: var(--text-muted); }
     .msg-builder.msg-sent::after {
       content: 'Sent';
@@ -578,31 +607,25 @@
       </div>
       <h2 class="panel-title">Start with what’s already happening</h2>
       <p class="truth-line">Income starts where demand already exists — not where you wish demand existed.</p>
-      <p class="panel-instruction">Mark what people have already asked. The system builds demand lines — you pick one.</p>
-      <p class="example-p">Example: “Can you look at my deck?” beats “I could maybe do marketing.”</p>
+      <p class="panel-instruction">Which of these has already happened? Pick one. The system builds offer, price, and message.</p>
+      <p class="example-p">You are not brainstorming. You are naming evidence.</p>
       <div class="reveal-fields">
         <p class="subhead" style="margin:0 0 12px;">Prompted recall</p>
-        <div class="pick-list" id="recall-chips" style="display:flex;flex-direction:column;align-items:stretch;">
-          <label class="opt"><input type="checkbox" class="recall-cb" value="deck" /> Review slides / deck / visuals</label>
-          <label class="opt"><input type="checkbox" class="recall-cb" value="writing" /> Writing, editing, or messaging</label>
-          <label class="opt"><input type="checkbox" class="recall-cb" value="ops" /> Systems, ops, or “make this work”</label>
-          <label class="opt"><input type="checkbox" class="recall-cb" value="coach" /> Advice / coaching / “what would you do?”</label>
-          <label class="opt"><input type="checkbox" class="recall-cb" value="intro" /> Introductions or connections</label>
-          <label class="opt"><input type="checkbox" class="recall-cb" value="tech" /> Technical fix or tool setup</label>
-        </div>
-        <div class="pick-list" id="pick-options-wrap" style="display:none;">
-          <p class="sub">Pick one demand line</p>
-          <div id="pick-options-radios"></div>
+        <div class="pick-list" id="scenario-list" style="display:flex;flex-direction:column;align-items:stretch;">
+          <label class="opt"><input type="radio" name="recall-scenario" value="asked" /> Someone asked for help</label>
+          <label class="opt"><input type="radio" name="recall-scenario" value="free_review" /> You reviewed something for free</label>
+          <label class="opt"><input type="radio" name="recall-scenario" value="explained_twice" /> You explained something twice</label>
+          <label class="opt"><input type="radio" name="recall-scenario" value="solved_fast" /> You solved something quickly</label>
+          <label class="opt"><input type="radio" name="recall-scenario" value="good_at" /> Someone said you’re good at this</label>
         </div>
         <input type="hidden" id="opt-1" /><input type="hidden" id="opt-2" /><input type="hidden" id="opt-3" />
         <input type="hidden" id="opt-4" /><input type="hidden" id="opt-5" />
       </div>
       <div class="output-block muted" id="out-pick" style="display:none;">
-        <p class="output-label">Selection</p>
-        <p id="out-selected-opt" class="pattern-result">—</p>
-        <p class="pattern-result sm" style="margin-top:12px;">This is the one.</p>
-        <p class="translate-line">Translate: This means you are building from a request that already happened — not from a fantasy niche.</p>
-        <p class="consequence-line">Consequence: If this continues without a pick, you stay in “everything” and sell nothing.</p>
+        <p class="output-label">System output</p>
+        <p id="out-generated-offer" class="pattern-result" style="font-size:17px;">—</p>
+        <p class="output-row" style="margin-top:12px;padding:0;border:none;"><span>Price range locked</span><span id="out-generated-price">—</span></p>
+        <div id="sys-response-r3-1" class="sys-response" style="display:none;"></div>
       </div>
       <button type="button" class="btn-continue" id="btn-1" disabled>Continue</button>
     </section>
@@ -610,10 +633,10 @@
     <section class="panel" data-step="2" id="panel-2">
       <h2 class="panel-title">Say it simply</h2>
       <p class="truth-line">One sentence. If you need a paragraph, you do not understand the offer yet.</p>
-      <p class="panel-instruction">You can edit — defaults come from the demand line you picked.</p>
+      <p class="panel-instruction">Locked from your recall — read it aloud. If it is wrong, restart Room 03.</p>
       <div class="reveal-fields">
-        <div class="field"><label for="in-person">I help [person]</label><input type="text" id="in-person" placeholder="e.g. small teams" /></div>
-        <div class="field"><label for="in-problem">with [specific problem]</label><input type="text" id="in-problem" placeholder="e.g. unclear positioning" /></div>
+        <div class="field"><label for="in-person">I help [person]</label><input type="text" id="in-person" readonly /></div>
+        <div class="field"><label for="in-problem">with [specific problem]</label><input type="text" id="in-problem" readonly /></div>
       </div>
       <div class="output-block muted" id="out-define" style="display:none;">
         <p class="output-label">Offer</p>
@@ -623,6 +646,7 @@
         <h4>This connects to what you saw earlier</h4>
         <p>Room 01 and 02 mapped leak and allocation. This room is the <strong>execution / transaction</strong> phase: you are naming what you sell in one line someone can repeat.</p>
       </div>
+      <div id="sys-response-r3-2" class="sys-response" style="display:none;"></div>
       <button type="button" class="btn-continue" id="btn-2" disabled>Continue</button>
     </section>
 
@@ -647,6 +671,7 @@
         <p class="translate-line">Translate: This means you have a number you can quote without negotiating yourself to zero.</p>
         <p class="consequence-line">Consequence: If this continues fuzzy, every conversation ends in “let’s talk later.”</p>
       </div>
+      <div id="sys-response-r3-3" class="sys-response" style="display:none;"></div>
       <button type="button" class="btn-continue" id="btn-3" disabled>Continue</button>
     </section>
 
@@ -670,34 +695,38 @@
         <p class="translate-line">Translate: This means you know which thread to open first.</p>
         <p class="consequence-line">Consequence: If this continues as “someone someday,” revenue stays theoretical.</p>
       </div>
+      <div id="sys-response-r3-4" class="sys-response" style="display:none;"></div>
       <button type="button" class="btn-continue" id="btn-4" disabled>Continue</button>
     </section>
 
     <section class="panel" data-step="5" id="panel-5">
       <h2 class="panel-title">Make contact</h2>
       <p class="truth-line">The offer does not exist until someone else can read it in their inbox.</p>
-      <p class="panel-instruction">Keep it simple and specific.</p>
+      <p class="panel-instruction">Write → Send → Mark → Move. Copy or mark sent before you continue.</p>
       <div class="msg-builder" id="msg-builder">
         <div class="field">
-          <label for="msg-body">Message</label>
-          <textarea id="msg-body" class="tall"></textarea>
+          <label for="msg-body">Outbound message (generated)</label>
+          <textarea id="msg-body" class="tall" readonly></textarea>
         </div>
         <div class="msg-builder-panel">
           <p class="msg-preview-label">Live preview</p>
           <pre class="msg-preview-body" id="msg-preview"></pre>
           <div class="msg-actions">
-            <button type="button" class="btn-continue btn-secondary" id="btn-copy-msg">Copy</button>
+            <button type="button" class="btn-continue btn-secondary" id="btn-copy-msg">Copy message</button>
             <button type="button" class="btn-continue btn-secondary btn-mark-sent" id="btn-mark-sent">Mark as sent</button>
           </div>
         </div>
       </div>
-      <p class="translate-line">Translate: This message is the smallest unit of the sale — edit until you would send it to a friend.</p>
-      <p class="consequence-line">Consequence: If this continues in your head, your calendar stays empty.</p>
+      <p class="send-consequence" id="msg-send-consequence">If you send 5 of these, you will likely get 1–2 responses. If you send none, nothing happens.</p>
+      <div class="money-path-preview" id="msg-money-path">
+        If you repeat this for 14 days: 10–20 messages sent · 2–5 responses · 1+ paid outcome likely.
+      </div>
+      <div id="sys-response-r3-5" class="sys-response" style="display:none;"></div>
       <div class="diag-tie">
         <h4>This connects to what you saw earlier</h4>
         <p>This is the <strong>execution / transaction</strong> phase in one action: a thread opened at a price. No template replaces sending.</p>
       </div>
-      <button type="button" class="btn-continue" id="btn-5" disabled>Continue</button>
+      <button type="button" class="btn-continue" id="btn-5" disabled>Sent → continue</button>
     </section>
 
     <section class="panel" data-step="6" id="panel-6">
@@ -713,6 +742,7 @@
         <p class="output-label">Follow-up</p>
         <p id="out-follow-text" class="pattern-result sm">—</p>
       </div>
+      <div id="sys-response-r3-6" class="sys-response" style="display:none;"></div>
       <button type="button" class="btn-continue" id="btn-6" disabled>Continue</button>
     </section>
 
@@ -727,6 +757,7 @@
         <p class="output-label">Close</p>
         <p id="out-close-text" class="pattern-result sm">—</p>
       </div>
+      <div id="sys-response-r3-7" class="sys-response" style="display:none;"></div>
       <button type="button" class="btn-continue" id="btn-7" disabled>Continue</button>
     </section>
 
@@ -743,6 +774,7 @@
         <p class="output-label">Delivery</p>
         <p id="out-delivery-line" class="pattern-result sm">—</p>
       </div>
+      <div id="sys-response-r3-8" class="sys-response" style="display:none;"></div>
       <button type="button" class="btn-continue" id="btn-8" disabled>Continue</button>
     </section>
 
@@ -758,6 +790,7 @@
         <p class="output-label">Next loop</p>
         <p class="pattern-result">Loop ready</p>
       </div>
+      <div id="sys-response-r3-9" class="sys-response" style="display:none;"></div>
       <button type="button" class="btn-continue" id="btn-9" disabled>Continue</button>
     </section>
 
@@ -851,6 +884,8 @@
   var state = {
     options: [],
     selectedOption: '',
+    scenarioKey: '',
+    topicShort: '',
     person: '',
     problem: '',
     price: '',
@@ -858,10 +893,84 @@
     selectedTarget: '',
     message: '',
     messageSent: false,
+    messageCopied: false,
     followUp: '',
     close: '',
     delivery: '',
     nextLoop: ''
+  };
+
+  var SCENARIOS = {
+    asked: {
+      label: 'Someone asked for help',
+      topicLine: 'what you asked me to help with',
+      aboutPhrase: 'what you asked me to help with',
+      person: 'people who already asked you for help',
+      problem: 'finishing that work without it taking over your week',
+      price: '$297',
+      sys: {
+        means: 'Demand already showed up. You are not inventing a niche.',
+        why: 'They asked because you are the lower-risk choice than a stranger.',
+        continues: 'Revenue stays at zero until a thread exists with a price on it.',
+        fix: 'Send the generated message to one name on your list today.'
+      }
+    },
+    free_review: {
+      label: 'You reviewed something for free',
+      topicLine: 'that review I did for you',
+      aboutPhrase: 'that review I did for you',
+      person: 'people you already helped for free',
+      problem: 'getting paid for the next round of the same kind of help',
+      price: '$297',
+      sys: {
+        means: 'You trained them to expect free work.',
+        why: 'Free sets the price at zero until you redraw the line.',
+        continues: 'They keep asking. You keep donating hours.',
+        fix: 'Send a paid scope for the next version of the same task.'
+      }
+    },
+    explained_twice: {
+      label: 'You explained something twice',
+      topicLine: 'the thing I already explained twice',
+      aboutPhrase: 'this after I already explained it twice',
+      person: 'people who keep asking for the same explanation',
+      problem: 'stopping repeat explanations for free',
+      price: '$750',
+      sys: {
+        means: 'Repeat questions are demand — not noise.',
+        why: 'They pay when you save them time and embarrassment.',
+        continues: 'You burn hours re-teaching the same point.',
+        fix: 'Sell a short pack: one doc + one call. Send the message.'
+      }
+    },
+    solved_fast: {
+      label: 'You solved something quickly',
+      topicLine: 'that thing I fixed fast for you',
+      aboutPhrase: 'that quick fix I did for you',
+      person: 'people who saw you solve it once',
+      problem: 'the same fire next time without you eating the cost',
+      price: '$750',
+      sys: {
+        means: 'Speed reads as cheap until you put a number on it.',
+        why: 'Fast work still costs you focus and risk.',
+        continues: 'You become the emergency dial with no invoice.',
+        fix: 'Name a price for “same-day / same-type” fixes.'
+      }
+    },
+    good_at: {
+      label: 'Someone said you’re good at this',
+      topicLine: 'what you said I am good at',
+      aboutPhrase: 'what you said I am good at here',
+      person: 'people who already praised your work',
+      problem: 'turning that praise into a paid ask',
+      price: '$1,500',
+      sys: {
+        means: 'Praise is a lead — not income.',
+        why: 'Compliments do not move until you ask for money.',
+        continues: 'You stay famous and broke.',
+        fix: 'Send one message that converts praise into a scoped offer.'
+      }
+    }
   };
 
   var currentStep = 0;
@@ -878,10 +987,12 @@
       p.classList.toggle('active', parseInt(p.getAttribute('data-step'), 10) === n);
     });
     setProgress();
-    if (n === 2) autoFillOfferFromRecall();
+    if (n === 2) syncScenarioToDefineFields();
+    if (n === 3) syncPriceFromScenario();
     if (n === 5) {
       prepMessage();
       updateMsgPreview();
+      fillSysResponse('sys-response-r3-5', SCENARIOS[state.scenarioKey] && SCENARIOS[state.scenarioKey].sys);
     }
     if (n === 6) {
       var fu = document.getElementById('fu-do');
@@ -933,84 +1044,93 @@
       .replace(/"/g, '&quot;');
   }
 
-  var RECALL_LABELS = {
-    deck: 'slides / deck',
-    writing: 'writing',
-    ops: 'ops / systems',
-    coach: 'advice / coaching',
-    intro: 'introductions',
-    tech: 'technical fixes'
-  };
-
-  function buildDemandLinesFromRecall() {
-    var sel = [];
-    document.querySelectorAll('.recall-cb:checked').forEach(function (c) {
-      sel.push(c.value);
-    });
-    if (sel.length < 2) return [];
-    var L = RECALL_LABELS;
-    var a = L[sel[0]] || sel[0];
-    var b = L[sel[1]] || sel[1];
-    return [
-      'People keep asking for help with ' + a + ' — especially where it touches ' + b + '.',
-      'Repeat: quick fixes on ' + a + ' before deadlines.',
-      'Repeat: ' + b + ' when they are stuck shipping.'
-    ];
+  function fillSysResponse(containerId, sys) {
+    var el = document.getElementById(containerId);
+    if (!el || !sys) return;
+    el.style.display = 'block';
+    el.innerHTML =
+      '<p class="sys-line"><strong>This means:</strong> ' +
+      escapeHtml(sys.means) +
+      '</p>' +
+      '<p class="sys-line"><strong>This is why:</strong> ' +
+      escapeHtml(sys.why) +
+      '</p>' +
+      '<p class="sys-line"><strong>If this continues:</strong> ' +
+      escapeHtml(sys.continues) +
+      '</p>' +
+      '<p class="sys-line"><strong>Fix:</strong> ' +
+      escapeHtml(sys.fix) +
+      '</p>';
   }
 
-  function computeRecallPicks() {
-    var lines = buildDemandLinesFromRecall();
-    state.options = lines;
+  function computeScenarioSelect() {
+    var picked = document.querySelector('input[name="recall-scenario"]:checked');
+    if (!picked) return;
+    var key = picked.value;
+    var S = SCENARIOS[key];
+    if (!S) return;
+
+    state.scenarioKey = key;
+    state.topicShort = S.topicLine;
+    state.person = S.person;
+    state.problem = S.problem;
+    state.price = S.price;
+    state.options = [S.person + ' — ' + S.problem];
+    state.selectedOption = 'I help ' + S.person + ' solve ' + S.problem + '.';
+
     var i;
     for (i = 0; i < 5; i++) {
-      var el = document.getElementById('opt-' + (i + 1));
-      if (el) el.value = lines[i] || '';
-    }
-    var wrap = document.getElementById('pick-options-wrap');
-    var radios = document.getElementById('pick-options-radios');
-    radios.innerHTML = '';
-    state.selectedOption = '';
-    document.getElementById('out-pick').style.display = 'none';
-    document.getElementById('btn-1').disabled = true;
-
-    if (lines.length < 3) {
-      wrap.style.display = 'none';
-      return;
+      var hid = document.getElementById('opt-' + (i + 1));
+      if (hid) hid.value = i === 0 ? state.selectedOption : '';
     }
 
-    wrap.style.display = 'block';
-    lines.forEach(function (text, idx) {
-      var id = 'pick-opt-' + idx;
-      var lab = document.createElement('label');
-      lab.className = 'opt';
-      var inp = document.createElement('input');
-      inp.type = 'radio';
-      inp.name = 'pickopt';
-      inp.id = id;
-      inp.value = String(idx);
-      var span = document.createElement('span');
-      span.textContent = text;
-      lab.appendChild(inp);
-      lab.appendChild(document.createTextNode(' '));
-      lab.appendChild(span);
-      radios.appendChild(lab);
-      inp.addEventListener('change', function () {
-        state.selectedOption = state.options[parseInt(inp.value, 10)] || '';
-        document.getElementById('out-selected-opt').textContent = state.selectedOption;
-        document.getElementById('out-pick').style.display = 'block';
-        document.getElementById('btn-1').disabled = false;
-      });
-    });
+    var offerEl = document.getElementById('out-generated-offer');
+    if (offerEl) offerEl.textContent = state.selectedOption;
+    var priceEl = document.getElementById('out-generated-price');
+    if (priceEl) priceEl.textContent = S.price;
+
+    document.getElementById('out-pick').style.display = 'block';
+    document.getElementById('btn-1').disabled = false;
+
+    fillSysResponse('sys-response-r3-1', S.sys);
   }
 
-  function autoFillOfferFromRecall() {
-    var line = state.selectedOption || '';
-    if (!line) return;
+  function syncScenarioToDefineFields() {
+    if (!state.scenarioKey || !SCENARIOS[state.scenarioKey]) return;
+    var S = SCENARIOS[state.scenarioKey];
     var ip = document.getElementById('in-person');
     var prob = document.getElementById('in-problem');
-    if (ip && !ip.value.trim()) ip.value = 'people who already asked you for help';
-    if (prob && !prob.value.trim()) prob.value = line.length > 120 ? line.slice(0, 120) : line;
+    if (ip) ip.value = S.person;
+    if (prob) prob.value = S.problem;
     computeDefine();
+  }
+
+  function syncPriceFromScenario() {
+    var p = state.price || (SCENARIOS[state.scenarioKey] && SCENARIOS[state.scenarioKey].price);
+    if (!p) return;
+    var inp = document.getElementById('in-price');
+    if (inp && !inp.value.trim()) inp.value = p;
+    var use = inp && inp.value.trim() ? inp.value.trim() : p;
+    document.querySelectorAll('input[name="price-tier"]').forEach(function (r) {
+      r.checked = r.value === use;
+    });
+    computePrice();
+  }
+
+  function buildOutboundMessage() {
+    var S = SCENARIOS[state.scenarioKey];
+    var phrase = (S && S.aboutPhrase) || state.topicShort || 'this';
+    var price = (state.price || '').trim() || (S && S.price) || '$297';
+    return (
+      'Hey — quick note. You asked me about ' +
+      phrase +
+      '.\n\n' +
+      'I can handle this directly.\n\n' +
+      "I'd charge " +
+      price +
+      ' to complete it cleanly.\n\n' +
+      'Want me to take it on?'
+    );
   }
 
   function computeDefine() {
@@ -1027,6 +1147,12 @@
     document.getElementById('out-offer-line').textContent = line;
     document.getElementById('out-define').style.display = 'block';
     document.getElementById('btn-2').disabled = false;
+    fillSysResponse('sys-response-r3-2', {
+      means: 'The offer in one line is: ' + line,
+      why: 'Buyers repeat what they understand — unclear offers never get forwarded.',
+      continues: 'You rewrite forever and never send.',
+      fix: 'Read the line aloud once — if it sounds wrong, restart this room from step one.'
+    });
   }
 
   function computePrice() {
@@ -1040,6 +1166,12 @@
     document.getElementById('out-price-val').textContent = p;
     document.getElementById('out-price').style.display = 'block';
     document.getElementById('btn-3').disabled = false;
+    fillSysResponse('sys-response-r3-3', {
+      means: 'The locked price is ' + p + '.',
+      why: 'Prices you will not say out loud do not get collected.',
+      continues: 'Every thread ends in “let’s talk later.”',
+      fix: 'Quote this exact figure in the next message — no range language.'
+    });
   }
 
   function computeTargets() {
@@ -1081,19 +1213,28 @@
         document.getElementById('out-target-name').textContent = state.selectedTarget;
         document.getElementById('out-target').style.display = 'block';
         document.getElementById('btn-4').disabled = false;
+        fillSysResponse('sys-response-r3-4', {
+          means: 'The first thread opens with ' + state.selectedTarget + '.',
+          why: 'Trust already exists — cold outreach burns hours.',
+          continues: 'Silence stays the default.',
+          fix: 'Send to that name first — no reordering to a “better” prospect.'
+        });
       });
     });
   }
 
   function prepMessage() {
-    var prob = state.problem || '[problem]';
-    var hook = state.selectedOption ? state.selectedOption.split('—')[0].trim() : prob;
-    var t =
-      'Hey — I\'ve been helping people with ' + hook + '.\n' +
-      'I think I could help you with your version of this (' + prob + ').\n' +
-      'Would it be useful if I put something together?';
+    state.messageCopied = false;
+    state.messageSent = false;
+    var wrap = document.getElementById('msg-builder');
+    if (wrap) wrap.classList.remove('msg-sent');
+    var markBtn = document.getElementById('btn-mark-sent');
+    if (markBtn) {
+      markBtn.disabled = false;
+      markBtn.textContent = 'Mark as sent';
+    }
     var ta = document.getElementById('msg-body');
-    if (!ta.value.trim()) ta.value = t;
+    if (ta) ta.value = buildOutboundMessage();
     computeMessage();
     updateMsgPreview();
   }
@@ -1111,10 +1252,16 @@
     if (pre) pre.textContent = raw || '—';
   }
 
+  function updateSendGate() {
+    var ok = !!(state.message && (state.messageCopied || state.messageSent));
+    document.getElementById('btn-5').disabled = !ok;
+  }
+
   function computeMessage() {
-    state.message = document.getElementById('msg-body').value.trim();
+    var ta = document.getElementById('msg-body');
+    state.message = ta ? ta.value.trim() : '';
     updateMsgPreview();
-    document.getElementById('btn-5').disabled = !state.message;
+    updateSendGate();
   }
 
   function buildFollowUp() {
@@ -1135,6 +1282,12 @@
     document.getElementById('out-follow-text').textContent = block;
     document.getElementById('out-follow').style.display = 'block';
     document.getElementById('btn-6').disabled = false;
+    fillSysResponse('sys-response-r3-6', {
+      means: 'Yes is scoped to deliverables, timeline, and price in one thread.',
+      why: 'Yes without scope is unpaid work.',
+      continues: 'They ghost while you do favors.',
+      fix: 'Send this follow-up block as the very next reply — no extra tools.'
+    });
   }
 
   function computeClose() {
@@ -1149,6 +1302,12 @@
     document.getElementById('out-close-text').textContent = block;
     document.getElementById('out-close').style.display = 'block';
     document.getElementById('btn-7').disabled = false;
+    fillSysResponse('sys-response-r3-7', {
+      means: 'Payment path is named: ' + pay + '.',
+      why: 'Favors do not deposit — instructions do.',
+      continues: 'Work ships before cash moves.',
+      fix: 'Send that payment line in the same thread before you start work.'
+    });
   }
 
   function computeDelivery() {
@@ -1165,6 +1324,12 @@
     document.getElementById('out-delivery-line').textContent = o + ' · ' + f + ' · ' + t;
     document.getElementById('out-delivery').style.display = 'block';
     document.getElementById('btn-8').disabled = false;
+    fillSysResponse('sys-response-r3-8', {
+      means: 'Delivery is defined as outcome, format, and timeline — not effort.',
+      why: 'Clients repeat what they received — not how hard you tried.',
+      continues: 'Disputes eat margin.',
+      fix: 'Ship exactly what this line says — no silent scope creep.'
+    });
   }
 
   function computeLoop() {
@@ -1178,6 +1343,12 @@
     state.nextLoop = 'Next person: ' + np + '\nAdjustment: ' + adj;
     document.getElementById('out-loop').style.display = 'block';
     document.getElementById('btn-9').disabled = false;
+    fillSysResponse('sys-response-r3-9', {
+      means: 'The next loop is named: ' + np + ' — with one adjustment locked.',
+      why: 'One loop is noise — a second loop is a process.',
+      continues: 'You stay stuck on one hero thread.',
+      fix: 'Send the adjusted message to that next name within 48 hours.'
+    });
   }
 
   function buildInterpretation() {
@@ -1280,6 +1451,8 @@
     var t = document.getElementById('msg-body').value;
     if (navigator.clipboard && navigator.clipboard.writeText) {
       navigator.clipboard.writeText(t).then(function () {
+        state.messageCopied = true;
+        updateSendGate();
         var b = document.getElementById('btn-copy-msg');
         var o = b.textContent;
         b.textContent = 'Copied ✓';
@@ -1303,8 +1476,8 @@
 
   document.getElementById('btn-begin').addEventListener('click', next);
 
-  document.querySelectorAll('.recall-cb').forEach(function (cb) {
-    cb.addEventListener('change', computeRecallPicks);
+  document.querySelectorAll('input[name="recall-scenario"]').forEach(function (inp) {
+    inp.addEventListener('change', computeScenarioSelect);
   });
   document.getElementById('btn-1').addEventListener('click', next);
 
@@ -1328,15 +1501,19 @@
   });
   document.getElementById('btn-4').addEventListener('click', next);
 
-  document.getElementById('msg-body').addEventListener('input', computeMessage);
   document.getElementById('btn-5').addEventListener('click', next);
   document.getElementById('btn-copy-msg').addEventListener('click', copyMsg);
   document.getElementById('btn-mark-sent').addEventListener('click', function () {
-    state.messageSent = !state.messageSent;
+    if (state.messageSent) return;
+    state.messageSent = true;
     var wrap = document.getElementById('msg-builder');
-    if (wrap) wrap.classList.toggle('msg-sent', state.messageSent);
+    if (wrap) wrap.classList.add('msg-sent');
     var b = document.getElementById('btn-mark-sent');
-    if (b) b.textContent = state.messageSent ? 'Sent (undo)' : 'Mark as sent';
+    if (b) {
+      b.textContent = 'Marked sent';
+      b.disabled = true;
+    }
+    updateSendGate();
   });
 
   ['fu-do', 'fu-time', 'fu-get'].forEach(function (id) {
