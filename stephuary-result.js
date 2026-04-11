@@ -167,6 +167,7 @@
     return out;
   }
 
+  /** One recommended section per diagnostic (anti-overlap). Order = priority; only [0] is assigned. */
   var VERSION_PLAYBOOKS = {
     spotter_delay_nopressure: ['Execution', 'Reset'],
     connector_overthinking_scattered: ['Execution', 'Reset'],
@@ -177,6 +178,94 @@
     mixed_general: ['Execution', 'Reset']
   };
 
+  var PLAYBOOK_ROOM = {
+    Reset: { room: 1, title: 'Where your time and money are going', path: '/room-01-extraction.html' },
+    Execution: { room: 2, title: 'What to change this week', path: '/room-02-direction.html' },
+    'Income Architecture': { room: 3, title: 'What you can offer and charge for', path: '/room-03-transaction.html' },
+    Ownership: { room: 4, title: 'Fixing execution and delivery', path: '/room-04-infrastructure.html' },
+    'AI Control': { room: 5, title: 'Using AI without lowering quality', path: '/room-05-cognition.html' }
+  };
+
+  var DIAGNOSTIC_BY_VERSION = {
+    spotter_delay_nopressure: {
+      main_problem: 'You register friction early, then stop before the loop closes.',
+      what_it_costs: 'Open decisions stack. Small fixes stay undone. Attention keeps re-scanning the same issue.',
+      what_you_have: 'Accurate reads and a standard that rarely gets an external deadline.',
+      fix_first: 'Pick one decision or fix you will close before you add new inputs.'
+    },
+    connector_overthinking_scattered: {
+      main_problem: 'You connect too many threads before anything ships.',
+      what_it_costs: 'Depth replaces closure. The day never holds one line long enough to finish.',
+      what_you_have: 'Pattern speed and systems thinking.',
+      fix_first: 'Hold one thread until it is done — before you expand the map.'
+    },
+    interpreter_avoidance_wrongpeople: {
+      main_problem: 'You read the room accurately, then soften the move.',
+      what_it_costs: 'Your clearest call stays edited. Accountability to others replaces commitment to the work.',
+      what_you_have: 'Subtext accuracy and timing sense.',
+      fix_first: 'Make one call without rehearsing it around someone else’s comfort.'
+    },
+    operator_distraction_misaligned: {
+      main_problem: 'You fix what is loud before what is load-bearing.',
+      what_it_costs: 'Attention fragments. Improvements start and do not finish. Context pulls you off structure.',
+      what_you_have: 'Fast stabilization and practical repair instinct.',
+      fix_first: 'Cut measurable drain before you reorganize the week around new priorities.'
+    },
+    reworker_delay_misaligned: {
+      main_problem: 'You see the full rebuild and wait for conditions that match it.',
+      what_it_costs: 'Good ideas stay at the level of thought. Fit stays wrong while you refine the blueprint.',
+      what_you_have: 'Structural diagnosis and quality bar.',
+      fix_first: 'Ship one smaller version, then fix the environment layer that blocks the rest.'
+    },
+    builder_delay_lowstandard: {
+      main_problem: 'Low-quality input is eating your decision speed.',
+      what_it_costs: 'Reaction crowds out building. Your bar and your day disagree.',
+      what_you_have: 'Delta vision — you see what “complete” would require.',
+      fix_first: 'Remove one drain and one input stream before you touch leverage tools.'
+    },
+    mixed_general: {
+      main_problem: 'Awareness is ahead of a single committed line of action.',
+      what_it_costs: 'Too many options stay warm. Finishing stays rare.',
+      what_you_have: 'Enough signal to choose a lane.',
+      fix_first: 'Choose one direction for seven days and refuse new inputs until something ships.'
+    }
+  };
+
+  function primaryPlaybookForVersion(version) {
+    var list = VERSION_PLAYBOOKS[version] || VERSION_PLAYBOOKS.mixed_general;
+    return list[0];
+  }
+
+  function nextReason(playbook) {
+    var R = {
+      Reset:
+        'The diagnostic points to measurable waste. That has to be cut before the week gets re-planned.',
+      Execution:
+        'The next step is to reallocate this week’s time and priority — not to price an offer here.',
+      'Income Architecture':
+        'The bottleneck is packaging what already shows up into an offer, a number, and a first message.',
+      Ownership:
+        'The gap is delivery and follow-through — not another pass at leaks or the calendar.',
+      'AI Control':
+        'Leverage belongs after the core path is clear enough to protect from generic output.'
+    };
+    return R[playbook] || 'This section matches the bottleneck the diagnostic isolated.';
+  }
+
+  function buildDiagnostic(version, primaryPlaybook) {
+    var d = DIAGNOSTIC_BY_VERSION[version] || DIAGNOSTIC_BY_VERSION.mixed_general;
+    var room = PLAYBOOK_ROOM[primaryPlaybook] || PLAYBOOK_ROOM.Execution;
+    return {
+      main_problem: d.main_problem,
+      what_it_costs: d.what_it_costs,
+      what_you_have: d.what_you_have,
+      fix_first: d.fix_first,
+      next_playbook: primaryPlaybook,
+      next_room: { num: room.room, title: room.title, path: room.path },
+      next_reason: nextReason(primaryPlaybook)
+    };
+  }
+
   function buildFromPhase01(bits) {
     var fallback = {
       type_primary: '',
@@ -184,8 +273,9 @@
       block: '',
       environment: '',
       signals: buildSignals(null),
-      playbooks: VERSION_PLAYBOOKS.mixed_general.slice(),
-      result_version: 'mixed_general'
+      playbooks: [primaryPlaybookForVersion('mixed_general')],
+      result_version: 'mixed_general',
+      diagnostic: buildDiagnostic('mixed_general', primaryPlaybookForVersion('mixed_general'))
     };
 
     if (!bits || !bits.length) return fallback;
@@ -193,7 +283,7 @@
     var scored = scoreArchetype(bits);
     var archetype = scored.archetype;
     var version = resolveResultVersion(archetype, bits, scored.scores, scored.maxScore);
-    var pb = VERSION_PLAYBOOKS[version] ? VERSION_PLAYBOOKS[version].slice() : VERSION_PLAYBOOKS.mixed_general.slice();
+    var primary = primaryPlaybookForVersion(version);
 
     return {
       type_primary: archetype,
@@ -201,14 +291,19 @@
       block: blockFromBits(bits),
       environment: environmentFromBits(bits),
       signals: buildSignals(bits),
-      playbooks: pb,
-      result_version: version
+      playbooks: [primary],
+      result_version: version,
+      diagnostic: buildDiagnostic(version, primary)
     };
   }
 
   global.StephuaryResult = {
     STORAGE_KEY: STORAGE_KEY,
     buildFromPhase01: buildFromPhase01,
-    scoreArchetype: scoreArchetype
+    scoreArchetype: scoreArchetype,
+    primaryPlaybookForVersion: primaryPlaybookForVersion,
+    buildDiagnostic: buildDiagnostic,
+    PLAYBOOK_ROOM: PLAYBOOK_ROOM,
+    VERSION_PLAYBOOKS: VERSION_PLAYBOOKS
   };
 })(typeof window !== 'undefined' ? window : this);

@@ -185,6 +185,65 @@
     }
     .signals dd { color: var(--muted); margin: 0 0 6px 0; }
 
+    .diag-wrap {
+      margin-top: 28px;
+      padding-top: 22px;
+      border-top: 1px solid var(--line-soft);
+      max-width: 560px;
+    }
+    .diag-grid {
+      display: grid;
+      grid-template-columns: minmax(auto, 140px) 1fr;
+      gap: 6px 20px;
+      margin: 0;
+      align-items: baseline;
+    }
+    .diag-grid dt {
+      font-size: 9px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--blue);
+      margin: 0;
+      font-family: 'Lato', sans-serif;
+    }
+    .diag-grid dd {
+      margin: 0 0 14px;
+      font-size: 15px;
+      color: var(--muted);
+      line-height: 1.65;
+    }
+    @media (max-width: 520px) {
+      .diag-grid {
+        grid-template-columns: 1fr;
+      }
+      .diag-grid dd { margin-bottom: 16px; }
+    }
+    .diag-next {
+      margin-top: 22px;
+      padding-top: 18px;
+      border-top: 1px solid var(--line-soft);
+    }
+    .diag-next-label {
+      font-size: 9px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--gold-dim);
+      margin-bottom: 8px;
+      font-family: 'Lato', sans-serif;
+    }
+    .diag-next-title {
+      font-size: 17px;
+      color: var(--white);
+      margin-bottom: 10px;
+      font-weight: 400;
+    }
+    .diag-next-reason {
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.65;
+      margin: 0;
+    }
+
     section.block { padding: 44px 0; }
     section.block.alt { background: #0b1520; }
 
@@ -280,6 +339,29 @@
       justify-content: center;
       font-family: 'Lato', sans-serif;
       margin-top: 2px;
+    }
+    .action-step--cta {
+      border-bottom: none;
+      padding: 0;
+    }
+    .action-step--cta a {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 14px 22px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: linear-gradient(165deg, var(--blue-hi) 0%, var(--blue) 100%);
+      color: #fff;
+      font-size: 10px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      text-decoration: none;
+      font-family: 'Lato', sans-serif;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .action-step--cta a:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 24px rgba(43, 79, 212, 0.35);
     }
 
     .play-wrap { padding: 44px 0 52px; }
@@ -435,11 +517,24 @@
   <main id="state-result">
     <section class="hero-result">
       <div class="wrap">
-        <p class="hero-kicker">Structured read</p>
-        <h1 class="hero-h1">This is how you operate.</h1>
-        <p class="hero-sub">Read it slowly. You’ll know if it fits.</p>
-        <p class="opening-read" id="openingRead"></p>
+        <p class="hero-kicker">Phase 01 · Diagnostic</p>
+        <h1 class="hero-h1" id="openingRead"></h1>
         <div class="type-pill" id="typePill" aria-label="Detected types"></div>
+        <div class="diag-wrap" id="diagnosticBlock" hidden>
+          <dl class="diag-grid">
+            <dt>What it is costing</dt>
+            <dd id="diagCost"></dd>
+            <dt>What you already have</dt>
+            <dd id="diagHave"></dd>
+            <dt>Fix first</dt>
+            <dd id="diagFix"></dd>
+          </dl>
+          <div class="diag-next">
+            <p class="diag-next-label">Recommended next section</p>
+            <p class="diag-next-title" id="diagNextTitle"></p>
+            <p class="diag-next-reason" id="diagNextReason"></p>
+          </div>
+        </div>
         <dl class="signals" id="signalsBlock" hidden></dl>
       </div>
     </section>
@@ -460,19 +555,13 @@
       </div>
     </section>
 
-    <section class="block alt">
-      <div class="wrap-wide">
-        <p class="sec-label">Do this now</p>
-        <div id="doNow"></div>
-      </div>
-    </section>
-
     <div class="rule"></div>
 
     <section class="action-section">
       <div class="wrap-wide">
         <div class="action-card">
-          <h3>Start with this</h3>
+          <h3>Open this section next</h3>
+          <p class="body-text" id="actionIntro" style="margin-bottom:18px;"></p>
           <div class="action-steps" id="actionSteps"></div>
         </div>
       </div>
@@ -482,7 +571,7 @@
 
     <section class="play-wrap">
       <div class="wrap-wide">
-        <p class="sec-label">Go deeper on this</p>
+        <p class="sec-label">Section details</p>
         <div class="play-grid" id="playGrid"></div>
       </div>
     </section>
@@ -509,6 +598,7 @@
     </footer>
   </main>
 
+  <script src="/stephuary-result.js"></script>
   <script>
 (function () {
   var STORAGE_KEY = 'stephuary_result_v1';
@@ -516,23 +606,23 @@
 
   var PLAYBOOK_META = {
     'Execution': {
-      desc: 'Turn decisions into action without dragging them out',
+      desc: 'This week only: schedule, priorities, one plan. No offer build, pricing, or AI stack.',
       slug: 'execution'
     },
     'Reset': {
-      desc: 'Fix where your time, money, and energy are being drained',
+      desc: 'Measure leaks and cut them. No offers, monetization angles, outreach scripts, or AI workflows.',
       slug: 'reset'
     },
     'Income Architecture': {
-      desc: 'Turn what you know into paid work people can understand and buy',
+      desc: 'Offer, buyer, price band, first message. No time tracking, lifestyle framing, or AI education.',
       slug: 'income-architecture'
     },
     'AI Control': {
-      desc: 'Use AI without letting it lower your thinking or your standards',
+      desc: 'AI use, prompts, distribution. No leak worksheets, weekly calendar design, or first-offer drafting.',
       slug: 'ai-control'
     },
     'Ownership': {
-      desc: 'Build systems you control so you are not dependent on one path',
+      desc: 'Finish, send, deliver, client handling. No new offer from scratch, no leak math, no AI system build.',
       slug: 'ownership'
     }
   };
@@ -732,16 +822,20 @@
     container.appendChild(ul);
   }
 
-  function renderActions(container, items) {
-    container.innerHTML = '';
-    items.forEach(function (text, i) {
-      var row = document.createElement('div');
-      row.className = 'action-step';
-      row.innerHTML =
-        '<span class="action-n">' + (i + 1) + '</span>' +
-        '<span>' + esc(text) + '</span>';
-      container.appendChild(row);
-    });
+  function renderPrimaryCta(diag) {
+    var intro = document.getElementById('actionIntro');
+    var steps = document.getElementById('actionSteps');
+    intro.textContent = '';
+    steps.innerHTML = '';
+    if (!diag || !diag.next_room || !diag.next_room.path) return;
+    intro.textContent = 'The diagnostic is complete. This section does not repeat earlier steps.';
+    var row = document.createElement('div');
+    row.className = 'action-step action-step--cta';
+    var a = document.createElement('a');
+    a.href = diag.next_room.path;
+    a.textContent = 'Open ' + diag.next_room.title + ' →';
+    row.appendChild(a);
+    steps.appendChild(row);
   }
 
   /** Maps legacy result “playbook” names to Room routes. */
@@ -826,7 +920,17 @@
     if (data.block === undefined) data.block = '';
     if (data.environment === undefined) data.environment = '';
     if (!data.playbooks || !data.playbooks.length) {
-      data.playbooks = RESULT_VERSIONS[data.result_version].playbooks.slice();
+      var leg = RESULT_VERSIONS[data.result_version] && RESULT_VERSIONS[data.result_version].playbooks;
+      data.playbooks = leg && leg.length ? [leg[0]] : ['Execution'];
+    } else {
+      data.playbooks = [data.playbooks[0]];
+    }
+    if (!data.diagnostic && typeof window.StephuaryResult !== 'undefined') {
+      try {
+        var ver = data.result_version || 'mixed_general';
+        var prim = data.playbooks[0] || window.StephuaryResult.primaryPlaybookForVersion(ver);
+        data.diagnostic = window.StephuaryResult.buildDiagnostic(ver, prim);
+      } catch (e) {}
     }
     return data;
   }
@@ -846,7 +950,9 @@
     document.getElementById('state-missing').classList.remove('visible');
     document.getElementById('state-result').classList.add('visible');
 
-    document.getElementById('openingRead').textContent = version.opening;
+    var diag = data.diagnostic;
+    document.getElementById('openingRead').textContent =
+      diag && diag.main_problem ? diag.main_problem : version.opening;
 
     var pill = document.getElementById('typePill');
     var parts = [];
@@ -856,10 +962,23 @@
     if (data.environment) parts.push('<span>' + esc(data.environment) + '</span>');
     pill.innerHTML = parts.length ? parts.join(' · ') : '';
 
+    var diagEl = document.getElementById('diagnosticBlock');
+    if (diag) {
+      diagEl.hidden = false;
+      document.getElementById('diagCost').textContent = diag.what_it_costs || '';
+      document.getElementById('diagHave').textContent = diag.what_you_have || '';
+      document.getElementById('diagFix').textContent = diag.fix_first || '';
+      document.getElementById('diagNextTitle').textContent =
+        diag.next_room && diag.next_room.title ? diag.next_room.title : '';
+      document.getElementById('diagNextReason').textContent = diag.next_reason || '';
+    } else {
+      diagEl.hidden = true;
+    }
+
     var sigEl = document.getElementById('signalsBlock');
     sigEl.innerHTML = '';
     sigEl.hidden = true;
-    if (data.signals && typeof data.signals === 'object') {
+    if (!diag && data.signals && typeof data.signals === 'object') {
       var keys = Object.keys(data.signals).filter(function (k) {
         return String(data.signals[k] || '').trim();
       });
@@ -878,10 +997,9 @@
 
     renderBlocks(document.getElementById('whatShows'), version.whatThisShows);
     renderBulletList(document.getElementById('whereShows'), version.whereShowsUp);
-    renderBulletList(document.getElementById('doNow'), version.doThisNow);
-    renderActions(document.getElementById('actionSteps'), version.doThisNow);
+    renderPrimaryCta(diag);
 
-    var names = (data.playbooks && data.playbooks.length ? data.playbooks : version.playbooks).slice();
+    var names = data.playbooks && data.playbooks.length ? data.playbooks.slice(0, 1) : [(version.playbooks && version.playbooks[0]) || 'Execution'];
     renderPlaybooks(names);
   }
 
