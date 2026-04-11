@@ -334,6 +334,79 @@
       line-height: 1.65;
     }
 
+    .step-checkpoint {
+      font-size: 12px;
+      color: var(--text-dim);
+      letter-spacing: 0.04em;
+      line-height: 1.55;
+      margin: 0 0 20px;
+      padding: 12px 14px;
+      border-left: 2px solid rgba(196, 163, 90, 0.45);
+    }
+
+    .step-validation {
+      font-size: 12px;
+      color: var(--gold-dim);
+      letter-spacing: 0.03em;
+      line-height: 1.5;
+      margin: 14px 0 0;
+      min-height: 1.4em;
+    }
+
+    .capture-flash {
+      display: none;
+      position: fixed;
+      bottom: 28px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 150;
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold);
+      text-align: center;
+      min-height: 1.2em;
+      pointer-events: none;
+    }
+
+    #building-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 500;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: rgba(8, 8, 7, 0.92);
+      backdrop-filter: blur(6px);
+    }
+
+    #building-overlay p {
+      font-family: var(--serif);
+      font-size: clamp(22px, 4vw, 32px);
+      font-weight: 300;
+      color: var(--text);
+      letter-spacing: -0.02em;
+    }
+
+    .summary-hit {
+      font-family: var(--serif);
+      font-size: clamp(28px, 5vw, 40px);
+      font-weight: 300;
+      line-height: 1.15;
+      margin-bottom: 12px;
+      color: var(--text);
+    }
+
+    .summary-confidence {
+      font-size: 13px;
+      color: var(--text-dim);
+      letter-spacing: 0.03em;
+      line-height: 1.65;
+      margin-bottom: 28px;
+      max-width: 42em;
+    }
+
     .progress-bar-wrap {
       width: 100%;
       margin-bottom: 40px;
@@ -714,10 +787,14 @@
         <div id="steps-root"></div>
       </div>
 
+      <div id="capture-flash" class="capture-flash" aria-live="polite"></div>
+
+      <div id="building-overlay" role="status" aria-live="assertive"><p>Building your result.</p></div>
+
       <div id="summary">
         <p class="summary-phase-tag">Capture · Phase 01</p>
-        <h2 class="summary-title">Phase 01 complete</h2>
-        <p class="summary-sub">Here’s what the diagnostic picked up.</p>
+        <h2 class="summary-hit" id="summaryHitLine">We found the main issue.</h2>
+        <p class="summary-confidence">This is based on your actual responses, not a preset category.</p>
 
         <div class="result-section">
           <p class="result-h">1. You are</p>
@@ -781,26 +858,22 @@
     </div>
 
     <aside class="live-panel" id="livePanel" aria-live="polite">
-      <div class="live-panel-head">Live Read</div>
+      <div class="live-panel-head">Live read</div>
       <div class="live-field">
-        <div class="live-label">You notice</div>
-        <div class="live-value" id="live-notice">Waiting.</div>
+        <div class="live-label">Main issue (emerging)</div>
+        <div class="live-value" id="live-notice">Answer to load the first signal.</div>
       </div>
       <div class="live-field">
-        <div class="live-label">You tend to do</div>
-        <div class="live-value" id="live-do">Waiting.</div>
+        <div class="live-label">Biggest loss (emerging)</div>
+        <div class="live-value" id="live-do">—</div>
       </div>
       <div class="live-field">
-        <div class="live-label">You tend to hold back</div>
-        <div class="live-value" id="live-hold">Waiting.</div>
+        <div class="live-label">Current pattern</div>
+        <div class="live-value" id="live-hold">—</div>
       </div>
       <div class="live-field">
-        <div class="live-label">Your environment</div>
-        <div class="live-value" id="live-env">Waiting.</div>
-      </div>
-      <div class="live-field">
-        <div class="live-label">Your current bottleneck</div>
-        <div class="live-value" id="live-bottleneck">Waiting.</div>
+        <div class="live-label">Likely next step</div>
+        <div class="live-value" id="live-env">—</div>
       </div>
       <div class="live-field">
         <div class="live-label">Phase status</div>
@@ -1173,59 +1246,110 @@
     }
   };
 
+  function answeredCount(bits) {
+    var c = 0;
+    for (var i = 0; i < TOTAL_Q; i++) {
+      if (bits[i] !== null && bits[i] !== undefined) c++;
+      else break;
+    }
+    return c;
+  }
+
+  function liveStrings(bits) {
+    var ac = answeredCount(bits);
+
+    var main = 'Answer to load the first signal.';
+    var loss = '—';
+    var pattern = '—';
+    var next = '—';
+
+    if (ac === 1) {
+      loss = 'Loss shape not isolated yet.';
+      next = 'One more answer narrows it.';
+    }
+
+    if (ac >= 1 && bits[0] !== null && bits[0] !== undefined) {
+      main = bits[0] === 0
+        ? 'Misalignment surfaces before consensus forms.'
+        : 'Upgrade paths register before comfort does.';
+    }
+    if (ac >= 2 && bits[1] !== null && bits[1] !== undefined) {
+      main += bits[1] === 0 ? ' Diagnosis runs ahead of motion.' : ' Motion runs ahead of full proof.';
+      loss = bits[1] === 0
+        ? 'Time lost mapping before you intervene.'
+        : 'Cost from moving before the map is tight.';
+    }
+    if (ac >= 3 && bits[2] !== null && bits[2] !== undefined) {
+      main += bits[2] === 0 ? ' Fine-grain signal first.' : ' Cross-case pattern first.';
+      loss += bits[2] === 0 ? ' Detail load without closure.' : ' Synthesis load without closure.';
+    }
+    if (ac >= 4 && bits[3] !== null && bits[3] !== undefined) {
+      pattern = bits[3] === 0 ? 'You work from what is said on the surface.' : 'You track intent under the line.';
+    }
+    if (ac >= 5 && bits[4] !== null && bits[4] !== undefined) {
+      pattern += bits[4] === 0 ? ' You accept “works” as enough to move.' : ' “Works” still reads incomplete to you.';
+    }
+    if (ac >= 6 && bits[5] !== null && bits[5] !== undefined) {
+      pattern += bits[5] === 0 ? ' Failure is a design miss first.' : ' Failure is handling quality first.';
+    }
+    if (ac >= 7 && bits[6] !== null && bits[6] !== undefined) {
+      pattern += bits[6] === 0 ? ' Important reads stay internal.' : ' Important reads get pushed into the room.';
+    }
+
+    if (ac >= 1 && ac < 3) {
+      next = 'Next answers lock in the loss shape.';
+    }
+    if (ac >= 3 && ac < 6) {
+      next = 'Pattern firms as standards and failure reads come in.';
+    }
+    if (ac >= 6 && ac < 8) {
+      next = 'Expression and timing answers tighten what breaks.';
+    }
+
+    if (ac >= 8 && bits[7] !== null && bits[7] !== undefined) {
+      loss = bits[7] === 0
+        ? 'Time is being lost through hesitation.'
+        : 'Cost from moving before certainty and repairing in motion.';
+      next = bits[7] === 0 ? 'Tighten the move before you add more analysis.' : 'Name what you ship before you widen scope.';
+    }
+    if (ac >= 9 && bits[8] !== null && bits[8] !== undefined) {
+      loss = bits[8] === 0
+        ? 'You already have usable skill — not using it fully in this context.'
+        : 'Skill structurally used — volume and load are the risk.';
+      next = bits[8] === 0 ? 'Fit is the lever — not more generic effort.' : 'Scale only what the context already uses.';
+    }
+    if (ac >= 10 && bits[9] !== null && bits[9] !== undefined) {
+      main = bits[9] === 0
+        ? 'You already have usable signal — motion is the gap.'
+        : 'Direction is still open — closure is the gap.';
+      next = bits[9] === 0
+        ? 'Next: one public move that matches the read.'
+        : 'Next: pick one lane and close the others.';
+    }
+    if (ac >= 10) {
+      next = 'Result locks — open the recommended section next.';
+    }
+
+    return { main: main, loss: loss, pattern: pattern, next: next };
+  }
+
   function updateLivePanel(stepIndex, bits) {
     var n = stepIndex + 1;
     function el(id, t) { document.getElementById(id).textContent = t; }
 
-    var notice = 'Waiting.';
-    if (bits[0] !== null && bits[0] !== undefined) {
-      notice = bits[0] === 0 ? 'Friction and misalignment before consensus.' : 'Improvement vectors before comfort.';
-      if (bits[2] !== null && bits[2] !== undefined && n >= 3) {
-        notice = (bits[2] === 0 ? 'Fine grain. ' : 'Cross-pattern. ') + notice;
-      }
-      if (bits[3] !== null && bits[3] !== undefined && n >= 4) {
-        notice += bits[3] === 0 ? ' Stated terms first.' : ' Subtext tracked automatically.';
-      }
-    }
-
-    var doing = 'Waiting.';
-    if (bits[1] !== null && bits[1] !== undefined && n >= 2) {
-      doing = bits[1] === 0 ? 'Cause and structure before motion.' : 'Motion before full proof.';
-      if (bits[4] !== null && bits[4] !== undefined && n >= 5) {
-        doing += bits[4] === 0 ? ' You accept "works" as a baseline.' : ' "Works" still looks incomplete to you.';
-      }
-      if (bits[5] !== null && bits[5] !== undefined && n >= 6) {
-        doing += bits[5] === 0 ? ' Failure reads as a design miss.' : ' Failure reads as handling quality.';
-      }
-    }
-
-    var hold = 'Waiting.';
-    if (bits[6] !== null && bits[6] !== undefined && n >= 7) {
-      hold = bits[6] === 0 ? 'Important reads held to protect the room.' : 'Important reads pushed into the room.';
-    }
-
-    var env = 'Waiting.';
-    if (bits[8] !== null && bits[8] !== undefined && n >= 9) {
-      env = bits[8] === 0 ? 'Your strongest gear is not what the context pulls for.' : 'How you think is structurally used.';
-    }
-
-    var bot = 'Waiting.';
-    if (bits[9] !== null && bits[9] !== undefined && n >= 10) {
-      bot = bits[9] === 0 ? 'Knowing without motion.' : 'Open search without closure.';
-    }
-
-    el('live-notice', notice);
-    el('live-do', doing);
-    el('live-hold', hold);
-    el('live-env', env);
-    el('live-bottleneck', bot);
+    var L = liveStrings(bits);
+    el('live-notice', L.main);
+    el('live-do', L.loss);
+    el('live-hold', L.pattern);
+    el('live-env', L.next);
     el('live-status', 'Step ' + n + ' of ' + TOTAL_Q + ' · In progress');
   }
 
   function resetLiveWaiting() {
-    ['live-notice','live-do','live-hold','live-env','live-bottleneck'].forEach(function(id) {
-      document.getElementById(id).textContent = 'Waiting.';
-    });
+    document.getElementById('live-notice').textContent = 'Answer to load the first signal.';
+    document.getElementById('live-do').textContent = '—';
+    document.getElementById('live-hold').textContent = '—';
+    document.getElementById('live-env').textContent = '—';
     document.getElementById('live-status').textContent = 'Not started.';
   }
 
@@ -1234,6 +1358,57 @@
     currentStep: 1,
     answers: []
   };
+
+  var lastTransitionPick = -1;
+  var TRANSITION_PHRASES = ['Noted.', 'That matters.', 'This connects.', 'Keep going.', 'Locked in.', 'Recorded.'];
+
+  function pickTransitionPhrase() {
+    var pool = [];
+    for (var i = 0; i < TRANSITION_PHRASES.length; i++) {
+      if (i !== lastTransitionPick) pool.push(i);
+    }
+    var pick = pool[Math.floor(Math.random() * pool.length)];
+    lastTransitionPick = pick;
+    return TRANSITION_PHRASES[pick];
+  }
+
+  function runTransitionThen(cb) {
+    var flash = document.getElementById('capture-flash');
+    flash.textContent = pickTransitionPhrase();
+    flash.style.display = 'block';
+    setTimeout(function() {
+      flash.style.display = 'none';
+      flash.textContent = '';
+      cb();
+    }, 400);
+  }
+
+  function earlyValidation(b0, b1) {
+    if (b0 === 0 && b1 === 0) return 'Based on this, your main issue is starting to show.';
+    if (b0 === 0 && b1 === 1) return 'This pattern usually connects to hesitation or underuse.';
+    if (b0 === 1 && b1 === 0) return 'Speed and structure are split — the cost shows in the gap.';
+    return 'Motion before proof: exposure stays high until timing is trained.';
+  }
+
+  function updateStepValidation(currentStepNum) {
+    document.querySelectorAll('.step').forEach(function(panel, i) {
+      var sn = i + 1;
+      var vel = panel.querySelector('.step-validation');
+      if (!vel) return;
+      if (sn !== currentStepNum) {
+        vel.textContent = '';
+        vel.style.display = 'none';
+        return;
+      }
+      if (currentStepNum === 3 && state.bits[0] !== null && state.bits[1] !== null) {
+        vel.textContent = earlyValidation(state.bits[0], state.bits[1]);
+        vel.style.display = 'block';
+      } else {
+        vel.textContent = '';
+        vel.style.display = 'none';
+      }
+    });
+  }
 
   function saveStorage() {
     try {
@@ -1285,16 +1460,22 @@
       var div = document.createElement('div');
       div.className = 'step' + (stepNum === 1 ? ' active' : '');
       div.id = 'step-' + stepNum;
+      var checkpointBlock =
+        stepNum === 5
+          ? '<p class="step-checkpoint">This is enough to identify the direction. The rest sharpens it.</p>'
+          : '';
       div.innerHTML =
         '<div class="step-header">' +
           '<div class="step-instruction"></div>' +
           '<div class="step-directive"></div>' +
           '<div class="step-micro"></div>' +
         '</div>' +
+        checkpointBlock +
         '<div class="option-list">' +
           '<div class="option-item" data-bit="0" tabindex="0" role="button"></div>' +
           '<div class="option-item" data-bit="1" tabindex="0" role="button"></div>' +
         '</div>' +
+        '<div class="step-validation" aria-live="polite"></div>' +
         '<div class="nav-row">' +
           (stepNum > 1 ? '<button type="button" class="btn btn-ghost" data-back="' + stepNum + '">Back</button>' : '') +
         '</div>';
@@ -1317,13 +1498,18 @@
           updateLivePanel(idx, state.bits);
 
           opts.forEach(function(o) { o.classList.add('dim'); });
-          setTimeout(function() {
-            if (idx === TOTAL_Q - 1) {
+
+          if (idx === TOTAL_Q - 1) {
+            document.getElementById('building-overlay').style.display = 'flex';
+            setTimeout(function() {
               showSummary();
-            } else {
-              goTo(stepNum + 1);
-            }
-          }, 520);
+            }, 700);
+            return;
+          }
+
+          runTransitionThen(function() {
+            goTo(stepNum + 1);
+          });
         });
       });
 
@@ -1358,6 +1544,7 @@
     }
 
     updateLivePanel(n - 1, state.bits);
+    updateStepValidation(n);
     updateRail();
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
@@ -1374,9 +1561,10 @@
         return;
       }
     } catch (err) {}
+    document.getElementById('building-overlay').style.display = 'none';
     document.getElementById('flow').style.display = 'none';
     document.getElementById('summary').style.display = 'flex';
-    document.getElementById('live-status').textContent = 'Phase 01 complete.';
+    document.getElementById('live-status').textContent = 'Complete.';
 
     var bits = state.bits.map(function(b) { return b == null ? 0 : b; });
     var arch = scoreArchetype(bits);
@@ -1491,6 +1679,10 @@
     state.bits = Array(TOTAL_Q).fill(null);
     state.currentStep = 1;
     state.answers = [];
+    lastTransitionPick = -1;
+    document.getElementById('building-overlay').style.display = 'none';
+    document.getElementById('capture-flash').style.display = 'none';
+    document.getElementById('capture-flash').textContent = '';
     document.getElementById('summary').style.display = 'none';
     document.getElementById('flow').style.display = 'block';
     document.querySelectorAll('.step').forEach(function(s, i) {
@@ -1531,7 +1723,10 @@
         buildRail();
         buildSteps();
       }
-      showSummary();
+      document.getElementById('building-overlay').style.display = 'flex';
+      setTimeout(function() {
+        showSummary();
+      }, 700);
       return true;
     }
     state.currentStep = firstEmpty + 1;
