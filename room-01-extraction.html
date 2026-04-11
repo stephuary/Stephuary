@@ -648,6 +648,69 @@
       box-shadow: 0 4px 20px rgba(0,0,0,0.2);
     }
 
+    /* Leak meter — functional only */
+    .leak-meter-wrap {
+      margin: 20px 0 8px;
+      padding: 16px 0 0;
+      border-top: 1px solid var(--border);
+    }
+    .leak-meter-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 8px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--gold-dim);
+      margin-bottom: 10px;
+    }
+    .leak-meter {
+      height: 8px;
+      background: rgba(7, 6, 5, 0.85);
+      border: 1px solid var(--border-soft);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    .leak-meter__fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, rgba(107, 83, 68, 0.9), rgba(154, 130, 96, 0.95));
+      transition: width 0.35s ease;
+    }
+    .leak-meter-stat {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.06em;
+      color: var(--text-muted);
+      margin-top: 10px;
+    }
+    .leak-meter-stat strong { color: var(--cream); font-weight: 400; }
+    .leak-picks {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin: 16px 0 20px;
+      padding: 16px;
+      background: rgba(7, 6, 5, 0.35);
+      border: 1px solid var(--border-soft);
+      border-radius: var(--radius-sm);
+    }
+    .leak-picks .opt { font-size: 13px; }
+    .viz-lock-card {
+      margin: 24px 0;
+      padding: 20px;
+      border: 1px solid rgba(154, 130, 96, 0.25);
+      border-radius: var(--radius-sm);
+      background: rgba(7, 6, 5, 0.5);
+    }
+    .viz-lock-card .leak-meter { opacity: 0.95; }
+    .viz-lock-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 8px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--gold-dim);
+      margin-bottom: 12px;
+    }
+
     .summary-card {
       background: linear-gradient(165deg, rgba(26, 22, 18, 0.95) 0%, rgba(12, 10, 9, 0.98) 100%);
       border: 1px solid rgba(154, 130, 96, 0.18);
@@ -1013,6 +1076,13 @@
         <p class="translate-line">This shows what you are spending without deciding.</p>
         <p class="consequence-line">If this continues, nothing accumulates.</p>
         <p class="consequence-line" style="margin-top:10px;">This is what you are trading for nothing.</p>
+        <div class="leak-meter-wrap" id="leak-meter-wrap" style="display:none;">
+          <p class="leak-meter-label">Leak meter</p>
+          <div class="leak-meter" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="leak-meter-bar">
+            <div class="leak-meter__fill" id="leak-meter-fill"></div>
+          </div>
+          <p class="leak-meter-stat"><strong id="leak-meter-cumulative">—</strong> cumulative · <span id="leak-meter-picks">0</span>/5 leak types flagged</p>
+        </div>
       </div>
       <button type="button" class="btn-continue" id="btn-1" disabled>Continue</button>
     </section>
@@ -1044,6 +1114,13 @@
       <p class="panel-instruction">subscriptions you don’t use · impulse spending · convenience spending · time spent on low-value tasks · apps or habits you check daily without purpose</p>
       <p class="panel-instruction" style="margin-top:-12px;">Then lock the pattern below — not what sounds better.</p>
       <p class="example-p">Example: Scroll → order → impulse in one night. Two leaks, one chain.</p>
+      <div class="leak-picks" id="leak-picks">
+        <label class="opt"><input type="checkbox" class="leak-cb" value="subs" /> Subscriptions you don’t use</label>
+        <label class="opt"><input type="checkbox" class="leak-cb" value="impulse" /> Impulse spending</label>
+        <label class="opt"><input type="checkbox" class="leak-cb" value="convenience" /> Convenience spending</label>
+        <label class="opt"><input type="checkbox" class="leak-cb" value="lowvalue" /> Low-value time</label>
+        <label class="opt"><input type="checkbox" class="leak-cb" value="apps" /> Apps / habits without purpose</label>
+      </div>
       <div class="choice-stack">
       <div class="choice-row">
         <span class="choice-label">Scroll / Sleep</span>
@@ -1262,6 +1339,11 @@
       <div class="summary-card summary-card--artifact">
         <h3>YOUR OPERATING SYSTEM</h3>
         <p class="summary-lede">You named the leak.<br /><br />Stopping it is what’s left.</p>
+        <div class="viz-lock-card" id="leak-meter-locked" aria-label="Locked leak outcome">
+          <p class="viz-lock-label">Locked · your leak load</p>
+          <div class="leak-meter"><div class="leak-meter__fill" id="leak-meter-fill-locked"></div></div>
+          <p class="leak-meter-stat"><strong id="leak-locked-money">—</strong> / mo · <span id="leak-locked-picks">0</span>/5 types · meter <span id="leak-locked-pct">0</span>%</p>
+        </div>
         <div id="summary-interpret"></div>
         <div id="summary-body"></div>
         <p class="summary-outro">Copy this. Re-run until the leaks stop.</p>
@@ -1277,6 +1359,7 @@
   <script>
 (function () {
   var state = {
+    leakCbCount: 0,
     subscriptions: 0,
     groceries: 0,
     delivery: 0,
@@ -1382,6 +1465,7 @@
     if (n === 9) renderBoundaries();
     if (n === 10) renderElimination();
     if (n === 13) renderSummary();
+    if (n === 1 || n === 4) updateLeakMeter();
   }
 
   function next() {
@@ -1399,6 +1483,35 @@
   }
 
   function weeklyToMonthly(w) { return w * (52 / 12); }
+
+  function countLeakCbs() {
+    var n = 0;
+    document.querySelectorAll('.leak-cb:checked').forEach(function () { n++; });
+    return n;
+  }
+
+  function updateLeakMeter() {
+    var wrap = document.getElementById('leak-meter-wrap');
+    var fill = document.getElementById('leak-meter-fill');
+    var cum = document.getElementById('leak-meter-cumulative');
+    var picks = document.getElementById('leak-meter-picks');
+    var bar = document.getElementById('leak-meter-bar');
+    if (!wrap || !fill) return;
+    if (document.getElementById('btn-1').disabled) {
+      wrap.style.display = 'none';
+      return;
+    }
+    wrap.style.display = 'block';
+    var n = countLeakCbs();
+    state.leakCbCount = n;
+    var moneyPct = Math.min(100, (state.monthlySpend / 80) * 10);
+    var pickPct = n * 16;
+    var pct = Math.min(100, moneyPct * 0.45 + pickPct * 0.55);
+    fill.style.width = pct + '%';
+    if (bar) bar.setAttribute('aria-valuenow', String(Math.round(pct)));
+    if (cum) cum.textContent = fmtMoney(state.monthlySpend) + ' / mo';
+    if (picks) picks.textContent = String(n);
+  }
 
   function computeReveal() {
     var subs = parseFloat(document.getElementById('in-subs').value);
@@ -1446,6 +1559,7 @@
     if (elHw) elHw.textContent = fmtNum(scr * 7, 1) + ' h';
 
     document.getElementById('btn-1').disabled = false;
+    updateLeakMeter();
   }
 
   function computePattern() {
@@ -1686,6 +1800,18 @@
 
   function renderSummary() {
     syncAlternatives();
+    var moneyPct = Math.min(100, (state.monthlySpend / 80) * 10);
+    var pickPct = state.leakCbCount * 16;
+    var pct = Math.min(100, moneyPct * 0.45 + pickPct * 0.55);
+    var lf = document.getElementById('leak-meter-fill-locked');
+    if (lf) lf.style.width = pct + '%';
+    var lm = document.getElementById('leak-locked-money');
+    if (lm) lm.textContent = fmtMoney(state.monthlySpend);
+    var lp = document.getElementById('leak-locked-picks');
+    if (lp) lp.textContent = String(state.leakCbCount);
+    var lpc = document.getElementById('leak-locked-pct');
+    if (lpc) lpc.textContent = String(Math.round(pct));
+
     var interpEl = document.getElementById('summary-interpret');
     if (interpEl) {
       interpEl.innerHTML = '';
@@ -1862,6 +1988,10 @@
 
   document.getElementById('btn-begin').addEventListener('click', function () { next(); });
   document.getElementById('btn-pause').addEventListener('click', function () { next(); });
+
+  document.querySelectorAll('.leak-cb').forEach(function (cb) {
+    cb.addEventListener('change', updateLeakMeter);
+  });
 
   ['in-subs', 'in-groceries', 'in-delivery', 'in-social', 'in-impulse', 'in-screen'].forEach(function (id) {
     document.getElementById(id).addEventListener('input', computeReveal);

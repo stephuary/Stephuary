@@ -391,6 +391,66 @@
       box-shadow: 0 4px 20px rgba(0,0,0,0.2);
     }
 
+    .alloc-sliders-wrap {
+      margin: 8px 0 20px;
+      padding: 16px;
+      background: rgba(7, 6, 5, 0.45);
+      border: 1px solid var(--border-soft);
+      border-radius: var(--radius-sm);
+    }
+    .alloc-sliders-wrap .subhead { margin-top: 0; }
+    .slider-row {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 14px;
+    }
+    .slider-row label {
+      font-family: 'DM Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+    }
+    .slider-row input[type="range"] {
+      width: 100%;
+      accent-color: var(--bronze);
+      height: 6px;
+    }
+    .slider-row-static {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin: 0 0 4px;
+    }
+    .slider-row-static strong { color: var(--cream); font-weight: 400; }
+    .stack-bar {
+      display: flex;
+      height: 10px;
+      border-radius: 2px;
+      overflow: hidden;
+      border: 1px solid var(--border-soft);
+      margin-top: 8px;
+    }
+    .stack-bar span { height: 100%; display: block; }
+    .stack-bar .seg-m { background: rgba(90, 90, 90, 0.6); }
+    .stack-bar .seg-b { background: rgba(154, 130, 96, 0.75); }
+    .stack-bar .seg-x { background: rgba(43, 79, 212, 0.45); }
+    .viz-lock-stack {
+      margin: 0 0 20px;
+      padding: 16px;
+      border: 1px solid rgba(154, 130, 96, 0.22);
+      border-radius: var(--radius-sm);
+      background: rgba(7, 6, 5, 0.4);
+    }
+    .viz-lock-stack .viz-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 8px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--gold-dim);
+      margin-bottom: 10px;
+    }
+
     .summary-card {
       background: linear-gradient(165deg, rgba(26, 22, 18, 0.95) 0%, rgba(12, 10, 9, 0.98) 100%);
       border: 1px solid rgba(154, 130, 96, 0.18);
@@ -711,6 +771,23 @@
       <p class="truth-line">Where is your time going right now?</p>
       <p class="truth-line" style="border-left-color:transparent;padding-left:0;margin-top:-8px;">Where is your money going right now?</p>
       <p class="panel-instruction">Answer in the numbers below.</p>
+      <div class="alloc-sliders-wrap" id="alloc-sliders-wrap">
+        <p class="subhead">Time split — Maintain / Build / Multiply (= 100%)</p>
+        <div class="slider-row">
+          <label for="sl-m">Maintain <span id="sl-pct-m">34</span>%</label>
+          <input type="range" id="sl-m" min="0" max="100" value="34" step="1" />
+        </div>
+        <div class="slider-row">
+          <label for="sl-b">Build <span id="sl-pct-b">33</span>%</label>
+          <input type="range" id="sl-b" min="0" max="66" value="33" step="1" />
+        </div>
+        <p class="slider-row-static">Multiply <strong id="sl-pct-x">33</strong>%</p>
+        <div class="stack-bar" id="stack-bar-live" aria-hidden="true">
+          <span class="seg-m" id="stack-seg-m" style="width:34%"></span>
+          <span class="seg-b" id="stack-seg-b" style="width:33%"></span>
+          <span class="seg-x" id="stack-seg-x" style="width:33%"></span>
+        </div>
+      </div>
       <div class="reveal-fields">
         <p class="subhead">Time (hours / week) — current</p>
         <div class="field">
@@ -891,6 +968,15 @@
       <p class="panel-instruction">This is what you’re running now.</p>
       <div class="summary-card">
         <h3>Summary</h3>
+        <div class="viz-lock-stack" id="viz-lock-alloc" aria-label="Locked time allocation">
+          <p class="viz-label">Locked · time allocation</p>
+          <div class="stack-bar">
+            <span class="seg-m" id="lock-seg-m" style="width:33%"></span>
+            <span class="seg-b" id="lock-seg-b" style="width:34%"></span>
+            <span class="seg-x" id="lock-seg-x" style="width:33%"></span>
+          </div>
+          <p class="translate-line" style="margin-top:10px;font-size:12px;" id="lock-alloc-labels">Maintain · Build · Multiply</p>
+        </div>
         <div id="summary-interpret"></div>
         <div id="summary-body"></div>
       </div>
@@ -931,6 +1017,7 @@
       p.classList.toggle('active', parseInt(p.getAttribute('data-step'), 10) === n);
     });
     setProgress();
+    if (n === 5) initAllocSliders();
     if (n === 9) syncSystemStatement();
     if (n === 12) renderSummary();
   }
@@ -1004,6 +1091,54 @@
     document.getElementById('out-opportunity').textContent = state.opportunity;
     document.getElementById('out-opp-block').style.display = 'block';
     document.getElementById('btn-3').disabled = false;
+  }
+
+  function updateStackBarLive(m, b, x) {
+    var sm = document.getElementById('stack-seg-m');
+    var sb = document.getElementById('stack-seg-b');
+    var sx = document.getElementById('stack-seg-x');
+    if (sm) sm.style.width = m + '%';
+    if (sb) sb.style.width = b + '%';
+    if (sx) sx.style.width = x + '%';
+  }
+
+  function syncAllocSlidersToH() {
+    var H = state.hours;
+    if (!H || H <= 0) return;
+    var m = parseInt(document.getElementById('sl-m').value, 10);
+    var slB = document.getElementById('sl-b');
+    var maxB = 100 - m;
+    slB.max = maxB;
+    var b = parseInt(slB.value, 10);
+    if (b > maxB) {
+      b = maxB;
+      slB.value = b;
+    }
+    var x = 100 - m - b;
+    document.getElementById('sl-pct-m').textContent = String(m);
+    document.getElementById('sl-pct-b').textContent = String(b);
+    document.getElementById('sl-pct-x').textContent = String(x);
+    updateStackBarLive(m, b, x);
+    document.getElementById('ct-maint').value = ((H * m) / 100).toFixed(1);
+    document.getElementById('ct-growth').value = ((H * b) / 100).toFixed(1);
+    document.getElementById('ct-unclear').value = ((H * x) / 100).toFixed(1);
+    computeAllocation();
+  }
+
+  function initAllocSliders() {
+    var H = state.hours;
+    if (!H || H <= 0) return;
+    var cm = parseFloat(document.getElementById('ct-maint').value);
+    var cg = parseFloat(document.getElementById('ct-growth').value);
+    var cu = parseFloat(document.getElementById('ct-unclear').value);
+    if (!isNaN(cm) && !isNaN(cg) && !isNaN(cu) && cm + cg + cu > 0.1) {
+      var m = Math.min(100, Math.round((cm / H) * 100));
+      var b = Math.min(100 - m, Math.round((cg / H) * 100));
+      document.getElementById('sl-m').value = m;
+      document.getElementById('sl-b').max = 100 - m;
+      document.getElementById('sl-b').value = b;
+    }
+    syncAllocSlidersToH();
   }
 
   function computePriority() {
@@ -1151,6 +1286,22 @@
   }
 
   function renderSummary() {
+    var H = state.hours;
+    var ca = state.currentAllocation;
+    if (H && ca && ca.time) {
+      var m = Math.round((ca.time.maintenance / H) * 100);
+      var b = Math.round((ca.time.growth / H) * 100);
+      var x = Math.max(0, 100 - m - b);
+      var lm = document.getElementById('lock-seg-m');
+      var lb = document.getElementById('lock-seg-b');
+      var lx = document.getElementById('lock-seg-x');
+      var lab = document.getElementById('lock-alloc-labels');
+      if (lm) lm.style.width = m + '%';
+      if (lb) lb.style.width = b + '%';
+      if (lx) lx.style.width = x + '%';
+      if (lab) lab.textContent = 'Maintain ' + m + '% · Build ' + b + '% · Multiply ' + x + '%';
+    }
+
     var interpEl = document.getElementById('summary-interpret');
     if (interpEl) {
       interpEl.innerHTML = '';
@@ -1282,6 +1433,9 @@
     el.addEventListener('change', computePriority);
   });
   document.getElementById('btn-4').addEventListener('click', next);
+
+  document.getElementById('sl-m').addEventListener('input', syncAllocSlidersToH);
+  document.getElementById('sl-b').addEventListener('input', syncAllocSlidersToH);
 
   var allocIds = ['ct-maint', 'ct-growth', 'ct-unclear', 'dt-maint', 'dt-growth', 'dt-unclear', 'cm-living', 'cm-growth', 'cm-waste', 'dm-living', 'dm-growth', 'dm-waste'];
   allocIds.forEach(function (id) {

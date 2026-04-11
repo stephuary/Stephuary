@@ -217,6 +217,80 @@
       flex-shrink: 0;
     }
 
+    .policy-block label.opt-toggle {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      cursor: pointer;
+      position: relative;
+    }
+    .policy-block label.opt-toggle input {
+      position: absolute;
+      opacity: 0;
+      width: 1px;
+      height: 1px;
+    }
+    .toggle-text { flex: 1; font-size: 13px; color: var(--muted); }
+    .toggle-track {
+      width: 36px;
+      height: 20px;
+      border-radius: 10px;
+      background: rgba(35, 40, 48, 0.95);
+      border: 1px solid var(--line);
+      position: relative;
+      flex-shrink: 0;
+      transition: background 0.2s ease;
+    }
+    .toggle-track::after {
+      content: '';
+      position: absolute;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: var(--dim);
+      top: 2px;
+      left: 2px;
+      transition: transform 0.2s ease, background 0.2s ease;
+    }
+    .policy-block label.opt-toggle:has(input:checked) .toggle-track {
+      background: rgba(55, 75, 55, 0.45);
+    }
+    .policy-block label.opt-toggle:has(input:checked) .toggle-track::after {
+      transform: translateX(16px);
+      background: var(--cream);
+    }
+    .policy-block label.opt-toggle:has(input:checked) .toggle-text { color: var(--cream); }
+
+    .viz-lock-rules {
+      margin: 0 0 18px;
+      padding: 14px;
+      border: 1px solid var(--line-strong);
+      background: rgba(8, 10, 13, 0.55);
+    }
+    .viz-lock-rules .viz-label {
+      font-family: var(--font-mono);
+      font-size: 8px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 12px;
+    }
+    .lock-rule-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--line);
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .lock-rule-row:last-child { border-bottom: none; }
+    .lock-rule-row .toggle-track.on::after { transform: translateX(16px); background: var(--cream); }
+    .lock-rule-row .toggle-track.on { background: rgba(55, 75, 55, 0.45); }
+    .lock-rule-row .toggle-track.off::after { transform: none; }
+
     .field label {
       display: block;
       font-family: var(--font-mono);
@@ -668,6 +742,10 @@ Do not add new ideas.</pre>
       <p class="panel-instruction">Your record below. Read the two interpretation lines first — they say what to fix for money, clients, and execution.</p>
       <div class="summary-card">
         <h3>Your Cognition System</h3>
+        <div class="viz-lock-rules" id="viz-lock-rules" aria-label="Locked rules">
+          <p class="viz-label">Locked · rule panel</p>
+          <div id="viz-lock-rules-inner"></div>
+        </div>
         <div id="summary-interpret"></div>
         <div id="summary-body"></div>
       </div>
@@ -1111,15 +1189,19 @@ Do not add ideas.</pre>
       var wrap = document.getElementById(wrapId);
       opts.forEach(function (o) {
         var lab = document.createElement('label');
-        lab.className = 'opt';
+        lab.className = 'opt opt-toggle';
         var inp = document.createElement('input');
         inp.type = 'checkbox';
         inp.value = o.id;
         var span = document.createElement('span');
+        span.className = 'toggle-text';
         span.textContent = o.label;
+        var track = document.createElement('span');
+        track.className = 'toggle-track';
+        track.setAttribute('aria-hidden', 'true');
         lab.appendChild(inp);
-        lab.appendChild(document.createTextNode(' '));
         lab.appendChild(span);
+        lab.appendChild(track);
         wrap.appendChild(lab);
         inp.addEventListener('change', function () {
           state.approvedUses = [];
@@ -1202,6 +1284,38 @@ Do not add ideas.</pre>
 
   function renderSummary() {
     buildOperatingLayer();
+    var lr = document.getElementById('viz-lock-rules-inner');
+    if (lr) {
+      lr.innerHTML = '';
+      function addRow(label) {
+        var row = document.createElement('div');
+        row.className = 'lock-rule-row';
+        var s = document.createElement('span');
+        s.textContent = label;
+        var t = document.createElement('span');
+        t.className = 'toggle-track on';
+        t.setAttribute('aria-hidden', 'true');
+        row.appendChild(s);
+        row.appendChild(t);
+        lr.appendChild(row);
+      }
+      function addSub(h) {
+        var p = document.createElement('p');
+        p.className = 'summary-section-title';
+        p.style.marginTop = '12px';
+        p.textContent = h;
+        lr.appendChild(p);
+      }
+      if (state.approvedUses && state.approvedUses.length) {
+        addSub('Approved');
+        state.approvedUses.forEach(addRow);
+      }
+      if (state.restrictedUses && state.restrictedUses.length) {
+        addSub('Restricted');
+        state.restrictedUses.forEach(addRow);
+      }
+    }
+
     var interpEl = document.getElementById('summary-interpret');
     if (interpEl) {
       interpEl.innerHTML = '';

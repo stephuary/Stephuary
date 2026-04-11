@@ -289,6 +289,55 @@
     }
     .tier-row input { accent-color: var(--bronze); }
 
+    .stability-rg {
+      display: flex;
+      gap: 4px;
+      margin: 0 0 12px;
+    }
+    .stability-rg button {
+      flex: 1;
+      height: 14px;
+      border: none;
+      cursor: pointer;
+      border-radius: 2px;
+      padding: 0;
+      min-width: 0;
+    }
+    .stability-rg button[data-tier="none"] { background: rgba(110, 45, 45, 0.75); }
+    .stability-rg button[data-tier="started"] { background: rgba(130, 110, 45, 0.75); }
+    .stability-rg button[data-tier="functional"] { background: rgba(45, 95, 65, 0.75); }
+    .stability-rg button.active { box-shadow: 0 0 0 2px rgba(244, 237, 224, 0.28); }
+    .viz-lock-grid {
+      margin: 0 0 18px;
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(8, 7, 6, 0.55);
+    }
+    .viz-lock-grid .viz-label {
+      font-family: var(--font-mono);
+      font-size: 8px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 10px;
+    }
+    .lock-grid-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    @media (min-width: 480px) {
+      .lock-grid-inner { grid-template-columns: repeat(3, 1fr); }
+    }
+    .lock-cell {
+      height: 12px;
+      border-radius: 2px;
+    }
+    .lock-cell.none { background: rgba(110, 45, 45, 0.75); }
+    .lock-cell.started { background: rgba(130, 110, 45, 0.75); }
+    .lock-cell.functional { background: rgba(45, 95, 65, 0.75); }
+
     .action-list {
       list-style: decimal;
       padding-left: 1.25em;
@@ -711,6 +760,10 @@
       <p class="panel-instruction">This is your starting structure — Continuity Stack and next moves.</p>
       <div class="summary-card">
         <h3>Record</h3>
+        <div class="viz-lock-grid" id="viz-lock-stack" aria-label="Locked continuity scores">
+          <p class="viz-label">Locked · stack state</p>
+          <div class="lock-grid-inner" id="lock-grid-cells"></div>
+        </div>
         <div id="summary-interpret"></div>
         <div id="summary-body"></div>
       </div>
@@ -957,6 +1010,15 @@
     });
   }
 
+  function syncStabilityRg(key) {
+    var v = state.domains[key];
+    var rg = document.querySelector('.stability-rg[data-domain="' + key + '"]');
+    if (!rg) return;
+    rg.querySelectorAll('button').forEach(function (b) {
+      b.classList.toggle('active', b.getAttribute('data-tier') === v);
+    });
+  }
+
   function initDomains() {
     var grid = document.getElementById('domain-grid');
     DOMAIN_KEYS.forEach(function (key) {
@@ -965,6 +1027,27 @@
       var h = document.createElement('h4');
       h.textContent = DOMAIN_LABEL[key];
       card.appendChild(h);
+      var rg = document.createElement('div');
+      rg.className = 'stability-rg';
+      rg.setAttribute('data-domain', key);
+      ['none', 'started', 'functional'].forEach(function (tier) {
+        var btn = document.createElement('button');
+        btn.type = 'button';
+        btn.setAttribute('data-tier', tier);
+        btn.setAttribute('aria-label', DOMAIN_LABEL[key] + ' ' + tier);
+        btn.addEventListener('click', function () {
+          var rid = 'dom-' + key + '-' + tier;
+          var radio = document.getElementById(rid);
+          if (radio) {
+            radio.checked = true;
+            state.domains[key] = tier;
+            syncStabilityRg(key);
+            validateDomains();
+          }
+        });
+        rg.appendChild(btn);
+      });
+      card.appendChild(rg);
       var row = document.createElement('div');
       row.className = 'tier-row';
       [
@@ -984,6 +1067,7 @@
         row.appendChild(lab);
         inp.addEventListener('change', function () {
           state.domains[key] = tier.v;
+          syncStabilityRg(key);
           validateDomains();
         });
       });
@@ -1179,6 +1263,19 @@
   }
 
   function renderSummary() {
+    var lockWrap = document.getElementById('lock-grid-cells');
+    if (lockWrap) {
+      lockWrap.innerHTML = '';
+      DOMAIN_KEYS.forEach(function (k) {
+        var d = document.createElement('div');
+        var v = state.domains[k] || 'none';
+        d.className = 'lock-cell ' + v;
+        d.title = DOMAIN_LABEL[k] + ': ' + v;
+        d.setAttribute('aria-label', DOMAIN_LABEL[k] + ' ' + v);
+        lockWrap.appendChild(d);
+      });
+    }
+
     state.finalPlan = {
       situation: state.situation,
       householdType: state.householdType,

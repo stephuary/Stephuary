@@ -333,6 +333,59 @@
       box-shadow: 0 4px 20px rgba(0,0,0,0.2);
     }
 
+    .msg-builder { position: relative; }
+    .msg-builder-panel {
+      border: 1px solid var(--border-soft);
+      border-radius: var(--radius-sm);
+      background: rgba(7, 6, 5, 0.4);
+      padding: 14px;
+      margin-bottom: 12px;
+    }
+    .msg-preview-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 8px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--gold-dim);
+      margin-bottom: 8px;
+    }
+    .msg-preview-body {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.55;
+      white-space: pre-wrap;
+      word-break: break-word;
+      min-height: 72px;
+      margin: 0;
+    }
+    .msg-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      margin-top: 12px;
+    }
+    .msg-builder.msg-sent .msg-preview-body { color: var(--text-muted); }
+    .msg-builder.msg-sent::after {
+      content: 'Sent';
+      font-family: 'DM Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold);
+      display: block;
+      margin-top: 10px;
+    }
+    .btn-mark-sent { margin-top: 0; }
+    .viz-lock-msg {
+      margin: 0 0 18px;
+      padding: 16px;
+      border: 1px solid rgba(154, 130, 96, 0.22);
+      border-radius: var(--radius-sm);
+      background: rgba(7, 6, 5, 0.45);
+    }
+    .viz-lock-msg .msg-preview-body { min-height: 0; }
+
     .summary-card {
       background: linear-gradient(165deg, rgba(26, 22, 18, 0.95) 0%, rgba(12, 10, 9, 0.98) 100%);
       border: 1px solid rgba(154, 130, 96, 0.18);
@@ -605,11 +658,20 @@
       <h2 class="panel-title">Make contact</h2>
       <p class="truth-line">The offer does not exist until someone else can read it in their inbox.</p>
       <p class="panel-instruction">Keep it simple and specific.</p>
-      <div class="field">
-        <label for="msg-body">Message</label>
-        <textarea id="msg-body" class="tall"></textarea>
+      <div class="msg-builder" id="msg-builder">
+        <div class="field">
+          <label for="msg-body">Message</label>
+          <textarea id="msg-body" class="tall"></textarea>
+        </div>
+        <div class="msg-builder-panel">
+          <p class="msg-preview-label">Live preview</p>
+          <pre class="msg-preview-body" id="msg-preview"></pre>
+          <div class="msg-actions">
+            <button type="button" class="btn-continue btn-secondary" id="btn-copy-msg">Copy</button>
+            <button type="button" class="btn-continue btn-secondary btn-mark-sent" id="btn-mark-sent">Mark as sent</button>
+          </div>
+        </div>
       </div>
-      <button type="button" class="btn-continue btn-secondary" id="btn-copy-msg">Copy message</button>
       <p class="translate-line">Translate: This message is the smallest unit of the sale — edit until you would send it to a friend.</p>
       <p class="consequence-line">Consequence: If this continues in your head, your calendar stays empty.</p>
       <div class="diag-tie">
@@ -752,6 +814,10 @@
       <p class="panel-instruction">This is ready to use.</p>
       <div class="summary-card">
         <h3>Summary</h3>
+        <div class="viz-lock-msg" id="viz-lock-msg" aria-label="Locked message">
+          <p class="msg-preview-label">Locked · outbound message</p>
+          <pre class="msg-preview-body" id="msg-locked-preview"></pre>
+        </div>
         <div id="summary-interpret"></div>
         <div id="summary-body"></div>
       </div>
@@ -772,6 +838,7 @@
     targetNames: [],
     selectedTarget: '',
     message: '',
+    messageSent: false,
     followUp: '',
     close: '',
     delivery: '',
@@ -792,7 +859,10 @@
       p.classList.toggle('active', parseInt(p.getAttribute('data-step'), 10) === n);
     });
     setProgress();
-    if (n === 5) prepMessage();
+    if (n === 5) {
+      prepMessage();
+      updateMsgPreview();
+    }
     if (n === 12) syncSendPanel();
     if (n === 14) renderSummary();
   }
@@ -934,6 +1004,7 @@
     var ta = document.getElementById('msg-body');
     if (!ta.value.trim()) ta.value = t;
     computeMessage();
+    updateMsgPreview();
   }
 
   function syncSendPanel() {
@@ -943,8 +1014,15 @@
     }
   }
 
+  function updateMsgPreview() {
+    var raw = document.getElementById('msg-body').value;
+    var pre = document.getElementById('msg-preview');
+    if (pre) pre.textContent = raw || '—';
+  }
+
   function computeMessage() {
     state.message = document.getElementById('msg-body').value.trim();
+    updateMsgPreview();
     document.getElementById('btn-5').disabled = !state.message;
   }
 
@@ -1023,6 +1101,9 @@
   }
 
   function renderSummary() {
+    var lockPre = document.getElementById('msg-locked-preview');
+    if (lockPre) lockPre.textContent = state.message || '—';
+
     var interpEl = document.getElementById('summary-interpret');
     if (interpEl) {
       interpEl.innerHTML = '';
@@ -1152,6 +1233,13 @@
   document.getElementById('msg-body').addEventListener('input', computeMessage);
   document.getElementById('btn-5').addEventListener('click', next);
   document.getElementById('btn-copy-msg').addEventListener('click', copyMsg);
+  document.getElementById('btn-mark-sent').addEventListener('click', function () {
+    state.messageSent = !state.messageSent;
+    var wrap = document.getElementById('msg-builder');
+    if (wrap) wrap.classList.toggle('msg-sent', state.messageSent);
+    var b = document.getElementById('btn-mark-sent');
+    if (b) b.textContent = state.messageSent ? 'Sent (undo)' : 'Mark as sent';
+  });
 
   ['fu-do', 'fu-time', 'fu-get'].forEach(function (id) {
     document.getElementById(id).addEventListener('input', buildFollowUp);
