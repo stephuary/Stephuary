@@ -16,11 +16,11 @@
     5: '/sovereignty'
   };
   var ROOM_PATH = {
-    '01': '/room-01',
-    '02': '/room-02',
-    '03': '/room-03',
-    '04': '/room-04',
-    '05': '/room-05'
+    '01': '/room-01-extraction',
+    '02': '/room-02-direction',
+    '03': '/room-03-transaction',
+    '04': '/room-04-infrastructure',
+    '05': '/room-05-cognition'
   };
 
   function defaultState() {

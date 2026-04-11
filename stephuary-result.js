@@ -179,11 +179,11 @@
   };
 
   var PLAYBOOK_ROOM = {
-    Reset: { room: 1, title: 'Where your time and money are going', path: '/room-01' },
-    Execution: { room: 2, title: 'What to change this week', path: '/room-02' },
-    'Income Architecture': { room: 3, title: 'What you can offer and charge for', path: '/room-03' },
-    Ownership: { room: 4, title: 'Fixing execution and delivery', path: '/room-04' },
-    'AI Control': { room: 5, title: 'Using AI without lowering quality', path: '/room-05' }
+    Reset: { room: 1, title: 'Where your time and money are going', path: '/room-01-extraction' },
+    Execution: { room: 2, title: 'What to change this week', path: '/room-02-direction' },
+    'Income Architecture': { room: 3, title: 'What you can offer and charge for', path: '/room-03-transaction' },
+    Ownership: { room: 4, title: 'Fixing execution and delivery', path: '/room-04-infrastructure' },
+    'AI Control': { room: 5, title: 'Using AI without lowering quality', path: '/room-05-cognition' }
   };
 
   var DIAGNOSTIC_BY_VERSION = {
