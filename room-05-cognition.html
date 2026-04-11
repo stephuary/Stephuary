@@ -547,6 +547,10 @@
         <p class="translate-line">Translate: This shows whether you think before producing work, or outsource your thinking.</p>
         <p class="consequence-line">Consequence: If this continues, you send work you cannot defend in a real conversation.</p>
       </div>
+      <div class="output-block" id="ai-mode-block" style="display:none;">
+        <p class="output-label">Misuse check → assigned mode</p>
+        <p class="output-body" id="ai-mode-text">—</p>
+      </div>
       <div class="diag-tie">
         <h4>This connects to what you saw earlier</h4>
         <p>Rooms 01–04 handled money, direction, deals, and continuity. Here you lock who owns judgment before anything reaches a client or an invoice.</p>
@@ -939,7 +943,8 @@ Do not add ideas.</pre>
     approvedUses: [],
     restrictedUses: [],
     principles: [],
-    operatingLayer: ''
+    operatingLayer: '',
+    aiUsageMode: ''
   };
 
   var currentStep = 0;
@@ -1006,6 +1011,39 @@ Do not add ideas.</pre>
     return 'You cannot evaluate what you are pasting — do not send it as paid or client work.';
   }
 
+  function computeMisuseSignals() {
+    var score = 0;
+    state.currentUse.forEach(function (l) {
+      if (l.indexOf('before I think') !== -1) score += 3;
+      if (l.indexOf('blank-page') !== -1) score += 2;
+      if (l.indexOf('decision-making') !== -1) score += 1;
+    });
+    var tc = parseInt(document.getElementById('tool-count') && document.getElementById('tool-count').value, 10);
+    if (!isNaN(tc) && tc > 5) score += 2;
+    if (!isNaN(tc) && tc > 8) score += 2;
+    return score;
+  }
+
+  function assignAiUsageMode() {
+    var misuse = computeMisuseSignals();
+    var subDrift =
+      state.substitutionRisk &&
+      (state.substitutionRisk.indexOf('before trying') !== -1 ||
+        state.substitutionRisk.indexOf('do not know the domain') !== -1);
+    var mode =
+      misuse >= 6 || subDrift
+        ? 'Recovery mode: notes first, one tool, no AI before your own sentence exists.'
+        : misuse >= 3
+          ? 'Strict mode: verify every claim; no strategy you cannot explain live.'
+          : 'Standard mode: augment after you think; verify before anything client-facing.';
+    state.aiUsageMode = mode;
+    var el = document.getElementById('ai-mode-text');
+    var block = document.getElementById('ai-mode-block');
+    var ou = document.getElementById('out-use');
+    if (el) el.textContent = mode;
+    if (block) block.style.display = ou && ou.style.display === 'block' ? 'block' : 'none';
+  }
+
   function buildOperatingLayer() {
     var texts = state.principles.filter(Boolean);
     if (!texts.length) {
@@ -1039,11 +1077,14 @@ Do not add ideas.</pre>
         if (state.currentUse.length === 0) {
           document.getElementById('out-use').style.display = 'none';
           document.getElementById('btn-1').disabled = true;
+          var amb = document.getElementById('ai-mode-block');
+          if (amb) amb.style.display = 'none';
           return;
         }
         document.getElementById('out-use-text').textContent = summarizeCurrentUse();
         document.getElementById('out-use').style.display = 'block';
         document.getElementById('btn-1').disabled = false;
+        assignAiUsageMode();
       });
     });
   }
@@ -1068,6 +1109,7 @@ Do not add ideas.</pre>
         document.getElementById('out-sub-text').textContent = substitutionReadout(o.tier);
         document.getElementById('out-sub').style.display = 'block';
         document.getElementById('btn-2').disabled = false;
+        assignAiUsageMode();
       });
     });
   }
@@ -1182,6 +1224,7 @@ Do not add ideas.</pre>
     if (follow) follow.style.display = n > 3 ? 'block' : 'none';
     document.getElementById('out-tools').style.display = 'block';
     document.getElementById('btn-6').disabled = false;
+    assignAiUsageMode();
   }
 
   function initRules() {
@@ -1283,6 +1326,7 @@ Do not add ideas.</pre>
   }
 
   function renderSummary() {
+    assignAiUsageMode();
     buildOperatingLayer();
     var lr = document.getElementById('viz-lock-rules-inner');
     if (lr) {
@@ -1343,6 +1387,8 @@ Do not add ideas.</pre>
     }
 
     addSec('Current use pattern', '<p>' + escapeHtml(state.currentUse.join(', ')) + '</p><p style="margin-top:8px;">' + escapeHtml(summarizeCurrentUse()) + '</p>');
+
+    addSec('AI usage mode', '<p>' + escapeHtml(state.aiUsageMode || '—') + '</p>');
 
     var subTier = SUB_OPTS.filter(function (s) { return s.label === state.substitutionRisk; })[0];
     addSec('Augmentation vs substitution', '<p>' + escapeHtml(state.substitutionRisk) + '</p><p style="margin-top:8px;">' + escapeHtml(subTier ? substitutionReadout(subTier.tier) : '—') + '</p>');

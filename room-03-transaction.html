@@ -578,18 +578,24 @@
       </div>
       <h2 class="panel-title">Start with what’s already happening</h2>
       <p class="truth-line">Income starts where demand already exists — not where you wish demand existed.</p>
-      <p class="panel-instruction">List things people have actually asked you for help with.</p>
+      <p class="panel-instruction">Mark what people have already asked. The system builds demand lines — you pick one.</p>
       <p class="example-p">Example: “Can you look at my deck?” beats “I could maybe do marketing.”</p>
       <div class="reveal-fields">
-        <div class="field"><label for="opt-1">Option 1</label><input type="text" id="opt-1" /></div>
-        <div class="field"><label for="opt-2">Option 2</label><input type="text" id="opt-2" /></div>
-        <div class="field"><label for="opt-3">Option 3</label><input type="text" id="opt-3" /></div>
-        <div class="field"><label for="opt-4">Option 4 (optional)</label><input type="text" id="opt-4" placeholder="Optional" /></div>
-        <div class="field"><label for="opt-5">Option 5 (optional)</label><input type="text" id="opt-5" placeholder="Optional" /></div>
+        <p class="subhead" style="margin:0 0 12px;">Prompted recall</p>
+        <div class="pick-list" id="recall-chips" style="display:flex;flex-direction:column;align-items:stretch;">
+          <label class="opt"><input type="checkbox" class="recall-cb" value="deck" /> Review slides / deck / visuals</label>
+          <label class="opt"><input type="checkbox" class="recall-cb" value="writing" /> Writing, editing, or messaging</label>
+          <label class="opt"><input type="checkbox" class="recall-cb" value="ops" /> Systems, ops, or “make this work”</label>
+          <label class="opt"><input type="checkbox" class="recall-cb" value="coach" /> Advice / coaching / “what would you do?”</label>
+          <label class="opt"><input type="checkbox" class="recall-cb" value="intro" /> Introductions or connections</label>
+          <label class="opt"><input type="checkbox" class="recall-cb" value="tech" /> Technical fix or tool setup</label>
+        </div>
         <div class="pick-list" id="pick-options-wrap" style="display:none;">
-          <p class="sub">Pick one</p>
+          <p class="sub">Pick one demand line</p>
           <div id="pick-options-radios"></div>
         </div>
+        <input type="hidden" id="opt-1" /><input type="hidden" id="opt-2" /><input type="hidden" id="opt-3" />
+        <input type="hidden" id="opt-4" /><input type="hidden" id="opt-5" />
       </div>
       <div class="output-block muted" id="out-pick" style="display:none;">
         <p class="output-label">Selection</p>
@@ -604,7 +610,7 @@
     <section class="panel" data-step="2" id="panel-2">
       <h2 class="panel-title">Say it simply</h2>
       <p class="truth-line">One sentence. If you need a paragraph, you do not understand the offer yet.</p>
-      <p class="panel-instruction">Fill this in clearly.</p>
+      <p class="panel-instruction">You can edit — defaults come from the demand line you picked.</p>
       <div class="reveal-fields">
         <div class="field"><label for="in-person">I help [person]</label><input type="text" id="in-person" placeholder="e.g. small teams" /></div>
         <div class="field"><label for="in-problem">with [specific problem]</label><input type="text" id="in-problem" placeholder="e.g. unclear positioning" /></div>
@@ -626,7 +632,13 @@
       <p class="panel-instruction">No ranges. No “it depends.”</p>
       <p class="example-p">Example: “$500” is an answer. “It depends” is not.</p>
       <div class="reveal-fields">
-        <div class="field"><label for="in-price">Price</label><input type="text" id="in-price" placeholder="e.g. $500" inputmode="decimal" /></div>
+        <p class="subhead" style="margin:0 0 10px;">Suggested price (pick one — edits allowed)</p>
+        <div class="pick-list" id="price-tier-wrap" style="display:flex;flex-direction:column;align-items:stretch;">
+          <label class="opt"><input type="radio" name="price-tier" value="$297" /> $297 — tight scope / fast</label>
+          <label class="opt"><input type="radio" name="price-tier" value="$750" /> $750 — standard project</label>
+          <label class="opt"><input type="radio" name="price-tier" value="$1,500" /> $1,500 — deeper engagement</label>
+        </div>
+        <div class="field" style="margin-top:14px;"><label for="in-price">Lock the number</label><input type="text" id="in-price" placeholder="Fills from tier — edit if needed" inputmode="decimal" /></div>
       </div>
       <div class="output-block muted" id="out-price" style="display:none;">
         <p class="output-label">Locked</p>
@@ -866,9 +878,43 @@
       p.classList.toggle('active', parseInt(p.getAttribute('data-step'), 10) === n);
     });
     setProgress();
+    if (n === 2) autoFillOfferFromRecall();
     if (n === 5) {
       prepMessage();
       updateMsgPreview();
+    }
+    if (n === 6) {
+      var fu = document.getElementById('fu-do');
+      if (fu && !fu.value.trim()) {
+        fu.value = 'Deliver: ' + (state.problem || 'the scoped outcome') + ' with clear checkpoints.';
+        document.getElementById('fu-time').value = '3–5 business days';
+        document.getElementById('fu-get').value = 'A finished artifact they can use immediately.';
+        buildFollowUp();
+      }
+    }
+    if (n === 7) {
+      var pay = document.getElementById('in-pay');
+      if (pay && !pay.value.trim()) {
+        pay.value = 'Stripe link or Venmo — send after they confirm scope';
+        computeClose();
+      }
+    }
+    if (n === 8) {
+      var o = document.getElementById('dl-outcome');
+      if (o && !o.value.trim()) {
+        o.value = 'They can act on ' + (state.problem || 'the outcome') + ' without rework.';
+        document.getElementById('dl-format').value = 'PDF + short call';
+        document.getElementById('dl-time').value = 'Inside the agreed window';
+        computeDelivery();
+      }
+    }
+    if (n === 9) {
+      var ln = document.getElementById('loop-next');
+      if (ln && !ln.value.trim()) {
+        ln.value = 'Next warm contact in the same network';
+        document.getElementById('loop-adjust').value = 'Same offer — tighter subject line.';
+        computeLoop();
+      }
     }
     if (n === 12) syncSendPanel();
     if (n === 14) renderSummary();
@@ -887,12 +933,39 @@
       .replace(/"/g, '&quot;');
   }
 
-  function computePickOptions() {
-    var vals = [1, 2, 3, 4, 5].map(function (i) {
-      return document.getElementById('opt-' + i).value.trim();
+  var RECALL_LABELS = {
+    deck: 'slides / deck',
+    writing: 'writing',
+    ops: 'ops / systems',
+    coach: 'advice / coaching',
+    intro: 'introductions',
+    tech: 'technical fixes'
+  };
+
+  function buildDemandLinesFromRecall() {
+    var sel = [];
+    document.querySelectorAll('.recall-cb:checked').forEach(function (c) {
+      sel.push(c.value);
     });
-    var filled = vals.map(function (v, i) { return v ? { i: i, v: v } : null; }).filter(Boolean);
-    state.options = vals.filter(function (v) { return v; });
+    if (sel.length < 2) return [];
+    var L = RECALL_LABELS;
+    var a = L[sel[0]] || sel[0];
+    var b = L[sel[1]] || sel[1];
+    return [
+      'People keep asking for help with ' + a + ' — especially where it touches ' + b + '.',
+      'Repeat: quick fixes on ' + a + ' before deadlines.',
+      'Repeat: ' + b + ' when they are stuck shipping.'
+    ];
+  }
+
+  function computeRecallPicks() {
+    var lines = buildDemandLinesFromRecall();
+    state.options = lines;
+    var i;
+    for (i = 0; i < 5; i++) {
+      var el = document.getElementById('opt-' + (i + 1));
+      if (el) el.value = lines[i] || '';
+    }
     var wrap = document.getElementById('pick-options-wrap');
     var radios = document.getElementById('pick-options-radios');
     radios.innerHTML = '';
@@ -900,13 +973,13 @@
     document.getElementById('out-pick').style.display = 'none';
     document.getElementById('btn-1').disabled = true;
 
-    if (state.options.length < 3) {
+    if (lines.length < 3) {
       wrap.style.display = 'none';
       return;
     }
 
     wrap.style.display = 'block';
-    state.options.forEach(function (text, idx) {
+    lines.forEach(function (text, idx) {
       var id = 'pick-opt-' + idx;
       var lab = document.createElement('label');
       lab.className = 'opt';
@@ -928,6 +1001,16 @@
         document.getElementById('btn-1').disabled = false;
       });
     });
+  }
+
+  function autoFillOfferFromRecall() {
+    var line = state.selectedOption || '';
+    if (!line) return;
+    var ip = document.getElementById('in-person');
+    var prob = document.getElementById('in-problem');
+    if (ip && !ip.value.trim()) ip.value = 'people who already asked you for help';
+    if (prob && !prob.value.trim()) prob.value = line.length > 120 ? line.slice(0, 120) : line;
+    computeDefine();
   }
 
   function computeDefine() {
@@ -1004,9 +1087,10 @@
 
   function prepMessage() {
     var prob = state.problem || '[problem]';
+    var hook = state.selectedOption ? state.selectedOption.split('—')[0].trim() : prob;
     var t =
-      'Hey — I\'ve been helping people with ' + prob + '.\n' +
-      'I think I could help you with your version of this.\n' +
+      'Hey — I\'ve been helping people with ' + hook + '.\n' +
+      'I think I could help you with your version of this (' + prob + ').\n' +
       'Would it be useful if I put something together?';
     var ta = document.getElementById('msg-body');
     if (!ta.value.trim()) ta.value = t;
@@ -1219,10 +1303,17 @@
 
   document.getElementById('btn-begin').addEventListener('click', next);
 
-  [1, 2, 3, 4, 5].forEach(function (i) {
-    document.getElementById('opt-' + i).addEventListener('input', computePickOptions);
+  document.querySelectorAll('.recall-cb').forEach(function (cb) {
+    cb.addEventListener('change', computeRecallPicks);
   });
   document.getElementById('btn-1').addEventListener('click', next);
+
+  document.querySelectorAll('input[name="price-tier"]').forEach(function (el) {
+    el.addEventListener('change', function () {
+      document.getElementById('in-price').value = el.value;
+      computePrice();
+    });
+  });
 
   ['in-person', 'in-problem'].forEach(function (id) {
     document.getElementById(id).addEventListener('input', computeDefine);

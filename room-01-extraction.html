@@ -297,6 +297,17 @@
       color: var(--text-secondary);
     }
 
+    .sys-response {
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border-soft);
+      font-size: 13px;
+      line-height: 1.55;
+      color: var(--text-secondary);
+    }
+    .sys-response .sys-line { margin: 0 0 8px; }
+    .sys-response strong { color: var(--cream); font-weight: 400; }
+
     .pattern-result {
       font-family: 'Cormorant Garamond', serif;
       font-size: clamp(22px, 5vw, 30px);
@@ -1035,47 +1046,35 @@
       <p class="truth-line">You are already losing money, time, or attention. You just haven’t named it.</p>
       <p class="truth-line">Where is your money going every month?</p>
       <p class="truth-line" style="margin-top:-6px;">Where is your time going every day?</p>
-      <p class="panel-instruction">Answer in real numbers — subscriptions, food, delivery, social, impulse, screen hours.</p>
+      <p class="panel-instruction">Pick the pattern that matches your last 30 days. The system estimates numbers — you are not budgeting here.</p>
       <div class="reveal-fields">
-      <div class="field">
-        <label for="in-subs">Subscriptions (per month)</label>
-        <input type="number" id="in-subs" min="0" step="1" inputmode="decimal" />
-      </div>
-      <div class="field">
-        <label for="in-groceries">Groceries (per week)</label>
-        <input type="number" id="in-groceries" min="0" step="1" inputmode="decimal" />
-      </div>
-      <div class="field">
-        <label for="in-delivery">Delivery (per week)</label>
-        <input type="number" id="in-delivery" min="0" step="1" inputmode="decimal" />
-      </div>
-      <div class="field">
-        <label for="in-social">Social spending (per month)</label>
-        <input type="number" id="in-social" min="0" step="1" inputmode="decimal" />
-      </div>
-      <div class="field">
-        <label for="in-impulse">Impulse spending (per month)</label>
-        <input type="number" id="in-impulse" min="0" step="1" inputmode="decimal" />
-      </div>
-      <div class="field">
-        <label for="in-screen">Screen hours (per day)</label>
-        <input type="number" id="in-screen" min="0" step="0.25" inputmode="decimal" />
-      </div>
+        <p class="subhead" style="margin:0 0 12px;">Leak pattern</p>
+        <div class="leak-picks" id="leak-pattern-grid">
+          <label class="opt"><input type="radio" name="leak-pattern" value="autopay" /> Autopay stack — subs, apps, small charges you stopped noticing</label>
+          <label class="opt"><input type="radio" name="leak-pattern" value="convenience" /> Convenience loop — delivery, fees, paying to skip friction</label>
+          <label class="opt"><input type="radio" name="leak-pattern" value="social_impulse" /> Social + impulse — nights out, yes to plans, quick buys</label>
+          <label class="opt"><input type="radio" name="leak-pattern" value="screen" /> Screen-heavy days — scroll and task-switch burn hours</label>
+          <label class="opt"><input type="radio" name="leak-pattern" value="spread" /> Spread thin — a little everywhere, no line defended</label>
+          <label class="opt"><input type="radio" name="leak-pattern" value="tight" /> Tight run — leaks exist but are smaller</label>
+        </div>
       </div>
       <div class="output-block output-block--reveal" id="reveal-output">
         <p class="output-label">What this costs</p>
-        <p class="panel-instruction" style="margin-bottom:16px;font-size:14px;">Estimate how much this costs you monthly — the fields above already total it.</p>
+        <p class="panel-instruction" style="margin-bottom:16px;font-size:14px;">Estimated from your pattern — totals update the rest of this room.</p>
         <p class="output-big" id="out-yearly">—</p>
         <p class="reveal-per-year">per year (run rate)</p>
         <div class="output-row output-row--secondary"><span>Money lost (monthly)</span><span id="out-monthly">—</span></div>
         <div class="output-row output-row--secondary"><span>Time lost (hours/week, screen)</span><span id="out-hours-week">—</span></div>
         <div class="output-row output-row--secondary"><span>Five years (money)</span><span id="out-five">—</span></div>
         <div class="output-row output-row--secondary"><span>Days lost / year (screen)</span><span id="out-days">—</span></div>
+        <div class="output-row output-row--secondary"><span>Estimated loss range</span><span id="out-loss-range">—</span></div>
+        <p class="translate-line" id="out-waste-sources" style="margin-top:8px;">—</p>
         <p class="example-p">Example: You are losing: $200/month · 10+ hours/week (screen)</p>
         <p class="reveal-micro">Money lost and time lost — together.</p>
         <p class="translate-line">This shows what you are spending without deciding.</p>
         <p class="consequence-line">If this continues, nothing accumulates.</p>
         <p class="consequence-line" style="margin-top:10px;">This is what you are trading for nothing.</p>
+        <div id="sys-response-reveal" class="sys-response" style="display:none;"></div>
         <div class="leak-meter-wrap" id="leak-meter-wrap" style="display:none;">
           <p class="leak-meter-label">Leak meter</p>
           <div class="leak-meter" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="leak-meter-bar">
@@ -1148,6 +1147,7 @@
         <p class="output-label">Your pattern</p>
         <p id="out-pattern" class="pattern-result">—</p>
         <p id="pattern-interp" class="pattern-interp" aria-live="polite"></p>
+        <div id="sys-response-pattern" class="sys-response" style="display:none;"></div>
       </div>
       <div class="diag-tie">
         <h4>This connects to what you saw earlier</h4>
@@ -1162,31 +1162,19 @@
     <section class="panel" data-step="5" id="panel-4">
       <h2 class="panel-title">Social cost</h2>
       <p class="truth-line">One night out is more than the receipt — it’s ride, food, prep, recovery.</p>
-      <p class="panel-instruction">Break one night into every dollar and hour.</p>
+      <p class="panel-instruction">Pick a spend band for a typical night — the system splits venue, ride, food, prep, recovery.</p>
       <p class="example-p">Example: Venue + ride + drinks + looking “right” + next-day recovery — that is four costs, not one dinner.</p>
-      <div class="field">
-        <label for="in-venue">Venue or outing</label>
-        <input type="number" id="in-venue" min="0" step="1" inputmode="decimal" />
-      </div>
-      <div class="field">
-        <label for="in-transport">Transportation</label>
-        <input type="number" id="in-transport" min="0" step="1" inputmode="decimal" />
-      </div>
-      <div class="field">
-        <label for="in-food">Food / drink</label>
-        <input type="number" id="in-food" min="0" step="1" inputmode="decimal" />
-      </div>
-      <div class="field">
-        <label for="in-appearance">Appearance / prep</label>
-        <input type="number" id="in-appearance" min="0" step="1" inputmode="decimal" />
-      </div>
-      <div class="field">
-        <label for="in-recovery">Recovery time (hours)</label>
-        <input type="number" id="in-recovery" min="0" step="0.25" inputmode="decimal" />
-      </div>
-      <div class="field">
-        <label for="in-nights">Outings per month</label>
-        <input type="number" id="in-nights" min="0" step="1" inputmode="decimal" />
+      <div class="reveal-fields">
+        <p class="subhead" style="margin:0 0 12px;">One night out (total band)</p>
+        <div class="leak-picks" id="night-band-grid">
+          <label class="opt"><input type="radio" name="night-band" value="low" /> Low — ~$75–$120 / night</label>
+          <label class="opt"><input type="radio" name="night-band" value="mid" /> Medium — ~$150–$260 / night</label>
+          <label class="opt"><input type="radio" name="night-band" value="high" /> Heavy — ~$320–$480 / night</label>
+        </div>
+        <div class="field" style="margin-top:14px;">
+          <label for="in-nights">Outings per month</label>
+          <input type="number" id="in-nights" min="0" step="1" inputmode="decimal" placeholder="e.g. 4" />
+        </div>
       </div>
       <div class="output-block output-block--cost" id="social-output">
         <p class="output-label">Cost breakdown</p>
@@ -1197,6 +1185,7 @@
         <p class="output-foot output-foot--tight">Cash + time you don’t get back.</p>
         <p class="translate-line">The outing is money plus recovery hours — not one line on the receipt.</p>
         <p class="consequence-line">If you don’t count it, you keep paying twice.</p>
+        <div id="sys-response-social" class="sys-response" style="display:none;"></div>
       </div>
       <button type="button" class="btn-continue" id="btn-3" disabled>Continue</button>
     </section>
@@ -1215,6 +1204,7 @@
         <label class="opt"><input type="radio" name="driver" value="Preemption" /> Preemption</label>
       </div>
       <div class="interp" id="driver-interp"></div>
+      <div id="sys-response-driver" class="sys-response" style="display:none;"></div>
       <p class="translate-line">This names what you buy when you spend — connection, relief, status, or avoidance.</p>
       <p class="consequence-line">If you don’t name it, you keep paying the same bill with different receipts.</p>
       <div class="diag-tie">
@@ -1255,6 +1245,7 @@
         <p class="shift-foot">This is what you get back if you actually cut.</p>
         <p class="translate-line">You are choosing a smaller monthly leak on purpose.</p>
         <p class="consequence-line">At zero shift, your first number stays your life.</p>
+        <div id="sys-response-shift" class="sys-response" style="display:none;"></div>
       </div>
       <button type="button" class="btn-continue" id="btn-6">Continue</button>
     </section>
@@ -1271,6 +1262,7 @@
         <p class="output-foot boundary-foot">These only work if you keep them.</p>
         <p class="translate-line">You block trigger moments — not “try harder.”</p>
         <p class="consequence-line">With zero boundaries, the same leaks fire the same hours.</p>
+        <div id="sys-response-boundary" class="sys-response" style="display:none;"></div>
       </div>
       <button type="button" class="btn-continue" id="btn-7" disabled>Continue</button>
     </section>
@@ -1384,7 +1376,83 @@
     _socialOutingTotal: 0,
     _socialMonthlyTotal: 0,
     _socialYearlyTotal: 0,
-    _socialYearlyRecoveryHours: 0
+    _socialYearlyRecoveryHours: 0,
+    leakPatternKey: ''
+  };
+
+  var LEAK_PATTERN_DEFS = {
+    autopay: {
+      subs: 160, g: 95, d: 75, soc: 110, imp: 95, screen: 2.25,
+      lossRange: '$240–$620/mo',
+      wasteSources: 'Likely sources: unused subscriptions, in-app renewals, trial fallout.',
+      sys: {
+        means: 'Money leaves on autopilot while your attention stays elsewhere.',
+        why: 'Small charges compound because nothing forces a monthly review.',
+        continues: 'You pay for tools and content you do not use.',
+        fix: 'Cancel one subscription today. List the rest on paper.'
+      }
+    },
+    convenience: {
+      subs: 80, g: 110, d: 140, soc: 140, imp: 120, screen: 2.5,
+      lossRange: '$320–$780/mo',
+      wasteSources: 'Likely sources: delivery fees, rush fees, paying to skip friction.',
+      sys: {
+        means: 'You are buying speed and escape from small daily friction.',
+        why: 'Fees stack because each choice feels small at the moment.',
+        continues: 'The monthly total quietly rivals a real bill.',
+        fix: 'Batch errands one day. Delete one delivery app.'
+      }
+    },
+    social_impulse: {
+      subs: 60, g: 90, d: 60, soc: 220, imp: 180, screen: 2,
+      lossRange: '$380–$920/mo',
+      wasteSources: 'Likely sources: nights out, unplanned buys, saying yes without a number.',
+      sys: {
+        means: 'Social pressure and impulse share one wallet.',
+        why: 'You pay to belong, escape, or keep up in the moment.',
+        continues: 'The leak shows up as “fun,” not as a line item.',
+        fix: 'Set a cash cap before you leave. One “no” per week.'
+      }
+    },
+    screen: {
+      subs: 90, g: 85, d: 65, soc: 100, imp: 70, screen: 4.5,
+      lossRange: '$280–$520/mo',
+      wasteSources: 'Likely sources: feeds, context switching, late-night scroll.',
+      sys: {
+        means: 'Hours leave first; money follows through fatigue spending.',
+        why: 'Screens fill gaps you do not name as time.',
+        continues: 'You trade sleep and focus for cheap stimulation.',
+        fix: 'Phone out of bedroom. One app deleted tonight.'
+      }
+    },
+    spread: {
+      subs: 110, g: 100, d: 95, soc: 130, imp: 110, screen: 3,
+      lossRange: '$260–$680/mo',
+      wasteSources: 'Likely sources: a little overspending in every category.',
+      sys: {
+        means: 'No category looks guilty, so none get cut.',
+        why: 'Diffuse spending avoids one clear decision.',
+        continues: 'You stay busy managing leaks instead of removing one.',
+        fix: 'Pick one category. Cut 15% there only.'
+      }
+    },
+    tight: {
+      subs: 45, g: 80, d: 55, soc: 70, imp: 45, screen: 1.75,
+      lossRange: '$90–$240/mo',
+      wasteSources: 'Likely sources: small habits still unchecked.',
+      sys: {
+        means: 'You are not bleeding — but drift still costs you.',
+        why: 'Even small leaks steal compounding room.',
+        continues: 'Comfort with “fine” blocks the next upgrade.',
+        fix: 'Remove one recurring line anyway. Proof you can cut.'
+      }
+    }
+  };
+
+  var NIGHT_BANDS = {
+    low: { venue: 35, transport: 15, food: 40, app: 18, rec: 2 },
+    mid: { venue: 75, transport: 25, food: 85, app: 35, rec: 4 },
+    high: { venue: 140, transport: 45, food: 160, app: 70, rec: 6 }
   };
 
   var PATTERN_NAMES = [
@@ -1404,6 +1472,39 @@
     Relief: 'You are paying to escape how you feel.',
     Reciprocity: 'You are spending to stay even.',
     Preemption: 'You are paying to avoid discomfort before it happens.'
+  };
+
+  var DRIVER_SYS = {
+    Belonging: {
+      means: 'Spend is buying connection — not the item on the receipt.',
+      why: 'Loneliness and FOMI read as “normal” social cost.',
+      continues: 'You say yes until the account says no.',
+      fix: 'One cheap hangout this week. Name it as enough.'
+    },
+    Status: {
+      means: 'Spend is signaling — you are buying how you look, not what you need.',
+      why: 'Perception tax feels mandatory in public moments.',
+      continues: 'You chase optics until cash is thin.',
+      fix: 'Remove one appearance line next outing.'
+    },
+    Relief: {
+      means: 'Spend is sedation — quick relief, delayed bill.',
+      why: 'Stress routes to the fastest fix available.',
+      continues: 'Relief spend scales with pressure.',
+      fix: 'Before you buy: 10-minute walk or shower. Then decide.'
+    },
+    Reciprocity: {
+      means: 'Spend is keeping score — you pay to stay even.',
+      why: 'Guilt and obligation do not negotiate.',
+      continues: 'You fund other people’s convenience.',
+      fix: 'One clear “no” or a smaller reciprocal move.'
+    },
+    Preemption: {
+      means: 'Spend is buying certainty before you need it.',
+      why: 'Anxiety shops early.',
+      continues: 'You stockpile comfort you never fully use.',
+      fix: 'Delay one preemptive purchase 48 hours.'
+    }
   };
 
   var PATTERN_INTERP = {
@@ -1482,6 +1583,26 @@
     return (Math.round(n * Math.pow(10, d || 0)) / Math.pow(10, d || 0)).toLocaleString();
   }
 
+  function escapeHtml(s) {
+    if (s == null) return '';
+    return String(s)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  function fillSysResponse(elId, o) {
+    var el = document.getElementById(elId);
+    if (!el || !o) return;
+    el.innerHTML =
+      '<p class="sys-line"><strong>This means:</strong> ' + escapeHtml(o.means) + '</p>' +
+      '<p class="sys-line"><strong>This is why:</strong> ' + escapeHtml(o.why) + '</p>' +
+      '<p class="sys-line"><strong>If this continues:</strong> ' + escapeHtml(o.continues) + '</p>' +
+      '<p class="sys-line"><strong>Fix:</strong> ' + escapeHtml(o.fix) + '</p>';
+    el.style.display = 'block';
+  }
+
   function weeklyToMonthly(w) { return w * (52 / 12); }
 
   function countLeakCbs() {
@@ -1514,20 +1635,25 @@
   }
 
   function computeReveal() {
-    var subs = parseFloat(document.getElementById('in-subs').value);
-    var g = parseFloat(document.getElementById('in-groceries').value);
-    var d = parseFloat(document.getElementById('in-delivery').value);
-    var soc = parseFloat(document.getElementById('in-social').value);
-    var imp = parseFloat(document.getElementById('in-impulse').value);
-    var scr = parseFloat(document.getElementById('in-screen').value);
-
-    var vals = [subs, g, d, soc, imp, scr];
-    var allOk = vals.every(function (v) { return !isNaN(v) && v >= 0; });
-
-    if (!allOk) {
+    var picked = document.querySelector('input[name="leak-pattern"]:checked');
+    if (!picked) {
       document.getElementById('btn-1').disabled = true;
       return;
     }
+    var key = picked.value;
+    var def = LEAK_PATTERN_DEFS[key];
+    if (!def) {
+      document.getElementById('btn-1').disabled = true;
+      return;
+    }
+    state.leakPatternKey = key;
+
+    var subs = def.subs;
+    var g = def.g;
+    var d = def.d;
+    var soc = def.soc;
+    var imp = def.imp;
+    var scr = def.screen;
 
     state.subscriptions = subs;
     state.groceries = g;
@@ -1557,6 +1683,12 @@
     document.getElementById('out-days').textContent = fmtNum(state.daysLost, 1) + ' d';
     var elHw = document.getElementById('out-hours-week');
     if (elHw) elHw.textContent = fmtNum(scr * 7, 1) + ' h';
+    var lr = document.getElementById('out-loss-range');
+    if (lr) lr.textContent = def.lossRange;
+    var ws = document.getElementById('out-waste-sources');
+    if (ws) ws.textContent = def.wasteSources;
+
+    fillSysResponse('sys-response-reveal', def.sys);
 
     document.getElementById('btn-1').disabled = false;
     updateLeakMeter();
@@ -1583,24 +1715,33 @@
       interpEl.textContent = PATTERN_INTERP[state.pattern] || '';
       interpEl.classList.add('visible');
     }
+    var pi = PATTERN_INTERP[state.pattern] || 'Your pairs show where ease beats control.';
+    fillSysResponse('sys-response-pattern', {
+      means: pi,
+      why: 'Stress makes you grab the first lever — scroll, order, impulse.',
+      continues: 'The chain stays invisible until you name the sequence.',
+      fix: 'Change one pair only this week — cook once, or wait before impulse.'
+    });
     document.getElementById('btn-2').disabled = false;
   }
 
   function computeSocial() {
-    var venue = parseFloat(document.getElementById('in-venue').value);
-    var tr = parseFloat(document.getElementById('in-transport').value);
-    var food = parseFloat(document.getElementById('in-food').value);
-    var app = parseFloat(document.getElementById('in-appearance').value);
-    var rec = parseFloat(document.getElementById('in-recovery').value);
+    var bandEl = document.querySelector('input[name="night-band"]:checked');
     var nights = parseFloat(document.getElementById('in-nights').value);
-
-    var vals = [venue, tr, food, app, rec, nights];
-    var ok = vals.every(function (v) { return !isNaN(v) && v >= 0; });
-
-    if (!ok) {
+    if (!bandEl || isNaN(nights) || nights < 0) {
       document.getElementById('btn-3').disabled = true;
       return;
     }
+    var B = NIGHT_BANDS[bandEl.value];
+    if (!B) {
+      document.getElementById('btn-3').disabled = true;
+      return;
+    }
+    var venue = B.venue;
+    var tr = B.transport;
+    var food = B.food;
+    var app = B.app;
+    var rec = B.rec;
 
     state._socialOutingTotal = venue + tr + food + app;
     state.socialNightCost = state._socialOutingTotal;
@@ -1613,6 +1754,13 @@
     document.getElementById('out-soc-month').textContent = fmtMoney(state._socialMonthlyTotal);
     document.getElementById('out-soc-year').textContent = fmtMoney(state._socialYearlyTotal);
     document.getElementById('out-recovery-y').textContent = fmtNum(state._socialYearlyRecoveryHours, 1) + ' h';
+
+    fillSysResponse('sys-response-social', {
+      means: 'One “night out” is several costs plus recovery — not one receipt.',
+      why: 'You underestimate because you only remember the fun line item.',
+      continues: 'Monthly outings multiply what felt like exceptions.',
+      fix: 'Cut one outing next month or downgrade the band once.'
+    });
 
     document.getElementById('btn-3').disabled = false;
   }
@@ -1628,6 +1776,7 @@
     state.driver = r.value;
     interp.textContent = DRIVER_TEXT[state.driver] || '';
     interp.classList.add('visible');
+    fillSysResponse('sys-response-driver', DRIVER_SYS[state.driver] || DRIVER_SYS.Belonging);
     document.getElementById('btn-4').disabled = false;
   }
 
@@ -1678,6 +1827,12 @@
     if (elB) elB.textContent = fmtMoney(state.yearlySpend);
     document.getElementById('out-new-yearly').textContent = fmtMoney(state._newYearlyAfterShift);
     document.getElementById('out-recovered').textContent = fmtMoney(state.recoveredAmount);
+    fillSysResponse('sys-response-shift', {
+      means: 'You are locking a new yearly run rate — not hoping harder.',
+      why: 'Cuts work when they hit named categories, not motivation.',
+      continues: 'At zero shift, the first room’s number stays your life.',
+      fix: 'Hit remove or -20% on your worst line before you leave this screen.'
+    });
   }
 
   function renderShift() {
@@ -1748,9 +1903,17 @@
     if (state.selectedBoundaries.length) {
       out.style.display = 'block';
       txt.textContent = state.selectedBoundaries.join('. ') + '.';
+      fillSysResponse('sys-response-boundary', {
+        means: 'You named tripwires before willpower is gone.',
+        why: 'Triggers are seconds-long; rules beat mood.',
+        continues: 'Without them, the same apps and spends win.',
+        fix: 'Put one rule on your lock screen tonight.'
+      });
     } else {
       out.style.display = 'none';
       txt.textContent = '';
+      var sb = document.getElementById('sys-response-boundary');
+      if (sb) sb.style.display = 'none';
     }
     document.getElementById('btn-7').disabled = state.selectedBoundaries.length === 0;
   }
@@ -1784,7 +1947,7 @@
     lines.push(
       'You are losing ' +
         fmtMoney(state.yearlySpend) +
-        ' per year on what you entered — cash and screen time that is not building anything.'
+        ' per year at this pattern’s run rate — cash and screen time that is not building anything.'
     );
     if (/Passive|Drift|Instant|Convenience/i.test(state.pattern || '')) {
       lines.push(
@@ -1993,8 +2156,8 @@
     cb.addEventListener('change', updateLeakMeter);
   });
 
-  ['in-subs', 'in-groceries', 'in-delivery', 'in-social', 'in-impulse', 'in-screen'].forEach(function (id) {
-    document.getElementById(id).addEventListener('input', computeReveal);
+  document.querySelectorAll('input[name="leak-pattern"]').forEach(function (el) {
+    el.addEventListener('change', computeReveal);
   });
 
   document.getElementById('btn-1').addEventListener('click', next);
@@ -2006,9 +2169,10 @@
   });
   document.getElementById('btn-2').addEventListener('click', next);
 
-  ['in-venue', 'in-transport', 'in-food', 'in-appearance', 'in-recovery', 'in-nights'].forEach(function (id) {
-    document.getElementById(id).addEventListener('input', computeSocial);
+  document.querySelectorAll('input[name="night-band"]').forEach(function (el) {
+    el.addEventListener('change', computeSocial);
   });
+  document.getElementById('in-nights').addEventListener('input', computeSocial);
   document.getElementById('btn-3').addEventListener('click', next);
 
   document.querySelectorAll('input[name="driver"]').forEach(function (el) {

@@ -688,6 +688,17 @@
     }
     a.btn-continue { text-decoration: none; display: inline-flex; box-sizing: border-box; }
 
+    .sys-response {
+      margin-top: 14px;
+      padding-top: 14px;
+      border-top: 1px solid var(--border-soft);
+      font-size: 13px;
+      line-height: 1.55;
+      color: var(--text-secondary);
+    }
+    .sys-response .sys-line { margin: 0 0 8px; }
+    .sys-response strong { color: var(--cream); font-weight: 400; }
+
     @media (min-width: 600px) {
       .panel { max-width: 520px; padding-left: 32px; padding-right: 32px; }
       .panel--entry { max-width: 440px; }
@@ -743,7 +754,22 @@
     <section class="panel" data-step="2" id="panel-2">
       <h2 class="panel-title">Where it is going now</h2>
       <p class="reveal-micro" style="margin-top:0;border-top:0;padding-top:0;">You are already allocating your time and money. The problem is that you may be doing it without deciding.</p>
-      <p class="panel-instruction">Set each group to 100%. Sliders lock the split.</p>
+      <p class="panel-instruction">Pick a mode first — then adjust sliders if needed. Each group stays at 100%.</p>
+      <div class="reveal-fields" style="margin-bottom:12px;">
+        <p class="subhead" style="margin-top:0;">Allocation mode</p>
+        <div class="value-grid" id="alloc-mode-grid" style="flex-direction:column;align-items:stretch;">
+          <label class="opt"><input type="radio" name="alloc-mode" value="survival" /> Survival — heavy maintain, little build</label>
+          <label class="opt"><input type="radio" name="alloc-mode" value="build" /> Build-forward — more build, protected maintain</label>
+          <label class="opt"><input type="radio" name="alloc-mode" value="leverage" /> Leverage — meaningful multiply + build</label>
+          <label class="opt"><input type="radio" name="alloc-mode" value="balanced" /> Balanced — even split across all three</label>
+          <label class="opt"><input type="radio" name="alloc-mode" value="cut" /> Cut waste — shift off maintain into build</label>
+        </div>
+      </div>
+      <div class="diag-tie" id="alloc-diagnosis" style="display:none;">
+        <h4>System diagnosis</h4>
+        <p id="alloc-diagnosis-text" style="margin:0;font-size:14px;line-height:1.55;color:var(--text-secondary);">—</p>
+      </div>
+      <div id="sys-response-alloc" class="sys-response" style="display:none;"></div>
       <div class="alloc-sliders-wrap" id="alloc-sliders-wrap">
         <p class="subhead">Time — maintain / build / multiply (= 100%)</p>
         <div class="slider-row">
@@ -783,7 +809,7 @@
         <p class="translate-line" style="margin-top:0;">This shows what your current system is feeding.</p>
         <p class="consequence-line">If maintain takes everything, nothing grows. If waste stays untouched, nothing changes.</p>
       </div>
-      <button type="button" class="btn-continue" id="btn-2">Continue</button>
+      <button type="button" class="btn-continue" id="btn-2" disabled>Continue</button>
     </section>
 
     <!-- 3 Priority -->
@@ -1094,6 +1120,74 @@ Reduce anything that is not building or multiplying.</pre>
     return '$' + Math.round(n).toLocaleString();
   }
 
+  function escapeHtml(s) {
+    if (s == null) return '';
+    return String(s)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  function fillSysResponse(elId, o) {
+    var el = document.getElementById(elId);
+    if (!el || !o) return;
+    el.innerHTML =
+      '<p class="sys-line"><strong>This means:</strong> ' + escapeHtml(o.means) + '</p>' +
+      '<p class="sys-line"><strong>This is why:</strong> ' + escapeHtml(o.why) + '</p>' +
+      '<p class="sys-line"><strong>If this continues:</strong> ' + escapeHtml(o.continues) + '</p>' +
+      '<p class="sys-line"><strong>Fix:</strong> ' + escapeHtml(o.fix) + '</p>';
+    el.style.display = 'block';
+  }
+
+  var ALLOC_MODES = {
+    survival: { tm: 65, tb: 25, mm: 62, mb: 28 },
+    build: { tm: 40, tb: 45, mm: 42, mb: 43 },
+    leverage: { tm: 32, tb: 38, mm: 35, mb: 38 },
+    balanced: { tm: 34, tb: 33, mm: 34, mb: 33 },
+    cut: { tm: 48, tb: 40, mm: 38, mb: 45 }
+  };
+
+  function applyAllocMode(key) {
+    var M = ALLOC_MODES[key];
+    if (!M) return;
+    document.getElementById('sl-m').value = M.tm;
+    document.getElementById('sl-b').max = 100 - M.tm;
+    document.getElementById('sl-b').value = M.tb;
+    document.getElementById('money-sl-m').value = M.mm;
+    document.getElementById('money-sl-b').max = 100 - M.mm;
+    document.getElementById('money-sl-b').value = M.mb;
+    syncTimeSliders();
+    syncMoneySliders();
+    document.getElementById('btn-2').disabled = false;
+  }
+
+  function maybeRunAllocDiagnosis() {
+    if (document.querySelector('input[name="alloc-mode"]:checked')) runAllocDiagnosis();
+  }
+
+  function runAllocDiagnosis() {
+    var tc = state.timeCur;
+    var mc = state.moneyCur;
+    var t = document.getElementById('alloc-diagnosis-text');
+    var wrap = document.getElementById('alloc-diagnosis');
+    if (!t || !wrap) return;
+    wrap.style.display = 'block';
+    var msg = '';
+    if (tc.m >= 55 && tc.b < 28) msg = 'Time is mostly maintain — growth is starved unless you steal hours back.';
+    else if (tc.b >= 40) msg = 'Build is getting real weight — protect it on the calendar or it gets eaten.';
+    else if (tc.x >= 32) msg = 'Multiply has leverage on paper — it only pays if build is already real.';
+    else if (mc.m >= 55) msg = 'Money is parked in maintain — you are buying safety, not progress.';
+    else msg = 'Split is workable — the failure mode is drift, not math.';
+    t.textContent = msg;
+    fillSysResponse('sys-response-alloc', {
+      means: 'These percentages describe who gets fed when you are tired.',
+      why: 'Defaults favor maintain and comfort unless you force build.',
+      continues: 'Nothing compounds if build and multiply stay starved.',
+      fix: 'Lock one non-negotiable block for build this week.'
+    });
+  }
+
   function computeResources() {
     var inc = parseFloat(document.getElementById('in-income').value);
     var hrs = parseFloat(document.getElementById('in-hours').value);
@@ -1147,6 +1241,7 @@ Reduce anything that is not building or multiplying.</pre>
     document.getElementById('sl-pct-x').textContent = String(x);
     updateStackBar('time', m, b, x);
     state.timeCur = { m: m, b: b, x: x };
+    maybeRunAllocDiagnosis();
   }
 
   function syncMoneySliders() {
@@ -1165,6 +1260,7 @@ Reduce anything that is not building or multiplying.</pre>
     document.getElementById('money-sl-pct-x').textContent = String(x);
     updateStackBar('money', m, b, x);
     state.moneyCur = { m: m, b: b, x: x };
+    maybeRunAllocDiagnosis();
   }
 
   function syncRevTimeSliders() {
@@ -1502,6 +1598,11 @@ Reduce anything that is not building or multiplying.</pre>
   });
   document.getElementById('btn-1').addEventListener('click', next);
 
+  document.querySelectorAll('input[name="alloc-mode"]').forEach(function (el) {
+    el.addEventListener('change', function () {
+      applyAllocMode(el.value);
+    });
+  });
   document.getElementById('sl-m').addEventListener('input', syncTimeSliders);
   document.getElementById('sl-b').addEventListener('input', syncTimeSliders);
   document.getElementById('money-sl-m').addEventListener('input', syncMoneySliders);
