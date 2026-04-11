@@ -879,6 +879,7 @@
     </section>
   </div>
 
+  <script src="/stephuary-os.js"></script>
   <script>
 (function () {
   var state = {
@@ -1029,6 +1030,16 @@
     }
     if (n === 12) syncSendPanel();
     if (n === 14) renderSummary();
+    syncStephuaryOS();
+  }
+
+  function syncStephuaryOS() {
+    if (!window.StephuaryOS) return;
+    window.StephuaryOS.record('03', {
+      step: currentStep,
+      totalSteps: totalSteps,
+      messageCommitted: !!(state.messageCopied || state.messageSent)
+    });
   }
 
   function next() {
@@ -1255,6 +1266,7 @@
   function updateSendGate() {
     var ok = !!(state.message && (state.messageCopied || state.messageSent));
     document.getElementById('btn-5').disabled = !ok;
+    syncStephuaryOS();
   }
 
   function computeMessage() {
