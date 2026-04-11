@@ -1943,7 +1943,16 @@
   function buildResultCardPlainText() {
     var h = loadRoomHandoffs();
     var monthly = h.r01 && typeof h.r01.monthlyLeak === 'number' ? h.r01.monthlyLeak : null;
-    var wasteLine = monthly != null ? formatUsd(monthly) + '/month' : '—';
+    var recY =
+      h.r01 && typeof h.r01.recoveredYearly === 'number' && h.r01.recoveredYearly > 0
+        ? h.r01.recoveredYearly
+        : null;
+    var wasteLine =
+      monthly != null
+        ? formatUsd(monthly) + '/month in waste' + (recY != null ? ' · ' + formatUsd(recY) + '/yr recovered (modeled)' : '')
+        : recY != null
+          ? formatUsd(recY) + '/yr recovered (modeled)'
+          : '—';
     var r02 = h.r02;
     var hrs =
       r02 && typeof r02.timeRedirectHrsPerWeek === 'number'
@@ -1958,7 +1967,7 @@
     lines.push('Your system result');
     lines.push('');
     lines.push('You just:');
-    lines.push('- identified ' + wasteLine + ' in waste');
+    lines.push('- identified ' + wasteLine);
     lines.push('- redirected ' + hrs + ' hours/week');
     lines.push('- created a ' + priceStr + ' offer');
     lines.push('- ' + (sent ? 'sent your first message' : 'first message not marked sent yet'));
@@ -1978,10 +1987,23 @@
     if (!card) return;
     var h = loadRoomHandoffs();
     var monthly = h.r01 && typeof h.r01.monthlyLeak === 'number' ? h.r01.monthlyLeak : null;
-    var wasteSpan =
+    var recY =
+      h.r01 && typeof h.r01.recoveredYearly === 'number' && h.r01.recoveredYearly > 0
+        ? h.r01.recoveredYearly
+        : null;
+    var wasteInner =
       monthly != null
-        ? '<span class="result-card-num">' + escapeHtml(formatUsd(monthly)) + '</span>'
-        : '<span class="result-card-num">—</span>';
+        ? '<span class="result-card-num">' +
+            escapeHtml(formatUsd(monthly)) +
+            '</span>/month in waste' +
+            (recY != null
+              ? ' · <span class="result-card-num">' +
+                  escapeHtml(formatUsd(recY)) +
+                  '</span>/yr recovered (modeled)'
+              : '')
+        : recY != null
+          ? '<span class="result-card-num">' + escapeHtml(formatUsd(recY)) + '</span>/yr recovered (modeled)'
+          : '<span class="result-card-num">—</span>';
     var r02 = h.r02;
     var hrs =
       r02 && typeof r02.timeRedirectHrsPerWeek === 'number'
@@ -1998,7 +2020,7 @@
     if (!ulYou || !ulRep) return;
 
     ulYou.innerHTML =
-      '<li>identified ' + wasteSpan + '/month in waste</li>' +
+      '<li>identified ' + wasteInner + '</li>' +
       '<li>redirected <span class="result-card-num">' +
         escapeHtml(hrs) +
         '</span> hours/week</li>' +
