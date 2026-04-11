@@ -1630,6 +1630,10 @@ Reduce anything that is not building or multiplying.</pre>
   }
 
   function saveHandoff() {
+    var rm = { hrsPerWk: 0, moneyMo: 0 };
+    try {
+      rm = computeRedirectMetrics();
+    } catch (err) {}
     var payload = {
       version: 1,
       priority: state.priority,
@@ -1640,7 +1644,9 @@ Reduce anything that is not building or multiplying.</pre>
       timeBlockedHours: state.blockHours,
       moneyShift: state.moneyShiftLine,
       systemChoice: state.systemChoice,
-      starterLine: buildStarterLine()
+      starterLine: buildStarterLine(),
+      timeRedirectHrsPerWeek: rm.hrsPerWk,
+      moneyRedirectMonthly: rm.moneyMo
     };
     try {
       localStorage.setItem(HANDOFF_KEY, JSON.stringify(payload));
@@ -1773,6 +1779,7 @@ Reduce anything that is not building or multiplying.</pre>
         '<p>Money redirected per month (into build): ' + fmtMoney(rm.moneyMo) + '</p>' +
         '<p style="margin-top:12px;">If this holds (4 weeks): ' + rm.fourWkH.toFixed(1) + ' h · ' + fmtMoney(rm.fourWkMoney) + '</p>';
     }
+    saveHandoff();
   }
 
   function buildSummaryPlainText() {

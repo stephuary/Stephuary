@@ -468,6 +468,86 @@
       border-top: 1px solid var(--gold-line);
     }
 
+    .result-card {
+      margin: 0 0 28px;
+      padding: 28px 22px 24px;
+      border: 1px solid rgba(154, 130, 96, 0.2);
+      border-radius: var(--radius);
+      background: rgba(7, 6, 5, 0.5);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+    }
+    .result-card-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-size: clamp(20px, 4.5vw, 26px);
+      color: var(--cream);
+      letter-spacing: -0.02em;
+      margin: 0 0 16px;
+      line-height: 1.15;
+    }
+    .result-card-lede {
+      font-size: 14px;
+      color: var(--text-muted);
+      margin: 0 0 12px;
+      line-height: 1.5;
+    }
+    .result-card-list {
+      margin: 0;
+      padding: 0 0 0 1.15em;
+      font-size: 14px;
+      line-height: 1.65;
+      color: var(--text-secondary);
+    }
+    .result-card-list li { margin-bottom: 8px; }
+    .result-card-num {
+      display: inline;
+      color: var(--cream);
+      font-weight: 400;
+    }
+    .result-card--blur .result-card-num {
+      filter: blur(5px);
+      user-select: none;
+    }
+    .result-card-section-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 8px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--gold-dim);
+      margin: 18px 0 10px;
+    }
+    .result-card-toolbar {
+      margin: 16px 0 12px;
+    }
+    .result-card-toggle {
+      font-family: 'DM Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      user-select: none;
+    }
+    .result-card-toggle input {
+      accent-color: var(--bronze);
+      width: 14px;
+      height: 14px;
+    }
+    .result-card .btn-continue { margin-top: 10px; }
+    .result-card-footer {
+      font-family: 'DM Mono', monospace;
+      font-size: 8px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--text-label);
+      margin: 18px 0 0;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+    }
+
     .truth-line {
       font-size: 14px;
       color: var(--text-secondary);
@@ -968,6 +1048,24 @@
         <div id="summary-interpret"></div>
         <div id="summary-body"></div>
       </div>
+
+      <div class="result-card" id="result-card">
+        <h3 class="result-card-title">Your system result</h3>
+        <p class="result-card-lede">You just:</p>
+        <ul class="result-card-list" id="result-card-list-you"></ul>
+        <p class="result-card-section-label">If repeated</p>
+        <ul class="result-card-list" id="result-card-list-repeat"></ul>
+        <p class="translate-line" style="margin-top: 14px;">Most people don’t send the message.</p>
+        <div class="result-card-toolbar">
+          <label class="result-card-toggle"
+            ><input type="checkbox" id="result-card-blur" /> Blur numbers</label
+          >
+        </div>
+        <button type="button" class="btn-continue" id="btn-result-copy">Copy summary</button>
+        <button type="button" class="btn-continue btn-secondary" id="btn-result-share">Share</button>
+        <p class="result-card-footer">Built inside Stephuary</p>
+      </div>
+
       <button type="button" class="btn-continue" id="btn-copy">Copy full system</button>
       <button type="button" class="btn-continue btn-secondary" id="btn-restart">Restart</button>
       <p class="final-line">Revenue is sent messages — not smarter ideas.</p>
@@ -1828,6 +1926,121 @@
     ];
   }
 
+  function loadRoomHandoffs() {
+    var r01 = null;
+    var r02 = null;
+    try {
+      var a = localStorage.getItem('stephuary_room01_handoff');
+      if (a) r01 = JSON.parse(a);
+    } catch (e) {}
+    try {
+      var b = localStorage.getItem('stephuary_room02_handoff');
+      if (b) r02 = JSON.parse(b);
+    } catch (e) {}
+    return { r01: r01, r02: r02 };
+  }
+
+  function buildResultCardPlainText() {
+    var h = loadRoomHandoffs();
+    var monthly = h.r01 && typeof h.r01.monthlyLeak === 'number' ? h.r01.monthlyLeak : null;
+    var wasteLine = monthly != null ? formatUsd(monthly) + '/month' : '—';
+    var r02 = h.r02;
+    var hrs =
+      r02 && typeof r02.timeRedirectHrsPerWeek === 'number'
+        ? r02.timeRedirectHrsPerWeek.toFixed(1)
+        : '—';
+    var priceStr = (state.price || '').trim() || '—';
+    var pv = parsePriceNum(state.price);
+    if (!pv) pv = parsePriceNum(SCENARIOS[state.scenarioKey] && SCENARIOS[state.scenarioKey].price);
+    var sent = state.messageSent === true;
+    var moPot = pv * (52 / 12);
+    var lines = [];
+    lines.push('Your system result');
+    lines.push('');
+    lines.push('You just:');
+    lines.push('- identified ' + wasteLine + ' in waste');
+    lines.push('- redirected ' + hrs + ' hours/week');
+    lines.push('- created a ' + priceStr + ' offer');
+    lines.push('- ' + (sent ? 'sent your first message' : 'first message not marked sent yet'));
+    lines.push('');
+    lines.push('If repeated:');
+    lines.push('- ' + formatUsd(moPot) + '/mo potential (weekly cadence at stated price)');
+    lines.push('- 1–2 likely responses (at 5 sends) · 2–4 (at 10 sends)');
+    lines.push('');
+    lines.push('Most people don’t send the message.');
+    lines.push('');
+    lines.push('Built inside Stephuary');
+    return lines.join('\n');
+  }
+
+  function renderResultCard() {
+    var card = document.getElementById('result-card');
+    if (!card) return;
+    var h = loadRoomHandoffs();
+    var monthly = h.r01 && typeof h.r01.monthlyLeak === 'number' ? h.r01.monthlyLeak : null;
+    var wasteSpan =
+      monthly != null
+        ? '<span class="result-card-num">' + escapeHtml(formatUsd(monthly)) + '</span>'
+        : '<span class="result-card-num">—</span>';
+    var r02 = h.r02;
+    var hrs =
+      r02 && typeof r02.timeRedirectHrsPerWeek === 'number'
+        ? r02.timeRedirectHrsPerWeek.toFixed(1)
+        : '—';
+    var priceStr = (state.price || '').trim() || '—';
+    var pv = parsePriceNum(state.price);
+    if (!pv) pv = parsePriceNum(SCENARIOS[state.scenarioKey] && SCENARIOS[state.scenarioKey].price);
+    var sent = state.messageSent === true;
+    var moPot = pv * (52 / 12);
+
+    var ulYou = document.getElementById('result-card-list-you');
+    var ulRep = document.getElementById('result-card-list-repeat');
+    if (!ulYou || !ulRep) return;
+
+    ulYou.innerHTML =
+      '<li>identified ' + wasteSpan + '/month in waste</li>' +
+      '<li>redirected <span class="result-card-num">' +
+        escapeHtml(hrs) +
+        '</span> hours/week</li>' +
+      '<li>created a <span class="result-card-num">' +
+        escapeHtml(priceStr) +
+        '</span> offer</li>' +
+      '<li>' +
+        (sent ? 'sent your first message' : 'first message not marked sent yet') +
+      '</li>';
+
+    ulRep.innerHTML =
+      '<li><span class="result-card-num">' +
+        escapeHtml(formatUsd(moPot)) +
+        '</span>/mo potential (weekly cadence at stated price)</li>' +
+      '<li><span class="result-card-num">1–2</span> likely responses (at 5 sends) · <span class="result-card-num">2–4</span> (at 10 sends)</li>';
+  }
+
+  function copyResultCard() {
+    copyToClipboard(buildResultCardPlainText(), function () {
+      var b = document.getElementById('btn-result-copy');
+      if (!b) return;
+      var o = b.textContent;
+      b.textContent = 'Copied ✓';
+      setTimeout(function () {
+        b.textContent = o;
+      }, 2000);
+    });
+  }
+
+  function shareResultCard() {
+    var t = buildResultCardPlainText();
+    if (navigator.share) {
+      navigator
+        .share({ title: 'Your system result', text: t })
+        .catch(function () {
+          copyResultCard();
+        });
+    } else {
+      copyResultCard();
+    }
+  }
+
   function renderSummary() {
     var lockPre = document.getElementById('msg-locked-preview');
     if (lockPre) lockPre.textContent = state.message || '—';
@@ -1907,6 +2120,7 @@
     addSec('Close', state.close);
     addSec('Delivery', state.delivery);
     addSec('Next loop', state.nextLoop);
+    renderResultCard();
   }
 
   function buildSummaryPlainText() {
@@ -2110,6 +2324,16 @@
   document.getElementById('btn-esc-03').addEventListener('click', next);
 
   document.getElementById('btn-copy').addEventListener('click', copySummary);
+
+  var blurCb = document.getElementById('result-card-blur');
+  if (blurCb) {
+    blurCb.addEventListener('change', function () {
+      var rc = document.getElementById('result-card');
+      if (rc) rc.classList.toggle('result-card--blur', blurCb.checked);
+    });
+  }
+  document.getElementById('btn-result-copy').addEventListener('click', copyResultCard);
+  document.getElementById('btn-result-share').addEventListener('click', shareResultCard);
   document.getElementById('btn-restart').addEventListener('click', function () {
     location.reload();
   });
