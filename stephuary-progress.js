@@ -16,11 +16,11 @@
     5: '/sovereignty'
   };
   var ROOM_PATH = {
-    '01': '/capture',
-    '02': '/monetize',
-    '03': '/structure',
-    '04': '/automation',
-    '05': '/sovereignty'
+    '01': '/room-01',
+    '02': '/room-02',
+    '03': '/room-03',
+    '04': '/room-04',
+    '05': '/room-05'
   };
 
   function defaultState() {

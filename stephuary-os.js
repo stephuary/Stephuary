@@ -6,11 +6,11 @@
   var KEY = 'stephuary_os_v1';
 
   var META = {
-    '01': { path: '/capture', title: 'Capture', statuses: ['exposed', 'reducing', 'controlled'] },
-    '02': { path: '/monetize', title: 'Monetize', statuses: ['scattered', 'shifting', 'locked'] },
-    '03': { path: '/structure', title: 'Structure', statuses: ['unsent', 'active', 'closed'] },
-    '04': { path: '/automation', title: 'Automation', statuses: ['fragile', 'stabilizing', 'durable'] },
-    '05': { path: '/sovereignty', title: 'Sovereignty', statuses: ['reactive', 'uneven', 'controlled'] }
+    '01': { path: '/room-01', title: 'Room 1 · Extraction', statuses: ['exposed', 'reducing', 'controlled'] },
+    '02': { path: '/room-02', title: 'Room 2 · Direction', statuses: ['scattered', 'shifting', 'locked'] },
+    '03': { path: '/room-03', title: 'Room 3 · Transaction', statuses: ['unsent', 'active', 'closed'] },
+    '04': { path: '/room-04', title: 'Room 4 · Infrastructure', statuses: ['fragile', 'stabilizing', 'durable'] },
+    '05': { path: '/room-05', title: 'Room 5 · Cognition', statuses: ['reactive', 'uneven', 'controlled'] }
   };
 
   var ORDER = ['01', '02', '03', '04', '05'];
