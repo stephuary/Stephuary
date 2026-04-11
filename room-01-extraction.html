@@ -1127,6 +1127,11 @@
         <label class="opt"><input type="checkbox" class="leak-cb" value="convenience" /> Convenience spending</label>
         <label class="opt"><input type="checkbox" class="leak-cb" value="lowvalue" /> Low-value time</label>
         <label class="opt"><input type="checkbox" class="leak-cb" value="apps" /> Apps / habits without purpose</label>
+        <label class="opt"><input type="checkbox" class="leak-cb" value="other" id="leak-cb-other" /> Other — I’ll enter it</label>
+      </div>
+      <div class="field" id="leak-other-wrap" style="display:none;">
+        <label for="leak-other-text">What’s leaking (one line)</label>
+        <input type="text" id="leak-other-text" placeholder="e.g. client gifts, sports fees" />
       </div>
       <div class="choice-stack">
       <div class="choice-row">
@@ -1178,6 +1183,11 @@
           <label class="opt"><input type="radio" name="night-band" value="low" /> Low — ~$75–$120 / night</label>
           <label class="opt"><input type="radio" name="night-band" value="mid" /> Medium — ~$150–$260 / night</label>
           <label class="opt"><input type="radio" name="night-band" value="high" /> Heavy — ~$320–$480 / night</label>
+          <label class="opt"><input type="radio" name="night-band" value="other" /> Other — I’ll enter total per outing</label>
+        </div>
+        <div class="field" id="night-other-wrap" style="display:none;margin-top:12px;">
+          <label for="in-night-custom">Total per outing ($)</label>
+          <input type="number" id="in-night-custom" min="0" step="1" placeholder="e.g. 200" inputmode="decimal" />
         </div>
         <div class="field" style="margin-top:14px;">
           <label for="in-nights">Outings per month</label>
@@ -1210,6 +1220,11 @@
         <label class="opt"><input type="radio" name="driver" value="Relief" /> Relief</label>
         <label class="opt"><input type="radio" name="driver" value="Reciprocity" /> Reciprocity</label>
         <label class="opt"><input type="radio" name="driver" value="Preemption" /> Preemption</label>
+        <label class="opt"><input type="radio" name="driver" value="__other__" /> Other — I’ll enter it</label>
+      </div>
+      <div class="field" id="driver-other-wrap" style="display:none;margin-top:12px;">
+        <label for="driver-other-text">What you’re buying (one line)</label>
+        <input type="text" id="driver-other-text" placeholder="e.g. keeping up with peers" />
       </div>
       <div class="interp" id="driver-interp"></div>
       <div id="sys-response-driver" class="sys-response" style="display:none;"></div>
@@ -1222,21 +1237,30 @@
       <button type="button" class="btn-continue" id="btn-4" disabled>Continue</button>
     </section>
 
-    <!-- 7 Replace -->
+    <!-- 7 Where this goes -->
     <section class="panel" data-step="7" id="panel-6">
-      <h2 class="panel-title">Replace</h2>
-      <p class="truth-line">Use the time or money you just freed for something that moves you forward.</p>
-      <p class="panel-instruction">You don’t only stop — you swap.<br />Pick what actually fits.</p>
-      <p class="panel-instruction alt-line">Keep it simple or it won’t stick.</p>
-      <div id="alt-container"></div>
-      <div class="field">
-        <label for="alt-note">Your notes (optional)</label>
-        <textarea id="alt-note" placeholder="What you'll actually try"></textarea>
+      <h2 class="panel-title">Where this goes now</h2>
+      <p class="truth-line">At this run rate, here’s what you can redirect — not back into the same leak.</p>
+      <div class="output-block muted" id="freed-block">
+        <p class="output-label">You just freed (run rate on the table)</p>
+        <div class="output-row"><span>Money</span><span id="out-freed-money">—</span></div>
+        <div class="output-row"><span>Time</span><span id="out-freed-time">—</span></div>
       </div>
-      <p class="translate-line">You swap in a cheaper way to get the same job done — or you snap back.</p>
-      <p class="consequence-line">No swap, no stick. The leak returns on the first hard day.</p>
+      <p class="panel-instruction">Pick ONE place it goes:</p>
+      <div class="leak-picks" id="where-goes-grid">
+        <label class="opt"><input type="radio" name="where-goes" value="income" /> Toward income — build or sell something paid</label>
+        <label class="opt"><input type="radio" name="where-goes" value="pressure" /> Toward reducing pressure — remove a recurring cost</label>
+        <label class="opt"><input type="radio" name="where-goes" value="time" /> Toward buying time — pay to remove a task</label>
+        <label class="opt"><input type="radio" name="where-goes" value="bottleneck" /> Toward fixing a bottleneck — what slows paid work</label>
+        <label class="opt"><input type="radio" name="where-goes" value="other" /> Other — I’ll enter it</label>
+      </div>
+      <div class="field" id="where-goes-other-wrap" style="display:none;">
+        <label for="where-goes-other">Where (one line)</label>
+        <input type="text" id="where-goes-other" placeholder="e.g. tax prep, childcare block" />
+      </div>
+      <p class="consequence-line" style="margin-top:14px;">This only works if the freed resource moves immediately.</p>
       <div id="sys-response-replace" class="sys-response" style="display:none;"></div>
-      <button type="button" class="btn-continue" id="btn-5">Continue</button>
+      <button type="button" class="btn-continue" id="btn-5" disabled>Continue</button>
     </section>
 
     <!-- 8 Shift -->
@@ -1382,7 +1406,9 @@
     reductions: {},
     selectedBoundaries: [],
     eliminationChoices: {},
-    alternatives: {},
+    whereGoes: '',
+    whereGoesOther: '',
+    driverOtherText: '',
     _categoryMonthly: {},
     _newYearlyAfterShift: 0,
     _socialOutingTotal: 0,
@@ -1571,36 +1597,36 @@
     Preemption: 'You are paying to avoid discomfort before it happens.'
   };
 
-  var DRIVER_SYS = {
+  var DRIVER_DEC = {
     Belonging: {
       means: 'Spend is buying connection — not the item on the receipt.',
-      why: 'Loneliness and FOMI read as “normal” social cost.',
-      continues: 'You say yes until the account says no.',
-      fix: 'One cheap hangout this week. Name it as enough.'
+      losing: 'Same monthly run rate — social + impulse lines above.',
+      driving: 'FOMO routes to “yes” before you check the number.',
+      doThis: 'This week: one hangout under $30, cash in hand — or skip once.'
     },
     Status: {
-      means: 'Spend is signaling — you are buying how you look, not what you need.',
-      why: 'Perception tax feels mandatory in public moments.',
-      continues: 'You chase optics until cash is thin.',
-      fix: 'Remove one appearance line next outing.'
+      means: 'Spend is signaling — you’re buying perception, not utility.',
+      losing: 'Same run rate — appearance and optics tax the same wallet.',
+      driving: 'Public moments feel mandatory to look “right.”',
+      doThis: 'Next outing: remove one appearance line from the budget.'
     },
     Relief: {
       means: 'Spend is sedation — quick relief, delayed bill.',
-      why: 'Stress routes to the fastest fix available.',
-      continues: 'Relief spend scales with pressure.',
-      fix: 'Before you buy: 10-minute walk or shower. Then decide.'
+      losing: 'Same run rate — relief spend scales when stress spikes.',
+      driving: 'Stress hits the fastest payment path first.',
+      doThis: 'Before you pay: type the dollar amount in Notes — wait 10 minutes — then pay or don’t.'
     },
     Reciprocity: {
       means: 'Spend is keeping score — you pay to stay even.',
-      why: 'Guilt and obligation do not negotiate.',
-      continues: 'You fund other people’s convenience.',
-      fix: 'One clear “no” or a smaller reciprocal move.'
+      losing: 'Same run rate — obligation spends stack quietly.',
+      driving: 'Guilt negotiates before your budget does.',
+      doThis: 'This week: one clear “no” or one smaller reciprocal move — pick one.'
     },
     Preemption: {
       means: 'Spend is buying certainty before you need it.',
-      why: 'Anxiety shops early.',
-      continues: 'You stockpile comfort you never fully use.',
-      fix: 'Delay one preemptive purchase 48 hours.'
+      losing: 'Same run rate — early buys to avoid discomfort.',
+      driving: 'Anxiety shops before the real need shows up.',
+      doThis: 'Delay one preemptive purchase 48 hours — calendar it.'
     }
   };
 
@@ -1615,13 +1641,6 @@
     'Mixed Pattern': 'Your behavior changes depending on context.'
   };
 
-  var ALT_BY_DRIVER = {
-    Belonging: ['Small gatherings', 'One-on-one calls', 'Shared meals at home'],
-    Status: ['Skill depth', 'Quiet wins', 'Private progress'],
-    Relief: ['Movement', 'Cooking at home', 'Cold water / breath'],
-    Reciprocity: ['Clear yes/no', 'Smaller favors', 'Scheduled give'],
-    Preemption: ['Batch decisions', 'Environment shifts', 'Novelty in place']
-  };
 
   var BOUNDARIES = [
     'No phone first 30 minutes after waking',
@@ -1658,7 +1677,7 @@
       p.classList.toggle('active', parseInt(p.getAttribute('data-step'), 10) === n);
     });
     setProgress();
-    if (n === 7) renderAlternatives();
+    if (n === 7) initWhereGoes();
     if (n === 8) renderShift();
     if (n === 9) renderBoundaries();
     if (n === 10) renderElimination();
@@ -1692,14 +1711,14 @@
       .replace(/"/g, '&quot;');
   }
 
-  function fillSysResponse(elId, o) {
+  function fillDecisionOutput(elId, d) {
     var el = document.getElementById(elId);
-    if (!el || !o) return;
+    if (!el || !d) return;
     el.innerHTML =
-      '<p class="sys-line"><strong>What’s true:</strong> ' + escapeHtml(o.means) + '</p>' +
-      '<p class="sys-line"><strong>Why:</strong> ' + escapeHtml(o.why) + '</p>' +
-      '<p class="sys-line"><strong>If you ignore it:</strong> ' + escapeHtml(o.continues) + '</p>' +
-      '<p class="sys-line"><strong>Next:</strong> ' + escapeHtml(o.fix) + '</p>';
+      '<p class="sys-line decision-out"><strong>This means:</strong> ' + escapeHtml(d.means) + '</p>' +
+      '<p class="sys-line decision-out"><strong>You\'re likely losing:</strong> ' + escapeHtml(d.losing) + '</p>' +
+      '<p class="sys-line decision-out"><strong>What\'s actually driving it:</strong> ' + escapeHtml(d.driving) + '</p>' +
+      '<p class="sys-line decision-out"><strong>Do this:</strong> ' + escapeHtml(d.doThis) + '</p>';
     el.style.display = 'block';
   }
 
@@ -1830,19 +1849,26 @@
     }
 
     var baseSys = LEAK_PATTERN_DEFS[strongK].sys;
+    var losingLine =
+      fmtMoney(state.monthlySpend) +
+      '/mo cash · ~' +
+      fmtNum(hwLow, 0) +
+      '–' +
+      fmtNum(hwHigh, 0) +
+      ' h/wk screen';
     var sysOut = {
       means:
         keys.length > 1
-          ? 'More than one leak is running — money and time are leaving through different holes.'
+          ? 'More than one leak is running — money and time are leaving at once.'
           : baseSys.means,
-      why:
+      losing: losingLine,
+      driving:
         keys.length > 1
-          ? 'Each line you checked adds a different drain; one story rarely covers all of it.'
-          : baseSys.why,
-      continues: baseSys.continues,
-      fix: 'Cut one repeating money leak and one repeating time leak today.'
+          ? 'Stacked pulls — money and screen leave before you total them.'
+          : baseSys.why + ' · ' + baseSys.continues,
+      doThis: 'Today: cancel one subscription you already forgot about.'
     };
-    fillSysResponse('sys-response-reveal', sysOut);
+    fillDecisionOutput('sys-response-reveal', sysOut);
 
     document.getElementById('btn-1').disabled = false;
     updateLeakMeter();
@@ -1871,18 +1897,34 @@
     if (fr) fr.style.display = 'block';
   }
 
+  function gatePanel3() {
+    var a = document.querySelector('input[name="p0"]:checked');
+    var b = document.querySelector('input[name="p1"]:checked');
+    var c = document.querySelector('input[name="p2"]:checked');
+    var patternOk = !!(a && b && c);
+    var n = 0;
+    document.querySelectorAll('.leak-cb:checked').forEach(function () { n++; });
+    var otherEl = document.getElementById('leak-cb-other');
+    var otherOn = otherEl && otherEl.checked;
+    var ot = document.getElementById('leak-other-text');
+    var otherOk = !otherOn || (ot && ot.value.trim());
+    var leakOk = n > 0 && otherOk;
+    var btn = document.getElementById('btn-2');
+    if (btn) btn.disabled = !(patternOk && leakOk);
+  }
+
   function computePattern() {
     var a = document.querySelector('input[name="p0"]:checked');
     var b = document.querySelector('input[name="p1"]:checked');
     var c = document.querySelector('input[name="p2"]:checked');
     var interpEl = document.getElementById('pattern-interp');
     if (!a || !b || !c) {
-      document.getElementById('btn-2').disabled = true;
       document.getElementById('out-pattern').textContent = '—';
       if (interpEl) {
         interpEl.textContent = '';
         interpEl.classList.remove('visible');
       }
+      gatePanel3();
       return;
     }
     var idx = parseInt(a.value, 10) * 4 + parseInt(b.value, 10) * 2 + parseInt(c.value, 10);
@@ -1893,50 +1935,69 @@
       interpEl.classList.add('visible');
     }
     var pi = PATTERN_INTERP[state.pattern] || 'Your pairs show where ease beats control.';
-    fillSysResponse('sys-response-pattern', {
+    fillDecisionOutput('sys-response-pattern', {
       means: pi,
-      why: 'Stress makes you grab the first lever — scroll, order, impulse.',
-      continues: 'The chain stays invisible until you name the sequence.',
-      fix: 'Break the chain at one pair tonight — the first move you already named.'
+      losing: 'Same run rates as step 1 — scroll, order, and impulse stack.',
+      driving: 'Stress grabs scroll → order → impulse before you notice the chain.',
+      doThis: 'Tonight: change the first move in one pair you already named.'
     });
-    document.getElementById('btn-2').disabled = false;
+    gatePanel3();
   }
 
   function computeSocial() {
     var bandEl = document.querySelector('input[name="night-band"]:checked');
+    var now = document.getElementById('night-other-wrap');
     var nights = parseFloat(document.getElementById('in-nights').value);
     if (!bandEl || isNaN(nights) || nights < 0) {
       document.getElementById('btn-3').disabled = true;
       return;
     }
-    var B = NIGHT_BANDS[bandEl.value];
-    if (!B) {
-      document.getElementById('btn-3').disabled = true;
-      return;
+    if (bandEl.value === 'other') {
+      if (now) now.style.display = 'block';
+      var cust = parseFloat(document.getElementById('in-night-custom').value);
+      if (isNaN(cust) || cust <= 0) {
+        document.getElementById('btn-3').disabled = true;
+        return;
+      }
+      state._socialOutingTotal = cust;
+      state.socialNightCost = cust;
+      state.socialRecoveryHours = 3;
+    } else {
+      if (now) now.style.display = 'none';
+      var B = NIGHT_BANDS[bandEl.value];
+      if (!B) {
+        document.getElementById('btn-3').disabled = true;
+        return;
+      }
+      var venue = B.venue;
+      var tr = B.transport;
+      var food = B.food;
+      var app = B.app;
+      var rec = B.rec;
+      state._socialOutingTotal = venue + tr + food + app;
+      state.socialNightCost = state._socialOutingTotal;
+      state.socialRecoveryHours = rec;
     }
-    var venue = B.venue;
-    var tr = B.transport;
-    var food = B.food;
-    var app = B.app;
-    var rec = B.rec;
 
-    state._socialOutingTotal = venue + tr + food + app;
-    state.socialNightCost = state._socialOutingTotal;
-    state.socialRecoveryHours = rec;
     state._socialMonthlyTotal = state._socialOutingTotal * nights;
     state._socialYearlyTotal = state._socialMonthlyTotal * 12;
-    state._socialYearlyRecoveryHours = rec * nights * 12;
+    state._socialYearlyRecoveryHours = state.socialRecoveryHours * nights * 12;
 
     document.getElementById('out-outing').textContent = fmtMoney(state._socialOutingTotal);
     document.getElementById('out-soc-month').textContent = fmtMoney(state._socialMonthlyTotal);
     document.getElementById('out-soc-year').textContent = fmtMoney(state._socialYearlyTotal);
     document.getElementById('out-recovery-y').textContent = fmtNum(state._socialYearlyRecoveryHours, 1) + ' h';
 
-    fillSysResponse('sys-response-social', {
-      means: 'One “night out” is several costs plus recovery — not one receipt.',
-      why: 'You underestimate because you only remember the fun line item.',
-      continues: 'Monthly outings multiply what felt like exceptions.',
-      fix: 'Downgrade one band on the very next outing you already planned.'
+    fillDecisionOutput('sys-response-social', {
+      means:
+        'You’re spending ' + fmtMoney(state._socialMonthlyTotal) + '/mo on this social line alone.',
+      losing:
+        fmtMoney(state._socialMonthlyTotal) +
+        '/mo · ' +
+        fmtMoney(state._socialYearlyTotal) +
+        '/yr if nothing changes.',
+      driving: 'Venue + ride + food + prep + recovery — not one receipt.',
+      doThis: 'This month: cut one outing or drop one band — or the number stays.'
     });
 
     document.getElementById('btn-3').disabled = false;
@@ -1945,67 +2006,103 @@
   function computeDriver() {
     var r = document.querySelector('input[name="driver"]:checked');
     var interp = document.getElementById('driver-interp');
+    var ow = document.getElementById('driver-other-wrap');
+    var oi = document.getElementById('driver-other-text');
     if (!r) {
       document.getElementById('btn-4').disabled = true;
-      interp.classList.remove('visible');
+      if (interp) interp.classList.remove('visible');
+      if (ow) ow.style.display = 'none';
       return;
     }
+    if (r.value === '__other__') {
+      if (ow) ow.style.display = 'block';
+      state.driver = '__other__';
+      state.driverOtherText = oi ? oi.value.trim() : '';
+      if (interp) {
+        interp.textContent = state.driverOtherText ? 'Driver: ' + state.driverOtherText : '';
+        interp.classList.toggle('visible', !!state.driverOtherText);
+      }
+      if (!state.driverOtherText) {
+        document.getElementById('btn-4').disabled = true;
+        var sd0 = document.getElementById('sys-response-driver');
+        if (sd0) sd0.style.display = 'none';
+        return;
+      }
+      fillDecisionOutput('sys-response-driver', {
+        means: 'You named what the spend buys — off the short list.',
+        losing: fmtMoney(state.monthlySpend) + '/mo at this run rate until that driver is handled.',
+        driving: state.driverOtherText,
+        doThis: 'Next payment: ask if it matches this line — if not, don’t pay.'
+      });
+      document.getElementById('btn-4').disabled = false;
+      return;
+    }
+    if (ow) ow.style.display = 'none';
     state.driver = r.value;
-    interp.textContent = DRIVER_TEXT[state.driver] || '';
-    interp.classList.add('visible');
-    fillSysResponse('sys-response-driver', DRIVER_SYS[state.driver] || DRIVER_SYS.Belonging);
+    state.driverOtherText = '';
+    if (interp) {
+      interp.textContent = DRIVER_TEXT[state.driver] || '';
+      interp.classList.add('visible');
+    }
+    fillDecisionOutput('sys-response-driver', DRIVER_DEC[state.driver] || DRIVER_DEC.Belonging);
     document.getElementById('btn-4').disabled = false;
   }
 
-  function renderAlternatives() {
-    var container = document.getElementById('alt-container');
-    var list = ALT_BY_DRIVER[state.driver] || [];
-    var html = '<div class="alt-module"><div class="alt-picks">';
-    list.forEach(function (item, i) {
-      html += '<label><input type="checkbox" name="altpick" value="' + item.replace(/"/g, '&quot;') + '" /> ' + item + '</label>';
-    });
-    html += '</div></div>';
-    container.innerHTML = html;
-    container.querySelectorAll('input[name="altpick"]').forEach(function (inp) {
-      inp.addEventListener('change', updateReplaceSys);
-    });
-    var noteEl = document.getElementById('alt-note');
-    if (noteEl) {
-      noteEl.removeEventListener('input', updateReplaceSys);
-      noteEl.addEventListener('input', updateReplaceSys);
-    }
-    updateReplaceSys();
+  function initWhereGoes() {
+    var fm = document.getElementById('out-freed-money');
+    var ft = document.getElementById('out-freed-time');
+    if (fm) fm.textContent = fmtMoney(state.monthlySpend) + '/mo (redirect target)';
+    if (ft) ft.textContent = fmtNum((state.screenHours || 0) * 7, 1) + ' h/wk screen (redirect target)';
+    updateWhereGoes();
   }
 
-  function updateReplaceSys() {
-    syncAlternatives();
-    var picks = state.alternatives.picks;
-    var note = state.alternatives.note;
-    var el = document.getElementById('sys-response-replace');
-    if (!el) return;
-    if (picks.length === 0 && !note) {
-      el.style.display = 'none';
+  function updateWhereGoes() {
+    var r = document.querySelector('input[name="where-goes"]:checked');
+    var wrap = document.getElementById('where-goes-other-wrap');
+    var oi = document.getElementById('where-goes-other');
+    if (r && r.value === 'other') {
+      if (wrap) wrap.style.display = 'block';
+    } else if (wrap) wrap.style.display = 'none';
+    if (!r) {
+      document.getElementById('btn-5').disabled = true;
+      var sr = document.getElementById('sys-response-replace');
+      if (sr) sr.style.display = 'none';
       return;
     }
-    fillSysResponse('sys-response-replace', {
-      means: picks.length
-        ? 'Swap paths marked: ' + picks.join(' · ') + '.'
-        : 'A note exists without a checked swap — the note must become one action.',
-      why: 'Swaps that stay in your head snap back under stress.',
-      continues: 'The next hard day routes money to the old habit.',
-      fix: 'Execute the smallest checked swap before the next spend trigger hits.'
+    if (r.value === 'other' && (!oi || !oi.value.trim())) {
+      document.getElementById('btn-5').disabled = true;
+      var sr2 = document.getElementById('sys-response-replace');
+      if (sr2) sr2.style.display = 'none';
+      return;
+    }
+    var doOne =
+      r.value === 'income'
+        ? 'This week: send one invoice or one paid ask tied to work already in motion.'
+        : r.value === 'pressure'
+          ? 'This week: cancel one recurring bill or subscription you named earlier.'
+          : r.value === 'time'
+            ? 'This month: pay one vendor or hire one hour — put the date on the calendar.'
+            : r.value === 'bottleneck'
+              ? 'This week: write one next step on your slowest paid deliverable — then do it.'
+              : 'This week: book one hour toward: ' + (oi ? oi.value.trim() : '') + '.';
+    fillDecisionOutput('sys-response-replace', {
+      means: 'This only works if the freed resource moves immediately.',
+      losing:
+        fmtMoney(state.monthlySpend) +
+        '/mo · ' +
+        fmtNum((state.screenHours || 0) * 7, 1) +
+        ' h/wk if it snaps back to the old leak.',
+      driving: 'Cash and time without a destination return to autopilot spend.',
+      doThis: doOne
     });
+    document.getElementById('btn-5').disabled = false;
   }
 
-  function syncAlternatives() {
-    var picks = [];
-    document.querySelectorAll('input[name="altpick"]:checked').forEach(function (el) {
-      picks.push(el.value);
-    });
-    state.alternatives = {
-      picks: picks,
-      note: document.getElementById('alt-note').value.trim()
-    };
+  function syncWhereGoes() {
+    var r = document.querySelector('input[name="where-goes"]:checked');
+    var oi = document.getElementById('where-goes-other');
+    state.whereGoes = r ? r.value : '';
+    state.whereGoesOther = oi ? oi.value.trim() : '';
   }
 
   function initReductions() {
@@ -2033,11 +2130,11 @@
     if (elB) elB.textContent = fmtMoney(state.yearlySpend);
     document.getElementById('out-new-yearly').textContent = fmtMoney(state._newYearlyAfterShift);
     document.getElementById('out-recovered').textContent = fmtMoney(state.recoveredAmount);
-    fillSysResponse('sys-response-shift', {
-      means: 'You are locking a new yearly run rate — not hoping harder.',
-      why: 'Cuts work when they hit named categories, not motivation.',
-      continues: 'At zero shift, the first room’s number stays your life.',
-      fix: 'Hit remove on your worst line before you leave this screen.'
+    fillDecisionOutput('sys-response-shift', {
+      means: 'You locked a new yearly run rate — not a mood.',
+      losing: fmtMoney(state.recoveredAmount) + '/yr vs baseline — only real if sliders stay.',
+      driving: 'Named categories beat motivation — zero shift keeps step 1’s number.',
+      doThis: 'This week: hit remove on your worst category line before you leave this screen.'
     });
   }
 
@@ -2109,11 +2206,11 @@
     if (state.selectedBoundaries.length) {
       out.style.display = 'block';
       txt.textContent = state.selectedBoundaries.join('. ') + '.';
-      fillSysResponse('sys-response-boundary', {
+      fillDecisionOutput('sys-response-boundary', {
         means: 'You named tripwires before willpower is gone.',
-        why: 'Triggers are seconds-long; rules beat mood.',
-        continues: 'Without them, the same apps and spends win.',
-        fix: 'Put one rule on your lock screen tonight.'
+        losing: 'Same leak rate if triggers still fire unchecked.',
+        driving: 'Apps and spends win in seconds — rules beat mood.',
+        doThis: 'Tonight: one rule on your lock screen — the first trigger you named.'
       });
     } else {
       out.style.display = 'none';
@@ -2160,11 +2257,12 @@
       else if (v === 'limit') lim++;
       else kp++;
     });
-    fillSysResponse('sys-response-elim', {
-      means: 'The table shows ' + rm + ' removes, ' + lim + ' limits, ' + kp + ' keeps.',
-      why: 'Keeps preserve the old pull — removes and limits are the only rows that cut exposure.',
-      continues: 'All-keep reads as “decide later” in real life.',
-      fix: 'Execute one remove row before you open the highest-spend app today.'
+    fillDecisionOutput('sys-response-elim', {
+      means:
+        'Removes: ' + rm + ' · Limits: ' + lim + ' · Keeps: ' + kp + '.',
+      losing: 'Keeps leave the pull intact — same money and attention exit.',
+      driving: 'Remove rows are the only rows that cut exposure.',
+      doThis: 'Today: execute one remove row before you open your highest-spend app.'
     });
     validateElimGate();
   }
@@ -2198,7 +2296,7 @@
   }
 
   function renderSummary() {
-    syncAlternatives();
+    syncWhereGoes();
     var moneyPct = Math.min(100, (state.monthlySpend / 80) * 10);
     var pickPct = state.leakCbCount * 16;
     var pct = Math.min(100, moneyPct * 0.45 + pickPct * 0.55);
@@ -2255,7 +2353,10 @@
 
     addSection('Pattern', [state.pattern, PATTERN_INTERP[state.pattern] || ''].filter(function (x) { return x; }));
 
-    addSection('Driver', [state.driver, DRIVER_TEXT[state.driver] || ''].filter(function (x) { return x; }));
+    addSection('Driver', [
+      state.driver === '__other__' ? 'Other: ' + state.driverOtherText : state.driver,
+      state.driver === '__other__' ? '' : (DRIVER_TEXT[state.driver] || '')
+    ].filter(function (x) { return x; }));
 
     addSection('Social cost', [
       'Per outing: ' + fmtMoney(state._socialOutingTotal),
@@ -2305,16 +2406,19 @@
     eSec.appendChild(ewrap);
     body.appendChild(eSec);
 
-    var altLines = [];
-    if (state.alternatives.picks && state.alternatives.picks.length) {
-      state.alternatives.picks.forEach(function (p) { altLines.push(p); });
+    var wgLines = [];
+    if (state.whereGoes) {
+      wgLines.push(
+        state.whereGoes === 'other'
+          ? state.whereGoesOther || '—'
+          : state.whereGoes
+      );
     }
-    if (state.alternatives.note) altLines.push('Notes: ' + state.alternatives.note);
-    addSection('Alternatives', altLines.length ? altLines : ['—']);
+    addSection('Where this goes', wgLines.length ? wgLines : ['—']);
   }
 
   function buildSummaryPlainText() {
-    syncAlternatives();
+    syncWhereGoes();
     var lines = [];
     lines.push('YOUR OPERATING SYSTEM');
     lines.push('');
@@ -2334,8 +2438,12 @@
     if (PATTERN_INTERP[state.pattern]) lines.push(PATTERN_INTERP[state.pattern]);
     lines.push('');
     lines.push('Driver');
-    lines.push(state.driver);
-    if (DRIVER_TEXT[state.driver]) lines.push(DRIVER_TEXT[state.driver]);
+    if (state.driver === '__other__') {
+      lines.push('Other: ' + state.driverOtherText);
+    } else {
+      lines.push(state.driver);
+      if (DRIVER_TEXT[state.driver]) lines.push(DRIVER_TEXT[state.driver]);
+    }
     lines.push('');
     lines.push('Social cost');
     lines.push('Per outing: ' + fmtMoney(state._socialOutingTotal));
@@ -2355,12 +2463,10 @@
       lines.push('- ' + p + ': ' + (state.eliminationChoices[p] || 'keep'));
     });
     lines.push('');
-    lines.push('Alternatives');
-    if (state.alternatives.picks && state.alternatives.picks.length) {
-      state.alternatives.picks.forEach(function (p) { lines.push('- ' + p); });
-    }
-    if (state.alternatives.note) lines.push('Notes: ' + state.alternatives.note);
-    if ((!state.alternatives.picks || !state.alternatives.picks.length) && !state.alternatives.note) {
+    lines.push('Where this goes');
+    if (state.whereGoes) {
+      lines.push(state.whereGoes === 'other' ? state.whereGoesOther : state.whereGoes);
+    } else {
       lines.push('—');
     }
     lines.push('');
@@ -2388,9 +2494,21 @@
   document.getElementById('btn-begin').addEventListener('click', function () { next(); });
   document.getElementById('btn-pause').addEventListener('click', function () { next(); });
 
+  function toggleLeakOther() {
+    var o = document.getElementById('leak-cb-other');
+    var w = document.getElementById('leak-other-wrap');
+    if (o && w) w.style.display = o.checked ? 'block' : 'none';
+    gatePanel3();
+  }
+
   document.querySelectorAll('.leak-cb').forEach(function (cb) {
-    cb.addEventListener('change', updateLeakMeter);
+    cb.addEventListener('change', function () {
+      toggleLeakOther();
+      updateLeakMeter();
+    });
   });
+  var leakOtherText = document.getElementById('leak-other-text');
+  if (leakOtherText) leakOtherText.addEventListener('input', gatePanel3);
 
   document.querySelectorAll('input.leak-tag').forEach(function (el) {
     el.addEventListener('change', computeReveal);
@@ -2406,18 +2524,33 @@
   document.getElementById('btn-2').addEventListener('click', next);
 
   document.querySelectorAll('input[name="night-band"]').forEach(function (el) {
-    el.addEventListener('change', computeSocial);
+    el.addEventListener('change', function () {
+      var nw = document.getElementById('night-other-wrap');
+      var o = document.querySelector('input[name="night-band"]:checked');
+      if (nw && o && o.value !== 'other') nw.style.display = 'none';
+      computeSocial();
+    });
   });
   document.getElementById('in-nights').addEventListener('input', computeSocial);
+  var inc = document.getElementById('in-night-custom');
+  if (inc) inc.addEventListener('input', computeSocial);
   document.getElementById('btn-3').addEventListener('click', next);
 
   document.querySelectorAll('input[name="driver"]').forEach(function (el) {
     el.addEventListener('change', computeDriver);
   });
+  var dot = document.getElementById('driver-other-text');
+  if (dot) dot.addEventListener('input', computeDriver);
   document.getElementById('btn-4').addEventListener('click', next);
 
+  document.querySelectorAll('input[name="where-goes"]').forEach(function (el) {
+    el.addEventListener('change', updateWhereGoes);
+  });
+  var wgo = document.getElementById('where-goes-other');
+  if (wgo) wgo.addEventListener('input', updateWhereGoes);
+
   document.getElementById('btn-5').addEventListener('click', function () {
-    syncAlternatives();
+    syncWhereGoes();
     next();
   });
 

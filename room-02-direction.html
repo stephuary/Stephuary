@@ -1177,11 +1177,15 @@ Reduce anything that is not building or multiplying.</pre>
   function fillSysResponse(elId, o) {
     var el = document.getElementById(elId);
     if (!el || !o) return;
+    var losing = o.losing != null ? o.losing : 'Time or money at the rate shown on this screen.';
+    var driving =
+      o.driving != null ? o.driving : [o.why, o.continues].filter(Boolean).join(' · ');
+    var doThis = o.doThis != null ? o.doThis : o.fix;
     el.innerHTML =
-      '<p class="sys-line"><strong>What’s true:</strong> ' + escapeHtml(o.means) + '</p>' +
-      '<p class="sys-line"><strong>Why:</strong> ' + escapeHtml(o.why) + '</p>' +
-      '<p class="sys-line"><strong>If you ignore it:</strong> ' + escapeHtml(o.continues) + '</p>' +
-      '<p class="sys-line"><strong>Next:</strong> ' + escapeHtml(o.fix) + '</p>';
+      '<p class="sys-line"><strong>This means:</strong> ' + escapeHtml(o.means) + '</p>' +
+      '<p class="sys-line"><strong>You\'re likely losing:</strong> ' + escapeHtml(losing) + '</p>' +
+      '<p class="sys-line"><strong>What\'s actually driving it:</strong> ' + escapeHtml(driving) + '</p>' +
+      '<p class="sys-line"><strong>Do this:</strong> ' + escapeHtml(doThis) + '</p>';
     el.style.display = 'block';
   }
 

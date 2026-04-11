@@ -967,19 +967,23 @@ End with one CTA line (use verbatim):
   function fillSysResponse(containerId, sys) {
     var el = document.getElementById(containerId);
     if (!el || !sys) return;
+    var losing = sys.losing != null ? sys.losing : 'Billable time or client trust at the rate shown.';
+    var driving =
+      sys.driving != null ? sys.driving : [sys.why, sys.continues].filter(Boolean).join(' · ');
+    var doThis = sys.doThis != null ? sys.doThis : sys.fix;
     el.style.display = 'block';
     el.innerHTML =
-      '<p class="sys-line"><strong>What’s true:</strong> ' +
+      '<p class="sys-line"><strong>This means:</strong> ' +
       escapeHtml(sys.means) +
       '</p>' +
-      '<p class="sys-line"><strong>Why:</strong> ' +
-      escapeHtml(sys.why) +
+      '<p class="sys-line"><strong>You\'re likely losing:</strong> ' +
+      escapeHtml(losing) +
       '</p>' +
-      '<p class="sys-line"><strong>If you ignore it:</strong> ' +
-      escapeHtml(sys.continues) +
+      '<p class="sys-line"><strong>What\'s actually driving it:</strong> ' +
+      escapeHtml(driving) +
       '</p>' +
-      '<p class="sys-line"><strong>Next:</strong> ' +
-      escapeHtml(sys.fix) +
+      '<p class="sys-line"><strong>Do this:</strong> ' +
+      escapeHtml(doThis) +
       '</p>';
   }
 
