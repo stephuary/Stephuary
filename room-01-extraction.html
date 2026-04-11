@@ -1373,6 +1373,10 @@
         </div>
         <div id="summary-interpret"></div>
         <div id="summary-body"></div>
+        <div class="summary-section" id="value-realization-r01">
+          <h4 class="summary-section-title">What you just found</h4>
+          <div class="summary-section-body" id="value-realization-r01-body"></div>
+        </div>
         <p class="summary-outro">Copy this. Re-run until the leaks stop.</p>
       </div>
       <button type="button" class="btn-continue" id="btn-copy">Copy summary</button>
@@ -2415,6 +2419,26 @@
       );
     }
     addSection('Where this goes', wgLines.length ? wgLines : ['—']);
+
+    var vr = document.getElementById('value-realization-r01-body');
+    if (vr) {
+      var nLines = Math.max(
+        1,
+        (state.leakPatternKeys && state.leakPatternKeys.length) || state.leakCbCount || 1
+      );
+      var moOne = state.monthlySpend / nLines;
+      var yrOne = moOne * 12;
+      var wkHOne = ((state.screenHours || 0) * 7) / nLines;
+      var yrDaysOne = state.daysLost / nLines;
+      vr.innerHTML =
+        '<p>Monthly money leak: ' + fmtMoney(state.monthlySpend) + '</p>' +
+        '<p>Yearly projection: ' + fmtMoney(state.yearlySpend) + '</p>' +
+        '<p>Weekly time leak (screen): ' + fmtNum((state.screenHours || 0) * 7, 1) + ' h</p>' +
+        '<p>Yearly time projection (screen): ' + fmtNum(state.daysLost, 1) + ' d</p>' +
+        '<p style="margin-top:12px;">If you cut one (of ' + nLines + ' tracked lines):</p>' +
+        '<p>Money: +' + fmtMoney(moOne) + '/mo · +' + fmtMoney(yrOne) + '/yr</p>' +
+        '<p>Time: +' + fmtNum(wkHOne, 1) + ' h/wk screen · +' + fmtNum(yrDaysOne, 1) + ' d/yr equivalent</p>';
+    }
   }
 
   function buildSummaryPlainText() {
@@ -2469,6 +2493,21 @@
     } else {
       lines.push('—');
     }
+    lines.push('');
+    lines.push('What you just found');
+    var nL = Math.max(
+      1,
+      (state.leakPatternKeys && state.leakPatternKeys.length) || state.leakCbCount || 1
+    );
+    var moO = state.monthlySpend / nL;
+    var yrO = moO * 12;
+    var wkHO = ((state.screenHours || 0) * 7) / nL;
+    var yrDO = state.daysLost / nL;
+    lines.push('Monthly money leak: ' + fmtMoney(state.monthlySpend));
+    lines.push('Yearly projection: ' + fmtMoney(state.yearlySpend));
+    lines.push('Weekly time leak (screen): ' + fmtNum((state.screenHours || 0) * 7, 1) + ' h');
+    lines.push('Yearly time projection (screen): ' + fmtNum(state.daysLost, 1) + ' d');
+    lines.push('If you cut one (of ' + nL + ' tracked lines): +' + fmtMoney(moO) + '/mo · +' + fmtMoney(yrO) + '/yr · +' + fmtNum(wkHO, 1) + ' h/wk · +' + fmtNum(yrDO, 1) + ' d/yr equivalent');
     lines.push('');
     buildInterpretation().forEach(function (l) {
       lines.push(l);

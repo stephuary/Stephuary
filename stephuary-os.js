@@ -47,8 +47,8 @@
 
   function statusFor03(step, messageSent) {
     var s = META['03'].statuses;
-    if (step >= 14) return s[2];
-    if (step === 5 && !messageSent) return s[0];
+    if (step >= 15) return s[2];
+    if (step === 6 && !messageSent) return s[0];
     return s[1];
   }
 
@@ -71,13 +71,13 @@
   function record(roomId, opts) {
     if (!META[roomId] || !opts) return;
     var step = typeof opts.step === 'number' ? opts.step : 0;
-    var totalSteps = opts.totalSteps || 15;
+    var totalSteps = opts.totalSteps || 16;
     var comp = completionFromStep(step, totalSteps);
     var sent = opts.messageSent === true || opts.messageCommitted === true;
     var status;
     if (roomId === '03') {
       status = statusFor03(step, sent);
-      if (step >= 14) comp = 100;
+      if (step >= 15) comp = 100;
     } else {
       status = statusDefault(roomId, comp);
       if (comp >= 100) comp = 100;

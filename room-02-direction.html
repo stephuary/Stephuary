@@ -1067,6 +1067,10 @@ Reduce anything that is not building or multiplying.</pre>
         </div>
         <div id="summary-interpret"></div>
         <div id="summary-body"></div>
+        <div class="summary-section" id="value-realization-r02">
+          <h4 class="summary-section-title">What just changed</h4>
+          <div id="value-realization-r02-body"></div>
+        </div>
       </div>
       <button type="button" class="btn-continue" id="btn-copy">Copy summary</button>
       <button type="button" class="btn-continue btn-secondary" id="btn-restart">Restart</button>
@@ -1685,6 +1689,29 @@ Reduce anything that is not building or multiplying.</pre>
     return [interpretSystem(), 'Decision: ' + (state.systemChoice === 'keep' ? 'keep' : 'change') + '.'];
   }
 
+  function computeRedirectMetrics() {
+    var H = state.hours || 0;
+    var tc = state.timeCur;
+    var tr = state.timeRev;
+    var hrsPerWk = Math.max(0, ((tr.b - tc.b) / 100) * H);
+    var mc = state.moneyCur;
+    var mr = state.moneyRev;
+    var dB = mr.b - mc.b;
+    var inc = state.income || 0;
+    var pct = Math.max(1, Math.round(Math.abs(dB)));
+    var dollars = inc ? Math.round(inc * (pct / 100)) : 0;
+    if (inc && dollars < 25) dollars = Math.max(25, Math.round(inc * 0.03));
+    if (Math.abs(dB) < 1 && inc) dollars = Math.max(25, Math.round(inc * 0.03));
+    var fourWkH = hrsPerWk * 4;
+    var fourWkMoney = Math.round(dollars * (4 / 4.345));
+    return {
+      hrsPerWk: hrsPerWk,
+      moneyMo: dollars,
+      fourWkH: fourWkH,
+      fourWkMoney: fourWkMoney
+    };
+  }
+
   function renderSummary() {
     var tr = state.timeRev;
     var lm = document.getElementById('lock-seg-m');
@@ -1737,6 +1764,15 @@ Reduce anything that is not building or multiplying.</pre>
     addSec('What stops', '<p>' + escapeHtml(stopLabel()) + '</p>');
     addSec('Decision', '<p>' + escapeHtml(state.systemChoice === 'keep' ? 'Keep this system' : 'Change this system') + '</p>');
     addSec('This week', '<pre class="copy-block" style="white-space:pre-wrap;">' + escapeHtml(state.weeklyPlanText) + '</pre>');
+
+    var vr2 = document.getElementById('value-realization-r02-body');
+    if (vr2) {
+      var rm = computeRedirectMetrics();
+      vr2.innerHTML =
+        '<p>Time redirected per week (into build): ' + rm.hrsPerWk.toFixed(1) + ' h</p>' +
+        '<p>Money redirected per month (into build): ' + fmtMoney(rm.moneyMo) + '</p>' +
+        '<p style="margin-top:12px;">If this holds (4 weeks): ' + rm.fourWkH.toFixed(1) + ' h · ' + fmtMoney(rm.fourWkMoney) + '</p>';
+    }
   }
 
   function buildSummaryPlainText() {
@@ -1765,6 +1801,12 @@ Reduce anything that is not building or multiplying.</pre>
     lines.push('');
     lines.push('This week');
     lines.push(state.weeklyPlanText);
+    lines.push('');
+    var rmx = computeRedirectMetrics();
+    lines.push('What just changed');
+    lines.push('Time redirected per week (into build): ' + rmx.hrsPerWk.toFixed(1) + ' h');
+    lines.push('Money redirected per month (into build): ' + fmtMoney(rmx.moneyMo));
+    lines.push('If this holds (4 weeks): ' + rmx.fourWkH.toFixed(1) + ' h · ' + fmtMoney(rmx.fourWkMoney));
     lines.push('');
     lines.push('If you don’t change anything, nothing changes.');
     return lines.join('\n');
