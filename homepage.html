@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Stephuary · Diagnostic</title>
+  <title>Stephuary</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=DM+Mono:wght@300;400&family=Lato:wght@300;400&display=swap" rel="stylesheet" />
@@ -222,6 +222,34 @@
       box-shadow: 0 2px 16px rgba(43,79,212,0.2);
     }
 
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 14px 18px;
+    }
+
+    .btn-hero-secondary {
+      display: inline-block;
+      background: transparent;
+      color: var(--text-secondary);
+      border: 1px solid rgba(43, 79, 212, 0.38);
+      font-family: 'DM Mono', monospace;
+      font-size: 9px;
+      font-weight: 400;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      text-decoration: none;
+      padding: 10px 20px;
+      cursor: pointer;
+      transition: border-color 0.28s ease, color 0.28s ease, background 0.28s ease;
+    }
+    .btn-hero-secondary:hover {
+      border-color: rgba(43, 79, 212, 0.55);
+      color: var(--text-primary);
+      background: rgba(43, 79, 212, 0.08);
+    }
+
     .hero-rule-bottom {
       position: absolute;
       bottom: 0; left: 52px; right: 52px;
@@ -233,302 +261,91 @@
     }
     @keyframes ruleIn { to { transform: scaleX(1); } }
 
-    .section {
+    .sys-section {
       background: var(--bg);
       border-bottom: 1px solid var(--border);
     }
 
-    .section-header {
-      display: grid;
-      grid-template-columns: 1fr auto;
-      grid-template-rows: auto auto;
-      gap: 8px 24px;
-      padding: 28px 52px;
-      text-align: left;
-      cursor: pointer;
-      transition: background 0.3s ease, box-shadow 0.3s ease;
-      align-items: start;
+    .sys-inner {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 72px 52px 80px;
     }
-    .section-header:hover { background: rgba(196,163,90,0.025); }
-    .section.open .section-header {
-      background: rgba(196,163,90,0.04);
-      box-shadow: inset 0 1px 0 rgba(196,163,90,0.06);
-    }
-    .section-header:focus-visible { outline: 1px solid var(--gold-line); outline-offset: -1px; }
 
-    .section-header h2 {
-      grid-column: 1;
-      grid-row: 1;
+    .sys-h2 {
       font-family: 'Cormorant Garamond', serif;
       font-weight: 300;
-      font-size: clamp(26px, 3.2vw, 38px);
+      font-size: clamp(26px, 3.2vw, 36px);
       letter-spacing: -0.02em;
       color: var(--text-primary);
+      margin-bottom: 22px;
+      line-height: 1.15;
     }
 
-    .section-header .preview {
-      grid-column: 1;
-      grid-row: 2;
-      font-size: 14px;
-      color: var(--text-muted);
-      line-height: 1.5;
-      max-width: 520px;
-    }
-
-    .section-chevron {
-      grid-column: 2;
-      grid-row: 1 / span 2;
-      align-self: center;
-      width: 6px;
-      height: 6px;
-      border-right: 1px solid var(--text-label);
-      border-bottom: 1px solid var(--text-label);
-      transform: rotate(45deg);
-      transition: transform 0.45s cubic-bezier(0.22,1,0.36,1);
-    }
-    .section.open .section-chevron { transform: rotate(225deg); }
-
-    .section-content {
-      max-height: 0;
-      overflow: hidden;
-      opacity: 0;
-      transition: max-height 0.65s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.4s ease;
-    }
-    .section.open .section-content {
-      max-height: 12000px;
-      opacity: 1;
-    }
-
-    .section-body {
-      padding: 0 52px 44px;
-      max-width: 1100px;
-      margin: 0 auto;
-    }
-
-    #section-reality { position: relative; overflow: hidden; }
-    .reality-visual {
-      position: absolute;
-      inset: 0;
-      pointer-events: none;
-      opacity: 0.1;
-      z-index: 0;
-    }
-    .reality-visual svg { width: 100%; height: 100%; }
-    .reality-path {
-      fill: none;
-      stroke: var(--gold-dim);
-      stroke-width: 0.75;
-      stroke-dasharray: 8 12;
-      animation: pathLoop 16s linear infinite;
-    }
-    @keyframes pathLoop { to { stroke-dashoffset: -120; } }
-    .reality-path-branch {
-      stroke-dasharray: 4 10;
-      animation: pathLoop 20s linear infinite;
-    }
-
-    .reality-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 40px;
-      align-items: start;
-      position: relative;
-      z-index: 1;
-    }
-    .reality-lead {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: clamp(19px, 2.1vw, 28px);
-      font-weight: 300;
-      line-height: 1.4;
-      color: var(--text-secondary);
-    }
-    .reality-lead p { margin-bottom: 1em; }
-    .reality-lead p:last-child { margin-bottom: 0; }
-    .reality-aside {
-      font-size: 15px;
-      color: var(--text-muted);
-      line-height: 1.75;
-      padding-top: 8px;
-      border-top: 1px solid var(--border);
-    }
-
-    /* What happens: three-step flow */
-    .flow-wrap {
-      position: relative;
-      padding: 8px 0 12px;
-    }
-    .flow-row {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 2px;
-      background: var(--border);
-    }
-    .flow-card {
-      background: var(--bg-1);
-      padding: 28px 22px 32px;
-      position: relative;
-      transition: background 0.25s ease, box-shadow 0.25s ease;
-    }
-    .flow-card:hover {
-      background: var(--bg-2);
-      box-shadow: inset 0 0 0 1px rgba(196,163,90,0.07);
-    }
-    .flow-card::after {
-      content: '';
-      position: absolute;
-      top: 50%;
-      right: -2px;
-      width: 12px;
-      height: 1px;
-      background: linear-gradient(to right, var(--gold-line), transparent);
-      transform: translateY(-50%);
-      opacity: 0.5;
-      pointer-events: none;
-    }
-    .flow-card:last-child::after { display: none; }
-    .flow-num {
-      font-family: 'DM Mono', monospace;
-      font-size: 9px;
-      letter-spacing: 0.2em;
-      color: var(--text-label);
-      margin-bottom: 14px;
-    }
-    .flow-title {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: clamp(17px, 1.5vw, 22px);
-      font-weight: 300;
-      color: var(--text-primary);
-      margin-bottom: 10px;
-      line-height: 1.2;
-    }
-    .flow-desc {
-      font-size: 14px;
-      color: var(--text-muted);
-      line-height: 1.6;
-    }
-
-    .what-list {
-      list-style: none;
-      max-width: 560px;
-    }
-    .what-list li {
-      font-size: 15px;
-      color: var(--text-secondary);
-      padding: 12px 0;
-      border-bottom: 1px solid var(--border);
-      padding-left: 0;
-      line-height: 1.6;
-    }
-    .what-list li:last-child { border-bottom: none; }
-
-    .how-plain {
-      font-size: 15px;
-      color: var(--text-secondary);
-      line-height: 1.75;
-      max-width: 560px;
-      margin-bottom: 28px;
-    }
-
-    .phase-line-wrap { position: relative; padding: 12px 0 28px; }
-
-    .phase-line {
-      display: flex;
-      flex-direction: column;
-      gap: 18px;
-      border-left: 1px solid rgba(255,255,255,0.12);
-      padding-left: 18px;
-    }
-
-    .phase {
-      position: relative;
-      transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
-    }
-    .phase.active { transform: translateY(-2px); }
-    .phase::before {
-      content: '';
-      position: absolute;
-      left: -8px;
-      top: 6px;
-      width: 11px;
-      height: 11px;
-      background: var(--phase-blue);
-      border-radius: 50%;
-      opacity: 0.28;
-      transition: opacity 0.4s ease, box-shadow 0.4s ease;
-    }
-    .phase.active::before {
-      opacity: 1;
-      box-shadow: 0 0 12px rgba(59,130,246,0.35);
-    }
-
-    .phase-name {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: clamp(15px, 1.4vw, 19px);
-      color: var(--gold-dim);
-      margin-bottom: 4px;
-    }
-    .phase.active .phase-name { color: var(--gold); }
-    .phase-desc { font-size: 13px; color: var(--text-muted); line-height: 1.45; }
-    .phase.active .phase-desc { color: var(--text-secondary); }
-
-    @media (min-width: 961px) {
-      .phase-line {
-        flex-direction: row;
-        flex-wrap: nowrap;
-        justify-content: space-between;
-        align-items: flex-start;
-        gap: 10px;
-        border-left: none;
-        padding-left: 0;
-        padding-top: 22px;
-        border-top: 1px solid rgba(255,255,255,0.1);
-        position: relative;
-      }
-      .phase-line::after {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 1px;
-        background: linear-gradient(to right, var(--gold-line), var(--border), var(--gold-line));
-      }
-      .phase {
-        flex: 1;
-        min-width: 0;
-        text-align: center;
-        padding-top: 6px;
-      }
-      .phase::before {
-        left: 50%;
-        top: -5px;
-        transform: translateX(-50%);
-      }
-      .phase.active {
-        transform: translateY(-3px) scale(1.02);
-      }
-      .phase.active::before {
-        transform: translateX(-50%);
-      }
-    }
-
-    .private-simple {
-      max-width: 560px;
-    }
-    .private-simple p {
-      font-size: 15px;
+    .sys-lead {
+      font-size: 16px;
       color: var(--text-secondary);
       line-height: 1.78;
       margin-bottom: 1.1em;
     }
-    .private-simple p:last-child { margin-bottom: 0; }
-    .private-quiet {
-      font-size: 14px;
-      color: var(--text-muted);
-      margin-top: 1.5em;
-      padding-top: 1.2em;
+    .sys-lead:last-child { margin-bottom: 0; }
+
+    .room-rows {
+      margin-top: 8px;
       border-top: 1px solid var(--border);
     }
+
+    .room-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 20px 28px;
+      align-items: start;
+      padding: 26px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .room-row:last-child { border-bottom: none; }
+
+    .room-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-size: clamp(17px, 1.8vw, 21px);
+      color: var(--text-primary);
+      margin-bottom: 8px;
+      line-height: 1.25;
+    }
+
+    .room-desc {
+      font-size: 14px;
+      color: var(--text-muted);
+      line-height: 1.65;
+      max-width: 520px;
+    }
+
+    .room-enter {
+      font-family: 'DM Mono', monospace;
+      font-size: 9px;
+      font-weight: 400;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      text-decoration: none;
+      white-space: nowrap;
+      padding-top: 4px;
+      transition: color 0.22s ease;
+      align-self: center;
+    }
+    .room-enter:hover { color: var(--gold-dim); }
+
+    .start-here .sys-lead { margin-bottom: 28px; }
+
+    .cta-pair {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 14px 18px;
+    }
+
+    .private-block .sys-lead { margin-bottom: 0; }
 
     #closing {
       padding: 100px 52px 120px;
@@ -543,8 +360,15 @@
       line-height: 1.15;
       letter-spacing: -0.02em;
       color: var(--text-primary);
-      max-width: 520px;
-      margin: 0 auto 32px;
+      max-width: 560px;
+      margin: 0 auto 36px;
+    }
+    .closing-actions {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 14px 18px;
     }
     .btn-close {
       display: inline-block;
@@ -621,20 +445,12 @@
       nav { padding: 18px 28px; }
       #hero { padding: 130px 28px 100px; }
       .hero-rule-bottom { left: 28px; right: 28px; }
-      .section-header, .section-body { padding-left: 28px; padding-right: 28px; }
-      .reality-grid { grid-template-columns: 1fr; }
-      .flow-row { grid-template-columns: 1fr; }
-      .flow-card::after {
-        top: auto;
-        bottom: -2px;
-        left: 50%;
-        right: auto;
-        width: 1px;
-        height: 12px;
-        transform: translateX(-50%);
-        background: linear-gradient(to bottom, var(--gold-line), transparent);
+      .sys-inner { padding-left: 28px; padding-right: 28px; }
+      .room-row {
+        grid-template-columns: 1fr;
+        gap: 12px;
       }
-      .flow-card:last-child::after { display: none; }
+      .room-enter { justify-self: start; padding-top: 0; }
       footer { padding: 40px 28px; }
       #closing { padding: 80px 28px 100px; }
     }
@@ -643,7 +459,7 @@
       nav { padding: 16px 20px; }
       #hero { padding: 120px 20px 90px; }
       .hero-rule-bottom { left: 20px; right: 20px; }
-      .section-header, .section-body { padding-left: 20px; padding-right: 20px; }
+      .sys-inner { padding-left: 20px; padding-right: 20px; padding-top: 64px; padding-bottom: 68px; }
       footer { padding: 36px 20px; }
     }
   </style>
@@ -663,10 +479,11 @@
     <div class="hero-particles" aria-hidden="true"></div>
     <div class="hero-inner">
       <p class="hero-eyebrow reveal">Stephuary</p>
-      <h1 class="hero-headline reveal">You already know more than you're using.</h1>
-      <p class="hero-sub reveal">Run the diagnostic.<br>See how you think, where you stall, and what to do next.</p>
-      <div class="reveal">
-        <a href="/capture" class="btn-hero">Run diagnostic →</a>
+      <h1 class="hero-headline reveal">You do not need more content.<br />You need the right room.</h1>
+      <p class="hero-sub reveal">Stephuary is a system of guided environments built to help you see clearly, decide cleanly, and move.</p>
+      <div class="hero-actions reveal">
+        <a href="/playbooks" class="btn-hero">Enter the Rooms →</a>
+        <a href="/capture" class="btn-hero-secondary">Start with the diagnostic →</a>
       </div>
     </div>
     <div class="hero-rule-bottom"></div>
@@ -674,151 +491,86 @@
 
   <main class="page-main">
 
-    <div class="section" id="section-reality">
-      <div class="section-header reveal" role="button" tabindex="0" aria-expanded="false">
-        <h2>Reality</h2>
-        <p class="preview">You've seen the pattern. This names it.</p>
-        <span class="section-chevron" aria-hidden="true"></span>
+    <section class="sys-section" id="system-intro" aria-labelledby="what-this-is">
+      <div class="sys-inner">
+        <h2 class="sys-h2 reveal" id="what-this-is">What this is</h2>
+        <p class="sys-lead reveal">Stephuary is not a library.<br />It is a system.</p>
+        <p class="sys-lead reveal">Each Room is a contained environment built for a specific kind of problem.<br />You enter the one that matches what needs to change.<br />You move through it once.<br />You leave with something usable.</p>
       </div>
-      <div class="section-content">
-        <div class="section-body">
-          <div class="reality-visual" aria-hidden="true">
-            <svg viewBox="0 0 400 200" preserveAspectRatio="none">
-              <path class="reality-path" d="M0,100 Q100,40 200,100 T400,100" />
-              <path class="reality-path" d="M0,120 Q120,160 200,120 T400,130" opacity="0.55" />
-              <path class="reality-path reality-path-branch" d="M200,100 L200,40 L280,40 L280,160 L200,160" opacity="0.3" />
-            </svg>
-          </div>
-          <div class="reality-grid">
-            <div class="reality-lead reveal">
-              <p>You started something.</p>
-              <p>Stopped.</p>
-              <p>Changed direction.</p>
-              <p>Started again.</p>
-              <p>You've had ideas.<br>Skills.<br>Experience.</p>
-            </div>
+    </section>
+
+    <section class="sys-section" id="rooms-overview" aria-labelledby="the-rooms-heading">
+      <div class="sys-inner">
+        <h2 class="sys-h2 reveal" id="the-rooms-heading">The Rooms</h2>
+        <div class="room-rows">
+          <article class="room-row reveal">
             <div>
-              <p class="reality-aside reveal">You've also had hesitation, overthinking, and unfinished decisions.</p>
-              <p class="reality-aside reveal" style="margin-top:16px;border-top:none;padding-top:0;">That's what this reads.</p>
+              <h3 class="room-title">Room 01 — Extraction</h3>
+              <p class="room-desc">See where your money, time, and attention are being drained, then rebuild it.</p>
             </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="section" id="section-happens">
-      <div class="section-header reveal" role="button" tabindex="0" aria-expanded="false">
-        <h2>What happens</h2>
-        <p class="preview">A short read on how you think and decide.</p>
-        <span class="section-chevron" aria-hidden="true"></span>
-      </div>
-      <div class="section-content">
-        <div class="section-body">
-          <p class="how-plain reveal">You go through a short diagnostic.</p>
-          <p class="how-plain reveal" style="margin-top:12px;">It reads how you operate, what keeps getting in your way, and what to do next. The result changes based on your answers.</p>
-          <div class="flow-wrap">
-            <div class="flow-row">
-              <div class="flow-card reveal">
-                <p class="flow-num">01</p>
-                <p class="flow-title">Short diagnostic</p>
-                <p class="flow-desc">Direct questions. No filler.</p>
-              </div>
-              <div class="flow-card reveal">
-                <p class="flow-num">02</p>
-                <p class="flow-title">Dynamic result</p>
-                <p class="flow-desc">Shaped by what you answer.</p>
-              </div>
-              <div class="flow-card reveal">
-                <p class="flow-num">03</p>
-                <p class="flow-title">Matched next step</p>
-                <p class="flow-desc">One clear move forward.</p>
-              </div>
+            <a class="room-enter" href="/room-01-extraction.html">Enter →</a>
+          </article>
+          <article class="room-row reveal">
+            <div>
+              <h3 class="room-title">Room 02 — Direction</h3>
+              <p class="room-desc">Decide where everything goes and what gets removed to make it possible.</p>
             </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="section" id="section-what-you-get">
-      <div class="section-header reveal" role="button" tabindex="0" aria-expanded="false">
-        <h2>What you get</h2>
-        <p class="preview">Direction and next steps.</p>
-        <span class="section-chevron" aria-hidden="true"></span>
-      </div>
-      <div class="section-content">
-        <div class="section-body">
-          <p class="how-plain reveal" style="margin-bottom:20px;">You get:</p>
-          <ul class="what-list">
-            <li class="reveal">A direct read on how you operate</li>
-            <li class="reveal">The main issue getting in your way</li>
-            <li class="reveal">One clear next step</li>
-            <li class="reveal">The right next layer if you need it</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-
-    <div class="section" id="section-how">
-      <div class="section-header reveal" role="button" tabindex="0" aria-expanded="false">
-        <h2>How it works</h2>
-        <p class="preview">Five short sections. Live output.</p>
-        <span class="section-chevron" aria-hidden="true"></span>
-      </div>
-      <div class="section-content">
-        <div class="section-body">
-          <p class="how-plain reveal">The diagnostic runs through five short sections.</p>
-          <p class="how-plain reveal" style="margin-top:12px;">You answer simple choices. It reads the pattern. Then it routes you forward.</p>
-          <div class="phase-line-wrap">
-            <div class="phase-line" id="phase-line">
-              <div class="phase reveal" data-phase="0">
-                <div class="phase-name">Read</div>
-                <div class="phase-desc">What shows up first</div>
-              </div>
-              <div class="phase reveal" data-phase="1">
-                <div class="phase-name">Pattern</div>
-                <div class="phase-desc">What repeats</div>
-              </div>
-              <div class="phase reveal" data-phase="2">
-                <div class="phase-name">Environment</div>
-                <div class="phase-desc">What surrounds the stall</div>
-              </div>
-              <div class="phase reveal" data-phase="3">
-                <div class="phase-name">Action</div>
-                <div class="phase-desc">What you'd actually do</div>
-              </div>
-              <div class="phase reveal" data-phase="4">
-                <div class="phase-name">Route</div>
-                <div class="phase-desc">Where you're sent next</div>
-              </div>
+            <a class="room-enter" href="/room-02-direction.html">Enter →</a>
+          </article>
+          <article class="room-row reveal">
+            <div>
+              <h3 class="room-title">Room 03 — Transaction</h3>
+              <p class="room-desc">Turn what you already know into one real transaction and run the loop.</p>
             </div>
-          </div>
+            <a class="room-enter" href="/room-03-transaction.html">Enter →</a>
+          </article>
+          <article class="room-row reveal">
+            <div>
+              <h3 class="room-title">Room 04 — Infrastructure</h3>
+              <p class="room-desc">Build the systems that allow you to function regardless of external instability.</p>
+            </div>
+            <a class="room-enter" href="/room-04-infrastructure.html">Enter →</a>
+          </article>
+          <article class="room-row reveal">
+            <div>
+              <h3 class="room-title">Room 05 — Cognition</h3>
+              <p class="room-desc">Control how you think, decide, and use tools without losing clarity.</p>
+            </div>
+            <a class="room-enter" href="/room-05-cognition.html">Enter →</a>
+          </article>
         </div>
+        <p class="sys-lead reveal" style="margin-top: 32px; margin-bottom: 0;">
+          <a href="/playbooks" class="room-enter" style="display: inline-block; padding-top: 0;">View all Rooms →</a>
+        </p>
       </div>
-    </div>
+    </section>
 
-    <div class="section" id="section-private">
-      <div class="section-header reveal" role="button" tabindex="0" aria-expanded="false">
-        <h2>Private access</h2>
-        <p class="preview">A quieter layer for specific needs.</p>
-        <span class="section-chevron" aria-hidden="true"></span>
-      </div>
-      <div class="section-content">
-        <div class="section-body">
-          <div class="private-simple">
-            <p class="reveal">There's a smaller, reviewed layer for people with a clear need.</p>
-            <p class="reveal">That part comes later.</p>
-            <p class="reveal">You don't start there. You reach it if it fits.</p>
-            <p class="private-quiet reveal">No need to decide that here.</p>
-          </div>
+    <section class="sys-section start-here" id="start-here" aria-labelledby="start-here-heading">
+      <div class="sys-inner">
+        <h2 class="sys-h2 reveal" id="start-here-heading">Start here</h2>
+        <p class="sys-lead reveal">If you already know what is wrong, enter the Room that matches it.<br />If you do not, start with the diagnostic and let it route you.</p>
+        <div class="cta-pair reveal">
+          <a href="/playbooks" class="btn-hero">Enter the Rooms →</a>
+          <a href="/capture" class="btn-hero-secondary">Run diagnostic →</a>
         </div>
       </div>
-    </div>
+    </section>
+
+    <section class="sys-section private-block" id="private-access" aria-labelledby="private-heading">
+      <div class="sys-inner">
+        <h2 class="sys-h2 reveal" id="private-heading">Private access</h2>
+        <p class="sys-lead reveal">There is a quieter layer for specific needs.<br />You do not start there.<br />You reach it if it fits.</p>
+      </div>
+    </section>
 
   </main>
 
   <section id="closing">
-    <h2 class="closing-h2 reveal">You'll know if it fits once you go through it.</h2>
-    <a href="/capture" class="btn-close">Begin here →</a>
+    <h2 class="closing-h2 reveal">Enter the right room.<br />That is enough to start.</h2>
+    <div class="closing-actions reveal">
+      <a href="/playbooks" class="btn-close">Enter the Rooms →</a>
+      <a href="/capture" class="btn-hero-secondary">Start with the diagnostic →</a>
+    </div>
   </section>
 
   <footer>
@@ -850,65 +602,6 @@
 
       document.querySelectorAll('.reveal').forEach(function (el) {
         observer.observe(el);
-      });
-
-      document.querySelectorAll('.section-header').forEach(function (header) {
-        function toggleSection() {
-          var section = header.parentElement;
-          document.querySelectorAll('.section').forEach(function (s) {
-            if (s !== section) {
-              s.classList.remove('open');
-              var h = s.querySelector('.section-header');
-              if (h) h.setAttribute('aria-expanded', 'false');
-            }
-          });
-          section.classList.toggle('open');
-          header.setAttribute('aria-expanded', section.classList.contains('open') ? 'true' : 'false');
-          if (section.classList.contains('open')) {
-            section.querySelectorAll('.reveal:not(.visible)').forEach(function (el, i) {
-              window.setTimeout(function () { el.classList.add('visible'); }, 35 * i);
-            });
-            if (section.id === 'section-how') {
-              window.requestAnimationFrame(function () { window.dispatchEvent(new Event('scroll')); });
-            }
-          }
-        }
-        header.addEventListener('click', toggleSection);
-        header.addEventListener('keydown', function (e) {
-          if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault();
-            toggleSection();
-          }
-        });
-      });
-
-      var scrollPhaseIdx = 0;
-      function syncPhaseScroll() {
-        var track = document.getElementById('section-how');
-        if (!track || !track.classList.contains('open')) return;
-        var inner = track.querySelector('.phase-line-wrap');
-        if (!inner) return;
-        var rect = inner.getBoundingClientRect();
-        var h = window.innerHeight;
-        if (rect.bottom < 0 || rect.top > h) return;
-        var t = Math.max(0, Math.min(1, (h * 0.45 - rect.top) / Math.max(rect.height, 1)));
-        scrollPhaseIdx = Math.min(4, Math.max(0, Math.floor(t * 5)));
-        document.querySelectorAll('.phase').forEach(function (n) {
-          var idx = parseInt(n.getAttribute('data-phase'), 10);
-          n.classList.toggle('active', idx === scrollPhaseIdx);
-        });
-      }
-
-      window.addEventListener('scroll', syncPhaseScroll, { passive: true });
-
-      document.querySelectorAll('.phase').forEach(function (phase) {
-        phase.addEventListener('mouseenter', function () {
-          document.querySelectorAll('.phase').forEach(function (p) { p.classList.remove('active'); });
-          phase.classList.add('active');
-        });
-        phase.addEventListener('mouseleave', function () {
-          syncPhaseScroll();
-        });
       });
     })();
   </script>
