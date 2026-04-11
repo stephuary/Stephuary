@@ -743,12 +743,17 @@
     });
   }
 
+  /** Maps legacy result “playbook” names to Room routes (01–04 live; 05 anchors on listing until shipped). */
+  var PLAYBOOK_TO_ROOM = {
+    'Reset': '/room-01',
+    'Execution': '/room-02',
+    'Income Architecture': '/room-03',
+    'Ownership': '/room-04',
+    'AI Control': '/rooms#room-05'
+  };
+
   function playbookHref(name, mode) {
-    var meta = PLAYBOOK_META[name];
-    if (!meta) return '/playbooks';
-    var hash = '#pb-' + meta.slug;
-    if (mode === 'open') return '/playbooks' + hash;
-    return '/playbooks?download=1' + hash;
+    return PLAYBOOK_TO_ROOM[name] || '/rooms';
   }
 
   function playbookDownloadPrice(name) {

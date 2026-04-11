@@ -1,0 +1,1092 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Room 04 — Infrastructure · Stephuary</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0a0908;
+      --surface: rgba(22, 20, 18, 0.72);
+      --surface-grid: rgba(18, 16, 14, 0.92);
+      --line: rgba(232, 224, 212, 0.07);
+      --line-strong: rgba(120, 108, 92, 0.35);
+      --bronze: #5c4d3f;
+      --accent: #8a7a66;
+      --accent-soft: rgba(138, 122, 102, 0.2);
+      --cream: #e4dcd0;
+      --text: #d4ccc0;
+      --muted: #9a9186;
+      --dim: #6a635a;
+      --label: #4a4540;
+      --radius: 4px;
+      --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      --font-serif: ui-serif, Georgia, "Times New Roman", serif;
+      --font-mono: ui-monospace, "SF Mono", Menlo, Monaco, Consolas, monospace;
+    }
+
+    html, body { height: 100%; }
+    body {
+      font-family: var(--font-sans);
+      font-weight: 400;
+      background: var(--bg);
+      background-image:
+        linear-gradient(180deg, rgba(28, 24, 20, 0.35) 0%, transparent 38%),
+        radial-gradient(ellipse 70% 45% at 50% 0%, rgba(60, 52, 44, 0.25) 0%, transparent 55%);
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+      overflow: hidden;
+      font-size: 15px;
+      line-height: 1.55;
+    }
+
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+      opacity: 0.022;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    #room-app {
+      position: relative;
+      z-index: 1;
+      height: 100%;
+      min-height: 100dvh;
+    }
+
+    .room-top {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 200;
+      padding: 20px 22px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      background: linear-gradient(to bottom, rgba(10, 9, 8, 0.94) 0%, rgba(10, 9, 8, 0.5) 70%, transparent 100%);
+      pointer-events: none;
+      border-bottom: 1px solid transparent;
+    }
+    .room-top a {
+      pointer-events: auto;
+      font-family: var(--font-mono);
+      font-size: 8px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--dim);
+      text-decoration: none;
+    }
+    .room-top a:hover { color: var(--muted); }
+    .room-progress {
+      font-family: var(--font-mono);
+      font-size: 8px;
+      letter-spacing: 0.12em;
+      color: var(--label);
+    }
+
+    .panel {
+      display: none;
+      min-height: 100dvh;
+      max-height: 100dvh;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      padding: 84px 22px 108px;
+      flex-direction: column;
+      align-items: stretch;
+      max-width: 520px;
+      margin: 0 auto;
+      border-left: 1px solid var(--line);
+      border-right: 1px solid var(--line);
+      animation: panelIn 0.38s ease-out;
+    }
+    .panel.active { display: flex; }
+    @keyframes panelIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .panel--entry {
+      justify-content: center;
+      text-align: center;
+      border-left: none;
+      border-right: none;
+      max-width: 440px;
+    }
+    .panel-micro {
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 36px;
+      max-width: 300px;
+      margin-left: auto;
+      margin-right: auto;
+      line-height: 1.6;
+    }
+
+    .section-rule {
+      height: 1px;
+      background: var(--line-strong);
+      margin: 0 0 28px;
+      opacity: 0.5;
+    }
+
+    .panel-title {
+      font-family: var(--font-serif);
+      font-weight: 400;
+      font-size: clamp(24px, 5.5vw, 34px);
+      line-height: 1.12;
+      letter-spacing: -0.02em;
+      margin-bottom: 14px;
+      color: var(--cream);
+    }
+
+    .panel-instruction {
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+
+    .panel-kicker {
+      font-family: var(--font-mono);
+      font-size: 8px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 18px;
+    }
+
+    .ops-block {
+      background: var(--surface-grid);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 18px 16px;
+      margin-bottom: 20px;
+    }
+    .ops-block + .ops-block { margin-top: 8px; }
+
+    .output-block {
+      background: var(--surface);
+      border: 1px solid var(--line-strong);
+      border-radius: var(--radius);
+      padding: 18px 16px;
+      margin: 20px 0 24px;
+    }
+    .output-label {
+      font-family: var(--font-mono);
+      font-size: 7px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--label);
+      margin-bottom: 10px;
+    }
+    .output-body {
+      font-size: 14px;
+      color: var(--text);
+      line-height: 1.55;
+    }
+    .output-body.sm { font-size: 13px; color: var(--muted); }
+
+    .pick-list label.opt {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 14px 12px;
+      margin-bottom: 6px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      cursor: pointer;
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.45;
+      transition: border-color 0.15s ease, background 0.15s ease;
+    }
+    .pick-list label.opt:hover { border-color: rgba(138, 122, 102, 0.35); }
+    .pick-list label.opt:has(input:checked) {
+      border-color: rgba(138, 122, 102, 0.5);
+      background: var(--accent-soft);
+      color: var(--cream);
+    }
+    .pick-list input {
+      margin-top: 3px;
+      accent-color: var(--bronze);
+      width: 15px;
+      height: 15px;
+      flex-shrink: 0;
+    }
+
+    .field { margin-bottom: 0; }
+    .field + .field { margin-top: 12px; }
+    .field label {
+      display: block;
+      font-family: var(--font-mono);
+      font-size: 7px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--dim);
+      margin-bottom: 6px;
+    }
+    .field input[type="text"],
+    .field select,
+    .field textarea {
+      width: 100%;
+      padding: 13px 14px;
+      background: rgba(6, 5, 4, 0.65);
+      border: 1px solid var(--line);
+      color: var(--cream);
+      font-family: var(--font-sans);
+      font-size: 16px;
+      font-weight: 400;
+      border-radius: var(--radius);
+    }
+    .field input:focus,
+    .field select:focus,
+    .field textarea:focus {
+      outline: none;
+      border-color: rgba(138, 122, 102, 0.45);
+    }
+    .field textarea { min-height: 72px; resize: vertical; }
+
+    .domain-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+    @media (min-width: 480px) {
+      .domain-grid { grid-template-columns: 1fr 1fr; }
+    }
+    .domain-card {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 14px 12px;
+      background: rgba(12, 10, 8, 0.5);
+    }
+    .domain-card h4 {
+      font-family: var(--font-mono);
+      font-size: 8px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 12px;
+    }
+    .tier-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .tier-row label {
+      font-family: var(--font-sans);
+      font-size: 12px;
+      color: var(--muted);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+    }
+    .tier-row input { accent-color: var(--bronze); }
+
+    .action-list {
+      list-style: decimal;
+      padding-left: 1.25em;
+      margin: 0;
+    }
+    .action-list li {
+      padding: 8px 0;
+      font-size: 14px;
+      color: var(--text);
+      border-bottom: 1px solid var(--line);
+    }
+    .action-list li:last-child { border-bottom: none; }
+
+    .btn-continue {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      margin-top: 10px;
+      padding: 16px 20px;
+      min-height: 52px;
+      font-family: var(--font-mono);
+      font-size: 8px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--cream);
+      background: rgba(90, 78, 64, 0.35);
+      border: 1px solid rgba(120, 108, 92, 0.45);
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: opacity 0.2s ease, border-color 0.2s ease;
+    }
+    .btn-continue:hover:not(:disabled) {
+      border-color: rgba(138, 122, 102, 0.65);
+    }
+    .btn-continue:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--muted);
+      border: 1px solid var(--line);
+      margin-top: 12px;
+    }
+    .btn-secondary:hover:not(:disabled) {
+      color: var(--text);
+      border-color: rgba(138, 122, 102, 0.3);
+    }
+
+    .summary-card {
+      background: linear-gradient(165deg, rgba(22, 20, 18, 0.98) 0%, rgba(10, 9, 8, 0.99) 100%);
+      border: 1px solid var(--line-strong);
+      padding: 28px 22px 24px;
+      margin-bottom: 20px;
+      border-radius: var(--radius);
+    }
+    .summary-card h3 {
+      font-family: var(--font-serif);
+      font-size: 18px;
+      font-weight: 400;
+      color: var(--accent);
+      margin-bottom: 18px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      font-size: 11px;
+      font-family: var(--font-mono);
+      letter-spacing: 0.18em;
+    }
+    .summary-section {
+      margin-bottom: 16px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--line);
+    }
+    .summary-section:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+    .summary-section-title {
+      font-family: var(--font-mono);
+      font-size: 7px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--dim);
+      margin-bottom: 6px;
+    }
+    .summary-section p, .summary-section ul { font-size: 13px; color: var(--muted); line-height: 1.6; }
+    .summary-section ul { padding-left: 1.1em; margin-top: 4px; }
+
+    .final-line {
+      text-align: center;
+      font-family: var(--font-serif);
+      font-size: 17px;
+      font-weight: 400;
+      font-style: italic;
+      color: var(--muted);
+      line-height: 1.5;
+      margin-top: 24px;
+      padding-top: 22px;
+      border-top: 1px solid var(--line-strong);
+    }
+
+    .check-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .check-grid label.opt { margin-bottom: 0; }
+
+    @media (min-width: 600px) {
+      .panel { padding-left: 28px; padding-right: 28px; max-width: 540px; }
+    }
+  </style>
+</head>
+<body>
+  <div id="room-app">
+    <header class="room-top">
+      <a href="/">Stephuary</a>
+      <span class="room-progress" id="progress-text">Room 04</span>
+    </header>
+
+    <section class="panel panel--entry active" data-step="0" id="panel-0">
+      <p class="panel-kicker">Room 04 — Infrastructure</p>
+      <h1 class="panel-title">This is not optimization.<br />This is continuity.</h1>
+      <p class="panel-micro">Move through it once.<br />Leave with a practical starting point.</p>
+      <button type="button" class="btn-continue" id="btn-begin">Begin</button>
+    </section>
+
+    <section class="panel" data-step="1" id="panel-1">
+      <div class="section-rule" aria-hidden="true"></div>
+      <h2 class="panel-title">Start with your reality</h2>
+      <p class="panel-instruction">Choose the situation that matches you now.</p>
+      <div class="pick-list" id="situation-list"></div>
+      <div class="output-block" id="out-situation" style="display:none;">
+        <p class="output-label">Orientation</p>
+        <p class="output-body" id="out-situation-line">—</p>
+      </div>
+      <button type="button" class="btn-continue" id="btn-1" disabled>Continue</button>
+    </section>
+
+    <section class="panel" data-step="2" id="panel-2">
+      <div class="section-rule" aria-hidden="true"></div>
+      <h2 class="panel-title">What phase are you in?</h2>
+      <p class="panel-instruction">Pick the closest phase.</p>
+      <div class="pick-list" id="phase-list"></div>
+      <div class="output-block" id="out-phase" style="display:none;">
+        <p class="output-label">Phase</p>
+        <p class="output-body" id="out-phase-title">—</p>
+        <p class="output-body sm" id="out-phase-body" style="margin-top:10px;">—</p>
+      </div>
+      <button type="button" class="btn-continue" id="btn-2" disabled>Continue</button>
+    </section>
+
+    <section class="panel" data-step="3" id="panel-3">
+      <div class="section-rule" aria-hidden="true"></div>
+      <h2 class="panel-title">Start with people before supplies</h2>
+      <p class="panel-instruction">Pick what already exists.</p>
+      <div class="ops-block check-grid" id="human-infra-wrap"></div>
+      <div class="output-block" id="out-human" style="display:none;">
+        <p class="output-label">What still comes before gear</p>
+        <ul class="output-body" id="out-human-list" style="list-style:disc;padding-left:1.2em;margin:0;"></ul>
+      </div>
+      <button type="button" class="btn-continue" id="btn-3" disabled>Continue</button>
+    </section>
+
+    <section class="panel" data-step="4" id="panel-4">
+      <div class="section-rule" aria-hidden="true"></div>
+      <h2 class="panel-title">What is already in place?</h2>
+      <p class="panel-instruction">Check what is actually built.</p>
+      <div class="domain-grid" id="domain-grid"></div>
+      <div class="output-block" id="out-domains" style="display:none;">
+        <p class="output-label">Domains not yet functional</p>
+        <p class="output-body" id="out-domain-gaps">—</p>
+      </div>
+      <button type="button" class="btn-continue" id="btn-4" disabled>Continue</button>
+    </section>
+
+    <section class="panel" data-step="5" id="panel-5">
+      <div class="section-rule" aria-hidden="true"></div>
+      <h2 class="panel-title">What fails first?</h2>
+      <p class="panel-instruction">Choose your highest-priority vulnerability.</p>
+      <div class="pick-list" id="priority-list"></div>
+      <div class="output-block" id="out-priority" style="display:none;">
+        <p class="output-label">Priority</p>
+        <p class="output-body" id="out-priority-line">—</p>
+      </div>
+      <button type="button" class="btn-continue" id="btn-5" disabled>Continue</button>
+    </section>
+
+    <section class="panel" data-step="6" id="panel-6">
+      <div class="section-rule" aria-hidden="true"></div>
+      <h2 class="panel-title">Who is part of this?</h2>
+      <p class="panel-instruction">Start with trust, not preference.</p>
+      <div class="ops-block">
+        <div class="field">
+          <label for="cohort-status">Cohort status</label>
+          <select id="cohort-status">
+            <option value="">Select…</option>
+            <option value="none">none</option>
+            <option value="1-2">1–2 people in mind</option>
+            <option value="active">active conversations</option>
+            <option value="forming">forming group</option>
+            <option value="established">established group</option>
+          </select>
+        </div>
+        <div class="field"><label for="cohort-n1">First candidate name</label><input type="text" id="cohort-n1" autocomplete="name" /></div>
+        <div class="field"><label for="cohort-n2">Second candidate name</label><input type="text" id="cohort-n2" autocomplete="name" /></div>
+      </div>
+      <div class="output-block" id="out-cohort" style="display:none;">
+        <p class="output-label">Your next human step</p>
+        <p class="output-body" id="out-cohort-line">—</p>
+      </div>
+      <button type="button" class="btn-continue" id="btn-6" disabled>Continue</button>
+    </section>
+
+    <section class="panel" data-step="7" id="panel-7">
+      <div class="section-rule" aria-hidden="true"></div>
+      <h2 class="panel-title">What happens first</h2>
+      <p class="panel-instruction">You do not need the whole system today.<br />You need the first actions in order.</p>
+      <div class="ops-block">
+        <ol class="action-list" id="first-actions-list"></ol>
+      </div>
+      <button type="button" class="btn-continue" id="btn-7">Continue</button>
+    </section>
+
+    <section class="panel" data-step="8" id="panel-8">
+      <div class="section-rule" aria-hidden="true"></div>
+      <h2 class="panel-title">Choose your build pace</h2>
+      <p class="panel-instruction">Pick the most realistic track.</p>
+      <div class="pick-list" id="timeline-list"></div>
+      <div class="output-block" id="out-timeline" style="display:none;">
+        <p class="output-label">Pace</p>
+        <p class="output-body" id="out-timeline-line">—</p>
+      </div>
+      <button type="button" class="btn-continue" id="btn-8" disabled>Continue</button>
+    </section>
+
+    <section class="panel" data-step="9" id="panel-9">
+      <div class="section-rule" aria-hidden="true"></div>
+      <h2 class="panel-title">Your infrastructure plan</h2>
+      <p class="panel-instruction">This is your starting structure.</p>
+      <div class="summary-card">
+        <h3>Record</h3>
+        <div id="summary-body"></div>
+      </div>
+      <button type="button" class="btn-continue" id="btn-copy">Copy plan</button>
+      <button type="button" class="btn-continue btn-secondary" id="btn-restart">Restart</button>
+      <p class="final-line">Quiet structure beats visible panic.</p>
+    </section>
+  </div>
+
+  <script>
+(function () {
+  var HUMAN_DEFS = [
+    { id: 'signal', label: 'Signal installed' },
+    { id: 'library', label: 'Library cards in hand' },
+    { id: 'cash', label: 'Cash on hand' },
+    { id: 'candidates', label: 'Cohort candidates named' },
+    { id: 'conversation', label: 'First cohort conversation started' },
+    { id: 'governance', label: 'Governance discussed' },
+    { id: 'none', label: 'No human infrastructure started' }
+  ];
+
+  var HUMAN_GAP_ORDER = [
+    { id: 'signal', text: 'Secure comms: Signal on every phone you rely on.' },
+    { id: 'library', text: 'IDs and public resources: library cards and document photos.' },
+    { id: 'cash', text: 'Cash in mixed small bills, stored plainly.' },
+    { id: 'candidates', text: 'Two names written down — not hypothetical.' },
+    { id: 'conversation', text: 'One real conversation about mutual aid under stress.' },
+    { id: 'governance', text: 'How decisions get made when pressure hits.' }
+  ];
+
+  var DOMAIN_KEYS = ['food', 'water', 'energy', 'medical', 'security', 'finance'];
+  var DOMAIN_LABEL = { food: 'Food', water: 'Water', energy: 'Energy', medical: 'Medical', security: 'Security', finance: 'Finance' };
+
+  var SITUATIONS = [
+    { id: 'no_savings', text: 'no savings, no supplies, no cohort', path: 'Phase 0 — Stabilize: liquidity and water first; then comms and two names before buying gear.' },
+    { id: 'some_savings', text: 'some savings, no cohort yet', path: 'Phase 0–1 — Keep cash accessible; stack water and start one trusted conversation this week.' },
+    { id: 'supplies_no_cohort', text: 'supplies in place, no cohort formed', path: 'Phase 1–3 — Basics exist; cohort formation is now the risk to remove.' },
+    { id: 'supplies_cohort', text: 'supplies + cohort forming', path: 'Phase 2–3 — Turn informal links into roles, rhythm, and clear agreements.' },
+    { id: 'full_basics', text: 'full basics complete', path: 'Phase 3–5 — Deepen documentation, cross-training, and measured expansion.' },
+    { id: 'single_adult', text: 'single adult household', path: 'Phase 0–1 — Smaller footprint: water, documents, and one reliable check-in partner first.' },
+    { id: 'apartment', text: 'apartment renter', path: 'Phase 0–1 — Storage-limited; prioritize water, portability, and lease-safe backups.' },
+    { id: 'low_income', text: 'low income / SNAP eligible', path: 'Phase 0 — Stabilize food access (SNAP), water, and small-bill cash before accumulation.' },
+    { id: 'medical', text: 'medically vulnerable household', path: 'Phase 0–1 — Prescription continuity and care logistics before deep stockpiling.' },
+    { id: 'elder', text: 'elder-led household', path: 'Phase 0–2 — Mobility, medication, and trusted network before heavy physical loads.' }
+  ];
+
+  var PHASES = [
+    { id: 'p0', label: 'Phase 0 — Stabilize', body: 'Stop the worst failure modes first: cash you can reach, water you can drink, a way to reach people, and sleep.' },
+    { id: 'p1', label: 'Phase 1 — Secure Basics', body: 'Minimum viable food, water storage, backup power for essentials, medical continuity, and basic home security awareness.' },
+    { id: 'p2', label: 'Phase 2 — Build Systems', body: 'Repeatable routines, sensible storage, lists, and documentation so the household can run without heroics.' },
+    { id: 'p3', label: 'Phase 3 — Form the Cohort', body: 'Named people, candid conversations, and early agreements — the Cohort of 6 direction, not a fantasy roster.' },
+    { id: 'p4', label: 'Phase 4 — Cross-Train and Document', body: 'Someone else can execute critical steps if you are absent; paper and clarity beat memory.' },
+    { id: 'p5', label: 'Phase 5 — Expand', body: 'Deepen reserves and relationships without sprawl; expand only what you can maintain.' }
+  ];
+
+  var PRIORITIES = [
+    { id: 'food', label: 'food access' },
+    { id: 'water', label: 'water storage' },
+    { id: 'medical', label: 'medical continuity' },
+    { id: 'energy', label: 'energy / outage risk' },
+    { id: 'comms', label: 'communication failure' },
+    { id: 'finance', label: 'financial fragility' },
+    { id: 'network', label: 'no trusted network' }
+  ];
+
+  var TIMELINES = [
+    { id: '72h', label: '72-hour stabilize', summary: 'Three days to interrupt the worst failure modes: water, cash, comms, and a clear head.' },
+    { id: '30d', label: '30-day acceleration', summary: 'One month to compress Phase 0–1 work with frequent, small completions.' },
+    { id: '60d', label: '60-day foundation', summary: 'Two months to lock basics and human agreements without buying your way out of clarity.' },
+    { id: '90d', label: '90-day steady build', summary: 'Quarterly pace: systems and documentation before accumulation.' }
+  ];
+
+  var state = {
+    situation: '',
+    householdType: '',
+    currentPhase: '',
+    domains: { food: '', water: '', energy: '', medical: '', security: '', finance: '' },
+    urgentNeeds: [],
+    firstActions: [],
+    cohortStatus: '',
+    cohortCandidates: [],
+    timeline: '',
+    scenarioPriority: '',
+    finalPlan: {}
+  };
+
+  var humanInfraSelected = [];
+
+  var currentStep = 0;
+  var totalSteps = 10;
+
+  function escapeHtml(s) {
+    if (s == null) return '';
+    return String(s)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  function setProgress() {
+    var el = document.getElementById('progress-text');
+    if (el) el.textContent = 'Room 04 · ' + (currentStep + 1) + ' / ' + totalSteps;
+  }
+
+  function showStep(n) {
+    currentStep = n;
+    document.querySelectorAll('.panel').forEach(function (p) {
+      p.classList.toggle('active', parseInt(p.getAttribute('data-step'), 10) === n);
+    });
+    setProgress();
+    if (n === 7) renderFirstActions();
+    if (n === 9) renderSummary();
+  }
+
+  function next() {
+    if (currentStep < totalSteps - 1) showStep(currentStep + 1);
+  }
+
+  function initSituations() {
+    var wrap = document.getElementById('situation-list');
+    SITUATIONS.forEach(function (s, idx) {
+      var id = 'sit-' + s.id;
+      var lab = document.createElement('label');
+      lab.className = 'opt';
+      var inp = document.createElement('input');
+      inp.type = 'radio';
+      inp.name = 'situation';
+      inp.value = s.id;
+      inp.id = id;
+      var span = document.createElement('span');
+      span.textContent = s.text;
+      lab.appendChild(inp);
+      lab.appendChild(document.createTextNode(' '));
+      lab.appendChild(span);
+      wrap.appendChild(lab);
+      inp.addEventListener('change', function () {
+        state.situation = s.text;
+        var ht = '';
+        if (s.id === 'single_adult') ht = 'single adult household';
+        else if (s.id === 'apartment') ht = 'apartment renter';
+        else if (s.id === 'medical') ht = 'medically vulnerable household';
+        else if (s.id === 'elder') ht = 'elder-led household';
+        state.householdType = ht;
+        document.getElementById('out-situation-line').innerHTML =
+          'Start here: <strong>' + escapeHtml(s.path) + '</strong>';
+        document.getElementById('out-situation').style.display = 'block';
+        document.getElementById('btn-1').disabled = false;
+      });
+    });
+  }
+
+  function initPhases() {
+    var wrap = document.getElementById('phase-list');
+    PHASES.forEach(function (p) {
+      var id = 'ph-' + p.id;
+      var lab = document.createElement('label');
+      lab.className = 'opt';
+      var inp = document.createElement('input');
+      inp.type = 'radio';
+      inp.name = 'phase';
+      inp.value = p.id;
+      inp.id = id;
+      var span = document.createElement('span');
+      span.textContent = p.label;
+      lab.appendChild(inp);
+      lab.appendChild(document.createTextNode(' '));
+      lab.appendChild(span);
+      wrap.appendChild(lab);
+      inp.addEventListener('change', function () {
+        state.currentPhase = p.label;
+        document.getElementById('out-phase-title').textContent = p.label;
+        document.getElementById('out-phase-body').textContent = p.body;
+        document.getElementById('out-phase').style.display = 'block';
+        document.getElementById('btn-2').disabled = false;
+      });
+    });
+  }
+
+  function computeHumanGaps() {
+    var selected = humanInfraSelected.slice();
+    if (selected.indexOf('none') !== -1) {
+      return HUMAN_GAP_ORDER.map(function (x) { return x.text; });
+    }
+    var gaps = [];
+    HUMAN_GAP_ORDER.forEach(function (row) {
+      if (selected.indexOf(row.id) === -1) gaps.push(row.text);
+    });
+    return gaps;
+  }
+
+  function refreshHumanInfra() {
+    var wrap = document.getElementById('human-infra-wrap');
+    wrap.innerHTML = '';
+    HUMAN_DEFS.forEach(function (def) {
+      var id = 'hi-' + def.id;
+      var lab = document.createElement('label');
+      lab.className = 'opt';
+      var inp = document.createElement('input');
+      inp.type = 'checkbox';
+      inp.value = def.id;
+      inp.id = id;
+      var span = document.createElement('span');
+      span.textContent = def.label;
+      lab.appendChild(inp);
+      lab.appendChild(document.createTextNode(' '));
+      lab.appendChild(span);
+      wrap.appendChild(lab);
+      inp.addEventListener('change', function () {
+        if (def.id === 'none' && inp.checked) {
+          wrap.querySelectorAll('input[type=checkbox]').forEach(function (c) {
+            if (c.value !== 'none') c.checked = false;
+          });
+        } else if (def.id !== 'none' && inp.checked) {
+          var n = document.getElementById('hi-none');
+          if (n) n.checked = false;
+        }
+        humanInfraSelected = [];
+        wrap.querySelectorAll('input[type=checkbox]:checked').forEach(function (c) {
+          humanInfraSelected.push(c.value);
+        });
+        var listEl = document.getElementById('out-human-list');
+        listEl.innerHTML = '';
+        var gaps = computeHumanGaps();
+        state.urgentNeeds = gaps.slice();
+        if (humanInfraSelected.length === 0) {
+          document.getElementById('out-human').style.display = 'none';
+          document.getElementById('btn-3').disabled = true;
+          return;
+        }
+        gaps.forEach(function (g) {
+          var li = document.createElement('li');
+          li.textContent = g;
+          listEl.appendChild(li);
+        });
+        document.getElementById('out-human').style.display = 'block';
+        document.getElementById('btn-3').disabled = false;
+      });
+    });
+  }
+
+  function initDomains() {
+    var grid = document.getElementById('domain-grid');
+    DOMAIN_KEYS.forEach(function (key) {
+      var card = document.createElement('div');
+      card.className = 'domain-card';
+      var h = document.createElement('h4');
+      h.textContent = DOMAIN_LABEL[key];
+      card.appendChild(h);
+      var row = document.createElement('div');
+      row.className = 'tier-row';
+      [
+        { v: 'none', t: 'Not started' },
+        { v: 'started', t: 'Started' },
+        { v: 'functional', t: 'Functional' }
+      ].forEach(function (tier) {
+        var lid = 'dom-' + key + '-' + tier.v;
+        var lab = document.createElement('label');
+        var inp = document.createElement('input');
+        inp.type = 'radio';
+        inp.name = 'dom-' + key;
+        inp.value = tier.v;
+        inp.id = lid;
+        lab.appendChild(inp);
+        lab.appendChild(document.createTextNode(' ' + tier.t));
+        row.appendChild(lab);
+        inp.addEventListener('change', function () {
+          state.domains[key] = tier.v;
+          validateDomains();
+        });
+      });
+      card.appendChild(row);
+      grid.appendChild(card);
+    });
+  }
+
+  function validateDomains() {
+    var anyUnset = DOMAIN_KEYS.some(function (k) {
+      var v = state.domains[k];
+      return v !== 'none' && v !== 'started' && v !== 'functional';
+    });
+    if (anyUnset) {
+      document.getElementById('out-domains').style.display = 'none';
+      document.getElementById('btn-4').disabled = true;
+      return;
+    }
+    var missing = DOMAIN_KEYS.filter(function (k) {
+      return state.domains[k] !== 'functional';
+    }).map(function (k) { return DOMAIN_LABEL[k]; });
+    var gapText = missing.length ? missing.join(', ') : 'All six domains marked functional — maintain and document.';
+    document.getElementById('out-domain-gaps').textContent = missing.length
+      ? 'Not yet functional: ' + gapText + '.'
+      : gapText;
+    document.getElementById('out-domains').style.display = 'block';
+    document.getElementById('btn-4').disabled = false;
+  }
+
+  function initPriority() {
+    var wrap = document.getElementById('priority-list');
+    PRIORITIES.forEach(function (pr) {
+      var lab = document.createElement('label');
+      lab.className = 'opt';
+      var inp = document.createElement('input');
+      inp.type = 'radio';
+      inp.name = 'priority';
+      inp.value = pr.id;
+      var span = document.createElement('span');
+      span.textContent = pr.label;
+      lab.appendChild(inp);
+      lab.appendChild(document.createTextNode(' '));
+      lab.appendChild(span);
+      wrap.appendChild(lab);
+      inp.addEventListener('change', function () {
+        state.scenarioPriority = pr.label;
+        document.getElementById('out-priority-line').textContent = 'Your first priority is: ' + pr.label + '.';
+        document.getElementById('out-priority').style.display = 'block';
+        document.getElementById('btn-5').disabled = false;
+      });
+    });
+  }
+
+  function cohortNextStep() {
+    var st = state.cohortStatus;
+    if (st === 'none') return 'Name two people you could message in a crisis. Write them down before you buy anything else.';
+    if (st === '1-2') return 'Send one plain, low-stakes message to confirm willingness to talk about mutual support.';
+    if (st === 'active') return 'Propose one shared purpose and a monthly check-in — cadence before scale.';
+    if (st === 'forming') return 'Draft provisional roles: communications, medical awareness, logistics — even if informal.';
+    if (st === 'established') return 'Run a short governance pass: how decisions get made when pressure is high.';
+    return '—';
+  }
+
+  function computeCohort() {
+    var st = document.getElementById('cohort-status').value;
+    var n1 = document.getElementById('cohort-n1').value.trim();
+    var n2 = document.getElementById('cohort-n2').value.trim();
+    var names = [n1, n2].filter(Boolean);
+    state.cohortStatus = st;
+    state.cohortCandidates = names;
+    var needNames = st && st !== 'none' && names.length === 0;
+    if (!st || needNames) {
+      document.getElementById('out-cohort').style.display = 'none';
+      document.getElementById('btn-6').disabled = true;
+      return;
+    }
+    document.getElementById('out-cohort-line').textContent = cohortNextStep();
+    document.getElementById('out-cohort').style.display = 'block';
+    document.getElementById('btn-6').disabled = false;
+  }
+
+  function domainWeak(key) {
+    return state.domains[key] !== 'functional';
+  }
+
+  function generateFirstActions() {
+    var actions = [];
+    function add(a) {
+      if (a && actions.indexOf(a) === -1 && actions.length < 3) actions.push(a);
+    }
+    var hi = humanInfraSelected;
+    var pri = state.scenarioPriority;
+    var sitId = SITUATIONS.filter(function (s) { return s.text === state.situation; })[0];
+    sitId = sitId ? sitId.id : '';
+
+    if (pri === 'food access') add('Start or extend a 30-day pantry using food you already eat on rotation.');
+    if (pri === 'water storage') add('Fill every clean container with tap water; label and date.');
+    if (pri === 'medical continuity') add('Request a 90-day supply where clinically appropriate; photograph insurance cards.');
+    if (pri === 'energy / outage risk') add('Test flashlights and one backup power path for phone and cold meds.');
+    if (pri === 'communication failure') add('Install Signal on every phone you rely on; run one test thread.');
+    if (pri === 'financial fragility') add('Pull cash in mixed small bills; separate rent money from discretionary.');
+    if (pri === 'no trusted network') add('Name two trusted people on paper — not in your head.');
+
+    if (sitId === 'low_income' || sitId === 'no_savings') add('If eligible, start or renew SNAP; keep water and cash simultaneous.');
+    if (sitId === 'medical' || sitId === 'elder') add('Write a one-page medication and care-contact list; store digital and paper copies.');
+
+    if (hi.indexOf('none') === -1) {
+      if (hi.indexOf('signal') === -1) add('Install Signal on every household phone.');
+      if (hi.indexOf('cash') === -1) add('Withdraw cash in mixed denominations you can use without a card.');
+      if (hi.indexOf('candidates') === -1) add('Write down two cohort candidates with phone numbers.');
+    }
+
+    if (domainWeak('water')) add('Store three days of drinking water per person at minimum.');
+    if (domainWeak('food')) add('Stock 72 hours of shelf-stable food that does not require cooking.');
+    if (domainWeak('medical')) add('Assemble a household medical kit aligned to your prescriptions and allergies.');
+
+    if (state.cohortStatus === 'none') add('Schedule one conversation about check-ins before the next purchase.');
+
+    var fallbacks = [
+      'Photograph IDs and insurance cards; store offline copies.',
+      'Walk room by room: where water, food, and meds live in an outage.',
+      'List three exit routes and one rally point text line.',
+      'Print one page: contacts, medications, and allergies.',
+      'Rotate one pantry item you already buy this week.'
+    ];
+    var fi = 0;
+    while (actions.length < 3) {
+      add(fallbacks[fi % fallbacks.length]);
+      fi++;
+    }
+    state.firstActions = actions.slice(0, 3);
+  }
+
+  function renderFirstActions() {
+    generateFirstActions();
+    var ol = document.getElementById('first-actions-list');
+    ol.innerHTML = '';
+    state.firstActions.forEach(function (a) {
+      var li = document.createElement('li');
+      li.textContent = a;
+      ol.appendChild(li);
+    });
+  }
+
+  function initTimeline() {
+    var wrap = document.getElementById('timeline-list');
+    TIMELINES.forEach(function (t) {
+      var lab = document.createElement('label');
+      lab.className = 'opt';
+      var inp = document.createElement('input');
+      inp.type = 'radio';
+      inp.name = 'timeline';
+      inp.value = t.id;
+      var span = document.createElement('span');
+      span.textContent = t.label;
+      lab.appendChild(inp);
+      lab.appendChild(document.createTextNode(' '));
+      lab.appendChild(span);
+      wrap.appendChild(lab);
+      inp.addEventListener('change', function () {
+        state.timeline = t.label;
+        document.getElementById('out-timeline-line').textContent = t.summary;
+        document.getElementById('out-timeline').style.display = 'block';
+        document.getElementById('btn-8').disabled = false;
+      });
+    });
+  }
+
+  function humanInfraSummary() {
+    if (humanInfraSelected.indexOf('none') !== -1) return 'No human infrastructure started yet — full gap list applies.';
+    var labels = HUMAN_DEFS.filter(function (d) {
+      return humanInfraSelected.indexOf(d.id) !== -1 && d.id !== 'none';
+    }).map(function (d) { return d.label; });
+    return labels.length ? labels.join('; ') : '—';
+  }
+
+  function renderSummary() {
+    state.finalPlan = {
+      situation: state.situation,
+      householdType: state.householdType,
+      phase: state.currentPhase,
+      humanInfra: humanInfraSummary(),
+      gaps: state.urgentNeeds,
+      domains: JSON.parse(JSON.stringify(state.domains)),
+      priority: state.scenarioPriority,
+      cohortStatus: state.cohortStatus,
+      cohortCandidates: state.cohortCandidates.slice(),
+      firstActions: state.firstActions.slice(),
+      timeline: state.timeline
+    };
+
+    var body = document.getElementById('summary-body');
+    body.innerHTML = '';
+
+    function addSec(title, html) {
+      var d = document.createElement('div');
+      d.className = 'summary-section';
+      var h = document.createElement('p');
+      h.className = 'summary-section-title';
+      h.textContent = title;
+      d.appendChild(h);
+      var inner = document.createElement('div');
+      inner.innerHTML = html;
+      d.appendChild(inner);
+      body.appendChild(d);
+    }
+
+    var gapDom = DOMAIN_KEYS.filter(function (k) { return state.domains[k] !== 'functional'; })
+      .map(function (k) { return DOMAIN_LABEL[k]; }).join(', ') || 'None — all functional';
+
+    addSec('Situation', '<p>' + escapeHtml(state.situation) + '</p>');
+    if (state.householdType) addSec('Household', '<p>' + escapeHtml(state.householdType) + '</p>');
+    addSec('Phase', '<p>' + escapeHtml(state.currentPhase) + '</p>');
+    addSec('Human infrastructure status', '<p>' + escapeHtml(humanInfraSummary()) + '</p>');
+    addSec('Domain gaps', '<p>' + escapeHtml(gapDom) + '</p>');
+    addSec('Priority vulnerability', '<p>' + escapeHtml(state.scenarioPriority) + '</p>');
+    addSec('Cohort status', '<p>' + escapeHtml(state.cohortStatus) + '</p>');
+    if (state.cohortCandidates.length) {
+      addSec('Cohort candidates', '<p>' + escapeHtml(state.cohortCandidates.join(', ')) + '</p>');
+    }
+    var actHtml = '<ul>' + state.firstActions.map(function (a) { return '<li>' + escapeHtml(a) + '</li>'; }).join('') + '</ul>';
+    addSec('First 3 actions', actHtml);
+    addSec('Build pace', '<p>' + escapeHtml(state.timeline) + '</p>');
+  }
+
+  function buildPlanText() {
+    var lines = [];
+    lines.push('ROOM 04 — INFRASTRUCTURE');
+    lines.push('');
+    lines.push('Situation: ' + state.situation);
+    if (state.householdType) lines.push('Household note: ' + state.householdType);
+    lines.push('Phase: ' + state.currentPhase);
+    lines.push('Human infrastructure: ' + humanInfraSummary());
+    lines.push('Gaps before gear: ' + (state.urgentNeeds.length ? state.urgentNeeds.join(' | ') : '—'));
+    lines.push('Domain gaps (not functional): ' + DOMAIN_KEYS.filter(function (k) { return state.domains[k] !== 'functional'; }).map(function (k) { return DOMAIN_LABEL[k]; }).join(', ') || 'none');
+    lines.push('Priority: ' + state.scenarioPriority);
+    lines.push('Cohort status: ' + state.cohortStatus);
+    lines.push('Candidates: ' + (state.cohortCandidates.join(', ') || '—'));
+    lines.push('');
+    lines.push('First actions:');
+    state.firstActions.forEach(function (a, i) { lines.push((i + 1) + '. ' + a); });
+    lines.push('');
+    lines.push('Build pace: ' + state.timeline);
+    return lines.join('\n');
+  }
+
+  function copyPlan() {
+    renderSummary();
+    var t = buildPlanText();
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(t).then(function () {
+        var b = document.getElementById('btn-copy');
+        var o = b.textContent;
+        b.textContent = 'Copied';
+        setTimeout(function () { b.textContent = o; }, 2000);
+      });
+    }
+  }
+
+  document.getElementById('btn-begin').addEventListener('click', next);
+
+  initSituations();
+  initPhases();
+  refreshHumanInfra();
+  initDomains();
+  initPriority();
+  initTimeline();
+
+  document.getElementById('btn-1').addEventListener('click', next);
+  document.getElementById('btn-2').addEventListener('click', next);
+  document.getElementById('btn-3').addEventListener('click', next);
+  document.getElementById('btn-4').addEventListener('click', next);
+  document.getElementById('btn-5').addEventListener('click', next);
+
+  ['cohort-status', 'cohort-n1', 'cohort-n2'].forEach(function (id) {
+    document.getElementById(id).addEventListener('input', computeCohort);
+    document.getElementById(id).addEventListener('change', computeCohort);
+  });
+  document.getElementById('btn-6').addEventListener('click', next);
+
+  document.getElementById('btn-7').addEventListener('click', next);
+  document.getElementById('btn-8').addEventListener('click', next);
+
+  document.getElementById('btn-copy').addEventListener('click', copyPlan);
+  document.getElementById('btn-restart').addEventListener('click', function () {
+    location.reload();
+  });
+
+  showStep(0);
+})();
+  </script>
+</body>
+</html>
