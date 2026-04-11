@@ -1283,8 +1283,23 @@
     document.getElementById('out-target').style.display = 'none';
     document.getElementById('btn-4').disabled = true;
 
-    if (names.length < 2) {
+    if (names.length === 0) {
       wrap.style.display = 'none';
+      return;
+    }
+
+    if (names.length === 1) {
+      wrap.style.display = 'none';
+      state.selectedTarget = names[0];
+      document.getElementById('out-target-name').textContent = state.selectedTarget;
+      document.getElementById('out-target').style.display = 'block';
+      document.getElementById('btn-4').disabled = false;
+      fillSysResponse('sys-response-r3-4', {
+        means: 'The first thread opens with ' + state.selectedTarget + '.',
+        why: 'Trust already exists — cold outreach burns hours.',
+        continues: 'Silence stays the default.',
+        fix: 'Send to that name first — no reordering to a “better” prospect.'
+      });
       return;
     }
 
@@ -1531,44 +1546,61 @@
     return lines.join('\n');
   }
 
+  function copyToClipboard(text, onOk) {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(onOk).catch(function () {
+        legacyCopy(text, onOk);
+      });
+      return;
+    }
+    legacyCopy(text, onOk);
+  }
+
+  function legacyCopy(text, onOk) {
+    var ta = document.createElement('textarea');
+    ta.value = text;
+    ta.setAttribute('readonly', '');
+    ta.style.cssText = 'position:fixed;left:-9999px;top:0';
+    document.body.appendChild(ta);
+    ta.select();
+    try {
+      if (document.execCommand('copy') && onOk) onOk();
+    } catch (e) {}
+    document.body.removeChild(ta);
+  }
+
   function copySummary() {
     renderSummary();
     var t = buildSummaryPlainText();
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(t).then(function () {
-        var b = document.getElementById('btn-copy');
-        var o = b.textContent;
-        b.textContent = 'Copied ✓';
-        setTimeout(function () { b.textContent = o; }, 2000);
-      });
-    }
+    copyToClipboard(t, function () {
+      var b = document.getElementById('btn-copy');
+      var o = b.textContent;
+      b.textContent = 'Copied ✓';
+      setTimeout(function () { b.textContent = o; }, 2000);
+    });
   }
 
   function copyMsg() {
     var t = document.getElementById('msg-body').value;
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(t).then(function () {
-        state.messageCopied = true;
-        updateSendGate();
-        var b = document.getElementById('btn-copy-msg');
-        var o = b.textContent;
-        b.textContent = 'Copied ✓';
-        setTimeout(function () { b.textContent = o; }, 2000);
-      });
-    }
+    copyToClipboard(t, function () {
+      state.messageCopied = true;
+      updateSendGate();
+      var b = document.getElementById('btn-copy-msg');
+      var o = b.textContent;
+      b.textContent = 'Copied ✓';
+      setTimeout(function () { b.textContent = o; }, 2000);
+    });
   }
 
   function copySendFinal() {
     syncSendPanel();
     var t = document.getElementById('msg-send-final').value;
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(t).then(function () {
-        var b = document.getElementById('btn-copy-send-final');
-        var o = b.textContent;
-        b.textContent = 'Copied ✓';
-        setTimeout(function () { b.textContent = o; }, 2000);
-      });
-    }
+    copyToClipboard(t, function () {
+      var b = document.getElementById('btn-copy-send-final');
+      var o = b.textContent;
+      b.textContent = 'Copied ✓';
+      setTimeout(function () { b.textContent = o; }, 2000);
+    });
   }
 
   document.getElementById('btn-begin').addEventListener('click', next);
