@@ -1,659 +1,576 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>The System | Stephuary</title>
-<meta name="description" content="Know what's wrong. Fix it." />
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet" />
-<link rel="stylesheet" href="/sai-framework.css" />
-<style>
-*, *::before, *::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>System · Stephuary</title>
+  <meta name="description" content="How Stephuary works end to end: diagnostic, sections, output, distribution, and income." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400&family=DM+Mono:wght@300;400&family=Lato:wght@300;400&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-:root {
-  --bg:       #0a0a0a;
-  --card:     #111111;
-  --card-hover: #161616;
-  --border:   rgba(255,255,255,0.08);
-  --border-hover: rgba(255,255,255,0.18);
-  --text:     #ffffff;
-  --text-2:   #a1a1a1;
-  --gold:     #c6a85e;
-  --gold-dim: rgba(198,168,94,0.15);
-  --radius:   12px;
-  --max:      680px;
-}
+    :root {
+      --bg: #060605;
+      --text: #f4ede0;
+      --muted: #a89f92;
+      --dim: #6e6558;
+      --border: rgba(244, 237, 224, 0.1);
+      --blue: #2b4fd4;
+      --blue-hi: #3a5ee0;
+    }
 
-html, body {
-  background: var(--bg);
-  color: var(--text);
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  font-size: 18px;
-  line-height: 1.5;
-  font-weight: 400;
-  -webkit-font-smoothing: antialiased;
-  min-height: 100%;
-}
+    html { scroll-behavior: smooth; }
 
-a { color: inherit; text-decoration: none; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Lato', sans-serif;
+      font-weight: 300;
+      font-size: 16px;
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+      min-height: 100%;
+    }
 
-/* ---- LAYOUT ---- */
-.wrap {
-  max-width: var(--max);
-  margin: 0 auto;
-  padding: 0 24px;
-}
+    a { color: inherit; text-decoration: none; }
 
-/* ---- NAV ---- */
-nav {
-  padding: 28px 24px;
-  max-width: var(--max);
-  margin: 0 auto;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+      padding: 20px 28px;
+      background: rgba(6, 6, 5, 0.92);
+      border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(12px);
+    }
 
-.nav-logo {
-  font-size: 13px;
-  font-weight: 600;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--gold);
-}
+    .nav-mark {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 15px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text);
+    }
 
-.nav-link {
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--text-2);
-  transition: color 0.15s;
-}
-.nav-link:hover { color: var(--text); }
+    .nav-links {
+      display: flex;
+      gap: 22px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
 
-/* ---- SECTIONS ---- */
-section {
-  padding: 96px 0;
-}
+    .nav-links a {
+      font-family: 'DM Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--dim);
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--muted); }
 
-section + section {
-  padding-top: 0;
-}
+    .wrap {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 0 28px 96px;
+    }
 
-/* ---- HERO ---- */
-.hero {
-  padding: 112px 0 80px;
-}
+    .page-head {
+      padding: 56px 0 40px;
+      border-bottom: 1px solid var(--border);
+    }
 
-.hero-eyebrow {
-  display: block;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--gold);
-  margin-bottom: 24px;
-}
+    .page-h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-size: clamp(32px, 5vw, 44px);
+      letter-spacing: -0.03em;
+      line-height: 1.1;
+      margin-bottom: 28px;
+    }
 
-.hero h1 {
-  font-size: 48px;
-  font-weight: 600;
-  line-height: 1.1;
-  letter-spacing: -0.02em;
-  color: var(--text);
-  margin-bottom: 20px;
-}
+    .intro-lead {
+      font-size: 15px;
+      color: var(--muted);
+      margin-bottom: 14px;
+    }
 
-.hero p {
-  font-size: 18px;
-  color: var(--text-2);
-  line-height: 1.6;
-  max-width: 44ch;
-  margin-bottom: 40px;
-}
+    .intro-list {
+      list-style: none;
+      margin: 0 0 22px;
+      padding: 0;
+    }
+    .intro-list li {
+      position: relative;
+      padding-left: 1.1em;
+      margin-bottom: 0.45em;
+      font-size: 15px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+    .intro-list li::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0.65em;
+      width: 4px;
+      height: 1px;
+      background: var(--dim);
+    }
 
-.hero-divider {
-  width: 40px;
-  height: 1px;
-  background: var(--border);
-  margin: 32px 0;
-}
+    .intro-close {
+      font-size: 15px;
+      color: var(--muted);
+      line-height: 1.75;
+    }
+    .intro-close + .intro-close {
+      margin-top: 12px;
+    }
 
-.hero-actions {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  align-items: flex-start;
-}
+    .sys-acc {
+      margin-top: 8px;
+      border-top: 1px solid var(--border);
+    }
 
-.hero-or {
-  font-size: 13px;
-  color: var(--text-2);
-  margin: 4px 0;
-}
+    .sys-acc-item {
+      border-bottom: 1px solid var(--border);
+    }
 
-/* ---- BUTTONS ---- */
-.btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 48px;
-  padding: 14px 24px;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 600;
-  letter-spacing: 0.02em;
-  cursor: pointer;
-  border: none;
-  transition: opacity 0.15s, transform 0.15s;
-  white-space: nowrap;
-}
-.btn:active { transform: scale(0.98); }
+    .sys-acc-item summary {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      list-style: none;
+      cursor: pointer;
+      padding: 20px 0 18px;
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-size: clamp(20px, 2.6vw, 26px);
+      letter-spacing: -0.02em;
+      color: var(--text);
+      line-height: 1.2;
+    }
 
-.btn-primary {
-  background: var(--gold);
-  color: #0a0a0a;
-}
-.btn-primary:hover { opacity: 0.9; }
+    .sys-acc-item summary::-webkit-details-marker { display: none; }
 
-.btn-ghost {
-  background: transparent;
-  color: var(--text-2);
-  border: 1px solid var(--border);
-}
-.btn-ghost:hover {
-  color: var(--text);
-  border-color: var(--border-hover);
-}
+    .sys-acc-item summary::after {
+      content: '+';
+      flex-shrink: 0;
+      font-family: 'DM Mono', monospace;
+      font-size: 14px;
+      color: var(--dim);
+      line-height: 1;
+    }
 
-/* ---- SECTION HEADER ---- */
-.section-label {
-  display: block;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--text-2);
-  margin-bottom: 32px;
-}
+    .sys-acc-item[open] summary::after { content: '−'; }
 
-/* ---- PROBLEM CARDS ---- */
-.problem-grid {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
+    .sys-acc-panel {
+      padding: 0 0 28px;
+    }
 
-.problem-card {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 20px 22px;
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  cursor: pointer;
-  text-decoration: none;
-  transition: background 0.15s, border-color 0.15s, transform 0.15s;
-  gap: 16px;
-}
+    .sys-p {
+      font-size: 15px;
+      color: var(--muted);
+      line-height: 1.75;
+      margin-bottom: 1em;
+    }
+    .sys-p:last-child { margin-bottom: 0; }
 
-.problem-card:hover {
-  background: var(--card-hover);
-  border-color: var(--border-hover);
-  transform: scale(1.015);
-}
+    .sys-steps {
+      margin: 0 0 1.1em;
+    }
+    .sys-step {
+      margin-bottom: 0.95em;
+      font-size: 15px;
+      color: var(--muted);
+    }
+    .sys-step-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 8px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--dim);
+      display: block;
+      margin-bottom: 4px;
+    }
 
-.problem-card:active {
-  transform: scale(0.99);
-}
+    .sys-list {
+      list-style: none;
+      margin: 0 0 1em;
+      padding: 0;
+    }
+    .sys-list li {
+      position: relative;
+      padding-left: 1em;
+      margin-bottom: 0.4em;
+      font-size: 15px;
+      color: var(--muted);
+      line-height: 1.65;
+    }
+    .sys-list li::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0.65em;
+      width: 3px;
+      height: 1px;
+      background: var(--dim);
+    }
 
-.problem-left {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  flex: 1;
-  min-width: 0;
-}
+    .sys-ol {
+      margin: 0 0 1em;
+      padding-left: 1.2em;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.75;
+    }
+    .sys-ol li { margin-bottom: 0.35em; }
 
-.problem-category {
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--gold);
-}
+    .sys-subhead {
+      font-family: 'DM Mono', monospace;
+      font-size: 8px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--dim);
+      margin: 1em 0 0.5em;
+    }
+    .sys-subhead:first-child { margin-top: 0; }
 
-.problem-title {
-  font-size: 17px;
-  font-weight: 500;
-  color: var(--text);
-  line-height: 1.3;
-}
+    .flow-block {
+      margin-bottom: 14px;
+      font-size: 15px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+    .flow-group { margin-top: 1.1em; }
+    .flow-group:first-child { margin-top: 0; }
+    .flow-line-label {
+      margin-bottom: 6px;
+      color: var(--text);
+      font-size: 15px;
+    }
+    .flow-line-desc {
+      margin-top: 0;
+      font-size: 15px;
+      color: var(--muted);
+    }
+    .flow-arrow {
+      color: var(--dim);
+      margin-right: 6px;
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+    }
+    .sys-chain {
+      color: var(--text);
+      font-size: 16px;
+    }
 
-.problem-fix {
-  font-size: 14px;
-  color: var(--text-2);
-  margin-top: 2px;
-}
+    .sys-tier {
+      margin-bottom: 18px;
+    }
+    .sys-tier:last-child { margin-bottom: 0; }
+    .sys-tier h4 {
+      font-family: 'DM Mono', monospace;
+      font-size: 8px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--dim);
+      margin-bottom: 8px;
+      font-weight: 400;
+    }
+    .sys-tier p {
+      font-size: 15px;
+      color: var(--muted);
+      line-height: 1.65;
+    }
 
-.problem-cta {
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--text-2);
-  white-space: nowrap;
-  flex-shrink: 0;
-  transition: color 0.15s;
-}
+    .btn-cta {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 18px;
+      background: linear-gradient(165deg, var(--blue-hi) 0%, var(--blue) 100%);
+      color: #fff;
+      font-family: 'DM Mono', monospace;
+      font-size: 9px;
+      font-weight: 400;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      padding: 14px 26px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 1px;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .btn-cta:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 24px rgba(43, 79, 212, 0.35);
+    }
 
-.problem-card:hover .problem-cta {
-  color: var(--text);
-}
+    footer {
+      padding: 40px 28px 48px;
+      border-top: 1px solid var(--border);
+      max-width: 720px;
+      margin: 0 auto;
+    }
+    .footer-inner {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 24px;
+      align-items: flex-start;
+    }
+    .footer-mark {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 13px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--dim);
+    }
+    .footer-links {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      list-style: none;
+    }
+    .footer-links a {
+      font-family: 'DM Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--dim);
+      padding: 6px 0;
+      border-bottom: 1px solid var(--border);
+      transition: color 0.2s;
+    }
+    .footer-links li:last-child a { border-bottom: none; }
+    .footer-links a:hover { color: var(--muted); }
 
-/* ---- HOW IT WORKS ---- */
-.steps {
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-}
-
-.step {
-  display: flex;
-  align-items: flex-start;
-  gap: 20px;
-  padding: 20px 0;
-  border-bottom: 1px solid var(--border);
-}
-.step:first-child { border-top: 1px solid var(--border); }
-
-.step-num {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--gold);
-  min-width: 24px;
-  padding-top: 2px;
-  opacity: 0.8;
-}
-
-.step-text {
-  font-size: 17px;
-  color: var(--text-2);
-  line-height: 1.5;
-}
-
-/* ---- ENTRY CARD ---- */
-.entry-card {
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 40px 36px;
-}
-
-.entry-price {
-  font-size: 48px;
-  font-weight: 600;
-  color: var(--text);
-  line-height: 1;
-  margin-bottom: 6px;
-  letter-spacing: -0.02em;
-}
-
-.entry-note {
-  font-size: 14px;
-  color: var(--text-2);
-  margin-bottom: 28px;
-}
-
-/* ---- PROOF LAYER ---- */
-.proof-title {
-  font-size: 28px;
-  font-weight: 600;
-  line-height: 1.2;
-  letter-spacing: -0.02em;
-  color: var(--text);
-  margin: -8px 0 28px;
-  max-width: 22ch;
-}
-
-.proof-stack {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.proof-item {
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 22px 22px 20px;
-}
-
-.proof-row {
-  margin-bottom: 16px;
-}
-.proof-row:last-child { margin-bottom: 0; }
-
-.proof-k {
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--gold);
-  margin-bottom: 6px;
-}
-
-.proof-v {
-  font-size: 15px;
-  color: var(--text-2);
-  line-height: 1.55;
-}
-
-/* ---- MORE SECTION ---- */
-.more-text {
-  font-size: 16px;
-  color: var(--text-2);
-  margin-bottom: 16px;
-}
-
-/* ---- FOOTER ---- */
-footer {
-  padding: 40px 24px;
-  max-width: var(--max);
-  margin: 0 auto;
-  border-top: 1px solid var(--border);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 16px;
-}
-
-.footer-logo {
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--gold);
-}
-
-.footer-links {
-  display: flex;
-  gap: 20px;
-  flex-wrap: wrap;
-}
-.footer-links a {
-  font-size: 13px;
-  color: var(--text-2);
-  transition: color 0.15s;
-}
-.footer-links a:hover { color: var(--text); }
-
-/* ---- RULE ---- */
-.rule {
-  height: 1px;
-  background: var(--border);
-  margin: 0;
-}
-
-/* ---- MOBILE ---- */
-@media (max-width: 680px) {
-  html, body { font-size: 16px; }
-
-  .hero { padding: 80px 0 60px; }
-  .hero h1 { font-size: 32px; }
-  .hero p { font-size: 16px; }
-
-  section { padding: 64px 0; }
-
-  .entry-card { padding: 28px 22px; }
-  .entry-price { font-size: 40px; }
-
-  .problem-card { padding: 18px 18px; }
-  .problem-title { font-size: 16px; }
-
-  .proof-title { font-size: 22px; margin-bottom: 22px; }
-
-  .hero-actions { width: 100%; }
-  .btn { width: 100%; text-align: center; }
-
-  footer { flex-direction: column; align-items: flex-start; }
-}
-</style>
+    @media (max-width: 640px) {
+      .wrap { padding-left: 20px; padding-right: 20px; }
+      nav { padding: 16px 20px; }
+      .page-head { padding-top: 40px; }
+    }
+  </style>
 </head>
 <body>
 
-<!-- NAV -->
-<nav>
-  <a href="/index" class="nav-logo">Stephuary</a>
-  <div style="display:flex;gap:20px;align-items:center;flex-wrap:wrap;">
-    <a href="/playbooks" class="nav-link">Sections</a>
-    <a href="/capture" class="nav-link">Run diagnostic &rarr;</a>
-  </div>
-</nav>
-
-<div class="rule"></div>
-
-<!-- HERO -->
-<section class="hero">
-  <div class="wrap">
-    <span class="hero-eyebrow">The System</span>
-    <h1>Know what&rsquo;s wrong.<br>Fix it.</h1>
-    <p>If your work isn’t paying, isn’t shipping, or keeps breaking — start with what to fix first.</p>
-
-    <div class="hero-actions">
-      <a href="/capture" class="btn btn-primary">Start the 30-second diagnostic &rarr;</a>
-      <span class="hero-or">or choose your problem below</span>
+  <nav aria-label="Main">
+    <a href="/" class="nav-mark">Stephuary</a>
+    <div class="nav-links">
+      <a href="/capture">Diagnostic</a>
+      <a href="/playbooks">Sections</a>
+      <a href="/systems">System</a>
+      <a href="/access">.5% club</a>
     </div>
-  </div>
-</section>
-
-<div class="rule"></div>
-
-<section aria-labelledby="sai-framework-heading">
-  <div class="wrap sai-fw sai-fw--full sai-fw--theme-systems">
-    <h2 id="sai-framework-heading" class="sai-fw__title">Signal → Authority → Income</h2>
-    <p class="sai-fw__lede">Turn thinking into assets.<br />Turn assets into leverage.<br />Turn leverage into income.</p>
-    <div class="sai-fw__stages">
-      <article class="sai-fw__stage">
-        <h3 class="sai-fw__label">Signal</h3>
-        <p class="sai-fw__def">Capture thinking</p>
-      </article>
-      <article class="sai-fw__stage">
-        <h3 class="sai-fw__label">Authority</h3>
-        <p class="sai-fw__def">Publish and prove</p>
-      </article>
-      <article class="sai-fw__stage">
-        <h3 class="sai-fw__label">Income</h3>
-        <p class="sai-fw__def">Convert and scale</p>
-      </article>
-    </div>
-  </div>
-</section>
-
-<div class="rule"></div>
-
-<!-- CHOOSE ONE -->
-<section>
-  <div class="wrap">
-    <span class="section-label">Choose one</span>
-
-    <div class="problem-grid">
-
-      <a href="/capture" class="problem-card">
-        <div class="problem-left">
-          <span class="problem-category">Idea</span>
-          <div class="problem-title">You don’t know what you’re building</div>
-          <div class="problem-fix">Get clear</div>
-        </div>
-        <span class="problem-cta">Capture &rarr;</span>
-      </a>
-
-      <a href="/monetize" class="problem-card">
-        <div class="problem-left">
-          <span class="problem-category">Money</span>
-          <div class="problem-title">People aren’t buying</div>
-          <div class="problem-fix">Get paid</div>
-        </div>
-        <span class="problem-cta">Monetize &rarr;</span>
-      </a>
-
-      <a href="/structure" class="problem-card">
-        <div class="problem-left">
-          <span class="problem-category">Execution</span>
-          <div class="problem-title">You start but don’t finish</div>
-          <div class="problem-fix">Finish the work</div>
-        </div>
-        <span class="problem-cta">Structure &rarr;</span>
-      </a>
-
-      <a href="/automation" class="problem-card">
-        <div class="problem-left">
-          <span class="problem-category">Repeat</span>
-          <div class="problem-title">You keep starting over</div>
-          <div class="problem-fix">Make it repeatable</div>
-        </div>
-        <span class="problem-cta">Automation &rarr;</span>
-      </a>
-
-      <a href="/sovereignty" class="problem-card">
-        <div class="problem-left">
-          <span class="problem-category">Life</span>
-          <div class="problem-title">Your system breaks under pressure</div>
-          <div class="problem-fix">Stabilize your system</div>
-        </div>
-        <span class="problem-cta">Life &rarr;</span>
-      </a>
-
-    </div>
-  </div>
-</section>
-
-<div class="rule"></div>
-
-<!-- HOW IT WORKS -->
-<section>
-  <div class="wrap">
-    <span class="section-label">How it works</span>
-
-    <div class="steps">
-      <div class="step">
-        <span class="step-num">1</span>
-        <span class="step-text">Find the problem</span>
-      </div>
-      <div class="step">
-        <span class="step-num">2</span>
-        <span class="step-text">Go to that section</span>
-      </div>
-      <div class="step">
-        <span class="step-num">3</span>
-        <span class="step-text">Fix it</span>
-      </div>
-      <div class="step">
-        <span class="step-num">4</span>
-        <span class="step-text">Move forward</span>
-      </div>
-    </div>
-  </div>
-</section>
-
-<div class="rule"></div>
-
-<!-- PROOF LAYER -->
-<section>
-  <div class="wrap">
-    <span class="section-label">In practice</span>
-    <h2 class="proof-title">What this looks like in real time</h2>
-
-    <div class="proof-stack">
-
-      <article class="proof-item">
-        <div class="proof-row">
-          <p class="proof-k">Example</p>
-          <p class="proof-v">&ldquo;I&rsquo;m losing money somewhere, but I can&rsquo;t name the line item.&rdquo;</p>
-        </div>
-        <div class="proof-row">
-          <p class="proof-k">Fix</p>
-          <p class="proof-v">Tally subscriptions + convenience + screen time once. One total.</p>
-        </div>
-        <div class="proof-row">
-          <p class="proof-k">Result</p>
-          <p class="proof-v">A monthly waste number you can cut or keep on purpose.</p>
-        </div>
-      </article>
-
-      <article class="proof-item">
-        <div class="proof-row">
-          <p class="proof-k">Example</p>
-          <p class="proof-v">&ldquo;Hey &mdash; can you take a quick look?&rdquo;</p>
-        </div>
-        <div class="proof-row">
-          <p class="proof-k">Fix</p>
-          <p class="proof-v">Reply with scope + price + deadline. No scope, no start.</p>
-        </div>
-        <div class="proof-row">
-          <p class="proof-k">Result</p>
-          <p class="proof-v">They can say yes to a number. You stop donating the evening.</p>
-        </div>
-      </article>
-
-      <article class="proof-item">
-        <div class="proof-row">
-          <p class="proof-k">Example</p>
-          <p class="proof-v">Build time keeps getting eaten by maintenance.</p>
-        </div>
-        <div class="proof-row">
-          <p class="proof-k">Fix</p>
-          <p class="proof-v">Redirect one block per week from maintain to build. Name what stops.</p>
-        </div>
-        <div class="proof-row">
-          <p class="proof-k">Result</p>
-          <p class="proof-v">Calendar matches the split. Progress shows up in one thread, not in guilt.</p>
-        </div>
-      </article>
-
-    </div>
-  </div>
-</section>
-
-<div class="rule"></div>
-
-<!-- ENTRY -->
-<section>
-  <div class="wrap">
-    <div class="entry-card">
-      <div class="entry-price">$39</div>
-      <p class="entry-note">One time. All five phases. No subscription.</p>
-      <a href="/systems" class="btn btn-primary">Enter &rarr;</a>
-    </div>
-  </div>
-</section>
-
-<div class="rule"></div>
-
-<!-- MORE -->
-<section style="padding: 64px 0;">
-  <div class="wrap">
-    <p class="more-text">For complex situations:</p>
-    <a href="/access" class="btn btn-ghost">Request access &rarr;</a>
-  </div>
-</section>
-
-<!-- FOOTER -->
-<div class="rule"></div>
-<footer>
-  <span class="footer-logo">Stephuary</span>
-  <nav class="footer-links">
-    <a href="/capture">Capture</a>
-    <a href="/systems">The System</a>
-    <a href="/access">Private Access</a>
-    <a href="https://github.com/stephuary/Stephuary" target="_blank" rel="noopener">GitHub</a>
   </nav>
-</footer>
 
+  <div class="wrap">
+    <header class="page-head">
+      <h1 class="page-h1">System</h1>
+      <p class="intro-lead">This system shows you:</p>
+      <ul class="intro-list">
+        <li>where your time and money are going</li>
+        <li>what to change</li>
+        <li>what you can offer</li>
+        <li>how to act on it</li>
+        <li>how to turn that into income</li>
+      </ul>
+      <p class="intro-close">You do not need to learn anything first.</p>
+      <p class="intro-close">You start, see the result, and act.</p>
+    </header>
+
+    <div class="sys-acc">
+
+      <details class="sys-acc-item" name="sys-acc">
+        <summary>How it works</summary>
+        <div class="sys-acc-panel">
+          <div class="sys-steps">
+            <div class="sys-step"><span class="sys-step-label">Step 1</span>Complete the diagnostic</div>
+            <div class="sys-step"><span class="sys-step-label">Step 2</span>See what it identifies</div>
+            <div class="sys-step"><span class="sys-step-label">Step 3</span>Go to the section that matches your result</div>
+            <div class="sys-step"><span class="sys-step-label">Step 4</span>Complete one action</div>
+          </div>
+          <p class="sys-p">Each section solves one problem.</p>
+          <p class="sys-p">You do not move forward until something is fixed or completed.</p>
+        </div>
+      </details>
+
+      <details class="sys-acc-item" name="sys-acc">
+        <summary>System structure</summary>
+        <div class="sys-acc-panel">
+          <p class="sys-p">The system is divided into five sections:</p>
+          <ol class="sys-ol">
+            <li>Where your time and money are going</li>
+            <li>What to change this week</li>
+            <li>What you can offer and charge for</li>
+            <li>Fixing execution and delivery</li>
+            <li>Using AI without lowering quality</li>
+          </ol>
+          <p class="sys-p">Each section:</p>
+          <ul class="sys-list">
+            <li>focuses on one outcome</li>
+            <li>gives you something to complete</li>
+            <li>leads to a usable result</li>
+          </ul>
+        </div>
+      </details>
+
+      <details class="sys-acc-item" name="sys-acc">
+        <summary>How results turn into income</summary>
+        <div class="sys-acc-panel">
+          <p class="sys-p">This system follows a simple structure:</p>
+          <p class="sys-p sys-chain">Signal → Authority → Income</p>
+          <p class="sys-subhead">Signal</p>
+          <p class="sys-p">What you observe, think, and identify</p>
+          <p class="sys-subhead">Authority</p>
+          <p class="sys-p">What you produce and make visible</p>
+          <p class="sys-subhead">Income</p>
+          <p class="sys-p">What you convert into paid work or products</p>
+        </div>
+      </details>
+
+      <details class="sys-acc-item" name="sys-acc">
+        <summary>How everything connects</summary>
+        <div class="sys-acc-panel">
+          <div class="flow-group">
+            <p class="flow-line-label">Diagnostic</p>
+            <p class="flow-line-desc"><span class="flow-arrow">→</span>identifies the problem</p>
+          </div>
+          <div class="flow-group">
+            <p class="flow-line-label">Section</p>
+            <p class="flow-line-desc"><span class="flow-arrow">→</span>fixes one specific issue</p>
+          </div>
+          <div class="flow-group">
+            <p class="flow-line-label">Output</p>
+            <p class="flow-line-desc"><span class="flow-arrow">→</span>produces something usable</p>
+          </div>
+          <div class="flow-group">
+            <p class="flow-line-label">Distribution</p>
+            <p class="flow-line-desc"><span class="flow-arrow">→</span>places it where people see it</p>
+          </div>
+          <div class="flow-group">
+            <p class="flow-line-label">Conversion</p>
+            <p class="flow-line-desc"><span class="flow-arrow">→</span>turns it into paid work or products</p>
+          </div>
+        </div>
+      </details>
+
+      <details class="sys-acc-item" name="sys-acc">
+        <summary>What you produce</summary>
+        <div class="sys-acc-panel">
+          <p class="sys-p">You leave each section with something concrete:</p>
+          <ul class="sys-list">
+            <li>a clear decision</li>
+            <li>a defined offer</li>
+            <li>a usable output</li>
+            <li>a corrected process</li>
+          </ul>
+          <p class="sys-p">This is not theory.</p>
+          <p class="sys-p">Each step produces something you can use.</p>
+        </div>
+      </details>
+
+      <details class="sys-acc-item" name="sys-acc">
+        <summary>Where it goes</summary>
+        <div class="sys-acc-panel">
+          <p class="sys-p">You do not rely on one platform.</p>
+          <div class="sys-tier">
+            <h4>Authority platforms</h4>
+            <p>Substack · YouTube</p>
+          </div>
+          <div class="sys-tier">
+            <h4>Distribution platforms</h4>
+            <p>LinkedIn · X · Instagram · TikTok</p>
+          </div>
+          <div class="sys-tier">
+            <h4>Conversion platforms</h4>
+            <p>communities · marketplaces · direct services</p>
+          </div>
+        </div>
+      </details>
+
+      <details class="sys-acc-item" name="sys-acc">
+        <summary>How this turns into income</summary>
+        <div class="sys-acc-panel">
+          <p class="sys-p">This system leads to:</p>
+          <ul class="sys-list">
+            <li>advisory</li>
+            <li>consulting</li>
+            <li>project work</li>
+            <li>digital products</li>
+          </ul>
+          <p class="sys-p">You do not start with products.</p>
+          <p class="sys-p">You start with clarity, output, and demand. Then you expand.</p>
+        </div>
+      </details>
+
+      <details class="sys-acc-item" name="sys-acc">
+        <summary>How to use this correctly</summary>
+        <div class="sys-acc-panel">
+          <ul class="sys-list">
+            <li>complete one section at a time</li>
+            <li>do not skip steps</li>
+            <li>do not move forward without finishing</li>
+          </ul>
+          <p class="sys-p">You are not browsing.</p>
+          <p class="sys-p">You are completing something.</p>
+        </div>
+      </details>
+
+      <details class="sys-acc-item" name="sys-acc">
+        <summary>What this is not</summary>
+        <div class="sys-acc-panel">
+          <ul class="sys-list">
+            <li>not a course</li>
+            <li>not content to read passively</li>
+            <li>not a productivity tool</li>
+          </ul>
+          <p class="sys-p">This is a system you use to fix a problem, produce something, and act on it.</p>
+        </div>
+      </details>
+
+      <details class="sys-acc-item" name="sys-acc">
+        <summary>Start</summary>
+        <div class="sys-acc-panel">
+          <p class="sys-p">Start with the diagnostic.</p>
+          <p class="sys-p">It gives you your first step.</p>
+          <a href="/capture" class="btn-cta">Start the diagnostic →</a>
+        </div>
+      </details>
+
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-inner">
+      <span class="footer-mark">Stephuary</span>
+      <ul class="footer-links">
+        <li><a href="/capture">Diagnostic</a></li>
+        <li><a href="/playbooks">Sections</a></li>
+        <li><a href="/systems">System</a></li>
+        <li><a href="/access">.5% club</a></li>
+      </ul>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      document.querySelectorAll('.sys-acc-item').forEach(function (d) {
+        d.addEventListener('toggle', function () {
+          if (!d.open) return;
+          document.querySelectorAll('.sys-acc-item').forEach(function (o) {
+            if (o !== d) o.open = false;
+          });
+        });
+      });
+    })();
+  </script>
 </body>
 </html>
