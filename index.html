@@ -10,6 +10,18 @@
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
     :root {
       --bg: #030303;
       --blue: #3A6BFF;
@@ -43,7 +55,7 @@
       }
     }
 
-    /* Ambient layers */
+    /* Ambient background */
     .ambient {
       position: fixed;
       inset: 0;
@@ -236,14 +248,30 @@
       margin-bottom: 20px;
     }
 
+    .hero-h1--wrap {
+      position: relative;
+      min-height: clamp(100px, 16vw, 168px);
+      margin-bottom: 20px;
+    }
     .hero-h1 {
       font-family: 'Cormorant Garamond', serif;
       font-weight: 300;
       font-size: clamp(38px, 6vw, 68px);
-      line-height: 1.05;
+      line-height: 1.08;
       letter-spacing: -0.03em;
-      margin-bottom: 20px;
-      max-width: 14ch;
+      max-width: 26ch;
+    }
+    .hero-line {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      max-width: 26ch;
+      opacity: 0;
+      pointer-events: none;
+    }
+    .hero-line.is-visible {
+      opacity: 1;
     }
 
     .hero-lead {
@@ -318,6 +346,246 @@
     .resume-pill a:hover {
       border-color: var(--gold-dim);
       box-shadow: 0 0 24px rgba(198, 161, 91, 0.12);
+    }
+
+    /* Live leak check — entry */
+    .hero-leak-entry {
+      margin-top: 28px;
+      padding-top: 24px;
+      border-top: 1px solid rgba(244, 237, 224, 0.06);
+    }
+    .leak-trigger {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-family: 'DM Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--text-3);
+      background: none;
+      border: none;
+      padding: 0 0 4px;
+      cursor: pointer;
+      position: relative;
+      transition: color 0.25s ease;
+    }
+    .leak-trigger::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      width: 100%;
+      height: 1px;
+      background: var(--blue);
+      transform: scaleX(0.35);
+      transform-origin: left;
+      transition: transform 0.35s ease, box-shadow 0.35s ease;
+    }
+    .leak-trigger:hover {
+      color: var(--text-2);
+    }
+    .leak-trigger:hover::after {
+      transform: scaleX(1);
+      box-shadow: 0 0 12px var(--blue-soft);
+    }
+    .leak-trigger__dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--blue);
+      box-shadow: 0 0 12px var(--blue-glow);
+      animation: leakPulse 2.2s ease-in-out infinite;
+    }
+    @keyframes leakPulse {
+      0%, 100% { opacity: 0.55; transform: scale(1); }
+      50% { opacity: 1; transform: scale(1.15); }
+    }
+
+    /* Leak overlay */
+    .leak-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 10050;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition: opacity 0.45s ease, visibility 0.45s ease;
+    }
+    .leak-overlay.is-open {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+    }
+    body.leak-open {
+      overflow: hidden;
+    }
+
+    .leak-overlay__bg {
+      position: absolute;
+      inset: 0;
+      background: rgba(3, 3, 3, 0.92);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      transition: background 0.85s ease;
+    }
+    .leak-overlay.is-deep .leak-overlay__bg {
+      background:
+        radial-gradient(ellipse 90% 70% at 50% 45%, rgba(59, 13, 13, 0.85) 0%, rgba(3, 3, 3, 0.97) 55%, #020202 100%);
+    }
+
+    .leak-panel {
+      position: relative;
+      width: 100%;
+      max-width: 440px;
+      padding: 36px 32px 32px;
+      border: 1px solid rgba(244, 237, 224, 0.1);
+      border-radius: 3px;
+      background: linear-gradient(165deg, rgba(8, 8, 8, 0.98) 0%, rgba(5, 5, 5, 0.99) 100%);
+      box-shadow: 0 24px 80px rgba(0, 0, 0, 0.65);
+      z-index: 1;
+    }
+
+    .leak-close {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      width: 36px;
+      height: 36px;
+      border: none;
+      background: transparent;
+      color: var(--text-3);
+      font-size: 22px;
+      line-height: 1;
+      cursor: pointer;
+      border-radius: 2px;
+      transition: color 0.2s ease, background 0.2s ease;
+    }
+    .leak-close:hover {
+      color: var(--text);
+      background: rgba(244, 237, 224, 0.06);
+    }
+
+    .leak-step {
+      display: none;
+      opacity: 0;
+    }
+    .leak-step.is-active {
+      display: block;
+    }
+
+    .leak-intro-text {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(26px, 5vw, 36px);
+      font-weight: 300;
+      line-height: 1.2;
+      color: var(--text);
+      text-align: center;
+    }
+
+    .leak-q-num {
+      font-family: 'DM Mono', monospace;
+      font-size: 8px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 12px;
+    }
+    .leak-q-text {
+      font-size: 17px;
+      line-height: 1.45;
+      color: var(--text-2);
+      margin-bottom: 22px;
+    }
+
+    .leak-options {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .leak-opt {
+      display: block;
+      width: 100%;
+      text-align: left;
+      font-family: 'Lato', sans-serif;
+      font-size: 14px;
+      font-weight: 300;
+      color: var(--text-2);
+      padding: 14px 16px;
+      border-radius: 2px;
+      border: 1px solid rgba(244, 237, 224, 0.1);
+      background: rgba(0, 0, 0, 0.45);
+      cursor: pointer;
+      transition: border-color 0.25s ease, background 0.25s ease, box-shadow 0.25s ease, color 0.2s ease;
+    }
+    .leak-opt:hover {
+      border-color: rgba(58, 107, 255, 0.35);
+      color: var(--text);
+    }
+    .leak-opt.is-selected {
+      border-color: rgba(58, 107, 255, 0.65);
+      background: rgba(58, 107, 255, 0.1);
+      color: var(--text);
+      box-shadow: 0 0 28px rgba(58, 107, 255, 0.12);
+    }
+
+    .leak-calc {
+      text-align: center;
+      padding: 8px 0 20px;
+    }
+    .leak-calc__row {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(36px, 8vw, 52px);
+      font-weight: 300;
+      color: var(--gold);
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+    }
+    .leak-calc__row small {
+      font-size: 0.42em;
+      color: var(--text-3);
+      font-family: 'DM Mono', monospace;
+      letter-spacing: 0.12em;
+      margin-left: 4px;
+    }
+    .leak-calc__sub {
+      font-family: 'DM Mono', monospace;
+      font-size: 8px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--text-3);
+      margin-top: 8px;
+    }
+
+    .leak-verdict {
+      font-size: 16px;
+      line-height: 1.55;
+      color: var(--text);
+      margin-bottom: 18px;
+    }
+    .leak-action-line {
+      font-size: 14px;
+      line-height: 1.5;
+      color: var(--text-2);
+      padding: 14px 0 22px;
+      border-left: 2px solid var(--gold);
+      padding-left: 16px;
+      margin-bottom: 8px;
+    }
+    .leak-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .leak-actions .btn {
+      width: 100%;
+    }
+    .leak-actions .btn--ghost {
+      text-align: center;
     }
 
     /* Proof */
@@ -610,10 +878,11 @@
       margin-bottom: 6px;
       color: var(--text);
     }
-    .phase-card__hook {
-      font-size: 13px;
-      color: var(--text-3);
-      line-height: 1.4;
+    .phase-card__outcome {
+      font-size: 14px;
+      color: var(--text-2);
+      line-height: 1.45;
+      margin-top: 4px;
     }
 
     .phase-card__more {
@@ -746,29 +1015,40 @@
   </div>
 
   <div class="page">
+    <!-- Routes verified against vercel.json rewrites: /phase-1..5, /systems, /capture, /access -->
     <nav id="main-nav">
       <a href="/" class="nav-mark" data-cursor data-cursor-label="View">Stephuary</a>
       <div class="nav-links">
-        <a href="/systems" class="nav-link">System</a>
-        <a href="/systems#phases" class="nav-link">Phases</a>
-        <a href="#" class="nav-link" id="nav-restart">Restart</a>
-        <a href="/capture" class="nav-link">Diagnostic</a>
-        <a href="/playbooks" class="nav-link">Sections</a>
-        <a href="/access" class="nav-link">.5% club</a>
+        <a href="/" class="nav-link">System</a>
+        <!-- .5% Club: /access (no /point-five-club in vercel.json) -->
+        <a href="/access" class="nav-link">.5% Club</a>
         <a href="https://stephuary.substack.com" class="nav-link" target="_blank" rel="noopener">Substack</a>
+        <a href="https://onlysometimesclub.com" class="nav-link" target="_blank" rel="noopener">Only Sometimes Club</a>
       </div>
     </nav>
 
     <main id="main-content">
     <section id="hero">
       <div class="hero-inner" id="hero-parallax">
-        <p class="hero-kicker" id="hero-kicker">Operating system</p>
-        <h1 class="hero-h1" id="hero-h1">Loss you have not totaled.</h1>
-        <p class="hero-lead" id="hero-lead">Name it, measure it, cut one line. Five phases. One device. No syllabus.</p>
+        <div class="hero-h1--wrap">
+          <h1 class="hero-h1" id="hero-h1">
+            <span class="hero-line">Find where your time, money, or attention is leaking.</span>
+            <span class="hero-line">See the actual cost in numbers.</span>
+            <span class="hero-line">Fix one thing this week.</span>
+            <span class="hero-line">Repeat until the system holds.</span>
+          </h1>
+        </div>
+        <p class="hero-lead" id="hero-lead">This is a short diagnostic that shows you what’s not working, what it’s costing you, and what to change first.</p>
         <div class="hero-actions" id="hero-actions">
           <a href="/phase-1" class="btn btn--pri" data-cursor data-cursor-label="Enter">Enter the system</a>
-          <a href="/systems" class="btn btn--ghost" data-cursor data-cursor-label="View">All phases</a>
+          <a href="/systems" class="btn btn--ghost" data-cursor data-cursor-label="View">See all phases</a>
           <p class="resume-pill" id="home-resume"><a href="/phase-1" id="home-resume-link" data-cursor data-cursor-label="Open">Continue where you left off</a></p>
+        </div>
+        <div class="hero-leak-entry" id="hero-leak-entry">
+          <button type="button" class="leak-trigger" id="leak-open" data-cursor data-cursor-label="Open" aria-haspopup="dialog" aria-controls="leak-overlay">
+            <span class="leak-trigger__dot" aria-hidden="true"></span>
+            Live leak check
+          </button>
         </div>
       </div>
     </section>
@@ -782,7 +1062,7 @@
               <path id="proof-line-path" d="M0,56 Q80,52 120,44 T200,28 T320,18 L400,12" />
             </svg>
           </div>
-          <p class="proof-label">Illustrative output · Phase 1</p>
+          <p class="proof-label">Example · Step 1 numbers</p>
           <p class="proof-loss"><span id="proof-money">0</span><small>/yr</small></p>
           <div class="proof-grid">
             <div>
@@ -790,19 +1070,19 @@
               <p class="proof-dd"><strong id="proof-hours">0</strong> h / week (screen)</p>
             </div>
             <div>
-              <p class="proof-dt">Leak type</p>
-              <p class="proof-dd">Convenience + <strong>drift</strong></p>
+              <p class="proof-dt">Pattern</p>
+              <p class="proof-dd">Easy habits + <strong>distraction</strong></p>
             </div>
           </div>
           <p class="proof-action">One action: remove one source. Enforce one boundary. This week.</p>
-          <p class="proof-note">Your run generates inside the room.</p>
+          <p class="proof-note">You fill this in inside each step.</p>
         </div>
       </div>
     </section>
 
     <section id="system" aria-label="How it works">
       <div class="system-inner">
-        <p class="system-head st-reveal">How it runs</p>
+        <p class="system-head st-reveal">How it works</p>
         <div class="system-grid">
           <div class="sys-block st-reveal" data-cursor data-cursor-label="View">
             <div class="sys-icon" aria-hidden="true">
@@ -812,7 +1092,7 @@
               </svg>
             </div>
             <p class="sys-tag">Identify</p>
-            <p class="sys-text">What pulls time and money without a decision.</p>
+            <p class="sys-text">What is taking time, money, or attention without a clear return.</p>
           </div>
           <div class="sys-block st-reveal" data-cursor data-cursor-label="View">
             <div class="sys-icon" aria-hidden="true">
@@ -821,7 +1101,7 @@
               </svg>
             </div>
             <p class="sys-tag">Measure</p>
-            <p class="sys-text">Run rate in money and hours. No optimism.</p>
+            <p class="sys-text">See the cost in hours and dollars.</p>
           </div>
           <div class="sys-block st-reveal" data-cursor data-cursor-label="View">
             <div class="sys-icon" aria-hidden="true">
@@ -831,7 +1111,7 @@
               </svg>
             </div>
             <p class="sys-tag">Correct</p>
-            <p class="sys-text">One cut, one rule, then the next phase.</p>
+            <p class="sys-text">Fix one source this week before moving forward.</p>
           </div>
         </div>
       </div>
@@ -839,8 +1119,8 @@
 
     <section id="phases" aria-label="Phases">
       <div class="phase-head-wrap st-reveal">
-        <h2 class="phase-title">Phase sequence</h2>
-        <p class="phase-sub">Horizontal scroll. Hover for detail. Click enters the room.</p>
+        <h2 class="phase-title">Five steps</h2>
+        <p class="phase-sub">Swipe or scroll sideways. Hover or focus for more detail. Click a card to open that step.</p>
       </div>
 
       <div class="connector-wrap st-reveal">
@@ -860,29 +1140,29 @@
         <a class="phase-card" href="/phase-1" role="listitem" data-cursor data-cursor-label="Open">
           <span class="phase-card__num">Phase 1</span>
           <span class="phase-card__name">Extraction</span>
-          <span class="phase-card__hook">Stop the leak</span>
+          <span class="phase-card__outcome">Find and measure one active loss.</span>
           <div class="phase-card__more">
-            <p>Surface spend and time you are not defending.</p>
+            <p>Surface spend and time you are not protecting.</p>
             <ul>
-              <li>You leave with: one removal + boundaries</li>
+              <li>You leave with: one removal and clear boundaries</li>
             </ul>
           </div>
         </a>
         <a class="phase-card" href="/phase-2" role="listitem" data-cursor data-cursor-label="Open">
           <span class="phase-card__num">Phase 2</span>
           <span class="phase-card__name">Redirection</span>
-          <span class="phase-card__hook">Redirect it</span>
+          <span class="phase-card__outcome">Move that time or money into something useful.</span>
           <div class="phase-card__more">
             <p>Rebuild the week around what you said matters.</p>
             <ul>
-              <li>You leave with: a weekly structure</li>
+              <li>You leave with: a weekly structure you can follow</li>
             </ul>
           </div>
         </a>
         <a class="phase-card" href="/phase-3" role="listitem" data-cursor data-cursor-label="Open">
           <span class="phase-card__num">Phase 3</span>
           <span class="phase-card__name">Build</span>
-          <span class="phase-card__hook">Offer + message</span>
+          <span class="phase-card__outcome">Turn it into something that produces value.</span>
           <div class="phase-card__more">
             <p>Offer, buyer, price, first outbound.</p>
             <ul>
@@ -893,22 +1173,22 @@
         <a class="phase-card" href="/phase-4" role="listitem" data-cursor data-cursor-label="Open">
           <span class="phase-card__num">Phase 4</span>
           <span class="phase-card__name">Automation</span>
-          <span class="phase-card__hook">Delivery stack</span>
+          <span class="phase-card__outcome">Reduce manual effort and repetition.</span>
           <div class="phase-card__more">
-            <p>Continuity when pressure hits.</p>
+            <p>Keep delivery working when work gets busy.</p>
             <ul>
-              <li>You leave with: ops you can point to</li>
+              <li>You leave with: steps you can repeat without thinking</li>
             </ul>
           </div>
         </a>
         <a class="phase-card" href="/phase-5" role="listitem" data-cursor data-cursor-label="Open">
           <span class="phase-card__num">Phase 5</span>
           <span class="phase-card__name">Sovereignty</span>
-          <span class="phase-card__hook">AI + cognition</span>
+          <span class="phase-card__outcome">Stabilize what you built so it holds.</span>
           <div class="phase-card__more">
             <p>Rules for tools on paid work.</p>
             <ul>
-              <li>You leave with: enforced policy</li>
+              <li>You leave with: rules you actually follow</li>
             </ul>
           </div>
         </a>
@@ -917,8 +1197,8 @@
 
     <section id="diagnostic">
       <div class="diag-inner st-reveal">
-        <h2>Signal first</h2>
-        <p>Short capture. Maps pressure and bottleneck. Does not replace Phase 1 numbers.</p>
+        <h2>Start here</h2>
+        <p>Answer a few questions.<br />See where you’re losing time, money, or attention.<br />Get one clear action to fix it this week.</p>
         <a href="/capture" class="btn btn--pri" data-cursor data-cursor-label="Enter">Run diagnostic</a>
       </div>
     </section>
@@ -928,14 +1208,71 @@
       <div class="foot-inner">
         <span class="foot-mark">Stephuary</span>
         <ul class="foot-links">
-          <li><a href="/capture">Diagnostic</a></li>
-          <li><a href="/playbooks">Sections</a></li>
-          <li><a href="/systems">Systems</a></li>
-          <li><a href="/access">.5% club</a></li>
+          <li><a href="/">System</a></li>
+          <li><a href="/access">.5% Club</a></li>
           <li><a href="https://stephuary.substack.com" target="_blank" rel="noopener">Substack</a></li>
+          <li><a href="https://onlysometimesclub.com" target="_blank" rel="noopener">Only Sometimes Club</a></li>
         </ul>
       </div>
     </footer>
+  </div>
+
+  <div id="leak-overlay" class="leak-overlay" role="dialog" aria-modal="true" aria-labelledby="leak-dialog-title" aria-hidden="true">
+    <div class="leak-overlay__bg" aria-hidden="true"></div>
+    <div class="leak-panel">
+      <h2 id="leak-dialog-title" class="sr-only">Live leak check</h2>
+      <button type="button" class="leak-close" id="leak-close" aria-label="Close" data-cursor data-cursor-label="Open">×</button>
+
+      <div class="leak-step is-active" id="leak-step-intro" data-leak-step="intro">
+        <p class="leak-intro-text">Give me 5 seconds.</p>
+      </div>
+
+      <div class="leak-step" id="leak-step-q1" data-leak-step="q1">
+        <p class="leak-q-num">Question 1 of 3</p>
+        <p class="leak-q-text">How does your time usually go on the thing that pulls you?</p>
+        <div class="leak-options" role="group" aria-label="Time usage">
+          <button type="button" class="leak-opt" data-leak-a="q1" data-value="0">Pulled into feeds, tabs, and half-starts</button>
+          <button type="button" class="leak-opt" data-leak-a="q1" data-value="1">Split: some deep work, a lot of drift</button>
+          <button type="button" class="leak-opt" data-leak-a="q1" data-value="2">Mostly intentional; I know where it went</button>
+        </div>
+      </div>
+
+      <div class="leak-step" id="leak-step-q2" data-leak-step="q2">
+        <p class="leak-q-num">Question 2 of 3</p>
+        <p class="leak-q-text">What do you get back from that time, in money or progress?</p>
+        <div class="leak-options" role="group" aria-label="Perceived return">
+          <button type="button" class="leak-opt" data-leak-a="q2" data-value="0">Almost nothing I could invoice or ship</button>
+          <button type="button" class="leak-opt" data-leak-a="q2" data-value="1">Mixed — hard to point to</button>
+          <button type="button" class="leak-opt" data-leak-a="q2" data-value="2">Enough that I would defend the hours</button>
+        </div>
+      </div>
+
+      <div class="leak-step" id="leak-step-q3" data-leak-step="q3">
+        <p class="leak-q-num">Question 3 of 3</p>
+        <p class="leak-q-text">Hours per week on that pull — honest.</p>
+        <div class="leak-options" role="group" aria-label="Hours spent">
+          <button type="button" class="leak-opt" data-leak-a="q3" data-value="0">Under 5</button>
+          <button type="button" class="leak-opt" data-leak-a="q3" data-value="1">5 to 10</button>
+          <button type="button" class="leak-opt" data-leak-a="q3" data-value="2">10 to 15</button>
+          <button type="button" class="leak-opt" data-leak-a="q3" data-value="3">Over 15</button>
+        </div>
+      </div>
+
+      <div class="leak-step" id="leak-step-outcome" data-leak-step="outcome" aria-live="polite">
+        <div class="leak-calc" id="leak-calc-block">
+          <p class="leak-calc__row"><span id="leak-out-dollar">$0</span><small>/yr</small></p>
+          <p class="leak-calc__sub">estimated yearly cost</p>
+          <p class="leak-calc__row" style="margin-top: 18px;"><span id="leak-out-hours">0</span><small>h / wk</small></p>
+          <p class="leak-calc__sub">time not recovered</p>
+        </div>
+        <p class="leak-verdict" id="leak-verdict"></p>
+        <p class="leak-action-line" id="leak-action-line">Remove one source. Set one boundary. This week.</p>
+        <div class="leak-actions" id="leak-actions-block">
+          <a href="/phase-1" class="btn btn--pri" id="leak-goto-phase" data-cursor data-cursor-label="Enter">Open Step 1</a>
+          <button type="button" class="btn btn--ghost" id="leak-goto-phases" data-cursor data-cursor-label="View">See all phases</button>
+        </div>
+      </div>
+    </div>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
@@ -990,11 +1327,294 @@
       window.addEventListener('scroll', updateNavScroll, { passive: true });
       updateNavScroll();
 
+      /* Live leak detection overlay */
+      var leakOverlay = document.getElementById('leak-overlay');
+      var leakOpenBtn = document.getElementById('leak-open');
+      var leakCloseBtn = document.getElementById('leak-close');
+      var leakIntroTimer = null;
+      var leakLastFocus = null;
+      var leakAnswers = { q1: null, q2: null, q3: null };
+
+      var LEAK_Q1 = [0.72, 0.52, 0.28];
+      var LEAK_Q2 = [78, 58, 42];
+      var LEAK_Q3 = [3, 7.5, 12, 19];
+
+      function leakClamp(n, a, b) {
+        return Math.max(a, Math.min(b, n));
+      }
+
+      function leakCompute() {
+        var h = LEAK_Q3[leakAnswers.q3];
+        var lf = LEAK_Q1[leakAnswers.q1];
+        var rate = LEAK_Q2[leakAnswers.q2];
+        var leakH = h * lf;
+        var annual = leakH * 52 * rate;
+        annual = leakClamp(annual, 1200, 52000);
+        leakH = leakClamp(leakH, 0.5, 22);
+        return {
+          dollars: Math.round(annual / 10) * 10,
+          hours: Math.round(leakH * 10) / 10
+        };
+      }
+
+      function leakVerdict(d, h) {
+        var ds = '$' + d.toLocaleString();
+        var hs = h % 1 === 0 ? String(Math.round(h)) : h.toFixed(1);
+        return (
+          'You lose about ' +
+          ds +
+          ' a year and ' +
+          hs +
+          ' hours a week on that pull. You had not added it up before.'
+        );
+      }
+
+      function leakReset() {
+        leakAnswers = { q1: null, q2: null, q3: null };
+        if (leakIntroTimer) {
+          window.clearTimeout(leakIntroTimer);
+          leakIntroTimer = null;
+        }
+        document.querySelectorAll('.leak-opt').forEach(function (b) {
+          b.classList.remove('is-selected');
+        });
+        document.querySelectorAll('.leak-overlay .leak-step').forEach(function (s) {
+          s.classList.remove('is-active');
+        });
+        var intro = document.getElementById('leak-step-intro');
+        if (intro) {
+          intro.classList.add('is-active');
+          gsap.set(intro, { opacity: 1 });
+          var it = intro.querySelector('.leak-intro-text');
+          if (it) gsap.set(it, { opacity: 1, y: 0 });
+        }
+        if (leakOverlay) leakOverlay.classList.remove('is-deep');
+        var ld = document.getElementById('leak-out-dollar');
+        var lh = document.getElementById('leak-out-hours');
+        var lv = document.getElementById('leak-verdict');
+        if (ld) ld.textContent = '$0';
+        if (lh) lh.textContent = '0';
+        if (lv) lv.textContent = '';
+        gsap.set('#leak-verdict, #leak-action-line, #leak-actions-block', { opacity: 0 });
+        ['leak-step-q1', 'leak-step-q2', 'leak-step-q3', 'leak-step-outcome'].forEach(function (id) {
+          var el = document.getElementById(id);
+          if (el) gsap.set(el, { opacity: 1, y: 0 });
+        });
+      }
+
+      function leakGoTo(stepName) {
+        var next = leakOverlay && leakOverlay.querySelector('[data-leak-step="' + stepName + '"]');
+        var cur = leakOverlay && leakOverlay.querySelector('.leak-step.is-active');
+        if (stepName === 'q1' && leakIntroTimer) {
+          window.clearTimeout(leakIntroTimer);
+          leakIntroTimer = null;
+        }
+        if (cur && next && cur === next) return;
+        if (!next) return;
+
+        var showNextLeakStep = function () {
+          if (cur) {
+            cur.classList.remove('is-active');
+          }
+          next.classList.add('is-active');
+          gsap.fromTo(next, { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.4, ease: 'power2.out' });
+        };
+
+        if (cur) {
+          gsap.to(cur, {
+            opacity: 0,
+            duration: 0.22,
+            ease: 'power2.in',
+            onComplete: function () {
+              showNextLeakStep();
+            }
+          });
+        } else {
+          showNextLeakStep();
+        }
+      }
+
+      function leakFinish() {
+        var cur = document.getElementById('leak-step-q3');
+        var res = leakCompute();
+        if (!cur || !leakOverlay) return;
+
+        gsap.to(cur, {
+          opacity: 0,
+          duration: 0.28,
+          ease: 'power2.in',
+          onComplete: function () {
+            cur.classList.remove('is-active');
+            leakOverlay.classList.add('is-deep');
+            window.setTimeout(function () {
+              var out = document.getElementById('leak-step-outcome');
+              if (!out) return;
+              out.classList.add('is-active');
+              document.getElementById('leak-out-dollar').textContent = '$0';
+              document.getElementById('leak-out-hours').textContent = '0';
+              gsap.set('#leak-verdict', { opacity: 0, y: 6 });
+              gsap.set('#leak-action-line', { opacity: 0 });
+              gsap.set('#leak-actions-block', { opacity: 0 });
+              gsap.fromTo(out, { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 0.45, ease: 'power2.out' });
+
+              var nums = { d: 0, h: 0 };
+              gsap.to(nums, {
+                d: res.dollars,
+                h: res.hours,
+                duration: 1.25,
+                ease: 'power2.out',
+                onUpdate: function () {
+                  var elD = document.getElementById('leak-out-dollar');
+                  var elH = document.getElementById('leak-out-hours');
+                  if (elD) elD.textContent = '$' + Math.round(nums.d).toLocaleString();
+                  if (elH) elH.textContent = nums.h.toFixed(1);
+                },
+                onComplete: function () {
+                  var v = document.getElementById('leak-verdict');
+                  if (v) v.textContent = leakVerdict(res.dollars, res.hours);
+                  gsap.to('#leak-verdict', { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' });
+                  gsap.to('#leak-action-line', { opacity: 1, duration: 0.38, delay: 0.06 });
+                  gsap.to('#leak-actions-block', { opacity: 1, duration: 0.38, delay: 0.12 });
+                }
+              });
+            }, 650);
+          }
+        });
+      }
+
+      function leakClose() {
+        if (!leakOverlay) return;
+        if (leakIntroTimer) {
+          window.clearTimeout(leakIntroTimer);
+          leakIntroTimer = null;
+        }
+        leakOverlay.classList.remove('is-open', 'is-deep');
+        leakOverlay.setAttribute('aria-hidden', 'true');
+        document.body.classList.remove('leak-open');
+        leakReset();
+        if (leakLastFocus && typeof leakLastFocus.focus === 'function') {
+          leakLastFocus.focus();
+        }
+      }
+
+      function leakOpen() {
+        if (!leakOverlay) return;
+        leakLastFocus = document.activeElement;
+        leakReset();
+        leakOverlay.classList.add('is-open');
+        leakOverlay.setAttribute('aria-hidden', 'false');
+        document.body.classList.add('leak-open');
+        gsap.fromTo(
+          '.leak-panel',
+          { opacity: 0, scale: 0.98, y: 14 },
+          { opacity: 1, scale: 1, y: 0, duration: 0.5, ease: 'power3.out' }
+        );
+        gsap.fromTo(
+          '#leak-step-intro .leak-intro-text',
+          { opacity: 0, y: 8 },
+          { opacity: 1, y: 0, duration: 0.45, ease: 'power2.out', delay: 0.06 }
+        );
+        leakIntroTimer = window.setTimeout(function () {
+          leakGoTo('q1');
+        }, 1700);
+        window.requestAnimationFrame(function () {
+          if (leakCloseBtn) leakCloseBtn.focus();
+        });
+      }
+
+      if (leakOpenBtn) {
+        leakOpenBtn.addEventListener('click', function (e) {
+          e.preventDefault();
+          leakOpen();
+        });
+      }
+      if (leakCloseBtn) {
+        leakCloseBtn.addEventListener('click', function () {
+          leakClose();
+        });
+      }
+
+      var leakIntroEl = document.getElementById('leak-step-intro');
+      if (leakIntroEl) {
+        leakIntroEl.addEventListener('click', function (e) {
+          if (e.target.closest('#leak-close')) return;
+          leakGoTo('q1');
+        });
+      }
+
+      if (leakOverlay) {
+        leakOverlay.addEventListener('click', function (e) {
+          var opt = e.target.closest('.leak-opt');
+          if (!opt) return;
+          e.preventDefault();
+          var q = opt.getAttribute('data-leak-a');
+          var val = parseInt(opt.getAttribute('data-value'), 10);
+          if (q === 'q1' || q === 'q2' || q === 'q3') {
+            var group = opt.closest('.leak-options');
+            if (group) {
+              group.querySelectorAll('.leak-opt').forEach(function (b) {
+                b.classList.remove('is-selected');
+              });
+            }
+            opt.classList.add('is-selected');
+            leakAnswers[q] = val;
+            window.setTimeout(function () {
+              if (q === 'q1') leakGoTo('q2');
+              else if (q === 'q2') leakGoTo('q3');
+              else leakFinish();
+            }, 200);
+          }
+        });
+      }
+
+      var leakGotoPhases = document.getElementById('leak-goto-phases');
+      if (leakGotoPhases) {
+        leakGotoPhases.addEventListener('click', function () {
+          leakClose();
+          window.setTimeout(function () {
+            var ph = document.getElementById('phases');
+            if (ph) ph.scrollIntoView({ behavior: 'smooth' });
+          }, 380);
+        });
+      }
+
+      document.addEventListener('keydown', function (e) {
+        if (e.key !== 'Escape' || !leakOverlay || !leakOverlay.classList.contains('is-open')) return;
+        leakClose();
+      });
+
+      var heroLines = document.querySelectorAll('#hero-h1 .hero-line');
+      if (heroLines.length) {
+        gsap.set(heroLines, { opacity: 0, y: 16 });
+        gsap.set(heroLines[0], { opacity: 1, y: 0 });
+      }
+
       var tlHero = gsap.timeline({ defaults: { ease: 'power3.out' } });
-      tlHero.from('#hero-kicker', { opacity: 0, y: 14, duration: 0.55 }, 0);
-      tlHero.from('#hero-h1', { opacity: 0, y: 22, duration: 0.75 }, 0.12);
-      tlHero.from('#hero-lead', { opacity: 0, y: 16, duration: 0.65 }, 0.28);
-      tlHero.from('#hero-actions', { opacity: 0, y: 12, duration: 0.55 }, 0.42);
+      tlHero.from('.hero-h1--wrap', { opacity: 0, y: 18, duration: 0.65 }, 0);
+      if (heroLines.length) {
+        tlHero.from(heroLines[0], { opacity: 0, y: 22, duration: 0.75 }, 0.1);
+      }
+      tlHero.from('#hero-lead', { opacity: 0, y: 16, duration: 0.65 }, 0.22);
+      tlHero.from('#hero-actions', { opacity: 0, y: 12, duration: 0.55 }, 0.36);
+      tlHero.from('#hero-leak-entry', { opacity: 0, y: 10, duration: 0.5 }, 0.42);
+
+      var heroLineIndex = 0;
+      function advanceHeroLine() {
+        if (heroLines.length < 2) return;
+        var prev = heroLineIndex;
+        heroLineIndex = (heroLineIndex + 1) % heroLines.length;
+        gsap.to(heroLines[prev], { opacity: 0, y: -10, duration: 0.42, ease: 'power2.in' });
+        gsap.fromTo(
+          heroLines[heroLineIndex],
+          { opacity: 0, y: 14 },
+          { opacity: 1, y: 0, duration: 0.55, ease: 'power2.out', delay: 0.08 }
+        );
+      }
+      if (heroLines.length > 1) {
+        window.setTimeout(function () {
+          window.setInterval(advanceHeroLine, 4200);
+        }, 3200);
+      }
 
       var heroParallax = document.getElementById('hero-parallax');
       if (heroParallax) {
@@ -1114,14 +1734,6 @@
         pill.classList.add('visible');
         link.textContent = resume.line;
         link.href = resume.href;
-      }
-
-      var nr = document.getElementById('nav-restart');
-      if (nr) {
-        nr.addEventListener('click', function (e) {
-          e.preventDefault();
-          if (window.StephuaryProgress) window.StephuaryProgress.confirmRestart();
-        });
       }
 
       window.addEventListener('load', function () {
