@@ -24,72 +24,6 @@
   transform: scale(1);
 }
 
-.cursor-dot {
-  position: fixed;
-  width: 6px;
-  height: 6px;
-  margin: -3px 0 0 -3px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.85);
-  pointer-events: none;
-  z-index: 100001;
-  mix-blend-mode: difference;
-  opacity: 0;
-  transition: opacity 0.35s ease, transform 0.15s ease;
-}
-@media (hover: hover) and (pointer: fine) {
-  body.sys-cursor-on,
-  body.sys-cursor-on a,
-  body.sys-cursor-on button,
-  body.sys-cursor-on [role='button'],
-  body.sys-cursor-on input[type='submit'],
-  body.sys-cursor-on summary {
-    cursor: none;
-  }
-}
-body.sys-cursor-on .cursor-dot {
-  opacity: 1;
-}
-body.sys-cursor-on.sys-cursor-hover .cursor-dot {
-  transform: scale(1.35);
-}
-
-.sh-cursor-glow.sys-cursor-ring {
-  width: 220px;
-  height: 220px;
-  margin: -110px 0 0 -110px;
-  opacity: 0;
-  transition: opacity 0.4s ease, width 0.3s ease, height 0.3s ease, margin 0.3s ease;
-}
-body.sys-cursor-on .sh-cursor-glow.sys-cursor-ring {
-  opacity: 0.55;
-}
-body.sys-cursor-hover .sh-cursor-glow.sys-cursor-ring {
-  width: 280px;
-  height: 280px;
-  margin: -140px 0 0 -140px;
-  opacity: 0.75;
-}
-body.sys-adaptive--engaged.sys-cursor-on .sh-cursor-glow.sys-cursor-ring {
-  width: 300px;
-  height: 300px;
-  margin: -150px 0 0 -150px;
-  opacity: 0.9;
-}
-body.sys-adaptive--engaged.sys-cursor-on.sys-cursor-hover .sh-cursor-glow.sys-cursor-ring {
-  width: 320px;
-  height: 320px;
-  margin: -160px 0 0 -160px;
-  opacity: 0.95;
-}
-
-@media (max-width: 767px), (prefers-reduced-motion: reduce) {
-  .cursor-dot,
-  .sh-cursor-glow.sys-cursor-ring {
-    display: none !important;
-  }
-}
-
 /* Compact header */
 .sys-compact {
   position: relative;
@@ -463,6 +397,195 @@ a.phase-card.is-phase-current {
   transition: opacity var(--sys-reveal-duration, 0.55s) ease;
 }
 
+/* ——— Live output panel ——— */
+.sh-live-panel {
+  position: fixed;
+  right: 12px;
+  bottom: 56px;
+  z-index: 165;
+  max-width: min(320px, calc(100vw - 24px));
+  font-family: 'DM Mono', ui-monospace, monospace;
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(12px);
+  transition:
+    opacity 0.55s ease,
+    transform 0.55s ease;
+}
+.sh-live-panel--visible {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+.sh-live-panel__chrome {
+  position: relative;
+  border-radius: 3px;
+  border: 1px solid rgba(244, 237, 224, 0.12);
+  background: rgba(8, 8, 7, 0.92);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(12px);
+  padding: 12px 12px 10px;
+}
+.sh-live-panel__min {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  border: none;
+  border-radius: 2px;
+  background: rgba(244, 237, 224, 0.06);
+  color: rgba(244, 237, 224, 0.55);
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+.sh-live-panel__min:hover {
+  background: rgba(58, 107, 255, 0.15);
+  color: rgba(244, 237, 224, 0.9);
+}
+.sh-live-panel__top {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 10px;
+  padding-right: 28px;
+}
+.sh-live-panel__phase {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 15px;
+  font-weight: 300;
+  letter-spacing: -0.02em;
+  color: #f4ede0;
+  line-height: 1.25;
+}
+.sh-live-panel__status {
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: rgba(196, 163, 90, 0.75);
+}
+.sh-live-panel__metrics {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+}
+.sh-live-panel__metrics > div {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px;
+  align-items: baseline;
+  border-top: 1px solid rgba(244, 237, 224, 0.06);
+  padding-top: 8px;
+}
+.sh-live-panel__metrics > div:first-of-type {
+  border-top: none;
+  padding-top: 0;
+}
+.sh-live-panel__metrics dt {
+  margin: 0;
+  font-size: 8px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(110, 101, 88, 0.95);
+}
+.sh-live-panel__metrics dd {
+  margin: 0;
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  color: rgba(244, 237, 224, 0.92);
+  text-align: right;
+}
+.sh-live-panel__summary {
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(58, 107, 255, 0.15);
+}
+.sh-live-panel__summary-pre {
+  margin: 0;
+  font-size: 9px;
+  line-height: 1.45;
+  letter-spacing: 0.04em;
+  white-space: pre-wrap;
+  word-break: break-word;
+  color: rgba(203, 195, 180, 0.88);
+  max-height: 140px;
+  overflow: auto;
+}
+.sh-live-panel__bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 10px;
+}
+.sh-live-panel__btn {
+  flex: 1 1 auto;
+  min-width: 0;
+  padding: 7px 8px;
+  border-radius: 2px;
+  border: 1px solid rgba(244, 237, 224, 0.1);
+  background: rgba(43, 79, 212, 0.12);
+  color: rgba(244, 237, 224, 0.85);
+  font-family: inherit;
+  font-size: 8px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease;
+}
+.sh-live-panel__btn:hover {
+  border-color: rgba(58, 107, 255, 0.4);
+  background: rgba(43, 79, 212, 0.22);
+}
+.sh-live-panel__dock {
+  display: none;
+  position: fixed;
+  right: 12px;
+  bottom: 56px;
+  z-index: 165;
+  padding: 8px 12px;
+  border-radius: 2px;
+  border: 1px solid rgba(196, 163, 90, 0.25);
+  background: rgba(8, 8, 7, 0.9);
+  color: rgba(196, 163, 90, 0.95);
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+}
+.sh-live-panel--collapsed .sh-live-panel__chrome {
+  display: none;
+}
+.sh-live-panel--collapsed .sh-live-panel__dock {
+  display: block;
+}
+.sh-live-panel--collapsed.sh-live-panel--visible {
+  opacity: 1;
+  transform: none;
+  pointer-events: auto;
+}
+@media (max-width: 767px) {
+  .sh-live-panel {
+    right: 8px;
+    left: 8px;
+    bottom: 48px;
+    max-width: none;
+  }
+  .sh-live-panel__dock {
+    right: 8px;
+    left: auto;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .sys-btn,
   .sh-map-node,
@@ -477,5 +600,8 @@ a.phase-card.is-phase-current {
   .sys-adaptive-cta-pulse.tier-cta-primary,
   .sys-adaptive-cta-pulse.btn--pri {
     animation: none !important;
+  }
+  .sh-live-panel {
+    transition: none !important;
   }
 }

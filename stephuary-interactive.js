@@ -37,55 +37,6 @@
     );
   }
 
-  /* ——— Cursor ——— */
-  function initCursor() {
-    if (reduceMotion || isMobile) return;
-    var dot = document.querySelector('.cursor-dot');
-    if (!dot) return;
-    document.body.classList.add('sys-cursor-on');
-    var glowCached = null;
-    function resolveGlow() {
-      if (!glowCached) glowCached = document.querySelector('.sh-cursor-glow.sys-cursor-ring');
-      return glowCached;
-    }
-    var mx = 0,
-      my = 0,
-      lx = 0,
-      ly = 0;
-    document.addEventListener(
-      'mousemove',
-      function (e) {
-        mx = e.clientX;
-        my = e.clientY;
-      },
-      { passive: true }
-    );
-    function tick() {
-      lx += (mx - lx) * 0.18;
-      ly += (my - ly) * 0.18;
-      dot.style.transform = 'translate3d(' + lx + 'px,' + ly + 'px,0)';
-      var g = resolveGlow();
-      if (g) g.style.transform = 'translate3d(' + lx + 'px,' + ly + 'px,0)';
-      requestAnimationFrame(tick);
-    }
-    tick();
-    var sel = 'a, button, .sh-map-node, .sys-btn, .tier-cta, .btn, .magnetic, [data-interactive]';
-    document.addEventListener(
-      'mouseover',
-      function (e) {
-        if (e.target.closest(sel)) document.body.classList.add('sys-cursor-hover');
-      },
-      true
-    );
-    document.addEventListener(
-      'mouseout',
-      function (e) {
-        if (e.target.closest(sel)) document.body.classList.remove('sys-cursor-hover');
-      },
-      true
-    );
-  }
-
   function magneticStrength() {
     return document.body.classList.contains('sys-adaptive--engaged') ? 0.14 : 0.08;
   }
@@ -510,11 +461,316 @@
     );
   }
 
+  function initLiveOutput() {
+    if (document.getElementById('sh-live-panel')) return;
+    if (document.body.getAttribute('data-live-output') === 'off') return;
+
+    var STORAGE = 'stephuary_live_output_v1';
+    var PATH_PHASES = [
+      { path: '/', n: 0, name: 'Home', where: 'Home', cat: 'Overview', act: 'Open Capture when you want a structured read on leaks.' },
+      { path: '/capture', n: 1, name: 'Extraction', where: "You're in Capture", cat: 'Leak visibility', act: 'Finish one full pass of the diagnostic.' },
+      { path: '/monetize', n: 2, name: 'Position', where: "You're in Position", cat: 'Offer clarity', act: 'Name one buyer and one price before you add tools.' },
+      { path: '/structure', n: 3, name: 'Structure', where: "You're in Structure", cat: 'Delivery & packaging', act: 'Turn the concept into one page you can send.' },
+      { path: '/automation', n: 4, name: 'Automation', where: "You're in Automation", cat: 'Execution load', act: 'Automate one repeat step this week.' },
+      { path: '/sovereignty', n: 5, name: 'Sovereignty', where: "You're in Sovereignty", cat: 'Ownership', act: 'Pick one system you control end to end.' },
+      { path: '/systems', n: 0, name: 'System', where: 'System map', cat: 'Flow overview', act: 'Open the phase that matches your next decision.' },
+      { path: '/pricing', n: 0, name: 'Pricing', where: 'Pricing', cat: 'Entry choice', act: 'Pick one tier that matches how much support you want.' },
+      { path: '/results', n: 0, name: 'Results', where: 'Results', cat: 'Readout', act: 'Note one cut and one keep from the readout.' },
+      { path: '/playbooks', n: 0, name: 'Rooms', where: 'Rooms', cat: 'Focused topic', act: 'Complete one room before starting another.' },
+      { path: '/access', n: 0, name: 'Access', where: 'Club access', cat: 'Request', act: 'Send the form when your situation needs direct work.' },
+      { path: '/snapshot', n: 0, name: 'Snapshot', where: 'Snapshot', cat: 'Full review', act: 'Book the snapshot when you want the full written pass.' }
+    ];
+
+    function pathInfo() {
+      var p = normPath(window.location.pathname);
+      for (var i = 0; i < PATH_PHASES.length; i++) {
+        if (PATH_PHASES[i].path === p) return PATH_PHASES[i];
+      }
+      if (/^\/room-/.test(p)) {
+        return {
+          n: 0,
+          name: 'Room',
+          where: "You're in a room",
+          cat: 'Focused topic',
+          act: 'Finish this room before opening another.'
+        };
+      }
+      return {
+        n: 0,
+        name: 'Site',
+        where: 'Browsing',
+        cat: 'Operating clarity',
+        act: 'Open Capture when you want a structured read on leaks.'
+      };
+    }
+
+    function loadStore() {
+      try {
+        var raw = localStorage.getItem(STORAGE);
+        if (raw) return JSON.parse(raw);
+      } catch (e) {}
+      return {
+        scrollAcc: 0,
+        interactAcc: 0,
+        sessionStart: Date.now(),
+        smoothMoney: 42000,
+        smoothHours: 6.2,
+        lastPath: ''
+      };
+    }
+
+    var store = loadStore();
+    var pageEnter = Date.now();
+    var scrollAcc = store.scrollAcc || 0;
+    var interactAcc = store.interactAcc || 0;
+    var lastScrollY = window.scrollY;
+    var smoothMoney = store.smoothMoney;
+    var smoothHours = store.smoothHours;
+    var statusText = 'Calculating…';
+    var lastStatusTick = 0;
+
+    var root = document.createElement('aside');
+    root.id = 'sh-live-panel';
+    root.className = 'sh-live-panel';
+    root.setAttribute('aria-label', 'Live output estimate');
+    root.innerHTML =
+      '<div class="sh-live-panel__chrome">' +
+      '<div class="sh-live-panel__top">' +
+      '<span class="sh-live-panel__phase" id="sh-live-phase">—</span>' +
+      '<span class="sh-live-panel__status" id="sh-live-status">Calculating…</span>' +
+      '</div>' +
+      '<dl class="sh-live-panel__metrics">' +
+      '<div><dt>Est. yearly loss</dt><dd id="sh-live-money">—</dd></div>' +
+      '<div><dt>Time / week</dt><dd id="sh-live-time">—</dd></div>' +
+      '<div><dt>Category</dt><dd id="sh-live-cat">—</dd></div>' +
+      '<div><dt>Next move</dt><dd id="sh-live-action">—</dd></div>' +
+      '</dl>' +
+      '<div class="sh-live-panel__summary" id="sh-live-summary-block" hidden>' +
+      '<pre class="sh-live-panel__summary-pre" id="sh-live-summary-text"></pre>' +
+      '</div>' +
+      '<div class="sh-live-panel__bar">' +
+      '<button type="button" class="sh-live-panel__btn" id="sh-live-toggle-summary">Summary</button>' +
+      '<button type="button" class="sh-live-panel__btn" id="sh-live-copy">Copy</button>' +
+      '<button type="button" class="sh-live-panel__btn" id="sh-live-download">Download</button>' +
+      '<button type="button" class="sh-live-panel__btn" id="sh-live-share">Share</button>' +
+      '</div>' +
+      '</div>' +
+      '<button type="button" class="sh-live-panel__dock" id="sh-live-dock" title="Show output estimate" aria-label="Show live output">Output</button>';
+
+    document.body.appendChild(root);
+
+    var elPhase = document.getElementById('sh-live-phase');
+    var elStatus = document.getElementById('sh-live-status');
+    var elMoney = document.getElementById('sh-live-money');
+    var elTime = document.getElementById('sh-live-time');
+    var elCat = document.getElementById('sh-live-cat');
+    var elAction = document.getElementById('sh-live-action');
+    var elSummaryBlock = document.getElementById('sh-live-summary-block');
+    var elSummaryText = document.getElementById('sh-live-summary-text');
+    var btnDock = document.getElementById('sh-live-dock');
+    var chrome = root.querySelector('.sh-live-panel__chrome');
+
+    function persist() {
+      try {
+        localStorage.setItem(
+          STORAGE,
+          JSON.stringify({
+            scrollAcc: scrollAcc,
+            interactAcc: interactAcc,
+            sessionStart: store.sessionStart,
+            smoothMoney: smoothMoney,
+            smoothHours: smoothHours,
+            lastPath: normPath(window.location.pathname)
+          })
+        );
+      } catch (e) {}
+    }
+
+    function lerp(a, b, t) {
+      return a + (b - a) * t;
+    }
+
+    function computeTargets() {
+      var info = pathInfo();
+      var tOnPage = (Date.now() - pageEnter) / 1000;
+      var pathBoost = info.n > 0 ? info.n * 900 : 400;
+      var scrollBoost = Math.min(28000, scrollAcc * 0.018);
+      var interactBoost = Math.min(22000, interactAcc * 85);
+      var dwellBoost = Math.min(12000, tOnPage * 12);
+      var base = 18000 + pathBoost + scrollBoost + interactBoost + dwellBoost;
+      var wave = Math.sin(Date.now() / 8200) * 600;
+      var targetMoney = Math.round(base + wave);
+      var hBase = 3.2 + info.n * 0.35 + scrollAcc * 0.00012 + interactAcc * 0.04 + tOnPage * 0.028;
+      var targetHours = Math.min(38, Math.max(2.1, hBase + Math.sin(Date.now() / 6400) * 0.35));
+      return { info: info, targetMoney: targetMoney, targetHours: targetHours };
+    }
+
+    function updateStatus() {
+      var now = Date.now();
+      if (lastStatusTick > 0 && now - lastStatusTick < 2800) return;
+      lastStatusTick = now;
+      if (scrollAcc > 400 && interactAcc > 8) statusText = 'Most time is lost here';
+      else if (scrollAcc > 120 || interactAcc > 3) statusText = 'Updating…';
+      else if (now - pageEnter < 4000) statusText = 'Calculating…';
+      else statusText = 'Updating…';
+      elStatus.textContent = statusText;
+    }
+
+    function formatMoney(n) {
+      return '$' + n.toLocaleString(undefined, { maximumFractionDigits: 0 });
+    }
+
+    function formatHours(h) {
+      return h.toFixed(1) + ' h';
+    }
+
+    function buildSummaryText(comp) {
+      return (
+        'Stephuary · live estimate\n' +
+        '—\n' +
+        'Phase: ' +
+        (comp.info.n > 0
+          ? '0' + comp.info.n + ' active · ' + comp.info.name
+          : comp.info.name + ' · ' + comp.info.where) +
+        '\n' +
+        'Est. yearly loss: ' +
+        formatMoney(Math.round(smoothMoney)) +
+        '\n' +
+        'Time loss / week: ' +
+        formatHours(smoothHours) +
+        '\n' +
+        'Category: ' +
+        comp.info.cat +
+        '\n' +
+        'Next move: ' +
+        comp.info.act +
+        '\n'
+      );
+    }
+
+    function tick() {
+      var comp = computeTargets();
+      smoothMoney = lerp(smoothMoney, comp.targetMoney, 0.08);
+      smoothHours = lerp(smoothHours, comp.targetHours, 0.1);
+
+      var phaseLine =
+        comp.info.n > 0
+          ? 'Phase ' +
+            (comp.info.n < 10 ? '0' + comp.info.n : comp.info.n) +
+            ' active · ' +
+            comp.info.name
+          : comp.info.where;
+      elPhase.textContent = phaseLine;
+      elMoney.textContent = formatMoney(Math.round(smoothMoney));
+      elTime.textContent = formatHours(smoothHours);
+      elCat.textContent = comp.info.cat;
+      elAction.textContent = comp.info.act;
+      elSummaryText.textContent = buildSummaryText(comp);
+      updateStatus();
+      persist();
+    }
+
+    window.addEventListener(
+      'scroll',
+      function () {
+        var dy = Math.abs(window.scrollY - lastScrollY);
+        lastScrollY = window.scrollY;
+        scrollAcc += dy;
+      },
+      { passive: true }
+    );
+
+    document.addEventListener(
+      'click',
+      function (e) {
+        if (e.target.closest('#sh-live-panel')) return;
+        interactAcc += 1;
+      },
+      true
+    );
+
+    window.addEventListener('beforeunload', persist);
+
+    document.getElementById('sh-live-toggle-summary').addEventListener('click', function () {
+      elSummaryBlock.hidden = !elSummaryBlock.hidden;
+    });
+
+    document.getElementById('sh-live-copy').addEventListener('click', function () {
+      var t = elSummaryText.textContent || '';
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(t).catch(function () {});
+      } else {
+        var ta = document.createElement('textarea');
+        ta.value = t;
+        document.body.appendChild(ta);
+        ta.select();
+        try {
+          document.execCommand('copy');
+        } catch (e) {}
+        document.body.removeChild(ta);
+      }
+      elStatus.textContent = 'Updating…';
+      window.setTimeout(function () {
+        elStatus.textContent = statusText;
+      }, 1400);
+    });
+
+    document.getElementById('sh-live-download').addEventListener('click', function () {
+      var t = elSummaryText.textContent || '';
+      var blob = new Blob([t], { type: 'text/plain;charset=utf-8' });
+      var a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'stephuary-output.txt';
+      a.click();
+      URL.revokeObjectURL(a.href);
+    });
+
+    document.getElementById('sh-live-share').addEventListener('click', function () {
+      var t = elSummaryText.textContent || '';
+      if (navigator.share) {
+        navigator.share({ title: 'Stephuary output', text: t }).catch(function () {
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(t).catch(function () {});
+          }
+        });
+      } else if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(t).catch(function () {});
+      }
+    });
+
+    btnDock.setAttribute('aria-hidden', 'true');
+    btnDock.addEventListener('click', function () {
+      root.classList.remove('sh-live-panel--collapsed');
+      btnDock.setAttribute('aria-hidden', 'true');
+    });
+
+    var collapseBtn = document.createElement('button');
+    collapseBtn.type = 'button';
+    collapseBtn.className = 'sh-live-panel__min';
+    collapseBtn.setAttribute('aria-label', 'Minimize panel');
+    collapseBtn.textContent = '−';
+    collapseBtn.addEventListener('click', function () {
+      root.classList.add('sh-live-panel--collapsed');
+      btnDock.setAttribute('aria-hidden', 'false');
+    });
+    chrome.insertBefore(collapseBtn, chrome.firstChild);
+
+    window.setInterval(tick, 1100);
+    tick();
+
+    window.setTimeout(
+      function () {
+        root.classList.add('sh-live-panel--visible');
+      },
+      reduceMotion ? 400 : 2400
+    );
+  }
+
   function boot() {
     initPageTransition();
-    initCursor();
     initMagnetic();
     initAdaptiveLayer();
+    initLiveOutput();
 
     var hCanvas = document.querySelector('.sys-compact__bg canvas');
     if (hCanvas) initHeaderParticles(hCanvas);
