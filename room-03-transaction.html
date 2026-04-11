@@ -569,6 +569,13 @@
     </section>
 
     <section class="panel" data-step="1" id="panel-1">
+      <div class="output-block muted" id="r02-bridge" style="display:none;" role="region" aria-label="From Room 02">
+        <p class="output-label">Brought forward from Room 02</p>
+        <div class="output-row"><span>Priority</span><span id="r02-bridge-priority">—</span></div>
+        <div class="output-row"><span>Time now protected for</span><span id="r02-bridge-time">—</span></div>
+        <div class="output-row"><span>What stopped</span><span id="r02-bridge-stop">—</span></div>
+        <p class="translate-line" style="margin-top:12px;">This is what you are turning into a transaction.</p>
+      </div>
       <h2 class="panel-title">Start with what’s already happening</h2>
       <p class="truth-line">Income starts where demand already exists — not where you wish demand existed.</p>
       <p class="panel-instruction">List things people have actually asked you for help with.</p>
@@ -1270,6 +1277,29 @@
   document.getElementById('btn-restart').addEventListener('click', function () {
     location.reload();
   });
+
+  (function initRoom02Bridge() {
+    var HANDOFF_KEY = 'stephuary_room02_handoff';
+    try {
+      var raw = localStorage.getItem(HANDOFF_KEY);
+      if (!raw) return;
+      var d = JSON.parse(raw);
+      if (!d || typeof d.priority !== 'string' || !d.priority) return;
+      var el = document.getElementById('r02-bridge');
+      if (!el) return;
+      var priEl = document.getElementById('r02-bridge-priority');
+      var timeEl = document.getElementById('r02-bridge-time');
+      var stopEl = document.getElementById('r02-bridge-stop');
+      if (priEl) priEl.textContent = d.priority;
+      if (timeEl) {
+        var h = d.timeBlockedHours;
+        timeEl.textContent =
+          h != null && h !== '' ? h + ' hours — ' + d.priority : '—';
+      }
+      if (stopEl) stopEl.textContent = d.removedItem || '—';
+      el.style.display = 'block';
+    } catch (err) {}
+  })();
 
   showStep(0);
 })();
