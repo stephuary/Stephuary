@@ -1074,6 +1074,9 @@
         <p class="translate-line">This shows what you are spending without deciding.</p>
         <p class="consequence-line">If this continues, nothing accumulates.</p>
         <p class="consequence-line" style="margin-top:10px;">This is what you are trading for nothing.</p>
+        <p class="consequence-line pressure-live" id="pressure-live-01" style="display:none;margin-top:12px;"></p>
+        <p class="consequence-line" id="unchanged-01" style="display:none;">This is what continues if unchanged: the same yearly run rate on screen — no compounding room.</p>
+        <p class="consequence-line frequency-block" id="freq-01" style="display:none;">If repeated 5–10 times without a cut, this leads to: lost money, missed revenue, stalled progress.</p>
         <div id="sys-response-reveal" class="sys-response" style="display:none;"></div>
         <div class="leak-meter-wrap" id="leak-meter-wrap" style="display:none;">
           <p class="leak-meter-label">Leak meter</p>
@@ -1279,7 +1282,8 @@
       <p class="translate-line">“Remove” or “limit” cuts a channel built to pull money and attention.</p>
       <p class="consequence-line">If you don’t remove anything, nothing changes.</p>
       <div id="sys-response-elim" class="sys-response" style="display:none;"></div>
-      <button type="button" class="btn-continue" id="btn-8">Continue</button>
+      <p class="consequence-line" style="margin-top:14px;">You cannot continue until at least one row is set to <strong>remove</strong> — one real cut.</p>
+      <button type="button" class="btn-continue" id="btn-8" disabled>Continue</button>
     </section>
 
     <!-- 11 Use this -->
@@ -1638,18 +1642,21 @@
     if (bar) bar.setAttribute('aria-valuenow', String(Math.round(pct)));
     if (cum) cum.textContent = fmtMoney(state.monthlySpend) + ' / mo';
     if (picks) picks.textContent = String(n);
+    updateLivePressure01();
   }
 
   function computeReveal() {
     var picked = document.querySelector('input[name="leak-pattern"]:checked');
     if (!picked) {
       document.getElementById('btn-1').disabled = true;
+      updateLivePressure01();
       return;
     }
     var key = picked.value;
     var def = LEAK_PATTERN_DEFS[key];
     if (!def) {
       document.getElementById('btn-1').disabled = true;
+      updateLivePressure01();
       return;
     }
     state.leakPatternKey = key;
@@ -1698,6 +1705,29 @@
 
     document.getElementById('btn-1').disabled = false;
     updateLeakMeter();
+    updateLivePressure01();
+  }
+
+  function updateLivePressure01() {
+    var el = document.getElementById('pressure-live-01');
+    var u = document.getElementById('unchanged-01');
+    var fr = document.getElementById('freq-01');
+    var b1 = document.getElementById('btn-1');
+    if (!el || !state.monthlySpend || (b1 && b1.disabled)) {
+      if (el) el.style.display = 'none';
+      if (u) u.style.display = 'none';
+      if (fr) fr.style.display = 'none';
+      return;
+    }
+    el.style.display = 'block';
+    var hw = typeof state.screenHours === 'number' ? fmtNum(state.screenHours * 7, 1) : null;
+    el.textContent =
+      'You are currently losing approximately ' +
+      fmtMoney(state.monthlySpend) +
+      ' per month at this run rate' +
+      (hw ? ' and about ' + hw + ' hours/week to screen drag.' : '.');
+    if (u) u.style.display = 'block';
+    if (fr) fr.style.display = 'block';
   }
 
   function computePattern() {
@@ -1995,6 +2025,16 @@
       continues: 'All-keep reads as “decide later” in real life.',
       fix: 'Execute one remove row before you open the highest-spend app today.'
     });
+    validateElimGate();
+  }
+
+  function validateElimGate() {
+    var hasRemove = false;
+    PLATFORMS.forEach(function (p) {
+      if (state.eliminationChoices[p] === 'remove') hasRemove = true;
+    });
+    var b = document.getElementById('btn-8');
+    if (b) b.disabled = !hasRemove;
   }
 
   function buildInterpretation() {

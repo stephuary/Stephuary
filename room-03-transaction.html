@@ -702,7 +702,7 @@
     <section class="panel" data-step="5" id="panel-5">
       <h2 class="panel-title">Make contact</h2>
       <p class="truth-line">The offer does not exist until someone else can read it in their inbox.</p>
-      <p class="panel-instruction">Write → Send → Mark → Move. Copy or mark sent before you continue.</p>
+      <p class="panel-instruction">Write → Send → Mark → Move. Copy alone does not unlock Continue — you must mark as sent.</p>
       <div class="msg-builder" id="msg-builder">
         <div class="field">
           <label for="msg-body">Outbound message (generated)</label>
@@ -721,6 +721,7 @@
       <div class="money-path-preview" id="msg-money-path">
         If you repeat this for 14 days: 10–20 messages sent · 2–5 responses · 1+ paid outcome likely.
       </div>
+      <p class="send-consequence" id="msg-freq-pressure" style="margin-top:10px;">If repeated 5–10 times without closing loops: lost money, missed revenue, stalled progress.</p>
       <div id="sys-response-r3-5" class="sys-response" style="display:none;"></div>
       <div class="diag-tie">
         <h4>This connects to what you saw earlier</h4>
@@ -1038,7 +1039,7 @@
     window.StephuaryOS.record('03', {
       step: currentStep,
       totalSteps: totalSteps,
-      messageCommitted: !!(state.messageCopied || state.messageSent)
+      messageSent: state.messageSent === true
     });
   }
 
@@ -1264,7 +1265,7 @@
   }
 
   function updateSendGate() {
-    var ok = !!(state.message && (state.messageCopied || state.messageSent));
+    var ok = !!(state.message && state.messageSent);
     document.getElementById('btn-5').disabled = !ok;
     syncStephuaryOS();
   }

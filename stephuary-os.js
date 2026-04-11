@@ -45,10 +45,10 @@
     return Math.min(100, Math.round((step / last) * 100));
   }
 
-  function statusFor03(step, messageCommitted) {
+  function statusFor03(step, messageSent) {
     var s = META['03'].statuses;
     if (step >= 14) return s[2];
-    if (step === 5 && !messageCommitted) return s[0];
+    if (step === 5 && !messageSent) return s[0];
     return s[1];
   }
 
@@ -66,17 +66,17 @@
 
   /**
    * @param {string} roomId '01'..'05'
-   * @param {{ step: number, totalSteps: number, messageCommitted?: boolean }} opts
+   * @param {{ step: number, totalSteps: number, messageSent?: boolean, messageCommitted?: boolean }} opts
    */
   function record(roomId, opts) {
     if (!META[roomId] || !opts) return;
     var step = typeof opts.step === 'number' ? opts.step : 0;
     var totalSteps = opts.totalSteps || 15;
     var comp = completionFromStep(step, totalSteps);
-    var msg = opts.messageCommitted === true;
+    var sent = opts.messageSent === true || opts.messageCommitted === true;
     var status;
     if (roomId === '03') {
-      status = statusFor03(step, msg);
+      status = statusFor03(step, sent);
       if (step >= 14) comp = 100;
     } else {
       status = statusDefault(roomId, comp);
@@ -92,7 +92,7 @@
       timestamp: nowIso(),
       step: step
     };
-    if (roomId === '03') room.messageCommitted = msg;
+    if (roomId === '03') room.messageSent = sent;
     data.rooms[roomId] = room;
     data.lastRoomId = roomId;
     save(data);

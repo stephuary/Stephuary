@@ -591,6 +591,9 @@
         <p class="consequence-line">Consequence: If you skip this, you optimize tools while invoices, handoffs, or coverage still fail under load.</p>
       </div>
       <div id="sys-response-r4-1" class="sys-response" style="display:none;"></div>
+      <p class="consequence-line" id="pressure-live-04" style="display:none;margin-top:12px;"></p>
+      <p class="consequence-line" id="unchanged-04" style="display:none;">This is what continues if unchanged: the same failure mode under load — revenue still stalls.</p>
+      <p class="consequence-line" id="freq-04" style="display:none;">If repeated 5–10 times without fixing the weakest layer: lost money, missed revenue, stalled progress.</p>
       <button type="button" class="btn-continue" id="btn-1" disabled>Continue</button>
     </section>
 
@@ -699,7 +702,8 @@
         <ol class="action-list" id="first-actions-list"></ol>
       </div>
       <div id="sys-response-r4-7" class="sys-response" style="display:none;"></div>
-      <button type="button" class="btn-continue" id="btn-7">Continue</button>
+      <label class="opt" style="margin-top:14px;display:flex;align-items:flex-start;gap:10px;"><input type="checkbox" id="cb-first-actions-commit" /> I have read the ordered list and commit to completing action #1 before adding tools or scope.</label>
+      <button type="button" class="btn-continue" id="btn-7" disabled>Continue</button>
     </section>
 
     <section class="panel" data-step="8" id="panel-8">
@@ -920,7 +924,10 @@
     });
     setProgress();
     if (n === 7) {
+      var c7 = document.getElementById('cb-first-actions-commit');
+      if (c7) c7.checked = false;
       renderFirstActions();
+      updateGatePanel7();
       fillSysResponse('sys-response-r4-7', {
         means: state.firstActions[0]
           ? 'Your first move is: ' + state.firstActions[0]
@@ -938,6 +945,28 @@
 
   function next() {
     if (currentStep < totalSteps - 1) showStep(currentStep + 1);
+  }
+
+  function updatePressure04() {
+    var el = document.getElementById('pressure-live-04');
+    var u = document.getElementById('unchanged-04');
+    var fr = document.getElementById('freq-04');
+    if (!el || !state.situation) {
+      if (el) el.style.display = 'none';
+      if (u) u.style.display = 'none';
+      if (fr) fr.style.display = 'none';
+      return;
+    }
+    el.style.display = 'block';
+    el.textContent =
+      'You are currently exposed to the income risk shape you picked — wrong order here costs real money every week it stays unaddressed.';
+    if (u) u.style.display = 'block';
+    if (fr) fr.style.display = 'block';
+  }
+
+  function updateGatePanel7() {
+    var cb = document.getElementById('cb-first-actions-commit');
+    document.getElementById('btn-7').disabled = !(cb && cb.checked);
   }
 
   function initSituations() {
@@ -969,6 +998,7 @@
           'Start here: <strong>' + escapeHtml(s.path) + '</strong>';
         document.getElementById('out-situation').style.display = 'block';
         document.getElementById('btn-1').disabled = false;
+        updatePressure04();
         fillSysResponse('sys-response-r4-1', {
           means: 'You are running: ' + state.situation,
           why: 'Income and delivery fail in patterns tied to load — not to “being disorganized.”',
@@ -1498,6 +1528,8 @@
   });
   document.getElementById('btn-6').addEventListener('click', next);
 
+  var cb7 = document.getElementById('cb-first-actions-commit');
+  if (cb7) cb7.addEventListener('change', updateGatePanel7);
   document.getElementById('btn-7').addEventListener('click', next);
   document.getElementById('btn-8').addEventListener('click', next);
 

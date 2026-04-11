@@ -748,6 +748,9 @@
         <p class="consequence-line">If you skip this, you will cut the wrong line or block time you do not have.</p>
       </div>
       <div id="sys-response-r2-1" class="sys-response" style="display:none;"></div>
+      <p class="consequence-line pressure-live" id="pressure-live-02" style="display:none;margin-top:12px;"></p>
+      <p class="consequence-line" id="unchanged-02" style="display:none;">This is what continues if unchanged: the same yearly run rate on screen — no compounding room.</p>
+      <p class="consequence-line" id="freq-02" style="display:none;">If repeated 5–10 times without a real shift, this leads to: lost money, missed revenue, stalled progress.</p>
       <button type="button" class="btn-continue" id="btn-1" disabled>Continue</button>
     </section>
 
@@ -911,7 +914,8 @@
       <p class="translate-line">This is the shift between how you are living and how you say you want to move.</p>
       <p class="consequence-line">If the revised version looks the same, nothing changes.</p>
       <div id="sys-response-r2-5" class="sys-response" style="display:none;"></div>
-      <button type="button" class="btn-continue" id="btn-5">Continue</button>
+      <label class="opt" style="margin-top:14px;display:flex;align-items:flex-start;gap:10px;"><input type="checkbox" id="cb-confirm-rev" /> I confirm this revised split is what I will run this week.</label>
+      <button type="button" class="btn-continue" id="btn-5" disabled>Continue</button>
     </section>
 
     <!-- 6 Current system output -->
@@ -933,7 +937,8 @@
       <p class="truth-line">If nothing changes, this is what continues.</p>
       <p class="pattern-result" id="sys-interpret" style="font-size:18px;margin-top:12px;">—</p>
       <div id="sys-response-r2-6" class="sys-response" style="display:none;"></div>
-      <button type="button" class="btn-continue" id="btn-6">Continue</button>
+      <label class="opt" style="margin-top:14px;display:flex;align-items:flex-start;gap:10px;"><input type="checkbox" id="cb-confirm-sys-read" /> I have read the current vs revised output above.</label>
+      <button type="button" class="btn-continue" id="btn-6" disabled>Continue</button>
     </section>
 
     <!-- 7 Forced decision -->
@@ -957,7 +962,8 @@
       <p class="translate-line">This is your weekly operating plan.</p>
       <p class="consequence-line">If this does not show up in your week, Room 02 did nothing.</p>
       <div id="sys-response-r2-8" class="sys-response" style="display:none;"></div>
-      <button type="button" class="btn-continue" id="btn-8">Apply this and continue →</button>
+      <label class="opt" style="margin-top:14px;display:flex;align-items:flex-start;gap:10px;"><input type="checkbox" id="cb-confirm-weekly" /> I commit to placing this weekly plan on my calendar.</label>
+      <button type="button" class="btn-continue" id="btn-8" disabled>Apply this and continue →</button>
     </section>
 
     <!-- 9 Escalation -->
@@ -1101,8 +1107,18 @@ Reduce anything that is not building or multiplying.</pre>
       syncTimeSliders();
       syncMoneySliders();
     }
-    if (n === 5) initRevSlidersFromCurrent();
-    if (n === 6) renderSystemOutput();
+    if (n === 5) {
+      initRevSlidersFromCurrent();
+      var cr = document.getElementById('cb-confirm-rev');
+      if (cr) cr.checked = false;
+      updateGatePanel5();
+    }
+    if (n === 6) {
+      renderSystemOutput();
+      var cs = document.getElementById('cb-confirm-sys-read');
+      if (cs) cs.checked = false;
+      updateGatePanel6();
+    }
     if (n === 7) {
       document.getElementById('btn-sys-keep').classList.remove('selected');
       document.getElementById('btn-sys-change').classList.remove('selected');
@@ -1116,6 +1132,9 @@ Reduce anything that is not building or multiplying.</pre>
     }
     if (n === 8) {
       renderWeeklyPlan();
+      var cw = document.getElementById('cb-confirm-weekly');
+      if (cw) cw.checked = false;
+      updateGatePanel8();
       fillSysResponse('sys-response-r2-8', {
         means: 'The weekly plan on screen is hours, money shift, stop, and one finish line.',
         why: 'Text without calendar placement dies in the inbox.',
@@ -1214,6 +1233,7 @@ Reduce anything that is not building or multiplying.</pre>
     if (isNaN(inc) || inc < 0 || isNaN(hrs) || hrs <= 0 || !obl) {
       document.getElementById('btn-1').disabled = true;
       document.getElementById('out-resources-block').style.display = 'none';
+      updateLivePressure02();
       return;
     }
     state.income = inc;
@@ -1236,6 +1256,43 @@ Reduce anything that is not building or multiplying.</pre>
       continues: 'You defend the wrong expense or schedule hours you do not have.',
       fix: 'Re-enter these three fields when income or hours change — not when you feel motivated.'
     });
+    updateLivePressure02();
+  }
+
+  function updateLivePressure02() {
+    var el = document.getElementById('pressure-live-02');
+    var u = document.getElementById('unchanged-02');
+    var fr = document.getElementById('freq-02');
+    var block = document.getElementById('out-resources-block');
+    if (!el || !block || block.style.display === 'none' || !state.income) {
+      if (el) el.style.display = 'none';
+      if (u) u.style.display = 'none';
+      if (fr) fr.style.display = 'none';
+      return;
+    }
+    el.style.display = 'block';
+    var perWeek = state.income / 4.33;
+    el.textContent =
+      'You are currently allocating approximately ' +
+      fmtMoney(perWeek) +
+      ' per week of income at this run rate — drift eats that before build does.';
+    if (u) u.style.display = 'block';
+    if (fr) fr.style.display = 'block';
+  }
+
+  function updateGatePanel5() {
+    var cb = document.getElementById('cb-confirm-rev');
+    document.getElementById('btn-5').disabled = !(cb && cb.checked);
+  }
+
+  function updateGatePanel6() {
+    var cb = document.getElementById('cb-confirm-sys-read');
+    document.getElementById('btn-6').disabled = !(cb && cb.checked);
+  }
+
+  function updateGatePanel8() {
+    var cb = document.getElementById('cb-confirm-weekly');
+    document.getElementById('btn-8').disabled = !(cb && cb.checked);
   }
 
   function updateStackBar(which, m, b, x) {
@@ -1712,8 +1769,12 @@ Reduce anything that is not building or multiplying.</pre>
   document.getElementById('rev-sl-b').addEventListener('input', syncRevTimeSliders);
   document.getElementById('rev-money-sl-m').addEventListener('input', syncRevMoneySliders);
   document.getElementById('rev-money-sl-b').addEventListener('input', syncRevMoneySliders);
+  var cr = document.getElementById('cb-confirm-rev');
+  if (cr) cr.addEventListener('change', updateGatePanel5);
   document.getElementById('btn-5').addEventListener('click', next);
 
+  var cs = document.getElementById('cb-confirm-sys-read');
+  if (cs) cs.addEventListener('change', updateGatePanel6);
   document.getElementById('btn-6').addEventListener('click', next);
 
   document.getElementById('btn-sys-keep').addEventListener('click', function () {
@@ -1724,6 +1785,8 @@ Reduce anything that is not building or multiplying.</pre>
   });
   document.getElementById('btn-7').addEventListener('click', next);
 
+  var cw = document.getElementById('cb-confirm-weekly');
+  if (cw) cw.addEventListener('change', updateGatePanel8);
   document.getElementById('btn-8').addEventListener('click', next);
 
   document.getElementById('btn-esc-02').addEventListener('click', next);

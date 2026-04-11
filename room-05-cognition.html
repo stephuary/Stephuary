@@ -658,6 +658,9 @@
         <p class="consequence-line" id="out-tools-follow" style="display:none;">Consequence: Your time is spent switching, not executing.</p>
       </div>
       <div id="sys-response-r5-6" class="sys-response" style="display:none;"></div>
+      <p class="consequence-line" id="pressure-live-05" style="display:none;margin-top:12px;"></p>
+      <p class="consequence-line" id="unchanged-05" style="display:none;">This is what continues if unchanged: unpriced rework and stalled sends.</p>
+      <p class="consequence-line" id="freq-05" style="display:none;">If repeated 5–10 times without cutting tools or enforcing verify: lost money, missed revenue, stalled progress.</p>
       <button type="button" class="btn-continue" id="btn-6" disabled>Continue</button>
     </section>
 
@@ -696,6 +699,9 @@
         <p class="translate-line">These only matter if they show up in your next action.</p>
       </div>
       <div id="sys-response-r5-8" class="sys-response" style="display:none;"></div>
+      <div class="pick-list" style="margin-top:12px;">
+        <label class="opt"><input type="checkbox" id="cb-principles-bind" /> These principles bind my next client-facing send — not my notes.</label>
+      </div>
       <button type="button" class="btn-continue" id="btn-8" disabled>Continue</button>
     </section>
 
@@ -1009,6 +1015,11 @@ Do not add ideas.</pre>
       p.classList.toggle('active', parseInt(p.getAttribute('data-step'), 10) === n);
     });
     setProgress();
+    if (n === 8) {
+      var cp = document.getElementById('cb-principles-bind');
+      if (cp) cp.checked = false;
+      updatePrincipleGate();
+    }
     if (n === 12) renderSummary();
     if (window.StephuaryOS) {
       window.StephuaryOS.record('05', { step: currentStep, totalSteps: totalSteps });
@@ -1281,12 +1292,42 @@ Do not add ideas.</pre>
     });
   }
 
+  function updatePressure05() {
+    var el = document.getElementById('pressure-live-05');
+    var u = document.getElementById('unchanged-05');
+    var fr = document.getElementById('freq-05');
+    var ot = document.getElementById('out-tools');
+    if (!el || !ot || ot.style.display === 'none') {
+      if (el) el.style.display = 'none';
+      if (u) u.style.display = 'none';
+      if (fr) fr.style.display = 'none';
+      return;
+    }
+    var n = state.toolCount;
+    el.style.display = 'block';
+    el.textContent =
+      n > 5
+        ? 'You are currently losing approximately ' +
+          n +
+          ' tool surfaces per week — each extra surface is execution time you do not invoice.'
+        : 'At this tool count, switching cost is still containable — if you do not add another surface.';
+    if (u) u.style.display = 'block';
+    if (fr) fr.style.display = 'block';
+  }
+
+  function updatePrincipleGate() {
+    var cb = document.getElementById('cb-principles-bind');
+    var ok = state.principles.length > 0 && cb && cb.checked;
+    document.getElementById('btn-8').disabled = !ok;
+  }
+
   function computeTools() {
     var raw = document.getElementById('tool-count').value;
     var n = parseInt(raw, 10);
     if (raw === '' || isNaN(n) || n < 0) {
       document.getElementById('out-tools').style.display = 'none';
       document.getElementById('btn-6').disabled = true;
+      updatePressure05();
       return;
     }
     state.toolCount = n;
@@ -1306,6 +1347,7 @@ Do not add ideas.</pre>
       continues: 'You manage stacks instead of shipping.',
       fix: 'Pick one primary tool — archive the rest for 14 days.'
     });
+    updatePressure05();
   }
 
   function initRules() {
@@ -1390,12 +1432,12 @@ Do not add ideas.</pre>
         updatePrincipleCap();
         if (state.principles.length === 0) {
           document.getElementById('out-layer').style.display = 'none';
-          document.getElementById('btn-8').disabled = true;
+          updatePrincipleGate();
           return;
         }
         document.getElementById('out-layer-text').textContent = buildOperatingLayer();
         document.getElementById('out-layer').style.display = 'block';
-        document.getElementById('btn-8').disabled = false;
+        updatePrincipleGate();
         fillSysResponse('sys-response-r5-8', {
           means: 'Your operating layer is locked to: ' + state.principles.join(' · ') + '.',
           why: 'Principles you do not act on do not protect revenue — they decorate notes.',
@@ -1573,6 +1615,9 @@ Do not add ideas.</pre>
   initData();
   initRules();
   initPrinciples();
+
+  var cbBind = document.getElementById('cb-principles-bind');
+  if (cbBind) cbBind.addEventListener('change', updatePrincipleGate);
 
   document.getElementById('btn-1').addEventListener('click', next);
   document.getElementById('btn-2').addEventListener('click', next);
