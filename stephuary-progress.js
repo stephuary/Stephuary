@@ -9,11 +9,11 @@
   var ROOM_ORDER = ['01', '02', '03', '04', '05'];
   var ROOM_PHASE = { '01': 1, '02': 2, '03': 3, '04': 4, '05': 5 };
   var PHASE_PATH = {
-    1: '/phase-1',
-    2: '/phase-2',
-    3: '/phase-3',
-    4: '/phase-4',
-    5: '/phase-5'
+    1: '/room-01',
+    2: '/room-02',
+    3: '/room-03',
+    4: '/room-04',
+    5: '/room-05'
   };
   var ROOM_PATH = {
     '01': '/room-01',
