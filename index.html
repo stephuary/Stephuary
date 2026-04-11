@@ -220,14 +220,84 @@
 
     /* Hero */
     #hero {
+      position: relative;
+      overflow: hidden;
+      min-height: 100vh;
+      min-height: 100dvh;
+      padding: 0;
+    }
+
+    /* Hero immersive layer (canvas + overlay + content) */
+    .hero-container {
+      position: relative;
+      overflow: hidden;
+      min-height: 100vh;
+      min-height: 100dvh;
+      background: #0a0a0a;
+    }
+
+    #hero-canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+    }
+
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.85));
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    .hero-overlay::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      opacity: 0.04;
+      background-image: url('https://grainy-gradients.vercel.app/noise.svg');
+      pointer-events: none;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
       min-height: 100vh;
       min-height: 100dvh;
       display: flex;
       flex-direction: column;
       justify-content: center;
       padding: 100px 40px 48px;
-      position: relative;
-      overflow: hidden;
+      width: 100%;
+    }
+
+    .cursor-glow {
+      position: fixed;
+      width: 300px;
+      height: 300px;
+      margin: -150px 0 0 -150px;
+      pointer-events: none;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(65, 105, 225, 0.12), transparent 62%);
+      mix-blend-mode: screen;
+      z-index: 9998;
+      opacity: 0;
+      transition: opacity 0.6s ease;
+      will-change: transform;
+    }
+    body.hero-glow-on .cursor-glow {
+      opacity: 1;
+    }
+
+    @media (max-width: 767px) {
+      #hero-canvas {
+        display: none !important;
+      }
+      .cursor-glow {
+        display: none !important;
+      }
     }
 
     .hero-inner {
@@ -993,7 +1063,7 @@
 
     @media (max-width: 640px) {
       nav#main-nav { padding: 14px 20px; }
-      #hero { padding: 88px 20px 36px; }
+      .hero-content { padding: 88px 20px 36px; }
       #proof, #system, .phase-head-wrap, .connector-wrap, .phase-rail, #diagnostic { padding-left: 20px; padding-right: 20px; }
       footer { padding: 28px 20px 36px; }
     }
@@ -1019,7 +1089,7 @@
     <nav id="main-nav">
       <a href="/" class="nav-mark" data-cursor data-cursor-label="View">Stephuary</a>
       <div class="nav-links">
-        <a href="/" class="nav-link">System</a>
+        <a href="/systems" class="nav-link">System</a>
         <!-- .5% Club: /access (no /point-five-club in vercel.json) -->
         <a href="/access" class="nav-link">.5% Club</a>
         <a href="https://stephuary.substack.com" class="nav-link" target="_blank" rel="noopener">Substack</a>
@@ -1029,26 +1099,32 @@
 
     <main id="main-content">
     <section id="hero">
-      <div class="hero-inner" id="hero-parallax">
-        <div class="hero-h1--wrap">
-          <h1 class="hero-h1" id="hero-h1">
-            <span class="hero-line">Find where your time, money, or attention is leaking.</span>
-            <span class="hero-line">See the actual cost in numbers.</span>
-            <span class="hero-line">Fix one thing this week.</span>
-            <span class="hero-line">Repeat until the system holds.</span>
-          </h1>
-        </div>
-        <p class="hero-lead" id="hero-lead">This is a short diagnostic that shows you what’s not working, what it’s costing you, and what to change first.</p>
-        <div class="hero-actions" id="hero-actions">
-          <a href="/phase-1" class="btn btn--pri" data-cursor data-cursor-label="Enter">Enter the system</a>
-          <a href="/systems" class="btn btn--ghost" data-cursor data-cursor-label="View">See all phases</a>
-          <p class="resume-pill" id="home-resume"><a href="/phase-1" id="home-resume-link" data-cursor data-cursor-label="Open">Continue where you left off</a></p>
-        </div>
-        <div class="hero-leak-entry" id="hero-leak-entry">
-          <button type="button" class="leak-trigger" id="leak-open" data-cursor data-cursor-label="Open" aria-haspopup="dialog" aria-controls="leak-overlay">
-            <span class="leak-trigger__dot" aria-hidden="true"></span>
-            Live leak check
-          </button>
+      <div class="hero-container">
+        <canvas id="hero-canvas" aria-hidden="true"></canvas>
+        <div class="hero-overlay" aria-hidden="true"></div>
+        <div class="hero-content">
+          <div class="hero-inner" id="hero-parallax">
+            <div class="hero-h1--wrap">
+              <h1 class="hero-h1" id="hero-h1">
+                <span class="hero-line">Find where your time, money, or attention is leaking.</span>
+                <span class="hero-line">See the actual cost in numbers.</span>
+                <span class="hero-line">Fix one thing this week.</span>
+                <span class="hero-line">Repeat until the system holds.</span>
+              </h1>
+            </div>
+            <p class="hero-lead" id="hero-lead">This is a short diagnostic that shows you what’s not working, what it’s costing you, and what to change first.</p>
+            <div class="hero-actions" id="hero-actions">
+              <a href="/phase-1" class="btn btn--pri" data-cursor data-cursor-label="Enter">Enter the system</a>
+              <a href="/systems" class="btn btn--ghost" data-cursor data-cursor-label="View">See all phases</a>
+              <p class="resume-pill" id="home-resume"><a href="/phase-1" id="home-resume-link" data-cursor data-cursor-label="Open">Continue where you left off</a></p>
+            </div>
+            <div class="hero-leak-entry" id="hero-leak-entry">
+              <button type="button" class="leak-trigger" id="leak-open" data-cursor data-cursor-label="Open" aria-haspopup="dialog" aria-controls="leak-overlay">
+                <span class="leak-trigger__dot" aria-hidden="true"></span>
+                Live leak check
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -1208,7 +1284,7 @@
       <div class="foot-inner">
         <span class="foot-mark">Stephuary</span>
         <ul class="foot-links">
-          <li><a href="/">System</a></li>
+          <li><a href="/systems">System</a></li>
           <li><a href="/access">.5% Club</a></li>
           <li><a href="https://stephuary.substack.com" target="_blank" rel="noopener">Substack</a></li>
           <li><a href="https://onlysometimesclub.com" target="_blank" rel="noopener">Only Sometimes Club</a></li>
@@ -1282,6 +1358,138 @@
   <script>
     (function () {
       gsap.registerPlugin(ScrollTrigger);
+
+      /* Hero immersive: gradient canvas, particles, sweep, grain (overlay CSS), parallax, cursor glow */
+      (function heroImmersive() {
+        var container = document.querySelector('.hero-container');
+        var canvas = document.getElementById('hero-canvas');
+        if (!container || !canvas) return;
+
+        var isMobile = window.innerWidth < 768;
+        var ctx = canvas.getContext('2d');
+        if (isMobile) {
+          canvas.style.display = 'none';
+          return;
+        }
+        if (!ctx) {
+          canvas.style.display = 'none';
+          return;
+        }
+
+        var width = 1;
+        var height = 1;
+        var t = 0;
+        var particles = [];
+        var rafId = 0;
+
+        function initParticles() {
+          particles = Array.from({ length: 40 }).map(function () {
+            return {
+              x: Math.random() * width,
+              y: Math.random() * height,
+              r: Math.random() * 1.2 + 0.35,
+              dx: (Math.random() - 0.5) * 0.1,
+              dy: (Math.random() - 0.5) * 0.1
+            };
+          });
+        }
+
+        function resize() {
+          var rect = container.getBoundingClientRect();
+          width = Math.max(1, Math.floor(rect.width));
+          height = Math.max(1, Math.floor(rect.height));
+          canvas.width = width;
+          canvas.height = height;
+          initParticles();
+        }
+        resize();
+        window.addEventListener('resize', resize);
+
+        function draw() {
+          t += 0.001;
+          var ox = 0.42 + Math.sin(t * 0.7) * 0.06;
+          var bl = 0.4 + Math.cos(t * 0.55) * 0.06;
+          var grad = ctx.createLinearGradient(0, 0, width, height);
+          grad.addColorStop(0, '#0a0a0a');
+          grad.addColorStop(0.38, 'rgba(59, 13, 13, ' + ox + ')');
+          grad.addColorStop(0.72, 'rgba(20, 40, 120, ' + bl + ')');
+          grad.addColorStop(1, '#0a0a0a');
+          ctx.fillStyle = grad;
+          ctx.fillRect(0, 0, width, height);
+
+          particles.forEach(function (p) {
+            p.x += p.dx;
+            p.y += p.dy;
+            if (p.x < 0 || p.x > width) p.dx *= -1;
+            if (p.y < 0 || p.y > height) p.dy *= -1;
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(255,255,255,0.12)';
+            ctx.fill();
+          });
+
+          rafId = requestAnimationFrame(draw);
+        }
+        draw();
+
+        gsap.to(canvas, {
+          y: 26,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: '#hero',
+            start: 'top top',
+            end: 'bottom top',
+            scrub: 1.1
+          }
+        });
+
+        function lightSweep() {
+          var sweep = document.createElement('div');
+          sweep.setAttribute('aria-hidden', 'true');
+          sweep.style.position = 'absolute';
+          sweep.style.top = '0';
+          sweep.style.left = '-50%';
+          sweep.style.width = '50%';
+          sweep.style.height = '100%';
+          sweep.style.background =
+            'linear-gradient(90deg, transparent, rgba(255,255,255,0.045), transparent)';
+          sweep.style.transform = 'skewX(-18deg)';
+          sweep.style.zIndex = '1';
+          sweep.style.pointerEvents = 'none';
+          container.appendChild(sweep);
+          sweep.animate(
+            [
+              { transform: 'translateX(0) skewX(-18deg)' },
+              { transform: 'translateX(320%) skewX(-18deg)' }
+            ],
+            {
+              duration: 7000,
+              easing: 'cubic-bezier(0.45, 0, 0.2, 1)'
+            }
+          );
+          window.setTimeout(function () {
+            if (sweep.parentNode) sweep.parentNode.removeChild(sweep);
+          }, 7200);
+        }
+        window.setInterval(lightSweep, 12000);
+        window.setTimeout(lightSweep, 3500);
+
+        var finePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+        if (finePointer) {
+          var glow = document.createElement('div');
+          glow.className = 'cursor-glow';
+          glow.setAttribute('aria-hidden', 'true');
+          document.body.appendChild(glow);
+          document.body.classList.add('hero-glow-on');
+          document.addEventListener(
+            'mousemove',
+            function (e) {
+              glow.style.transform = 'translate3d(' + e.clientX + 'px,' + e.clientY + 'px,0)';
+            },
+            { passive: true }
+          );
+        }
+      })();
 
       var prefersFine = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
       if (prefersFine) {
