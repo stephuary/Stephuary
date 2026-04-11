@@ -1,0 +1,1655 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Room 01 — Extraction · Stephuary</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=DM+Mono:wght@300;400&family=Lato:wght@300;400&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0c0a09;
+      --bg-deep: #070605;
+      --bg-1: #141210;
+      --bg-2: #1a1714;
+      --surface: rgba(26, 22, 18, 0.65);
+      --surface-raised: rgba(32, 28, 24, 0.85);
+      --bronze: #6b5344;
+      --gold: #9a8260;
+      --gold-soft: rgba(154, 130, 96, 0.45);
+      --gold-dim: #7a6b58;
+      --gold-line: rgba(154, 130, 96, 0.22);
+      --gold-glow: rgba(154, 130, 96, 0.12);
+      --cream: #e8e0d4;
+      --text: #ddd5c8;
+      --text-secondary: #b8aea0;
+      --text-muted: #8a8175;
+      --text-dim: #5c554c;
+      --text-label: #4a433c;
+      --border: rgba(232, 224, 212, 0.06);
+      --border-soft: rgba(154, 130, 96, 0.14);
+      --radius: 6px;
+      --radius-sm: 4px;
+      --shadow-inset: inset 0 1px 0 rgba(255,255,255,0.04);
+      --shadow-soft: 0 12px 40px rgba(0,0,0,0.35);
+    }
+
+    html, body { height: 100%; }
+    body {
+      font-family: 'Lato', sans-serif;
+      font-weight: 300;
+      background: var(--bg);
+      background-image:
+        radial-gradient(ellipse 80% 50% at 50% -20%, rgba(107, 83, 68, 0.08) 0%, transparent 50%),
+        radial-gradient(ellipse 60% 40% at 100% 100%, rgba(20, 18, 16, 0.9) 0%, transparent 45%);
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+      overflow: hidden;
+    }
+
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+      opacity: 0.028;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    #room-app {
+      position: relative;
+      z-index: 1;
+      height: 100%;
+      min-height: 100dvh;
+    }
+
+    .room-top {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 200;
+      padding: 22px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      background: linear-gradient(to bottom, rgba(12,10,9,0.92) 0%, rgba(12,10,9,0.55) 65%, transparent 100%);
+      pointer-events: none;
+    }
+    .room-top a {
+      pointer-events: auto;
+      font-family: 'DM Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      text-decoration: none;
+      transition: color 0.25s ease;
+    }
+    .room-top a:hover { color: var(--text-muted); }
+    .room-progress {
+      font-family: 'DM Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.14em;
+      color: var(--text-label);
+    }
+
+    .panel {
+      display: none;
+      min-height: 100dvh;
+      max-height: 100dvh;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      padding: 88px 24px 112px;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: stretch;
+      max-width: 480px;
+      margin: 0 auto;
+      animation: panelIn 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .panel.active { display: flex; }
+    @keyframes panelIn {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: none; }
+    }
+
+    .panel--entry {
+      justify-content: center;
+      text-align: center;
+      padding-top: min(18vh, 140px);
+      padding-bottom: min(18vh, 140px);
+      max-width: 420px;
+    }
+    .panel--entry .panel-kicker { justify-content: center; }
+    .panel--entry .panel-title { margin-bottom: 20px; }
+    .panel--entry .panel-instruction {
+      margin-bottom: 40px;
+      max-width: 320px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .panel--entry .btn-continue {
+      max-width: 260px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .panel-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-size: clamp(26px, 6.5vw, 40px);
+      line-height: 1.08;
+      letter-spacing: -0.02em;
+      margin-bottom: 16px;
+      color: var(--cream);
+    }
+
+    .panel-instruction {
+      font-size: 15px;
+      color: var(--text-muted);
+      line-height: 1.58;
+      margin-bottom: 32px;
+      letter-spacing: 0.01em;
+    }
+    .panel-instruction.alt-line,
+    .panel-instruction.elim-line {
+      margin-top: -18px;
+      margin-bottom: 28px;
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.55;
+    }
+    .panel-instruction.elim-line { margin-top: -12px; }
+
+    .panel-kicker {
+      font-family: 'DM Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--gold-dim);
+      margin-bottom: 20px;
+    }
+
+    /* Reveal: form grid */
+    .reveal-fields {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      margin-bottom: 8px;
+      padding: 20px 18px;
+      background: var(--surface);
+      border: 1px solid var(--border-soft);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-inset), var(--shadow-soft);
+    }
+
+    .output-block {
+      background: var(--surface-raised);
+      border: 1px solid var(--border-soft);
+      border-radius: var(--radius);
+      padding: 28px 22px 22px;
+      margin: 28px 0 32px;
+      box-shadow: var(--shadow-inset), 0 8px 32px rgba(0,0,0,0.25);
+    }
+    .output-block.muted {
+      border-color: rgba(154, 130, 96, 0.12);
+      background: rgba(20, 18, 16, 0.5);
+    }
+
+    .output-block--reveal {
+      padding-top: 32px;
+    }
+    .output-block--reveal .output-label {
+      margin-bottom: 12px;
+      color: var(--gold-dim);
+    }
+    .output-block--reveal .output-big {
+      margin-bottom: 8px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .output-block--cost .output-label + .output-row {
+      padding-top: 8px;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 17px;
+      color: var(--text-secondary);
+    }
+    .output-block--cost .output-label + .output-row span:last-child {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 22px;
+      color: var(--cream);
+    }
+
+    .output-block--shift .output-row--baseline span:last-child {
+      font-size: 14px;
+      color: var(--text-muted);
+    }
+    .output-block--shift .output-row--after span:last-child {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 18px;
+      color: var(--text-secondary);
+    }
+    .output-block--shift .output-row--recovered {
+      margin-top: 8px;
+      padding-top: 20px;
+      border-top: 1px solid var(--gold-line);
+      border-bottom: none;
+      padding-bottom: 4px;
+    }
+    .output-block--shift .output-row--recovered span:first-child {
+      font-family: 'DM Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--gold-dim);
+    }
+    .output-block--shift .output-row--recovered span:last-child {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(26px, 8vw, 36px);
+      color: var(--gold);
+      font-weight: 300;
+      letter-spacing: -0.02em;
+    }
+
+    .output-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--text-label);
+      margin-bottom: 8px;
+    }
+
+    .output-big {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-size: clamp(42px, 14vw, 72px);
+      line-height: 0.95;
+      color: var(--gold);
+      letter-spacing: -0.03em;
+      text-shadow: 0 0 60px var(--gold-glow);
+    }
+
+    .output-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 16px;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 14px;
+      color: var(--text-muted);
+    }
+    .output-row:last-child { border-bottom: none; }
+    .output-row span:first-child { color: var(--text-muted); }
+    .output-row span:last-child {
+      color: var(--text);
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+    .output-row--secondary span:last-child {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    .pattern-result {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(22px, 5vw, 30px);
+      font-weight: 300;
+      color: var(--cream);
+      line-height: 1.25;
+      letter-spacing: -0.02em;
+    }
+
+    .field { margin-bottom: 0; }
+    .field + .field { margin-top: 14px; }
+    .field label {
+      display: block;
+      font-family: 'DM Mono', monospace;
+      font-size: 8px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin-bottom: 8px;
+    }
+    .field input[type="number"],
+    .field input[type="text"],
+    .field textarea,
+    .field select {
+      width: 100%;
+      padding: 15px 16px;
+      background: rgba(7, 6, 5, 0.6);
+      border: 1px solid var(--border);
+      color: var(--cream);
+      font-family: 'Lato', sans-serif;
+      font-size: 16px;
+      font-weight: 300;
+      border-radius: var(--radius-sm);
+      transition: border-color 0.25s ease, box-shadow 0.25s ease;
+    }
+    .field input::placeholder,
+    .field textarea::placeholder { color: var(--text-label); }
+    .field input:focus,
+    .field textarea:focus,
+    .field select:focus {
+      outline: none;
+      border-color: var(--gold-soft);
+      box-shadow: 0 0 0 1px rgba(154, 130, 96, 0.15), 0 8px 24px rgba(0,0,0,0.2);
+    }
+    .field textarea { min-height: 108px; resize: vertical; line-height: 1.55; }
+
+    .choice-stack {
+      background: var(--surface);
+      border: 1px solid var(--border-soft);
+      border-radius: var(--radius);
+      padding: 8px 16px 16px;
+      margin-bottom: 24px;
+      box-shadow: var(--shadow-inset);
+    }
+    .choice-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding: 18px 0;
+      border-bottom: 1px solid var(--border);
+      flex-wrap: wrap;
+    }
+    .choice-row:last-of-type { border-bottom: none; margin-bottom: 0; }
+    .choice-label {
+      font-size: 14px;
+      color: var(--text-secondary);
+      flex: 1;
+      min-width: 100px;
+      letter-spacing: 0.02em;
+    }
+    .choice-pair { display: flex; gap: 8px; flex-wrap: wrap; }
+    .choice-pair label.opt {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 11px 16px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      font-size: 13px;
+      color: var(--text-muted);
+      transition: border-color 0.25s ease, background 0.25s ease, transform 0.2s ease;
+    }
+    .choice-pair label.opt:hover {
+      border-color: rgba(154, 130, 96, 0.25);
+      background: rgba(154, 130, 96, 0.04);
+    }
+    .choice-pair label.opt:has(input:checked) {
+      border-color: rgba(154, 130, 96, 0.45);
+      background: rgba(154, 130, 96, 0.1);
+      color: var(--cream);
+      box-shadow: 0 0 20px var(--gold-glow);
+    }
+    .choice-pair input { accent-color: var(--bronze); width: 15px; height: 15px; }
+
+    .driver-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .driver-grid label.opt {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 18px 18px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      font-size: 14px;
+      color: var(--text-secondary);
+      transition: border-color 0.25s ease, background 0.25s ease, box-shadow 0.25s ease;
+      background: rgba(7, 6, 5, 0.35);
+    }
+    .driver-grid label.opt:hover {
+      border-color: rgba(154, 130, 96, 0.2);
+    }
+    .driver-grid label.opt:has(input:checked) {
+      border-color: rgba(154, 130, 96, 0.5);
+      background: rgba(154, 130, 96, 0.08);
+      color: var(--cream);
+      box-shadow: 0 0 28px var(--gold-glow);
+    }
+    .driver-grid input {
+      flex-shrink: 0;
+      accent-color: var(--bronze);
+      width: 17px;
+      height: 17px;
+    }
+
+    .interp {
+      margin-top: 24px;
+      padding: 22px 20px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-soft);
+      border-left: 3px solid var(--bronze);
+      background: rgba(7, 6, 5, 0.45);
+      font-size: 16px;
+      color: var(--text-secondary);
+      line-height: 1.65;
+      display: none;
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+    }
+    .interp.visible { display: block; }
+
+    .alt-module {
+      padding: 20px 18px;
+      margin-bottom: 8px;
+      background: var(--surface);
+      border: 1px solid var(--border-soft);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-inset);
+    }
+    .alt-module > p {
+      font-size: 14px;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+      line-height: 1.5;
+    }
+    .alt-picks {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .alt-picks label {
+      padding: 11px 16px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: border-color 0.2s ease, background 0.2s ease;
+    }
+    .alt-picks label:hover { border-color: rgba(154, 130, 96, 0.22); }
+    .alt-picks label:has(input:checked) {
+      border-color: rgba(154, 130, 96, 0.4);
+      background: rgba(154, 130, 96, 0.08);
+      color: var(--cream);
+    }
+    .alt-picks input { display: none; }
+
+    .shift-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 14px;
+      align-items: center;
+      padding: 18px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .shift-row:last-child { border-bottom: none; }
+    .shift-name { font-size: 14px; color: var(--text-secondary); letter-spacing: 0.02em; }
+    .shift-btns {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      justify-content: flex-end;
+    }
+    .shift-btns button {
+      font-family: 'DM Mono', monospace;
+      font-size: 8px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 11px 12px;
+      min-width: 44px;
+      min-height: 44px;
+      border: 1px solid var(--border);
+      background: rgba(7, 6, 5, 0.5);
+      color: var(--text-muted);
+      cursor: pointer;
+      border-radius: var(--radius-sm);
+      transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+    }
+    .shift-btns button:hover {
+      border-color: rgba(154, 130, 96, 0.28);
+      color: var(--text);
+      transform: translateY(-1px);
+    }
+    .shift-btns button.selected {
+      border-color: rgba(154, 130, 96, 0.5);
+      background: rgba(154, 130, 96, 0.12);
+      color: var(--gold);
+      box-shadow: 0 0 16px var(--gold-glow);
+    }
+
+    .boundary-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      padding: 8px 0;
+      border-radius: var(--radius);
+    }
+    .boundary-list label {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      padding: 16px 14px;
+      margin: 0 -14px;
+      border-radius: var(--radius-sm);
+      border-bottom: 1px solid var(--border);
+      font-size: 15px;
+      color: var(--text-secondary);
+      cursor: pointer;
+      line-height: 1.5;
+      transition: background 0.2s ease;
+    }
+    .boundary-list label:hover { background: rgba(154, 130, 96, 0.04); }
+    .boundary-list label:last-child { border-bottom: none; }
+    .boundary-list input {
+      margin-top: 4px;
+      width: 18px;
+      height: 18px;
+      accent-color: var(--bronze);
+      flex-shrink: 0;
+    }
+    .boundary-list label:has(input:checked) {
+      color: var(--cream);
+    }
+
+    .elim-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      border: 1px solid var(--border-soft);
+      border-radius: var(--radius);
+      overflow: hidden;
+      background: var(--surface);
+      box-shadow: var(--shadow-inset);
+    }
+    .elim-table th,
+    .elim-table td {
+      padding: 14px 16px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+      font-size: 14px;
+    }
+    .elim-table tr:last-child td { border-bottom: none; }
+    .elim-table th {
+      font-family: 'DM Mono', monospace;
+      font-size: 8px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-label);
+      background: rgba(7, 6, 5, 0.5);
+    }
+    .elim-table td:first-child { color: var(--text-secondary); }
+    .elim-table select {
+      width: 100%;
+      padding: 12px 14px;
+      background: rgba(7, 6, 5, 0.6);
+      border: 1px solid var(--border);
+      color: var(--cream);
+      font-size: 13px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    .elim-table select:focus {
+      outline: none;
+      border-color: var(--gold-soft);
+      box-shadow: 0 0 0 1px rgba(154, 130, 96, 0.12);
+    }
+
+    .btn-continue {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      margin-top: 12px;
+      padding: 17px 24px;
+      min-height: 54px;
+      font-family: 'DM Mono', monospace;
+      font-size: 9px;
+      font-weight: 400;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--cream);
+      background: linear-gradient(180deg, rgba(154, 130, 96, 0.22) 0%, rgba(107, 83, 68, 0.35) 100%);
+      border: 1px solid rgba(154, 130, 96, 0.35);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease, opacity 0.25s ease;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.06);
+    }
+    .btn-continue:hover:not(:disabled) {
+      transform: translateY(-2px);
+      border-color: rgba(154, 130, 96, 0.5);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.35), 0 0 28px var(--gold-glow), inset 0 1px 0 rgba(255,255,255,0.08);
+    }
+    .btn-continue:active:not(:disabled) { transform: translateY(0); }
+    .btn-continue:disabled {
+      opacity: 0.38;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+      margin-top: 14px;
+      box-shadow: none;
+    }
+    .btn-secondary:hover:not(:disabled) {
+      border-color: rgba(154, 130, 96, 0.25);
+      color: var(--text-secondary);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    }
+
+    .summary-card {
+      background: linear-gradient(165deg, rgba(26, 22, 18, 0.95) 0%, rgba(12, 10, 9, 0.98) 100%);
+      border: 1px solid rgba(154, 130, 96, 0.18);
+      padding: 32px 26px 28px;
+      margin-bottom: 24px;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-soft), var(--shadow-inset), 0 0 0 1px rgba(0,0,0,0.2);
+    }
+    .summary-card--artifact h3 {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-size: clamp(20px, 4.5vw, 26px);
+      margin-bottom: 18px;
+      color: var(--cream);
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+    .reveal-per-year {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin-top: 10px;
+      margin-bottom: 8px;
+    }
+    .reveal-micro {
+      margin-top: 28px;
+      padding-top: 22px;
+      border-top: 1px solid var(--border);
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 17px;
+      font-weight: 300;
+      font-style: italic;
+      line-height: 1.55;
+      color: var(--text-secondary);
+    }
+
+    .panel--pause {
+      justify-content: center;
+      text-align: center;
+      padding-top: min(14vh, 120px);
+      padding-bottom: min(14vh, 120px);
+      max-width: 400px;
+    }
+    .panel--pause .panel-instruction {
+      margin-bottom: 40px;
+      max-width: 300px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .panel--pause .btn-continue {
+      max-width: 260px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .pattern-interp {
+      margin-top: 18px;
+      padding: 18px 18px 20px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-soft);
+      border-left: 3px solid var(--bronze);
+      background: rgba(7, 6, 5, 0.45);
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 16px;
+      font-weight: 300;
+      line-height: 1.6;
+      color: var(--text-muted);
+      display: none;
+    }
+    .pattern-interp.visible { display: block; }
+
+    .output-foot {
+      margin-top: 22px;
+      padding-top: 18px;
+      border-top: 1px solid var(--border);
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 16px;
+      font-weight: 300;
+      font-style: italic;
+      line-height: 1.55;
+      color: var(--text-secondary);
+    }
+    .output-foot--tight { margin-top: 18px; padding-top: 16px; }
+
+    .shift-foot {
+      margin-top: 20px;
+      font-size: 14px;
+      color: var(--text-muted);
+      line-height: 1.55;
+      letter-spacing: 0.02em;
+    }
+
+    .summary-card--artifact .summary-lede {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 20px;
+      color: var(--cream);
+      margin-bottom: 28px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--gold-line);
+      line-height: 1.45;
+    }
+    #summary-body {
+      font-family: 'Lato', sans-serif;
+      font-size: 13px;
+      line-height: 1.65;
+      color: var(--text-secondary);
+    }
+    .summary-section {
+      margin-bottom: 22px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--border);
+    }
+    .summary-section:last-of-type { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+    .summary-section-title {
+      font-family: 'DM Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--gold-dim);
+      margin-bottom: 12px;
+    }
+    .summary-section-body p,
+    .summary-section-body li {
+      margin-bottom: 8px;
+      color: var(--text-secondary);
+    }
+    .summary-section-body ul {
+      margin: 0;
+      padding-left: 1.1em;
+    }
+    .summary-section-body li:last-child { margin-bottom: 0; }
+    .summary-outro {
+      margin-top: 28px;
+      padding-top: 24px;
+      border-top: 1px solid var(--gold-line);
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 17px;
+      font-weight: 300;
+      font-style: italic;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    .exit-copy {
+      margin-top: 40px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border-soft);
+      text-align: center;
+      max-width: 340px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .exit-copy p {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 17px;
+      font-weight: 300;
+      line-height: 1.65;
+      color: var(--text-muted);
+      margin-bottom: 14px;
+    }
+    .exit-copy p:last-child { margin-bottom: 0; color: var(--text-secondary); }
+
+    .boundary-copy {
+      font-size: 15px;
+      color: var(--text-secondary);
+      line-height: 1.65;
+    }
+
+    @media (min-width: 600px) {
+      .panel { max-width: 520px; padding-left: 32px; padding-right: 32px; }
+      .panel--entry { max-width: 440px; }
+    }
+  </style>
+</head>
+<body>
+  <div id="room-app">
+    <header class="room-top">
+      <a href="/">Stephuary</a>
+      <span class="room-progress" id="progress-text">Room 01</span>
+    </header>
+
+    <!-- 0 Entry -->
+    <section class="panel panel--entry active" data-step="0" id="panel-0">
+      <p class="panel-kicker">Room 01 — Extraction</p>
+      <h1 class="panel-title">This is not tracking. This is extraction.</h1>
+      <p class="panel-instruction">Move through the room.<br />You'll leave with a system.</p>
+      <button type="button" class="btn-continue" id="btn-begin">Begin</button>
+    </section>
+
+    <!-- 1 Reveal -->
+    <section class="panel panel--reveal" data-step="1" id="panel-1">
+      <h2 class="panel-title">Reveal</h2>
+      <p class="panel-instruction">Enter your real numbers.<br />No estimates. No rounding.</p>
+      <div class="reveal-fields">
+      <div class="field">
+        <label for="in-subs">Subscriptions (per month)</label>
+        <input type="number" id="in-subs" min="0" step="1" inputmode="decimal" />
+      </div>
+      <div class="field">
+        <label for="in-groceries">Groceries (per week)</label>
+        <input type="number" id="in-groceries" min="0" step="1" inputmode="decimal" />
+      </div>
+      <div class="field">
+        <label for="in-delivery">Delivery (per week)</label>
+        <input type="number" id="in-delivery" min="0" step="1" inputmode="decimal" />
+      </div>
+      <div class="field">
+        <label for="in-social">Social spending (per month)</label>
+        <input type="number" id="in-social" min="0" step="1" inputmode="decimal" />
+      </div>
+      <div class="field">
+        <label for="in-impulse">Impulse spending (per month)</label>
+        <input type="number" id="in-impulse" min="0" step="1" inputmode="decimal" />
+      </div>
+      <div class="field">
+        <label for="in-screen">Screen hours (per day)</label>
+        <input type="number" id="in-screen" min="0" step="0.25" inputmode="decimal" />
+      </div>
+      </div>
+      <div class="output-block output-block--reveal" id="reveal-output">
+        <p class="output-label">You are losing</p>
+        <p class="output-big" id="out-yearly">—</p>
+        <p class="reveal-per-year">per year</p>
+        <div class="output-row output-row--secondary"><span>Monthly</span><span id="out-monthly">—</span></div>
+        <div class="output-row output-row--secondary"><span>Five years</span><span id="out-five">—</span></div>
+        <div class="output-row output-row--secondary"><span>Days lost / year (screen)</span><span id="out-days">—</span></div>
+        <p class="reveal-micro">Most people never see this number.<br />You just did.</p>
+      </div>
+      <button type="button" class="btn-continue" id="btn-1" disabled>Continue</button>
+    </section>
+
+    <!-- 2 Pause -->
+    <section class="panel panel--pause" data-step="2" id="panel-2">
+      <h2 class="panel-title">Pause</h2>
+      <p class="panel-instruction">This number doesn't feel real.<br /><br />It is.<br /><br />Stay here for a second.</p>
+      <button type="button" class="btn-continue" id="btn-pause">Continue</button>
+    </section>
+
+    <!-- 3 Pattern -->
+    <section class="panel" data-step="3" id="panel-3">
+      <h2 class="panel-title">Pattern</h2>
+      <p class="panel-instruction">Choose what feels truest.<br />Not what sounds better.</p>
+      <div class="choice-stack">
+      <div class="choice-row">
+        <span class="choice-label">Scroll / Sleep</span>
+        <div class="choice-pair" data-pattern="0">
+          <label class="opt"><input type="radio" name="p0" value="0" /> Scroll</label>
+          <label class="opt"><input type="radio" name="p0" value="1" /> Sleep</label>
+        </div>
+      </div>
+      <div class="choice-row">
+        <span class="choice-label">Order / Cook</span>
+        <div class="choice-pair" data-pattern="1">
+          <label class="opt"><input type="radio" name="p1" value="0" /> Order</label>
+          <label class="opt"><input type="radio" name="p1" value="1" /> Cook</label>
+        </div>
+      </div>
+      <div class="choice-row">
+        <span class="choice-label">Impulse / Wait</span>
+        <div class="choice-pair" data-pattern="2">
+          <label class="opt"><input type="radio" name="p2" value="0" /> Impulse</label>
+          <label class="opt"><input type="radio" name="p2" value="1" /> Wait</label>
+        </div>
+      </div>
+      </div>
+      <div class="output-block muted">
+        <p class="output-label">Your pattern</p>
+        <p id="out-pattern" class="pattern-result">—</p>
+        <p id="pattern-interp" class="pattern-interp" aria-live="polite"></p>
+      </div>
+      <button type="button" class="btn-continue" id="btn-2" disabled>Continue</button>
+    </section>
+
+    <!-- 4 Social Cost -->
+    <section class="panel" data-step="4" id="panel-4">
+      <h2 class="panel-title">Social cost</h2>
+      <p class="panel-instruction">Break one night down completely.</p>
+      <div class="field">
+        <label for="in-venue">Venue or outing</label>
+        <input type="number" id="in-venue" min="0" step="1" inputmode="decimal" />
+      </div>
+      <div class="field">
+        <label for="in-transport">Transportation</label>
+        <input type="number" id="in-transport" min="0" step="1" inputmode="decimal" />
+      </div>
+      <div class="field">
+        <label for="in-food">Food / drink</label>
+        <input type="number" id="in-food" min="0" step="1" inputmode="decimal" />
+      </div>
+      <div class="field">
+        <label for="in-appearance">Appearance / prep</label>
+        <input type="number" id="in-appearance" min="0" step="1" inputmode="decimal" />
+      </div>
+      <div class="field">
+        <label for="in-recovery">Recovery time (hours)</label>
+        <input type="number" id="in-recovery" min="0" step="0.25" inputmode="decimal" />
+      </div>
+      <div class="field">
+        <label for="in-nights">Outings per month</label>
+        <input type="number" id="in-nights" min="0" step="1" inputmode="decimal" />
+      </div>
+      <div class="output-block output-block--cost" id="social-output">
+        <p class="output-label">Cost breakdown</p>
+        <div class="output-row"><span>Total per outing</span><span id="out-outing">—</span></div>
+        <div class="output-row output-row--secondary"><span>Monthly</span><span id="out-soc-month">—</span></div>
+        <div class="output-row output-row--secondary"><span>Yearly</span><span id="out-soc-year">—</span></div>
+        <div class="output-row output-row--secondary"><span>Yearly recovery hours</span><span id="out-recovery-y">—</span></div>
+        <p class="output-foot output-foot--tight">This is the real cost.<br />Not just the receipt.</p>
+      </div>
+      <button type="button" class="btn-continue" id="btn-3" disabled>Continue</button>
+    </section>
+
+    <!-- 5 Driver -->
+    <section class="panel" data-step="5" id="panel-5">
+      <h2 class="panel-title">Driver</h2>
+      <p class="panel-instruction">Pick the one that explains most of your behavior.</p>
+      <div class="driver-grid" id="driver-radios">
+        <label class="opt"><input type="radio" name="driver" value="Belonging" /> Belonging</label>
+        <label class="opt"><input type="radio" name="driver" value="Status" /> Status</label>
+        <label class="opt"><input type="radio" name="driver" value="Relief" /> Relief</label>
+        <label class="opt"><input type="radio" name="driver" value="Reciprocity" /> Reciprocity</label>
+        <label class="opt"><input type="radio" name="driver" value="Preemption" /> Preemption</label>
+      </div>
+      <div class="interp" id="driver-interp"></div>
+      <button type="button" class="btn-continue" id="btn-4" disabled>Continue</button>
+    </section>
+
+    <!-- 6 Alternatives -->
+    <section class="panel" data-step="6" id="panel-6">
+      <h2 class="panel-title">Replacement</h2>
+      <p class="panel-instruction">You don't remove behavior.<br />You replace it.<br /><br />Pick what actually fits your life.</p>
+      <p class="panel-instruction alt-line">If it's not realistic, it won't stick.</p>
+      <div id="alt-container"></div>
+      <div class="field">
+        <label for="alt-note">Your notes (optional)</label>
+        <textarea id="alt-note" placeholder="What you'll actually try"></textarea>
+      </div>
+      <button type="button" class="btn-continue" id="btn-5">Continue</button>
+    </section>
+
+    <!-- 7 Shift -->
+    <section class="panel" data-step="7" id="panel-7">
+      <h2 class="panel-title">Shift</h2>
+      <p class="panel-instruction">Reduce what repeats.</p>
+      <div id="shift-rows"></div>
+      <div class="output-block output-block--shift">
+        <p class="output-label">Before and after</p>
+        <div class="output-row output-row--baseline"><span>Before</span><span id="out-shift-baseline">—</span></div>
+        <div class="output-row output-row--after"><span>After</span><span id="out-new-yearly">—</span></div>
+        <div class="output-row output-row--recovered"><span>Recovered</span><span id="out-recovered">—</span></div>
+        <p class="shift-foot">This is what changes if nothing else does.</p>
+      </div>
+      <button type="button" class="btn-continue" id="btn-6">Continue</button>
+    </section>
+
+    <!-- 8 Boundaries -->
+    <section class="panel" data-step="8" id="panel-8">
+      <h2 class="panel-title">Boundaries</h2>
+      <p class="panel-instruction">Pick what you're no longer available for.</p>
+      <div class="boundary-list" id="boundary-list"></div>
+      <div class="output-block muted" id="boundary-output" style="display:none;">
+        <p class="output-label">Your rules</p>
+        <p id="boundary-text" class="boundary-copy"></p>
+        <p class="output-foot boundary-foot">These only work if you keep them.</p>
+      </div>
+      <button type="button" class="btn-continue" id="btn-7" disabled>Continue</button>
+    </section>
+
+    <!-- 9 Elimination -->
+    <section class="panel" data-step="9" id="panel-9">
+      <h2 class="panel-title">Elimination</h2>
+      <p class="panel-instruction">Decide what stays, what gets limited, and what goes.</p>
+      <p class="panel-instruction elim-line">Default is keep. Change it on purpose.</p>
+      <table class="elim-table" id="elim-table"></table>
+      <button type="button" class="btn-continue" id="btn-8">Continue</button>
+    </section>
+
+    <!-- 10 Final -->
+    <section class="panel" data-step="10" id="panel-10">
+      <h2 class="panel-title">Your system</h2>
+      <p class="panel-instruction">This is what you're running now.</p>
+      <div class="summary-card summary-card--artifact">
+        <h3>YOUR OPERATING SYSTEM</h3>
+        <p class="summary-lede">Most people never build this.<br /><br />You just did.</p>
+        <div id="summary-body"></div>
+        <p class="summary-outro">This only works if you use it.</p>
+      </div>
+      <button type="button" class="btn-continue" id="btn-copy">Copy summary</button>
+      <button type="button" class="btn-continue btn-secondary" id="btn-restart">Restart</button>
+      <div class="exit-copy">
+        <p>You see it now.</p>
+        <p>Most people will go back to not seeing it.</p>
+        <p>You don't have to.</p>
+      </div>
+    </section>
+  </div>
+
+  <script>
+(function () {
+  var state = {
+    subscriptions: 0,
+    groceries: 0,
+    delivery: 0,
+    social: 0,
+    impulse: 0,
+    screenHours: 0,
+    monthlySpend: 0,
+    yearlySpend: 0,
+    fiveYearSpend: 0,
+    daysLost: 0,
+    pattern: '',
+    driver: '',
+    socialNightCost: 0,
+    socialRecoveryHours: 0,
+    recoveredAmount: 0,
+    reductions: {},
+    selectedBoundaries: [],
+    eliminationChoices: {},
+    alternatives: {},
+    _categoryMonthly: {},
+    _newYearlyAfterShift: 0,
+    _socialOutingTotal: 0,
+    _socialMonthlyTotal: 0,
+    _socialYearlyTotal: 0,
+    _socialYearlyRecoveryHours: 0
+  };
+
+  var PATTERN_NAMES = [
+    'Convenience Loop',
+    'Instant Relief Cycle',
+    'Passive Drift Pattern',
+    'Controlled Operator',
+    'Intentional Builder',
+    'Directed Expansion Pattern',
+    'Deferred Life Pattern',
+    'Mixed Pattern'
+  ];
+
+  var DRIVER_TEXT = {
+    Belonging: 'You are paying for connection.',
+    Status: 'You are buying perception.',
+    Relief: 'You are paying to escape how you feel.',
+    Reciprocity: 'You are spending to stay even.',
+    Preemption: 'You are paying to avoid discomfort before it happens.'
+  };
+
+  var PATTERN_INTERP = {
+    'Convenience Loop': 'You default to ease. You rarely interrupt the pattern.',
+    'Instant Relief Cycle': 'You prioritize feeling better now over control later.',
+    'Passive Drift Pattern': 'You are not deciding. You are reacting.',
+    'Controlled Operator': 'You choose intentionally more often than not.',
+    'Intentional Builder': 'You design your behavior instead of inheriting it.',
+    'Directed Expansion Pattern': 'You spend with purpose and direction.',
+    'Deferred Life Pattern': 'You delay decisions and carry them forward.',
+    'Mixed Pattern': 'Your behavior changes depending on context.'
+  };
+
+  var ALT_BY_DRIVER = {
+    Belonging: ['Small gatherings', 'One-on-one calls', 'Shared meals at home'],
+    Status: ['Skill depth', 'Quiet wins', 'Private progress'],
+    Relief: ['Movement', 'Cooking at home', 'Cold water / breath'],
+    Reciprocity: ['Clear yes/no', 'Smaller favors', 'Scheduled give'],
+    Preemption: ['Batch decisions', 'Environment shifts', 'Novelty in place']
+  };
+
+  var BOUNDARIES = [
+    'No phone first 30 minutes after waking',
+    'No phone last hour before bed',
+    'No phone during meals',
+    'Phone in another room during work',
+    'No notifications except calls',
+    'One phone-free day per week',
+    'No social apps before noon'
+  ];
+
+  var PLATFORMS = ['Instagram', 'TikTok', 'YouTube', 'X / Twitter', 'Reddit', 'Snapchat'];
+
+  var SHIFT_KEYS = ['subscriptions', 'groceries', 'delivery', 'social', 'impulse'];
+  var SHIFT_LABELS = {
+    subscriptions: 'Subscriptions',
+    groceries: 'Groceries',
+    delivery: 'Delivery',
+    social: 'Social',
+    impulse: 'Impulse'
+  };
+
+  var currentStep = 0;
+  var totalSteps = 11;
+
+  function setProgress() {
+    var el = document.getElementById('progress-text');
+    if (el) el.textContent = 'Room 01 · ' + (currentStep + 1) + ' / ' + totalSteps;
+  }
+
+  function showStep(n) {
+    currentStep = n;
+    document.querySelectorAll('.panel').forEach(function (p) {
+      p.classList.toggle('active', parseInt(p.getAttribute('data-step'), 10) === n);
+    });
+    setProgress();
+    if (n === 6) renderAlternatives();
+    if (n === 7) renderShift();
+    if (n === 8) renderBoundaries();
+    if (n === 9) renderElimination();
+    if (n === 10) renderSummary();
+  }
+
+  function next() {
+    if (currentStep < totalSteps - 1) showStep(currentStep + 1);
+  }
+
+  function fmtMoney(n) {
+    if (isNaN(n)) return '—';
+    return '$' + Math.round(n).toLocaleString();
+  }
+
+  function fmtNum(n, d) {
+    if (isNaN(n)) return '—';
+    return (Math.round(n * Math.pow(10, d || 0)) / Math.pow(10, d || 0)).toLocaleString();
+  }
+
+  function weeklyToMonthly(w) { return w * (52 / 12); }
+
+  function computeReveal() {
+    var subs = parseFloat(document.getElementById('in-subs').value);
+    var g = parseFloat(document.getElementById('in-groceries').value);
+    var d = parseFloat(document.getElementById('in-delivery').value);
+    var soc = parseFloat(document.getElementById('in-social').value);
+    var imp = parseFloat(document.getElementById('in-impulse').value);
+    var scr = parseFloat(document.getElementById('in-screen').value);
+
+    var vals = [subs, g, d, soc, imp, scr];
+    var allOk = vals.every(function (v) { return !isNaN(v) && v >= 0; });
+
+    if (!allOk) {
+      document.getElementById('btn-1').disabled = true;
+      return;
+    }
+
+    state.subscriptions = subs;
+    state.groceries = g;
+    state.delivery = d;
+    state.social = soc;
+    state.impulse = imp;
+    state.screenHours = scr;
+
+    var gm = weeklyToMonthly(g);
+    var dm = weeklyToMonthly(d);
+    state._categoryMonthly = {
+      subscriptions: subs,
+      groceries: gm,
+      delivery: dm,
+      social: soc,
+      impulse: imp
+    };
+
+    state.monthlySpend = subs + gm + dm + soc + imp;
+    state.yearlySpend = state.monthlySpend * 12;
+    state.fiveYearSpend = state.yearlySpend * 5;
+    state.daysLost = (scr * 365) / 24;
+
+    document.getElementById('out-monthly').textContent = fmtMoney(state.monthlySpend);
+    document.getElementById('out-yearly').textContent = fmtMoney(state.yearlySpend);
+    document.getElementById('out-five').textContent = fmtMoney(state.fiveYearSpend);
+    document.getElementById('out-days').textContent = fmtNum(state.daysLost, 1) + ' d';
+
+    document.getElementById('btn-1').disabled = false;
+  }
+
+  function computePattern() {
+    var a = document.querySelector('input[name="p0"]:checked');
+    var b = document.querySelector('input[name="p1"]:checked');
+    var c = document.querySelector('input[name="p2"]:checked');
+    var interpEl = document.getElementById('pattern-interp');
+    if (!a || !b || !c) {
+      document.getElementById('btn-2').disabled = true;
+      document.getElementById('out-pattern').textContent = '—';
+      if (interpEl) {
+        interpEl.textContent = '';
+        interpEl.classList.remove('visible');
+      }
+      return;
+    }
+    var idx = parseInt(a.value, 10) * 4 + parseInt(b.value, 10) * 2 + parseInt(c.value, 10);
+    state.pattern = PATTERN_NAMES[idx];
+    document.getElementById('out-pattern').textContent = state.pattern;
+    if (interpEl) {
+      interpEl.textContent = PATTERN_INTERP[state.pattern] || '';
+      interpEl.classList.add('visible');
+    }
+    document.getElementById('btn-2').disabled = false;
+  }
+
+  function computeSocial() {
+    var venue = parseFloat(document.getElementById('in-venue').value);
+    var tr = parseFloat(document.getElementById('in-transport').value);
+    var food = parseFloat(document.getElementById('in-food').value);
+    var app = parseFloat(document.getElementById('in-appearance').value);
+    var rec = parseFloat(document.getElementById('in-recovery').value);
+    var nights = parseFloat(document.getElementById('in-nights').value);
+
+    var vals = [venue, tr, food, app, rec, nights];
+    var ok = vals.every(function (v) { return !isNaN(v) && v >= 0; });
+
+    if (!ok) {
+      document.getElementById('btn-3').disabled = true;
+      return;
+    }
+
+    state._socialOutingTotal = venue + tr + food + app;
+    state.socialNightCost = state._socialOutingTotal;
+    state.socialRecoveryHours = rec;
+    state._socialMonthlyTotal = state._socialOutingTotal * nights;
+    state._socialYearlyTotal = state._socialMonthlyTotal * 12;
+    state._socialYearlyRecoveryHours = rec * nights * 12;
+
+    document.getElementById('out-outing').textContent = fmtMoney(state._socialOutingTotal);
+    document.getElementById('out-soc-month').textContent = fmtMoney(state._socialMonthlyTotal);
+    document.getElementById('out-soc-year').textContent = fmtMoney(state._socialYearlyTotal);
+    document.getElementById('out-recovery-y').textContent = fmtNum(state._socialYearlyRecoveryHours, 1) + ' h';
+
+    document.getElementById('btn-3').disabled = false;
+  }
+
+  function computeDriver() {
+    var r = document.querySelector('input[name="driver"]:checked');
+    var interp = document.getElementById('driver-interp');
+    if (!r) {
+      document.getElementById('btn-4').disabled = true;
+      interp.classList.remove('visible');
+      return;
+    }
+    state.driver = r.value;
+    interp.textContent = DRIVER_TEXT[state.driver] || '';
+    interp.classList.add('visible');
+    document.getElementById('btn-4').disabled = false;
+  }
+
+  function renderAlternatives() {
+    var container = document.getElementById('alt-container');
+    var list = ALT_BY_DRIVER[state.driver] || [];
+    var html = '<div class="alt-module"><div class="alt-picks">';
+    list.forEach(function (item, i) {
+      html += '<label><input type="checkbox" name="altpick" value="' + item.replace(/"/g, '&quot;') + '" /> ' + item + '</label>';
+    });
+    html += '</div></div>';
+    container.innerHTML = html;
+  }
+
+  function syncAlternatives() {
+    var picks = [];
+    document.querySelectorAll('input[name="altpick"]:checked').forEach(function (el) {
+      picks.push(el.value);
+    });
+    state.alternatives = {
+      picks: picks,
+      note: document.getElementById('alt-note').value.trim()
+    };
+  }
+
+  function initReductions() {
+    SHIFT_KEYS.forEach(function (k) {
+      if (state.reductions[k] === undefined) state.reductions[k] = 0;
+    });
+  }
+
+  function applyReduction(monthly, key) {
+    var r = state.reductions[key];
+    if (r === 'remove') return 0;
+    var pct = typeof r === 'number' ? r : 0;
+    return monthly * (1 + pct / 100);
+  }
+
+  function computeShift() {
+    initReductions();
+    var newMonthly = 0;
+    SHIFT_KEYS.forEach(function (k) {
+      newMonthly += applyReduction(state._categoryMonthly[k], k);
+    });
+    state._newYearlyAfterShift = newMonthly * 12;
+    state.recoveredAmount = state.yearlySpend - state._newYearlyAfterShift;
+    var elB = document.getElementById('out-shift-baseline');
+    if (elB) elB.textContent = fmtMoney(state.yearlySpend);
+    document.getElementById('out-new-yearly').textContent = fmtMoney(state._newYearlyAfterShift);
+    document.getElementById('out-recovered').textContent = fmtMoney(state.recoveredAmount);
+  }
+
+  function renderShift() {
+    initReductions();
+    var wrap = document.getElementById('shift-rows');
+    wrap.innerHTML = '';
+    SHIFT_KEYS.forEach(function (key) {
+      var row = document.createElement('div');
+      row.className = 'shift-row';
+      var name = document.createElement('span');
+      name.className = 'shift-name';
+      name.textContent = SHIFT_LABELS[key];
+      var btns = document.createElement('div');
+      btns.className = 'shift-btns';
+      var opts = [
+        { label: '0%', val: 0 },
+        { label: '-10%', val: -10 },
+        { label: '-20%', val: -20 },
+        { label: '-30%', val: -30 },
+        { label: 'remove', val: 'remove' }
+      ];
+      opts.forEach(function (o) {
+        var b = document.createElement('button');
+        b.type = 'button';
+        b.textContent = o.label;
+        b.dataset.key = key;
+        b.dataset.val = String(o.val);
+        var cur = state.reductions[key];
+        var match = o.val === 'remove' ? cur === 'remove' : Number(cur) === Number(o.val);
+        if (match) b.classList.add('selected');
+        b.addEventListener('click', function () {
+          state.reductions[key] = o.val === 'remove' ? 'remove' : o.val;
+          row.querySelectorAll('.shift-btns button').forEach(function (x) { x.classList.remove('selected'); });
+          b.classList.add('selected');
+          computeShift();
+        });
+        btns.appendChild(b);
+      });
+      row.appendChild(name);
+      row.appendChild(btns);
+      wrap.appendChild(row);
+    });
+    computeShift();
+  }
+
+  function renderBoundaries() {
+    var list = document.getElementById('boundary-list');
+    list.innerHTML = '';
+    BOUNDARIES.forEach(function (text, i) {
+      var id = 'b-' + i;
+      var lab = document.createElement('label');
+      lab.innerHTML = '<input type="checkbox" id="' + id + '" value="' + text.replace(/"/g, '&quot;') + '" /> ' + text;
+      list.appendChild(lab);
+    });
+    list.querySelectorAll('input').forEach(function (inp) {
+      inp.addEventListener('change', updateBoundaries);
+    });
+    updateBoundaries();
+  }
+
+  function updateBoundaries() {
+    state.selectedBoundaries = [];
+    document.querySelectorAll('#boundary-list input:checked').forEach(function (el) {
+      state.selectedBoundaries.push(el.value);
+    });
+    var out = document.getElementById('boundary-output');
+    var txt = document.getElementById('boundary-text');
+    if (state.selectedBoundaries.length) {
+      out.style.display = 'block';
+      txt.textContent = state.selectedBoundaries.join('. ') + '.';
+    } else {
+      out.style.display = 'none';
+      txt.textContent = '';
+    }
+    document.getElementById('btn-7').disabled = state.selectedBoundaries.length === 0;
+  }
+
+  function renderElimination() {
+    var table = document.getElementById('elim-table');
+    var thead = '<thead><tr><th>Platform</th><th>Choice</th></tr></thead><tbody>';
+    var body = '';
+    PLATFORMS.forEach(function (p, idx) {
+      var sel = state.eliminationChoices[p] || 'keep';
+      body += '<tr><td>' + p + '</td><td><select data-idx="' + idx + '">';
+      ['keep', 'limit', 'remove'].forEach(function (v) {
+        body += '<option value="' + v + '"' + (sel === v ? ' selected' : '') + '>' + v + '</option>';
+      });
+      body += '</select></td></tr>';
+    });
+    table.innerHTML = thead + body + '</tbody>';
+    table.querySelectorAll('select').forEach(function (sel) {
+      sel.addEventListener('change', function () {
+        var i = parseInt(sel.getAttribute('data-idx'), 10);
+        state.eliminationChoices[PLATFORMS[i]] = sel.value;
+      });
+    });
+    PLATFORMS.forEach(function (p) {
+      if (!state.eliminationChoices[p]) state.eliminationChoices[p] = 'keep';
+    });
+  }
+
+  function renderSummary() {
+    syncAlternatives();
+    var body = document.getElementById('summary-body');
+    body.innerHTML = '';
+
+    function addSection(title, lineList) {
+      var sec = document.createElement('div');
+      sec.className = 'summary-section';
+      var h = document.createElement('h4');
+      h.className = 'summary-section-title';
+      h.textContent = title;
+      sec.appendChild(h);
+      var content = document.createElement('div');
+      content.className = 'summary-section-body';
+      lineList.forEach(function (line) {
+        if (line === undefined || line === null || line === '') return;
+        var p = document.createElement('p');
+        p.textContent = line;
+        content.appendChild(p);
+      });
+      sec.appendChild(content);
+      body.appendChild(sec);
+    }
+
+    addSection('Money', [
+      'Monthly (reveal): ' + fmtMoney(state.monthlySpend),
+      'Yearly: ' + fmtMoney(state.yearlySpend),
+      'Five-year: ' + fmtMoney(state.fiveYearSpend)
+    ]);
+
+    addSection('Time', [
+      'Days lost / year (screen): ' + fmtNum(state.daysLost, 1)
+    ]);
+
+    addSection('Pattern', [state.pattern, PATTERN_INTERP[state.pattern] || ''].filter(function (x) { return x; }));
+
+    addSection('Driver', [state.driver, DRIVER_TEXT[state.driver] || ''].filter(function (x) { return x; }));
+
+    addSection('Social cost', [
+      'Per outing: ' + fmtMoney(state._socialOutingTotal),
+      'Monthly: ' + fmtMoney(state._socialMonthlyTotal),
+      'Yearly: ' + fmtMoney(state._socialYearlyTotal),
+      'Yearly recovery hours: ' + fmtNum(state._socialYearlyRecoveryHours, 1)
+    ]);
+
+    addSection('Recovered', [
+      'After shift (yearly): ' + fmtMoney(state._newYearlyAfterShift),
+      'Recovered / year: ' + fmtMoney(state.recoveredAmount)
+    ]);
+
+    var bSec = document.createElement('div');
+    bSec.className = 'summary-section';
+    var bh = document.createElement('h4');
+    bh.className = 'summary-section-title';
+    bh.textContent = 'Boundaries';
+    bSec.appendChild(bh);
+    var bwrap = document.createElement('div');
+    bwrap.className = 'summary-section-body';
+    var bul = document.createElement('ul');
+    state.selectedBoundaries.forEach(function (b) {
+      var li = document.createElement('li');
+      li.textContent = b;
+      bul.appendChild(li);
+    });
+    bwrap.appendChild(bul);
+    bSec.appendChild(bwrap);
+    body.appendChild(bSec);
+
+    var eSec = document.createElement('div');
+    eSec.className = 'summary-section';
+    var eh = document.createElement('h4');
+    eh.className = 'summary-section-title';
+    eh.textContent = 'Elimination';
+    eSec.appendChild(eh);
+    var ewrap = document.createElement('div');
+    ewrap.className = 'summary-section-body';
+    var eul = document.createElement('ul');
+    PLATFORMS.forEach(function (p) {
+      var li = document.createElement('li');
+      li.textContent = p + ': ' + (state.eliminationChoices[p] || 'keep');
+      eul.appendChild(li);
+    });
+    ewrap.appendChild(eul);
+    eSec.appendChild(ewrap);
+    body.appendChild(eSec);
+
+    var altLines = [];
+    if (state.alternatives.picks && state.alternatives.picks.length) {
+      state.alternatives.picks.forEach(function (p) { altLines.push(p); });
+    }
+    if (state.alternatives.note) altLines.push('Notes: ' + state.alternatives.note);
+    addSection('Alternatives', altLines.length ? altLines : ['—']);
+  }
+
+  function buildSummaryPlainText() {
+    syncAlternatives();
+    var lines = [];
+    lines.push('YOUR OPERATING SYSTEM');
+    lines.push('');
+    lines.push('Most people never build this.');
+    lines.push('You just did.');
+    lines.push('');
+    lines.push('Money');
+    lines.push('Monthly (reveal): ' + fmtMoney(state.monthlySpend));
+    lines.push('Yearly: ' + fmtMoney(state.yearlySpend));
+    lines.push('Five-year: ' + fmtMoney(state.fiveYearSpend));
+    lines.push('');
+    lines.push('Time');
+    lines.push('Days lost / year (screen): ' + fmtNum(state.daysLost, 1));
+    lines.push('');
+    lines.push('Pattern');
+    lines.push(state.pattern);
+    if (PATTERN_INTERP[state.pattern]) lines.push(PATTERN_INTERP[state.pattern]);
+    lines.push('');
+    lines.push('Driver');
+    lines.push(state.driver);
+    if (DRIVER_TEXT[state.driver]) lines.push(DRIVER_TEXT[state.driver]);
+    lines.push('');
+    lines.push('Social cost');
+    lines.push('Per outing: ' + fmtMoney(state._socialOutingTotal));
+    lines.push('Monthly: ' + fmtMoney(state._socialMonthlyTotal));
+    lines.push('Yearly: ' + fmtMoney(state._socialYearlyTotal));
+    lines.push('Yearly recovery hours: ' + fmtNum(state._socialYearlyRecoveryHours, 1));
+    lines.push('');
+    lines.push('Recovered');
+    lines.push('After shift (yearly): ' + fmtMoney(state._newYearlyAfterShift));
+    lines.push('Recovered / year: ' + fmtMoney(state.recoveredAmount));
+    lines.push('');
+    lines.push('Boundaries');
+    state.selectedBoundaries.forEach(function (b) { lines.push('- ' + b); });
+    lines.push('');
+    lines.push('Elimination');
+    PLATFORMS.forEach(function (p) {
+      lines.push('- ' + p + ': ' + (state.eliminationChoices[p] || 'keep'));
+    });
+    lines.push('');
+    lines.push('Alternatives');
+    if (state.alternatives.picks && state.alternatives.picks.length) {
+      state.alternatives.picks.forEach(function (p) { lines.push('- ' + p); });
+    }
+    if (state.alternatives.note) lines.push('Notes: ' + state.alternatives.note);
+    if ((!state.alternatives.picks || !state.alternatives.picks.length) && !state.alternatives.note) {
+      lines.push('—');
+    }
+    lines.push('');
+    lines.push('This only works if you use it.');
+    return lines.join('\n');
+  }
+
+  function copySummary() {
+    renderSummary();
+    var t = buildSummaryPlainText();
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(t).then(function () {
+        var b = document.getElementById('btn-copy');
+        var o = b.textContent;
+        b.textContent = 'Copied ✓';
+        setTimeout(function () { b.textContent = o; }, 2000);
+      });
+    }
+  }
+
+  document.getElementById('btn-begin').addEventListener('click', function () { next(); });
+  document.getElementById('btn-pause').addEventListener('click', function () { next(); });
+
+  ['in-subs', 'in-groceries', 'in-delivery', 'in-social', 'in-impulse', 'in-screen'].forEach(function (id) {
+    document.getElementById(id).addEventListener('input', computeReveal);
+  });
+
+  document.getElementById('btn-1').addEventListener('click', next);
+
+  ['p0', 'p1', 'p2'].forEach(function (name) {
+    document.querySelectorAll('input[name="' + name + '"]').forEach(function (el) {
+      el.addEventListener('change', computePattern);
+    });
+  });
+  document.getElementById('btn-2').addEventListener('click', next);
+
+  ['in-venue', 'in-transport', 'in-food', 'in-appearance', 'in-recovery', 'in-nights'].forEach(function (id) {
+    document.getElementById(id).addEventListener('input', computeSocial);
+  });
+  document.getElementById('btn-3').addEventListener('click', next);
+
+  document.querySelectorAll('input[name="driver"]').forEach(function (el) {
+    el.addEventListener('change', computeDriver);
+  });
+  document.getElementById('btn-4').addEventListener('click', next);
+
+  document.getElementById('btn-5').addEventListener('click', function () {
+    syncAlternatives();
+    next();
+  });
+
+  document.getElementById('btn-6').addEventListener('click', next);
+
+  document.getElementById('btn-7').addEventListener('click', next);
+
+  document.getElementById('btn-8').addEventListener('click', function () {
+    document.querySelectorAll('#elim-table select').forEach(function (sel) {
+      var i = parseInt(sel.getAttribute('data-idx'), 10);
+      state.eliminationChoices[PLATFORMS[i]] = sel.value;
+    });
+    next();
+  });
+
+  document.getElementById('btn-copy').addEventListener('click', copySummary);
+  document.getElementById('btn-restart').addEventListener('click', function () {
+    location.reload();
+  });
+
+  setProgress();
+})();
+  </script>
+</body>
+</html>
