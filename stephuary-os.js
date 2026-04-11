@@ -96,6 +96,9 @@
     data.rooms[roomId] = room;
     data.lastRoomId = roomId;
     save(data);
+    if (global.StephuaryProgress && typeof global.StephuaryProgress.onRoomStep === 'function') {
+      global.StephuaryProgress.onRoomStep(roomId, step, totalSteps);
+    }
   }
 
   function getCompletion(data, id) {
@@ -147,9 +150,13 @@
     var resume = null;
     if (data.lastRoomId && META[data.lastRoomId]) {
       var rr = data.rooms[data.lastRoomId];
+      var basePath = META[data.lastRoomId].path;
+      if (rr && typeof rr.step === 'number') {
+        basePath = basePath + '?step=' + rr.step;
+      }
       resume = {
         id: data.lastRoomId,
-        path: META[data.lastRoomId].path,
+        path: basePath,
         title: META[data.lastRoomId].title,
         lastAction: rr && rr.lastAction ? rr.lastAction : 'Continue',
         completion: rr && typeof rr.completion === 'number' ? rr.completion : 0

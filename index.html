@@ -311,6 +311,92 @@
       outline-offset: 3px;
     }
 
+    .home-entry-strip {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 0 52px 48px;
+      position: relative;
+      z-index: 1;
+    }
+    .resume-pill {
+      display: none;
+      margin-bottom: 16px;
+      font-family: 'DM Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+    .resume-pill.visible { display: block; }
+    .resume-pill a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      border-bottom: 1px solid var(--border-strong);
+      padding-bottom: 2px;
+    }
+    .resume-pill a:hover { color: var(--gold-dim); }
+
+    .home-phase-preview {
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      background: rgba(10, 9, 7, 0.45);
+    }
+    .home-phase-inner {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 56px 52px 64px;
+    }
+    .home-phase-preview h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-size: clamp(22px, 3vw, 28px);
+      letter-spacing: -0.02em;
+      margin-bottom: 8px;
+      color: var(--text-primary);
+    }
+    .home-phase-preview .sub {
+      font-size: 14px;
+      color: var(--text-muted);
+      margin-bottom: 28px;
+      max-width: 48ch;
+    }
+    .home-phase-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 12px 16px;
+    }
+    .home-phase-card {
+      display: block;
+      padding: 16px 16px 14px;
+      border: 1px solid var(--border);
+      background: rgba(12, 11, 9, 0.5);
+      text-decoration: none;
+      color: var(--text-secondary);
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .home-phase-card:hover {
+      border-color: rgba(196,163,90,0.25);
+      background: rgba(196,163,90,0.04);
+    }
+    .home-phase-card .ph {
+      font-family: 'DM Mono', monospace;
+      font-size: 8px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text-label);
+      margin-bottom: 6px;
+    }
+    .home-phase-card .name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 17px;
+      color: var(--text-primary);
+      margin-bottom: 6px;
+    }
+    .home-phase-card .hook {
+      font-size: 13px;
+      line-height: 1.45;
+      color: var(--text-muted);
+    }
+
     .hero-rule-bottom {
       position: absolute;
       bottom: 0; left: 52px; right: 52px;
@@ -529,9 +615,11 @@
   <nav id="main-nav">
     <a href="/" class="nav-mark">Stephuary</a>
     <div class="nav-links">
+      <a href="/systems" class="nav-link">System</a>
+      <a href="/systems#phases" class="nav-link">Phases</a>
+      <a href="#" class="nav-link" id="nav-restart">Restart</a>
       <a href="/capture" class="nav-link">Diagnostic</a>
       <a href="/playbooks" class="nav-link">Sections</a>
-      <a href="/systems" class="nav-link">Systems</a>
       <a href="/access" class="nav-link">.5% club</a>
       <a href="https://stephuary.substack.com" class="nav-link" target="_blank" rel="noopener">Substack</a>
     </div>
@@ -549,11 +637,29 @@
         <li>how to act on it today</li>
       </ul>
       <div class="hero-actions reveal">
-        <a href="/capture" class="btn-hero">Start the diagnostic →</a>
-        <a href="#main-content" class="btn-hero-secondary">See how it works →</a>
+        <a href="/phase-1" class="btn-hero">Start the system</a>
+        <a href="/systems" class="btn-hero-secondary">View all phases</a>
       </div>
     </div>
     <div class="hero-rule-bottom" aria-hidden="true"></div>
+  </section>
+
+  <div class="home-entry-strip">
+    <p class="resume-pill" id="home-resume"><a href="/phase-1" id="home-resume-link">Continue where you left off</a></p>
+  </div>
+
+  <section class="home-phase-preview" aria-label="Phases">
+    <div class="home-phase-inner">
+      <h2>System</h2>
+      <p class="sub">Five phases. Same order recommended. Any phase can be opened directly.</p>
+      <div class="home-phase-grid">
+        <a class="home-phase-card" href="/phase-1"><span class="ph">Phase 1</span><span class="name">Extraction</span><span class="hook">Stop the leak</span></a>
+        <a class="home-phase-card" href="/phase-2"><span class="ph">Phase 2</span><span class="name">Redirection</span><span class="hook">Redirect it</span></a>
+        <a class="home-phase-card" href="/phase-3"><span class="ph">Phase 3</span><span class="name">Build</span><span class="hook">Build from it</span></a>
+        <a class="home-phase-card" href="/phase-4"><span class="ph">Phase 4</span><span class="name">Automation</span><span class="hook">Automate it</span></a>
+        <a class="home-phase-card" href="/phase-5"><span class="ph">Phase 5</span><span class="name">Sovereignty</span><span class="hook">Stabilize it</span></a>
+      </div>
+    </div>
   </section>
 
   <main class="page-main" id="main-content">
@@ -671,8 +777,27 @@
     </div>
   </footer>
 
+  <script src="/stephuary-os.js"></script>
+  <script src="/stephuary-progress.js"></script>
   <script>
     (function () {
+      var resume = window.StephuaryProgress && window.StephuaryProgress.getResumeLabel();
+      var pill = document.getElementById('home-resume');
+      var link = document.getElementById('home-resume-link');
+      if (resume && pill && link) {
+        pill.classList.add('visible');
+        link.textContent = resume.line;
+        link.href = resume.href;
+      }
+
+      var nr = document.getElementById('nav-restart');
+      if (nr) {
+        nr.addEventListener('click', function (e) {
+          e.preventDefault();
+          if (window.StephuaryProgress) window.StephuaryProgress.confirmRestart();
+        });
+      }
+
       var mainNav = document.getElementById('main-nav');
       window.addEventListener('scroll', function () {
         mainNav.classList.toggle('scrolled', window.scrollY > 60);

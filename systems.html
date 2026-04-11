@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>System · Stephuary</title>
-  <meta name="description" content="How Stephuary works end to end: diagnostic, sections, output, distribution, and income." />
+  <meta name="description" content="All phases: enter any room, resume progress, move forward." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400&family=DM+Mono:wght@300;400&family=Lato:wght@300;400&display=swap" rel="stylesheet" />
   <style>
@@ -28,7 +28,7 @@
       font-family: 'Lato', sans-serif;
       font-weight: 300;
       font-size: 16px;
-      line-height: 1.65;
+      line-height: 1.6;
       -webkit-font-smoothing: antialiased;
       min-height: 100%;
     }
@@ -60,7 +60,7 @@
 
     .nav-links {
       display: flex;
-      gap: 22px;
+      gap: 20px;
       flex-wrap: wrap;
       align-items: center;
     }
@@ -82,7 +82,7 @@
     }
 
     .page-head {
-      padding: 56px 0 40px;
+      padding: 48px 0 32px;
       border-bottom: 1px solid var(--border);
     }
 
@@ -92,229 +92,123 @@
       font-size: clamp(32px, 5vw, 44px);
       letter-spacing: -0.03em;
       line-height: 1.1;
-      margin-bottom: 28px;
+      margin-bottom: 12px;
     }
 
-    .intro-lead {
+    .page-lead {
       font-size: 15px;
       color: var(--muted);
-      margin-bottom: 14px;
+      max-width: 42ch;
     }
 
-    .intro-list {
-      list-style: none;
-      margin: 0 0 22px;
-      padding: 0;
+    .resume-banner {
+      display: none;
+      margin-top: 20px;
+      padding: 14px 18px;
+      border: 1px solid var(--border);
+      background: rgba(43, 79, 212, 0.08);
     }
-    .intro-list li {
-      position: relative;
-      padding-left: 1.1em;
-      margin-bottom: 0.45em;
-      font-size: 15px;
-      color: var(--muted);
-      line-height: 1.6;
-    }
-    .intro-list li::before {
-      content: '';
-      position: absolute;
-      left: 0;
-      top: 0.65em;
-      width: 4px;
-      height: 1px;
-      background: var(--dim);
-    }
-
-    .intro-close {
-      font-size: 15px;
-      color: var(--muted);
-      line-height: 1.75;
-    }
-    .intro-close + .intro-close {
-      margin-top: 12px;
-    }
-
-    .sys-acc {
-      margin-top: 8px;
-      border-top: 1px solid var(--border);
-    }
-
-    .sys-acc-item {
-      border-bottom: 1px solid var(--border);
-    }
-
-    .sys-acc-item summary {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
-      list-style: none;
-      cursor: pointer;
-      padding: 20px 0 18px;
-      font-family: 'Cormorant Garamond', serif;
-      font-weight: 300;
-      font-size: clamp(20px, 2.6vw, 26px);
-      letter-spacing: -0.02em;
-      color: var(--text);
-      line-height: 1.2;
-    }
-
-    .sys-acc-item summary::-webkit-details-marker { display: none; }
-
-    .sys-acc-item summary::after {
-      content: '+';
-      flex-shrink: 0;
+    .resume-banner.visible { display: block; }
+    .resume-banner a {
       font-family: 'DM Mono', monospace;
-      font-size: 14px;
-      color: var(--dim);
-      line-height: 1;
-    }
-
-    .sys-acc-item[open] summary::after { content: '−'; }
-
-    .sys-acc-panel {
-      padding: 0 0 28px;
-    }
-
-    .sys-p {
-      font-size: 15px;
-      color: var(--muted);
-      line-height: 1.75;
-      margin-bottom: 1em;
-    }
-    .sys-p:last-child { margin-bottom: 0; }
-
-    .sys-steps {
-      margin: 0 0 1.1em;
-    }
-    .sys-step {
-      margin-bottom: 0.95em;
-      font-size: 15px;
-      color: var(--muted);
-    }
-    .sys-step-label {
-      font-family: 'DM Mono', monospace;
-      font-size: 8px;
-      letter-spacing: 0.14em;
+      font-size: 9px;
+      letter-spacing: 0.12em;
       text-transform: uppercase;
-      color: var(--dim);
-      display: block;
-      margin-bottom: 4px;
+      color: var(--text);
+    }
+    .resume-banner a:hover { color: var(--muted); }
+
+    #phases {
+      margin-top: 36px;
     }
 
-    .sys-list {
-      list-style: none;
-      margin: 0 0 1em;
-      padding: 0;
-    }
-    .sys-list li {
-      position: relative;
-      padding-left: 1em;
-      margin-bottom: 0.4em;
-      font-size: 15px;
-      color: var(--muted);
-      line-height: 1.65;
-    }
-    .sys-list li::before {
-      content: '';
-      position: absolute;
-      left: 0;
-      top: 0.65em;
-      width: 3px;
-      height: 1px;
-      background: var(--dim);
+    .phase-card {
+      border: 1px solid var(--border);
+      padding: 22px 20px 20px;
+      margin-bottom: 16px;
     }
 
-    .sys-ol {
-      margin: 0 0 1em;
-      padding-left: 1.2em;
-      color: var(--muted);
-      font-size: 15px;
-      line-height: 1.75;
-    }
-    .sys-ol li { margin-bottom: 0.35em; }
-
-    .sys-subhead {
+    .phase-label {
       font-family: 'DM Mono', monospace;
       font-size: 8px;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: var(--dim);
-      margin: 1em 0 0.5em;
-    }
-    .sys-subhead:first-child { margin-top: 0; }
-
-    .flow-block {
-      margin-bottom: 14px;
-      font-size: 15px;
-      color: var(--muted);
-      line-height: 1.6;
-    }
-    .flow-group { margin-top: 1.1em; }
-    .flow-group:first-child { margin-top: 0; }
-    .flow-line-label {
-      margin-bottom: 6px;
-      color: var(--text);
-      font-size: 15px;
-    }
-    .flow-line-desc {
-      margin-top: 0;
-      font-size: 15px;
-      color: var(--muted);
-    }
-    .flow-arrow {
-      color: var(--dim);
-      margin-right: 6px;
-      font-family: 'DM Mono', monospace;
-      font-size: 11px;
-    }
-    .sys-chain {
-      color: var(--text);
-      font-size: 16px;
-    }
-
-    .sys-tier {
-      margin-bottom: 18px;
-    }
-    .sys-tier:last-child { margin-bottom: 0; }
-    .sys-tier h4 {
-      font-family: 'DM Mono', monospace;
-      font-size: 8px;
-      letter-spacing: 0.14em;
+      letter-spacing: 0.16em;
       text-transform: uppercase;
       color: var(--dim);
       margin-bottom: 8px;
-      font-weight: 400;
-    }
-    .sys-tier p {
-      font-size: 15px;
-      color: var(--muted);
-      line-height: 1.65;
     }
 
-    .btn-cta {
+    .phase-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 22px;
+      font-weight: 300;
+      letter-spacing: -0.02em;
+      margin-bottom: 10px;
+    }
+
+    .phase-meta {
+      font-size: 14px;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    .phase-get {
+      font-size: 13px;
+      color: var(--dim);
+      margin-bottom: 18px;
+    }
+
+    .phase-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .btn {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      margin-top: 18px;
-      background: linear-gradient(165deg, var(--blue-hi) 0%, var(--blue) 100%);
-      color: #fff;
       font-family: 'DM Mono', monospace;
       font-size: 9px;
-      font-weight: 400;
       letter-spacing: 0.14em;
       text-transform: uppercase;
-      padding: 14px 26px;
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 12px 20px;
       border-radius: 1px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      cursor: pointer;
       transition: transform 0.2s, box-shadow 0.2s;
     }
-    .btn-cta:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 6px 24px rgba(43, 79, 212, 0.35);
+    .btn-primary {
+      background: linear-gradient(165deg, var(--blue-hi) 0%, var(--blue) 100%);
+      color: #fff;
     }
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(43, 79, 212, 0.35);
+    }
+    .btn-secondary {
+      background: transparent;
+      color: var(--muted);
+      border-color: var(--border);
+    }
+    .btn-secondary:hover { color: var(--text); border-color: rgba(196, 163, 90, 0.3); }
+
+    .hub-foot {
+      margin-top: 40px;
+      padding-top: 28px;
+      border-top: 1px solid var(--border);
+      font-size: 14px;
+      color: var(--dim);
+    }
+    .hub-foot a {
+      color: var(--muted);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+    .hub-foot a:hover { color: var(--text); }
 
     footer {
-      padding: 40px 28px 48px;
+      padding: 32px 28px 48px;
       border-top: 1px solid var(--border);
       max-width: 720px;
       margin: 0 auto;
@@ -323,8 +217,7 @@
       display: flex;
       flex-wrap: wrap;
       justify-content: space-between;
-      gap: 24px;
-      align-items: flex-start;
+      gap: 20px;
     }
     .footer-mark {
       font-family: 'Cormorant Garamond', serif;
@@ -355,7 +248,6 @@
     @media (max-width: 640px) {
       .wrap { padding-left: 20px; padding-right: 20px; }
       nav { padding: 16px 20px; }
-      .page-head { padding-top: 40px; }
     }
   </style>
 </head>
@@ -364,227 +256,136 @@
   <nav aria-label="Main">
     <a href="/" class="nav-mark">Stephuary</a>
     <div class="nav-links">
-      <a href="/capture">Diagnostic</a>
-      <a href="/playbooks">Sections</a>
       <a href="/systems">System</a>
-      <a href="/access">.5% club</a>
+      <a href="/systems#phases">Phases</a>
+      <a href="#" id="nav-restart">Restart</a>
     </div>
   </nav>
 
   <div class="wrap">
     <header class="page-head">
-      <h1 class="page-h1">System</h1>
-      <p class="intro-lead">This system shows you:</p>
-      <ul class="intro-list">
-        <li>where your time and money are going</li>
-        <li>what to change</li>
-        <li>what you can offer</li>
-        <li>how to act on it</li>
-        <li>how to turn that into income</li>
-      </ul>
-      <p class="intro-close">You do not need to learn anything first.</p>
-      <p class="intro-close">You start, see the result, and act.</p>
+      <h1 class="page-h1">System map</h1>
+      <p class="page-lead">Five phases. Enter any phase. Progress saves on this device.</p>
+      <div class="resume-banner" id="resume-banner" aria-live="polite">
+        <a href="/phase-1" id="resume-link">Continue where you left off</a>
+      </div>
     </header>
 
-    <div class="sys-acc">
-
-      <details class="sys-acc-item" name="sys-acc">
-        <summary>How it works</summary>
-        <div class="sys-acc-panel">
-          <div class="sys-steps">
-            <div class="sys-step"><span class="sys-step-label">Step 1</span>Complete the diagnostic</div>
-            <div class="sys-step"><span class="sys-step-label">Step 2</span>See what it identifies</div>
-            <div class="sys-step"><span class="sys-step-label">Step 3</span>Go to the section that matches your result</div>
-            <div class="sys-step"><span class="sys-step-label">Step 4</span>Complete one action</div>
-          </div>
-          <p class="sys-p">Each section solves one problem.</p>
-          <p class="sys-p">You do not move forward until something is fixed or completed.</p>
+    <section id="phases" aria-label="Phases">
+      <article class="phase-card" data-room="01">
+        <p class="phase-label">Phase 1</p>
+        <h2 class="phase-title">Extraction</h2>
+        <p class="phase-meta">Name leaks, see the number, cut one line.</p>
+        <p class="phase-get">You get: a locked cut and a clear run rate.</p>
+        <div class="phase-actions">
+          <a class="btn btn-primary" href="/phase-1">Start</a>
+          <a class="btn btn-secondary phase-resume" href="/room-01" data-room="01" style="display:none;">Resume</a>
         </div>
-      </details>
+      </article>
 
-      <details class="sys-acc-item" name="sys-acc">
-        <summary>System structure</summary>
-        <div class="sys-acc-panel">
-          <p class="sys-p">The system is divided into five sections:</p>
-          <ol class="sys-ol">
-            <li>Where your time and money are going</li>
-            <li>What to change this week</li>
-            <li>What you can offer and charge for</li>
-            <li>Fixing execution and delivery</li>
-            <li>Using AI without lowering quality</li>
-          </ol>
-          <p class="sys-p">Each section:</p>
-          <ul class="sys-list">
-            <li>focuses on one outcome</li>
-            <li>gives you something to complete</li>
-            <li>leads to a usable result</li>
-          </ul>
+      <article class="phase-card" data-room="02">
+        <p class="phase-label">Phase 2</p>
+        <h2 class="phase-title">Redirection</h2>
+        <p class="phase-meta">Move time and money toward what you chose on purpose.</p>
+        <p class="phase-get">You get: a weekly structure you can run.</p>
+        <div class="phase-actions">
+          <a class="btn btn-primary" href="/phase-2">Start</a>
+          <a class="btn btn-secondary phase-resume" href="/room-02" data-room="02" style="display:none;">Resume</a>
         </div>
-      </details>
+      </article>
 
-      <details class="sys-acc-item" name="sys-acc">
-        <summary>How sections stay separate</summary>
-        <div class="sys-acc-panel">
-          <p class="sys-p">Each phase does one job. A later step assumes the earlier one is finished — it does not re-ask or re-solve the same problem.</p>
-          <ul class="sys-list">
-            <li>Diagnostic — bottleneck, cost in plain terms, what you can use, one recommended section. No leak totals, weekly plan, offer, pricing, outreach, or AI workflows.</li>
-            <li>Room 1 — quantify leaks and cut them. No offers, monetization, or AI.</li>
-            <li>Room 2 — reallocate this week. No skill discovery, offer build, pricing, or platform strategy.</li>
-            <li>Room 3 — offer, buyer, price, first message. No time tracking or AI education.</li>
-            <li>Room 4 — execution and delivery. No new offer from scratch, no leak math, no AI stack design.</li>
-            <li>Room 5 — AI and distribution. No leak worksheets, weekly scheduling, or drafting a first offer from zero.</li>
-          </ul>
+      <article class="phase-card" data-room="03">
+        <p class="phase-label">Phase 3</p>
+        <h2 class="phase-title">Build</h2>
+        <p class="phase-meta">Offer, buyer, price, first message.</p>
+        <p class="phase-get">You get: something you can send.</p>
+        <div class="phase-actions">
+          <a class="btn btn-primary" href="/phase-3">Start</a>
+          <a class="btn btn-secondary phase-resume" href="/room-03" data-room="03" style="display:none;">Resume</a>
         </div>
-      </details>
+      </article>
 
-      <details class="sys-acc-item" name="sys-acc">
-        <summary>How results turn into income</summary>
-        <div class="sys-acc-panel">
-          <p class="sys-p">This system follows a simple structure:</p>
-          <p class="sys-p sys-chain">Signal → Authority → Income</p>
-          <p class="sys-subhead">Signal</p>
-          <p class="sys-p">What you observe, think, and identify</p>
-          <p class="sys-subhead">Authority</p>
-          <p class="sys-p">What you produce and make visible</p>
-          <p class="sys-subhead">Income</p>
-          <p class="sys-p">What you convert into paid work or products</p>
+      <article class="phase-card" data-room="04">
+        <p class="phase-label">Phase 4</p>
+        <h2 class="phase-title">Automation</h2>
+        <p class="phase-meta">Execution, delivery, continuity.</p>
+        <p class="phase-get">You get: a plan that does not depend on mood.</p>
+        <div class="phase-actions">
+          <a class="btn btn-primary" href="/phase-4">Start</a>
+          <a class="btn btn-secondary phase-resume" href="/room-04" data-room="04" style="display:none;">Resume</a>
         </div>
-      </details>
+      </article>
 
-      <details class="sys-acc-item" name="sys-acc">
-        <summary>How everything connects</summary>
-        <div class="sys-acc-panel">
-          <div class="flow-group">
-            <p class="flow-line-label">Diagnostic</p>
-            <p class="flow-line-desc"><span class="flow-arrow">→</span>identifies the problem</p>
-          </div>
-          <div class="flow-group">
-            <p class="flow-line-label">Section</p>
-            <p class="flow-line-desc"><span class="flow-arrow">→</span>fixes one specific issue</p>
-          </div>
-          <div class="flow-group">
-            <p class="flow-line-label">Output</p>
-            <p class="flow-line-desc"><span class="flow-arrow">→</span>produces something usable</p>
-          </div>
-          <div class="flow-group">
-            <p class="flow-line-label">Distribution</p>
-            <p class="flow-line-desc"><span class="flow-arrow">→</span>places it where people see it</p>
-          </div>
-          <div class="flow-group">
-            <p class="flow-line-label">Conversion</p>
-            <p class="flow-line-desc"><span class="flow-arrow">→</span>turns it into paid work or products</p>
-          </div>
+      <article class="phase-card" data-room="05">
+        <p class="phase-label">Phase 5</p>
+        <h2 class="phase-title">Sovereignty</h2>
+        <p class="phase-meta">AI and cognition on paid work.</p>
+        <p class="phase-get">You get: rules you can enforce.</p>
+        <div class="phase-actions">
+          <a class="btn btn-primary" href="/phase-5">Start</a>
+          <a class="btn btn-secondary phase-resume" href="/room-05" data-room="05" style="display:none;">Resume</a>
         </div>
-      </details>
+      </article>
+    </section>
 
-      <details class="sys-acc-item" name="sys-acc">
-        <summary>What you produce</summary>
-        <div class="sys-acc-panel">
-          <p class="sys-p">You leave each section with something concrete:</p>
-          <ul class="sys-list">
-            <li>a clear decision</li>
-            <li>a defined offer</li>
-            <li>a usable output</li>
-            <li>a corrected process</li>
-          </ul>
-          <p class="sys-p">This is not theory.</p>
-          <p class="sys-p">Each step produces something you can use.</p>
-        </div>
-      </details>
-
-      <details class="sys-acc-item" name="sys-acc">
-        <summary>Where it goes</summary>
-        <div class="sys-acc-panel">
-          <p class="sys-p">You do not rely on one platform.</p>
-          <div class="sys-tier">
-            <h4>Authority platforms</h4>
-            <p>Substack · YouTube</p>
-          </div>
-          <div class="sys-tier">
-            <h4>Distribution platforms</h4>
-            <p>LinkedIn · X · Instagram · TikTok</p>
-          </div>
-          <div class="sys-tier">
-            <h4>Conversion platforms</h4>
-            <p>communities · marketplaces · direct services</p>
-          </div>
-        </div>
-      </details>
-
-      <details class="sys-acc-item" name="sys-acc">
-        <summary>How this turns into income</summary>
-        <div class="sys-acc-panel">
-          <p class="sys-p">This system leads to:</p>
-          <ul class="sys-list">
-            <li>advisory</li>
-            <li>consulting</li>
-            <li>project work</li>
-            <li>digital products</li>
-          </ul>
-          <p class="sys-p">You do not start with products.</p>
-          <p class="sys-p">You start with clarity, output, and demand. Then you expand.</p>
-        </div>
-      </details>
-
-      <details class="sys-acc-item" name="sys-acc">
-        <summary>How to use this correctly</summary>
-        <div class="sys-acc-panel">
-          <ul class="sys-list">
-            <li>complete one section at a time</li>
-            <li>do not skip steps</li>
-            <li>do not move forward without finishing</li>
-          </ul>
-          <p class="sys-p">You are not browsing.</p>
-          <p class="sys-p">You are completing something.</p>
-        </div>
-      </details>
-
-      <details class="sys-acc-item" name="sys-acc">
-        <summary>What this is not</summary>
-        <div class="sys-acc-panel">
-          <ul class="sys-list">
-            <li>not a course</li>
-            <li>not content to read passively</li>
-            <li>not a productivity tool</li>
-          </ul>
-          <p class="sys-p">This is a system you use to fix a problem, produce something, and act on it.</p>
-        </div>
-      </details>
-
-      <details class="sys-acc-item" name="sys-acc">
-        <summary>Start</summary>
-        <div class="sys-acc-panel">
-          <p class="sys-p">Start with the diagnostic.</p>
-          <p class="sys-p">It gives you your first step.</p>
-          <a href="/capture" class="btn-cta">Start the diagnostic →</a>
-        </div>
-      </details>
-
-    </div>
+    <p class="hub-foot">Diagnostic (signal before rooms): <a href="/capture">Capture</a>. Results: <a href="/results">Results</a>. <a href="/snapshot">Snapshot</a> if you want it done with you.</p>
   </div>
 
   <footer>
     <div class="footer-inner">
       <span class="footer-mark">Stephuary</span>
       <ul class="footer-links">
+        <li><a href="/">Home</a></li>
         <li><a href="/capture">Diagnostic</a></li>
         <li><a href="/playbooks">Sections</a></li>
-        <li><a href="/systems">System</a></li>
         <li><a href="/access">.5% club</a></li>
       </ul>
     </div>
   </footer>
 
+  <script src="/stephuary-os.js"></script>
+  <script src="/stephuary-progress.js"></script>
   <script>
     (function () {
-      document.querySelectorAll('.sys-acc-item').forEach(function (d) {
-        d.addEventListener('toggle', function () {
-          if (!d.open) return;
-          document.querySelectorAll('.sys-acc-item').forEach(function (o) {
-            if (o !== d) o.open = false;
-          });
-        });
+      function stepFromOS(roomId) {
+        try {
+          var os = window.StephuaryOS.load();
+          var r = os.rooms && os.rooms[roomId];
+          return r && typeof r.step === 'number' ? r.step : 0;
+        } catch (e) {
+          return 0;
+        }
+      }
+
+      function hasProgress(roomId) {
+        var st = stepFromOS(roomId);
+        return st > 0;
+      }
+
+      document.querySelectorAll('.phase-resume').forEach(function (a) {
+        var id = a.getAttribute('data-room');
+        if (hasProgress(id)) {
+          a.style.display = 'inline-flex';
+          a.href = window.StephuaryProgress.ROOM_PATH[id] + '?step=' + stepFromOS(id);
+        }
       });
+
+      var resume = window.StephuaryProgress.getResumeLabel();
+      var ban = document.getElementById('resume-banner');
+      var link = document.getElementById('resume-link');
+      if (resume && ban && link) {
+        ban.classList.add('visible');
+        link.textContent = resume.line;
+        link.href = resume.href;
+      }
+
+      var nr = document.getElementById('nav-restart');
+      if (nr) {
+        nr.addEventListener('click', function (e) {
+          e.preventDefault();
+          window.StephuaryProgress.confirmRestart();
+        });
+      }
     })();
   </script>
 </body>

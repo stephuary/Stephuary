@@ -22,7 +22,10 @@ body{font-family:'Lato',sans-serif;font-weight:300;background:var(--bg);color:va
 a{text-decoration:none;color:inherit}
 body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;opacity:0.025;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");background-size:200px 200px;}
 
-nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;justify-content:space-between;align-items:center;padding:22px 52px;background:rgba(8,8,7,0.94);backdrop-filter:blur(12px);border-bottom:1px solid var(--border-soft);}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px 20px;padding:22px 52px;background:rgba(8,8,7,0.94);backdrop-filter:blur(12px);border-bottom:1px solid var(--border-soft);}
+.nav-site{display:flex;gap:16px;flex-wrap:wrap;align-items:center;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-3);}
+.nav-site a{transition:color .2s;}
+.nav-site a:hover{color:var(--gold);}
 .nav-mark{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:300;color:var(--gold);letter-spacing:-.02em;}
 .nav-back{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-3);transition:color .2s;display:flex;align-items:center;gap:8px;}
 .nav-back::before{content:'←'}
@@ -138,6 +141,11 @@ footer{padding:40px 52px;display:flex;justify-content:space-between;align-items:
 
 <nav>
   <div class="nav-mark">.5%</div>
+  <div class="nav-site">
+    <a href="/systems">System</a>
+    <a href="/systems#phases">Phases</a>
+    <a href="#" id="access-nav-restart">Restart</a>
+  </div>
   <a href="/club" class="nav-back">.5% Club</a>
 </nav>
 
@@ -347,6 +355,18 @@ form.addEventListener('submit', function(e) {
   formSuccess.classList.add('visible');
   formSuccess.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 });
+</script>
+<script src="/stephuary-progress.js"></script>
+<script>
+(function () {
+  var el = document.getElementById('access-nav-restart');
+  if (el) {
+    el.addEventListener('click', function (e) {
+      e.preventDefault();
+      if (window.StephuaryProgress) window.StephuaryProgress.confirmRestart();
+    });
+  }
+})();
 </script>
 </body>
 </html>

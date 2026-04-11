@@ -74,6 +74,30 @@
       text-decoration: none;
     }
     .room-top a:hover { color: var(--muted); }
+    .room-top-left { pointer-events: auto; }
+    .room-top-nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 14px;
+      align-items: center;
+      justify-content: flex-end;
+      pointer-events: auto;
+    }
+    .room-forward-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      width: 100%;
+      max-width: 320px;
+      margin: 16px 0;
+    }
+    .room-forward-actions .btn-continue { text-align: center; }
+    .room-secondary-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
     .room-progress {
       font-family: var(--font-mono);
       font-size: 8px;
@@ -781,7 +805,12 @@
 <body>
   <div id="room-app">
     <header class="room-top">
-      <a href="/">Stephuary</a>
+      <div class="room-top-left"><a href="/">Stephuary</a></div>
+      <nav class="room-top-nav" aria-label="Site">
+        <a href="/systems">System</a>
+        <a href="/systems#phases">Phases</a>
+        <a href="#" id="room-nav-restart">Restart</a>
+      </nav>
       <span class="room-progress" id="progress-text">Room 5</span>
     </header>
 
@@ -1030,9 +1059,15 @@ Do not add new ideas.</pre>
         <div id="summary-interpret"></div>
         <div id="summary-body"></div>
       </div>
-      <button type="button" class="btn-continue" id="btn-copy">Copy policy</button>
+      <div class="room-forward-actions">
+        <a href="/systems" class="btn-continue btn-secondary">Full system</a>
+        <a href="/snapshot" class="btn-continue btn-secondary">Fix this with me</a>
+      </div>
       <button type="button" class="btn-continue" id="btn-to-signal">Continue</button>
-      <button type="button" class="btn-continue btn-secondary" id="btn-restart">Restart</button>
+      <div class="room-secondary-actions" style="margin-top:12px;">
+        <button type="button" class="btn-continue btn-secondary" id="btn-copy">Copy policy</button>
+        <button type="button" class="btn-continue btn-secondary" id="btn-restart">Restart</button>
+      </div>
       <p class="final-line">If you cannot defend it, do not send it.</p>
     </section>
 
@@ -1364,11 +1399,19 @@ If output reads like a template, rewrite it.</pre>
               </div>
       </div>
 
-      <button type="button" class="btn-continue btn-secondary" id="btn-restart-signal">Restart</button>
+      <div class="room-forward-actions">
+        <a href="/systems" class="btn-continue">Full system</a>
+        <a href="/results" class="btn-continue btn-secondary">View results</a>
+        <a href="/snapshot" class="btn-continue btn-secondary">Fix this with me</a>
+      </div>
+      <div class="room-secondary-actions">
+        <button type="button" class="btn-continue btn-secondary" id="btn-restart-signal">Restart</button>
+      </div>
     </section>
   </div>
 
   <script src="/stephuary-os.js"></script>
+  <script src="/stephuary-progress.js"></script>
   <script>
 (function () {
   var CURRENT_USE_OPTS = [
@@ -1508,6 +1551,7 @@ If output reads like a template, rewrite it.</pre>
       p.classList.toggle('active', parseInt(p.getAttribute('data-step'), 10) === n);
     });
     setProgress();
+    if (n === 13 && window.StephuaryProgress) window.StephuaryProgress.markRoomComplete('05');
     if (n === 8) {
       var cp = document.getElementById('cb-principles-bind');
       if (cp) cp.checked = false;
@@ -2138,7 +2182,22 @@ If output reads like a template, rewrite it.</pre>
     location.reload();
   });
 
-  showStep(0);
+  var rnr = document.getElementById('room-nav-restart');
+  if (rnr) {
+    rnr.addEventListener('click', function (e) {
+      e.preventDefault();
+      if (window.StephuaryProgress) window.StephuaryProgress.confirmRestart();
+    });
+  }
+
+  var params = new URLSearchParams(window.location.search);
+  var rs = params.get('step');
+  if (rs !== null && rs !== '') {
+    var sn = parseInt(rs, 10);
+    if (!isNaN(sn)) showStep(Math.min(Math.max(0, sn), totalSteps - 1));
+  } else {
+    showStep(0);
+  }
 })();
   </script>
 </body>

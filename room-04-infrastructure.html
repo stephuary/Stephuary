@@ -82,6 +82,30 @@
       text-decoration: none;
     }
     .room-top a:hover { color: var(--muted); }
+    .room-top-left { pointer-events: auto; }
+    .room-top-nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 14px;
+      align-items: center;
+      justify-content: flex-end;
+      pointer-events: auto;
+    }
+    .room-forward-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      width: 100%;
+      max-width: 320px;
+      margin: 0 0 16px;
+    }
+    .room-forward-actions .btn-continue { text-align: center; }
+    .room-secondary-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
     .room-progress {
       font-family: var(--font-mono);
       font-size: 8px;
@@ -594,7 +618,12 @@
 <body>
   <div id="room-app">
     <header class="room-top">
-      <a href="/">Stephuary</a>
+      <div class="room-top-left"><a href="/">Stephuary</a></div>
+      <nav class="room-top-nav" aria-label="Site">
+        <a href="/systems">System</a>
+        <a href="/systems#phases">Phases</a>
+        <a href="#" id="room-nav-restart">Restart</a>
+      </nav>
       <span class="room-progress" id="progress-text">Room 4</span>
     </header>
 
@@ -823,13 +852,21 @@
         <div id="summary-interpret"></div>
         <div id="summary-body"></div>
       </div>
-      <button type="button" class="btn-continue" id="btn-copy">Copy plan</button>
-      <button type="button" class="btn-continue btn-secondary" id="btn-restart">Restart</button>
+      <div class="room-forward-actions">
+        <a href="/phase-5" class="btn-continue">Next phase</a>
+        <a href="/systems" class="btn-continue btn-secondary">Full system</a>
+        <a href="/snapshot" class="btn-continue btn-secondary">Fix this with me</a>
+      </div>
+      <div class="room-secondary-actions">
+        <button type="button" class="btn-continue btn-secondary" id="btn-copy">Copy plan</button>
+        <button type="button" class="btn-continue btn-secondary" id="btn-restart">Restart</button>
+      </div>
       <p class="final-line">Clear operations beat silent revenue leaks.</p>
     </section>
   </div>
 
   <script src="/stephuary-os.js"></script>
+  <script src="/stephuary-progress.js"></script>
   <script>
 (function () {
   var HUMAN_DEFS = [
@@ -1432,6 +1469,7 @@
   }
 
   function renderSummary() {
+    if (window.StephuaryProgress) window.StephuaryProgress.markRoomComplete('04');
     var lockWrap = document.getElementById('lock-grid-cells');
     if (lockWrap) {
       lockWrap.innerHTML = '';
@@ -1580,7 +1618,22 @@
     location.reload();
   });
 
-  showStep(0);
+  var rnr = document.getElementById('room-nav-restart');
+  if (rnr) {
+    rnr.addEventListener('click', function (e) {
+      e.preventDefault();
+      if (window.StephuaryProgress) window.StephuaryProgress.confirmRestart();
+    });
+  }
+
+  var params = new URLSearchParams(window.location.search);
+  var rs = params.get('step');
+  if (rs !== null && rs !== '') {
+    var sn = parseInt(rs, 10);
+    if (!isNaN(sn)) showStep(Math.min(Math.max(0, sn), totalSteps - 1));
+  } else {
+    showStep(0);
+  }
 })();
   </script>
 </body>

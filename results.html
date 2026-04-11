@@ -56,10 +56,26 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      flex-wrap: wrap;
+      gap: 12px 20px;
       padding: 28px 48px 0;
       max-width: 900px;
       margin: 0 auto;
     }
+    .top-bar-nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      align-items: center;
+    }
+    .top-bar-nav a {
+      font-size: 9px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: rgba(244, 237, 224, 0.45);
+      text-decoration: none;
+    }
+    .top-bar-nav a:hover { color: var(--muted); }
     .logo {
       font-size: 10px;
       letter-spacing: 0.3em;
@@ -531,6 +547,11 @@
 
   <header class="top-bar">
     <a href="/" class="logo">Stephuary</a>
+    <nav class="top-bar-nav" aria-label="Site">
+      <a href="/systems">System</a>
+      <a href="/systems#phases">Phases</a>
+      <a href="#" id="results-nav-restart">Restart</a>
+    </nav>
   </header>
 
   <div id="state-missing">
@@ -872,11 +893,11 @@
 
   /** Maps legacy result “playbook” names to Room routes. */
   var PLAYBOOK_TO_ROOM = {
-    'Reset': '/room-01-extraction.html',
-    'Execution': '/room-02-direction.html',
-    'Income Architecture': '/room-03-transaction.html',
-    'Ownership': '/room-04-infrastructure.html',
-    'AI Control': '/room-05-cognition.html'
+    'Reset': '/phase-1',
+    'Execution': '/phase-2',
+    'Income Architecture': '/phase-3',
+    'Ownership': '/phase-4',
+    'AI Control': '/phase-5'
   };
 
   function playbookHref(name, mode) {
@@ -1068,6 +1089,18 @@
   var version = resolveVersion(data);
   showResult(data, version);
 })();
+  </script>
+  <script src="/stephuary-progress.js"></script>
+  <script>
+    (function () {
+      var el = document.getElementById('results-nav-restart');
+      if (el) {
+        el.addEventListener('click', function (e) {
+          e.preventDefault();
+          if (window.StephuaryProgress) window.StephuaryProgress.confirmRestart();
+        });
+      }
+    })();
   </script>
 </body>
 </html>
