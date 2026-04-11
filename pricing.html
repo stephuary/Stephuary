@@ -68,42 +68,50 @@ body::after{
 h1{font-family:var(--serif);font-weight:300;font-size:clamp(42px,8vw,70px);line-height:1.0;letter-spacing:-0.02em;color:var(--text);}
 .header-sub{font-size:15px;color:var(--text-3);max-width:44ch;margin-top:18px;line-height:1.55;}
 
-/* FREE ENTRY */
-.free-tier{
-  margin-bottom:52px;padding:24px 0;
-  border-top:1px solid var(--line-2);border-bottom:1px solid var(--line-2);
-  display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap;
-}
-.free-tier-tag{font-family:var(--mono);font-size:10px;letter-spacing:0.16em;text-transform:uppercase;color:var(--text-5);display:block;margin-bottom:6px;}
-.free-tier-name{font-family:var(--serif);font-size:22px;color:var(--text);font-weight:300;margin-bottom:6px;}
-.free-tier-desc{font-size:14px;color:var(--text-4);max-width:36ch;}
-.free-badge{
-  font-family:var(--mono);font-size:10px;letter-spacing:0.16em;text-transform:uppercase;
-  color:var(--text-5);padding:8px 14px;border:1px solid var(--line);
-  border-radius:var(--r);transition:color 150ms,border-color 150ms;flex-shrink:0;
-}
-.free-badge:hover{color:var(--text-3);border-color:var(--gold-line)}
-
-/* TIER STACK */
+/* ACCORDION TIERS */
 .tier-stack{display:flex;flex-direction:column;gap:0;}
-
-.tier{
+.price-acc{
   border:1px solid var(--line);border-radius:var(--r);
   background:var(--bg-1);overflow:hidden;
 }
-.tier+.tier{margin-top:12px;}
-
-.tier.featured{
+.price-acc+.price-acc{margin-top:12px;}
+.price-acc--featured{
   border-color:var(--gold-line);
   background:linear-gradient(160deg,rgba(196,163,90,0.06),var(--bg-1));
 }
-.tier.featured::before{
-  content:"";display:block;height:1px;
-  background:linear-gradient(90deg,transparent,var(--gold),transparent);
-  opacity:0.4;
+.price-acc--featured .price-acc__bar{
+  height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);opacity:0.4;
 }
-
-.tier-body{padding:28px 26px;}
+.price-acc--ongoing{
+  border:1px solid rgba(196,163,90,0.15);
+  background:linear-gradient(160deg,rgba(196,163,90,0.04),var(--bg-1));
+}
+.price-acc--ongoing .price-acc__bar{
+  height:1px;background:linear-gradient(90deg,transparent,rgba(196,163,90,0.5),transparent);
+}
+.price-acc > summary{
+  list-style:none;cursor:pointer;padding:20px 40px 18px 22px;position:relative;
+}
+.price-acc > summary::-webkit-details-marker{display:none}
+.price-acc > summary::after{
+  content:"+";position:absolute;right:18px;top:22px;font-size:15px;color:var(--text-5);line-height:1;
+  transition:color 0.15s;
+}
+.price-acc[open] > summary::after{content:"−";}
+.price-acc > summary:hover::after{color:var(--text-3);}
+.price-acc[open] > summary{border-bottom:1px solid var(--line-2);}
+.price-acc__peek{
+  font-size:14px;color:var(--text-4);line-height:1.45;
+  margin-top:10px;padding-right:8px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.price-acc__body{padding:0 26px 28px;}
+.price-acc .tier-label{margin-bottom:6px;}
+.price-acc .tier-price{
+  font-family:var(--serif);font-size:clamp(28px,5vw,42px);font-weight:300;color:var(--text);
+  letter-spacing:-0.02em;margin-bottom:0;line-height:1.1;
+}
+.price-acc--free > summary .tier-price{font-size:clamp(26px,4.5vw,36px);}
 
 .tier-label{
   font-family:var(--mono);font-size:10px;letter-spacing:0.18em;
@@ -111,9 +119,7 @@ h1{font-family:var(--serif);font-weight:300;font-size:clamp(42px,8vw,70px);line-
 }
 .tier-label.gold{color:var(--gold-dim)}
 
-.tier-name{font-family:var(--serif);font-weight:300;font-size:clamp(22px,3.5vw,30px);color:var(--text);margin-bottom:6px;}
 .tier-tagline{font-size:15px;color:var(--text-3);margin-bottom:16px;line-height:1.5;}
-.tier-price{font-family:var(--serif);font-size:clamp(32px,5vw,46px);font-weight:300;color:var(--text);letter-spacing:-0.02em;margin-bottom:4px;}
 .tier-price-note{font-family:var(--mono);font-size:11px;letter-spacing:0.08em;color:var(--text-5);margin-bottom:20px;line-height:1.5;}
 
 .tier-includes{
@@ -137,15 +143,12 @@ h1{font-family:var(--serif);font-weight:300;font-size:clamp(42px,8vw,70px);line-
   font-size:15px;color:var(--text-3);line-height:1.55;padding:4px 0;
 }
 
-.ongoing-tier{
-  border:1px solid rgba(196,163,90,0.15);border-radius:var(--r);
-  background:linear-gradient(160deg,rgba(196,163,90,0.04),var(--bg-1));
-  overflow:hidden;margin-top:12px;
+.free-badge{
+  display:inline-flex;font-family:var(--mono);font-size:10px;letter-spacing:0.16em;text-transform:uppercase;
+  color:var(--text-5);padding:8px 14px;border:1px solid var(--line);
+  border-radius:var(--r);transition:color 150ms,border-color 150ms;
 }
-.ongoing-tier::before{
-  content:"";display:block;height:1px;
-  background:linear-gradient(90deg,transparent,rgba(196,163,90,0.5),transparent);
-}
+.free-badge:hover{color:var(--text-3);border-color:var(--gold-line)}
 
 /* CTAs */
 .tier-cta{
@@ -185,7 +188,7 @@ h1{font-family:var(--serif);font-weight:300;font-size:clamp(42px,8vw,70px);line-
 }
 .foot a:hover{color:var(--text-4)}
 
-/* Built like this — custom systems offer */
+/* Custom builds */
 .built-like{
   margin-top:56px;padding:40px 28px 32px;
   border-top:1px solid var(--line-2);
@@ -199,28 +202,22 @@ h1{font-family:var(--serif);font-weight:300;font-size:clamp(42px,8vw,70px);line-
   font-family:var(--serif);font-size:clamp(22px,3vw,28px);font-weight:300;
   letter-spacing:-0.02em;color:var(--text);margin-bottom:10px;
 }
-.built-like__sub{font-size:14px;color:var(--text-4);line-height:1.55;max-width:42ch;margin-bottom:28px;}
+.built-like__sub{font-size:14px;color:var(--text-4);line-height:1.55;max-width:42ch;margin-bottom:20px;}
 .built-like__body{
   font-size:15px;color:var(--text-3);line-height:1.65;max-width:42ch;margin-bottom:22px;
 }
-.built-like__cta{
-  display:inline-flex;font-family:var(--mono);font-size:10px;letter-spacing:0.16em;text-transform:uppercase;
-  color:var(--text-4);border-bottom:1px solid var(--line-2);padding-bottom:2px;
-  transition:color 150ms,border-color 150ms,opacity 150ms;
-}
-.built-like__cta:hover{color:var(--text-2);border-color:rgba(196,163,90,0.35)}
 .built-like__osc{
   font-family:var(--mono);font-size:10px;letter-spacing:0.14em;text-transform:uppercase;
   color:var(--text-3);border-bottom:1px solid var(--line-2);padding-bottom:2px;
   transition:color 150ms,border-color 150ms;
 }
 .built-like__osc:hover{color:var(--text-2);border-color:rgba(196,163,90,0.35)}
+.built-like .tier-stack{margin-top:0;}
 
 @media(max-width:580px){
-  .free-tier{flex-direction:column;align-items:flex-start;}
   h1{font-size:clamp(36px,9vw,52px)}
   .page{padding:0 18px 80px}
-  .tier-body{padding:22px 20px}
+  .price-acc > summary{padding-right:36px;}
   .nav-links{gap:12px}
 }
 </style>
@@ -234,7 +231,7 @@ h1{font-family:var(--serif);font-weight:300;font-size:clamp(42px,8vw,70px);line-
       <a href="/system" class="nav-link">System</a>
       <a href="/access" class="nav-link">.5% Club</a>
       <a href="https://stephuary.substack.com" class="nav-link" target="_blank" rel="noopener">Substack</a>
-      <a href="/only-sometimes" class="nav-link">Only Sometimes Club</a>
+      <a href="https://onlysometimesclub.com" class="nav-link" target="_blank" rel="noopener noreferrer">Only Sometimes Club</a>
     </div>
   </div>
 
@@ -243,28 +240,34 @@ h1{font-family:var(--serif);font-weight:300;font-size:clamp(42px,8vw,70px);line-
     <p class="header-sub">Start where you are. Move forward based on what you need.</p>
   </div>
 
-  <div class="free-tier">
-    <div>
-      <span class="free-tier-tag">Diagnostic</span>
-      <div class="free-tier-name">Free</div>
-      <p class="free-tier-desc">A guided set of questions to assess your current situation.</p>
-      <p class="tier-tagline" style="margin-top:14px;margin-bottom:8px;">You’ll get:</p>
-      <ul class="tier-includes" style="margin-bottom:0;">
-        <li>visibility into what is working</li>
-        <li>visibility into what is not working</li>
-        <li>initial direction based on your inputs</li>
-      </ul>
-    </div>
-    <a href="/capture" class="free-badge">Run diagnostic &rarr;</a>
-  </div>
-
   <div class="tier-stack">
 
-    <div class="tier featured">
-      <div class="tier-body">
+    <details class="price-acc price-acc--free">
+      <summary>
+        <div class="price-acc__bar" aria-hidden="true"></div>
+        <span class="tier-label">Diagnostic</span>
+        <div class="tier-price">Free</div>
+        <p class="price-acc__peek">A guided set of questions to assess your current situation.</p>
+      </summary>
+      <div class="price-acc__body">
+        <p class="tier-tagline" style="margin-bottom:8px;">You’ll get:</p>
+        <ul class="tier-includes" style="margin-bottom:22px;">
+          <li>visibility into what is working</li>
+          <li>visibility into what is not working</li>
+          <li>initial direction based on your inputs</li>
+        </ul>
+        <a href="/capture" class="tier-cta tier-cta-primary">Run diagnostic &rarr;</a>
+      </div>
+    </details>
+
+    <details class="price-acc price-acc--featured">
+      <summary>
+        <div class="price-acc__bar" aria-hidden="true"></div>
         <span class="tier-label gold">Rooms</span>
         <div class="tier-price">$1 each</div>
-        <p class="tier-tagline">Focused deep-dives into specific areas.</p>
+        <p class="price-acc__peek">Focused deep-dives into specific areas.</p>
+      </summary>
+      <div class="price-acc__body">
         <p class="tier-tagline" style="margin-bottom:8px;">Use them to:</p>
         <ul class="use-when-list" style="margin-bottom:22px;">
           <li>isolate one problem</li>
@@ -273,12 +276,16 @@ h1{font-family:var(--serif);font-weight:300;font-size:clamp(42px,8vw,70px);line-
         </ul>
         <a href="/playbooks" class="tier-cta tier-cta-primary">Browse rooms &rarr;</a>
       </div>
-    </div>
+    </details>
 
-    <div class="tier featured">
-      <div class="tier-body">
+    <details class="price-acc price-acc--featured">
+      <summary>
+        <div class="price-acc__bar" aria-hidden="true"></div>
         <span class="tier-label gold">Direction Lock</span>
-        <div class="tier-price">$129</div>
+        <div class="tier-price">$159</div>
+        <p class="price-acc__peek">A focused review of what to pursue and what to ignore — decision brief in 48 hours.</p>
+      </summary>
+      <div class="price-acc__body">
         <p class="tier-tagline">A focused review of your situation to determine what to pursue and what to ignore.</p>
         <p class="tier-tagline" style="margin-bottom:8px;">You’ll get:</p>
         <ul class="tier-includes">
@@ -292,12 +299,16 @@ h1{font-family:var(--serif);font-weight:300;font-size:clamp(42px,8vw,70px);line-
         <p class="tier-price-note">Delivered within 48 hours.</p>
         <a href="/focused-review" class="tier-cta tier-cta-primary" style="margin-top:22px;">Start Direction Lock &rarr;</a>
       </div>
-    </div>
+    </details>
 
-    <div class="tier featured">
-      <div class="tier-body">
+    <details class="price-acc price-acc--featured">
+      <summary>
+        <div class="price-acc__bar" aria-hidden="true"></div>
         <span class="tier-label gold">Concept Build</span>
         <div class="tier-price">$379</div>
+        <p class="price-acc__peek">Structured concepts from your inputs — brief and execution outline in 72 hours.</p>
+      </summary>
+      <div class="price-acc__body">
         <p class="tier-tagline">A structured concept built from your inputs, experience, and interests.</p>
         <p class="tier-tagline" style="margin-bottom:8px;">You’ll get:</p>
         <ul class="tier-includes">
@@ -317,12 +328,16 @@ h1{font-family:var(--serif);font-weight:300;font-size:clamp(42px,8vw,70px);line-
         <a href="/access" class="tier-cta tier-cta-primary" style="margin-top:22px;">Request Concept Build &rarr;</a>
         <p class="optional-line" style="margin-top:20px;margin-bottom:0;">Direction Lock defines what to focus on.<br>Concept Build turns it into something usable.</p>
       </div>
-    </div>
+    </details>
 
-    <div class="tier">
-      <div class="tier-body">
+    <details class="price-acc">
+      <summary>
+        <div class="price-acc__bar" aria-hidden="true"></div>
         <span class="tier-label">Snapshot</span>
         <div class="tier-price">$750</div>
+        <p class="price-acc__peek">Full diagnostic of your current situation — where time and money are lost.</p>
+      </summary>
+      <div class="price-acc__body">
         <p class="tier-tagline">A full diagnostic of your current situation.</p>
         <p class="tier-tagline" style="margin-bottom:8px;">You’ll get:</p>
         <ul class="tier-includes">
@@ -333,12 +348,16 @@ h1{font-family:var(--serif);font-weight:300;font-size:clamp(42px,8vw,70px);line-
         </ul>
         <a href="/snapshot" class="tier-cta tier-cta-ghost" style="margin-top:22px;">View Snapshot &rarr;</a>
       </div>
-    </div>
+    </details>
 
-    <div class="ongoing-tier">
-      <div class="tier-body">
+    <details class="price-acc price-acc--ongoing">
+      <summary>
+        <div class="price-acc__bar" aria-hidden="true"></div>
         <span class="tier-label" style="color:var(--gold);">Private Access</span>
         <div class="tier-price" style="font-size:clamp(26px,4.5vw,40px);">$1,500+</div>
+        <p class="price-acc__peek">Direct work — deeper diagnostics, advisory, complex situations.</p>
+      </summary>
+      <div class="price-acc__body">
         <p class="tier-tagline">Direct work.</p>
         <p class="tier-tagline" style="margin-bottom:8px;">Used for:</p>
         <ul class="use-when-list">
@@ -348,7 +367,7 @@ h1{font-family:var(--serif);font-weight:300;font-size:clamp(42px,8vw,70px);line-
         </ul>
         <a href="/access" class="tier-cta tier-cta-gold" style="margin-top:22px;">Request access &rarr;</a>
       </div>
-    </div>
+    </details>
 
   </div>
 
@@ -356,10 +375,14 @@ h1{font-family:var(--serif);font-weight:300;font-size:clamp(42px,8vw,70px);line-
     <h2 id="custom-builds-title" class="built-like__title">Custom Builds</h2>
     <p class="built-like__sub">For those who want this built for them.</p>
     <div class="tier-stack">
-      <div class="tier">
-        <div class="tier-body">
+      <details class="price-acc">
+        <summary>
+          <div class="price-acc__bar" aria-hidden="true"></div>
           <span class="tier-label">Interactive Website Experiences</span>
           <div class="tier-price" style="font-size:clamp(26px,4vw,38px);">$2,500+</div>
+          <p class="price-acc__peek">Custom-built interactive websites — hold attention and convert visitors.</p>
+        </summary>
+        <div class="price-acc__body">
           <p class="tier-tagline">Custom-built websites designed as interactive environments.</p>
           <p class="tier-tagline" style="margin-bottom:8px;">Used to:</p>
           <ul class="use-when-list" style="margin-bottom:0;">
@@ -368,24 +391,32 @@ h1{font-family:var(--serif);font-weight:300;font-size:clamp(42px,8vw,70px);line-
             <li>convert visitors into clients</li>
           </ul>
         </div>
-      </div>
-      <div class="tier">
-        <div class="tier-body">
+      </details>
+      <details class="price-acc">
+        <summary>
+          <div class="price-acc__bar" aria-hidden="true"></div>
           <span class="tier-label">Custom Business Operating System</span>
           <div class="tier-price" style="font-size:clamp(26px,4vw,38px);">$3,750+</div>
+          <p class="price-acc__peek">Private browser-based system for operations, clients, and revenue in one place.</p>
+        </summary>
+        <div class="price-acc__body">
           <p class="tier-tagline">A private, browser-based system to manage operations, clients, and revenue in one place.</p>
           <p class="tier-tagline" style="margin-bottom:0;">Built to match how the business actually runs.</p>
         </div>
-      </div>
-      <div class="tier">
-        <div class="tier-body">
+      </details>
+      <details class="price-acc">
+        <summary>
+          <div class="price-acc__bar" aria-hidden="true"></div>
           <span class="tier-label">Combined Systems</span>
           <div class="tier-price" style="font-size:clamp(26px,4vw,38px);">$7,500+</div>
+          <p class="price-acc__peek">Complete build of operating system and website experience together.</p>
+        </summary>
+        <div class="price-acc__body">
           <p class="tier-tagline" style="margin-bottom:0;">A complete build of both the operating system and website experience.</p>
         </div>
-      </div>
+      </details>
     </div>
-    <p class="built-like__body" style="margin-top:28px;margin-bottom:0;">Custom work is handled through <a href="/only-sometimes" class="built-like__osc">Only Sometimes Club</a>.</p>
+    <p class="built-like__body" style="margin-top:28px;margin-bottom:0;">Custom work is handled through <a href="https://onlysometimesclub.com" class="built-like__osc" target="_blank" rel="noopener noreferrer">Only Sometimes Club</a>.</p>
   </section>
 
   <div class="footnote-block">
@@ -393,17 +424,12 @@ h1{font-family:var(--serif);font-weight:300;font-size:clamp(42px,8vw,70px);line-
   </div>
 
   <footer class="foot">
-    <a href="/index">Home</a>
-    <a href="/capture">Diagnostic</a>
+    <a href="/">Home</a>
     <a href="/systems">System</a>
     <a href="/pricing">Pricing</a>
-    <a href="/access">.5% club</a>
-    <a href="/club">5% Club</a>
-    <a href="/focused-review">Focused Review</a>
-    <a href="/snapshot">Snapshot</a>
+    <a href="/access">.5% Club</a>
     <a href="https://stephuary.substack.com" target="_blank" rel="noopener">Substack</a>
-    <a href="/only-sometimes">Only Sometimes Club</a>
-    <a href="https://github.com/stephuary/Stephuary" target="_blank" rel="noopener">GitHub</a>
+    <a href="https://onlysometimesclub.com" target="_blank" rel="noopener noreferrer">Only Sometimes Club</a>
   </footer>
 
 </div>
