@@ -1,0 +1,1127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Room 02 — Direction · Stephuary</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=DM+Mono:wght@300;400&family=Lato:wght@300;400&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0c0a09;
+      --surface: rgba(26, 22, 18, 0.65);
+      --surface-raised: rgba(32, 28, 24, 0.85);
+      --bronze: #6b5344;
+      --gold: #9a8260;
+      --gold-soft: rgba(154, 130, 96, 0.45);
+      --gold-dim: #7a6b58;
+      --gold-line: rgba(154, 130, 96, 0.22);
+      --gold-glow: rgba(154, 130, 96, 0.12);
+      --cream: #e8e0d4;
+      --text: #ddd5c8;
+      --text-secondary: #b8aea0;
+      --text-muted: #8a8175;
+      --text-dim: #5c554c;
+      --text-label: #4a433c;
+      --border: rgba(232, 224, 212, 0.06);
+      --border-soft: rgba(154, 130, 96, 0.14);
+      --radius: 6px;
+      --radius-sm: 4px;
+      --shadow-inset: inset 0 1px 0 rgba(255,255,255,0.04);
+      --shadow-soft: 0 12px 40px rgba(0,0,0,0.35);
+    }
+
+    html, body { height: 100%; }
+    body {
+      font-family: 'Lato', sans-serif;
+      font-weight: 300;
+      background: var(--bg);
+      background-image:
+        radial-gradient(ellipse 80% 50% at 50% -20%, rgba(107, 83, 68, 0.08) 0%, transparent 50%),
+        radial-gradient(ellipse 60% 40% at 100% 100%, rgba(20, 18, 16, 0.9) 0%, transparent 45%);
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+      overflow: hidden;
+    }
+
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+      opacity: 0.028;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    #room-app {
+      position: relative;
+      z-index: 1;
+      height: 100%;
+      min-height: 100dvh;
+    }
+
+    .room-top {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 200;
+      padding: 22px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      background: linear-gradient(to bottom, rgba(12,10,9,0.92) 0%, rgba(12,10,9,0.55) 65%, transparent 100%);
+      pointer-events: none;
+    }
+    .room-top a {
+      pointer-events: auto;
+      font-family: 'DM Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      text-decoration: none;
+      transition: color 0.25s ease;
+    }
+    .room-top a:hover { color: var(--text-muted); }
+    .room-progress {
+      font-family: 'DM Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.14em;
+      color: var(--text-label);
+    }
+
+    .panel {
+      display: none;
+      min-height: 100dvh;
+      max-height: 100dvh;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      padding: 88px 24px 112px;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: stretch;
+      max-width: 480px;
+      margin: 0 auto;
+      animation: panelIn 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .panel.active { display: flex; }
+    @keyframes panelIn {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: none; }
+    }
+
+    .panel--entry {
+      justify-content: center;
+      text-align: center;
+      padding-top: min(18vh, 140px);
+      padding-bottom: min(18vh, 140px);
+      max-width: 420px;
+    }
+    .panel--entry .panel-kicker { justify-content: center; }
+    .panel--entry .panel-title { margin-bottom: 20px; }
+    .panel--entry .panel-instruction { margin-bottom: 16px; }
+    .panel-micro {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.55;
+      margin-bottom: 40px;
+      max-width: 300px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .panel--entry .btn-continue {
+      max-width: 260px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .panel-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-size: clamp(26px, 6.5vw, 40px);
+      line-height: 1.08;
+      letter-spacing: -0.02em;
+      margin-bottom: 16px;
+      color: var(--cream);
+    }
+
+    .panel-instruction {
+      font-size: 15px;
+      color: var(--text-muted);
+      line-height: 1.58;
+      margin-bottom: 32px;
+      letter-spacing: 0.01em;
+    }
+
+    .panel-kicker {
+      font-family: 'DM Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--gold-dim);
+      margin-bottom: 20px;
+    }
+
+    .reveal-fields {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      margin-bottom: 8px;
+      padding: 20px 18px;
+      background: var(--surface);
+      border: 1px solid var(--border-soft);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-inset), var(--shadow-soft);
+    }
+
+    .output-block {
+      background: var(--surface-raised);
+      border: 1px solid var(--border-soft);
+      border-radius: var(--radius);
+      padding: 28px 22px 22px;
+      margin: 28px 0 32px;
+      box-shadow: var(--shadow-inset), 0 8px 32px rgba(0,0,0,0.25);
+    }
+    .output-block.muted {
+      border-color: rgba(154, 130, 96, 0.12);
+      background: rgba(20, 18, 16, 0.5);
+    }
+
+    .output-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--text-label);
+      margin-bottom: 8px;
+    }
+
+    .output-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 16px;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 14px;
+      color: var(--text-muted);
+    }
+    .output-row:last-child { border-bottom: none; }
+    .output-row span:last-child {
+      color: var(--text);
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .pattern-result {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(20px, 4.5vw, 26px);
+      font-weight: 300;
+      color: var(--cream);
+      line-height: 1.3;
+      letter-spacing: -0.02em;
+    }
+
+    .field { margin-bottom: 0; }
+    .field + .field { margin-top: 14px; }
+    .field label {
+      display: block;
+      font-family: 'DM Mono', monospace;
+      font-size: 8px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin-bottom: 8px;
+    }
+    .field input[type="number"],
+    .field input[type="text"],
+    .field textarea,
+    .field select {
+      width: 100%;
+      padding: 15px 16px;
+      background: rgba(7, 6, 5, 0.6);
+      border: 1px solid var(--border);
+      color: var(--cream);
+      font-family: 'Lato', sans-serif;
+      font-size: 16px;
+      font-weight: 300;
+      border-radius: var(--radius-sm);
+      transition: border-color 0.25s ease, box-shadow 0.25s ease;
+    }
+    .field input::placeholder,
+    .field textarea::placeholder { color: var(--text-label); }
+    .field input:focus,
+    .field textarea:focus,
+    .field select:focus {
+      outline: none;
+      border-color: var(--gold-soft);
+      box-shadow: 0 0 0 1px rgba(154, 130, 96, 0.15), 0 8px 24px rgba(0,0,0,0.2);
+    }
+    .field textarea { min-height: 88px; resize: vertical; line-height: 1.55; }
+    .field textarea.tall { min-height: 120px; }
+
+    .subhead {
+      font-family: 'DM Mono', monospace;
+      font-size: 8px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--gold-dim);
+      margin: 20px 0 12px;
+    }
+    .subhead:first-child { margin-top: 0; }
+
+    .value-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .value-grid label.opt {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 16px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      font-size: 13px;
+      color: var(--text-muted);
+      transition: border-color 0.25s ease, background 0.25s ease;
+      background: rgba(7, 6, 5, 0.35);
+    }
+    .value-grid label.opt:hover {
+      border-color: rgba(154, 130, 96, 0.25);
+    }
+    .value-grid label.opt:has(input:checked) {
+      border-color: rgba(154, 130, 96, 0.45);
+      background: rgba(154, 130, 96, 0.1);
+      color: var(--cream);
+      box-shadow: 0 0 20px var(--gold-glow);
+    }
+    .value-grid input { accent-color: var(--bronze); width: 16px; height: 16px; }
+
+    .trade-row {
+      padding: 18px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .trade-row:last-child { border-bottom: none; }
+    .trade-label {
+      font-size: 14px;
+      color: var(--text-secondary);
+      margin-bottom: 12px;
+      line-height: 1.45;
+    }
+    .trade-btns {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .trade-btns button {
+      font-family: 'DM Mono', monospace;
+      font-size: 8px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 12px 18px;
+      min-height: 44px;
+      border: 1px solid var(--border);
+      background: rgba(7, 6, 5, 0.5);
+      color: var(--text-muted);
+      cursor: pointer;
+      border-radius: var(--radius-sm);
+      transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+    }
+    .trade-btns button:hover {
+      border-color: rgba(154, 130, 96, 0.28);
+      color: var(--text);
+    }
+    .trade-btns button.selected {
+      border-color: rgba(154, 130, 96, 0.5);
+      background: rgba(154, 130, 96, 0.12);
+      color: var(--gold);
+      box-shadow: 0 0 16px var(--gold-glow);
+    }
+
+    .btn-continue {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      margin-top: 12px;
+      padding: 17px 24px;
+      min-height: 54px;
+      font-family: 'DM Mono', monospace;
+      font-size: 9px;
+      font-weight: 400;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--cream);
+      background: linear-gradient(180deg, rgba(154, 130, 96, 0.22) 0%, rgba(107, 83, 68, 0.35) 100%);
+      border: 1px solid rgba(154, 130, 96, 0.35);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease, opacity 0.25s ease;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.06);
+    }
+    .btn-continue:hover:not(:disabled) {
+      transform: translateY(-2px);
+      border-color: rgba(154, 130, 96, 0.5);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.35), 0 0 28px var(--gold-glow), inset 0 1px 0 rgba(255,255,255,0.08);
+    }
+    .btn-continue:disabled {
+      opacity: 0.38;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+      margin-top: 14px;
+      box-shadow: none;
+    }
+    .btn-secondary:hover:not(:disabled) {
+      border-color: rgba(154, 130, 96, 0.25);
+      color: var(--text-secondary);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    }
+
+    .summary-card {
+      background: linear-gradient(165deg, rgba(26, 22, 18, 0.95) 0%, rgba(12, 10, 9, 0.98) 100%);
+      border: 1px solid rgba(154, 130, 96, 0.18);
+      padding: 32px 26px 28px;
+      margin-bottom: 24px;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-soft), var(--shadow-inset), 0 0 0 1px rgba(0,0,0,0.2);
+    }
+    .summary-card h3 {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-size: clamp(18px, 4vw, 22px);
+      margin-bottom: 20px;
+      color: var(--gold);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    #summary-body {
+      font-family: 'Lato', sans-serif;
+      font-size: 13px;
+      line-height: 1.65;
+      color: var(--text-secondary);
+    }
+    .summary-section {
+      margin-bottom: 18px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+    .summary-section:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+    .summary-section-title {
+      font-family: 'DM Mono', monospace;
+      font-size: 8px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--gold-dim);
+      margin-bottom: 8px;
+    }
+    .summary-section p { margin-bottom: 6px; color: var(--text-secondary); }
+    .summary-section p:last-child { margin-bottom: 0; }
+
+    .final-line {
+      text-align: center;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 17px;
+      font-weight: 300;
+      font-style: italic;
+      color: var(--text-muted);
+      line-height: 1.55;
+      margin-top: 28px;
+      padding-top: 24px;
+      border-top: 1px solid var(--gold-line);
+    }
+
+    .reveal-micro {
+      margin-top: 18px;
+      padding-top: 18px;
+      border-top: 1px solid var(--border);
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 16px;
+      font-weight: 300;
+      font-style: italic;
+      line-height: 1.55;
+      color: var(--text-secondary);
+    }
+
+    @media (min-width: 600px) {
+      .panel { max-width: 520px; padding-left: 32px; padding-right: 32px; }
+      .panel--entry { max-width: 440px; }
+    }
+  </style>
+</head>
+<body>
+  <div id="room-app">
+    <header class="room-top">
+      <a href="/">Stephuary</a>
+      <span class="room-progress" id="progress-text">Room 02</span>
+    </header>
+
+    <!-- 0 Entry -->
+    <section class="panel panel--entry active" data-step="0" id="panel-0">
+      <p class="panel-kicker">Room 02 — Direction</p>
+      <h1 class="panel-title">You don’t need more options.<br />You need a decision structure.</h1>
+      <p class="panel-micro">This takes a few minutes.<br />Move through it once.</p>
+      <button type="button" class="btn-continue" id="btn-begin">Begin</button>
+    </section>
+
+    <!-- 1 Resources -->
+    <section class="panel" data-step="1" id="panel-1">
+      <h2 class="panel-title">What you actually have</h2>
+      <p class="panel-instruction">Enter real numbers.</p>
+      <div class="reveal-fields">
+        <div class="field">
+          <label for="in-income">Monthly income</label>
+          <input type="number" id="in-income" min="0" step="1" inputmode="decimal" />
+        </div>
+        <div class="field">
+          <label for="in-hours">Hours available per week</label>
+          <input type="number" id="in-hours" min="0" step="0.5" inputmode="decimal" />
+        </div>
+        <div class="field">
+          <label for="in-obligations">Current obligations</label>
+          <textarea id="in-obligations" placeholder="What already owns your time or money"></textarea>
+        </div>
+      </div>
+      <div class="output-block muted" id="out-resources-block" style="display:none;">
+        <p class="output-label">Available resources</p>
+        <div class="output-row"><span>Income / month</span><span id="out-income">—</span></div>
+        <div class="output-row"><span>Hours / week</span><span id="out-hours">—</span></div>
+        <div class="output-row"><span>Obligations</span><span id="out-obligations-short">—</span></div>
+      </div>
+      <button type="button" class="btn-continue" id="btn-1" disabled>Continue</button>
+    </section>
+
+    <!-- 2 Asset recognition -->
+    <section class="panel" data-step="2" id="panel-2">
+      <h2 class="panel-title">What you already see</h2>
+      <p class="panel-instruction">List what you notice faster than other people.</p>
+      <div class="reveal-fields">
+        <div class="field">
+          <label for="asset-1">Problems you notice</label>
+          <input type="text" id="asset-1" />
+        </div>
+        <div class="field">
+          <label for="asset-2">Things people ask you for</label>
+          <input type="text" id="asset-2" />
+        </div>
+        <div class="field">
+          <label for="asset-3">Things you fix quickly</label>
+          <input type="text" id="asset-3" />
+        </div>
+        <div class="field">
+          <label for="asset-4">Optional — fourth signal</label>
+          <input type="text" id="asset-4" placeholder="Optional" />
+        </div>
+        <div class="field">
+          <label for="asset-5">Optional — fifth signal</label>
+          <input type="text" id="asset-5" placeholder="Optional" />
+        </div>
+      </div>
+      <div class="output-block muted" id="out-asset-block" style="display:none;">
+        <p class="output-label">Common theme</p>
+        <p id="out-core-pattern" class="pattern-result">—</p>
+        <p class="reveal-micro">You’re not starting from zero.</p>
+      </div>
+      <button type="button" class="btn-continue" id="btn-2" disabled>Continue</button>
+    </section>
+
+    <!-- 3 Pattern → Opportunity -->
+    <section class="panel" data-step="3" id="panel-3">
+      <h2 class="panel-title">Where value already exists</h2>
+      <p class="panel-instruction">Turn one pattern into a real problem.</p>
+      <div class="reveal-fields">
+        <div class="field">
+          <label for="opp-who">Who has the problem</label>
+          <input type="text" id="opp-who" />
+        </div>
+        <div class="field">
+          <label for="opp-cost">What it costs them</label>
+          <input type="text" id="opp-cost" placeholder="Time, money, risk, stress…" />
+        </div>
+        <div class="field">
+          <label for="opp-where">Where it shows up</label>
+          <input type="text" id="opp-where" />
+        </div>
+      </div>
+      <div class="output-block muted" id="out-opp-block" style="display:none;">
+        <p class="output-label">Opportunity</p>
+        <p id="out-opportunity" class="pattern-result">—</p>
+      </div>
+      <button type="button" class="btn-continue" id="btn-3" disabled>Continue</button>
+    </section>
+
+    <!-- 4 Value type -->
+    <section class="panel" data-step="4" id="panel-4">
+      <h2 class="panel-title">How you create value</h2>
+      <p class="panel-instruction">Pick up to two.</p>
+      <div class="value-grid" id="value-type-grid">
+        <label class="opt"><input type="checkbox" name="vtype" value="Insight" /> Insight</label>
+        <label class="opt"><input type="checkbox" name="vtype" value="Structure" /> Structure</label>
+        <label class="opt"><input type="checkbox" name="vtype" value="Execution" /> Execution</label>
+        <label class="opt"><input type="checkbox" name="vtype" value="Access" /> Access</label>
+      </div>
+      <div class="output-block muted" id="out-value-block" style="display:none;">
+        <p class="output-label">Value</p>
+        <p id="out-value-line" class="pattern-result">—</p>
+      </div>
+      <button type="button" class="btn-continue" id="btn-4" disabled>Continue</button>
+    </section>
+
+    <!-- 5 Allocation -->
+    <section class="panel" data-step="5" id="panel-5">
+      <h2 class="panel-title">Where it goes</h2>
+      <p class="panel-instruction">This is where most people lie.</p>
+      <div class="reveal-fields">
+        <p class="subhead">Time (hours / week) — current</p>
+        <div class="field">
+          <label for="ct-maint">Maintenance</label>
+          <input type="number" id="ct-maint" min="0" step="0.5" inputmode="decimal" />
+        </div>
+        <div class="field">
+          <label for="ct-growth">Growth</label>
+          <input type="number" id="ct-growth" min="0" step="0.5" inputmode="decimal" />
+        </div>
+        <div class="field">
+          <label for="ct-unclear">Unclear</label>
+          <input type="number" id="ct-unclear" min="0" step="0.5" inputmode="decimal" />
+        </div>
+        <p class="subhead">Time (hours / week) — desired</p>
+        <div class="field">
+          <label for="dt-maint">Maintenance</label>
+          <input type="number" id="dt-maint" min="0" step="0.5" inputmode="decimal" />
+        </div>
+        <div class="field">
+          <label for="dt-growth">Growth</label>
+          <input type="number" id="dt-growth" min="0" step="0.5" inputmode="decimal" />
+        </div>
+        <div class="field">
+          <label for="dt-unclear">Unclear</label>
+          <input type="number" id="dt-unclear" min="0" step="0.5" inputmode="decimal" />
+        </div>
+        <p class="subhead">Money (% of take-home) — current</p>
+        <div class="field">
+          <label for="cm-living">Living</label>
+          <input type="number" id="cm-living" min="0" max="100" step="1" inputmode="decimal" />
+        </div>
+        <div class="field">
+          <label for="cm-growth">Growth</label>
+          <input type="number" id="cm-growth" min="0" max="100" step="1" inputmode="decimal" />
+        </div>
+        <div class="field">
+          <label for="cm-waste">Waste</label>
+          <input type="number" id="cm-waste" min="0" max="100" step="1" inputmode="decimal" />
+        </div>
+        <p class="subhead">Money (% of take-home) — desired</p>
+        <div class="field">
+          <label for="dm-living">Living</label>
+          <input type="number" id="dm-living" min="0" max="100" step="1" inputmode="decimal" />
+        </div>
+        <div class="field">
+          <label for="dm-growth">Growth</label>
+          <input type="number" id="dm-growth" min="0" max="100" step="1" inputmode="decimal" />
+        </div>
+        <div class="field">
+          <label for="dm-waste">Waste</label>
+          <input type="number" id="dm-waste" min="0" max="100" step="1" inputmode="decimal" />
+        </div>
+      </div>
+      <div class="output-block muted" id="out-alloc-block" style="display:none;">
+        <p class="output-label">Mismatch</p>
+        <p id="out-alloc-msg" class="pattern-result" style="font-size:18px;">—</p>
+      </div>
+      <button type="button" class="btn-continue" id="btn-5" disabled>Continue</button>
+    </section>
+
+    <!-- 6 Tradeoff -->
+    <section class="panel" data-step="6" id="panel-6">
+      <h2 class="panel-title">What this removes</h2>
+      <p class="panel-instruction">If this becomes real, something else goes.</p>
+      <div class="output-block muted" id="tradeoff-generated">
+        <p class="output-label">System tradeoffs</p>
+        <div id="tradeoff-rows"></div>
+      </div>
+      <button type="button" class="btn-continue" id="btn-6" disabled>Continue</button>
+    </section>
+
+    <!-- 7 System build -->
+    <section class="panel" data-step="7" id="panel-7">
+      <h2 class="panel-title">Your direction</h2>
+      <p class="panel-instruction">Define how this actually runs.</p>
+      <div class="reveal-fields">
+        <div class="field">
+          <label for="focus-weekly">What you focus on weekly</label>
+          <textarea id="focus-weekly" class="tall"></textarea>
+        </div>
+        <div class="field">
+          <label for="focus-ignore">What you ignore</label>
+          <textarea id="focus-ignore" class="tall"></textarea>
+        </div>
+        <div class="field">
+          <label for="focus-toward">What you build toward</label>
+          <textarea id="focus-toward" class="tall"></textarea>
+        </div>
+      </div>
+      <button type="button" class="btn-continue" id="btn-7" disabled>Continue</button>
+    </section>
+
+    <!-- 8 System statement -->
+    <section class="panel" data-step="8" id="panel-8">
+      <h2 class="panel-title">Make it clear</h2>
+      <p class="panel-instruction">This is how you operate now.</p>
+      <div class="field">
+        <label for="system-statement">Your system statement</label>
+        <textarea id="system-statement" class="tall" style="min-height:160px;"></textarea>
+      </div>
+      <button type="button" class="btn-continue" id="btn-8" disabled>Continue</button>
+    </section>
+
+    <!-- 9 Final -->
+    <section class="panel" data-step="9" id="panel-9">
+      <h2 class="panel-title">Your direction system</h2>
+      <p class="panel-instruction">This is what you’re running now.</p>
+      <div class="summary-card">
+        <h3>Summary</h3>
+        <div id="summary-body"></div>
+      </div>
+      <button type="button" class="btn-continue" id="btn-copy">Copy summary</button>
+      <button type="button" class="btn-continue btn-secondary" id="btn-restart">Restart</button>
+      <p class="final-line">Most people never decide this clearly.<br /><br />You just did.</p>
+    </section>
+  </div>
+
+  <script>
+(function () {
+  var state = {
+    income: 0,
+    hours: 0,
+    obligations: '',
+    assetInputs: [],
+    corePattern: '',
+    valueTypes: [],
+    opportunity: '',
+    currentAllocation: {},
+    desiredAllocation: {},
+    tradeoffs: [],
+    focus: '',
+    systemStatement: ''
+  };
+
+  var currentStep = 0;
+  var totalSteps = 10;
+
+  var TRADE_SUGGESTIONS = [
+    { id: 'social', text: 'Reduce social time' },
+    { id: 'passive', text: 'Reduce passive content' },
+    { id: 'lowvalue', text: 'Reduce low-value work' }
+  ];
+
+  function setProgress() {
+    var el = document.getElementById('progress-text');
+    if (el) el.textContent = 'Room 02 · ' + (currentStep + 1) + ' / ' + totalSteps;
+  }
+
+  function showStep(n) {
+    currentStep = n;
+    document.querySelectorAll('.panel').forEach(function (p) {
+      p.classList.toggle('active', parseInt(p.getAttribute('data-step'), 10) === n);
+    });
+    setProgress();
+    if (n === 6) renderTradeoffRows();
+    if (n === 8) syncSystemStatement();
+    if (n === 9) renderSummary();
+  }
+
+  function next() {
+    if (currentStep < totalSteps - 1) showStep(currentStep + 1);
+  }
+
+  function fmtMoney(n) {
+    if (isNaN(n)) return '—';
+    return '$' + Math.round(n).toLocaleString();
+  }
+
+  function deriveCorePattern(inputs) {
+    var cleaned = inputs.filter(function (s) { return s && String(s).trim(); }).map(function (s) { return String(s).trim(); });
+    if (!cleaned.length) return '';
+    var joined = cleaned.join(' ').toLowerCase();
+    if (/fix|repair|broken|patch/i.test(joined)) return 'Fast repair and hands-on clarity';
+    if (/notice|see|pattern|sense/i.test(joined)) return 'Early signal detection';
+    if (/ask|request|people|team/i.test(joined)) return 'Trusted when stakes are unclear';
+    return cleaned.slice(0, 2).join(' · ');
+  }
+
+  function computeResources() {
+    var inc = parseFloat(document.getElementById('in-income').value);
+    var hrs = parseFloat(document.getElementById('in-hours').value);
+    var obl = document.getElementById('in-obligations').value.trim();
+    if (isNaN(inc) || inc < 0 || isNaN(hrs) || hrs <= 0 || !obl) {
+      document.getElementById('btn-1').disabled = true;
+      document.getElementById('out-resources-block').style.display = 'none';
+      return;
+    }
+    state.income = inc;
+    state.hours = hrs;
+    state.obligations = obl;
+    document.getElementById('out-income').textContent = fmtMoney(inc);
+    document.getElementById('out-hours').textContent = hrs + ' h';
+    var short = obl.length > 72 ? obl.slice(0, 72) + '…' : obl;
+    document.getElementById('out-obligations-short').textContent = short;
+    document.getElementById('out-resources-block').style.display = 'block';
+    document.getElementById('btn-1').disabled = false;
+  }
+
+  function computeAssets() {
+    var ids = ['asset-1', 'asset-2', 'asset-3', 'asset-4', 'asset-5'];
+    var vals = ids.map(function (id) { return document.getElementById(id).value.trim(); });
+    var filled = vals.filter(function (v) { return v; });
+    if (filled.length < 3) {
+      document.getElementById('btn-2').disabled = true;
+      document.getElementById('out-asset-block').style.display = 'none';
+      return;
+    }
+    state.assetInputs = vals.filter(function (v) { return v; });
+    state.corePattern = deriveCorePattern(vals);
+    document.getElementById('out-core-pattern').textContent = state.corePattern;
+    document.getElementById('out-asset-block').style.display = 'block';
+    document.getElementById('btn-2').disabled = false;
+  }
+
+  function computeOpportunity() {
+    var who = document.getElementById('opp-who').value.trim();
+    var cost = document.getElementById('opp-cost').value.trim();
+    var where = document.getElementById('opp-where').value.trim();
+    if (!who || !cost || !where) {
+      document.getElementById('btn-3').disabled = true;
+      document.getElementById('out-opp-block').style.display = 'none';
+      return;
+    }
+    var problem = cost + (where ? ' — showing up in ' + where : '');
+    state.opportunity = 'You help ' + who + ' solve ' + problem + '.';
+    document.getElementById('out-opportunity').textContent = state.opportunity;
+    document.getElementById('out-opp-block').style.display = 'block';
+    document.getElementById('btn-3').disabled = false;
+  }
+
+  function computeValueTypes() {
+    var picked = [];
+    document.querySelectorAll('input[name="vtype"]:checked').forEach(function (el) {
+      picked.push(el.value);
+    });
+    if (picked.length < 1 || picked.length > 2) {
+      document.getElementById('btn-4').disabled = true;
+      document.getElementById('out-value-block').style.display = 'none';
+      return;
+    }
+    state.valueTypes = picked;
+    document.getElementById('out-value-line').textContent = 'You create value through: ' + picked.join(' & ');
+    document.getElementById('out-value-block').style.display = 'block';
+    document.getElementById('btn-4').disabled = false;
+  }
+
+  function onValueCheckboxChange(e) {
+    var checked = Array.prototype.slice.call(document.querySelectorAll('input[name="vtype"]:checked'));
+    if (checked.length > 2) {
+      var target = e.target;
+      var toUncheck = checked.filter(function (c) { return c !== target; })[0];
+      if (toUncheck) toUncheck.checked = false;
+    }
+    computeValueTypes();
+  }
+
+  function sumMoney(l, g, w) {
+    return (isNaN(l) ? 0 : l) + (isNaN(g) ? 0 : g) + (isNaN(w) ? 0 : w);
+  }
+
+  function computeAllocation() {
+    var ctM = parseFloat(document.getElementById('ct-maint').value);
+    var ctG = parseFloat(document.getElementById('ct-growth').value);
+    var ctU = parseFloat(document.getElementById('ct-unclear').value);
+    var dtM = parseFloat(document.getElementById('dt-maint').value);
+    var dtG = parseFloat(document.getElementById('dt-growth').value);
+    var dtU = parseFloat(document.getElementById('dt-unclear').value);
+    var cmL = parseFloat(document.getElementById('cm-living').value);
+    var cmGw = parseFloat(document.getElementById('cm-growth').value);
+    var cmWa = parseFloat(document.getElementById('cm-waste').value);
+    var dmL = parseFloat(document.getElementById('dm-living').value);
+    var dmGw = parseFloat(document.getElementById('dm-growth').value);
+    var dmWa = parseFloat(document.getElementById('dm-waste').value);
+
+    var H = state.hours;
+    var timeOk =
+      !isNaN(ctM) && !isNaN(ctG) && !isNaN(ctU) &&
+      !isNaN(dtM) && !isNaN(dtG) && !isNaN(dtU) &&
+      Math.abs(ctM + ctG + ctU - H) < 0.51 &&
+      Math.abs(dtM + dtG + dtU - H) < 0.51;
+
+    var moneyOk =
+      !isNaN(cmL) && !isNaN(cmGw) && !isNaN(cmWa) &&
+      !isNaN(dmL) && !isNaN(dmGw) && !isNaN(dmWa) &&
+      Math.abs(sumMoney(cmL, cmGw, cmWa) - 100) < 1.1 &&
+      Math.abs(sumMoney(dmL, dmGw, dmWa) - 100) < 1.1;
+
+    if (!timeOk || !moneyOk) {
+      document.getElementById('btn-5').disabled = true;
+      document.getElementById('out-alloc-block').style.display = 'none';
+      return;
+    }
+
+    state.currentAllocation = {
+      time: { maintenance: ctM, growth: ctG, unclear: ctU },
+      money: { living: cmL, growth: cmGw, waste: cmWa }
+    };
+    state.desiredAllocation = {
+      time: { maintenance: dtM, growth: dtG, unclear: dtU },
+      money: { living: dmL, growth: dmGw, waste: dmWa }
+    };
+
+    var msg = '';
+    if (ctM > dtM + 0.01) msg = 'You are over-allocating to maintenance.';
+    else if (cmL > dmL + 5) msg = 'You are over-allocating to living (money).';
+    else if (ctU > dtU + 0.01) msg = 'Too much time stays unclear versus where you say you want it.';
+    else if (cmWa > dmWa + 5) msg = 'Waste is heavier than what you want going forward.';
+    else if (ctG + 0.01 < dtG) msg = 'Growth is underfed versus your stated direction.';
+    else msg = 'Current and desired allocation show a tension worth resolving.';
+
+    document.getElementById('out-alloc-msg').textContent = msg;
+    document.getElementById('out-alloc-block').style.display = 'block';
+    document.getElementById('btn-5').disabled = false;
+  }
+
+  function renderTradeoffRows() {
+    var wrap = document.getElementById('tradeoff-rows');
+    wrap.innerHTML = '';
+    state.tradeoffs = TRADE_SUGGESTIONS.map(function (s) { return { id: s.id, text: s.text, choice: '' }; });
+
+    TRADE_SUGGESTIONS.forEach(function (s, i) {
+      var row = document.createElement('div');
+      row.className = 'trade-row';
+      row.dataset.id = s.id;
+      var lab = document.createElement('div');
+      lab.className = 'trade-label';
+      lab.textContent = s.text;
+      var btns = document.createElement('div');
+      btns.className = 'trade-btns';
+      ['Accept', 'Adjust'].forEach(function (label) {
+        var b = document.createElement('button');
+        b.type = 'button';
+        b.textContent = label;
+        b.dataset.choice = label.toLowerCase();
+        b.addEventListener('click', function () {
+          row.querySelectorAll('button').forEach(function (x) { x.classList.remove('selected'); });
+          b.classList.add('selected');
+          var idx = state.tradeoffs.findIndex(function (t) { return t.id === s.id; });
+          if (idx >= 0) state.tradeoffs[idx].choice = b.dataset.choice;
+          updateTradeoffContinue();
+        });
+        btns.appendChild(b);
+      });
+      row.appendChild(lab);
+      row.appendChild(btns);
+      wrap.appendChild(row);
+    });
+    updateTradeoffContinue();
+  }
+
+  function updateTradeoffContinue() {
+    var ok = state.tradeoffs.length && state.tradeoffs.every(function (t) { return t.choice; });
+    document.getElementById('btn-6').disabled = !ok;
+  }
+
+  function computeFocus() {
+    var a = document.getElementById('focus-weekly').value.trim();
+    var b = document.getElementById('focus-ignore').value.trim();
+    var c = document.getElementById('focus-toward').value.trim();
+    if (!a || !b || !c) {
+      document.getElementById('btn-7').disabled = true;
+      return;
+    }
+    state.focus = 'Weekly: ' + a + '\nIgnore: ' + b + '\nToward: ' + c;
+    document.getElementById('btn-7').disabled = false;
+  }
+
+  function focusSummary() {
+    if (!state.focus) return 'the weekly commitments above';
+    return state.focus.replace(/\n/g, '; ');
+  }
+
+  function buildAutoStatement() {
+    var assets = state.assetInputs.length ? state.assetInputs.join(', ') : 'your signals';
+    var vt = state.valueTypes.length ? state.valueTypes.join(' & ') : 'your strengths';
+    var opp = state.opportunity || 'this opportunity';
+    if (/^You help\s+/i.test(opp)) opp = opp.replace(/^You help\s+/i, '').replace(/\.\s*$/, '');
+    return 'I apply ' + assets + ' to ' + opp + ' through ' + vt + ' with focus on ' + focusSummary() + '.';
+  }
+
+  function syncSystemStatement() {
+    var ta = document.getElementById('system-statement');
+    if (!ta.value.trim()) ta.value = buildAutoStatement();
+    state.systemStatement = ta.value.trim();
+    document.getElementById('btn-8').disabled = !state.systemStatement;
+  }
+
+  function onStatementInput() {
+    state.systemStatement = document.getElementById('system-statement').value.trim();
+    document.getElementById('btn-8').disabled = !state.systemStatement;
+  }
+
+  function renderSummary() {
+    var body = document.getElementById('summary-body');
+    body.innerHTML = '';
+
+    function addSec(title, html) {
+      var d = document.createElement('div');
+      d.className = 'summary-section';
+      var h = document.createElement('p');
+      h.className = 'summary-section-title';
+      h.textContent = title;
+      d.appendChild(h);
+      var inner = document.createElement('div');
+      inner.innerHTML = html;
+      d.appendChild(inner);
+      body.appendChild(d);
+    }
+
+    addSec('Income / time', '<p>Income: ' + fmtMoney(state.income) + ' / month · Hours: ' + state.hours + ' / week</p><p>Obligations: ' + escapeHtml(state.obligations) + '</p>');
+    addSec('Core asset', '<p>' + escapeHtml(state.corePattern) + '</p><p>' + escapeHtml(state.assetInputs.join(' · ')) + '</p>');
+    addSec('Opportunity', '<p>' + escapeHtml(state.opportunity) + '</p>');
+    addSec('Value type', '<p>' + escapeHtml(state.valueTypes.join(' & ')) + '</p>');
+
+    var ca = state.currentAllocation;
+    var da = state.desiredAllocation;
+    var allocTxt = '';
+    if (ca.time && ca.money) {
+      allocTxt += '<p>Current time — maintenance: ' + ca.time.maintenance + ', growth: ' + ca.time.growth + ', unclear: ' + ca.time.unclear + '</p>';
+      allocTxt += '<p>Desired time — maintenance: ' + da.time.maintenance + ', growth: ' + da.time.growth + ', unclear: ' + da.time.unclear + '</p>';
+      allocTxt += '<p>Current money — living: ' + ca.money.living + '%, growth: ' + ca.money.growth + '%, waste: ' + ca.money.waste + '%</p>';
+      allocTxt += '<p>Desired money — living: ' + da.money.living + '%, growth: ' + da.money.growth + '%, waste: ' + da.money.waste + '%</p>';
+    }
+    addSec('Allocation', allocTxt);
+
+    var tt = state.tradeoffs.map(function (t) {
+      return escapeHtml(t.text) + ': ' + escapeHtml(t.choice);
+    }).join('<br />');
+    addSec('Tradeoffs', '<p>' + tt + '</p>');
+
+    addSec('System statement', '<p>' + escapeHtml(state.systemStatement) + '</p>');
+  }
+
+  function escapeHtml(s) {
+    if (!s) return '';
+    return String(s)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  function buildSummaryPlainText() {
+    var lines = [];
+    lines.push('ROOM 02 — DIRECTION');
+    lines.push('');
+    lines.push('Income / time');
+    lines.push('Income: ' + fmtMoney(state.income) + ' / month · Hours: ' + state.hours + ' / week');
+    lines.push('Obligations: ' + state.obligations);
+    lines.push('');
+    lines.push('Core asset');
+    lines.push(state.corePattern);
+    lines.push(state.assetInputs.join(' · '));
+    lines.push('');
+    lines.push('Opportunity');
+    lines.push(state.opportunity);
+    lines.push('');
+    lines.push('Value type');
+    lines.push(state.valueTypes.join(' & '));
+    lines.push('');
+    lines.push('Allocation');
+    if (state.currentAllocation.time) {
+      lines.push('Current time: m' + state.currentAllocation.time.maintenance + ' g' + state.currentAllocation.time.growth + ' u' + state.currentAllocation.time.unclear);
+      lines.push('Desired time: m' + state.desiredAllocation.time.maintenance + ' g' + state.desiredAllocation.time.growth + ' u' + state.desiredAllocation.time.unclear);
+      lines.push('Current money %: living ' + state.currentAllocation.money.living + ', growth ' + state.currentAllocation.money.growth + ', waste ' + state.currentAllocation.money.waste);
+      lines.push('Desired money %: living ' + state.desiredAllocation.money.living + ', growth ' + state.desiredAllocation.money.growth + ', waste ' + state.desiredAllocation.money.waste);
+    }
+    lines.push('');
+    lines.push('Tradeoffs');
+    state.tradeoffs.forEach(function (t) {
+      lines.push('- ' + t.text + ': ' + t.choice);
+    });
+    lines.push('');
+    lines.push('System statement');
+    lines.push(state.systemStatement);
+    return lines.join('\n');
+  }
+
+  function copySummary() {
+    renderSummary();
+    var t = buildSummaryPlainText();
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(t).then(function () {
+        var b = document.getElementById('btn-copy');
+        var o = b.textContent;
+        b.textContent = 'Copied ✓';
+        setTimeout(function () { b.textContent = o; }, 2000);
+      });
+    }
+  }
+
+  document.getElementById('btn-begin').addEventListener('click', next);
+
+  ['in-income', 'in-hours', 'in-obligations'].forEach(function (id) {
+    document.getElementById(id).addEventListener('input', computeResources);
+    document.getElementById(id).addEventListener('change', computeResources);
+  });
+  document.getElementById('btn-1').addEventListener('click', next);
+
+  ['asset-1', 'asset-2', 'asset-3', 'asset-4', 'asset-5'].forEach(function (id) {
+    document.getElementById(id).addEventListener('input', computeAssets);
+  });
+  document.getElementById('btn-2').addEventListener('click', next);
+
+  ['opp-who', 'opp-cost', 'opp-where'].forEach(function (id) {
+    document.getElementById(id).addEventListener('input', computeOpportunity);
+  });
+  document.getElementById('btn-3').addEventListener('click', next);
+
+  document.querySelectorAll('input[name="vtype"]').forEach(function (el) {
+    el.addEventListener('change', onValueCheckboxChange);
+  });
+  document.getElementById('btn-4').addEventListener('click', next);
+
+  var allocIds = ['ct-maint', 'ct-growth', 'ct-unclear', 'dt-maint', 'dt-growth', 'dt-unclear', 'cm-living', 'cm-growth', 'cm-waste', 'dm-living', 'dm-growth', 'dm-waste'];
+  allocIds.forEach(function (id) {
+    document.getElementById(id).addEventListener('input', computeAllocation);
+  });
+  document.getElementById('btn-5').addEventListener('click', next);
+
+  document.getElementById('btn-6').addEventListener('click', next);
+
+  ['focus-weekly', 'focus-ignore', 'focus-toward'].forEach(function (id) {
+    document.getElementById(id).addEventListener('input', computeFocus);
+  });
+  document.getElementById('btn-7').addEventListener('click', next);
+
+  document.getElementById('system-statement').addEventListener('input', onStatementInput);
+  document.getElementById('btn-8').addEventListener('click', next);
+
+  document.getElementById('btn-copy').addEventListener('click', copySummary);
+  document.getElementById('btn-restart').addEventListener('click', function () {
+    location.reload();
+  });
+
+  showStep(0);
+})();
+  </script>
+</body>
+</html>
