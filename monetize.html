@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=DM+Mono:wght@300;400&family=Lato:wght@300;400&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/stephuary-hero.css" />
+  <link rel="stylesheet" href="/stephuary-interactive.css" />
 
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -674,52 +674,26 @@
   </style>
 </head>
 <body>
-<script src="/stephuary-hero.js"></script>
+<div id="page-transition" aria-hidden="true"></div>
+<span class="cursor-dot" aria-hidden="true"></span>
+<script src="/stephuary-interactive.js"></script>
 
-<div class="sh-cursor-glow" aria-hidden="true"></div>
-
-<section
-  id="phase-hero"
-  class="sh-hero sh-hero--phase2"
-  data-sh-hero-init
-  data-sh-intensity="1"
-  data-sh-theme="phase2"
-  style="--sh-fade-to:#0c0a09;"
->
-  <div class="sh-hero__container">
-    <div class="sh-hero__canvas-wrap">
-      <canvas class="sh-hero-canvas-back" width="300" height="300" aria-hidden="true"></canvas>
-      <canvas class="sh-hero-canvas-front" width="300" height="300" aria-hidden="true"></canvas>
-    </div>
-    <div class="sh-hero__overlay"></div>
-    <div class="sh-hero__light"></div>
-    <div class="sh-hero__fade"></div>
-    <div class="sh-hero__content" style="padding-top:48px;">
-      <div class="sh-anchor" aria-hidden="true">
-        <svg viewBox="0 0 320 120" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <linearGradient id="m2" x1="0" y1="0" x2="1" y2="0">
-              <stop offset="0%" stop-color="rgba(90,20,28,0.9)"/>
-              <stop offset="100%" stop-color="rgba(43,79,212,0.75)"/>
-            </linearGradient>
-          </defs>
-          <line x1="90" y1="60" x2="230" y2="60" stroke="url(#m2)" stroke-width="1.2"/>
-          <circle cx="90" cy="60" r="14" fill="rgba(43,79,212,0.15)" stroke="rgba(58,107,255,0.45)" stroke-width="0.8"/>
-          <circle cx="230" cy="60" r="14" fill="rgba(72,14,14,0.12)" stroke="rgba(140,36,36,0.4)" stroke-width="0.8"/>
-        </svg>
-      </div>
-    </div>
-  </div>
-</section>
+<div class="sh-cursor-glow sys-cursor-ring" aria-hidden="true"></div>
 
 <div id="locked">
-  <p class="locked-phase">Phase 02 · Position</p>
-  <h1 class="sh-entry-title" style="font-size:clamp(28px,5.5vw,40px);margin-bottom:14px;">Position</h1>
-  <p class="sh-entry-lead" style="margin-bottom:28px;">Compare how you operate to what the market rewards, and name your position.</p>
-  <div class="sh-entry-actions">
-    <a href="/capture" class="sh-btn sh-btn--primary">Phase 01 · Capture first</a>
-    <a href="/pricing" class="sh-btn sh-btn--ghost">Pricing</a>
-  </div>
+  <header id="phase-header" class="sys-compact" style="margin-top:0">
+    <div class="sys-compact__bg"><canvas aria-hidden="true"></canvas></div>
+    <div class="sys-compact__inner">
+      <p class="sys-label">Phase 02 · Position</p>
+      <h1 class="sys-title">Position</h1>
+      <p class="sys-lead">Name how you work against what buyers pay for, in plain language.</p>
+      <div id="phase-visual" class="sys-visual" data-visual="orbit"></div>
+      <div class="sys-actions">
+        <a href="/capture" class="sys-btn sys-btn--pri magnetic">Finish Capture first</a>
+        <a href="/pricing" class="sys-btn sys-btn--ghost magnetic">Pricing</a>
+      </div>
+    </div>
+  </header>
 </div>
 
 <div id="flow-wrap">
@@ -1310,7 +1284,7 @@
       if (localStorage.getItem('capture_complete') === 'true') unlocked = true;
     } catch (err) {}
     if (unlocked) {
-      var ph = document.getElementById('phase-hero');
+      var ph = document.getElementById('phase-header');
       if (ph) ph.style.display = 'none';
       document.getElementById('locked').style.display = 'none';
       document.getElementById('flow-wrap').style.display = 'block';
