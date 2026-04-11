@@ -606,17 +606,20 @@
         <p class="translate-line" style="margin-top:12px;">This is what you are turning into a transaction.</p>
       </div>
       <h2 class="panel-title">Start with what’s already happening</h2>
-      <p class="truth-line">Income starts where demand already exists — not where you wish demand existed.</p>
-      <p class="panel-instruction">Which of these has already happened? Pick one. The system builds offer, price, and message.</p>
-      <p class="example-p">You are not brainstorming. You are naming evidence.</p>
+      <p class="truth-line">Demand shows up as behavior — not as a clean “niche” sentence.</p>
+      <p class="panel-instruction">What already happened? Check everything that’s true. The system picks a lead story, then builds offer, price, and message.</p>
+      <p class="example-p">You’re not inventing demand. You’re naming what already happened.</p>
       <div class="reveal-fields">
         <p class="subhead" style="margin:0 0 12px;">Prompted recall</p>
         <div class="pick-list" id="scenario-list" style="display:flex;flex-direction:column;align-items:stretch;">
-          <label class="opt"><input type="radio" name="recall-scenario" value="asked" /> Someone asked for help</label>
-          <label class="opt"><input type="radio" name="recall-scenario" value="free_review" /> You reviewed something for free</label>
-          <label class="opt"><input type="radio" name="recall-scenario" value="explained_twice" /> You explained something twice</label>
-          <label class="opt"><input type="radio" name="recall-scenario" value="solved_fast" /> You solved something quickly</label>
-          <label class="opt"><input type="radio" name="recall-scenario" value="good_at" /> Someone said you’re good at this</label>
+          <label class="opt"><input type="checkbox" class="recall-sig" value="asked" /> Someone asked for help</label>
+          <label class="opt"><input type="checkbox" class="recall-sig" value="advice" /> Someone asked me for advice</label>
+          <label class="opt"><input type="checkbox" class="recall-sig" value="fixed_free" /> I fixed something for free</label>
+          <label class="opt"><input type="checkbox" class="recall-sig" value="rewrote" /> I rewrote or reviewed something</label>
+          <label class="opt"><input type="checkbox" class="recall-sig" value="solved_fast" /> I solved something fast</label>
+          <label class="opt"><input type="checkbox" class="recall-sig" value="good_at" /> Someone said I’m good at this</label>
+          <label class="opt"><input type="checkbox" class="recall-sig" value="explained_twice" /> I’ve explained this more than once</label>
+          <label class="opt"><input type="checkbox" class="recall-sig" value="know_better" /> I already know how to do this better than most</label>
         </div>
         <input type="hidden" id="opt-1" /><input type="hidden" id="opt-2" /><input type="hidden" id="opt-3" />
         <input type="hidden" id="opt-4" /><input type="hidden" id="opt-5" />
@@ -624,7 +627,13 @@
       <div class="output-block muted" id="out-pick" style="display:none;">
         <p class="output-label">System output</p>
         <p id="out-generated-offer" class="pattern-result" style="font-size:17px;">—</p>
-        <p class="output-row" style="margin-top:12px;padding:0;border:none;"><span>Price range locked</span><span id="out-generated-price">—</span></p>
+        <p class="output-row" style="margin-top:12px;padding:0;border:none;"><span>Lead price</span><span id="out-generated-price">—</span></p>
+        <div id="out-offer-angles" style="display:none;margin-top:14px;">
+          <p class="output-label">Three ways to sell this</p>
+          <ul id="out-offer-angles-list" style="margin:8px 0 0 1.1em;font-size:14px;line-height:1.5;color:var(--text-secondary);"></ul>
+          <p id="out-buyer-type" class="pattern-result sm" style="margin-top:12px;">—</p>
+          <p id="out-price-band" class="pattern-result sm">—</p>
+        </div>
         <div id="sys-response-r3-1" class="sys-response" style="display:none;"></div>
       </div>
       <button type="button" class="btn-continue" id="btn-1" disabled>Continue</button>
@@ -701,7 +710,7 @@
 
     <section class="panel" data-step="5" id="panel-5">
       <h2 class="panel-title">Make contact</h2>
-      <p class="truth-line">The offer does not exist until someone else can read it in their inbox.</p>
+      <p class="truth-line">Send this. The offer doesn’t exist until someone else can read it in their thread.</p>
       <p class="panel-instruction">Write → Send → Mark → Move. Copy alone does not unlock Continue — you must mark as sent.</p>
       <div class="msg-builder" id="msg-builder">
         <div class="field">
@@ -975,6 +984,67 @@
     }
   };
 
+  var SIG_TO_SCENARIO = {
+    asked: 'asked',
+    advice: 'asked',
+    fixed_free: 'free_review',
+    rewrote: 'free_review',
+    solved_fast: 'solved_fast',
+    good_at: 'good_at',
+    explained_twice: 'explained_twice',
+    know_better: 'good_at'
+  };
+
+  var SCENARIO_PRIMARY_ORDER = ['asked', 'free_review', 'explained_twice', 'solved_fast', 'good_at'];
+
+  function collectMappedScenarios() {
+    var out = [];
+    document.querySelectorAll('input.recall-sig:checked').forEach(function (inp) {
+      var k = SIG_TO_SCENARIO[inp.value];
+      if (k && out.indexOf(k) === -1) out.push(k);
+    });
+    return out;
+  }
+
+  function pickPrimaryScenario(mapped) {
+    var i;
+    for (i = 0; i < SCENARIO_PRIMARY_ORDER.length; i++) {
+      if (mapped.indexOf(SCENARIO_PRIMARY_ORDER[i]) !== -1) return SCENARIO_PRIMARY_ORDER[i];
+    }
+    return mapped[0];
+  }
+
+  function renderOfferAngles(mapped, primary) {
+    var wrap = document.getElementById('out-offer-angles');
+    var list = document.getElementById('out-offer-angles-list');
+    var buyer = document.getElementById('out-buyer-type');
+    var band = document.getElementById('out-price-band');
+    if (!wrap || !list) return;
+    var lines = [];
+    mapped.forEach(function (k) {
+      var S = SCENARIOS[k];
+      lines.push(S.label + ' → quote ' + S.price + ': I help ' + S.person + ' with ' + S.problem + '.');
+    });
+    if (lines.length < 3) {
+      lines.push('Paid redo of the last free thing — same rails, ' + SCENARIOS[primary].price + ' entry.');
+    }
+    if (lines.length < 3) {
+      lines.push('Rush lane: if they want it today, put a rush fee on top of ' + SCENARIOS[primary].price + ' or scope smaller.');
+    }
+    list.innerHTML = lines
+      .slice(0, 3)
+      .map(function (t) {
+        return '<li>' + escapeHtml(t) + '</li>';
+      })
+      .join('');
+    if (buyer) {
+      buyer.textContent =
+        'Likely first yes: people who already asked, praised you, or watched you fix something — ' + SCENARIOS[primary].person + '.';
+    }
+    if (band) band.textContent = 'First price to send: ' + SCENARIOS[primary].price + ' (raise if scope grows).';
+    wrap.style.display = 'block';
+  }
+
   var currentStep = 0;
   var totalSteps = 15;
 
@@ -1067,7 +1137,7 @@
       '<p class="sys-line"><strong>This is why:</strong> ' +
       escapeHtml(sys.why) +
       '</p>' +
-      '<p class="sys-line"><strong>If this continues:</strong> ' +
+      '<p class="sys-line"><strong>If this keeps going:</strong> ' +
       escapeHtml(sys.continues) +
       '</p>' +
       '<p class="sys-line"><strong>Fix:</strong> ' +
@@ -1076,13 +1146,19 @@
   }
 
   function computeScenarioSelect() {
-    var picked = document.querySelector('input[name="recall-scenario"]:checked');
-    if (!picked) return;
-    var key = picked.value;
-    var S = SCENARIOS[key];
-    if (!S) return;
+    var mapped = collectMappedScenarios();
+    if (!mapped.length) {
+      document.getElementById('btn-1').disabled = true;
+      document.getElementById('out-pick').style.display = 'none';
+      var oa = document.getElementById('out-offer-angles');
+      if (oa) oa.style.display = 'none';
+      return;
+    }
 
-    state.scenarioKey = key;
+    var primary = pickPrimaryScenario(mapped);
+    var S = SCENARIOS[primary];
+
+    state.scenarioKey = primary;
     state.topicShort = S.topicLine;
     state.person = S.person;
     state.problem = S.problem;
@@ -1104,7 +1180,15 @@
     document.getElementById('out-pick').style.display = 'block';
     document.getElementById('btn-1').disabled = false;
 
-    fillSysResponse('sys-response-r3-1', S.sys);
+    renderOfferAngles(mapped, primary);
+
+    var sys = {
+      means: mapped.length > 1 ? 'More than one signal fired — messy, but real.' : S.sys.means,
+      why: mapped.length > 1 ? 'You don’t need a perfect story. You need one paid thread.' : S.sys.why,
+      continues: S.sys.continues,
+      fix: S.sys.fix
+    };
+    fillSysResponse('sys-response-r3-1', sys);
   }
 
   function syncScenarioToDefineFields() {
@@ -1489,7 +1573,7 @@
 
   document.getElementById('btn-begin').addEventListener('click', next);
 
-  document.querySelectorAll('input[name="recall-scenario"]').forEach(function (inp) {
+  document.querySelectorAll('input.recall-sig').forEach(function (inp) {
     inp.addEventListener('change', computeScenarioSelect);
   });
   document.getElementById('btn-1').addEventListener('click', next);

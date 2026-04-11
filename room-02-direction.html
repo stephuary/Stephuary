@@ -818,9 +818,9 @@
 
     <!-- 3 Priority -->
     <section class="panel" data-step="3" id="panel-3">
-      <h2 class="panel-title">What matters first</h2>
+      <h2 class="panel-title">What gets protected first</h2>
       <p class="truth-line">If everything matters, nothing moves.</p>
-      <p class="panel-instruction">Pick one only.</p>
+      <p class="panel-instruction">What gets your best time and attention first this week? Pick one.</p>
       <div class="value-grid" id="priority-grid">
         <label class="opt"><input type="radio" name="priority-one" value="Make money" /> Make money</label>
         <label class="opt"><input type="radio" name="priority-one" value="Stabilize your situation" /> Stabilize your situation</label>
@@ -839,9 +839,9 @@
 
     <!-- 4 What stops -->
     <section class="panel" data-step="4" id="panel-4">
-      <h2 class="panel-title">What stops</h2>
+      <h2 class="panel-title">What gets cut this week</h2>
       <p class="truth-line">Nothing new fits unless something else leaves.</p>
-      <p class="panel-instruction">Choose one thing that loses time or money this week.</p>
+      <p class="panel-instruction">What loses time or money this week — one real cut?</p>
       <div class="reveal-fields">
         <div class="value-grid" id="stop-grid" style="flex-direction:column;align-items:stretch;">
           <label class="opt"><input type="radio" name="stop-one" value="Unnecessary spending" /> Unnecessary spending</label>
@@ -936,6 +936,13 @@
       <p class="truth-line" style="border-left-color:var(--gold-line);margin-top:8px;">This is what your current system produces.</p>
       <p class="truth-line">If nothing changes, this is what continues.</p>
       <p class="pattern-result" id="sys-interpret" style="font-size:18px;margin-top:12px;">—</p>
+      <div class="output-block muted" id="alloc-plain-wrap" style="margin-top:16px;display:none;">
+        <p class="output-label">Where it’s heavy / light</p>
+        <p id="alloc-plain-a" class="pattern-result sm" style="margin-top:8px;">—</p>
+        <p id="alloc-plain-b" class="pattern-result sm">—</p>
+        <p id="alloc-plain-c" class="pattern-result sm">—</p>
+        <p id="alloc-plain-d" class="pattern-result sm">—</p>
+      </div>
       <div id="sys-response-r2-6" class="sys-response" style="display:none;"></div>
       <label class="opt" style="margin-top:14px;display:flex;align-items:flex-start;gap:10px;"><input type="checkbox" id="cb-confirm-sys-read" /> I have read the current vs revised output above.</label>
       <button type="button" class="btn-continue" id="btn-6" disabled>Continue</button>
@@ -1173,7 +1180,7 @@ Reduce anything that is not building or multiplying.</pre>
     el.innerHTML =
       '<p class="sys-line"><strong>This means:</strong> ' + escapeHtml(o.means) + '</p>' +
       '<p class="sys-line"><strong>This is why:</strong> ' + escapeHtml(o.why) + '</p>' +
-      '<p class="sys-line"><strong>If this continues:</strong> ' + escapeHtml(o.continues) + '</p>' +
+      '<p class="sys-line"><strong>If this keeps going:</strong> ' + escapeHtml(o.continues) + '</p>' +
       '<p class="sys-line"><strong>Fix:</strong> ' + escapeHtml(o.fix) + '</p>';
     el.style.display = 'block';
   }
@@ -1457,6 +1464,44 @@ Reduce anything that is not building or multiplying.</pre>
     return 'You are running a system that favors what already works over what you say you want next.';
   }
 
+  function renderPlainAllocReadout() {
+    var wrap = document.getElementById('alloc-plain-wrap');
+    var a = document.getElementById('alloc-plain-a');
+    var b = document.getElementById('alloc-plain-b');
+    var c = document.getElementById('alloc-plain-c');
+    var d = document.getElementById('alloc-plain-d');
+    if (!wrap || !a) return;
+    var tc = state.timeCur;
+    var mc = state.moneyCur;
+    var tr = state.timeRev;
+    var mr = state.moneyRev;
+    var pri = state.priority || '—';
+    var stop = stopLabel() || '—';
+    wrap.style.display = 'block';
+    a.textContent =
+      'Too much still on maintain: ' +
+      tc.m +
+      '% time · ' +
+      mc.m +
+      '% money (current). Build only gets ' +
+      tc.b +
+      '% time · ' +
+      mc.b +
+      '% money unless you move real blocks.';
+    b.textContent =
+      'Revised targets — build ' +
+      tr.b +
+      '% time / ' +
+      mr.b +
+      '% money · multiply ' +
+      tr.x +
+      '% time / ' +
+      mr.x +
+      '% money. That’s what you’re trying to fund.';
+    c.textContent = 'What has to give: ' + stop + '.';
+    d.textContent = 'Protected first: ' + pri + '.';
+  }
+
   function renderSystemOutput() {
     document.getElementById('sys-line-cur-time').textContent = lineAlloc('Time', state.timeCur);
     document.getElementById('sys-line-cur-money').textContent = lineAlloc('Money', state.moneyCur);
@@ -1464,6 +1509,7 @@ Reduce anything that is not building or multiplying.</pre>
     document.getElementById('sys-line-rev-money').textContent = lineAlloc('Money', state.moneyRev);
     var interp = interpretSystem();
     document.getElementById('sys-interpret').textContent = interp;
+    renderPlainAllocReadout();
     fillSysResponse('sys-response-r2-6', {
       means: interp,
       why: 'The split produces a weekly lifestyle whether you name it or not.',

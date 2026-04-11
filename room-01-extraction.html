@@ -1042,38 +1042,43 @@
 
     <!-- 1 Current state -->
     <section class="panel panel--reveal" data-step="1" id="panel-1">
-      <h2 class="panel-title">Current state</h2>
-      <p class="truth-line">You are already losing money, time, or attention. You just haven’t named it.</p>
-      <p class="truth-line">Where is your money going every month?</p>
-      <p class="truth-line" style="margin-top:-6px;">Where is your time going every day?</p>
-      <p class="panel-instruction">Pick the pattern that matches your last 30 days. The system estimates numbers — you are not budgeting here.</p>
+      <h2 class="panel-title">What’s been happening in the last 30 days</h2>
+      <p class="truth-line">Money and time are leaving whether you’ve totaled them or not.</p>
+      <p class="panel-instruction">Select everything that applies. The system blends what you picked — no single box has to carry the whole story.</p>
       <div class="reveal-fields">
-        <p class="subhead" style="margin:0 0 12px;">Leak pattern</p>
+        <p class="subhead" style="margin:0 0 12px;">Last 30 days</p>
         <div class="leak-picks" id="leak-pattern-grid">
-          <label class="opt"><input type="radio" name="leak-pattern" value="autopay" /> Autopay stack — subs, apps, small charges you stopped noticing</label>
-          <label class="opt"><input type="radio" name="leak-pattern" value="convenience" /> Convenience loop — delivery, fees, paying to skip friction</label>
-          <label class="opt"><input type="radio" name="leak-pattern" value="social_impulse" /> Social + impulse — nights out, yes to plans, quick buys</label>
-          <label class="opt"><input type="radio" name="leak-pattern" value="screen" /> Screen-heavy days — scroll and task-switch burn hours</label>
-          <label class="opt"><input type="radio" name="leak-pattern" value="spread" /> Spread thin — a little everywhere, no line defended</label>
-          <label class="opt"><input type="radio" name="leak-pattern" value="tight" /> Tight run — leaks exist but are smaller</label>
+          <label class="opt"><input type="checkbox" class="leak-tag" data-def="autopay" /> Auto-pay I barely think about</label>
+          <label class="opt"><input type="checkbox" class="leak-tag" data-def="convenience" /> Convenience spending I repeat without noticing</label>
+          <label class="opt"><input type="checkbox" class="leak-tag" data-def="social_impulse" /> Social spending I didn’t plan for</label>
+          <label class="opt"><input type="checkbox" class="leak-tag" data-def="screen" /> Screen-heavy days that eat time</label>
+          <label class="opt"><input type="checkbox" class="leak-tag" data-def="spread" /> Too many small pulls at once</label>
+          <label class="opt"><input type="checkbox" class="leak-tag" data-def="tight" /> Running tight and still leaking money</label>
+          <label class="opt"><input type="checkbox" class="leak-tag" data-def="autopay" /> Subscriptions or tools I’m still paying for</label>
+          <label class="opt"><input type="checkbox" class="leak-tag" data-def="convenience" /> Food, delivery, or rides adding up fast</label>
+          <label class="opt"><input type="checkbox" class="leak-tag" data-def="screen" /> Time going to stuff that doesn’t move anything forward</label>
         </div>
       </div>
       <div class="output-block output-block--reveal" id="reveal-output">
         <p class="output-label">What this costs</p>
-        <p class="panel-instruction" style="margin-bottom:16px;font-size:14px;">Estimated from your pattern — totals update the rest of this room.</p>
+        <p class="panel-instruction" style="margin-bottom:16px;font-size:14px;">Estimated from what you checked — totals feed the rest of this room.</p>
         <p class="output-big" id="out-yearly">—</p>
         <p class="reveal-per-year">per year (run rate)</p>
         <div class="output-row output-row--secondary"><span>Money lost (monthly)</span><span id="out-monthly">—</span></div>
+        <div class="output-row output-row--secondary"><span>Money band (est.)</span><span id="out-money-band">—</span></div>
         <div class="output-row output-row--secondary"><span>Time lost (hours/week, screen)</span><span id="out-hours-week">—</span></div>
+        <div class="output-row output-row--secondary"><span>Time band (screen, est.)</span><span id="out-time-band">—</span></div>
         <div class="output-row output-row--secondary"><span>Five years (money)</span><span id="out-five">—</span></div>
         <div class="output-row output-row--secondary"><span>Days lost / year (screen)</span><span id="out-days">—</span></div>
         <div class="output-row output-row--secondary"><span>Estimated loss range</span><span id="out-loss-range">—</span></div>
         <p class="translate-line" id="out-waste-sources" style="margin-top:8px;">—</p>
-        <p class="example-p">Example: You are losing: $200/month · 10+ hours/week (screen)</p>
+        <p class="consequence-line" id="out-hit-hardest" style="display:none;margin-top:10px;">—</p>
+        <p class="consequence-line" id="out-hidden-pattern" style="display:none;">—</p>
+        <p class="example-p">Rough read: when several boxes fit, the monthly number stacks.</p>
         <p class="reveal-micro">Money lost and time lost — together.</p>
         <p class="translate-line">This shows what you are spending without deciding.</p>
-        <p class="consequence-line">If this continues, nothing accumulates.</p>
-        <p class="consequence-line" style="margin-top:10px;">This is what you are trading for nothing.</p>
+        <p class="consequence-line">If this keeps going, nothing piles up in your favor.</p>
+        <p class="consequence-line" style="margin-top:10px;">This is what you’re trading for nothing.</p>
         <p class="consequence-line pressure-live" id="pressure-live-01" style="display:none;margin-top:12px;"></p>
         <p class="consequence-line" id="unchanged-01" style="display:none;">This is what continues if unchanged: the same yearly run rate on screen — no compounding room.</p>
         <p class="consequence-line frequency-block" id="freq-01" style="display:none;">If repeated 5–10 times without a cut, this leads to: lost money, missed revenue, stalled progress.</p>
@@ -1083,7 +1088,7 @@
           <div class="leak-meter" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="leak-meter-bar">
             <div class="leak-meter__fill" id="leak-meter-fill"></div>
           </div>
-          <p class="leak-meter-stat"><strong id="leak-meter-cumulative">—</strong> cumulative · <span id="leak-meter-picks">0</span>/5 leak types flagged</p>
+          <p class="leak-meter-stat"><strong id="leak-meter-cumulative">—</strong> cumulative · <span id="leak-meter-picks">0</span>/5 leak flags (next step)</p>
         </div>
       </div>
       <button type="button" class="btn-continue" id="btn-1" disabled>Continue</button>
@@ -1384,7 +1389,92 @@
     _socialMonthlyTotal: 0,
     _socialYearlyTotal: 0,
     _socialYearlyRecoveryHours: 0,
-    leakPatternKey: ''
+    leakPatternKeys: []
+  };
+
+  var ALL_LEAK_DEF_KEYS = ['autopay', 'convenience', 'social_impulse', 'screen', 'spread', 'tight'];
+
+  function defMonthlyTotal(def) {
+    if (!def) return 0;
+    return def.subs + weeklyToMonthly(def.g) + weeklyToMonthly(def.d) + def.soc + def.imp;
+  }
+
+  function collectLeakDefKeys() {
+    var seen = {};
+    var keys = [];
+    document.querySelectorAll('input.leak-tag:checked').forEach(function (inp) {
+      var k = inp.getAttribute('data-def');
+      if (!k || !LEAK_PATTERN_DEFS[k] || seen[k]) return;
+      seen[k] = true;
+      keys.push(k);
+    });
+    return keys;
+  }
+
+  function mergeLeakDefs(keys) {
+    var n = keys.length;
+    if (!n) return null;
+    var sum = { subs: 0, g: 0, d: 0, soc: 0, imp: 0, screen: 0 };
+    keys.forEach(function (k) {
+      var d = LEAK_PATTERN_DEFS[k];
+      sum.subs += d.subs;
+      sum.g += d.g;
+      sum.d += d.d;
+      sum.soc += d.soc;
+      sum.imp += d.imp;
+      sum.screen += d.screen;
+    });
+    var overlap = 1 + Math.min(0.2, (n - 1) * 0.05);
+    return {
+      subs: (sum.subs / n) * overlap,
+      g: (sum.g / n) * overlap,
+      d: (sum.d / n) * overlap,
+      soc: (sum.soc / n) * overlap,
+      imp: (sum.imp / n) * overlap,
+      screen: (sum.screen / n) * overlap,
+      _keys: keys,
+      _n: n
+    };
+  }
+
+  function strongestDefKey(keys) {
+    var bestK = keys[0];
+    var best = 0;
+    keys.forEach(function (k) {
+      var t = defMonthlyTotal(LEAK_PATTERN_DEFS[k]);
+      if (t > best) {
+        best = t;
+        bestK = k;
+      }
+    });
+    return bestK;
+  }
+
+  function hiddenDefKey(selectedKeys) {
+    var sel = {};
+    selectedKeys.forEach(function (k) {
+      sel[k] = true;
+    });
+    var bestK = null;
+    var best = -1;
+    ALL_LEAK_DEF_KEYS.forEach(function (k) {
+      if (sel[k]) return;
+      var t = defMonthlyTotal(LEAK_PATTERN_DEFS[k]);
+      if (t > best) {
+        best = t;
+        bestK = k;
+      }
+    });
+    return bestK;
+  }
+
+  var HIDDEN_HINT = {
+    autopay: 'Quiet subscription and renewal lines you didn’t argue with.',
+    convenience: 'Fees and delivery that look small per swipe.',
+    social_impulse: 'Nights out and “yes” spends that never got a budget line.',
+    screen: 'Hours on the feed that don’t show up on a receipt.',
+    spread: 'A little extra in every category so nothing looks guilty.',
+    tight: 'Small repeats that feel “fine” until you total them.'
   };
 
   var LEAK_PATTERN_DEFS = {
@@ -1608,7 +1698,7 @@
     el.innerHTML =
       '<p class="sys-line"><strong>This means:</strong> ' + escapeHtml(o.means) + '</p>' +
       '<p class="sys-line"><strong>This is why:</strong> ' + escapeHtml(o.why) + '</p>' +
-      '<p class="sys-line"><strong>If this continues:</strong> ' + escapeHtml(o.continues) + '</p>' +
+      '<p class="sys-line"><strong>If this keeps going:</strong> ' + escapeHtml(o.continues) + '</p>' +
       '<p class="sys-line"><strong>Fix:</strong> ' + escapeHtml(o.fix) + '</p>';
     el.style.display = 'block';
   }
@@ -1646,27 +1736,33 @@
   }
 
   function computeReveal() {
-    var picked = document.querySelector('input[name="leak-pattern"]:checked');
-    if (!picked) {
+    var keys = collectLeakDefKeys();
+    if (!keys.length) {
       document.getElementById('btn-1').disabled = true;
+      state.leakPatternKeys = [];
       updateLivePressure01();
+      var oh = document.getElementById('out-hit-hardest');
+      var hid = document.getElementById('out-hidden-pattern');
+      if (oh) {
+        oh.style.display = 'none';
+        oh.textContent = '';
+      }
+      if (hid) {
+        hid.style.display = 'none';
+        hid.textContent = '';
+      }
       return;
     }
-    var key = picked.value;
-    var def = LEAK_PATTERN_DEFS[key];
-    if (!def) {
-      document.getElementById('btn-1').disabled = true;
-      updateLivePressure01();
-      return;
-    }
-    state.leakPatternKey = key;
 
-    var subs = def.subs;
-    var g = def.g;
-    var d = def.d;
-    var soc = def.soc;
-    var imp = def.imp;
-    var scr = def.screen;
+    var merged = mergeLeakDefs(keys);
+    state.leakPatternKeys = keys.slice();
+
+    var subs = merged.subs;
+    var g = merged.g;
+    var d = merged.d;
+    var soc = merged.soc;
+    var imp = merged.imp;
+    var scr = merged.screen;
 
     state.subscriptions = subs;
     state.groceries = g;
@@ -1690,18 +1786,63 @@
     state.fiveYearSpend = state.yearlySpend * 5;
     state.daysLost = (scr * 365) / 24;
 
+    var mLow = Math.round(state.monthlySpend * 0.72);
+    var mHigh = Math.round(state.monthlySpend * 1.28);
+    var hwLow = Math.max(2, scr * 7 * 0.75);
+    var hwHigh = scr * 7 * 1.2;
+
     document.getElementById('out-monthly').textContent = fmtMoney(state.monthlySpend);
+    var mb = document.getElementById('out-money-band');
+    if (mb) mb.textContent = fmtMoney(mLow) + '–' + fmtMoney(mHigh) + ' / mo (band)';
+    var tb = document.getElementById('out-time-band');
+    if (tb) tb.textContent = fmtNum(hwLow, 0) + '–' + fmtNum(hwHigh, 0) + ' h / wk screen (band)';
     document.getElementById('out-yearly').textContent = fmtMoney(state.yearlySpend);
     document.getElementById('out-five').textContent = fmtMoney(state.fiveYearSpend);
     document.getElementById('out-days').textContent = fmtNum(state.daysLost, 1) + ' d';
     var elHw = document.getElementById('out-hours-week');
     if (elHw) elHw.textContent = fmtNum(scr * 7, 1) + ' h';
     var lr = document.getElementById('out-loss-range');
-    if (lr) lr.textContent = def.lossRange;
-    var ws = document.getElementById('out-waste-sources');
-    if (ws) ws.textContent = def.wasteSources;
+    if (lr) lr.textContent = fmtMoney(mLow) + '–' + fmtMoney(mHigh) + '/mo · ' + fmtNum(hwLow, 0) + '–' + fmtNum(hwHigh, 0) + ' h/wk';
 
-    fillSysResponse('sys-response-reveal', def.sys);
+    var wasteParts = [];
+    keys.forEach(function (k) {
+      var w = LEAK_PATTERN_DEFS[k].wasteSources;
+      if (wasteParts.indexOf(w) === -1) wasteParts.push(w);
+    });
+    var ws = document.getElementById('out-waste-sources');
+    if (ws) ws.textContent = 'Most likely sources: ' + wasteParts.join(' · ');
+
+    var strongK = strongestDefKey(keys);
+    var hitEl = document.getElementById('out-hit-hardest');
+    if (hitEl) {
+      hitEl.style.display = 'block';
+      hitEl.textContent =
+        'What’s hitting hardest: ' + LEAK_PATTERN_DEFS[strongK].wasteSources.split('.')[0] + '.';
+    }
+
+    var hidK = hiddenDefKey(keys);
+    var hidEl = document.getElementById('out-hidden-pattern');
+    if (hidEl && hidK) {
+      hidEl.style.display = 'block';
+      hidEl.textContent = 'What you’re probably lowballing: ' + HIDDEN_HINT[hidK];
+    } else if (hidEl) {
+      hidEl.style.display = 'none';
+    }
+
+    var baseSys = LEAK_PATTERN_DEFS[strongK].sys;
+    var sysOut = {
+      means:
+        keys.length > 1
+          ? 'More than one leak is running — money and time are leaving through different holes.'
+          : baseSys.means,
+      why:
+        keys.length > 1
+          ? 'Each line you checked adds a different drain; one story rarely covers all of it.'
+          : baseSys.why,
+      continues: baseSys.continues,
+      fix: 'Cut one repeating money leak and one repeating time leak today.'
+    };
+    fillSysResponse('sys-response-reveal', sysOut);
 
     document.getElementById('btn-1').disabled = false;
     updateLeakMeter();
@@ -2251,7 +2392,7 @@
     cb.addEventListener('change', updateLeakMeter);
   });
 
-  document.querySelectorAll('input[name="leak-pattern"]').forEach(function (el) {
+  document.querySelectorAll('input.leak-tag').forEach(function (el) {
     el.addEventListener('change', computeReveal);
   });
 
