@@ -1,0 +1,1019 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Room 05 — Cognition · Stephuary</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #090a0b;
+      --surface: rgba(18, 20, 24, 0.75);
+      --line: rgba(232, 236, 240, 0.06);
+      --line-strong: rgba(180, 190, 200, 0.18);
+      --accent: #8b9aab;
+      --accent-dim: #5c6570;
+      --cream: #e6e9ed;
+      --text: #cfd4db;
+      --muted: #8f96a0;
+      --dim: #5a616a;
+      --label: #3d4248;
+      --radius: 2px;
+      --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      --font-serif: ui-serif, Georgia, "Times New Roman", serif;
+      --font-mono: ui-monospace, "SF Mono", Menlo, Monaco, Consolas, monospace;
+    }
+
+    html, body { height: 100%; }
+    body {
+      font-family: var(--font-sans);
+      font-weight: 400;
+      background: var(--bg);
+      background-image:
+        linear-gradient(180deg, rgba(22, 26, 32, 0.5) 0%, transparent 42%);
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+      overflow: hidden;
+      font-size: 15px;
+      line-height: 1.55;
+      letter-spacing: 0.01em;
+    }
+
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+      opacity: 0.018;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    #room-app { position: relative; z-index: 1; height: 100%; min-height: 100dvh; }
+
+    .room-top {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 200;
+      padding: 20px 22px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      background: linear-gradient(to bottom, rgba(9, 10, 11, 0.96) 0%, rgba(9, 10, 11, 0.45) 72%, transparent 100%);
+      pointer-events: none;
+    }
+    .room-top a {
+      pointer-events: auto;
+      font-family: var(--font-mono);
+      font-size: 8px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--dim);
+      text-decoration: none;
+    }
+    .room-top a:hover { color: var(--muted); }
+    .room-progress {
+      font-family: var(--font-mono);
+      font-size: 8px;
+      letter-spacing: 0.12em;
+      color: var(--label);
+    }
+
+    .panel {
+      display: none;
+      min-height: 100dvh;
+      max-height: 100dvh;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      padding: 88px 24px 112px;
+      flex-direction: column;
+      align-items: stretch;
+      max-width: 500px;
+      margin: 0 auto;
+      border-left: 1px solid var(--line);
+      border-right: 1px solid var(--line);
+      animation: panelIn 0.32s ease-out;
+    }
+    .panel.active { display: flex; }
+    @keyframes panelIn { from { opacity: 0; } to { opacity: 1; } }
+
+    .panel--entry {
+      justify-content: center;
+      text-align: center;
+      border-left: none;
+      border-right: none;
+      max-width: 420px;
+    }
+    .panel-micro {
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 40px;
+      max-width: 280px;
+      margin-left: auto;
+      margin-right: auto;
+      line-height: 1.65;
+    }
+
+    .rule {
+      height: 1px;
+      background: var(--line-strong);
+      margin: 0 0 28px;
+      opacity: 0.7;
+    }
+
+    .panel-title {
+      font-family: var(--font-serif);
+      font-weight: 400;
+      font-size: clamp(22px, 5vw, 30px);
+      line-height: 1.14;
+      letter-spacing: -0.02em;
+      margin-bottom: 14px;
+      color: var(--cream);
+    }
+
+    .panel-instruction {
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.62;
+      margin-bottom: 22px;
+    }
+
+    .panel-kicker {
+      font-family: var(--font-mono);
+      font-size: 8px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent-dim);
+      margin-bottom: 20px;
+    }
+
+    .policy-block {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 18px 16px;
+      margin-bottom: 16px;
+    }
+    .policy-block h4 {
+      font-family: var(--font-mono);
+      font-size: 7px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 14px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .output-block {
+      border: 1px solid var(--line-strong);
+      padding: 18px 16px;
+      margin: 22px 0 26px;
+      background: rgba(12, 14, 18, 0.5);
+    }
+    .output-label {
+      font-family: var(--font-mono);
+      font-size: 7px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--label);
+      margin-bottom: 10px;
+    }
+    .output-body {
+      font-size: 14px;
+      color: var(--text);
+      line-height: 1.6;
+    }
+    .output-body.sm { font-size: 13px; color: var(--muted); }
+
+    .pick-list label.opt {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 13px 12px;
+      margin-bottom: 5px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      cursor: pointer;
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.45;
+      transition: border-color 0.15s ease, background 0.15s ease;
+    }
+    .pick-list label.opt:hover { border-color: rgba(139, 154, 171, 0.25); }
+    .pick-list label.opt:has(input:checked) {
+      border-color: rgba(139, 154, 171, 0.4);
+      background: rgba(139, 154, 171, 0.06);
+      color: var(--cream);
+    }
+    .pick-list input[type="radio"],
+    .pick-list input[type="checkbox"] {
+      margin-top: 3px;
+      accent-color: #6b7580;
+      width: 15px;
+      height: 15px;
+      flex-shrink: 0;
+    }
+
+    .field label {
+      display: block;
+      font-family: var(--font-mono);
+      font-size: 7px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--dim);
+      margin-bottom: 8px;
+    }
+    .field input[type="number"],
+    .field input[type="text"] {
+      width: 100%;
+      padding: 14px 14px;
+      background: rgba(6, 8, 10, 0.65);
+      border: 1px solid var(--line);
+      color: var(--cream);
+      font-family: var(--font-sans);
+      font-size: 18px;
+      font-weight: 400;
+      border-radius: var(--radius);
+    }
+    .field input:focus {
+      outline: none;
+      border-color: rgba(139, 154, 171, 0.35);
+    }
+
+    .btn-continue {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      margin-top: 12px;
+      padding: 16px 20px;
+      min-height: 50px;
+      font-family: var(--font-mono);
+      font-size: 8px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--cream);
+      background: rgba(70, 78, 88, 0.4);
+      border: 1px solid rgba(120, 130, 145, 0.35);
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: opacity 0.2s ease, border-color 0.2s ease;
+    }
+    .btn-continue:hover:not(:disabled) {
+      border-color: rgba(139, 154, 171, 0.45);
+    }
+    .btn-continue:disabled {
+      opacity: 0.32;
+      cursor: not-allowed;
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--muted);
+      border: 1px solid var(--line);
+      margin-top: 12px;
+    }
+    .btn-secondary:hover:not(:disabled) {
+      color: var(--text);
+      border-color: rgba(139, 154, 171, 0.25);
+    }
+
+    .principle-cap {
+      font-family: var(--font-mono);
+      font-size: 8px;
+      letter-spacing: 0.08em;
+      color: var(--dim);
+      margin-bottom: 12px;
+    }
+
+    .summary-card {
+      border: 1px solid var(--line-strong);
+      padding: 26px 20px 22px;
+      margin-bottom: 20px;
+      background: rgba(10, 12, 15, 0.65);
+    }
+    .summary-card h3 {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 18px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--line);
+    }
+    .summary-section {
+      margin-bottom: 16px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--line);
+    }
+    .summary-section:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+    .summary-section-title {
+      font-family: var(--font-mono);
+      font-size: 7px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--dim);
+      margin-bottom: 6px;
+    }
+    .summary-section p, .summary-section ul {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+    .summary-section ul { padding-left: 1.1em; margin: 4px 0 0; }
+
+    .final-line {
+      text-align: center;
+      font-family: var(--font-serif);
+      font-size: 16px;
+      font-weight: 400;
+      font-style: italic;
+      color: var(--muted);
+      line-height: 1.55;
+      margin-top: 24px;
+      padding-top: 22px;
+      border-top: 1px solid var(--line-strong);
+    }
+
+    @media (min-width: 600px) {
+      .panel { max-width: 520px; padding-left: 32px; padding-right: 32px; }
+    }
+  </style>
+</head>
+<body>
+  <div id="room-app">
+    <header class="room-top">
+      <a href="/">Stephuary</a>
+      <span class="room-progress" id="progress-text">Room 05</span>
+    </header>
+
+    <section class="panel panel--entry active" data-step="0" id="panel-0">
+      <p class="panel-kicker">Room 05 — Cognition</p>
+      <h1 class="panel-title">This is not about using more tools.<br />It is about staying in control of your thinking.</h1>
+      <p class="panel-micro">Move through it once.<br />Leave with rules you can actually use.</p>
+      <button type="button" class="btn-continue" id="btn-begin">Begin</button>
+    </section>
+
+    <section class="panel" data-step="1" id="panel-1">
+      <div class="rule" aria-hidden="true"></div>
+      <h2 class="panel-title">How are you actually using it?</h2>
+      <p class="panel-instruction">Pick what is already true.</p>
+      <div class="pick-list" id="current-use-list"></div>
+      <div class="output-block" id="out-use" style="display:none;">
+        <p class="output-label">Pattern</p>
+        <p class="output-body" id="out-use-text">—</p>
+      </div>
+      <button type="button" class="btn-continue" id="btn-1" disabled>Continue</button>
+    </section>
+
+    <section class="panel" data-step="2" id="panel-2">
+      <div class="rule" aria-hidden="true"></div>
+      <h2 class="panel-title">What is it doing for you?</h2>
+      <p class="panel-instruction">Choose the line that fits best.</p>
+      <div class="pick-list" id="sub-list"></div>
+      <div class="output-block" id="out-sub" style="display:none;">
+        <p class="output-label">Augmentation vs substitution</p>
+        <p class="output-body" id="out-sub-text">—</p>
+      </div>
+      <button type="button" class="btn-continue" id="btn-2" disabled>Continue</button>
+    </section>
+
+    <section class="panel" data-step="3" id="panel-3">
+      <div class="rule" aria-hidden="true"></div>
+      <h2 class="panel-title">What is it costing you?</h2>
+      <p class="panel-instruction">Pick the costs you are already noticing.</p>
+      <div class="pick-list" id="cost-list"></div>
+      <div class="output-block" id="out-cost" style="display:none;">
+        <p class="output-label">Cost</p>
+        <p class="output-body" id="out-cost-text">This is not just efficiency. This is overhead.</p>
+      </div>
+      <button type="button" class="btn-continue" id="btn-3" disabled>Continue</button>
+    </section>
+
+    <section class="panel" data-step="4" id="panel-4">
+      <div class="rule" aria-hidden="true"></div>
+      <h2 class="panel-title">Can you verify what it gives you?</h2>
+      <p class="panel-instruction">Be honest.</p>
+      <div class="pick-list" id="verify-list"></div>
+      <div class="output-block" id="out-verify" style="display:none;">
+        <p class="output-label">Verification</p>
+        <p class="output-body" id="out-verify-text">—</p>
+      </div>
+      <button type="button" class="btn-continue" id="btn-4" disabled>Continue</button>
+    </section>
+
+    <section class="panel" data-step="5" id="panel-5">
+      <div class="rule" aria-hidden="true"></div>
+      <h2 class="panel-title">What should never go in?</h2>
+      <p class="panel-instruction">Mark what requires protection.</p>
+      <div class="pick-list" id="data-list"></div>
+      <div class="output-block" id="out-data" style="display:none;">
+        <p class="output-label">Protection</p>
+        <p class="output-body" id="out-data-text">—</p>
+      </div>
+      <button type="button" class="btn-continue" id="btn-5" disabled>Continue</button>
+    </section>
+
+    <section class="panel" data-step="6" id="panel-6">
+      <div class="rule" aria-hidden="true"></div>
+      <h2 class="panel-title">How many tools are you managing?</h2>
+      <p class="panel-instruction">Count the ones you use regularly.</p>
+      <div class="policy-block">
+        <div class="field">
+          <label for="tool-count">AI tools used weekly</label>
+          <input type="number" id="tool-count" min="0" max="99" inputmode="numeric" placeholder="0" />
+        </div>
+      </div>
+      <div class="output-block" id="out-tools" style="display:none;">
+        <p class="output-label">Load</p>
+        <p class="output-body" id="out-tools-text">—</p>
+      </div>
+      <button type="button" class="btn-continue" id="btn-6" disabled>Continue</button>
+    </section>
+
+    <section class="panel" data-step="7" id="panel-7">
+      <div class="rule" aria-hidden="true"></div>
+      <h2 class="panel-title">Set your rules</h2>
+      <p class="panel-instruction">Decide what AI is for and what it is not for.</p>
+      <div class="policy-block">
+        <h4>Approved uses</h4>
+        <div class="pick-list" id="approved-list" style="margin:0;"></div>
+      </div>
+      <div class="policy-block">
+        <h4>Restricted uses</h4>
+        <div class="pick-list" id="restricted-list" style="margin:0;"></div>
+      </div>
+      <div class="output-block" id="out-rules" style="display:none;">
+        <p class="output-label">Rules</p>
+        <p class="output-body">These are your rules.</p>
+      </div>
+      <button type="button" class="btn-continue" id="btn-7" disabled>Continue</button>
+    </section>
+
+    <section class="panel" data-step="8" id="panel-8">
+      <div class="rule" aria-hidden="true"></div>
+      <h2 class="panel-title">Write your operating layer</h2>
+      <p class="panel-instruction">Choose the principles you want to operate from.</p>
+      <p class="principle-cap" id="principle-cap">Select up to 5.</p>
+      <div class="pick-list" id="principles-list"></div>
+      <div class="output-block" id="out-layer" style="display:none;">
+        <p class="output-label">Operating layer</p>
+        <p class="output-body sm" id="out-layer-text">—</p>
+      </div>
+      <button type="button" class="btn-continue" id="btn-8" disabled>Continue</button>
+    </section>
+
+    <section class="panel" data-step="9" id="panel-9">
+      <div class="rule" aria-hidden="true"></div>
+      <h2 class="panel-title">Your cognition policy</h2>
+      <p class="panel-instruction">This is how you stay in control.</p>
+      <div class="summary-card">
+        <h3>Policy record</h3>
+        <div id="summary-body"></div>
+      </div>
+      <button type="button" class="btn-continue" id="btn-copy">Copy policy</button>
+      <button type="button" class="btn-continue btn-secondary" id="btn-restart">Restart</button>
+      <p class="final-line">Use less. Decide better. Own the outcome.</p>
+    </section>
+  </div>
+
+  <script>
+(function () {
+  var CURRENT_USE_OPTS = [
+    { id: 'idea', label: 'idea generation' },
+    { id: 'drafts', label: 'writing first drafts' },
+    { id: 'summarize', label: 'summarizing information' },
+    { id: 'research', label: 'research support' },
+    { id: 'brainstorm', label: 'brainstorming' },
+    { id: 'analysis', label: 'analysis' },
+    { id: 'coding', label: 'coding / technical help' },
+    { id: 'decision', label: 'decision-making' },
+    { id: 'blank', label: 'replacing blank-page discomfort' },
+    { id: 'before_think', label: 'I use it before I think' },
+    { id: 'after_think', label: 'I use it after I think' }
+  ];
+
+  var SUB_OPTS = [
+    { id: 'extends', label: 'It extends work I already know how to do', tier: 'aug' },
+    { id: 'faster_after', label: 'It helps me move faster after I think', tier: 'aug' },
+    { id: 'before_try', label: 'I use it before trying myself', tier: 'drift' },
+    { id: 'unknown', label: 'I rely on it when I do not know the domain', tier: 'drift' },
+    { id: 'unverified', label: 'I often cannot verify what it gives me', tier: 'out' }
+  ];
+
+  var COST_OPTS = [
+    { id: 'tabs', label: 'more tabs open than clarity gained' },
+    { id: 'fatigue', label: 'mental fatigue' },
+    { id: 'output', label: 'more output, less confidence' },
+    { id: 'retention', label: 'weak retention' },
+    { id: 'dependence', label: 'dependence on the tool' },
+    { id: 'deep', label: 'less deep thinking' },
+    { id: 'sharing', label: 'sharing too much information' },
+    { id: 'many_tools', label: 'too many tools to manage' }
+  ];
+
+  var VERIFY_OPTS = [
+    { id: 'mostly', label: 'yes, in most cases', out: 'selective' },
+    { id: 'some', label: 'only in some domains', out: 'uneven' },
+    { id: 'rarely', label: 'rarely', out: 'uneval' },
+    { id: 'no', label: 'no', out: 'uneval' }
+  ];
+
+  var DATA_OPTS = [
+    { id: 'client', label: 'client details' },
+    { id: 'strategy', label: 'business strategy' },
+    { id: 'frameworks', label: 'proprietary frameworks' },
+    { id: 'financial', label: 'financial details' },
+    { id: 'medical', label: 'medical information' },
+    { id: 'relationships', label: 'personal relationships' },
+    { id: 'identity', label: 'identity documents' },
+    { id: 'nothing', label: 'nothing sensitive goes in', exclusive: true }
+  ];
+
+  var APPROVED_OPTS = [
+    { id: 'draft_after', label: 'drafting after I think' },
+    { id: 'summarize_pub', label: 'summarizing public information' },
+    { id: 'compare', label: 'comparing options I can verify' },
+    { id: 'structure', label: 'structuring material I already understand' },
+    { id: 'repetitive', label: 'speeding up repetitive tasks' }
+  ];
+
+  var RESTRICTED_OPTS = [
+    { id: 'replace_thought', label: 'replacing original thought' },
+    { id: 'medlegal', label: 'medical or legal judgment outside my expertise' },
+    { id: 'confidential', label: 'feeding confidential materials' },
+    { id: 'authority', label: 'generating authority I do not actually have' },
+    { id: 'discomfort', label: 'using it when the issue is discomfort, not need' }
+  ];
+
+  var PRINCIPLE_OPTS = [
+    { id: 'p1', text: 'AI augments my expertise. It does not replace it.' },
+    { id: 'p2', text: 'Precision before volume.' },
+    { id: 'p3', text: 'My data has value.' },
+    { id: 'p4', text: 'I verify before I trust.' },
+    { id: 'p5', text: 'If I cannot judge the output, I do not use it.' },
+    { id: 'p6', text: 'Less, but better.' },
+    { id: 'p7', text: 'I build with tools. I do not depend on them.' }
+  ];
+
+  var state = {
+    currentUse: [],
+    substitutionRisk: '',
+    verificationLevel: '',
+    dataExposure: [],
+    toolCount: 0,
+    fatigueSignals: [],
+    approvedUses: [],
+    restrictedUses: [],
+    principles: [],
+    operatingLayer: ''
+  };
+
+  var currentStep = 0;
+  var totalSteps = 10;
+
+  function escapeHtml(s) {
+    if (s == null) return '';
+    return String(s)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  function setProgress() {
+    var el = document.getElementById('progress-text');
+    if (el) el.textContent = 'Room 05 · ' + (currentStep + 1) + ' / ' + totalSteps;
+  }
+
+  function showStep(n) {
+    currentStep = n;
+    document.querySelectorAll('.panel').forEach(function (p) {
+      p.classList.toggle('active', parseInt(p.getAttribute('data-step'), 10) === n);
+    });
+    setProgress();
+    if (n === 9) renderSummary();
+  }
+
+  function next() {
+    if (currentStep < totalSteps - 1) showStep(currentStep + 1);
+  }
+
+  function summarizeCurrentUse() {
+    var sel = state.currentUse;
+    var before = sel.indexOf('I use it before I think') !== -1 || sel.indexOf('replacing blank-page discomfort') !== -1;
+    var after = sel.indexOf('I use it after I think') !== -1;
+    var taskTypes = ['idea generation', 'writing first drafts', 'summarizing information', 'research support', 'brainstorming', 'analysis', 'coding / technical help'];
+    var task = sel.filter(function (l) { return taskTypes.indexOf(l) !== -1; }).length;
+    var parts = [];
+    parts.push('Your use pattern is currently: ');
+    if (after && !before) {
+      parts.push('oriented toward augmentation—you reach for the tool after thinking.');
+    } else if (before && !after) {
+      parts.push('tilted toward substitution—you often reach for the tool before your own attempt.');
+    } else if (before && after) {
+      parts.push('mixed: both before and after thinking show up; the sequence is inconsistent.');
+    } else {
+      parts.push(task >= 4 ? 'spread across many task types; watch where judgment leaves the loop.' : 'focused on a few task types; notice whether judgment stays with you.');
+    }
+    return parts.join('');
+  }
+
+  function substitutionReadout(tier) {
+    if (tier === 'aug') return 'You are mostly augmenting.';
+    if (tier === 'drift') return 'You are drifting into substitution.';
+    return 'You are outsourcing judgment.';
+  }
+
+  function verificationReadout(key) {
+    var o = VERIFY_OPTS.filter(function (v) { return v.id === key; })[0];
+    if (!o) return '—';
+    if (o.out === 'selective') return 'You can use AI selectively here.';
+    if (o.out === 'uneven') return 'Your judgment is uneven.';
+    return 'You are taking in outputs you cannot evaluate.';
+  }
+
+  function buildOperatingLayer() {
+    var texts = state.principles.filter(Boolean);
+    if (!texts.length) {
+      state.operatingLayer = '';
+      return '';
+    }
+    state.operatingLayer = texts.join('. ') + '.';
+    return state.operatingLayer;
+  }
+
+  function initCurrentUse() {
+    var wrap = document.getElementById('current-use-list');
+    CURRENT_USE_OPTS.forEach(function (o) {
+      var lab = document.createElement('label');
+      lab.className = 'opt';
+      var inp = document.createElement('input');
+      inp.type = 'checkbox';
+      inp.value = o.id;
+      var span = document.createElement('span');
+      span.textContent = o.label;
+      lab.appendChild(inp);
+      lab.appendChild(document.createTextNode(' '));
+      lab.appendChild(span);
+      wrap.appendChild(lab);
+      inp.addEventListener('change', function () {
+        state.currentUse = [];
+        wrap.querySelectorAll('input:checked').forEach(function (c) {
+          var opt = CURRENT_USE_OPTS.filter(function (x) { return x.id === c.value; })[0];
+          if (opt) state.currentUse.push(opt.label);
+        });
+        if (state.currentUse.length === 0) {
+          document.getElementById('out-use').style.display = 'none';
+          document.getElementById('btn-1').disabled = true;
+          return;
+        }
+        document.getElementById('out-use-text').textContent = summarizeCurrentUse();
+        document.getElementById('out-use').style.display = 'block';
+        document.getElementById('btn-1').disabled = false;
+      });
+    });
+  }
+
+  function initSub() {
+    var wrap = document.getElementById('sub-list');
+    SUB_OPTS.forEach(function (o) {
+      var lab = document.createElement('label');
+      lab.className = 'opt';
+      var inp = document.createElement('input');
+      inp.type = 'radio';
+      inp.name = 'sub';
+      inp.value = o.id;
+      var span = document.createElement('span');
+      span.textContent = o.label;
+      lab.appendChild(inp);
+      lab.appendChild(document.createTextNode(' '));
+      lab.appendChild(span);
+      wrap.appendChild(lab);
+      inp.addEventListener('change', function () {
+        state.substitutionRisk = o.label;
+        document.getElementById('out-sub-text').textContent = substitutionReadout(o.tier);
+        document.getElementById('out-sub').style.display = 'block';
+        document.getElementById('btn-2').disabled = false;
+      });
+    });
+  }
+
+  function initCost() {
+    var wrap = document.getElementById('cost-list');
+    COST_OPTS.forEach(function (o) {
+      var lab = document.createElement('label');
+      lab.className = 'opt';
+      var inp = document.createElement('input');
+      inp.type = 'checkbox';
+      inp.value = o.id;
+      var span = document.createElement('span');
+      span.textContent = o.label;
+      lab.appendChild(inp);
+      lab.appendChild(document.createTextNode(' '));
+      lab.appendChild(span);
+      wrap.appendChild(lab);
+      inp.addEventListener('change', function () {
+        state.fatigueSignals = [];
+        wrap.querySelectorAll('input:checked').forEach(function (c) {
+          var opt = COST_OPTS.filter(function (x) { return x.id === c.value; })[0];
+          if (opt) state.fatigueSignals.push(opt.label);
+        });
+        if (state.fatigueSignals.length === 0) {
+          document.getElementById('out-cost').style.display = 'none';
+          document.getElementById('btn-3').disabled = true;
+          return;
+        }
+        document.getElementById('out-cost').style.display = 'block';
+        document.getElementById('btn-3').disabled = false;
+      });
+    });
+  }
+
+  function initVerify() {
+    var wrap = document.getElementById('verify-list');
+    VERIFY_OPTS.forEach(function (o) {
+      var lab = document.createElement('label');
+      lab.className = 'opt';
+      var inp = document.createElement('input');
+      inp.type = 'radio';
+      inp.name = 'verify';
+      inp.value = o.id;
+      var span = document.createElement('span');
+      span.textContent = o.label;
+      lab.appendChild(inp);
+      lab.appendChild(document.createTextNode(' '));
+      lab.appendChild(span);
+      wrap.appendChild(lab);
+      inp.addEventListener('change', function () {
+        state.verificationLevel = o.label;
+        document.getElementById('out-verify-text').textContent = verificationReadout(o.id);
+        document.getElementById('out-verify').style.display = 'block';
+        document.getElementById('btn-4').disabled = false;
+      });
+    });
+  }
+
+  function initData() {
+    var wrap = document.getElementById('data-list');
+    DATA_OPTS.forEach(function (o) {
+      var lab = document.createElement('label');
+      lab.className = 'opt';
+      var inp = document.createElement('input');
+      inp.type = 'checkbox';
+      inp.value = o.id;
+      var span = document.createElement('span');
+      span.textContent = o.label;
+      lab.appendChild(inp);
+      lab.appendChild(document.createTextNode(' '));
+      lab.appendChild(span);
+      wrap.appendChild(lab);
+      inp.addEventListener('change', function () {
+        if (o.exclusive && inp.checked) {
+          wrap.querySelectorAll('input').forEach(function (c) {
+            if (c !== inp) c.checked = false;
+          });
+        } else if (inp.checked) {
+          var noneInp = wrap.querySelector('input[value="nothing"]');
+          if (noneInp) noneInp.checked = false;
+        }
+        state.dataExposure = [];
+        wrap.querySelectorAll('input:checked').forEach(function (c) {
+          var opt = DATA_OPTS.filter(function (x) { return x.id === c.value; })[0];
+          if (opt) state.dataExposure.push(opt.label);
+        });
+        if (state.dataExposure.length === 0) {
+          document.getElementById('out-data').style.display = 'none';
+          document.getElementById('btn-5').disabled = true;
+          return;
+        }
+        document.getElementById('out-data-text').textContent = 'Your protected categories are: ' + state.dataExposure.join(', ') + '.';
+        document.getElementById('out-data').style.display = 'block';
+        document.getElementById('btn-5').disabled = false;
+      });
+    });
+  }
+
+  function computeTools() {
+    var raw = document.getElementById('tool-count').value;
+    var n = parseInt(raw, 10);
+    if (raw === '' || isNaN(n) || n < 0) {
+      document.getElementById('out-tools').style.display = 'none';
+      document.getElementById('btn-6').disabled = true;
+      return;
+    }
+    state.toolCount = n;
+    var msg = n <= 3 ? 'This is manageable.' : 'You are likely paying overhead for tool volume.';
+    document.getElementById('out-tools-text').textContent = msg;
+    document.getElementById('out-tools').style.display = 'block';
+    document.getElementById('btn-6').disabled = false;
+  }
+
+  function initRules() {
+    function bindGroup(wrapId, opts) {
+      var wrap = document.getElementById(wrapId);
+      opts.forEach(function (o) {
+        var lab = document.createElement('label');
+        lab.className = 'opt';
+        var inp = document.createElement('input');
+        inp.type = 'checkbox';
+        inp.value = o.id;
+        var span = document.createElement('span');
+        span.textContent = o.label;
+        lab.appendChild(inp);
+        lab.appendChild(document.createTextNode(' '));
+        lab.appendChild(span);
+        wrap.appendChild(lab);
+        inp.addEventListener('change', function () {
+          state.approvedUses = [];
+          document.getElementById('approved-list').querySelectorAll('input:checked').forEach(function (c) {
+            var opt = APPROVED_OPTS.filter(function (x) { return x.id === c.value; })[0];
+            if (opt) state.approvedUses.push(opt.label);
+          });
+          state.restrictedUses = [];
+          document.getElementById('restricted-list').querySelectorAll('input:checked').forEach(function (c) {
+            var opt = RESTRICTED_OPTS.filter(function (x) { return x.id === c.value; })[0];
+            if (opt) state.restrictedUses.push(opt.label);
+          });
+          var ok = state.approvedUses.length > 0 && state.restrictedUses.length > 0;
+          document.getElementById('out-rules').style.display = ok ? 'block' : 'none';
+          document.getElementById(btnId).disabled = !ok;
+        });
+      });
+    }
+    bindGroup('approved-list', APPROVED_OPTS);
+    bindGroup('restricted-list', RESTRICTED_OPTS);
+  }
+
+  function updatePrincipleCap() {
+    var n = state.principles.length;
+    document.getElementById('principle-cap').textContent = 'Selected ' + n + ' of 5 maximum.';
+  }
+
+  function initPrinciples() {
+    var wrap = document.getElementById('principles-list');
+    PRINCIPLE_OPTS.forEach(function (o) {
+      var lab = document.createElement('label');
+      lab.className = 'opt';
+      var inp = document.createElement('input');
+      inp.type = 'checkbox';
+      inp.value = o.id;
+      var span = document.createElement('span');
+      span.textContent = o.text;
+      lab.appendChild(inp);
+      lab.appendChild(document.createTextNode(' '));
+      lab.appendChild(span);
+      wrap.appendChild(lab);
+      inp.addEventListener('change', function () {
+        var checked = wrap.querySelectorAll('input:checked');
+        if (inp.checked && checked.length > 5) {
+          inp.checked = false;
+          return;
+        }
+        state.principles = [];
+        wrap.querySelectorAll('input:checked').forEach(function (c) {
+          var opt = PRINCIPLE_OPTS.filter(function (x) { return x.id === c.value; })[0];
+          if (opt) state.principles.push(opt.text);
+        });
+        updatePrincipleCap();
+        if (state.principles.length === 0) {
+          document.getElementById('out-layer').style.display = 'none';
+          document.getElementById('btn-8').disabled = true;
+          return;
+        }
+        document.getElementById('out-layer-text').textContent = buildOperatingLayer();
+        document.getElementById('out-layer').style.display = 'block';
+        document.getElementById('btn-8').disabled = false;
+      });
+    });
+    updatePrincipleCap();
+  }
+
+  function renderSummary() {
+    buildOperatingLayer();
+    var body = document.getElementById('summary-body');
+    body.innerHTML = '';
+
+    function addSec(title, html) {
+      var d = document.createElement('div');
+      d.className = 'summary-section';
+      var h = document.createElement('p');
+      h.className = 'summary-section-title';
+      h.textContent = title;
+      d.appendChild(h);
+      var inner = document.createElement('div');
+      inner.innerHTML = html;
+      d.appendChild(inner);
+      body.appendChild(d);
+    }
+
+    addSec('Current use pattern', '<p>' + escapeHtml(state.currentUse.join(', ')) + '</p><p style="margin-top:8px;">' + escapeHtml(summarizeCurrentUse()) + '</p>');
+
+    var subTier = SUB_OPTS.filter(function (s) { return s.label === state.substitutionRisk; })[0];
+    addSec('Augmentation vs substitution', '<p>' + escapeHtml(state.substitutionRisk) + '</p><p style="margin-top:8px;">' + escapeHtml(subTier ? substitutionReadout(subTier.tier) : '—') + '</p>');
+
+    addSec('Real costs', '<ul>' + state.fatigueSignals.map(function (l) { return '<li>' + escapeHtml(l) + '</li>'; }).join('') + '</ul><p style="margin-top:8px;">This is not just efficiency. This is overhead.</p>');
+
+    var vOpt = VERIFY_OPTS.filter(function (v) { return v.label === state.verificationLevel; })[0];
+    addSec('Verification level', '<p>' + escapeHtml(state.verificationLevel) + '</p><p style="margin-top:8px;">' + escapeHtml(vOpt ? verificationReadout(vOpt.id) : '—') + '</p>');
+
+    addSec('Protected data categories', '<p>' + escapeHtml(state.dataExposure.join(', ')) + '</p>');
+
+    addSec('Tool load', '<p>' + state.toolCount + ' tools weekly.</p>');
+
+    addSec('Approved uses', '<ul>' + state.approvedUses.map(function (l) { return '<li>' + escapeHtml(l) + '</li>'; }).join('') + '</ul>');
+    addSec('Restricted uses', '<ul>' + state.restrictedUses.map(function (l) { return '<li>' + escapeHtml(l) + '</li>'; }).join('') + '</ul>');
+
+    addSec('Operating principles', '<ul>' + state.principles.map(function (l) { return '<li>' + escapeHtml(l) + '</li>'; }).join('') + '</ul>');
+    addSec('Generated operating layer statement', '<p>' + escapeHtml(state.operatingLayer) + '</p>');
+  }
+
+  function buildPolicyText() {
+    var lines = [];
+    lines.push('ROOM 05 — COGNITION POLICY');
+    lines.push('');
+    lines.push('CURRENT USE');
+    lines.push(state.currentUse.join(', '));
+    lines.push(summarizeCurrentUse());
+    lines.push('');
+    lines.push('SUBSTITUTION RISK (dominant)');
+    lines.push(state.substitutionRisk);
+    lines.push('');
+    lines.push('COSTS NOTICED');
+    lines.push(state.fatigueSignals.join(', '));
+    lines.push('');
+    lines.push('VERIFICATION');
+    lines.push(state.verificationLevel);
+    var vOpt = VERIFY_OPTS.filter(function (v) { return v.label === state.verificationLevel; })[0];
+    if (vOpt) lines.push(verificationReadout(vOpt.id));
+    lines.push('');
+    lines.push('PROTECTED DATA');
+    lines.push(state.dataExposure.join(', '));
+    lines.push('');
+    lines.push('TOOLS WEEKLY: ' + state.toolCount);
+    lines.push('');
+    lines.push('APPROVED');
+    lines.push(state.approvedUses.join(', '));
+    lines.push('');
+    lines.push('RESTRICTED');
+    lines.push(state.restrictedUses.join(', '));
+    lines.push('');
+    lines.push('PRINCIPLES');
+    lines.push(state.principles.join('\n'));
+    lines.push('');
+    lines.push('OPERATING LAYER');
+    lines.push(state.operatingLayer);
+    lines.push('');
+    lines.push('Use less. Decide better. Own the outcome.');
+    return lines.join('\n');
+  }
+
+  function copyPolicy() {
+    renderSummary();
+    var t = buildPolicyText();
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(t).then(function () {
+        var b = document.getElementById('btn-copy');
+        var o = b.textContent;
+        b.textContent = 'Copied';
+        setTimeout(function () { b.textContent = o; }, 2000);
+      });
+    }
+  }
+
+  document.getElementById('btn-begin').addEventListener('click', next);
+
+  initCurrentUse();
+  initSub();
+  initCost();
+  initVerify();
+  initData();
+  initRules();
+  initPrinciples();
+
+  document.getElementById('btn-1').addEventListener('click', next);
+  document.getElementById('btn-2').addEventListener('click', next);
+  document.getElementById('btn-3').addEventListener('click', next);
+  document.getElementById('btn-4').addEventListener('click', next);
+  document.getElementById('btn-5').addEventListener('click', next);
+
+  document.getElementById('tool-count').addEventListener('input', computeTools);
+  document.getElementById('btn-6').addEventListener('click', next);
+
+  document.getElementById('btn-7').addEventListener('click', next);
+  document.getElementById('btn-8').addEventListener('click', next);
+
+  document.getElementById('btn-copy').addEventListener('click', copyPolicy);
+  document.getElementById('btn-restart').addEventListener('click', function () {
+    location.reload();
+  });
+
+  showStep(0);
+})();
+  </script>
+</body>
+</html>
