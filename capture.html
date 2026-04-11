@@ -9,6 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Mono:wght@300;400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/stephuary-hero.css" />
 
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -107,11 +108,10 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      min-height: 100vh;
       text-align: center;
       max-width: 520px;
       width: 100%;
-      padding: 60px 0;
+      padding: 24px 0 48px;
     }
 
     .landing-wordmark {
@@ -776,11 +776,12 @@
   </style>
 </head>
 <body>
+<script src="/stephuary-hero.js"></script>
 
 <nav class="global-nav" aria-label="Main">
   <a href="/" class="gn-logo">Stephuary</a>
   <div class="gn-links">
-    <a href="/system">System</a>
+    <a href="/systems">System</a>
     <a href="/pricing">Pricing</a>
     <a href="/access" class="nav-club">.5% Club</a>
     <a href="https://stephuary.substack.com" target="_blank" rel="noopener">Substack</a>
@@ -788,23 +789,48 @@
   </div>
 </nav>
 
-<section id="landing">
-  <p class="landing-wordmark">Stephuary</p>
-  <p class="landing-phase">Capture · Phase 01</p>
-  <h1 class="landing-title">You don’t need more ideas.<br><em>You need to see how you actually operate.</em></h1>
-  <p class="landing-time">3–5 minutes</p>
-  <div class="landing-leave">
-    <p>You’ll leave with:</p>
-    <ul>
-      <li>how you think</li>
-      <li>where you hesitate</li>
-      <li>where you’re underused or misused</li>
-      <li>what’s holding you in place</li>
-    </ul>
-  </div>
-  <div class="landing-actions">
-    <button type="button" class="btn btn-start" id="btnBegin">Begin Phase 01</button>
-    <button type="button" class="btn btn-ghost" id="btnSkip">Already in progress, skip</button>
+  <div class="sh-cursor-glow" aria-hidden="true"></div>
+
+  <section
+    id="phase-hero"
+    class="sh-hero sh-hero--phase1"
+    data-sh-hero-init
+    data-sh-intensity="1"
+    data-sh-theme="phase1"
+    style="--sh-fade-to:#0c0a09;margin-top:52px;"
+  >
+    <div class="sh-hero__container">
+      <div class="sh-hero__canvas-wrap">
+        <canvas class="sh-hero-canvas-back" width="300" height="300" aria-hidden="true"></canvas>
+        <canvas class="sh-hero-canvas-front" width="300" height="300" aria-hidden="true"></canvas>
+      </div>
+      <div class="sh-hero__overlay"></div>
+      <div class="sh-hero__light"></div>
+      <div class="sh-hero__fade"></div>
+      <div class="sh-hero__content">
+        <div class="sh-anchor sh-anchor--nodes" aria-hidden="true">
+          <svg viewBox="0 0 320 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <line x1="53" y1="58" x2="115" y2="38" stroke="rgba(58,107,255,0.35)" stroke-width="0.7"/>
+            <line x1="125" y1="36" x2="195" y2="68" stroke="rgba(58,107,255,0.28)" stroke-width="0.7"/>
+            <line x1="205" y1="70" x2="263" y2="48" stroke="rgba(58,107,255,0.3)" stroke-width="0.7"/>
+            <line x1="118" y1="40" x2="152" y2="92" stroke="rgba(58,107,255,0.22)" stroke-width="0.6"/>
+            <circle class="sh-n" cx="48" cy="60" r="5"/>
+            <circle class="sh-n" cx="120" cy="32" r="4"/>
+            <circle class="sh-n" cx="200" cy="72" r="6"/>
+            <circle class="sh-n" cx="268" cy="44" r="4.5"/>
+            <circle class="sh-n" cx="160" cy="100" r="3.5"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </section>
+
+<section id="landing" class="sh-phase-entry">
+  <h2 class="sh-entry-title">Phase 01 · Capture</h2>
+  <p class="sh-entry-lead">Answer questions to see where your time and money leak, and what to cut first.</p>
+  <div class="sh-entry-actions landing-actions">
+    <button type="button" class="sh-btn sh-btn--primary" id="btnBegin">Begin Phase 01</button>
+    <button type="button" class="sh-btn sh-btn--ghost" id="btnSkip">Already in progress, skip</button>
   </div>
 </section>
 
@@ -1735,11 +1761,15 @@
     resetLiveWaiting();
     document.getElementById('flow-wrap').style.display = 'block';
     document.getElementById('landing').style.display = 'none';
+    var ph = document.getElementById('phase-hero');
+    if (ph) ph.style.display = 'none';
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   function startFlow(skipLanding) {
     document.getElementById('landing').style.display = 'none';
+    var ph = document.getElementById('phase-hero');
+    if (ph) ph.style.display = 'none';
     document.getElementById('flow-wrap').style.display = 'block';
     if (!document.getElementById('step-1')) {
       buildRail();
@@ -1758,6 +1788,8 @@
     var firstEmpty = state.bits.indexOf(null);
     if (firstEmpty === -1) {
       document.getElementById('landing').style.display = 'none';
+      var ph2 = document.getElementById('phase-hero');
+      if (ph2) ph2.style.display = 'none';
       document.getElementById('flow-wrap').style.display = 'block';
       if (!document.getElementById('step-1')) {
         buildRail();

@@ -9,6 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=DM+Mono:wght@300;400&family=Lato:wght@300;400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/stephuary-hero.css" />
 
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -77,11 +78,11 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      min-height: 100vh;
+      min-height: auto;
       text-align: center;
-      max-width: 480px;
+      max-width: 520px;
       width: 100%;
-      padding: 60px 0;
+      padding: 32px 16px 72px;
     }
 
     .locked-phase {
@@ -663,14 +664,50 @@
   </style>
 </head>
 <body>
+<script src="/stephuary-hero.js"></script>
+
+<div class="sh-cursor-glow" aria-hidden="true"></div>
+
+<section
+  id="phase-hero"
+  class="sh-hero sh-hero--phase4"
+  data-sh-hero-init
+  data-sh-intensity="1"
+  data-sh-theme="phase4"
+  style="--sh-fade-to:#0c0a09;"
+>
+  <div class="sh-hero__container">
+    <div class="sh-hero__canvas-wrap">
+      <canvas class="sh-hero-canvas-back" width="300" height="300" aria-hidden="true"></canvas>
+      <canvas class="sh-hero-canvas-front" width="300" height="300" aria-hidden="true"></canvas>
+    </div>
+    <div class="sh-hero__overlay"></div>
+    <div class="sh-hero__light"></div>
+    <div class="sh-hero__fade"></div>
+    <div class="sh-hero__content" style="padding-top:48px;">
+      <div class="sh-anchor" aria-hidden="true">
+        <svg viewBox="0 0 320 100" xmlns="http://www.w3.org/2000/svg">
+          <line x1="40" y1="50" x2="120" y2="50" stroke="rgba(58,107,255,0.2)" stroke-width="1"/>
+          <line x1="120" y1="50" x2="200" y2="50" stroke="rgba(58,107,255,0.16)" stroke-width="1"/>
+          <line x1="200" y1="50" x2="280" y2="50" stroke="rgba(58,107,255,0.12)" stroke-width="1"/>
+          <circle cx="40" cy="50" r="6" fill="rgba(43,79,212,0.2)" stroke="rgba(58,107,255,0.35)" stroke-width="0.6"/>
+          <circle cx="120" cy="50" r="5" fill="rgba(43,79,212,0.14)" stroke="rgba(58,107,255,0.28)" stroke-width="0.6"/>
+          <circle cx="200" cy="50" r="5" fill="rgba(43,79,212,0.12)" stroke="rgba(58,107,255,0.22)" stroke-width="0.6"/>
+          <circle cx="280" cy="50" r="6" fill="rgba(43,79,212,0.1)" stroke="rgba(58,107,255,0.18)" stroke-width="0.6"/>
+        </svg>
+      </div>
+    </div>
+  </div>
+</section>
 
 <div id="locked">
   <p class="locked-phase">Phase 04 · Validation</p>
-  <h1 class="locked-headline">Nothing is proven<br><em>until someone responds.</em></h1>
-  <p class="locked-body">Complete Phase 03, or get full system access.</p>
-  <a href="/structure" class="btn">Phase 03 · Structure</a>
-  <p style="margin-top:28px;font-size:11px;color:var(--text-dim);letter-spacing:0.12em;text-transform:uppercase">Or</p>
-  <a href="/pricing#checkout" class="btn btn-solid" style="margin-top:16px">Enter System</a>
+  <h1 class="sh-entry-title" style="font-size:clamp(28px,5.5vw,40px);margin-bottom:14px;">Validation</h1>
+  <p class="sh-entry-lead" style="margin-bottom:28px;">Put your offer in front of people and record what happens—response is the proof.</p>
+  <div class="sh-entry-actions">
+    <a href="/structure" class="sh-btn sh-btn--primary">Phase 03 · Structure first</a>
+    <a href="/pricing" class="sh-btn sh-btn--ghost">Pricing</a>
+  </div>
 </div>
 
 <div id="flow-wrap">
@@ -1330,6 +1367,8 @@
     } catch (err) {}
     if (!unlocked) return;
 
+    var ph = document.getElementById('phase-hero');
+    if (ph) ph.style.display = 'none';
     document.getElementById('locked').style.display = 'none';
     document.getElementById('flow-wrap').style.display = 'block';
     buildRail();
