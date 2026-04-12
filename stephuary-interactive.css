@@ -399,19 +399,19 @@ a.phase-card.is-phase-current {
 
 /* ——— Live output panel ——— */
 .sh-live-panel {
-  --sh-panel-bottom: 56px;
+  --sh-panel-bottom: 24px;
   --sh-panel-inline: 24px;
   box-sizing: border-box;
   position: fixed;
   left: auto;
   right: var(--sh-panel-inline);
   bottom: var(--sh-panel-bottom);
-  width: min(420px, calc(100vw - var(--sh-panel-inline) * 2));
-  max-width: min(420px, calc(100vw - var(--sh-panel-inline) * 2));
+  width: min(380px, calc(100vw - 48px));
+  max-width: 380px;
+  min-width: min(300px, calc(100vw - 48px));
   z-index: 158;
-  /* Keep panel inside viewport when tall content or raised bottom (flow bar) */
-  max-height: calc(100vh - var(--sh-panel-bottom) - 20px);
-  max-height: calc(100dvh - var(--sh-panel-bottom) - 20px);
+  max-height: calc(100vh - var(--sh-panel-bottom) - 16px);
+  max-height: calc(100dvh - var(--sh-panel-bottom) - 16px);
   overflow-x: hidden;
   overflow-y: auto;
   overscroll-behavior: contain;
@@ -421,14 +421,10 @@ a.phase-card.is-phase-current {
   letter-spacing: 0.06em;
   pointer-events: none;
   opacity: 0;
-  transform: translate3d(0, 12px, 0);
-  transition:
-    opacity 0.55s ease,
-    transform 0.55s ease;
+  transition: opacity 0.55s ease;
 }
 .sh-live-panel--visible {
   opacity: 1;
-  transform: translate3d(0, 0, 0);
   pointer-events: auto;
 }
 .sh-live-panel__chrome {
@@ -563,9 +559,10 @@ a.phase-card.is-phase-current {
   position: fixed;
   left: auto;
   right: var(--sh-panel-inline, 24px);
-  bottom: var(--sh-panel-bottom, 56px);
+  bottom: var(--sh-panel-bottom, 24px);
   z-index: 158;
-  max-width: min(420px, calc(100vw - var(--sh-panel-inline, 24px) * 2));
+  box-sizing: border-box;
+  max-width: min(380px, calc(100vw - 48px));
   padding: 8px 12px;
   border-radius: 2px;
   border: 1px solid rgba(196, 163, 90, 0.25);
@@ -586,23 +583,26 @@ a.phase-card.is-phase-current {
 }
 .sh-live-panel--collapsed.sh-live-panel--visible {
   opacity: 1;
-  transform: translate3d(0, 0, 0);
   pointer-events: auto;
 }
-@media (max-width: 767px) {
+
+/* Tablet / narrow: contained bottom sheet — no floating clip */
+@media (max-width: 979px) {
   .sh-live-panel {
-    --sh-panel-bottom: 48px;
-    --sh-panel-inline: 8px;
-    right: max(8px, env(safe-area-inset-right, 0px));
-    left: max(8px, env(safe-area-inset-left, 0px));
-    bottom: var(--sh-panel-bottom);
-    width: auto;
-    max-width: none;
+    --sh-panel-inline: 12px;
+    --sh-panel-bottom: max(16px, env(safe-area-inset-bottom, 0px));
+    left: max(12px, env(safe-area-inset-left, 0px));
+    right: max(12px, env(safe-area-inset-right, 0px));
+    width: auto !important;
+    max-width: none !important;
+    min-width: 0 !important;
+    margin: 0 auto;
   }
   .sh-live-panel__dock {
-    right: max(8px, env(safe-area-inset-right, 0px));
-    left: auto;
-    max-width: calc(100vw - 16px - env(safe-area-inset-left, 0px) - env(safe-area-inset-right, 0px));
+    left: max(12px, env(safe-area-inset-left, 0px));
+    right: max(12px, env(safe-area-inset-right, 0px));
+    width: auto;
+    max-width: none;
   }
 }
 
@@ -616,15 +616,14 @@ body.has-flow-end {
   }
 }
 
-/* Live panel stacks above the flow bar; --sh-panel-bottom drives max-height so top is never clipped */
+/* Flow bar clearance: keep panel above fixed bar */
 body.has-flow-end .sh-live-panel {
-  --sh-panel-bottom: calc(56px + min(100px, 22vh));
+  --sh-panel-bottom: calc(24px + min(100px, 22vh));
   bottom: var(--sh-panel-bottom);
 }
-@media (max-width: 767px) {
+@media (max-width: 979px) {
   body.has-flow-end .sh-live-panel {
-    --sh-panel-bottom: calc(48px + min(108px, 26vh));
-    bottom: var(--sh-panel-bottom);
+    --sh-panel-bottom: calc(16px + min(108px, 26vh) + env(safe-area-inset-bottom, 0px));
   }
 }
 

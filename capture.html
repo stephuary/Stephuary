@@ -697,7 +697,6 @@
   <a href="/" class="gn-logo">Stephuary</a>
   <div class="gn-links">
     <a href="/systems">System</a>
-    <a href="/pricing">Pricing</a>
     <a href="/access" class="nav-club">.5% Club</a>
     <a href="https://stephuary.substack.com" target="_blank" rel="noopener">Substack</a>
     <a href="https://onlysometimesclub.com" target="_blank" rel="noopener noreferrer">Only Sometimes Club</a>
@@ -804,7 +803,6 @@
         <footer class="capture-footer">
           <a href="/">Home</a>
           <a href="/systems">System</a>
-          <a href="/pricing">Pricing</a>
           <a href="/access" class="nav-club">.5% Club</a>
           <a href="https://stephuary.substack.com" target="_blank" rel="noopener">Substack</a>
           <a href="https://onlysometimesclub.com" target="_blank" rel="noopener noreferrer">Only Sometimes Club</a>
@@ -1372,6 +1370,7 @@
         currentStep: state.currentStep,
         ts: Date.now()
       }));
+      localStorage.setItem('diagnosticStarted', 'true');
     } catch (e) {}
   }
 
@@ -1524,6 +1523,10 @@
         var resultObj = window.StephuaryResult.buildFromPhase01(state.bits);
         resultObj.capture_bits = state.bits; /* optional replay; diagnostic output stays in diagnostic + playbooks */
         localStorage.setItem(RESULT_KEY, JSON.stringify(resultObj));
+        try {
+          localStorage.setItem('diagnosticStarted', 'true');
+          localStorage.setItem('diagnosticCompleted', 'true');
+        } catch (e1) {}
         window.location.replace('/results');
         return;
       }
@@ -1566,6 +1569,8 @@
 
     try {
       localStorage.setItem('capture_complete', 'true');
+      localStorage.setItem('diagnosticStarted', 'true');
+      localStorage.setItem('diagnosticCompleted', 'true');
     } catch (e) {}
 
     updateRail();
@@ -1642,6 +1647,8 @@
     try {
       localStorage.removeItem(STORAGE_KEY);
       localStorage.removeItem('capture_complete');
+      localStorage.removeItem('diagnosticStarted');
+      localStorage.removeItem('diagnosticCompleted');
       localStorage.removeItem(RESULT_KEY);
     } catch (e) {}
     state.bits = Array(TOTAL_Q).fill(null);
@@ -1710,6 +1717,8 @@
   document.getElementById('btnBegin').addEventListener('click', function() {
     try {
       localStorage.removeItem('capture_complete');
+      localStorage.removeItem('diagnosticStarted');
+      localStorage.removeItem('diagnosticCompleted');
       localStorage.removeItem(STORAGE_KEY);
       localStorage.removeItem(RESULT_KEY);
     } catch (e) {}
