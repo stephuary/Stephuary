@@ -48,7 +48,10 @@
       --line: rgba(244, 237, 224, 0.08);
     }
 
-    html { scroll-behavior: smooth; }
+    html {
+      scroll-behavior: smooth;
+      overflow-x: hidden;
+    }
 
     body {
       background: var(--bg);
@@ -58,6 +61,8 @@
       -webkit-font-smoothing: antialiased;
       overflow-x: hidden;
       min-height: 100vh;
+      padding-bottom: 0;
+      margin: 0;
     }
 
     /* Ambient background */
@@ -73,7 +78,7 @@
       background:
         linear-gradient(125deg, #030303 0%, rgba(59, 13, 13, 0.55) 38%, rgba(15, 22, 48, 0.5) 62%, #030303 100%);
       background-size: 200% 200%;
-      animation: gradDrift 28s ease-in-out infinite;
+      animation: gradDrift 24s ease-in-out infinite;
     }
     @keyframes gradDrift {
       0%, 100% { background-position: 0% 40%; }
@@ -97,7 +102,7 @@
       height: 2px;
       border-radius: 50%;
       background: rgba(244, 237, 224, 0.15);
-      animation: floatP 18s ease-in-out infinite;
+      animation: floatP 15.5s ease-in-out infinite;
     }
     .ambient__particles span:nth-child(1) { left: 12%; top: 22%; animation-delay: 0s; }
     .ambient__particles span:nth-child(2) { left: 78%; top: 18%; animation-delay: -4s; }
@@ -109,7 +114,17 @@
       50% { transform: translate(8px, -12px); opacity: 0.7; }
     }
 
-    .page { position: relative; z-index: 1; }
+    .page {
+      position: relative;
+      z-index: 1;
+      padding-bottom: 0;
+      margin-bottom: 0;
+    }
+
+    #main-content {
+      padding-bottom: 0;
+      margin-bottom: 0;
+    }
 
     /* Nav */
     nav#main-nav {
@@ -194,6 +209,7 @@
     #hero {
       position: relative;
       overflow: hidden;
+      contain: paint;
       min-height: min(100vh, 920px);
       min-height: min(100dvh, 920px);
       min-height: -webkit-fill-available;
@@ -1054,6 +1070,7 @@
     footer {
       padding: 36px 40px 44px;
       border-top: 1px solid var(--line);
+      margin-bottom: 0;
     }
     .foot-inner {
       max-width: 1000px;
@@ -1428,7 +1445,7 @@
 
     <section class="home-origin home-origin--finale" id="home-origin" aria-label="Stephuary" data-sh-flow-section>
       <div class="home-origin__ambient" aria-hidden="true">
-        <span></span><span></span><span></span>
+        <span></span><span></span><span></span><span></span><span></span><span></span>
       </div>
       <div class="home-origin__shell">
         <div class="home-origin__rail" aria-hidden="true">
@@ -1436,11 +1453,19 @@
         </div>
         <div class="home-origin__content">
           <div class="home-origin__inner">
-            <p class="home-origin__line home-origin__line--gold">Stephuary comes from my name, and my birthday, February 28.</p>
-            <p class="home-origin__line">I stopped treating it like a single day and turned it into a month.</p>
-            <p class="home-origin__line">That idea stayed.</p>
-            <p class="home-origin__line">You don’t wait for the right moment.</p>
-            <p class="home-origin__line">You build something that works for you every day.</p>
+            <div class="home-origin__group" data-origin-group="1">
+              <p class="home-origin__line home-origin__line--gold">Stephuary comes from my name, and my birthday, February 28.</p>
+            </div>
+            <div class="home-origin__group" data-origin-group="2">
+              <p class="home-origin__line">I stopped treating it like a single day and turned it into a month.</p>
+            </div>
+            <div class="home-origin__group" data-origin-group="3">
+              <p class="home-origin__line">That idea stayed.</p>
+            </div>
+            <div class="home-origin__group home-origin__group--closing" data-origin-group="4">
+              <p class="home-origin__line home-origin__line--resolve">You don’t wait for the right moment.</p>
+              <p class="home-origin__line home-origin__line--resolve">You build something that works for you every day.</p>
+            </div>
           </div>
         </div>
       </div>
@@ -1594,9 +1619,9 @@
 
         function makeParticle(layer, w, h) {
           var cfg = {
-            far: { rMin: 0.18, rMax: 0.85, sp: 0.028, a: 0.048 },
-            mid: { rMin: 0.45, rMax: 1.45, sp: 0.065, a: 0.11 },
-            near: { rMin: 0.9, rMax: 2.35, sp: 0.042, a: 0.19 }
+            far: { rMin: 0.18, rMax: 0.85, sp: 0.032, a: 0.048 },
+            mid: { rMin: 0.45, rMax: 1.45, sp: 0.075, a: 0.11 },
+            near: { rMin: 0.9, rMax: 2.35, sp: 0.048, a: 0.19 }
           };
           var c = cfg[layer];
           var bright = layer === 'near' && Math.random() < 0.28;
@@ -1670,7 +1695,7 @@
         window.addEventListener('load', resize, { passive: true });
 
         function draw() {
-          t += 0.00165;
+          t += 0.0019;
           var em =
             typeof document !== 'undefined' &&
             document.documentElement &&
@@ -1692,7 +1717,7 @@
           ctx.fillStyle = grad;
           ctx.fillRect(0, 0, width, height);
 
-          var ap = t * 0.38;
+          var ap = t * 0.437;
           ctx.save();
           ctx.lineWidth = 1;
           ctx.globalAlpha = em ? 0.048 : 0.042;

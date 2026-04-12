@@ -507,7 +507,8 @@
     }
 
     function frame() {
-      t += 0.01;
+      var homeBoost = path === '/' ? 1.14 : 1;
+      t += 0.01 * homeBoost;
       var w = cBg.width / dprCap;
       var h = cBg.height / dprCap;
       var slow = document.body.classList.contains('sys-scroll--slow') ? 0.72 : 1;
@@ -515,9 +516,9 @@
       var vm = slow * fast;
       var navB = document.body.classList.contains('sh-transition-out') ? 2.35 : 1;
 
-      stepParticles(ptsBg, w, h, true, 0.55 * vm * navB);
-      stepParticles(ptsMid, w, h, false, 1 * vm * navB);
-      if (ptsFg.length) stepParticles(ptsFg, w, h, false, 1.35 * vm * navB);
+      stepParticles(ptsBg, w, h, true, 0.55 * vm * navB * homeBoost);
+      stepParticles(ptsMid, w, h, false, 1 * vm * navB * homeBoost);
+      if (ptsFg.length) stepParticles(ptsFg, w, h, false, 1.35 * vm * navB * homeBoost);
 
       drawLayer(ctxBg, ptsBg, 'rgba(5,5,5,0.1)', t, true);
       drawLayer(ctxMid, ptsMid, 'rgba(7,7,8,0.14)', t + 1.2, true);

@@ -533,7 +533,8 @@
 
     if (origin && !reduced) {
       var railFill = origin.querySelector('.home-origin__rail-fill');
-      var lines = global.gsap.utils.toArray(origin.querySelectorAll('.home-origin__line'));
+      var rail = origin.querySelector('.home-origin__rail');
+      var groups = global.gsap.utils.toArray(origin.querySelectorAll('.home-origin__group'));
 
       if (railFill) {
         global.gsap.fromTo(
@@ -552,30 +553,48 @@
         );
       }
 
-      lines.forEach(function (line, idx) {
+      if (rail) {
         global.gsap.fromTo(
-          line,
-          { autoAlpha: 0, y: 20 },
+          rail,
+          { autoAlpha: 0.42 },
           {
             autoAlpha: 1,
-            y: 0,
-            duration: 0.72,
+            duration: 1,
             ease: 'power2.out',
             scrollTrigger: {
-              trigger: line,
-              start: 'top 88%',
-              once: true,
-              onEnter: function () {
-                var j;
-                for (j = 0; j < idx; j++) {
-                  lines[j].classList.add('is-dimmed');
-                }
-              }
+              trigger: origin,
+              start: 'top 84%',
+              once: true
             }
           }
         );
-      });
+      }
+
+      if (groups.length) {
+        global.gsap.set(groups, { autoAlpha: 0, y: 12 });
+        global.gsap
+          .timeline({
+            scrollTrigger: {
+              trigger: origin.querySelector('.home-origin__inner') || origin,
+              start: 'top 78%',
+              once: true
+            }
+          })
+          .to(groups, {
+            autoAlpha: 1,
+            y: 0,
+            duration: 0.78,
+            stagger: 0.22,
+            ease: 'power2.out'
+          })
+          .call(function () {
+            origin.classList.add('is-origin-quiet');
+          });
+      }
     } else if (origin && reduced) {
+      global.gsap.utils.toArray(origin.querySelectorAll('.home-origin__group')).forEach(function (g) {
+        global.gsap.set(g, { autoAlpha: 1, y: 0 });
+      });
       global.gsap.utils.toArray(origin.querySelectorAll('.home-origin__line')).forEach(function (line) {
         global.gsap.set(line, { autoAlpha: 1, y: 0 });
       });
