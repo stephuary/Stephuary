@@ -55,19 +55,26 @@
   }
 
   function dominantLiteralLine(state) {
-    if (!state) return 'The system mapped where pressure concentrates.';
+    if (!state) return 'Your strongest pressure point is still clarifying.';
     var st = state.stage || 'direction';
     var strong = state.stageConfidence === 'high' || state.stageConfidence === 'medium';
     if (strong && state.stageReason) {
       var r = String(state.stageReason).trim();
-      if (r) return r;
+      if (r) {
+        if (/your strongest pressure point/i.test(r)) return r;
+        if (r.length < 140) {
+          var core = r.replace(/\.$/, '');
+          return 'Your strongest pressure point is ' + core + '.';
+        }
+        return r;
+      }
     }
     if (st === 'direction') return 'Your strongest pressure point is decision.';
-    if (st === 'revenue') return 'Time and revenue are out of sync.';
-    if (st === 'lock') return 'Friction is costing you more than effort is fixing.';
-    if (st === 'concept') return 'This is a build problem, not an effort problem.';
-    if (st === 'snapshot') return 'Several pressures show at once—worth a full read.';
-    return 'The system mapped where pressure concentrates.';
+    if (st === 'revenue') return 'Your strongest pressure point is time and revenue falling out of sync.';
+    if (st === 'lock') return 'Your strongest pressure point is friction.';
+    if (st === 'concept') return 'Your strongest pressure point is build and offer clarity.';
+    if (st === 'snapshot') return 'Your strongest pressure point is multiple pressures at once.';
+    return 'Your strongest pressure point is where you lose the most leverage.';
   }
 
   function tierHref(tierId) {
@@ -139,40 +146,19 @@
     var strip = root.getElementById('results-cei-strip');
     renderNodeStrip(strip, state);
 
-    var rec = state.recommendedTier || 'direction-system';
-    var strong = state.stageConfidence === 'high' || state.stageConfidence === 'medium';
-
     var pri = root.getElementById('results-primary-cta');
     var priSub = root.getElementById('results-primary-sub');
     if (pri) {
-      pri.href = strong ? tierHref(rec) : '/pricing';
-      pri.textContent = strong ? tierPrimaryLabel(rec) : 'See recommended pricing';
+      pri.href = '/monetize';
+      pri.textContent = 'Continue to Monetize →';
     }
     if (priSub) {
-      priSub.textContent = strong ? state.recommendedTierName + ' · matches this pattern' : 'Compare tiers and pick what fits';
-    }
-
-    var tierNameEl = root.getElementById('results-tier-name');
-    var tierWhyEl = root.getElementById('results-tier-why');
-    if (tierNameEl) tierNameEl.textContent = state.recommendedTierName || 'Direction System';
-    if (tierWhyEl) {
-      tierWhyEl.textContent = strong
-        ? String(state.stageReason || '').trim() || 'Fits where the pressure sits right now.'
-        : 'Use the system a little longer and the recommendation gets specific.';
-    }
-
-    var tierCta2 = root.getElementById('results-tier-cta');
-    if (tierCta2) {
-      if (strong) {
-        tierCta2.href = tierHref(rec);
-        tierCta2.textContent = tierPrimaryLabel(rec);
-      } else {
-        tierCta2.href = '/pricing';
-        tierCta2.textContent = 'View pricing';
-      }
+      priSub.textContent = '';
     }
     try {
-      if (strong) document.dispatchEvent(new CustomEvent('sh-env-pulse', { bubbles: true }));
+      var strongPulse =
+        state.stageConfidence === 'high' || state.stageConfidence === 'medium';
+      if (strongPulse) document.dispatchEvent(new CustomEvent('sh-env-pulse', { bubbles: true }));
     } catch (e) {}
   }
 

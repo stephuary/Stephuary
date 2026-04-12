@@ -149,6 +149,12 @@
       margin-bottom: 14px;
       max-width: 620px;
     }
+    .hero-h1--support {
+      font-size: clamp(18px, 2.2vw, 22px);
+      line-height: 1.45;
+      color: var(--muted);
+      max-width: 520px;
+    }
     .hero-sub {
       font-size: 15px;
       color: var(--muted);
@@ -591,7 +597,10 @@
       padding-bottom: 2px;
       transition: color 0.25s;
     }
-    .foot-link:hover { color: var(--gold); }
+    .foot-link:hover {
+      color: rgba(244, 237, 224, 0.55);
+      border-bottom-color: rgba(244, 237, 224, 0.12);
+    }
 
     @media (max-width: 720px) {
       .wrap, .wrap-wide, .top-bar { padding-left: 22px; padding-right: 22px; }
@@ -651,18 +660,38 @@
       box-shadow: 0 0 18px rgba(43, 79, 212, 0.22);
     }
     .results-dom-line {
-      font-size: 14px;
-      color: var(--muted);
-      line-height: 1.55;
-      max-width: 520px;
-      margin-bottom: 8px;
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-size: clamp(22px, 3.2vw, 32px);
+      line-height: 1.28;
+      color: var(--white);
+      max-width: 620px;
+      margin-bottom: 12px;
     }
     .results-hero-cta-row {
       display: flex;
-      flex-wrap: wrap;
-      gap: 10px 14px;
-      align-items: center;
-      margin-top: 8px;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 14px;
+      margin-top: 20px;
+    }
+    .results-flow-links {
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      color: rgba(244, 237, 224, 0.38);
+      line-height: 1.6;
+      max-width: 520px;
+    }
+    .results-flow-links a {
+      color: rgba(244, 237, 224, 0.5);
+      text-decoration: none;
+      border-bottom: 1px solid rgba(244, 237, 224, 0.12);
+      padding-bottom: 1px;
+      transition: color 0.2s ease, border-color 0.2s ease;
+    }
+    .results-flow-links a:hover {
+      color: rgba(244, 237, 224, 0.82);
+      border-bottom-color: rgba(244, 237, 224, 0.28);
     }
     .results-cta-pri {
       display: inline-flex;
@@ -690,16 +719,6 @@
       width: 100%;
       margin-top: 4px;
     }
-    .results-cta-sec {
-      font-size: 10px;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: var(--gold-dim);
-      text-decoration: none;
-      border-bottom: 1px solid rgba(196, 163, 90, 0.35);
-      padding-bottom: 2px;
-    }
-    .results-cta-sec:hover { color: var(--gold); }
     .results-sec {
       padding: 36px 0;
     }
@@ -783,17 +802,21 @@
     <section class="hero-result" data-sh-flow-section>
       <div class="wrap">
         <p class="hero-kicker">Your pattern</p>
-        <p class="hero-hit" id="heroHit">Named from your answers</p>
-        <h1 class="hero-h1" id="openingRead"></h1>
+        <p class="results-dom-line" id="results-dom-line"></p>
+        <h1 class="hero-h1 hero-h1--support" id="openingRead"></h1>
         <p class="hero-sub" id="results-hero-sub"></p>
         <div class="type-pill" id="typePill" aria-label="Detected types"></div>
         <div id="results-cei-strip" class="cei-node-strip" aria-label="Pressure map"></div>
-        <p class="results-dom-line" id="results-dom-line"></p>
         <div class="results-hero-cta-row">
-          <a class="results-cta-pri magnetic" id="results-primary-cta" href="/pricing" data-sh-flow-primary">See recommended pricing</a>
-          <a class="results-cta-sec" href="/systems">System map</a>
-          <a class="results-cta-sec" href="/pricing">Pricing</a>
-          <span class="results-cta-subnote" id="results-primary-sub"></span>
+          <a class="results-cta-pri magnetic" id="results-primary-cta" href="/monetize" data-sh-flow-primary>Continue to Monetize →</a>
+          <p class="results-flow-links" id="results-flow-links">
+            <a href="/systems">View system</a>
+            <span class="results-flow-links__sep" aria-hidden="true"> · </span>
+            <a href="/pricing">View pricing</a>
+            <span class="results-flow-links__sep" aria-hidden="true"> · </span>
+            <a href="/private-access">Request custom help</a>
+          </p>
+          <span class="results-cta-subnote" id="results-primary-sub" hidden></span>
         </div>
         <dl class="result-readout" id="resultReadoutBlock" hidden></dl>
       </div>
@@ -842,48 +865,10 @@
 
     <section class="results-sec alt" data-sh-flow-section>
       <div class="wrap-wide">
-        <p class="sec-label">C · What to do next</p>
+        <p class="sec-label">C · Next move</p>
         <div class="results-sec__card sh-flow-output-anchor">
           <p class="body-text" id="secC-next-move" style="margin-bottom:10px;"></p>
-          <p class="results-next-product" id="secC-product"></p>
-          <div class="action-steps" id="actionSteps" style="margin-top:16px;"></div>
-        </div>
-      </div>
-    </section>
-
-    <section class="results-sec" data-sh-flow-section>
-      <div class="wrap-wide">
-        <p class="sec-label">D · Best next step</p>
-        <div class="results-tier-card">
-          <p class="results-tier-kicker">Recommended tier</p>
-          <p class="results-tier-card__name" id="results-tier-name">Direction System</p>
-          <p class="results-tier-card__why" id="results-tier-why"></p>
-          <a class="results-cta-pri magnetic" id="results-tier-cta" href="/pricing">View pricing</a>
-          <p class="results-micro" id="diagNextBundle"></p>
-        </div>
-      </div>
-    </section>
-
-    <div class="rule"></div>
-
-    <section class="play-wrap" data-sh-flow-section style="padding-top:28px;">
-      <div class="wrap-wide">
-        <p class="sec-label">Room match</p>
-        <div class="play-grid" id="playGrid"></div>
-      </div>
-    </section>
-
-    <section class="block alt" data-sh-flow-section>
-      <div class="wrap-wide">
-        <div class="help-box">
-          <h2 class="sec-h2" style="margin-bottom: 12px;">Hands-on help</h2>
-          <p class="help-body">Written reviews, concept builds, and private work when you want someone in it with you.</p>
-          <ul class="help-options">
-            <li><strong>Direction Lock</strong> — A short written decision brief.</li>
-            <li><strong>Snapshot</strong> — Full written diagnostic, about 48 hours.</li>
-            <li><strong>Private access</strong> — Deeper work when the situation is complex.</li>
-          </ul>
-          <a href="/private-access" class="btn btn-ghost" data-sh-flow-secondary>Request access →</a>
+          <div class="action-steps" id="actionSteps" style="margin-top:8px;"></div>
         </div>
       </div>
     </section>
@@ -891,11 +876,11 @@
     <footer class="foot-close">
       <p class="foot-line">Clear next move beats more thinking.</p>
       <p class="foot-actions">
-        <a href="/pricing" class="foot-link">Pricing →</a>
+        <a href="/systems" class="foot-link">View system</a>
         <span class="foot-actions__sep" aria-hidden="true">·</span>
-        <a href="/systems" class="foot-link">System map →</a>
+        <a href="/pricing" class="foot-link">View pricing</a>
         <span class="foot-actions__sep" aria-hidden="true">·</span>
-        <a href="/capture" class="foot-link">Diagnostic again →</a>
+        <a href="/private-access" class="foot-link">Request custom help</a>
       </p>
     </footer>
   </main>
@@ -1131,16 +1116,6 @@
     var steps = document.getElementById('actionSteps');
     if (!steps) return;
     steps.innerHTML = '';
-    if (!diag || !diag.next_room || !diag.next_room.path) return;
-    var row = document.createElement('div');
-    row.className = 'action-step action-step--cta';
-    var a = document.createElement('a');
-    a.className = 'results-cta-pri';
-    a.href = diag.next_room.path;
-    a.setAttribute('data-sh-flow-secondary', '');
-    a.textContent = (diag.next_room.title || 'Next section') + ' →';
-    row.appendChild(a);
-    steps.appendChild(row);
   }
 
   function renderPickedUp(version, diag) {
@@ -1160,7 +1135,7 @@
       var ex = wt[0].p;
       if (items.indexOf(ex) < 0) items.push(ex);
     }
-    items.slice(0, 3).forEach(function (t) {
+    items.slice(0, 2).forEach(function (t) {
       var li = document.createElement('li');
       li.textContent = t;
       ul.appendChild(li);
@@ -1196,6 +1171,7 @@
 
   function renderPlaybooks(names) {
     var grid = document.getElementById('playGrid');
+    if (!grid) return;
     grid.innerHTML = '';
     names.forEach(function (name) {
       var meta = PLAYBOOK_META[name];
@@ -1290,18 +1266,19 @@
     document.getElementById('state-result').classList.add('visible');
 
     var diag = data.diagnostic;
-    var hitEl = document.getElementById('heroHit');
-    if (hitEl) hitEl.textContent = 'Your answers, mapped';
-
-    document.getElementById('openingRead').textContent =
-      diag && diag.main_problem ? diag.main_problem : version.opening;
+    var op = diag && diag.main_problem ? diag.main_problem : version.opening;
+    if (op && op.length > 140) op = op.slice(0, 137) + '…';
+    document.getElementById('openingRead').textContent = op || '';
 
     var subEl = document.getElementById('results-hero-sub');
     if (subEl) {
       var hl = '';
-      if (version.whatThisShows && version.whatThisShows[0] && version.whatThisShows[0].p) {
+      if (version.whatThisShows && version.whatThisShows[1] && version.whatThisShows[1].p) {
+        hl = version.whatThisShows[1].p;
+      } else if (version.whatThisShows && version.whatThisShows[0] && version.whatThisShows[0].p) {
         hl = version.whatThisShows[0].p;
       }
+      if (hl && hl.length > 120) hl = hl.slice(0, 117) + '…';
       subEl.textContent = hl;
     }
 
@@ -1325,18 +1302,6 @@
     } else {
       diagEl.hidden = true;
       if (confEl) confEl.textContent = '';
-    }
-
-    var bundleEl = document.getElementById('diagNextBundle');
-    if (bundleEl) {
-      if (diag && diag.next_room) {
-        var bits = [];
-        if (diag.next_room.title) bits.push(diag.next_room.title);
-        if (diag.next_reason) bits.push(diag.next_reason);
-        bundleEl.textContent = bits.join(' — ');
-      } else {
-        bundleEl.textContent = '';
-      }
     }
 
     var secC = document.getElementById('secC-next-move');
@@ -1425,16 +1390,6 @@
         window.StephuaryCeiBridge.applyResults(document);
       }
     } catch (e2) {}
-
-    var sp = document.getElementById('secC-product');
-    if (sp && window.StephuaryPersonalize && typeof window.StephuaryPersonalize.getState === 'function') {
-      try {
-        var st = window.StephuaryPersonalize.getState();
-        sp.textContent = st && st.recommendedTierName ? 'Suggested tier: ' + st.recommendedTierName : '';
-      } catch (e3) {
-          sp.textContent = '';
-      }
-    }
 
     try {
       if (window.StephuaryFounderReveal && typeof window.StephuaryFounderReveal.scheduleDiagnostic === 'function') {
