@@ -600,6 +600,163 @@
       .body-text, .bullet-list li { font-size: 16px; }
       .play-grid { grid-template-columns: 1fr; }
     }
+
+    /* CEI strip + revised results layout */
+    .cei-node-strip {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px 8px;
+      align-items: center;
+      margin: 18px 0 14px;
+      max-width: 640px;
+      position: relative;
+      padding: 12px 14px;
+      border: 1px solid var(--line-blue);
+      background: rgba(10, 12, 18, 0.45);
+    }
+    .cei-node-strip__pulse {
+      position: absolute;
+      inset: -1px;
+      border-radius: 2px;
+      pointer-events: none;
+      background: linear-gradient(120deg, transparent 40%, rgba(43, 79, 212, 0.12) 50%, transparent 60%);
+      background-size: 200% 100%;
+      animation: ceiPulse 7s ease-in-out infinite;
+      opacity: 0.85;
+    }
+    @keyframes ceiPulse {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .cei-node-strip__pulse { animation: none; opacity: 0.35; }
+    }
+    .cei-node {
+      font-family: 'Lato', sans-serif;
+      font-size: 8px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--faint);
+      padding: 5px 8px;
+      border: 1px solid var(--line-soft);
+      border-radius: 2px;
+      background: rgba(8, 8, 7, 0.6);
+      transition: border-color 0.25s, box-shadow 0.3s, color 0.2s;
+    }
+    .cei-node--hot {
+      color: var(--white);
+      border-color: rgba(43, 79, 212, 0.55);
+      box-shadow: 0 0 18px rgba(43, 79, 212, 0.22);
+    }
+    .results-dom-line {
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.55;
+      max-width: 520px;
+      margin-bottom: 8px;
+    }
+    .results-hero-cta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 14px;
+      align-items: center;
+      margin-top: 8px;
+    }
+    .results-cta-pri {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 14px 22px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: linear-gradient(165deg, var(--blue-hi) 0%, var(--blue) 100%);
+      color: #fff;
+      font-size: 10px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      text-decoration: none;
+      font-family: 'Lato', sans-serif;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .results-cta-pri:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 24px rgba(43, 79, 212, 0.35);
+    }
+    .results-cta-subnote {
+      font-size: 11px;
+      color: var(--faint);
+      letter-spacing: 0.06em;
+      width: 100%;
+      margin-top: 4px;
+    }
+    .results-cta-sec {
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--gold-dim);
+      text-decoration: none;
+      border-bottom: 1px solid rgba(196, 163, 90, 0.35);
+      padding-bottom: 2px;
+    }
+    .results-cta-sec:hover { color: var(--gold); }
+    .results-sec {
+      padding: 36px 0;
+    }
+    .results-sec.alt {
+      background: linear-gradient(180deg, #0a1018 0%, #080807 100%);
+    }
+    .results-sec__card {
+      border: 1px solid var(--line-blue);
+      background: rgba(13, 13, 11, 0.55);
+      padding: 22px 20px 24px;
+      max-width: 620px;
+    }
+    .results-sec__lead {
+      font-size: 15px;
+      color: var(--muted);
+      line-height: 1.65;
+      margin-bottom: 14px;
+    }
+    .results-tier-card {
+      border: 1px solid rgba(43, 79, 212, 0.35);
+      padding: 20px 18px;
+      background: rgba(10, 14, 22, 0.5);
+      max-width: 560px;
+    }
+    .results-tier-card__name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(22px, 2.8vw, 28px);
+      font-weight: 300;
+      color: var(--white);
+      margin-bottom: 8px;
+    }
+    .results-tier-card__why {
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.55;
+      margin-bottom: 16px;
+    }
+    .results-micro {
+      font-size: 12px;
+      color: var(--faint);
+      line-height: 1.5;
+      margin-top: 12px;
+    }
+    .results-next-product {
+      font-size: 13px;
+      color: var(--blue-hi);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-top: 6px;
+      font-family: 'Lato', sans-serif;
+    }
+    .results-tier-kicker {
+      font-size: 9px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--blue-hi);
+      margin-bottom: 8px;
+      font-family: 'Lato', sans-serif;
+    }
   </style>
 </head>
 <body>
@@ -623,41 +780,18 @@
   <main id="state-result">
     <section class="hero-result" data-sh-flow-section>
       <div class="wrap">
-        <p class="hero-kicker">Phase 01 · Diagnostic</p>
-        <p class="hero-hit" id="heroHit">We found the main issue.</p>
+        <p class="hero-kicker">Your pattern</p>
+        <p class="hero-hit" id="heroHit">Named from your answers</p>
         <h1 class="hero-h1" id="openingRead"></h1>
+        <p class="hero-sub" id="results-hero-sub"></p>
         <div class="type-pill" id="typePill" aria-label="Detected types"></div>
-        <div class="result-outcome" id="resultOutcome" hidden>
-          <p class="result-outcome__label">At a glance</p>
-          <dl class="result-outcome__grid">
-            <dt>Main issue</dt>
-            <dd id="outMainIssue"></dd>
-            <dt>Est. time loss</dt>
-            <dd id="outTimeLoss"></dd>
-            <dt>Est. money loss</dt>
-            <dd id="outMoneyLoss"></dd>
-            <dt>If nothing changes</dt>
-            <dd id="outStagnant"></dd>
-            <dt>Next step</dt>
-            <dd id="outNextStep"></dd>
-          </dl>
-          <p class="result-outcome__static">If nothing changes, this continues over the next 30–90 days.</p>
-        </div>
-        <div class="diag-wrap" id="diagnosticBlock" hidden>
-          <dl class="diag-grid">
-            <dt>What it is costing</dt>
-            <dd id="diagCost"></dd>
-            <dt>What you already have</dt>
-            <dd id="diagHave"></dd>
-            <dt>Fix first</dt>
-            <dd id="diagFix"></dd>
-          </dl>
-          <p class="diag-confidence" id="diagConfidence"></p>
-          <div class="diag-next">
-            <p class="diag-next-label">Recommended next section</p>
-            <p class="diag-next-title" id="diagNextTitle"></p>
-            <p class="diag-next-reason" id="diagNextReason"></p>
-          </div>
+        <div id="results-cei-strip" class="cei-node-strip" aria-label="Pressure map"></div>
+        <p class="results-dom-line" id="results-dom-line"></p>
+        <div class="results-hero-cta-row">
+          <a class="results-cta-pri magnetic" id="results-primary-cta" href="/pricing" data-sh-flow-primary">See recommended pricing</a>
+          <a class="results-cta-sec" href="/systems">System map</a>
+          <a class="results-cta-sec" href="/pricing">Pricing</a>
+          <span class="results-cta-subnote" id="results-primary-sub"></span>
         </div>
         <dl class="result-readout" id="resultReadoutBlock" hidden></dl>
       </div>
@@ -665,38 +799,74 @@
 
     <div class="rule"></div>
 
-    <section class="block alt" data-sh-flow-section>
+    <section class="results-sec alt" data-sh-flow-section>
       <div class="wrap-wide">
-        <p class="sec-label">What this shows</p>
-        <div id="whatShows"></div>
+        <p class="sec-label">A · What the system picked up</p>
+        <div class="results-sec__card">
+          <p class="results-sec__lead" id="picked-main"></p>
+          <ul class="bullet-list" id="picked-bullets"></ul>
+        </div>
       </div>
     </section>
 
-    <section class="block" data-sh-flow-section>
+    <section class="results-sec" data-sh-flow-section>
       <div class="wrap-wide">
-        <p class="sec-label">Where this shows up</p>
-        <div id="whereShows"></div>
+        <p class="sec-label">B · What this is costing</p>
+        <div class="result-outcome" id="resultOutcome">
+          <p class="result-outcome__label">Pressure and cost</p>
+          <dl class="result-outcome__grid">
+            <dt>Main issue</dt>
+            <dd id="outMainIssue"></dd>
+            <dt>Time</dt>
+            <dd id="outTimeLoss"></dd>
+            <dt>Money</dt>
+            <dd id="outMoneyLoss"></dd>
+            <dt>If nothing changes (30–90 days)</dt>
+            <dd id="outStagnant"></dd>
+          </dl>
+          <p class="result-outcome__static" id="out-stagnant-framing">If nothing changes, this continues over the next 30–90 days.</p>
+        </div>
+        <div class="diag-wrap" id="diagnosticBlock" hidden style="margin-top:20px;">
+          <dl class="diag-grid">
+            <dt>What it already costs</dt>
+            <dd id="diagCost"></dd>
+            <dt>What you already have</dt>
+            <dd id="diagHave"></dd>
+          </dl>
+          <p class="diag-confidence" id="diagConfidence"></p>
+        </div>
       </div>
     </section>
 
-    <div class="rule"></div>
-
-    <section class="action-section" data-sh-flow-section>
+    <section class="results-sec alt" data-sh-flow-section>
       <div class="wrap-wide">
-        <div class="action-card sh-flow-output-anchor">
-          <h3>Open this section next</h3>
-          <p class="body-text" id="actionIntro" style="margin-bottom:12px;"></p>
-          <p class="action-momentum" id="actionMomentum"></p>
-          <div class="action-steps" id="actionSteps"></div>
+        <p class="sec-label">C · What to do next</p>
+        <div class="results-sec__card sh-flow-output-anchor">
+          <p class="body-text" id="secC-next-move" style="margin-bottom:10px;"></p>
+          <p class="results-next-product" id="secC-product"></p>
+          <div class="action-steps" id="actionSteps" style="margin-top:16px;"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="results-sec" data-sh-flow-section>
+      <div class="wrap-wide">
+        <p class="sec-label">D · Best next step</p>
+        <div class="results-tier-card">
+          <p class="results-tier-kicker">Recommended tier</p>
+          <p class="results-tier-card__name" id="results-tier-name">Direction System</p>
+          <p class="results-tier-card__why" id="results-tier-why"></p>
+          <a class="results-cta-pri magnetic" id="results-tier-cta" href="/pricing">View pricing</a>
+          <p class="results-micro" id="diagNextBundle"></p>
         </div>
       </div>
     </section>
 
     <div class="rule"></div>
 
-    <section class="play-wrap" data-sh-flow-section>
+    <section class="play-wrap" data-sh-flow-section style="padding-top:28px;">
       <div class="wrap-wide">
-        <p class="sec-label">Section details</p>
+        <p class="sec-label">Room match</p>
         <div class="play-grid" id="playGrid"></div>
       </div>
     </section>
@@ -704,13 +874,12 @@
     <section class="block alt" data-sh-flow-section>
       <div class="wrap-wide">
         <div class="help-box">
-          <h2 class="sec-h2" style="margin-bottom: 12px;">If you want help applying this</h2>
-          <p class="help-body">If you want another set of eyes on this, there are a few ways to do that.</p>
-          <p class="help-body" style="font-size:14px;margin-bottom:12px;">You move up when what you have is not working cleanly enough on its own.</p>
+          <h2 class="sec-h2" style="margin-bottom: 12px;">Hands-on help</h2>
+          <p class="help-body">Written reviews, concept builds, and private work when you want someone in it with you.</p>
           <ul class="help-options">
-            <li><strong>Focused Review</strong> — Tighten what you already built so it converts.</li>
-            <li><strong>Snapshot</strong> — Written review in about 48 hours. Clear read on what to change.</li>
-            <li><strong>Advisory</strong> — Ongoing help so execution stays on track.</li>
+            <li><strong>Direction Lock</strong> — A short written decision brief.</li>
+            <li><strong>Snapshot</strong> — Full written diagnostic, about 48 hours.</li>
+            <li><strong>Private access</strong> — Deeper work when the situation is complex.</li>
           </ul>
           <a href="/access" class="btn btn-ghost" data-sh-flow-secondary>Request access →</a>
         </div>
@@ -718,16 +887,20 @@
     </section>
 
     <footer class="foot-close">
-      <p class="foot-line">You have enough to move now.</p>
+      <p class="foot-line">Clear next move beats more thinking.</p>
       <p class="foot-actions">
-        <a href="/pricing" class="foot-link">See pricing →</a>
+        <a href="/pricing" class="foot-link">Pricing →</a>
         <span class="foot-actions__sep" aria-hidden="true">·</span>
-        <a href="/capture" class="foot-link">Start again →</a>
+        <a href="/systems" class="foot-link">System map →</a>
+        <span class="foot-actions__sep" aria-hidden="true">·</span>
+        <a href="/capture" class="foot-link">Diagnostic again →</a>
       </p>
     </footer>
   </main>
 
   <script src="/stephuary-result.js"></script>
+  <script src="/stephuary-personalization.js"></script>
+  <script src="/stephuary-cei-bridge.js"></script>
   <script>
 (function () {
   var STORAGE_KEY = 'stephuary_result_v1';
@@ -952,23 +1125,53 @@
   }
 
   function renderPrimaryCta(diag) {
-    var intro = document.getElementById('actionIntro');
-    var momentum = document.getElementById('actionMomentum');
     var steps = document.getElementById('actionSteps');
-    intro.textContent = '';
-    momentum.textContent = '';
+    if (!steps) return;
     steps.innerHTML = '';
     if (!diag || !diag.next_room || !diag.next_room.path) return;
-    intro.textContent = 'The diagnostic is complete. This section does not repeat earlier steps.';
-    momentum.textContent = 'This is where you fix it.';
     var row = document.createElement('div');
     row.className = 'action-step action-step--cta';
     var a = document.createElement('a');
+    a.className = 'results-cta-pri';
     a.href = diag.next_room.path;
-    a.setAttribute('data-sh-flow-primary', '');
-    a.textContent = 'See Next Step →';
+    a.setAttribute('data-sh-flow-secondary', '');
+    a.textContent = (diag.next_room.title || 'Next section') + ' →';
     row.appendChild(a);
     steps.appendChild(row);
+  }
+
+  function renderPickedUp(version, diag) {
+    var main = document.getElementById('picked-main');
+    var ul = document.getElementById('picked-bullets');
+    if (main) {
+      main.textContent = diag && diag.main_problem ? diag.main_problem : version.opening;
+    }
+    if (!ul) return;
+    ul.innerHTML = '';
+    var items = [];
+    var w = version.whereShowsUp || [];
+    var i;
+    for (i = 0; i < w.length && items.length < 2; i++) items.push(w[i]);
+    var wt = version.whatThisShows;
+    if (wt && wt[0] && wt[0].p && items.length < 3) {
+      var ex = wt[0].p;
+      if (items.indexOf(ex) < 0) items.push(ex);
+    }
+    items.slice(0, 3).forEach(function (t) {
+      var li = document.createElement('li');
+      li.textContent = t;
+      ul.appendChild(li);
+    });
+  }
+
+  function readUserOutputs() {
+    try {
+      if (window.StephuaryPersonalize && typeof window.StephuaryPersonalize.getState === 'function') {
+        var st = window.StephuaryPersonalize.getState();
+        return st && st.outputs ? st.outputs : null;
+      }
+    } catch (e) {}
+    return null;
   }
 
   /** Maps legacy result “playbook” names to Room routes. */
@@ -1079,25 +1282,25 @@
     document.getElementById('state-result').classList.remove('visible');
   }
 
-  function heroHitLine(resultVersion) {
-    var k = resultVersion || 'mixed_general';
-    var s = 0;
-    for (var i = 0; i < k.length; i++) s += k.charCodeAt(i);
-    return s % 2 === 0
-      ? 'We found the main issue.'
-      : 'Here\'s what is actually getting in the way.';
-  }
-
   function showResult(data, version) {
     document.getElementById('state-missing').classList.remove('visible');
     document.getElementById('state-result').classList.add('visible');
 
     var diag = data.diagnostic;
     var hitEl = document.getElementById('heroHit');
-    if (hitEl) hitEl.textContent = heroHitLine(data.result_version);
+    if (hitEl) hitEl.textContent = 'Your answers, mapped';
 
     document.getElementById('openingRead').textContent =
       diag && diag.main_problem ? diag.main_problem : version.opening;
+
+    var subEl = document.getElementById('results-hero-sub');
+    if (subEl) {
+      var hl = '';
+      if (version.whatThisShows && version.whatThisShows[0] && version.whatThisShows[0].p) {
+        hl = version.whatThisShows[0].p;
+      }
+      subEl.textContent = hl;
+    }
 
     var pill = document.getElementById('typePill');
     var parts = [];
@@ -1113,16 +1316,32 @@
       diagEl.hidden = false;
       document.getElementById('diagCost').textContent = diag.what_it_costs || '';
       document.getElementById('diagHave').textContent = diag.what_you_have || '';
-      document.getElementById('diagFix').textContent = diag.fix_first || '';
-      document.getElementById('diagNextTitle').textContent =
-        diag.next_room && diag.next_room.title ? diag.next_room.title : '';
-      document.getElementById('diagNextReason').textContent = diag.next_reason || '';
       if (confEl) {
-        confEl.textContent = 'From your answers, not a generic label.';
+        confEl.textContent = 'Grounded in what you chose, not a generic type.';
       }
     } else {
       diagEl.hidden = true;
       if (confEl) confEl.textContent = '';
+    }
+
+    var bundleEl = document.getElementById('diagNextBundle');
+    if (bundleEl) {
+      if (diag && diag.next_room) {
+        var bits = [];
+        if (diag.next_room.title) bits.push(diag.next_room.title);
+        if (diag.next_reason) bits.push(diag.next_reason);
+        bundleEl.textContent = bits.join(' — ');
+      } else {
+        bundleEl.textContent = '';
+      }
+    }
+
+    var secC = document.getElementById('secC-next-move');
+    if (secC) {
+      secC.textContent =
+        diag && diag.fix_first
+          ? String(diag.fix_first)
+          : 'Pick one concrete move you can finish this week.';
     }
 
     var readoutEl = document.getElementById('resultReadoutBlock');
@@ -1168,30 +1387,51 @@
     if (outcomeEl) {
       outcomeEl.hidden = false;
       var lo = readLiveEstimates();
+      var uo = readUserOutputs();
       var mainIssueText = diag && diag.main_problem ? diag.main_problem : version.opening;
       document.getElementById('outMainIssue').textContent = mainIssueText || '';
-      document.getElementById('outTimeLoss').textContent = lo ? fmtH(lo.smoothHours) + ' (estimate)' : '—';
-      document.getElementById('outMoneyLoss').textContent = lo ? fmtMoney(lo.smoothMoney) + '/yr (estimate)' : '—';
+      var timeTxt = lo ? fmtH(lo.smoothHours) + ' (estimate)' : '—';
+      var moneyTxt = lo ? fmtMoney(lo.smoothMoney) + '/yr (estimate)' : '—';
+      if (uo && uo.timeLoss && String(uo.timeLoss).trim()) timeTxt = String(uo.timeLoss).trim();
+      if (uo && uo.moneyLoss && String(uo.moneyLoss).trim()) moneyTxt = String(uo.moneyLoss).trim();
+      document.getElementById('outTimeLoss').textContent = timeTxt;
+      document.getElementById('outMoneyLoss').textContent = moneyTxt;
       var stagn = '';
-      if (diag && diag.what_it_costs) {
+      if (uo && (uo.mainIssue || uo.nextMove)) {
+        var tail = [];
+        if (uo.mainIssue) tail.push(String(uo.mainIssue).trim());
+        if (diag && diag.what_it_costs) tail.push(String(diag.what_it_costs).trim());
+        stagn = tail.filter(Boolean).join(' ');
+      } else if (diag && diag.what_it_costs) {
         stagn = String(diag.what_it_costs).trim();
-        if (stagn.length > 240) stagn = stagn.slice(0, 237) + '…';
       } else {
-        stagn = 'The same leaks keep draining time and money.';
+        stagn = 'Same delay, same unfinished work cycle, same revenue leak.';
       }
+      if (stagn.length > 280) stagn = stagn.slice(0, 277) + '…';
       document.getElementById('outStagnant').textContent = stagn;
-      var nextS = '';
-      if (diag && diag.fix_first) nextS = String(diag.fix_first);
-      else if (diag && diag.next_room && diag.next_room.title) nextS = String(diag.next_room.title);
-      document.getElementById('outNextStep').textContent = nextS || '—';
     }
 
-    renderBlocks(document.getElementById('whatShows'), version.whatThisShows);
-    renderBulletList(document.getElementById('whereShows'), version.whereShowsUp);
+    renderPickedUp(version, diag);
     renderPrimaryCta(diag);
 
     var names = data.playbooks && data.playbooks.length ? data.playbooks.slice(0, 1) : [(version.playbooks && version.playbooks[0]) || 'Execution'];
     renderPlaybooks(names);
+
+    try {
+      if (window.StephuaryCeiBridge && typeof window.StephuaryCeiBridge.applyResults === 'function') {
+        window.StephuaryCeiBridge.applyResults(document);
+      }
+    } catch (e2) {}
+
+    var sp = document.getElementById('secC-product');
+    if (sp && window.StephuaryPersonalize && typeof window.StephuaryPersonalize.getState === 'function') {
+      try {
+        var st = window.StephuaryPersonalize.getState();
+        sp.textContent = st && st.recommendedTierName ? 'Suggested tier: ' + st.recommendedTierName : '';
+      } catch (e3) {
+        sp.textContent = '';
+      }
+    }
   }
 
   var loaded = loadResult();

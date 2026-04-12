@@ -103,9 +103,9 @@ body.pricing-page::after{
 .inner-tier--recommended{
   position:relative;
   border-radius:var(--r);
-  border:1px solid rgba(43,79,212,0.42);
-  box-shadow:0 0 0 1px rgba(43,79,212,0.25),0 12px 40px rgba(43,79,212,0.16);
-  transform:scale(1.006);
+  border:1px solid rgba(43,79,212,0.52);
+  box-shadow:0 0 0 1px rgba(43,79,212,0.32),0 0 28px rgba(43,79,212,0.2),0 14px 44px rgba(43,79,212,0.14);
+  transform:scale(1.012);
   transform-origin:center top;
   transition:box-shadow .3s ease,transform .25s ease;
 }
@@ -117,6 +117,34 @@ body.pricing-page::after{
   display:block;font-family:var(--mono);font-size:7px;letter-spacing:0.16em;text-transform:uppercase;
   color:var(--blue-hi);margin:0 0 8px;
 }
+.pricing-rec-context{
+  font-family:var(--mono);font-size:9px;letter-spacing:0.14em;text-transform:uppercase;
+  color:var(--text-4);margin:10px 0 6px;max-width:48ch;line-height:1.5;
+}
+.pricing-rec-context:not([hidden]){display:block;}
+.cei-node-strip{
+  display:flex;flex-wrap:wrap;gap:6px 8px;align-items:center;position:relative;
+  padding:10px 12px;border:1px solid rgba(43,79,212,0.18);border-radius:var(--r);
+  background:rgba(10,12,18,0.55);max-width:100%;
+}
+.cei-node-strip__pulse{
+  position:absolute;inset:-1px;border-radius:var(--r);pointer-events:none;
+  background:linear-gradient(120deg,transparent 40%,rgba(43,79,212,0.1) 50%,transparent 60%);
+  background-size:200% 100%;
+  animation:pricingCeiPulse 8s ease-in-out infinite;opacity:0.75;
+}
+@keyframes pricingCeiPulse{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+@media (prefers-reduced-motion:reduce){.cei-node-strip__pulse{animation:none;opacity:0.3}}
+.cei-node{
+  font-family:var(--mono);font-size:7px;letter-spacing:0.12em;text-transform:uppercase;
+  color:var(--text-5);padding:4px 6px;border:1px solid var(--line);border-radius:var(--r);
+  background:rgba(8,8,7,0.65);transition:border-color .2s,box-shadow .25s,color .15s;
+}
+.cei-node--hot{
+  color:var(--text);border-color:rgba(43,79,212,0.5);
+  box-shadow:0 0 14px rgba(43,79,212,0.18);
+}
+.pricing-cei-strip{margin:12px 0 14px;}
 .pricing-hero__viz{min-height:88px;display:flex;align-items:center;justify-content:center;}
 .pricing-hero__viz .sys-visual{
   margin:0;width:100%;max-width:100%;height:88px;opacity:0.92;
@@ -217,7 +245,8 @@ body.pricing-page #sh-live-panel .sh-live-panel__dock{
   color:var(--text);letter-spacing:-0.02em;line-height:1.15;margin-bottom:6px;
 }
 .price-group__preview{
-  font-size:13px;color:var(--text-4);line-height:1.45;max-width:52ch;
+  font-size:12px;color:var(--text-3);line-height:1.5;max-width:52ch;
+  font-family:var(--mono);letter-spacing:0.04em;
 }
 .price-group__hint{
   display:none;
@@ -335,6 +364,49 @@ body.pricing-page #sh-live-panel .sh-live-panel__dock{
 .foot a.foot-club{color:var(--gold-dim);}
 .foot a.foot-club:hover{color:var(--gold-hi);}
 
+.custom-build-showcase{
+  position:relative;margin:0 0 18px;padding:22px 18px 20px;
+  border:1px solid rgba(196,163,90,0.24);
+  background:linear-gradient(145deg,rgba(22,20,16,0.92) 0%,rgba(8,10,18,0.88) 100%);
+  overflow:hidden;--mx:0;
+  transition:box-shadow .35s ease;
+}
+.price-group--custom-build[open] .custom-build-showcase{
+  box-shadow:0 14px 52px rgba(0,0,0,0.38),0 0 0 1px rgba(43,79,212,0.06);
+}
+.custom-build-showcase__glow{
+  position:absolute;inset:-50% -20%;
+  background:radial-gradient(ellipse 70% 50% at 50% 35%,rgba(43,79,212,0.16),transparent 58%);
+  pointer-events:none;
+  transform:translateX(calc(var(--mx) * 22px));
+  transition:transform .35s ease-out;
+}
+.custom-build-showcase__orbit{
+  position:relative;height:76px;margin-bottom:14px;display:flex;align-items:center;justify-content:center;gap:22px;
+}
+.custom-build-showcase__dot{
+  width:10px;height:10px;border-radius:50%;background:var(--gold-dim);
+  box-shadow:0 0 18px rgba(196,163,90,0.4);
+  animation:cbDot 5s ease-in-out infinite;
+}
+.custom-build-showcase__dot--b{animation-delay:.45s;background:rgba(43,79,212,0.9);box-shadow:0 0 18px rgba(43,79,212,0.35);}
+.custom-build-showcase__dot--c{animation-delay:.9s;background:var(--text-4);box-shadow:0 0 12px rgba(244,237,224,0.12);}
+@keyframes cbDot{
+  0%,100%{transform:translateY(0);opacity:0.88}
+  50%{transform:translateY(-8px);opacity:1}
+}
+@media (prefers-reduced-motion:reduce){
+  .custom-build-showcase__dot{animation:none}
+}
+.custom-build-showcase__proof{
+  font-family:var(--serif);font-size:clamp(20px,2.5vw,28px);font-weight:300;
+  color:var(--text);line-height:1.18;margin:0 0 10px;letter-spacing:-0.02em;position:relative;z-index:1;
+}
+.custom-build-showcase__sub{
+  font-size:13px;color:var(--text-3);line-height:1.55;max-width:52ch;margin:0;position:relative;z-index:1;
+}
+.custom-build-club-note{margin-top:18px!important;padding-top:14px!important;border-top:1px solid rgba(59,13,13,0.3)!important;}
+
 /* Mobile / tablet: live block between hero and groups */
 @media(max-width:900px){
   .pricing-layout{
@@ -363,6 +435,7 @@ body.pricing-page #sh-live-panel .sh-live-panel__dock{
 <div id="page-transition" aria-hidden="true"></div>
 <script src="/stephuary-interactive.js" defer></script>
 <script src="/stephuary-early-mode.js" defer></script>
+<script src="/stephuary-cei-bridge.js" defer></script>
 <script src="/stephuary-personalization.js" defer></script>
 <script src="/stephuary-global-map.js" defer></script>
 <div class="page">
@@ -387,6 +460,8 @@ body.pricing-page #sh-live-panel .sh-live-panel__dock{
       <h1 class="pricing-hero__title">Pricing follows the system</h1>
       <p class="pricing-identity-line">I design systems so your work's usable, visible, and paid.</p>
       <p class="pricing-hero__sub">Start free. Unlock only what you need.</p>
+      <p class="pricing-rec-context" id="pricing-rec-context" hidden></p>
+      <div id="pricing-cei-strip" class="pricing-cei-strip" aria-label="Pressure map"></div>
       <p class="pricing-hero__personal" id="pricing-hero-personal" hidden></p>
     </div>
     <div class="pricing-hero__viz">
@@ -533,38 +608,49 @@ body.pricing-page #sh-live-panel .sh-live-panel__dock{
         </div>
       </details>
 
-      <details class="price-group" data-pricing-group id="tier-custom-build" data-sh-map-node="custom">
+      <details class="price-group price-group--custom-build" data-pricing-group id="tier-custom-build" data-sh-map-node="custom">
         <summary>
           <div class="price-group__kicker">D</div>
           <h2 class="price-group__title">Custom Build</h2>
-          <p class="price-group__preview">When you want this built for your business.</p>
+          <p class="price-group__preview">Built to spec—sites, internal tools, or both.</p>
           <div class="price-group__hint">Websites, internal systems, or both—priced by scope.</div>
         </summary>
         <div class="price-group__anim">
           <div class="price-group__inner">
             <div class="price-group__pad">
 
+              <div class="custom-build-showcase" id="custom-build-showcase">
+                <div class="custom-build-showcase__glow" aria-hidden="true"></div>
+                <div class="custom-build-showcase__orbit" style="position:relative;z-index:1" aria-hidden="true">
+                  <span class="custom-build-showcase__dot"></span>
+                  <span class="custom-build-showcase__dot custom-build-showcase__dot--b"></span>
+                  <span class="custom-build-showcase__dot custom-build-showcase__dot--c"></span>
+                </div>
+                <p class="custom-build-showcase__proof">This site is one example of what that can look like.</p>
+                <p class="custom-build-showcase__sub">Interactive flow, clear hierarchy, and a system behind the page—not a template with your name on it.</p>
+              </div>
+
               <div class="inner-tier">
                 <p class="inner-tier__label">Interactive Website Experiences</p>
                 <p class="inner-tier__price">$2,500+</p>
-                <p class="inner-tier__desc">Custom-built websites designed to hold attention and convert.</p>
+                <p class="inner-tier__desc">Built to hold attention and convert—structure first, decoration second.</p>
               </div>
 
               <div class="inner-tier">
                 <p class="inner-tier__label">Custom Business Operating System</p>
                 <p class="inner-tier__price">$3,750+</p>
-                <p class="inner-tier__desc">A private browser-based system to manage clients, revenue, and operations in one place.</p>
+                <p class="inner-tier__desc">One private browser-based place for clients, revenue, and operations.</p>
               </div>
 
               <div class="inner-tier">
                 <p class="inner-tier__label">Combined Systems</p>
                 <p class="inner-tier__price">$7,000+</p>
-                <p class="inner-tier__desc">Website and operating system built together.</p>
+                <p class="inner-tier__desc">Site and operating system designed together so nothing fights anything else.</p>
               </div>
 
-              <p class="note-bridge" style="margin-top:4px;border-top:none;padding-top:0;">Custom work's handled through Only Sometimes Club.</p>
+              <p class="note-bridge custom-build-club-note">Custom work is handled through Only Sometimes Club.</p>
               <div class="tier-cta-row">
-                <a href="https://onlysometimesclub.com" class="tier-cta tier-cta--pri magnetic" target="_blank" rel="noopener noreferrer">Request Access</a>
+                <a href="https://onlysometimesclub.com" class="tier-cta tier-cta--pri magnetic" target="_blank" rel="noopener noreferrer">Request access</a>
               </div>
 
             </div>
@@ -609,14 +695,14 @@ body.pricing-page #sh-live-panel .sh-live-panel__dock{
     if (slot.contains(panel)) return;
     slot.appendChild(panel);
   }
-  function run() {
+  function initLiveDock() {
     placeLivePanel();
     if (!document.getElementById('pricing-live-slot').querySelector('#sh-live-panel')) {
       setTimeout(placeLivePanel, 80);
     }
   }
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run);
-  else run();
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initLiveDock);
+  else initLiveDock();
   window.addEventListener('load', placeLivePanel);
 
   var groups = document.querySelectorAll('[data-pricing-group]');
@@ -628,6 +714,18 @@ body.pricing-page #sh-live-panel .sh-live-panel__dock{
       });
     });
   });
+
+  var cb = document.getElementById('custom-build-showcase');
+  if (cb) {
+    cb.addEventListener('mousemove', function (e) {
+      var r = cb.getBoundingClientRect();
+      var x = (e.clientX - r.left) / r.width - 0.5;
+      cb.style.setProperty('--mx', String(Math.max(-1, Math.min(1, x * 2))));
+    });
+    cb.addEventListener('mouseleave', function () {
+      cb.style.setProperty('--mx', '0');
+    });
+  }
 })();
 </script>
 </body>

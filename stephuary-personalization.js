@@ -964,6 +964,9 @@
     }
 
     if (!hasStrongRecommendation(state)) {
+      if (global.StephuaryCeiBridge && typeof global.StephuaryCeiBridge.applyPricing === 'function') {
+        global.StephuaryCeiBridge.applyPricing(global.document, state);
+      }
       return;
     }
 
@@ -989,14 +992,18 @@
     }
 
     if (sub) {
-      sub.textContent =
-        'When you are ready to pay for clarity: ' + state.recommendedTierName + '.';
+      var whyP = String(state.stageReason || '').trim();
+      sub.textContent = whyP || state.recommendedTierName + ' matches what showed up in your path.';
       sub.hidden = false;
     }
 
     var osc = state.behavior.onlySometimesClicks || 0;
     if (osc > 2 && groups.length) {
       groups[groups.length - 1].classList.add('price-group--osc-emphasis');
+    }
+
+    if (global.StephuaryCeiBridge && typeof global.StephuaryCeiBridge.applyPricing === 'function') {
+      global.StephuaryCeiBridge.applyPricing(global.document, state);
     }
   }
 
