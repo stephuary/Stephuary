@@ -1,10 +1,9 @@
 /**
- * Private Selection — Early Mode + signal-based visibility; monthly local storage.
+ * Private Selection — 3–7 AM local only; modal overlay; monthly local storage.
  */
 (function (global) {
-  var STORAGE_KEY = 'stephuary_private_selection_v1';
-  var SESSION_DWELL = 'ps_dwell_sec';
-  var SESSION_SEEN = 'ps_section_ids';
+  var STORAGE_KEY = 'stephuary_private_selection_v2';
+  var STORAGE_LEGACY = 'stephuary_private_selection_v1';
 
   function monthKey() {
     var d = new Date();
@@ -20,59 +19,24 @@
     }
   }
 
-  function hasDiagnostic() {
-    try {
-      return global.localStorage.getItem('diagnosticCompleted') === 'true';
-    } catch (e) {
-      return false;
-    }
-  }
-
-  function getDwellSec() {
-    try {
-      return parseInt(global.sessionStorage.getItem(SESSION_DWELL) || '0', 10) || 0;
-    } catch (e) {
-      return 0;
-    }
-  }
-
-  function getSectionCount() {
-    try {
-      var raw = global.sessionStorage.getItem(SESSION_SEEN);
-      if (!raw) return 0;
-      var a = JSON.parse(raw);
-      return Array.isArray(a) ? a.length : 0;
-    } catch (e) {
-      return 0;
-    }
-  }
-
-  function hasMeaningfulTime() {
-    return getDwellSec() >= 120;
-  }
-
-  function hasMultiSection() {
-    return getSectionCount() >= 3;
-  }
-
-  function secondarySignal() {
-    return hasDiagnostic() || hasMeaningfulTime() || hasMultiSection();
-  }
-
   function shouldShowFeature() {
-    return isEarlyMode() && secondarySignal();
+    return isEarlyMode();
   }
 
   function loadStore() {
     try {
       var raw = global.localStorage.getItem(STORAGE_KEY);
-      if (!raw) return null;
-      var o = JSON.parse(raw);
-      if (!o || o.v !== 1) return null;
-      return o;
-    } catch (e) {
-      return null;
-    }
+      if (raw) {
+        var o = JSON.parse(raw);
+        if (o && o.v === 2) return o;
+      }
+      var leg = global.localStorage.getItem(STORAGE_LEGACY);
+      if (leg) {
+        var o1 = JSON.parse(leg);
+        if (o1 && o1.v === 1) return o1;
+      }
+    } catch (e) {}
+    return null;
   }
 
   function saveStore(o) {
@@ -88,17 +52,87 @@
     return st.entry || null;
   }
 
+  function hasLegacyShape(entry) {
+    return entry && (entry.stuck !== undefined) && (entry.year === undefined);
+  }
+
   function hasSubmittedThisMonth() {
     var e = currentMonthEntry();
     return !!(e && e.submittedAt);
   }
 
+  function loadPersonalizationState() {
+    try {
+      var raw = global.localStorage.getItem('stephuary_user_state_v1');
+      return raw ? JSON.parse(raw) : null;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function loadResult() {
+    try {
+      var raw = global.localStorage.getItem('stephuary_result_v1');
+      return raw ? JSON.parse(raw) : null;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  /**
+   * Returns { kind, label } or null. kind is internal key for storage.
+   */
+  function pickDynamicQuestion(state, result) {
+    state = state || {};
+    var tags = state.tags || {};
+    var scores = state.stageScores || {};
+    var rec = String(state.recommendedTier || '');
+    var bott = String(tags.bottleneck || '');
+    var stage = String(state.stage || '');
+
+    var snapScore = typeof scores.snapshot === 'number' ? scores.snapshot : 0;
+    if (bott === 'needs_full_review' || snapScore >= 4 || stage === 'snapshot') {
+      return { kind: 'snapshot', label: 'What feels unclear even after going through this?' };
+    }
+    if (
+      rec.indexOf('direction') >= 0 ||
+      bott === 'too_many_ideas' ||
+      bott === 'scattered_focus' ||
+      bott === 'no_offer' ||
+      tags.directionClarity === 'none'
+    ) {
+      return { kind: 'direction', label: 'What are you deciding between right now?' };
+    }
+    if (rec.indexOf('revenue') >= 0 || bott === 'no_money_path' || tags.goal === 'make_money' || tags.goal === 'get_clients') {
+      return { kind: 'revenue', label: 'How are you currently trying to make money from this?' };
+    }
+    if (
+      rec.indexOf('lock') >= 0 ||
+      bott === 'wrong_order' ||
+      bott === 'execution_breakdown' ||
+      (tags.executionIssue && tags.executionIssue !== 'none' && tags.executionIssue !== '')
+    ) {
+      return { kind: 'friction', label: 'What is slowing you down most day to day?' };
+    }
+    if (rec.indexOf('concept') >= 0 || bott === 'weak_positioning' || stage === 'concept') {
+      return { kind: 'concept', label: 'Who is this actually for?' };
+    }
+    if (state.diagnosticCompleted || (result && result.diagnostic)) {
+      return { kind: 'snapshot', label: 'What feels unclear even after going through this?' };
+    }
+    return null;
+  }
+
   function gatherDiagnosticSnapshot() {
     var snap = {
-      diagnosticCompleted: hasDiagnostic(),
+      diagnosticCompleted: false,
       result: null,
-      userState: null
+      userState: null,
+      dynamicKind: null
     };
+    try {
+      snap.diagnosticCompleted = global.localStorage.getItem('diagnosticCompleted') === 'true';
+    } catch (e) {}
     try {
       var r = global.localStorage.getItem('stephuary_result_v1');
       if (r) snap.result = JSON.parse(r);
@@ -111,103 +145,33 @@
   }
 
   function prefillFromSnapshot() {
-    var out = { build: '', stuck: '', extra: '' };
+    var out = {
+      build: '',
+      year: '',
+      stuck: '',
+      tried: '',
+      why: '',
+      dynamic: ''
+    };
+    var r = loadResult();
+    var st = loadPersonalizationState();
     try {
-      var r = global.localStorage.getItem('stephuary_result_v1');
-      if (r) {
-        var o = JSON.parse(r);
-        if (o.diagnostic) {
-          if (o.diagnostic.main_problem) out.build = String(o.diagnostic.main_problem).trim();
-          if (o.diagnostic.fix_first) out.stuck = String(o.diagnostic.fix_first).trim();
-        }
-        if (!out.build && o.type_primary) out.build = String(o.type_primary).trim();
+      if (r && r.diagnostic) {
+        if (r.diagnostic.main_problem) out.build = String(r.diagnostic.main_problem).trim();
+        if (r.diagnostic.fix_first) out.stuck = String(r.diagnostic.fix_first).trim();
       }
+      if (!out.build && r && r.type_primary) out.build = String(r.type_primary).trim();
     } catch (e) {}
     try {
-      var u = global.localStorage.getItem('stephuary_user_state_v1');
-      if (u) {
-        var st = JSON.parse(u);
-        if (st.outputs) {
-          if (!out.build && st.outputs.mainIssue) out.build = String(st.outputs.mainIssue).trim();
-          if (!out.stuck && st.outputs.nextMove) out.stuck = String(st.outputs.nextMove).trim();
-        }
+      if (st && st.outputs) {
+        if (!out.build && st.outputs.mainIssue) out.build = String(st.outputs.mainIssue).trim();
+        if (!out.stuck && st.outputs.nextMove) out.stuck = String(st.outputs.nextMove).trim();
+        if (st.outputs.timeLoss) out.tried = 'Time cost context: ' + String(st.outputs.timeLoss).trim();
+        if (st.outputs.moneyLoss) out.why = 'Cost context: ' + String(st.outputs.moneyLoss).trim();
       }
+      if (st && st.stageReason && !out.why) out.why = String(st.stageReason).trim();
     } catch (e) {}
     return out;
-  }
-
-  var dwellTimer = null;
-  function tickDwell() {
-    try {
-      var n = getDwellSec() + 10;
-      global.sessionStorage.setItem(SESSION_DWELL, String(n));
-    } catch (e) {}
-  }
-
-  function bindDwell() {
-    if (dwellTimer) return;
-    dwellTimer = global.setInterval(tickDwell, 10000);
-  }
-
-  function bindSectionObserver() {
-    if (!global.IntersectionObserver) return;
-    var root = global.document.getElementById('main-content');
-    if (!root) return;
-    var sections = root.querySelectorAll('section[id], section[data-sh-flow-section]');
-    if (!sections.length) return;
-
-    var list = Array.prototype.slice.call(sections);
-    var seen = new Set();
-    try {
-      var prev = JSON.parse(global.sessionStorage.getItem(SESSION_SEEN) || '[]');
-      if (Array.isArray(prev)) prev.forEach(function (id) { seen.add(id); });
-    } catch (e) {}
-
-    function persistSeen() {
-      try {
-        global.sessionStorage.setItem(SESSION_SEEN, JSON.stringify(Array.from(seen)));
-      } catch (e) {}
-    }
-
-    function sectionKey(el) {
-      if (el.id) return String(el.id).slice(0, 64);
-      var ds = el.getAttribute('data-sh-flow-section');
-      if (ds !== null && ds !== '') return ('data-' + ds).slice(0, 64);
-      var ix = list.indexOf(el);
-      return 'sec-' + (ix >= 0 ? ix : 0);
-    }
-
-    var obs = new IntersectionObserver(
-      function (entries) {
-        entries.forEach(function (en) {
-          if (!en.isIntersecting || en.intersectionRatio < 0.25) return;
-          var key = sectionKey(en.target);
-          if (seen.has(key)) return;
-          seen.add(key);
-          persistSeen();
-          tryMount();
-        });
-      },
-      { root: null, threshold: [0, 0.25, 0.5] }
-    );
-
-    list.forEach(function (sec) {
-      obs.observe(sec);
-    });
-  }
-
-  function getSessionId() {
-    try {
-      var k = 'ps_session_id';
-      var id = global.sessionStorage.getItem(k);
-      if (!id) {
-        id = 'ps_' + Date.now() + '_' + Math.random().toString(36).slice(2, 11);
-        global.sessionStorage.setItem(k, id);
-      }
-      return id;
-    } catch (e) {
-      return null;
-    }
   }
 
   function syncEarlySlot() {
@@ -222,67 +186,52 @@
     }
   }
 
-  function mountHTML() {
-    return (
-      '<section class="private-selection" id="private-selection" aria-label="Private Selection">' +
-      '<div class="private-selection__inner">' +
-      '<h2 class="private-selection__title">Private Selection</h2>' +
-      '<p class="private-selection__body">Once a month, one build is selected.</p>' +
-      '<p class="private-selection__body private-selection__body--sub">Selection is based on clarity, not application.</p>' +
-      '<button type="button" class="btn btn--ghost private-selection__enter" id="ps-open-btn">Enter</button>' +
-      (hasSubmittedThisMonth()
-        ? '<p class="private-selection__status" id="ps-inline-status">Entry submitted this month.</p>'
-        : '') +
-      '</div></section>'
-    );
+  function tryMount() {
+    syncEarlySlot();
   }
 
-  function tryMount() {
-    var mount = global.document.getElementById('private-selection-mount');
-    if (!mount) return;
+  function renderDynamicField() {
+    var slot = global.document.getElementById('ps-dynamic-slot');
+    if (!slot) return null;
+    slot.innerHTML = '';
+    var st = loadPersonalizationState();
+    var res = loadResult();
+    var pick = pickDynamicQuestion(st, res);
+    if (!pick) return null;
 
-    syncEarlySlot();
+    var wrap = global.document.createElement('div');
+    wrap.className = 'ps-dynamic';
+    wrap.setAttribute('data-ps-dynamic', pick.kind);
 
-    if (!shouldShowFeature()) {
-      mount.innerHTML = '';
-      mount.setAttribute('hidden', '');
-      return;
-    }
+    var id = 'ps-field-dynamic';
+    var lab = global.document.createElement('label');
+    lab.className = 'ps-label';
+    lab.setAttribute('for', id);
+    lab.textContent = pick.label;
 
-    mount.removeAttribute('hidden');
-    if (!mount.querySelector('#private-selection')) {
-      mount.innerHTML = mountHTML();
-      var btn = global.document.getElementById('ps-open-btn');
-      if (btn) btn.addEventListener('click', openOverlay);
-    } else {
-      var stEl = global.document.getElementById('ps-inline-status');
-      if (hasSubmittedThisMonth()) {
-        if (!stEl) {
-          var inner = mount.querySelector('.private-selection__inner');
-          if (inner) {
-            var p = global.document.createElement('p');
-            p.className = 'private-selection__status';
-            p.id = 'ps-inline-status';
-            p.textContent = 'Entry submitted this month.';
-            inner.appendChild(p);
-          }
-        }
-      } else if (stEl) {
-        stEl.remove();
-      }
-    }
+    var ta = global.document.createElement('textarea');
+    ta.id = id;
+    ta.className = 'ps-input';
+    ta.name = 'dynamic';
+    ta.rows = 3;
+    ta.setAttribute('data-dynamic-kind', pick.kind);
+
+    wrap.appendChild(lab);
+    wrap.appendChild(ta);
+    slot.appendChild(wrap);
+    return pick.kind;
   }
 
   function openOverlay(opts) {
     opts = opts || {};
     if (!shouldShowFeature()) return;
+
     var overlay = global.document.getElementById('ps-overlay');
     if (!overlay) return;
 
     var formView = global.document.getElementById('ps-view-form');
     var doneView = global.document.getElementById('ps-view-done');
     var form = global.document.getElementById('ps-form');
-    var updateBtn = global.document.getElementById('ps-update-entry');
 
     var showForm = !hasSubmittedThisMonth() || opts.update === true;
 
@@ -290,19 +239,37 @@
       if (formView) formView.hidden = false;
       if (doneView) doneView.hidden = true;
       if (form) {
+        form.reset();
+        renderDynamicField();
         var entry = currentMonthEntry();
-        var b = form.querySelector('[name="build"]');
-        var s = form.querySelector('[name="stuck"]');
-        var x = form.querySelector('[name="extra"]');
+        var pre = prefillFromSnapshot();
+        function setn(name, val) {
+          var el = form.querySelector('[name="' + name + '"]');
+          if (!el) return;
+          el.value = val != null && val !== undefined ? String(val) : '';
+        }
         if (entry && entry.submittedAt) {
-          if (b) b.value = entry.build || '';
-          if (s) s.value = entry.stuck || '';
-          if (x) x.value = entry.extra || '';
+          setn('build', entry.build);
+          setn('stuck', entry.stuck);
+          if (hasLegacyShape(entry)) {
+            setn('year', '');
+            setn('tried', entry.extra);
+            setn('why', '');
+          } else {
+            setn('year', entry.year);
+            setn('tried', entry.tried);
+            setn('why', entry.why);
+          }
+          if (entry.dynamic) {
+            var d = form.querySelector('[name="dynamic"]');
+            if (d) d.value = entry.dynamic;
+          }
         } else {
-          var pre = prefillFromSnapshot();
-          if (b && !b.value) b.value = pre.build;
-          if (s && !s.value) s.value = pre.stuck;
-          if (x && !x.value) x.value = pre.extra;
+          setn('build', pre.build);
+          setn('year', pre.year);
+          setn('stuck', pre.stuck);
+          setn('tried', pre.tried);
+          setn('why', pre.why);
         }
       }
     } else {
@@ -310,13 +277,20 @@
       if (doneView) doneView.hidden = false;
     }
 
-    if (updateBtn) {
-      updateBtn.hidden = showForm || !hasSubmittedThisMonth();
-    }
-
     overlay.classList.add('is-open');
     overlay.setAttribute('aria-hidden', 'false');
     global.document.body.classList.add('ps-open');
+
+    var reduceMotion =
+      global.matchMedia && global.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduceMotion) {
+      overlay.classList.add('is-open--ready');
+    } else {
+      global.requestAnimationFrame(function () {
+        overlay.classList.add('is-open--ready');
+      });
+    }
+
     var closeBtn = global.document.getElementById('ps-close');
     if (closeBtn) closeBtn.focus();
   }
@@ -324,6 +298,7 @@
   function closeOverlay() {
     var overlay = global.document.getElementById('ps-overlay');
     if (!overlay) return;
+    overlay.classList.remove('is-open--ready');
     overlay.classList.remove('is-open');
     overlay.setAttribute('aria-hidden', 'true');
     global.document.body.classList.remove('ps-open');
@@ -335,26 +310,35 @@
     if (!form) return;
 
     var mk = monthKey();
-
     var fd = new FormData(form);
     var build = (fd.get('build') || '').toString().trim();
+    var year = (fd.get('year') || '').toString().trim();
     var stuck = (fd.get('stuck') || '').toString().trim();
-    var extra = (fd.get('extra') || '').toString().trim();
-    if (!build || !stuck) return;
+    var tried = (fd.get('tried') || '').toString().trim();
+    var why = (fd.get('why') || '').toString().trim();
+    var dynamic = (fd.get('dynamic') || '').toString().trim();
+    var dynEl = form.querySelector('[name="dynamic"]');
+    var dynamicKind = dynEl ? dynEl.getAttribute('data-dynamic-kind') || '' : '';
+
+    if (!build || !year || !stuck || !tried || !why) return;
+
+    var snap = gatherDiagnosticSnapshot();
+    snap.dynamicKind = dynamicKind || null;
 
     var entry = {
       submittedAt: Date.now(),
       build: build,
+      year: year,
       stuck: stuck,
-      extra: extra,
-      diagnosticSnapshot: gatherDiagnosticSnapshot(),
-      sessionDwellSec: getDwellSec(),
-      sectionSignals: getSectionCount(),
-      sessionId: getSessionId()
+      tried: tried,
+      why: why,
+      dynamic: dynamic,
+      dynamicKind: dynamicKind,
+      diagnosticSnapshot: snap
     };
 
     saveStore({
-      v: 1,
+      v: 2,
       month: mk,
       entry: entry
     });
@@ -363,8 +347,6 @@
     var doneView = global.document.getElementById('ps-view-done');
     if (formView) formView.hidden = true;
     if (doneView) doneView.hidden = false;
-    var updateBtn = global.document.getElementById('ps-update-entry');
-    if (updateBtn) updateBtn.hidden = false;
     tryMount();
   }
 
@@ -381,15 +363,11 @@
     var form = global.document.getElementById('ps-form');
     if (form) form.addEventListener('submit', submitForm);
 
-    var upd = global.document.getElementById('ps-update-entry');
-    if (upd) {
-      upd.addEventListener('click', function () {
-        openOverlay({ update: true });
-      });
-    }
-
     global.document.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape' && overlay.classList.contains('is-open')) closeOverlay();
+      if (e.key === 'Escape' && overlay.classList.contains('is-open')) {
+        e.preventDefault();
+        closeOverlay();
+      }
     });
   }
 
@@ -399,7 +377,7 @@
     var link = slot.querySelector('a');
     if (!link) return;
     link.setAttribute('href', '#');
-    link.textContent = 'Private Selection';
+    link.setAttribute('role', 'button');
     link.addEventListener('click', function (e) {
       e.preventDefault();
       if (!shouldShowFeature()) return;
@@ -408,8 +386,6 @@
   }
 
   function init() {
-    bindDwell();
-    bindSectionObserver();
     bindOverlay();
     bindEarlySlot();
     tryMount();
