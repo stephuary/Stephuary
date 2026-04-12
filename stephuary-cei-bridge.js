@@ -71,7 +71,14 @@
   }
 
   function tierHref(tierId) {
+    var g = typeof global !== 'undefined' ? global : typeof window !== 'undefined' ? window : null;
+    if (g && g.STEPHUARY_CONFIG && typeof g.STEPHUARY_CONFIG.getTierPurchaseHref === 'function') {
+      var u = g.STEPHUARY_CONFIG.getTierPurchaseHref(tierId);
+      if (u) return u;
+    }
     var m = {
+      diagnostic: '/capture',
+      rooms: '/playbooks',
       'direction-system': '/phases/direction',
       'revenue-system': '/phases/revenue',
       'direction-lock': '/focused-review',

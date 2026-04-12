@@ -2,6 +2,30 @@
   if (window.__STEPHUARY_INTERACTIVE_LOADED) return;
   window.__STEPHUARY_INTERACTIVE_LOADED = true;
 
+  if (typeof window.STEPHUARY_CONFIG === 'undefined') {
+    var _PAID = {
+      diagnostic: '/capture',
+      rooms: '/playbooks',
+      'direction-system': '/phases/direction',
+      'revenue-system': '/phases/revenue',
+      'direction-lock': '/focused-review',
+      'concept-build': '/access',
+      snapshot: '/snapshot'
+    };
+    window.STEPHUARY_CONFIG = {
+      FREE_MODE: false,
+      PAID_TIER_HREF: _PAID,
+      FREE_TIER_HREF: {},
+      getTierPurchaseHref: function (tierId) {
+        if (!tierId) return null;
+        return Object.prototype.hasOwnProperty.call(_PAID, tierId) ? _PAID[tierId] : null;
+      },
+      shouldBypassPhasePaymentGate: function () {
+        return false;
+      }
+    };
+  }
+
   var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var isMobile = window.matchMedia('(max-width: 767px)').matches;
   var PHASE_PATHS = ['/capture', '/monetize', '/structure', '/automation', '/sovereignty'];
