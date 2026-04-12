@@ -14,14 +14,80 @@
   z-index: 100000;
   pointer-events: none;
   opacity: 0;
-  background: radial-gradient(ellipse 80% 70% at 50% 45%, rgba(8, 8, 7, 0.2), rgba(8, 8, 7, 0.94));
+  background:
+    radial-gradient(ellipse 85% 75% at 50% 42%, rgba(6, 10, 22, 0.35), transparent 58%),
+    linear-gradient(165deg, rgba(5, 5, 5, 0.97) 0%, rgba(8, 8, 7, 0.94) 45%, rgba(4, 6, 14, 0.98) 100%);
   transform: scale(1.04);
-  transition: opacity 0.5s ease, transform 0.55s ease;
+  transition: opacity 0.5s ease, transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: opacity, transform;
 }
 #page-transition.is-active {
   pointer-events: all;
   opacity: 1;
   transform: scale(1);
+}
+#page-transition.is-active.sh-outgoing {
+  transform: scale(1.01);
+  transition: opacity 0.26s cubic-bezier(0.22, 1, 0.36, 1), transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+}
+#page-transition.sh-landing {
+  opacity: 1;
+  transform: scale(1.01);
+  transition: none;
+}
+#page-transition.sh-landing.sh-revealing {
+  opacity: 0;
+  transform: scale(1);
+  transition: opacity 0.48s cubic-bezier(0.22, 1, 0.36, 1), transform 0.52s cubic-bezier(0.22, 1, 0.36, 1);
+  pointer-events: none;
+}
+html.sh-landing-pending {
+  background: #050505;
+}
+
+body.sh-transition-out > *:not(#page-transition):not(#sh-env-depth):not(#sh-live-panel):not(#sh-flow-end):not(.sys-phase-rail) {
+  transform: scale(var(--sh-exit-scale, 1.028)) translateZ(0);
+  filter: brightness(0.94);
+  transition:
+    transform 0.26s cubic-bezier(0.22, 1, 0.36, 1),
+    filter 0.26s ease;
+}
+body.sh-mobile-depth.sh-transition-out > *:not(#page-transition):not(#sh-env-depth):not(#sh-live-panel):not(#sh-flow-end):not(.sys-phase-rail) {
+  transform: scale(1.014) translateZ(0);
+}
+
+body.sh-spatial-from-nav.sh-page-entry > *:not(#page-transition):not(#sh-env-depth):not(#sh-live-panel):not(#sh-flow-end):not(.sys-phase-rail) {
+  opacity: 0;
+  transform: translateY(18px) scale(0.998);
+  transition: none;
+}
+body.sh-spatial-from-nav.sh-page-entry--reveal > *:not(#page-transition):not(#sh-env-depth):not(#sh-live-panel):not(#sh-flow-end):not(.sys-phase-rail) {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  transition:
+    opacity 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.52s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+body.sh-page-soft-entry > *:not(#page-transition):not(#sh-env-depth):not(#sh-live-panel):not(#sh-flow-end):not(.sys-phase-rail) {
+  opacity: 0;
+  transform: translateY(12px);
+  transition: none;
+}
+body.sh-page-soft-entry.sh-page-soft-entry--on > *:not(#page-transition):not(#sh-env-depth):not(#sh-live-panel):not(#sh-flow-end):not(.sys-phase-rail) {
+  opacity: 1;
+  transform: translateY(0);
+  transition:
+    opacity 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.48s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+body.sh-page-ready.sh-has-env-depth > *:not(#sh-env-depth):not(#page-transition):not(#sh-live-panel):not(#sh-flow-end):not(.sys-phase-rail) {
+  transform: translateY(var(--sh-scroll-fg, 0px)) scale(var(--sh-scroll-scale, 1)) translateZ(0);
+}
+body.sh-page-entry:not(.sh-page-entry--reveal) > *:not(#page-transition):not(#sh-env-depth):not(#sh-live-panel):not(#sh-flow-end):not(.sys-phase-rail),
+body.sh-page-soft-entry:not(.sh-page-soft-entry--on) > *:not(#page-transition):not(#sh-env-depth):not(#sh-live-panel):not(#sh-flow-end):not(.sys-phase-rail) {
+  transition: none;
 }
 
 /* Compact header */
@@ -1113,6 +1179,10 @@ html {
   --sh-parallax-x: 0;
   --sh-parallax-y: 0;
   --sh-scroll-d: 0;
+  --sh-scroll-bg: 0px;
+  --sh-scroll-fg: 0px;
+  --sh-scroll-scale: 1;
+  --sh-exit-scale: 1.028;
 }
 
 #sh-env-depth {
@@ -1122,6 +1192,13 @@ html {
   pointer-events: none;
   overflow: hidden;
   contain: layout paint;
+  transform: translate3d(0, var(--sh-scroll-bg, 0px), 0);
+}
+
+@media (max-width: 767px) {
+  html {
+    --sh-exit-scale: 1.016;
+  }
 }
 
 #sh-env-depth .sh-depth-field {
@@ -1187,12 +1264,18 @@ body.sh-zone--immersive #sh-env-depth .sh-depth-field {
 }
 
 body.sh-zone--cei #sh-env-depth .sh-horizon__grid {
-  opacity: 0.48;
-  background-size: 40px 40px;
+  opacity: 0.52;
+  background-size: 38px 38px;
 }
 body.sh-zone--pricing #sh-env-depth .sh-horizon__grid {
-  opacity: 0.38;
-  background-size: 36px 36px;
+  opacity: 0.4;
+  background-size: 34px 34px;
+}
+body.sh-page--results #sh-env-depth .sh-depth-field {
+  filter: saturate(1.06);
+}
+body.sh-page--results .cei-node-strip {
+  box-shadow: 0 0 28px rgba(43, 79, 212, 0.2);
 }
 body.sh-zone--immersive #sh-env-depth .sh-horizon__grid {
   opacity: 0.55;
@@ -1242,7 +1325,7 @@ body.sh-mobile-depth #sh-env-depth .sh-depth-fg-wrap {
 body.sh-has-env-depth {
   isolation: isolate;
 }
-body.sh-has-env-depth > :not(#sh-env-depth):not(#page-transition) {
+body.sh-has-env-depth > :not(#sh-env-depth):not(#page-transition):not(#sh-live-panel):not(#sh-flow-end):not(.sys-phase-rail) {
   position: relative;
   z-index: 1;
 }
@@ -1288,5 +1371,8 @@ body.sh-zone--cei .sh-global-map__node:hover {
   }
   #sh-env-depth .sh-depth-field {
     opacity: 0.75;
+  }
+  body.sh-spatial-from-nav.sh-page-entry > *:not(#page-transition):not(#sh-env-depth):not(#sh-live-panel):not(#sh-flow-end):not(.sys-phase-rail) {
+    transform: translateY(12px) scale(0.999);
   }
 }

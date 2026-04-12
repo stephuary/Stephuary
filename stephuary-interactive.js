@@ -163,11 +163,22 @@
 
   window.StephuarySession = StephuarySession;
 
-  /* ——— Page transition ——— */
+  var SPATIAL_NAV_KEY = 'sh_spatial_nav';
+
+  function ensurePageTransitionOverlay() {
+    var el = document.getElementById('page-transition');
+    if (el) return el;
+    el = document.createElement('div');
+    el.id = 'page-transition';
+    el.setAttribute('aria-hidden', 'true');
+    document.body.appendChild(el);
+    return el;
+  }
+
+  /* ——— Spatial page transition (outbound) + entry (inbound) ——— */
   function initPageTransition() {
-    if (reduceMotion) return;
-    var overlay = document.getElementById('page-transition');
-    if (!overlay) return;
+    var overlay = ensurePageTransitionOverlay();
+
     document.addEventListener(
       'click',
       function (e) {
@@ -183,14 +194,71 @@
           return;
         }
         e.preventDefault();
-        overlay.classList.add('is-active');
         var url = a.href;
+        if (reduceMotion) {
+          try {
+            sessionStorage.setItem(SPATIAL_NAV_KEY, '1');
+          } catch (err2) {}
+          window.location.href = url;
+          return;
+        }
+        try {
+          sessionStorage.setItem(SPATIAL_NAV_KEY, '1');
+        } catch (err3) {}
+        document.body.classList.add('sh-transition-out');
+        overlay.classList.add('is-active', 'sh-outgoing');
+        var delay = isMobile ? 200 : 280;
         window.setTimeout(function () {
           window.location.href = url;
-        }, 520);
+        }, delay);
       },
       true
     );
+  }
+
+  function initSpatialNavigation() {
+    if (!document.body) return;
+    if (reduceMotion) {
+      document.body.classList.add('sh-page-ready');
+      return;
+    }
+
+    var landing = false;
+    try {
+      landing = sessionStorage.getItem(SPATIAL_NAV_KEY) === '1';
+      if (landing) sessionStorage.removeItem(SPATIAL_NAV_KEY);
+    } catch (e) {}
+
+    var ov = ensurePageTransitionOverlay();
+
+    if (landing) {
+      document.documentElement.classList.add('sh-landing-pending');
+      ov.classList.add('is-active', 'sh-landing');
+      document.body.classList.add('sh-page-entry', 'sh-spatial-from-nav');
+      requestAnimationFrame(function () {
+        requestAnimationFrame(function () {
+          document.documentElement.classList.remove('sh-landing-pending');
+          ov.classList.add('sh-revealing');
+          document.body.classList.add('sh-page-entry--reveal');
+          window.setTimeout(function () {
+            ov.classList.remove('is-active', 'sh-landing', 'sh-revealing', 'sh-outgoing');
+            document.body.classList.remove('sh-transition-out');
+            document.body.classList.remove('sh-page-entry', 'sh-page-entry--reveal', 'sh-spatial-from-nav');
+            document.body.classList.add('sh-page-ready');
+          }, isMobile ? 400 : 540);
+        });
+      });
+    } else {
+      document.body.classList.add('sh-page-soft-entry');
+      requestAnimationFrame(function () {
+        requestAnimationFrame(function () {
+          document.body.classList.add('sh-page-soft-entry--on');
+          window.setTimeout(function () {
+            document.body.classList.add('sh-page-ready');
+          }, 440);
+        });
+      });
+    }
   }
 
   function magneticStrength() {
@@ -229,10 +297,17 @@
       var py = (my / h - 0.5) * 2;
       var maxS = Math.max(1, (document.documentElement.scrollHeight || 1) - h);
       var sd = Math.min(1, (window.scrollY || 0) / maxS);
+      var sy = window.scrollY || 0;
+      var bgPx = -sy * (isMobile ? 0.022 : 0.042);
+      var fgPx = sy * (isMobile ? 0.008 : 0.016);
+      var sc = 1 + Math.min(0.006, sy * 0.0001);
       doc.style.setProperty('--sh-parallax-x', px.toFixed(5));
       doc.style.setProperty('--sh-parallax-y', py.toFixed(5));
       doc.style.setProperty('--sh-scroll-d', sd.toFixed(5));
-      window.__shParallax = { x: px, y: py, sd: sd };
+      doc.style.setProperty('--sh-scroll-bg', bgPx.toFixed(2) + 'px');
+      doc.style.setProperty('--sh-scroll-fg', fgPx.toFixed(2) + 'px');
+      doc.style.setProperty('--sh-scroll-scale', sc.toFixed(5));
+      window.__shParallax = { x: px, y: py, sd: sd, sy: sy };
     }
     function req() {
       if (ticking) return;
@@ -300,6 +375,7 @@
     var mobileLight = isMobile;
     var body = document.body;
     body.classList.add('sh-zone--' + zone);
+    if (path === '/results') body.classList.add('sh-page--results');
 
     var root = document.createElement('div');
     root.id = 'sh-env-depth';
@@ -421,7 +497,8 @@
         p = pts[i];
         a = p.a * (0.88 + 0.12 * Math.sin(t0 + p.x * 0.004 + p.y * 0.003));
         if (document.body.classList.contains('sh-env-pulse')) a *= 1.22;
-        if (a > 0.28) a = 0.28;
+        if (document.body.classList.contains('sh-transition-out')) a *= 1.35;
+        if (a > 0.32) a = 0.32;
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
         ctx.fillStyle = isWhite ? 'rgba(255,255,255,' + a + ')' : 'rgba(58,107,255,' + (a * 0.85) + ')';
@@ -436,10 +513,11 @@
       var slow = document.body.classList.contains('sys-scroll--slow') ? 0.72 : 1;
       var fast = document.body.classList.contains('sys-scroll--fast') ? 1.18 : 1;
       var vm = slow * fast;
+      var navB = document.body.classList.contains('sh-transition-out') ? 2.35 : 1;
 
-      stepParticles(ptsBg, w, h, true, 0.55 * vm);
-      stepParticles(ptsMid, w, h, false, 1 * vm);
-      if (ptsFg.length) stepParticles(ptsFg, w, h, false, 1.35 * vm);
+      stepParticles(ptsBg, w, h, true, 0.55 * vm * navB);
+      stepParticles(ptsMid, w, h, false, 1 * vm * navB);
+      if (ptsFg.length) stepParticles(ptsFg, w, h, false, 1.35 * vm * navB);
 
       drawLayer(ctxBg, ptsBg, 'rgba(5,5,5,0.1)', t, true);
       drawLayer(ctxMid, ptsMid, 'rgba(7,7,8,0.14)', t + 1.2, true);
@@ -486,9 +564,10 @@
       var h = canvas.height / (Math.min(window.devicePixelRatio || 1, 2));
       ctx.fillStyle = 'rgba(5,5,5,0.25)';
       ctx.fillRect(0, 0, w, h);
+      var navB = document.body.classList.contains('sh-transition-out') ? 2.05 : 1;
       pts.forEach(function (p) {
-        p.x += p.vx;
-        p.y += p.vy;
+        p.x += p.vx * navB;
+        p.y += p.vy * navB;
         if (p.x < 0 || p.x > w) p.vx *= -1;
         if (p.y < 0 || p.y > h) p.vy *= -1;
         var dwellBoost = 1;
@@ -1410,6 +1489,8 @@
     initLiveOutput();
     initHomeReturn();
     initFlowEndBar();
+
+    initSpatialNavigation();
 
     var hCanvas = document.querySelector('.sys-compact__bg canvas');
     if (hCanvas) initHeaderParticles(hCanvas);
