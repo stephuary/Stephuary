@@ -1,9 +1,10 @@
 /**
- * Private Selection — 3–7 AM local only; modal overlay; monthly local storage.
+ * One Free Spot — time-based free submission (3–7 AM local); modal overlay; monthly local storage.
  */
 (function (global) {
-  var STORAGE_KEY = 'stephuary_private_selection_v2';
-  var STORAGE_LEGACY = 'stephuary_private_selection_v1';
+  var STORAGE_KEY = 'stephuary_one_free_spot_v1';
+  var STORAGE_LEGACY_V2 = 'stephuary_private_selection_v2';
+  var STORAGE_LEGACY_V1 = 'stephuary_private_selection_v1';
 
   function monthKey() {
     var d = new Date();
@@ -28,11 +29,16 @@
       var raw = global.localStorage.getItem(STORAGE_KEY);
       if (raw) {
         var o = JSON.parse(raw);
-        if (o && o.v === 2) return o;
+        if (o && o.v === 1) return o;
       }
-      var leg = global.localStorage.getItem(STORAGE_LEGACY);
-      if (leg) {
-        var o1 = JSON.parse(leg);
+      var leg2 = global.localStorage.getItem(STORAGE_LEGACY_V2);
+      if (leg2) {
+        var o2 = JSON.parse(leg2);
+        if (o2 && o2.v === 2) return o2;
+      }
+      var leg1 = global.localStorage.getItem(STORAGE_LEGACY_V1);
+      if (leg1) {
+        var o1 = JSON.parse(leg1);
         if (o1 && o1.v === 1) return o1;
       }
     } catch (e) {}
@@ -96,7 +102,27 @@
   }
 
   function joinFields(e) {
+    if (!e) return '';
+    if (e.q1 != null || e.q2 != null || e.q3 != null) {
+      return [e.q1, e.q2, e.q3].filter(Boolean).join(' \n ');
+    }
     return [e.build, e.year, e.stuck, e.tried, e.why, e.dynamic].filter(Boolean).join(' \n ');
+  }
+
+  function entryToQFields(entry) {
+    if (!entry) return { q1: '', q2: '', q3: '' };
+    if (entry.q1 != null || entry.q2 != null || entry.q3 != null) {
+      return {
+        q1: String(entry.q1 != null ? entry.q1 : '').trim(),
+        q2: String(entry.q2 != null ? entry.q2 : '').trim(),
+        q3: String(entry.q3 != null ? entry.q3 : '').trim()
+      };
+    }
+    return {
+      q1: String(entry.build || '').trim(),
+      q2: String(entry.stuck || '').trim(),
+      q3: String(entry.why || entry.tried || '').trim()
+    };
   }
 
   function wordCount(s) {
@@ -426,31 +452,22 @@
   }
 
   function prefillFromSnapshot() {
-    var out = {
-      build: '',
-      year: '',
-      stuck: '',
-      tried: '',
-      why: '',
-      dynamic: ''
-    };
+    var out = { q1: '', q2: '', q3: '' };
     var r = loadResult();
     var st = loadPersonalizationState();
     try {
       if (r && r.diagnostic) {
-        if (r.diagnostic.main_problem) out.build = String(r.diagnostic.main_problem).trim();
-        if (r.diagnostic.fix_first) out.stuck = String(r.diagnostic.fix_first).trim();
+        if (r.diagnostic.main_problem) out.q1 = String(r.diagnostic.main_problem).trim();
+        if (r.diagnostic.fix_first) out.q2 = String(r.diagnostic.fix_first).trim();
       }
-      if (!out.build && r && r.type_primary) out.build = String(r.type_primary).trim();
+      if (!out.q1 && r && r.type_primary) out.q1 = String(r.type_primary).trim();
     } catch (e) {}
     try {
       if (st && st.outputs) {
-        if (!out.build && st.outputs.mainIssue) out.build = String(st.outputs.mainIssue).trim();
-        if (!out.stuck && st.outputs.nextMove) out.stuck = String(st.outputs.nextMove).trim();
-        if (st.outputs.timeLoss) out.tried = 'Time cost context: ' + String(st.outputs.timeLoss).trim();
-        if (st.outputs.moneyLoss) out.why = 'Cost context: ' + String(st.outputs.moneyLoss).trim();
+        if (!out.q1 && st.outputs.mainIssue) out.q1 = String(st.outputs.mainIssue).trim();
+        if (!out.q2 && st.outputs.nextMove) out.q2 = String(st.outputs.nextMove).trim();
       }
-      if (st && st.stageReason && !out.why) out.why = String(st.stageReason).trim();
+      if (st && st.stageReason && !out.q3) out.q3 = String(st.stageReason).trim();
     } catch (e) {}
     return out;
   }
@@ -458,104 +475,70 @@
   function syncEarlySlot() {
     var slot = global.document.getElementById('early-private-slot');
     if (!slot) return;
-    if (shouldShowFeature()) {
-      slot.classList.add('early-private-slot--visible');
-      slot.removeAttribute('hidden');
-    } else {
-      slot.classList.remove('early-private-slot--visible');
-      slot.setAttribute('hidden', '');
-    }
+    slot.classList.add('early-private-slot--visible');
+    slot.removeAttribute('hidden');
   }
 
   function tryMount() {
     syncEarlySlot();
   }
 
-  function renderDynamicField() {
-    var slot = global.document.getElementById('ps-dynamic-slot');
-    if (!slot) return null;
-    slot.innerHTML = '';
-    var st = loadPersonalizationState();
-    var res = loadResult();
-    var pick = pickDynamicQuestion(st, res);
-    if (!pick) return null;
-
-    var wrap = global.document.createElement('div');
-    wrap.className = 'ps-dynamic';
-    wrap.setAttribute('data-ps-dynamic', pick.kind);
-
-    var id = 'ps-field-dynamic';
-    var lab = global.document.createElement('label');
-    lab.className = 'ps-label';
-    lab.setAttribute('for', id);
-    lab.textContent = pick.label;
-
-    var ta = global.document.createElement('textarea');
-    ta.id = id;
-    ta.className = 'ps-input';
-    ta.name = 'dynamic';
-    ta.rows = 3;
-    ta.setAttribute('data-dynamic-kind', pick.kind);
-
-    wrap.appendChild(lab);
-    wrap.appendChild(ta);
-    slot.appendChild(wrap);
-    return pick.kind;
+  function populateFormFields(form) {
+    if (!form) return;
+    form.reset();
+    var entry = currentMonthEntry();
+    var pre = prefillFromSnapshot();
+    function setn(name, val) {
+      var el = form.querySelector('[name="' + name + '"]');
+      if (!el) return;
+      el.value = val != null && val !== undefined ? String(val) : '';
+    }
+    if (entry && entry.submittedAt) {
+      var q = entryToQFields(entry);
+      setn('q1', q.q1);
+      setn('q2', q.q2);
+      setn('q3', q.q3);
+    } else {
+      setn('q1', pre.q1);
+      setn('q2', pre.q2);
+      setn('q3', pre.q3);
+    }
   }
 
   function openOverlay(opts) {
     opts = opts || {};
-    if (!shouldShowFeature()) return;
 
     var overlay = global.document.getElementById('ps-overlay');
     if (!overlay) return;
 
+    var locked = global.document.getElementById('ps-view-locked');
+    var intro = global.document.getElementById('ps-view-intro');
     var formView = global.document.getElementById('ps-view-form');
     var doneView = global.document.getElementById('ps-view-done');
     var form = global.document.getElementById('ps-form');
 
-    var showForm = !hasSubmittedThisMonth() || opts.update === true;
-
-    if (showForm) {
-      if (formView) formView.hidden = false;
-      if (doneView) doneView.hidden = true;
-      if (form) {
-        form.reset();
-        renderDynamicField();
-        var entry = currentMonthEntry();
-        var pre = prefillFromSnapshot();
-        function setn(name, val) {
-          var el = form.querySelector('[name="' + name + '"]');
-          if (!el) return;
-          el.value = val != null && val !== undefined ? String(val) : '';
-        }
-        if (entry && entry.submittedAt) {
-          setn('build', entry.build);
-          setn('stuck', entry.stuck);
-          if (hasLegacyShape(entry)) {
-            setn('year', '');
-            setn('tried', entry.extra);
-            setn('why', '');
-          } else {
-            setn('year', entry.year);
-            setn('tried', entry.tried);
-            setn('why', entry.why);
-          }
-          if (entry.dynamic) {
-            var d = form.querySelector('[name="dynamic"]');
-            if (d) d.value = entry.dynamic;
-          }
-        } else {
-          setn('build', pre.build);
-          setn('year', pre.year);
-          setn('stuck', pre.stuck);
-          setn('tried', pre.tried);
-          setn('why', pre.why);
-        }
-      }
-    } else {
+    function hideAll() {
+      if (locked) locked.hidden = true;
+      if (intro) intro.hidden = true;
       if (formView) formView.hidden = true;
+      if (doneView) doneView.hidden = true;
+    }
+
+    if (!isEarlyMode()) {
+      hideAll();
+      if (locked) locked.hidden = false;
+    } else if (hasSubmittedThisMonth() && opts.update !== true) {
+      hideAll();
       if (doneView) doneView.hidden = false;
+    } else if (opts.showForm === true) {
+      hideAll();
+      if (formView) formView.hidden = false;
+      if (form) populateFormFields(form);
+    } else {
+      hideAll();
+      if (intro) intro.hidden = false;
+      if (formView) formView.hidden = true;
+      if (form) populateFormFields(form);
     }
 
     overlay.classList.add('is-open');
@@ -587,49 +570,51 @@
 
   function submitForm(ev) {
     ev.preventDefault();
+    if (!isEarlyMode()) return;
+
     var form = global.document.getElementById('ps-form');
     if (!form) return;
 
     var mk = monthKey();
     var fd = new FormData(form);
-    var build = (fd.get('build') || '').toString().trim();
-    var year = (fd.get('year') || '').toString().trim();
-    var stuck = (fd.get('stuck') || '').toString().trim();
-    var tried = (fd.get('tried') || '').toString().trim();
-    var why = (fd.get('why') || '').toString().trim();
-    var dynamic = (fd.get('dynamic') || '').toString().trim();
-    var dynEl = form.querySelector('[name="dynamic"]');
-    var dynamicKind = dynEl ? dynEl.getAttribute('data-dynamic-kind') || '' : '';
+    var q1 = (fd.get('q1') || '').toString().trim();
+    var q2 = (fd.get('q2') || '').toString().trim();
+    var q3 = (fd.get('q3') || '').toString().trim();
 
-    if (!build || !year || !stuck || !tried || !why) return;
+    if (!q1 || !q2 || !q3) return;
 
     var snap = gatherDiagnosticSnapshot();
-    snap.dynamicKind = dynamicKind || null;
+    snap.dynamicKind = null;
 
     var entry = {
       submittedAt: Date.now(),
-      build: build,
-      year: year,
-      stuck: stuck,
-      tried: tried,
-      why: why,
-      dynamic: dynamic,
-      dynamicKind: dynamicKind,
+      q1: q1,
+      q2: q2,
+      q3: q3,
+      build: q1,
+      year: '',
+      stuck: q2,
+      tried: '',
+      why: q3,
+      dynamic: '',
+      dynamicKind: null,
       diagnosticSnapshot: snap
     };
 
     entry.internalSummary = buildInternalSummary(entry);
 
     saveStore({
-      v: 2,
+      v: 1,
       month: mk,
       entry: entry
     });
 
     appendLedgerRecord(mk, entry);
 
+    var intro = global.document.getElementById('ps-view-intro');
     var formView = global.document.getElementById('ps-view-form');
     var doneView = global.document.getElementById('ps-view-done');
+    if (intro) intro.hidden = true;
     if (formView) formView.hidden = true;
     if (doneView) doneView.hidden = false;
     tryMount();
@@ -665,8 +650,20 @@
     link.setAttribute('role', 'button');
     link.addEventListener('click', function (e) {
       e.preventDefault();
-      if (!shouldShowFeature()) return;
       openOverlay();
+    });
+  }
+
+  function bindGotoForm() {
+    var btn = global.document.getElementById('ps-goto-form');
+    if (!btn) return;
+    btn.addEventListener('click', function () {
+      if (!isEarlyMode()) return;
+      openOverlay({ showForm: true });
+      var q1 = global.document.getElementById('ps-field-q1');
+      global.requestAnimationFrame(function () {
+        if (q1) q1.focus();
+      });
     });
   }
 
@@ -688,7 +685,7 @@
     init();
   }
 
-  global.StephuaryPrivateSelection = {
+  var api = {
     shouldShowFeature: shouldShowFeature,
     tryMount: tryMount,
     syncEarlySlot: syncEarlySlot,
@@ -704,4 +701,6 @@
       loadLedger: loadLedger
     }
   };
+  global.StephuaryPrivateSelection = api;
+  global.StephuaryOneFreeSpot = api;
 })(typeof window !== 'undefined' ? window : this);
