@@ -7,6 +7,9 @@
   var CAPTURE_KEY = 'stephuary_capture_p01_v2';
   var RESULT_KEY = 'stephuary_result_v1';
   var PROGRESS_KEY = 'stephuary_system_progress_v1';
+  var DIAGNOSTIC_ANSWERS_KEY = 'stephuary_diagnostic_answers_v1';
+  var ROOM01_HANDOFF_KEY = 'stephuary_room01_handoff';
+  var ROOM02_HANDOFF_KEY = 'stephuary_room02_handoff';
   var PHASE_PATH = ['/capture', '/monetize', '/structure', '/automation', '/sovereignty'];
 
   /** Min score gap to call confidence "high" (tuned for typical weight ranges). */
@@ -48,6 +51,14 @@
 
   var STAGE_ORDER_TIEBREAK = ['snapshot', 'concept', 'lock', 'revenue', 'direction'];
 
+  var LITERAL_STAGE_REASON = {
+    direction: 'No clear direction yet',
+    revenue: 'Direction exists but no revenue path',
+    lock: 'Too many moving parts without order',
+    concept: 'Enough inputs to build something real',
+    snapshot: 'Multiple issues require full review'
+  };
+
   function normPath(p) {
     if (!p || p === '') return '/';
     var x = String(p).replace(/\/$/, '') || '/';
@@ -87,7 +98,11 @@
         timeLoss: '',
         moneyLoss: '',
         mainIssue: '',
-        nextMove: ''
+        nextMove: '',
+        mainIssueTag: '',
+        nextMoveTag: '',
+        timeLossTier: '',
+        moneyLossTier: ''
       },
       behavior: {
         viewedPricing: false,
@@ -141,6 +156,157 @@
     lsSet(KEY, state);
   }
 
+  function pickMaxVote(votes) {
+    var best = '';
+    var max = -1;
+    var k;
+    for (k in votes) {
+      if (votes[k] > max) {
+        max = votes[k];
+        best = k;
+      }
+    }
+    return max > 0 ? best : '';
+  }
+
+  /**
+   * Maps capture diagnostic bit vector (10 binary choices) to canonical answer tags.
+   * Indices match capture.html QUESTIONS order.
+   */
+  function mapBitsToAnswers(bits) {
+    if (!bits || bits.length < 10) return null;
+    var b = bits;
+    var i;
+    for (i = 0; i < 10; i++) {
+      if (b[i] !== 0 && b[i] !== 1) return null;
+    }
+
+    var g = { make_money: 0, get_clear: 0, build_offer: 0, get_clients: 0, build_system: 0, fix_execution: 0 };
+    if (b[0] === 1) g.build_offer += 2;
+    if (b[2] === 1) g.build_system += 3;
+    if (b[4] === 1) g.build_offer += 2;
+    if (b[9] === 1) g.get_clear += 4;
+    if (b[9] === 0) g.fix_execution += 2;
+    if (b[7] === 0) g.fix_execution += 3;
+    if (b[6] === 1) g.get_clients += 2;
+    if (b[1] === 1) g.make_money += 2;
+
+    var bn = {
+      too_many_ideas: 0,
+      no_offer: 0,
+      no_money_path: 0,
+      scattered_focus: 0,
+      wrong_order: 0,
+      weak_positioning: 0,
+      execution_breakdown: 0,
+      needs_full_review: 0
+    };
+    if (b[9] === 1) {
+      bn.too_many_ideas += 3;
+      bn.scattered_focus += 2;
+    }
+    if (b[9] === 0) {
+      bn.execution_breakdown += 2;
+      bn.no_offer += 2;
+    }
+    if (b[2] === 1) bn.scattered_focus += 2;
+    if (b[8] === 0) bn.weak_positioning += 4;
+    if (b[5] === 0) bn.wrong_order += 2;
+    if (b[7] === 0) bn.execution_breakdown += 3;
+    if (b[4] === 1 && b[7] === 1) bn.no_money_path += 2;
+
+    var directionClarity = 'medium';
+    if (b[9] === 1) directionClarity = 'low';
+    if (b[9] === 1 && b[2] === 1) directionClarity = 'low';
+
+    var revenueReadiness = 'low';
+    if (b[4] === 0 && b[5] === 0) revenueReadiness = 'none';
+    if (b[5] === 1 && b[7] === 1) revenueReadiness = 'medium';
+
+    var audienceState = 'unclear';
+    if (b[3] === 1) audienceState = 'some';
+    if (b[8] === 1) audienceState = 'defined';
+
+    var executionIssue = 'none';
+    if (b[7] === 0) executionIssue = 'starting';
+    else if (b[7] === 1) executionIssue = 'shipping';
+
+    return {
+      goal: pickMaxVote(g) || 'get_clear',
+      bottleneck: pickMaxVote(bn) || 'scattered_focus',
+      directionClarity: directionClarity,
+      revenueReadiness: revenueReadiness,
+      audienceState: audienceState,
+      executionIssue: executionIssue,
+      source: 'capture_bits'
+    };
+  }
+
+  function tagStageFromMainIssue(text) {
+    var t = lc(text);
+    if (!t) return '';
+    if (/too many|unclear|don't know|do not know|not know|awareness is ahead|committed line|options stay|searching/.test(t)) {
+      return 'direction';
+    }
+    if (/not making money|no clients|no money|monetiz|revenue|paid work|buyer/.test(t)) return 'revenue';
+    if (/doing everything|scattered|jumping|fragment|everything at once/.test(t)) return 'lock';
+    if (/ideas but not structured|not formed|one page|packaging|offer description/.test(t)) return 'concept';
+    if (/multiple problems|not working overall|layered|full rebuild|several/.test(t)) return 'snapshot';
+    return '';
+  }
+
+  function tagStageFromNextMove(text) {
+    var t = lc(text);
+    if (!t) return '';
+    if (/choose one direction|one direction|one thread|one decision|lane|refuse new inputs/.test(t)) return 'direction';
+    if (/monetiz|offer|price|revenue|buyer|money path|charge/.test(t)) return 'revenue';
+    if (/cut|remove|stop|narrow|order|before you add|measurable drain/.test(t)) return 'lock';
+    if (/build|ship|package|page|send|outline|brief/.test(t)) return 'concept';
+    if (/review|full|snapshot|everything|diagnostic/.test(t)) return 'snapshot';
+    return '';
+  }
+
+  function tierFromMoneyMonthly(n) {
+    if (!(typeof n === 'number') || isNaN(n)) return '';
+    if (n > 800) return 'high';
+    if (n > 150) return 'medium';
+    return 'low';
+  }
+
+  function tierFromWeeklyHours(h) {
+    if (!(typeof h === 'number') || isNaN(h)) return '';
+    if (h > 25) return 'high';
+    if (h > 10) return 'medium';
+    return 'low';
+  }
+
+  function mergeRoomOutputs(state) {
+    var h1 = lsGet(ROOM01_HANDOFF_KEY);
+    if (h1 && h1.version === 1) {
+      if (typeof h1.monthlyLeak === 'number') {
+        state.outputs.moneyLossTier = tierFromMoneyMonthly(h1.monthlyLeak);
+      }
+      if (typeof h1.weeklyScreenHours === 'number') {
+        state.outputs.timeLossTier = tierFromWeeklyHours(h1.weeklyScreenHours);
+      }
+    }
+    var h2 = lsGet(ROOM02_HANDOFF_KEY);
+    if (h2 && h2.version === 1) {
+      if (!state.outputs.nextMove && h2.weeklyAction) state.outputs.nextMove = String(h2.weeklyAction);
+    }
+  }
+
+  function persistDiagnosticFromBits(bits) {
+    var ans = mapBitsToAnswers(bits);
+    if (!ans) return;
+    try {
+      lsSet(DIAGNOSTIC_ANSWERS_KEY, { v: 1, answers: ans, ts: Date.now() });
+      var st = load();
+      st.answers = Object.assign(defaultState().answers, ans);
+      save(st);
+    } catch (e) {}
+  }
+
   function mergeFromStorage(base) {
     var state = base || load();
     try {
@@ -155,26 +321,45 @@
         if (Array.isArray(pr.completed)) state.completedRooms = pr.completed.slice();
       }
 
+      var da = lsGet(DIAGNOSTIC_ANSWERS_KEY);
+      if (da && da.v === 1 && da.answers) {
+        state.answers = Object.assign(defaultState().answers, da.answers);
+      }
+
+      var cap = lsGet(CAPTURE_KEY);
+      if ((!state.answers || !state.answers.source) && cap && cap.bits) {
+        var filled = 0;
+        var bi;
+        for (bi = 0; bi < cap.bits.length; bi++) {
+          if (cap.bits[bi] === 0 || cap.bits[bi] === 1) filled++;
+        }
+        if (filled >= 10) {
+          var derived = mapBitsToAnswers(cap.bits);
+          if (derived) state.answers = Object.assign(defaultState().answers, derived);
+        } else if (filled > 0 && !state.answers.goal) {
+          state.answers.goal = 'in_progress_capture';
+        }
+      }
+
       var res = lsGet(RESULT_KEY);
       if (res) {
         var d = res.diagnostic || {};
-        state.outputs.mainIssue = d.main_problem || res.type_primary || state.outputs.mainIssue;
+        state.outputs.mainIssue = d.main_problem || state.outputs.mainIssue;
         state.outputs.nextMove = d.fix_first || state.outputs.nextMove;
         state.outputs.timeLoss = d.what_it_costs || state.outputs.timeLoss;
-        if (res.type_primary) state.answers.bottleneck = String(res.type_primary);
+        if (res.type_primary && !state.answers.source) {
+          state.answers.bottleneck = String(res.type_primary);
+        }
       }
+
+      mergeRoomOutputs(state);
+
+      state.outputs.mainIssueTag = tagStageFromMainIssue(state.outputs.mainIssue);
+      state.outputs.nextMoveTag = tagStageFromNextMove(state.outputs.nextMove);
 
       try {
         state.behavior.outputPanelClosed = global.localStorage.getItem('outputPanelClosed') === '1';
       } catch (e2) {}
-
-      var cap = lsGet(CAPTURE_KEY);
-      if (cap && cap.bits) {
-        var filled = cap.bits.filter(function (b) {
-          return b !== null && b !== undefined;
-        }).length;
-        if (filled > 0 && !state.answers.goal) state.answers.goal = 'in_progress_capture';
-      }
     } catch (e) {}
     return state;
   }
@@ -373,17 +558,28 @@
     );
   }
 
-  function textSuggestsLayeredProblems(mainIssue, nextMove) {
-    var t = lc(mainIssue) + ' ' + lc(nextMove);
-    if (!t.trim()) return false;
-    var n = 0;
-    if (t.indexOf('and') >= 0) n++;
-    if (t.indexOf('before') >= 0) n++;
-    if (t.indexOf('several') >= 0 || t.indexOf('multiple') >= 0) n++;
-    return n >= 2;
+  /** Merge raw answers, bits, result into state.tags. */
+  function isCanonicalAnswerKey(k, v) {
+    var sets = {
+      goal: ['make_money', 'get_clear', 'build_offer', 'get_clients', 'build_system', 'fix_execution'],
+      bottleneck: [
+        'too_many_ideas',
+        'no_offer',
+        'no_money_path',
+        'scattered_focus',
+        'wrong_order',
+        'weak_positioning',
+        'execution_breakdown',
+        'needs_full_review'
+      ],
+      directionClarity: ['none', 'low', 'medium', 'high'],
+      revenueReadiness: ['none', 'low', 'medium', 'high'],
+      audienceState: ['none', 'unclear', 'some', 'defined'],
+      executionIssue: ['starting', 'finishing', 'shipping', 'consistency', 'follow_through', 'none']
+    };
+    return sets[k] && sets[k].indexOf(v) >= 0;
   }
 
-  /** Merge raw answers, bits, result into state.tags. */
   function normalizeTags(state) {
     var tags = {
       goal: '',
@@ -399,44 +595,71 @@
     var res = lsGet(RESULT_KEY);
     var archetype = res && res.type_primary ? String(res.type_primary) : '';
 
-    var fromBits = inferTagsFromBits(bits);
-    var playbook = res && res.playbooks && res.playbooks[0] ? res.playbooks[0] : '';
-    var fromPb = inferTagsFromPlaybook(playbook);
+    if (a.source === 'capture_bits') {
+      tags.goal = a.goal || '';
+      tags.bottleneck = a.bottleneck || '';
+      tags.directionClarity = a.directionClarity || '';
+      tags.revenueReadiness = a.revenueReadiness || '';
+      tags.audienceState = a.audienceState || '';
+      tags.executionIssue = a.executionIssue || '';
+    } else {
+      var fromBits = inferTagsFromBits(bits);
+      var playbook = res && res.playbooks && res.playbooks[0] ? res.playbooks[0] : '';
+      var fromPb = inferTagsFromPlaybook(playbook);
 
-    tags.goal = normalizeGoalTag(a.goal) || fromPb.goal || fromBits.goal;
-    tags.bottleneck =
-      normalizeBottleneckTag(a.bottleneck, archetype) ||
-      normalizeBottleneckFromArchetype(archetype) ||
-      fromBits.bottleneck ||
-      fromPb.bottleneck;
+      tags.goal =
+        (isCanonicalAnswerKey('goal', a.goal) ? a.goal : '') ||
+        normalizeGoalTag(a.goal) ||
+        fromPb.goal ||
+        fromBits.goal;
+      tags.bottleneck =
+        (isCanonicalAnswerKey('bottleneck', a.bottleneck) ? a.bottleneck : '') ||
+        normalizeBottleneckTag(a.bottleneck, archetype) ||
+        normalizeBottleneckFromArchetype(archetype) ||
+        fromBits.bottleneck ||
+        fromPb.bottleneck;
 
-    tags.directionClarity =
-      normalizeClarityTag(a.directionClarity) || fromBits.directionClarity || '';
-    tags.revenueReadiness =
-      normalizeRevenueReadyTag(a.revenueReadiness) || fromPb.revenueReadiness || '';
-    tags.audienceState = normalizeAudienceTag(a.audienceState) || '';
-    tags.executionIssue =
-      normalizeExecutionTag(a.executionIssue) || fromBits.executionIssue || fromPb.executionIssue || '';
+      tags.directionClarity =
+        (isCanonicalAnswerKey('directionClarity', a.directionClarity) ? a.directionClarity : '') ||
+        normalizeClarityTag(a.directionClarity) ||
+        fromBits.directionClarity ||
+        '';
+      tags.revenueReadiness =
+        (isCanonicalAnswerKey('revenueReadiness', a.revenueReadiness) ? a.revenueReadiness : '') ||
+        normalizeRevenueReadyTag(a.revenueReadiness) ||
+        fromPb.revenueReadiness ||
+        '';
+      tags.audienceState =
+        (isCanonicalAnswerKey('audienceState', a.audienceState) ? a.audienceState : '') ||
+        normalizeAudienceTag(a.audienceState) ||
+        '';
+      tags.executionIssue =
+        (isCanonicalAnswerKey('executionIssue', a.executionIssue) ? a.executionIssue : '') ||
+        normalizeExecutionTag(a.executionIssue) ||
+        fromBits.executionIssue ||
+        fromPb.executionIssue ||
+        '';
 
-    if (res && res.result_version === 'mixed_general') {
-      if (!tags.directionClarity) tags.directionClarity = 'low';
-    }
+      if (res && res.result_version === 'mixed_general') {
+        if (!tags.directionClarity) tags.directionClarity = 'low';
+      }
 
-    if (res && res.result_version === 'connector_overthinking_scattered') {
-      if (!tags.bottleneck) tags.bottleneck = 'too_many_ideas';
-    }
-    if (res && res.result_version === 'interpreter_avoidance_wrongpeople') {
-      if (!tags.audienceState) tags.audienceState = 'unclear';
-    }
+      if (res && res.result_version === 'connector_overthinking_scattered') {
+        if (!tags.bottleneck) tags.bottleneck = 'too_many_ideas';
+      }
+      if (res && res.result_version === 'interpreter_avoidance_wrongpeople') {
+        if (!tags.audienceState) tags.audienceState = 'unclear';
+      }
 
-    if (typeof state.outputs === 'object' && state.outputs.mainIssue && mainIssueTextSuggestsDirection(state.outputs.mainIssue)) {
-      if (!tags.bottleneck) tags.bottleneck = 'too_many_ideas';
-    }
+      if (typeof state.outputs === 'object' && state.outputs.mainIssue && mainIssueTextSuggestsDirection(state.outputs.mainIssue)) {
+        if (!tags.bottleneck) tags.bottleneck = 'too_many_ideas';
+      }
 
-    if (state.diagnosticCompleted && !tags.revenueReadiness) {
-      if (state.currentPhase === '/monetize') tags.revenueReadiness = 'low';
-      else if (state.currentPhase === '/structure' || state.currentPhase === '/automation') {
-        tags.revenueReadiness = tags.revenueReadiness || 'medium';
+      if (state.diagnosticCompleted && !tags.revenueReadiness) {
+        if (state.currentPhase === '/monetize') tags.revenueReadiness = 'low';
+        else if (state.currentPhase === '/structure' || state.currentPhase === '/automation') {
+          tags.revenueReadiness = tags.revenueReadiness || 'medium';
+        }
       }
     }
 
@@ -447,14 +670,8 @@
   function scoreStages(state) {
     var tags = state.tags || {};
     var b = state.behavior || {};
-    var out = { direction: 0, revenue: 0, lock: 0, concept: 0, snapshot: 0 },
-      reasons = {
-        direction: [],
-        revenue: [],
-        lock: [],
-        concept: [],
-        snapshot: []
-      };
+    var out = { direction: 0, revenue: 0, lock: 0, concept: 0, snapshot: 0 };
+    var reasons = { direction: [], revenue: [], lock: [], concept: [], snapshot: [] };
 
     var dc = tags.directionClarity;
     var rr = tags.revenueReadiness;
@@ -467,82 +684,65 @@
     var pricingHits = b.pricingVisits || 0;
     var completedDiag = !!state.diagnosticCompleted;
     var roomsDone = (state.completedRooms || []).length;
-    var osc = b.onlySometimesClicks || 0;
-    var advisory = b.advisoryClicks || 0;
     var timeOn = b.timeOnSite || 0;
-    var main = (state.outputs && state.outputs.mainIssue) || '';
-    var next = (state.outputs && state.outputs.nextMove) || '';
-    var money = (state.outputs && state.outputs.moneyLoss) || '';
-    var timeLoss = (state.outputs && state.outputs.timeLoss) || '';
+    var o = state.outputs || {};
+    var mit = o.mainIssueTag;
+    var nmt = o.nextMoveTag;
+    var tlt = o.timeLossTier;
+    var mlt = o.moneyLossTier;
 
     function add(stage, w, reason) {
       out[stage] += w;
       if (reason) reasons[stage].push(reason);
     }
 
-    // --- Direction rules ---
-    if (!dc || dc === 'none' || dc === 'low') add('direction', 5, 'direction clarity is not solid yet');
-    if (bott === 'too_many_ideas' || bott === 'scattered_focus' || bott === 'no_offer') {
-      add('direction', 4, 'too many threads or no offer');
+    if (dc === 'none') add('direction', 3, 'direction clarity none');
+
+    if (bott === 'too_many_ideas' || bott === 'scattered_focus') {
+      add('direction', 3, 'bottleneck ideas or scatter');
+      add('lock', 2, 'bottleneck ideas or scatter');
     }
-    if (aud === 'none' || aud === 'unclear') add('direction', 3, 'audience not defined');
-    if (phaseClicks >= 5 && roomsDone === 0 && !completedDiag) {
-      add('direction', 2, 'many phases opened, no completion');
+    if (bott === 'no_offer') add('direction', 3, 'no offer');
+    if (bott === 'no_money_path') add('revenue', 3, 'no money path');
+    if (bott === 'wrong_order') add('lock', 3, 'wrong order');
+    if (bott === 'weak_positioning') add('concept', 2, 'weak positioning');
+    if (bott === 'needs_full_review') add('snapshot', 4, 'needs full review');
+
+    if ((rr === 'none' || rr === 'low') && (dc === 'medium' || dc === 'high')) {
+      add('revenue', 3, 'direction ahead of revenue');
     }
-    if (mainIssueTextSuggestsDirection(main)) add('direction', 3, 'main issue reads as confusion or options');
+    if (goal === 'make_money' || goal === 'get_clients') add('revenue', 2, 'goal revenue');
 
-    // --- Revenue rules ---
-    if ((dc === 'medium' || dc === 'high') && (rr === 'none' || rr === 'low')) {
-      add('revenue', 6, 'direction exists but money path is weak');
+    if (aud === 'none') add('direction', 2, 'no audience');
+    if (aud === 'some' || aud === 'defined') add('concept', 2, 'audience present');
+
+    if (ex === 'starting' || ex === 'consistency') add('lock', 2, 'execution stall');
+    if (ex === 'shipping' || ex === 'finishing') add('concept', 2, 'execution toward ship');
+
+    if (tlt === 'high') {
+      add('lock', 2, 'time loss high');
+      add('snapshot', 2, 'time loss high');
     }
-    if (bott === 'no_money_path') add('revenue', 6, 'no money path');
-    if (goal === 'make_money' || goal === 'get_clients') add('revenue', 4, 'goal is money or clients');
-    if (lc(main).indexOf('money') >= 0 && lc(main).indexOf('offer') === -1) add('revenue', 2, 'output mentions money without offer');
-
-    // --- Lock rules ---
-    if (bott === 'wrong_order') add('lock', 6, 'wrong order');
-    if (bott === 'scattered_focus' && (ex === 'starting' || ex === 'consistency')) {
-      add('lock', 3, 'scattered focus + execution stall');
+    if (mlt === 'high') {
+      add('revenue', 2, 'money loss high');
+      add('snapshot', 2, 'money loss high');
     }
-    if (ex === 'starting' || ex === 'consistency') add('lock', 2, 'starting or consistency');
-    if (pricingHits > 1 && roomsDone === 0 && !completedDiag) add('lock', 4, 'repeat pricing without progress');
-    if (phaseClicks >= 4 && !completedDiag) add('lock', 5, 'many phase clicks, diagnostic incomplete');
-    if (phaseClicks > 2 && pricingHits > 0 && timeOn > LONG_SESSION_MS && roomsDone === 0) {
-      add('lock', 3, 'circular browsing');
+    if (mit) add(mit, 3, 'main issue signal');
+    if (nmt) add(nmt, 2, 'next move signal');
+
+    if (pricingHits > 1) {
+      add('snapshot', 2, 'repeat pricing');
+      add('revenue', 1, 'repeat pricing');
     }
-
-    // --- Concept rules ---
-    if ((dc === 'medium' || dc === 'high') && (aud === 'some' || aud === 'defined')) {
-      add('concept', 3, 'audience and direction present');
+    if (phaseClicks > 2 && roomsDone === 0 && !completedDiag) {
+      add('lock', 3, 'phases without completion');
     }
-    if (rr === 'medium') add('concept', 4, 'revenue readiness medium');
-    if (goal === 'build_offer' || goal === 'build_system') add('concept', 4, 'goal is build offer or system');
-    var cur = state.currentPhase || '';
-    if (cur === '/structure' || cur === '/automation' || roomsDone >= 1) add('concept', 3, 'in build-heavy part of system');
-
-    // --- Snapshot rules ---
-    if (bott === 'needs_full_review') add('snapshot', 7, 'needs full review');
-    if (rr === 'high' && lc(main).indexOf('weak') >= 0) add('snapshot', 2, 'high readiness but weak performance signal');
-    if (roomsDone >= SNAPSHOT_ROOMS_DONE && pricingHits >= SNAPSHOT_PRICING_VISITS) {
-      add('snapshot', 5, 'multiple rooms + repeat pricing');
+    if (roomsDone > 1) {
+      add('concept', 2, 'multiple rooms done');
+      add('snapshot', 2, 'multiple rooms done');
     }
-    if (textSuggestsLayeredProblems(main, next)) add('snapshot', 3, 'layered problems in outputs');
-    if (advisory >= 2 || osc >= 3) add('snapshot', 4, 'advisory or private access interest');
-    if (lc(money).length > 20 && lc(timeLoss).length > 20) add('snapshot', 2, 'significant loss copy present');
-
-    // --- Behavior modifiers (confidence shifters) ---
-    if (pricingHits > 1 && roomsDone === 0) add('lock', 2, 'modifier: repeat pricing');
-    if (phaseClicks > 2) add('lock', 1.5, 'modifier: phase exploration');
-    if (timeOn > LONG_SESSION_MS && !completedDiag) add('lock', 1, 'modifier: long session without completion');
-
-    if (roomsDone >= 1 && (advisory || osc)) add('snapshot', 2, 'modifier: rooms + advisory interest');
-    if (goal === 'build_offer' || goal === 'build_system') add('concept', 1.5, 'modifier: build goal');
-    if (dc && dc !== 'none' && aud && aud !== 'none') add('concept', 1.5, 'modifier: direction + audience not blank');
-
-    if (goal === 'make_money' || goal === 'get_clients') add('revenue', 1.5, 'modifier: revenue goal');
-
-    if (!completedDiag && phaseClicks < 2 && pricingHits === 0) {
-      add('direction', 2, 'modifier: early visitor');
+    if (timeOn > LONG_SESSION_MS && !completedDiag && roomsDone === 0) {
+      add('lock', 2, 'long session no decision');
     }
 
     return { scores: out, reasons: reasons };
@@ -626,8 +826,7 @@
     var margin = picked.margin;
 
     var tier = TIER_BY_STAGE[stage] || TIER_BY_STAGE.direction;
-    var reasonList = reasons[stage] || [];
-    var stageReason = reasonList.length ? reasonList[0] : 'default to direction';
+    var stageReason = LITERAL_STAGE_REASON[stage] || LITERAL_STAGE_REASON.direction;
 
     var conf = 'low';
     if (margin >= CONF_HIGH_GAP) conf = 'high';
@@ -657,48 +856,6 @@
     if (!item || arr.indexOf(item) >= 0) return;
     arr.push(item);
     while (arr.length > (max || 12)) arr.shift();
-  }
-
-  function computeStage(state) {
-    var b = state.behavior;
-    var stage = 'direction';
-    var tier = 'direction-system';
-    var tierName = 'Direction System';
-
-    var phaseClicks = (b.clickedPhases || []).length;
-    var pricingHits = b.pricingVisits || 0;
-    var completed = state.diagnosticCompleted;
-    var cur = state.currentPhase || '';
-
-    if (pricingHits >= 2 || (pricingHits >= 1 && b.timeOnSite > 120000 && b.viewedPricing)) {
-      stage = 'snapshot';
-      tier = 'snapshot';
-      tierName = 'Snapshot';
-    } else if (
-      phaseClicks >= 4 &&
-      (!completed || ['/capture', '/monetize', '/systems'].indexOf(cur) >= 0)
-    ) {
-      stage = 'lock';
-      tier = 'direction-lock';
-      tierName = 'Direction Lock';
-    } else if (completed && (cur === '/capture' || cur === '/monetize' || cur === '')) {
-      stage = 'revenue';
-      tier = 'revenue-system';
-      tierName = 'Revenue System';
-    } else if (
-      cur === '/structure' ||
-      cur === '/automation' ||
-      (state.completedRooms && state.completedRooms.length >= 2) ||
-      (state.answers.bottleneck && /structure|offer|concept/i.test(state.answers.bottleneck + ''))
-    ) {
-      stage = 'concept';
-      tier = 'concept-build';
-      tierName = 'Concept Build';
-    }
-
-    state.stage = stage;
-    state.recommendedTier = tier;
-    state.recommendedTierName = tierName;
   }
 
   var pathVisitCounted = false;
@@ -1001,6 +1158,9 @@
   }
 
   function clearDiagnosticSlice() {
+    try {
+      global.localStorage.removeItem(DIAGNOSTIC_ANSWERS_KEY);
+    } catch (e) {}
     state = mergeFromStorage(load());
     state.answers = defaultState().answers;
     state.outputs = defaultState().outputs;
@@ -1033,6 +1193,8 @@
     getState: function () {
       return state;
     },
+    mapBitsToAnswers: mapBitsToAnswers,
+    persistDiagnosticFromBits: persistDiagnosticFromBits,
     applyLivePanel: applyLivePanel,
     applyHomeHero: applyHomeHero,
     afterLivePanelTick: afterLivePanelTick,
