@@ -512,11 +512,77 @@ body.page-systems .systems-flow-stack-depth {
   overflow: visible;
 }
 
+body.page-systems .systems-flow-stack-aura-haze,
+body.page-systems .systems-flow-stack-aura-rings,
 body.page-systems .systems-flow-stack-atmo,
 body.page-systems .systems-flow-stack-orbit {
   position: absolute;
   left: 50%;
   pointer-events: none;
+}
+
+/* Layer 3: gradient haze — soft blend between rings and core */
+body.page-systems .systems-flow-stack-aura-haze {
+  top: 38%;
+  width: min(200vw, 920px);
+  height: 95%;
+  transform: translate(-50%, -50%);
+  z-index: 0;
+  background:
+    radial-gradient(ellipse 78% 62% at 46% 44%, rgba(72, 38, 32, 0.09) 0%, transparent 58%),
+    radial-gradient(ellipse 55% 48% at 58% 52%, rgba(38, 58, 42, 0.07) 0%, transparent 55%),
+    radial-gradient(ellipse 70% 55% at 52% 48%, rgba(32, 40, 72, 0.06) 0%, transparent 62%);
+  filter: blur(64px);
+  opacity: 0.55;
+  mix-blend-mode: normal;
+  animation: systemsAuraHazeMotion 34s ease-in-out infinite;
+}
+
+/* Layer 2: large soft aura rings — oxblood / muted green / soft brown */
+body.page-systems .systems-flow-stack-aura-rings {
+  top: 40%;
+  width: min(185vw, 880px);
+  height: 92%;
+  transform: translate(-50%, -50%);
+  z-index: 1;
+}
+
+body.page-systems .systems-flow-stack-aura-ring {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  filter: blur(38px);
+  opacity: 0.09;
+  mix-blend-mode: screen;
+  animation: systemsAuraRingMotion 38s ease-in-out infinite;
+}
+
+body.page-systems .systems-flow-stack-aura-ring--a {
+  width: 118%;
+  height: 88%;
+  background: radial-gradient(
+    ellipse 100% 100% at 48% 46%,
+    rgba(88, 32, 28, 0.55) 0%,
+    rgba(58, 22, 20, 0.22) 42%,
+    transparent 72%
+  );
+  animation-delay: 0s;
+}
+
+body.page-systems .systems-flow-stack-aura-ring--b {
+  width: 132%;
+  height: 102%;
+  background: radial-gradient(
+    ellipse 100% 100% at 54% 54%,
+    rgba(42, 62, 48, 0.42) 0%,
+    rgba(58, 48, 38, 0.28) 48%,
+    transparent 74%
+  );
+  mix-blend-mode: normal;
+  opacity: 0.07;
+  animation-delay: -14s;
 }
 
 @media (max-width: 767px) {
@@ -544,10 +610,24 @@ body.page-systems .systems-flow-stack-orbit {
     inset: -3% -8% -6% -8%;
   }
 
+  body.page-systems .systems-flow-stack-aura-haze {
+    top: calc(36% + (0.5 - var(--systems-stack-center, 0.5)) * 12%);
+    width: min(168vw, 648px);
+    height: 74%;
+    opacity: 0.48;
+  }
+
+  body.page-systems .systems-flow-stack-aura-rings {
+    top: calc(38% + (0.5 - var(--systems-stack-center, 0.5)) * 10%);
+    width: min(158vw, 600px);
+    height: 78%;
+  }
+
   body.page-systems .systems-flow-stack-atmo {
     top: calc(36% + (0.5 - var(--systems-stack-center, 0.5)) * 18%);
-    width: min(140vw, 540px);
-    height: 62%;
+    z-index: 2;
+    width: min(168vw, 648px);
+    height: 74%;
     transform: translate(
       -50%,
       calc(-50% + (0.45 - var(--systems-stack-visibility, 0.5)) * 28px)
@@ -562,6 +642,7 @@ body.page-systems .systems-flow-stack-orbit {
   }
 
   body.page-systems .systems-flow-stack-orbit {
+    z-index: 3;
     top: 41%;
     width: min(122vw, 488px);
     height: 80%;
@@ -578,10 +659,35 @@ body.page-systems .systems-flow-stack-orbit {
 }
 
 @media (min-width: 768px) {
-  body.page-systems .systems-flow-stack-atmo {
+  body.page-systems .systems-flow-stack-aura-haze {
     top: 40%;
-    width: min(88vw, 760px);
-    height: 52%;
+    width: min(105vw, 912px);
+    height: 62%;
+    transform: translate(-50%, -50%);
+    opacity: 0.5;
+  }
+
+  body.page-systems .systems-flow-stack-aura-rings {
+    top: 40%;
+    width: min(98vw, 840px);
+    height: 58%;
+    transform: translate(-50%, -50%);
+  }
+
+  body.page-systems .systems-flow-stack-aura-ring {
+    filter: blur(44px);
+    opacity: 0.085;
+  }
+
+  body.page-systems .systems-flow-stack-aura-ring--b {
+    opacity: 0.065;
+  }
+
+  body.page-systems .systems-flow-stack-atmo {
+    z-index: 2;
+    top: 40%;
+    width: min(105vw, 912px);
+    height: 62%;
     transform: translate(-50%, -50%);
     background: radial-gradient(
       ellipse 62% 58% at 50% 46%,
@@ -592,6 +698,7 @@ body.page-systems .systems-flow-stack-orbit {
     filter: blur(58px);
     opacity: 0.18;
     mix-blend-mode: normal;
+    animation: systemsAuraCoreMotion 36s ease-in-out infinite;
   }
 
   body.page-systems .systems-flow-stack-orbit {
@@ -611,9 +718,50 @@ body.page-systems .systems-flow-stack-orbit {
   }
 }
 
+@keyframes systemsAuraCoreMotion {
+  0%,
+  100% {
+    transform: translate(-50%, -50%) translate3d(-6px, 4px, 0) scale(1);
+    opacity: 0.16;
+  }
+  33% {
+    transform: translate(-50%, -50%) translate3d(5px, -4px, 0) scale(1.008);
+    opacity: 0.2;
+  }
+  66% {
+    transform: translate(-50%, -50%) translate3d(3px, 5px, 0) scale(1.014);
+    opacity: 0.17;
+  }
+}
+
+@keyframes systemsAuraHazeMotion {
+  0%,
+  100% {
+    transform: translate(-50%, -50%) translate3d(4px, -3px, 0) scale(1);
+  }
+  50% {
+    transform: translate(-50%, -50%) translate3d(-5px, 5px, 0) scale(1.01);
+  }
+}
+
+@keyframes systemsAuraRingMotion {
+  0%,
+  100% {
+    transform: translate(-50%, -50%) translate3d(-4px, 5px, 0) scale(1);
+  }
+  50% {
+    transform: translate(-50%, -50%) translate3d(6px, -4px, 0) scale(1.012);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   body.page-systems .systems-flow-stack-orbit {
     animation: none;
     opacity: 0.32;
+  }
+  body.page-systems .systems-flow-stack-aura-haze,
+  body.page-systems .systems-flow-stack-aura-ring,
+  body.page-systems .systems-flow-stack-atmo {
+    animation: none !important;
   }
 }

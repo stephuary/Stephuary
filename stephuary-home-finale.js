@@ -33,8 +33,10 @@
     var cx = w * 0.5;
     var cy = h * 0.5;
     var orbitR = 128;
-    var centerR = 11;
-    var satR = 6;
+    var centerR = 9.5;
+    var satR = 5.2;
+    var HUB_CLIP_R = 40;
+    var CENTER_LABEL_R = 24;
 
     var nodes = [];
     var i;
@@ -216,7 +218,10 @@
         var j = (i + 2) % N;
         var ai = nodes[i];
         var aj = nodes[j];
+        var dCross = distToSeg(cx, cy, ai.x, ai.y, aj.x, aj.y);
+        var nearCenter = Math.max(0, 1 - dCross / 52);
         var o = 0.03 * rew * (1 - converge * 0.5);
+        o *= 0.28 + 0.72 * (1 - nearCenter * 0.92);
         ctx.strokeStyle = 'rgba(58, 107, 255, ' + o + ')';
         ctx.lineWidth = 0.6;
         ctx.beginPath();
@@ -231,12 +236,21 @@
         if (hasPointer) hub += Math.max(0, 1 - Math.hypot(mxi - nd.x, myi - nd.y) / 100) * 0.25;
         hub = lineBright(center.x, center.y, nd.x, nd.y, hub);
         var shift = hasPointer ? Math.sin(t * 0.4 + i) * 0.4 * (1 - converge) : 0;
+        var cxs = center.x + shift * 0.2;
+        var cys = center.y + shift * 0.15;
+        var dx = nd.x - cxs;
+        var dy = nd.y - cys;
+        var hdist = Math.hypot(dx, dy) || 1;
+        var ux = dx / hdist;
+        var uy = dy / hdist;
+        var sx = cxs + ux * HUB_CLIP_R;
+        var sy = cys + uy * HUB_CLIP_R;
         ctx.strokeStyle = 'rgba(198, 161, 91, ' + hub + ')';
         ctx.lineWidth = 0.9 + shift;
         ctx.shadowColor = 'rgba(198, 161, 91, ' + (0.12 + hub * 0.2) + ')';
         ctx.shadowBlur = 6 + hub * 8;
         ctx.beginPath();
-        ctx.moveTo(center.x + shift * 0.2, center.y + shift * 0.15);
+        ctx.moveTo(sx, sy);
         ctx.lineTo(nd.x, nd.y);
         ctx.stroke();
         ctx.shadowBlur = 0;
@@ -247,6 +261,7 @@
         var dim = 0.35 + 0.55 * (1 - Math.min(1, Math.hypot(mxi - nd2.x, myi - nd2.y) / 140));
         if (!hasPointer) dim = 0.72 + 0.2 * Math.sin(t * 0.4 + nd2.phase);
         dim *= 1 - converge * 0.12;
+        dim *= 0.88;
         var grd = ctx.createRadialGradient(nd2.x, nd2.y, 0, nd2.x, nd2.y, 18);
         grd.addColorStop(0, 'rgba(58, 107, 255, ' + (0.12 * dim) + ')');
         grd.addColorStop(0.55, 'rgba(58, 107, 255, ' + (0.05 * dim) + ')');
@@ -259,41 +274,57 @@
         var sc = 1 + Math.max(0, 1 - Math.hypot(mxi - nd2.x, myi - nd2.y) / INFLUENCE_R) * 0.07;
         if (!hasPointer) sc = 1 + Math.sin(t * 0.5 + nd2.phase) * 0.02;
         sc = Math.min(1.08, sc);
-        ctx.fillStyle = 'rgba(244, 237, 224, ' + (0.12 + 0.55 * dim * sc) + ')';
-        ctx.strokeStyle = 'rgba(198, 161, 91, ' + (0.15 + 0.35 * dim) + ')';
+        ctx.shadowColor = 'rgba(58, 107, 255, ' + (0.14 * dim) + ')';
+        ctx.shadowBlur = 5 + dim * 4;
+        ctx.fillStyle = 'rgba(244, 237, 224, ' + (0.1 + 0.48 * dim * sc) + ')';
+        ctx.strokeStyle = 'rgba(198, 161, 91, ' + (0.12 + 0.3 * dim) + ')';
         ctx.lineWidth = 1;
         ctx.beginPath();
         ctx.arc(nd2.x, nd2.y, satR * sc, 0, Math.PI * 2);
         ctx.fill();
         ctx.stroke();
-
-        var lx = (nd2.x - cx) / orbitR;
-        var ly = (nd2.y - cy) / orbitR;
-        var tx = nd2.x + 16 * lx;
-        var ty = nd2.y + 16 * ly + (ly < -0.35 ? -2 : 14);
-        ctx.font = '7px "DM Mono", monospace';
-        ctx.fillStyle = 'rgba(181, 170, 156, ' + (0.2 + 0.75 * dim * (hasPointer ? 1 : 0.65)) + ')';
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.fillText(nd2.label, tx, ty);
+        ctx.shadowBlur = 0;
       }
 
-      var cg = ctx.createRadialGradient(center.x, center.y, 0, center.x, center.y, 28);
+      var cg = ctx.createRadialGradient(center.x, center.y, 0, center.x, center.y, CENTER_LABEL_R);
       cg.addColorStop(0, 'rgba(198, 161, 91, ' + (0.35 + converge * 0.15) + ')');
       cg.addColorStop(0.45, 'rgba(59, 13, 13, ' + (0.12 + converge * 0.08) + ')');
       cg.addColorStop(1, 'rgba(59, 13, 13, 0)');
       ctx.fillStyle = cg;
       ctx.beginPath();
-      ctx.arc(center.x, center.y, 28, 0, Math.PI * 2);
+      ctx.arc(center.x, center.y, CENTER_LABEL_R, 0, Math.PI * 2);
       ctx.fill();
 
-      ctx.fillStyle = 'rgba(244, 237, 224, ' + (0.55 + converge * 0.2) + ')';
-      ctx.strokeStyle = 'rgba(198, 161, 91, 0.45)';
+      ctx.shadowColor = 'rgba(198, 161, 91, 0.22)';
+      ctx.shadowBlur = 8;
+      ctx.fillStyle = 'rgba(244, 237, 224, ' + (0.5 + converge * 0.18) + ')';
+      ctx.strokeStyle = 'rgba(198, 161, 91, 0.4)';
       ctx.lineWidth = 1.1;
       ctx.beginPath();
       ctx.arc(center.x, center.y, centerR, 0, Math.PI * 2);
       ctx.fill();
       ctx.stroke();
+      ctx.shadowBlur = 0;
+
+      for (i = 0; i < N; i++) {
+        var nd3 = nodes[i];
+        var dimL = 0.35 + 0.55 * (1 - Math.min(1, Math.hypot(mxi - nd3.x, myi - nd3.y) / 140));
+        if (!hasPointer) dimL = 0.72 + 0.2 * Math.sin(t * 0.4 + nd3.phase);
+        dimL *= 1 - converge * 0.12;
+        dimL *= 0.88;
+        var lx2 = (nd3.x - cx) / orbitR;
+        var ly2 = (nd3.y - cy) / orbitR;
+        var tx2 = nd3.x + 22 * lx2;
+        var ty2 = nd3.y + 22 * ly2 + (ly2 < -0.35 ? -2 : 14);
+        ctx.font = '7px "DM Mono", monospace';
+        ctx.shadowColor = 'rgba(3, 3, 3, 0.65)';
+        ctx.shadowBlur = 6;
+        ctx.fillStyle = 'rgba(181, 170, 156, ' + (0.22 + 0.7 * dimL * (hasPointer ? 1 : 0.65)) + ')';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(nd3.label, tx2, ty2);
+        ctx.shadowBlur = 0;
+      }
 
       ctx.restore();
 
