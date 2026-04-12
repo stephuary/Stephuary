@@ -738,9 +738,150 @@ body.sh-behavior--fast {
   transition: box-shadow 0.35s ease;
 }
 
+/* Global orientation map (Diagnostic → Custom) */
+.sh-global-map-wrap {
+  width: 100%;
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+.sh-global-map {
+  border: 1px solid rgba(244, 237, 224, 0.08);
+  background: rgba(8, 8, 7, 0.45);
+  border-radius: 2px;
+  padding: 14px 16px 16px;
+  margin: 0 auto;
+}
+.sh-global-map--minimal {
+  padding: 10px 12px;
+}
+.sh-global-map--full {
+  padding: 18px 20px 20px;
+}
+.sh-global-map__you {
+  font-family: 'DM Mono', monospace;
+  font-size: 7px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(110, 101, 88, 0.95);
+  margin: 0 0 10px;
+}
+.sh-global-map__track {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 4px 2px;
+  row-gap: 8px;
+}
+.sh-global-map__node {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px 4px 6px;
+  border-radius: 2px;
+  text-decoration: none;
+  color: rgba(160, 152, 137, 0.55);
+  font-family: 'DM Mono', monospace;
+  font-size: 8px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  transition: color 0.25s ease, box-shadow 0.3s ease, transform 0.25s ease, opacity 0.25s ease;
+  border: 1px solid transparent;
+  opacity: 0.72;
+}
+.sh-global-map__dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: rgba(244, 237, 224, 0.12);
+  flex-shrink: 0;
+  transition: background 0.25s ease, box-shadow 0.3s ease;
+}
+.sh-global-map__node:hover {
+  color: rgba(203, 195, 180, 0.92);
+  opacity: 1;
+  transform: translateY(-1px);
+}
+.sh-global-map__node.is-done {
+  opacity: 0.95;
+  color: rgba(196, 163, 90, 0.75);
+  border-color: rgba(196, 163, 90, 0.28);
+}
+.sh-global-map__node.is-done .sh-global-map__dot {
+  background: rgba(196, 163, 90, 0.35);
+  box-shadow: 0 0 0 1px rgba(196, 163, 90, 0.2);
+}
+.sh-global-map__node.is-current {
+  opacity: 1;
+  color: rgba(244, 237, 224, 0.95);
+  border-color: rgba(43, 79, 212, 0.45);
+  box-shadow: 0 0 0 1px rgba(43, 79, 212, 0.2), 0 0 22px rgba(43, 79, 212, 0.12);
+  transform: scale(1.02);
+}
+.sh-global-map__node.is-current .sh-global-map__dot {
+  background: rgba(58, 107, 255, 0.65);
+  box-shadow: 0 0 12px rgba(43, 79, 212, 0.35);
+}
+.sh-global-map__node.is-rec:not(.is-current) {
+  border-color: rgba(43, 79, 212, 0.22);
+  opacity: 0.9;
+}
+.sh-global-map__arrow {
+  color: rgba(110, 101, 88, 0.35);
+  font-size: 11px;
+  padding: 0 2px;
+  user-select: none;
+}
+.sh-global-map__rec-inline {
+  display: inline;
+  margin-left: 5px;
+  font-family: 'DM Mono', monospace;
+  font-size: 6px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(58, 107, 255, 0.5);
+  font-weight: 400;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+.sh-global-map__node.is-current .sh-global-map__rec-inline {
+  color: rgba(58, 107, 255, 0.72);
+}
+.sh-global-map--minimal .sh-global-map__rec-inline {
+  font-size: 5px;
+  margin-left: 4px;
+}
+.sh-global-map__reason {
+  margin: 8px 0 0;
+  font-size: 12px;
+  line-height: 1.45;
+  color: rgba(160, 152, 137, 0.85);
+  max-width: 52ch;
+}
+.sh-global-map--minimal .sh-global-map__track {
+  font-size: 7px;
+}
+.sh-global-map--minimal .sh-global-map__you {
+  margin-bottom: 6px;
+}
+@media (max-width: 720px) {
+  .sh-global-map__track {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    padding-bottom: 4px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+  }
+  .sh-global-map__node {
+    flex-shrink: 0;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .sys-btn,
   .sh-map-node,
+  .sh-global-map__node,
   .magnetic,
   #page-transition {
     transition: none !important;

@@ -274,6 +274,7 @@
 
   function setupVisual(el, type) {
     if (!el || reduceMotion) return;
+    if (el.querySelector('canvas')) return;
     var canvas = document.createElement('canvas');
     el.appendChild(canvas);
     var ctx = canvas.getContext('2d');
@@ -1144,8 +1145,17 @@
     document.head.appendChild(sp);
   }
 
+  function ensureGlobalMapScript() {
+    if (document.querySelector('script[src*="stephuary-global-map"]')) return;
+    var sg = document.createElement('script');
+    sg.src = '/stephuary-global-map.js';
+    sg.defer = true;
+    document.head.appendChild(sg);
+  }
+
   function boot() {
     ensurePersonalizeScript();
+    ensureGlobalMapScript();
     initPageTransition();
     initMagnetic();
     initAdaptiveLayer();
@@ -1182,6 +1192,15 @@
         { passive: true }
       );
     }
+
+    window.addEventListener('load', function () {
+      window.dispatchEvent(new Event('resize'));
+      window.setTimeout(function () {
+        if (window.StephuaryGlobalMap && typeof window.StephuaryGlobalMap.init === 'function') {
+          window.StephuaryGlobalMap.init();
+        }
+      }, 120);
+    });
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);

@@ -243,13 +243,16 @@
 <body>
   <div id="page-transition" aria-hidden="true"></div>
   <script src="/stephuary-interactive.js" defer></script>
+  <script src="/stephuary-personalization.js" defer></script>
+  <script src="/stephuary-global-map.js" defer></script>
 
   <nav aria-label="Main">
     <a href="/" class="nav-mark">Stephuary</a>
     <div class="nav-links">
       <a href="/systems">System</a>
+      <a href="/pricing">Pricing</a>
       <a href="/access" class="nav-club">.5% Club</a>
-      <a href="https://stephuary.substack.com" target="_blank" rel="noopener">Substack</a>
+      <a href="https://stephuary.substack.com" target="_blank" rel="noopener">Grown spaghetti</a>
       <a href="https://onlysometimesclub.com" target="_blank" rel="noopener noreferrer">Only Sometimes Club</a>
     </div>
   </nav>
@@ -267,6 +270,10 @@
   <div class="wrap">
     <div class="resume-banner" id="resume-banner" aria-live="polite">
       <a href="/capture" id="resume-link">Continue where you left off</a>
+    </div>
+
+    <div class="sh-global-map-wrap" style="margin-bottom: 28px">
+      <div data-global-system-map="full"></div>
     </div>
 
     <div class="sh-system-map" aria-label="Five phases from diagnostic through sovereignty">
@@ -315,8 +322,9 @@
       <ul class="footer-links">
         <li><a href="/">Home</a></li>
         <li><a href="/systems">System</a></li>
+        <li><a href="/pricing">Pricing</a></li>
         <li><a href="/access" class="nav-club">.5% Club</a></li>
-        <li><a href="https://stephuary.substack.com" target="_blank" rel="noopener">Substack</a></li>
+        <li><a href="https://stephuary.substack.com" target="_blank" rel="noopener">Grown spaghetti</a></li>
         <li><a href="https://onlysometimesclub.com" target="_blank" rel="noopener noreferrer">Only Sometimes Club</a></li>
       </ul>
     </div>
@@ -326,13 +334,25 @@
   <script src="/stephuary-progress.js"></script>
   <script>
     (function () {
-      var resume = window.StephuaryProgress.getResumeLabel();
-      var ban = document.getElementById('resume-banner');
-      var link = document.getElementById('resume-link');
-      if (resume && ban && link) {
-        ban.classList.add('visible');
-        link.textContent = resume.line;
-        link.href = resume.href;
+      var tries = 0;
+      function applyResume() {
+        if (!window.StephuaryProgress || typeof window.StephuaryProgress.getResumeLabel !== 'function') {
+          if (tries++ < 40) setTimeout(applyResume, 50);
+          return;
+        }
+        var resume = window.StephuaryProgress.getResumeLabel();
+        var ban = document.getElementById('resume-banner');
+        var link = document.getElementById('resume-link');
+        if (resume && ban && link) {
+          ban.classList.add('visible');
+          link.textContent = resume.line;
+          link.href = resume.href;
+        }
+      }
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', applyResume);
+      } else {
+        applyResume();
       }
     })();
   </script>
