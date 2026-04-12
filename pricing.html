@@ -412,6 +412,60 @@ body.pricing-page #sh-live-panel .sh-live-panel__dock{
   border-top:1px solid rgba(59,13,13,0.22);
 }
 
+/* Full Environment — progressive reveal (behavior only) */
+.fe-env__summary-price{
+  font-family:var(--serif);font-size:clamp(20px,2.6vw,28px);font-weight:300;color:var(--gold);
+  letter-spacing:-0.02em;line-height:1.1;margin:6px 0 8px;
+}
+body.pricing-page:not(.fe-env--s2):not(.fe-env--s3) .fe-env-tier2{
+  display:grid;grid-template-rows:0fr;opacity:0;visibility:hidden;
+  transition:grid-template-rows .48s cubic-bezier(0.22,1,0.36,1),opacity .42s ease,visibility 0s linear .45s;
+}
+body.pricing-page.fe-env--s2 .fe-env-tier2,
+body.pricing-page.fe-env--s3 .fe-env-tier2{
+  display:grid;grid-template-rows:1fr;opacity:1;visibility:visible;
+  transition:grid-template-rows .48s cubic-bezier(0.22,1,0.36,1),opacity .45s ease .05s,visibility 0s;
+}
+.fe-env-tier2-inner{min-height:0;overflow:hidden;}
+body.pricing-page.fe-env--s2 .fe-env-tier1 .fe-env__s1-only,
+body.pricing-page.fe-env--s3 .fe-env-tier1 .fe-env__s1-only{display:none;}
+.fe-env-tier1{position:relative;transition:opacity .3s ease;}
+.fe-env-btn-details{
+  font:inherit;cursor:pointer;font-family:var(--mono);font-size:9px;letter-spacing:0.16em;text-transform:uppercase;
+  color:var(--text-3);padding:10px 16px;border-radius:var(--r);border:1px solid var(--line);background:transparent;
+  transition:border-color .2s,color .2s,transform .15s ease;
+}
+.fe-env-btn-details:hover{border-color:rgba(43,79,212,0.4);color:var(--text-2);}
+body.pricing-page.fe-env--s1 .fe-env-s3-wrap,
+body.pricing-page.fe-env--s2 .fe-env-s3-wrap{
+  display:none;opacity:0;visibility:hidden;
+}
+body.pricing-page.fe-env--s3 .fe-env-s3-wrap{
+  display:block;opacity:1;visibility:visible;margin-top:6px;
+  animation:feEnvS3In .45s ease both;
+}
+@keyframes feEnvS3In{from{opacity:0}to{opacity:1}}
+@media (prefers-reduced-motion:reduce){
+  body.pricing-page.fe-env--s3 .fe-env-s3-wrap{animation:none;}
+}
+.fe-env-s3-wrap-inner{padding-bottom:2px;}
+.fe-env-micro-line{
+  font-size:12px;color:var(--text-4);line-height:1.45;max-width:48ch;margin:0 0 8px;font-style:italic;
+  opacity:0.88;
+}
+.fe-env-limited{margin-top:0!important;padding-top:10px!important;}
+body.pricing-page.fe-env--s3 .price-group--custom-build.fe-env--emphasize{
+  border-color:rgba(196,163,90,0.32);
+  box-shadow:0 0 0 1px rgba(196,163,90,0.08),0 8px 32px rgba(0,0,0,0.35);
+}
+.fe-env-cta .tier-cta--pri{transition:box-shadow .3s ease,background .2s ease;}
+body.pricing-page.fe-env--s3 .fe-env-cta .tier-cta--pri{
+  box-shadow:0 4px 24px rgba(43,79,212,0.38),0 0 0 1px rgba(120,155,255,0.12);
+}
+@media (prefers-reduced-motion:reduce){
+  body.pricing-page .fe-env-tier2{transition:none;}
+}
+
 /* Mobile / tablet: live block between hero and groups */
 @media(max-width:900px){
   .pricing-layout{
@@ -438,6 +492,41 @@ body.pricing-page #sh-live-panel .sh-live-panel__dock{
 <link rel="stylesheet" href="/stephuary-free-mode.css"/>
 </head>
 <body class="pricing-page">
+<script>
+(function () {
+  try {
+    var K = 'stephuary_pricing_fe_env';
+    function ls(k) {
+      try {
+        return localStorage.getItem(k);
+      } catch (e) {
+        return null;
+      }
+    }
+    function ss(k) {
+      try {
+        return sessionStorage.getItem(k);
+      } catch (e) {
+        return null;
+      }
+    }
+    var floor = 1;
+    if (ls('capture_complete') === 'true' || ls('stephuary_result_v1') || ls('diagnosticCompleted') === 'true') floor = 3;
+    else if (ls('diagnosticStarted') === 'true') floor = 2;
+    var saved = parseInt(ss(K) || '0', 10);
+    var n = saved >= 1 && saved <= 3 ? saved : 1;
+    if (floor > n) n = floor;
+    if (n < 1) n = 1;
+    if (n > 3) n = 3;
+    document.body.classList.add('fe-env--s' + n);
+    try {
+      sessionStorage.setItem(K, String(n));
+    } catch (e) {}
+  } catch (e) {
+    document.body.classList.add('fe-env--s1');
+  }
+})();
+</script>
 <div id="page-transition" aria-hidden="true"></div>
 <script src="/stephuary-config.js"></script>
 <script src="/stephuary-interactive.js" defer></script>
@@ -620,15 +709,25 @@ body.pricing-page #sh-live-panel .sh-live-panel__dock{
         <summary>
           <div class="price-group__kicker">D</div>
           <h2 class="price-group__title">Full Environment</h2>
-          <p class="price-group__preview">Perception, pathways, and decisions—engineered as one connected environment.</p>
+          <p class="fe-env__summary-price">Starting at $22,000</p>
+          <p class="price-group__preview">A custom-built interactive system designed to reshape how your business is experienced and chosen.</p>
           <div class="price-group__hint">From CEI through discovery—one integrated engagement.</div>
         </summary>
         <div class="price-group__anim">
           <div class="price-group__inner">
             <div class="price-group__pad">
 
-              <div class="inner-tier">
-                <p class="inner-tier__price">Starting at $22,000</p>
+              <div class="inner-tier fe-env-inner">
+                <div class="fe-env-tier1">
+                  <p class="inner-tier__price fe-env__s1-only">Starting at $22,000</p>
+                  <p class="inner-tier__desc fe-env__s1-only">A custom-built interactive system designed to reshape how your business is experienced and chosen.</p>
+                  <div class="tier-cta-row fe-env__s1-only">
+                    <button type="button" class="fe-env-btn-details" id="fe-env-btn-details" aria-controls="fe-env-tier2-block">View details</button>
+                  </div>
+                </div>
+
+                <div class="fe-env-tier2" id="fe-env-tier2-block">
+                  <div class="fe-env-tier2-inner">
 
                 <p class="inner-tier__sub">What this is</p>
                 <p class="inner-tier__desc">A custom-built, interactive system designed to control how people understand, move through, and decide on your business.</p>
@@ -671,10 +770,18 @@ body.pricing-page #sh-live-panel .sh-live-panel__dock{
 
                 <p class="note-bridge">This is a custom-built experience system, not a standard website.</p>
 
-                <p class="deliver-note deliver-note--limited">Limited builds per quarter</p>
+                <div class="fe-env-s3-wrap">
+                  <div class="fe-env-s3-wrap-inner">
+                    <p class="fe-env-micro-line">This is likely what you’re actually looking for.</p>
+                    <p class="deliver-note deliver-note--limited fe-env-limited">Limited builds per quarter</p>
+                  </div>
+                </div>
 
-                <div class="tier-cta-row">
-                  <a href="/private-access" class="tier-cta tier-cta--pri magnetic">Request access</a>
+                <div class="tier-cta-row fe-env-cta">
+                  <a href="/private-access" class="tier-cta tier-cta--pri magnetic" id="fe-env-request">Request access</a>
+                </div>
+
+                  </div>
                 </div>
               </div>
 
@@ -713,6 +820,9 @@ body.pricing-page #sh-live-panel .sh-live-panel__dock{
 </div>
 <script>
 (function () {
+  var FEK = 'stephuary_pricing_fe_env';
+  var IXK = 'stephuary_pricing_fe_ix';
+
   function placeLivePanel() {
     var panel = document.getElementById('sh-live-panel');
     var slot = document.getElementById('pricing-live-slot');
@@ -737,8 +847,141 @@ body.pricing-page #sh-live-panel .sh-live-panel__dock{
       groups.forEach(function (o) {
         if (o !== g) o.open = false;
       });
+      if (g.id !== 'tier-custom-build') {
+        tryFeEngage(2, false);
+      }
     });
   });
+
+  function getFeState() {
+    var m = document.body.className.match(/fe-env--s(\d)/);
+    return m ? parseInt(m[1], 10) : 1;
+  }
+
+  function setFeState(target) {
+    if (target < 1 || target > 3) return;
+    var cur = getFeState();
+    if (target <= cur) return;
+    document.body.classList.remove('fe-env--s1', 'fe-env--s2', 'fe-env--s3');
+    document.body.classList.add('fe-env--s' + target);
+    try {
+      sessionStorage.setItem(FEK, String(target));
+    } catch (e) {}
+    var det = document.getElementById('tier-custom-build');
+    if (det) det.classList.toggle('fe-env--emphasize', target >= 3);
+  }
+
+  var feScrollDone = false;
+  var lastBump = 0;
+
+  function bumpIxDebounced() {
+    var now = Date.now();
+    if (now - lastBump < 1800) return;
+    lastBump = now;
+    bumpIx();
+  }
+
+  function tryFeEngage(min, skipIx) {
+    setFeState(min);
+    syncFeFromLs();
+    if (!skipIx) bumpIxDebounced();
+  }
+
+  function bumpIx() {
+    try {
+      var n = parseInt(sessionStorage.getItem(IXK) || '0', 10) + 1;
+      sessionStorage.setItem(IXK, String(n));
+      if (n >= 6 && getFeState() >= 2) setFeState(3);
+    } catch (e) {}
+  }
+
+  function syncFeFromLs() {
+    try {
+      if (
+        localStorage.getItem('capture_complete') === 'true' ||
+        localStorage.getItem('stephuary_result_v1') ||
+        localStorage.getItem('diagnosticCompleted') === 'true'
+      ) {
+        setFeState(3);
+        return;
+      }
+      if (localStorage.getItem('diagnosticStarted') === 'true') setFeState(2);
+    } catch (e) {}
+  }
+
+  function scrollDepth() {
+    var el = document.documentElement;
+    var sh = el.scrollHeight - el.clientHeight;
+    if (sh <= 0) return 0;
+    return window.scrollY / sh;
+  }
+
+  var feT = null;
+  function onScrollFe() {
+    if (feT) return;
+    feT = window.requestAnimationFrame(function () {
+      feT = null;
+      syncFeFromLs();
+      if (!feScrollDone && scrollDepth() >= 0.42) {
+        feScrollDone = true;
+        tryFeEngage(2, true);
+      }
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', function () {
+    var det = document.getElementById('tier-custom-build');
+    if (det && getFeState() >= 3) det.classList.add('fe-env--emphasize');
+
+    var btn = document.getElementById('fe-env-btn-details');
+    if (btn) {
+      btn.addEventListener('click', function (e) {
+        e.preventDefault();
+        tryFeEngage(2, false);
+      });
+    }
+
+    window.addEventListener('scroll', onScrollFe, { passive: true });
+    window.setTimeout(function () {
+      tryFeEngage(2, true);
+    }, 26000);
+
+    document.addEventListener(
+      'click',
+      function (e) {
+        var t = e.target;
+        if (t.closest && t.closest('#fe-env-btn-details')) return;
+        if (t.closest && t.closest('#tier-custom-build') && t.closest('.fe-env-tier2')) {
+          bumpIxDebounced();
+          return;
+        }
+        if (
+          t.closest &&
+          (t.closest('.top-nav') ||
+            t.closest('.sh-global-map-wrap') ||
+            t.closest('#pricing-live-slot') ||
+            t.closest('#sh-live-panel') ||
+            t.closest('.pricing-hero'))
+        ) {
+          tryFeEngage(2, false);
+        }
+      },
+      true
+    );
+
+    syncFeFromLs();
+  });
+
+  window.addEventListener('storage', function (e) {
+    if (!e.key || ['capture_complete', 'diagnosticStarted', 'diagnosticCompleted', 'stephuary_result_v1'].indexOf(e.key) === -1) return;
+    syncFeFromLs();
+    try {
+      var n = parseInt(sessionStorage.getItem(IXK) || '0', 10);
+      if (n >= 6 && getFeState() >= 2) setFeState(3);
+    } catch (err) {}
+  });
+
+  window.setInterval(syncFeFromLs, 4000);
 })();
 </script>
 </body>
