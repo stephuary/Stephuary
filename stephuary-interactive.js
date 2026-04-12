@@ -1520,6 +1520,34 @@
     document.head.appendChild(mf);
   }
 
+  function initCollapsibleProgressBars() {
+    document.querySelectorAll('.progress-bar-wrap').forEach(function (wrap) {
+      if (wrap.getAttribute('data-sh-progress-collapsible') === '1') return;
+      var meta = wrap.querySelector('.progress-meta');
+      var track = wrap.querySelector('.progress-track');
+      var countEl = wrap.querySelector('.progress-count');
+      if (!meta || !track || !countEl) return;
+      wrap.setAttribute('data-sh-progress-collapsible', '1');
+      wrap.classList.add('progress-bar-wrap--collapsible');
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'progress-bar-toggle';
+      btn.setAttribute('aria-expanded', 'true');
+      btn.setAttribute('aria-label', 'Hide progress bar');
+      btn.innerHTML = '<span class="progress-bar-toggle__icon" aria-hidden="true">▼</span>';
+      var end = document.createElement('span');
+      end.className = 'progress-bar-meta-end';
+      countEl.parentNode.insertBefore(end, countEl);
+      end.appendChild(countEl);
+      end.appendChild(btn);
+      btn.addEventListener('click', function () {
+        var collapsed = wrap.classList.toggle('progress-bar-wrap--collapsed');
+        btn.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+        btn.setAttribute('aria-label', collapsed ? 'Show progress bar' : 'Hide progress bar');
+      });
+    });
+  }
+
   function boot() {
     initEnvironmentDepth();
     ensurePersonalizeScript();
@@ -1527,6 +1555,7 @@
     ensureMagneticFlowScript();
     initPageTransition();
     initMagnetic();
+    initCollapsibleProgressBars();
     initAdaptiveLayer();
     initLiveOutput();
     initHomeReturn();
