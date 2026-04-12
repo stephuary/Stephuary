@@ -251,7 +251,7 @@ body.page-systems .systems-energy-svg {
 
 body.page-systems .systems-flow-wrap .sh-flow-grid {
   position: relative;
-  z-index: 1;
+  z-index: 2;
   margin-bottom: 0;
   padding: 0;
 }
@@ -298,5 +298,121 @@ body.page-systems .systems-energy-svg .systems-energy-glow {
 @media (max-width: 767px) {
   body.page-systems .systems-energy-svg path {
     opacity: 0.09;
+  }
+}
+
+/* --- Constellation (hover / focus relationships) --- */
+body.page-systems .systems-energy-svg {
+  z-index: 0;
+}
+
+body.page-systems .systems-constellation-svg {
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+  overflow: visible;
+}
+
+body.page-systems .systems-constellation-edge {
+  fill: none;
+  stroke: rgba(88, 118, 210, 0.16);
+  stroke-width: 1;
+  stroke-linecap: round;
+  vector-effect: non-scaling-stroke;
+  opacity: 0;
+  transition: opacity 0.42s ease, stroke 0.45s ease;
+  transform: translateZ(0);
+}
+
+body.page-systems .systems-flow-wrap[data-constellation-active] .systems-constellation-edge {
+  opacity: 0.12;
+}
+
+body.page-systems .systems-flow-wrap.constellation-dwell .systems-constellation-edge {
+  stroke: rgba(120, 150, 235, 0.24);
+  opacity: 0.2;
+}
+
+body.page-systems .systems-constellation-edge-glow {
+  fill: none;
+  stroke: rgba(43, 79, 212, 0.1);
+  stroke-width: 3;
+  stroke-linecap: round;
+  opacity: 0;
+  filter: blur(1.8px);
+  transition: opacity 0.42s ease;
+  pointer-events: none;
+}
+
+body.page-systems .systems-flow-wrap[data-constellation-active] .systems-constellation-edge-glow {
+  opacity: 0.35;
+}
+
+body.page-systems .systems-flow-wrap.constellation-dwell .systems-constellation-edge-glow {
+  opacity: 0.48;
+}
+
+body.page-systems .sh-map-node.constellation-active {
+  box-shadow:
+    0 0 0 1px rgba(43, 79, 212, 0.22),
+    0 0 26px rgba(43, 79, 212, 0.12);
+  transition: box-shadow 0.38s ease, filter 0.38s ease, opacity 0.38s ease;
+}
+
+body.page-systems .sh-map-node.constellation-linked {
+  filter: brightness(1.045);
+  opacity: 0.96;
+  transition: filter 0.38s ease, opacity 0.38s ease;
+}
+
+body.page-systems .systems-flow-wrap.constellation-dwell .sh-map-node.constellation-active {
+  box-shadow:
+    0 0 0 1px rgba(43, 79, 212, 0.3),
+    0 0 34px rgba(43, 79, 212, 0.16);
+}
+
+body.page-systems .systems-flow-wrap.constellation-dwell .sh-map-node.constellation-linked {
+  filter: brightness(1.07);
+}
+
+body.page-systems .systems-constellation-ripple {
+  fill: none;
+  stroke: rgba(130, 160, 255, 0.42);
+  stroke-width: 1.1;
+  stroke-linecap: round;
+  pointer-events: none;
+  vector-effect: non-scaling-stroke;
+}
+
+body.page-systems .systems-constellation-ripple--run {
+  animation: constellationRippleOnce 1.12s ease-out forwards;
+}
+
+@keyframes constellationRippleOnce {
+  from {
+    stroke-dashoffset: var(--c-len, 48);
+    opacity: 0.4;
+  }
+  to {
+    stroke-dashoffset: 0;
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body.page-systems .systems-constellation-edge,
+  body.page-systems .systems-constellation-edge-glow {
+    transition: opacity 0.2s ease;
+  }
+  body.page-systems .systems-constellation-ripple,
+  body.page-systems .systems-constellation-ripple--run {
+    animation: none !important;
+    opacity: 0 !important;
   }
 }

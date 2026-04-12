@@ -238,6 +238,7 @@
         var mx = (x1 + x2) / 2;
         var my = (y1 + y2) / 2 - Math.abs(x2 - x1) * 0.08;
         var path = document.createElementNS(svgNS, 'path');
+        path.setAttribute('class', 'systems-energy-path');
         var d = 'M ' + x1 + ' ' + y1 + ' Q ' + mx + ' ' + my + ' ' + x2 + ' ' + y2;
         path.setAttribute('d', d);
         path.style.animationDuration = 9.2 + i * 0.48 + 's';
@@ -279,6 +280,9 @@
     }
     initEnergyLines();
     initBreath();
+    if (window.SystemsConstellation && typeof window.SystemsConstellation.init === 'function') {
+      window.SystemsConstellation.init();
+    }
   }
 
   if (document.readyState === 'loading') {
