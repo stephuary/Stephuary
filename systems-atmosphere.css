@@ -1,0 +1,302 @@
+/* System page only — solar / layered depth. Scoped to body.page-systems */
+
+body.page-systems .sh-global-map {
+  overflow: visible;
+}
+
+/* --- Atmospheric gradient (ambient, 5–12%) --- */
+body.page-systems .systems-atmo-gradient {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+  mix-blend-mode: normal;
+  opacity: 0.09;
+  background: linear-gradient(
+    180deg,
+    rgba(4, 8, 22, 0.95) 0%,
+    rgba(18, 24, 48, 0.55) 38%,
+    rgba(32, 28, 58, 0.45) 52%,
+    rgba(42, 32, 18, 0.35) 78%,
+    rgba(58, 38, 22, 0.4) 100%
+  );
+  transform: translate3d(
+    calc(var(--sh-parallax-x, 0) * -4px),
+    calc(var(--sh-scroll-d, 0) * -8px),
+    0
+  );
+  transition: opacity 1.4s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body.page-systems .systems-atmo-gradient {
+    transform: none;
+  }
+}
+
+/* Star + near canvases (injected into #sh-env-depth) */
+body.page-systems #systems-stars-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  display: block;
+  transform: translate3d(
+    calc(var(--sh-parallax-x, 0) * -3px),
+    calc(var(--sh-scroll-bg, 0px) * 0.35),
+    0
+  );
+  opacity: 0.42;
+  will-change: transform;
+}
+
+body.page-systems #systems-near-glow-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+  display: block;
+  transform: translate3d(
+    calc(var(--sh-parallax-x, 0) * 8px),
+    calc(var(--sh-scroll-fg, 0px) * 0.12),
+    0
+  );
+  opacity: 0.55;
+  mix-blend-mode: screen;
+  will-change: transform;
+}
+
+@media (max-width: 767px) {
+  body.page-systems #systems-stars-layer {
+    opacity: 0.32;
+  }
+  body.page-systems #systems-near-glow-layer {
+    opacity: 0.38;
+  }
+  body.page-systems .systems-atmo-gradient {
+    opacity: 0.07;
+  }
+}
+
+/* --- System breath (barely visible) --- */
+body.page-systems.systems-breath #sh-env-depth {
+  filter: brightness(1.035);
+  transition: filter 2.4s cubic-bezier(0.45, 0, 0.55, 1);
+}
+
+body.page-systems.systems-breath .sh-map-node {
+  filter: brightness(1.02);
+  transition: filter 2.4s ease;
+}
+
+body.page-systems.systems-breath .sh-global-map__dot {
+  box-shadow: 0 0 10px rgba(43, 79, 212, 0.12);
+  transition: box-shadow 2.4s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body.page-systems.systems-breath #sh-env-depth,
+  body.page-systems.systems-breath .sh-map-node {
+    filter: none;
+  }
+}
+
+/* --- Orbital path: subtle arc + trail --- */
+body.page-systems .sh-global-map__path {
+  height: 4px;
+  margin-bottom: 14px;
+  border-radius: 999px;
+  background: rgba(244, 237, 224, 0.045);
+  overflow: visible;
+  position: relative;
+  transform: perspective(380px) rotateX(6deg);
+  transform-origin: 50% 50%;
+  box-shadow: 0 0 0 1px rgba(43, 79, 212, 0.04);
+}
+
+body.page-systems .sh-global-map__path::before {
+  content: '';
+  position: absolute;
+  left: 2%;
+  right: 2%;
+  top: 50%;
+  height: 18px;
+  transform: translateY(-50%);
+  border-radius: 50%;
+  border: 1px solid rgba(43, 79, 212, 0.07);
+  border-bottom: none;
+  border-left-color: transparent;
+  border-right-color: transparent;
+  opacity: 0.65;
+  pointer-events: none;
+}
+
+body.page-systems .sh-global-map__path::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 24px;
+  transform: translateY(-48%);
+  background: radial-gradient(
+    ellipse 50% 45% at 50% 0%,
+    rgba(43, 79, 212, 0.07),
+    transparent 70%
+  );
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+body.page-systems .sh-global-map__path-fill {
+  border-radius: inherit;
+  filter: drop-shadow(0 0 6px rgba(43, 79, 212, 0.12));
+}
+
+body.page-systems .sh-global-map:hover .sh-global-map__path-fill {
+  filter: drop-shadow(0 0 10px rgba(43, 79, 212, 0.2));
+  transition: filter 0.45s ease;
+}
+
+body.page-systems .sh-global-map:hover .sh-global-map__path {
+  box-shadow: 0 0 0 1px rgba(43, 79, 212, 0.1);
+}
+
+/* Active path segment feel when any node hovered */
+body.page-systems .sh-global-map:has(.sh-global-map__node:hover) .sh-global-map__path {
+  box-shadow: 0 0 20px rgba(43, 79, 212, 0.06);
+}
+
+body.page-systems .sh-global-map__node:active {
+  transform: translateY(-1px) scale(1.02);
+}
+
+/* --- You are here: current node --- */
+body.page-systems .sh-global-map__node.is-current,
+body.page-systems .sh-global-map__node.is-scroll-current {
+  animation: systemsHerePulse 5.5s ease-in-out infinite;
+}
+
+body.page-systems .sh-global-map__node.is-current::after,
+body.page-systems .sh-global-map__node.is-scroll-current::after {
+  content: '';
+  position: absolute;
+  inset: -5px;
+  border-radius: 4px;
+  border: 1px solid rgba(43, 79, 212, 0.22);
+  opacity: 0.55;
+  pointer-events: none;
+  animation: systemsHereRipple 4.2s ease-out infinite;
+  z-index: -1;
+}
+
+@keyframes systemsHerePulse {
+  0%,
+  100% {
+    box-shadow:
+      0 0 0 1px rgba(43, 79, 212, 0.22),
+      0 0 22px rgba(43, 79, 212, 0.12);
+  }
+  50% {
+    box-shadow:
+      0 0 0 1px rgba(43, 79, 212, 0.32),
+      0 0 32px rgba(43, 79, 212, 0.18);
+  }
+}
+
+@keyframes systemsHereRipple {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.35;
+  }
+  50% {
+    transform: scale(1.04);
+    opacity: 0.2;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body.page-systems .sh-global-map__node.is-current,
+  body.page-systems .sh-global-map__node.is-scroll-current {
+    animation: none;
+  }
+  body.page-systems .sh-global-map__node.is-current::after,
+  body.page-systems .sh-global-map__node.is-scroll-current::after {
+    animation: none;
+    opacity: 0.25;
+  }
+}
+
+/* --- Flow grid: energy connections --- */
+body.page-systems .systems-flow-wrap {
+  position: relative;
+  max-width: min(100%, 960px);
+  margin: 0 auto 12px;
+  padding: 0 8px;
+}
+
+body.page-systems .systems-energy-svg {
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+  overflow: visible;
+}
+
+body.page-systems .systems-flow-wrap .sh-flow-grid {
+  position: relative;
+  z-index: 1;
+  margin-bottom: 0;
+  padding: 0;
+}
+
+body.page-systems .systems-energy-svg path:not(.systems-energy-glow) {
+  fill: none !important;
+  stroke: url(#systems-energy-grad);
+  stroke-width: 1;
+  stroke-linecap: round;
+  stroke-dasharray: 5 16;
+  opacity: 0.12;
+  vector-effect: non-scaling-stroke;
+  animation: systemsEnergyDrift 10.5s ease-in-out infinite;
+}
+
+@keyframes systemsEnergyDrift {
+  0%,
+  100% {
+    stroke-dashoffset: 0;
+    opacity: 0.08;
+  }
+  50% {
+    stroke-dashoffset: 22;
+    opacity: 0.15;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body.page-systems .systems-energy-svg path:not(.systems-energy-glow) {
+    animation: none;
+    stroke-dasharray: 0;
+    opacity: 0.09;
+  }
+}
+
+body.page-systems .systems-energy-svg .systems-energy-glow {
+  fill: none;
+  stroke: rgba(43, 79, 212, 0.12);
+  stroke-width: 2.5;
+  opacity: 0.35;
+  filter: blur(1.2px);
+}
+
+@media (max-width: 767px) {
+  body.page-systems .systems-energy-svg path {
+    opacity: 0.09;
+  }
+}
