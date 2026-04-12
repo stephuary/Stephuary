@@ -1306,6 +1306,7 @@
     }
   </style>
   <link rel="stylesheet" href="/stephuary-early-mode.css" />
+  <link rel="stylesheet" href="/stephuary-private-selection.css" />
 </head>
 <body>
 
@@ -1371,6 +1372,8 @@
     </section>
 
     <p class="home-interactive-disclosure">This site is interactive. Some parts only appear at certain hours, on certain pages, or after certain actions.</p>
+
+    <div id="private-selection-mount" hidden></div>
 
     <section class="home-map-section" aria-label="Your place in the system" data-sh-flow-section>
       <div data-global-system-map="compact"></div>
@@ -1633,8 +1636,35 @@
     </div>
   </div>
 
+  <div id="ps-overlay" class="ps-overlay" role="dialog" aria-modal="true" aria-labelledby="ps-dialog-title" aria-hidden="true">
+    <div class="ps-overlay__bg" data-ps-close tabindex="-1" aria-hidden="true"></div>
+    <div class="ps-panel">
+      <button type="button" class="ps-close" id="ps-close" aria-label="Close">×</button>
+      <div id="ps-view-form">
+        <h2 id="ps-dialog-title" class="ps-title">Private Selection</h2>
+        <p class="ps-lead">Once a month, one build is selected.</p>
+        <p class="ps-sub">Selection is based on clarity, not application.</p>
+        <form id="ps-form" autocomplete="off">
+          <label class="ps-label" for="ps-field-build">What are you trying to build?</label>
+          <textarea id="ps-field-build" class="ps-input" name="build" rows="3" required></textarea>
+          <label class="ps-label" for="ps-field-stuck">Where are you stuck right now?</label>
+          <textarea id="ps-field-stuck" class="ps-input" name="stuck" rows="3" required></textarea>
+          <label class="ps-label" for="ps-field-extra">Anything else that matters (optional)</label>
+          <textarea id="ps-field-extra" class="ps-input ps-input--short" name="extra" rows="2"></textarea>
+          <button type="submit" class="btn btn--pri ps-submit">Submit for selection</button>
+        </form>
+      </div>
+      <div id="ps-view-done" hidden>
+        <p class="ps-done">You're in.</p>
+        <p class="ps-done-sub">If selected, you'll hear directly.</p>
+        <p class="ps-foot">Selections happen once per month.</p>
+        <button type="button" class="btn btn--ghost ps-update" id="ps-update-entry" hidden>Update entry</button>
+      </div>
+    </div>
+  </div>
+
   <div id="early-private-slot" class="early-private-slot" hidden>
-    <a href="/access" class="early-private-slot__link">Private layer</a>
+    <a href="#" class="early-private-slot__link">Private Selection</a>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
@@ -1644,6 +1674,7 @@
   <script src="/stephuary-interactive.js" defer></script>
   <script src="/stephuary-early-mode.js" defer></script>
   <script src="/stephuary-personalization.js" defer></script>
+  <script src="/stephuary-private-selection.js" defer></script>
   <script src="/stephuary-global-map.js" defer></script>
   <script>
     (function () {

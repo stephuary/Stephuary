@@ -3,8 +3,6 @@
  */
 (function (global) {
   var CHECK_MS = 60000;
-  var DWELL_MS = 42000;
-  var SCROLL_THRESHOLD = 0.72;
 
   function compute() {
     try {
@@ -34,43 +32,8 @@
     }
   }
 
-  var eggBound = false;
-  function bindEasterEgg() {
-    if (eggBound) return;
-    var slot = global.document.getElementById('early-private-slot');
-    if (!slot) return;
-    eggBound = true;
-
-    var revealed = false;
-    function reveal() {
-      if (revealed) return;
-      if (!getIsEarlyMode()) return;
-      revealed = true;
-      slot.classList.add('early-private-slot--visible');
-      slot.removeAttribute('hidden');
-    }
-
-    global.setTimeout(function () {
-      if (getIsEarlyMode()) reveal();
-    }, DWELL_MS);
-
-    function onScroll() {
-      if (revealed || !getIsEarlyMode()) return;
-      var doc = global.document.documentElement;
-      var sh = doc.scrollHeight - global.innerHeight;
-      if (sh <= 0) return;
-      if ((global.scrollY || 0) / sh >= SCROLL_THRESHOLD) reveal();
-    }
-
-    global.addEventListener('scroll', onScroll, { passive: true });
-    global.addEventListener('earlymodechange', function (ev) {
-      if (ev && ev.detail && ev.detail.isEarlyMode) {
-        global.setTimeout(function () {
-          onScroll();
-        }, 0);
-      }
-    });
-  }
+  /** #early-private-slot visibility is managed by stephuary-private-selection.js (Private Selection). */
+  function bindEasterEgg() {}
 
   function init() {
     apply();
