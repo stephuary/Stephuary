@@ -168,6 +168,43 @@ body.pricing-page .pricing-layout__main{transform:translateZ(0);}
   padding:10px 12px;border:1px solid rgba(58,68,48,0.38);border-radius:var(--r);
   background:rgba(10,11,9,0.62);max-width:100%;
 }
+.cei-node-strip--split{
+  flex-direction:column;align-items:stretch;flex-wrap:nowrap;gap:0;
+}
+.cei-node-strip--split .cei-node-strip__rows{
+  display:flex;flex-direction:column;gap:8px;width:100%;
+}
+.cei-node-strip--split .cei-node-strip__row--primary{
+  display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px 4px;width:100%;
+}
+.cei-node-strip--split .cei-node-strip__row--secondary{
+  display:flex;justify-content:center;align-items:center;gap:6px;flex-wrap:nowrap;width:100%;
+}
+@media (min-width:721px){
+  .cei-node-strip--split .cei-node-strip__rows{
+    flex-direction:row;flex-wrap:nowrap;align-items:center;justify-content:center;gap:10px;
+  }
+  .cei-node-strip--split .cei-node-strip__row--primary,
+  .cei-node-strip--split .cei-node-strip__row--secondary{
+    display:flex;width:auto;flex:0 0 auto;
+  }
+  .cei-node-strip--split .cei-node-strip__row--primary{gap:6px;}
+  .cei-node-strip--split .cei-node-strip__row--primary .cei-node{flex:1 1 0;min-width:0;text-align:center;}
+  .cei-node-strip--split .cei-node-strip__row--secondary .cei-node{flex:0 0 auto;}
+}
+@media (max-width:720px){
+  .cei-node-strip--split{padding:8px 8px;}
+  .cei-node-strip--split .cei-node{font-size:6.5px;letter-spacing:0.1em;padding:4px 3px;}
+}
+button.cei-node{
+  font:inherit;font-family:var(--mono);cursor:pointer;appearance:none;-webkit-appearance:none;
+  text-align:center;
+}
+.cei-node--selected{
+  border-color:rgba(196,163,90,0.48)!important;
+  color:var(--text-3)!important;
+  box-shadow:0 0 12px rgba(58,62,48,0.28),0 0 1px rgba(196,163,90,0.35);
+}
 .cei-node-strip__pulse{
   position:absolute;inset:-1px;border-radius:var(--r);pointer-events:none;
   background:linear-gradient(120deg,transparent 38%,rgba(92,88,58,0.14) 50%,transparent 62%);
@@ -192,6 +229,10 @@ body.pricing-page .pricing-layout__main{transform:translateZ(0);}
   content:"";position:absolute;inset:-1px;border-radius:var(--r);pointer-events:none;z-index:2;
   opacity:0.35;
   background:radial-gradient(ellipse 80% 70% at 50% 50%,transparent 38%,rgba(88,108,62,0.18) 52%,transparent 72%);
+}
+details.price-group--pricing-field-focus > summary{
+  box-shadow:0 0 0 1px rgba(196,163,90,0.18),0 4px 28px rgba(42,48,36,0.18);
+  transition:box-shadow .45s ease;
 }
 .pricing-hero__viz .sys-visual{
   margin:0;width:100%;max-width:100%;height:88px;opacity:0.94;
@@ -675,14 +716,14 @@ html.early-mode body.pricing-page{
       <p class="pricing-hero__personal" id="pricing-hero-personal" hidden></p>
     </div>
     <div class="pricing-hero__viz">
-      <div id="phase-visual" class="sys-visual" data-visual="grid"></div>
+      <div id="phase-visual" class="sys-visual" data-visual="pricing-field"></div>
     </div>
   </header>
 
   <div class="pricing-layout">
     <div class="pricing-layout__main" id="pricing-groups">
 
-      <details class="price-group" data-pricing-group>
+      <details class="price-group" data-pricing-group data-pricing-cluster="A">
         <summary>
           <div class="price-group__kicker">A</div>
           <h2 class="price-group__title">Free and Low Cost</h2>
@@ -726,7 +767,7 @@ html.early-mode body.pricing-page{
         </div>
       </details>
 
-      <details class="price-group" data-pricing-group>
+      <details class="price-group" data-pricing-group data-pricing-cluster="B">
         <summary>
           <div class="price-group__kicker">B</div>
           <h2 class="price-group__title">Core Decision and Build</h2>
@@ -781,7 +822,7 @@ html.early-mode body.pricing-page{
         </div>
       </details>
 
-      <details class="price-group" data-pricing-group>
+      <details class="price-group" data-pricing-group data-pricing-cluster="C">
         <summary>
           <div class="price-group__kicker">C</div>
           <h2 class="price-group__title">Diagnostic and Advisory</h2>
@@ -818,7 +859,7 @@ html.early-mode body.pricing-page{
         </div>
       </details>
 
-      <details class="price-group price-group--custom-build" data-pricing-group id="tier-custom-build" data-sh-map-node="custom">
+      <details class="price-group price-group--custom-build" data-pricing-group data-pricing-cluster="D" id="tier-custom-build" data-sh-map-node="custom">
         <summary>
           <div class="price-group__kicker">D</div>
           <h2 class="price-group__title">Custom builds</h2>
@@ -986,6 +1027,54 @@ html.early-mode body.pricing-page{
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initLiveDock);
   else initLiveDock();
   window.addEventListener('load', placeLivePanel);
+
+  var CEI_CLUSTER = {
+    revenue: 'B',
+    attention: 'A',
+    friction: 'C',
+    time: 'D',
+    behavior: 'A',
+    environment: 'D',
+    decision: 'B'
+  };
+  var CEI_LIVE = {
+    behavior: 'Next move: behavior shapes what people trust first.',
+    environment: 'Next move: align environment with how you want to be read.',
+    decision: 'Next move: narrow decisions before you scale surface area.',
+    time: 'Next move: time cost is the hidden price—tighten throughput.',
+    revenue: 'Next move: revenue path aligns with Core Decision & Build.',
+    friction: 'Next move: friction maps to Diagnostic & Advisory depth.',
+    attention: 'Next move: attention budget fits Free & Low Cost entry.'
+  };
+  function applyPricingFieldUi(id) {
+    var cl = CEI_CLUSTER[id];
+    document.querySelectorAll('[data-pricing-cluster]').forEach(function (d) {
+      d.classList.toggle('price-group--pricing-field-focus', cl && d.getAttribute('data-pricing-cluster') === cl);
+    });
+    var act = document.getElementById('sh-live-action');
+    if (act && CEI_LIVE[id]) act.textContent = CEI_LIVE[id];
+  }
+  document.addEventListener('pricing-cei-select', function (e) {
+    var id = e.detail && e.detail.id;
+    if (!id) return;
+    applyPricingFieldUi(id);
+  });
+  function syncPricingFieldFromBody() {
+    try {
+      var id = document.body.getAttribute('data-pricing-cei');
+      if (id) applyPricingFieldUi(id);
+    } catch (err) {}
+  }
+  window.addEventListener('load', function () {
+    var tries = 0;
+    function tick() {
+      syncPricingFieldFromBody();
+      var act = document.getElementById('sh-live-action');
+      if (act && act.textContent && act.textContent !== '—') return;
+      if (tries++ < 25) setTimeout(tick, 120);
+    }
+    setTimeout(tick, 200);
+  });
 
   var groups = document.querySelectorAll('[data-pricing-group]');
   groups.forEach(function (g) {

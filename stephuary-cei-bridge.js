@@ -106,31 +106,81 @@
     return m[tierId] || 'View pricing';
   }
 
+  function bindPricingCeiInteractions(container) {
+    if (!container || container.id !== 'pricing-cei-strip') return;
+    var persisted = '';
+    try {
+      persisted = document.body.getAttribute('data-pricing-cei') || '';
+    } catch (e) {}
+    function setActive(id) {
+      if (!id) return;
+      try {
+        document.body.setAttribute('data-pricing-cei', id);
+      } catch (e2) {}
+      container.querySelectorAll('.cei-node').forEach(function (btn) {
+        btn.classList.toggle('cei-node--selected', btn.getAttribute('data-cei-node') === id);
+      });
+      try {
+        document.dispatchEvent(new CustomEvent('pricing-cei-select', { detail: { id: id }, bubbles: true }));
+      } catch (e3) {}
+    }
+    container.querySelectorAll('.cei-node').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        setActive(btn.getAttribute('data-cei-node'));
+      });
+    });
+    var hotEl = container.querySelector('.cei-node--hot');
+    var initial = persisted || (hotEl && hotEl.getAttribute('data-cei-node')) || 'decision';
+    setActive(initial);
+  }
+
   function renderNodeStrip(container, state) {
     if (!container) return;
     var hot = getHotNodeIds(state);
     container.innerHTML = '';
-    container.className = (container.className + ' cei-node-strip').trim();
+    container.className = container.className
+      .split(/\s+/)
+      .filter(function (c) {
+        return c && c !== 'cei-node-strip' && c !== 'cei-node-strip--split';
+      })
+      .concat(['cei-node-strip', 'cei-node-strip--split'])
+      .join(' ');
     var pulse = document.createElement('span');
     pulse.className = 'cei-node-strip__pulse';
     pulse.setAttribute('aria-hidden', 'true');
-    container.appendChild(pulse);
 
-    NODE_ORDER.forEach(function (n) {
-      var el = document.createElement('span');
+    var rows = document.createElement('div');
+    rows.className = 'cei-node-strip__rows';
+    var row1 = document.createElement('div');
+    row1.className = 'cei-node-strip__row cei-node-strip__row--primary';
+    var row2 = document.createElement('div');
+    row2.className = 'cei-node-strip__row cei-node-strip__row--secondary';
+
+    NODE_ORDER.forEach(function (n, idx) {
+      var el = document.createElement('button');
+      el.type = 'button';
       el.className = 'cei-node';
       el.setAttribute('data-cei-node', n.id);
       el.textContent = n.label;
       if (hot.indexOf(n.id) >= 0) el.classList.add('cei-node--hot');
-      container.appendChild(el);
+      if (idx < 4) row1.appendChild(el);
+      else row2.appendChild(el);
     });
 
-    var att = document.createElement('span');
+    var att = document.createElement('button');
+    att.type = 'button';
     att.className = 'cei-node';
     att.setAttribute('data-cei-node', 'attention');
     att.textContent = 'Attention';
     if (hot.indexOf('attention') >= 0) att.classList.add('cei-node--hot');
-    container.appendChild(att);
+    row2.appendChild(att);
+
+    rows.appendChild(row1);
+    rows.appendChild(row2);
+    container.appendChild(pulse);
+    container.appendChild(rows);
+
+    bindPricingCeiInteractions(container);
   }
 
   function applyResults(root, stateIn) {

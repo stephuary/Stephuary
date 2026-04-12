@@ -880,6 +880,109 @@
           else ctx.lineTo(px, yy);
         }
         ctx.stroke();
+      } else if (type === 'pricing-field') {
+        var pr2 = window.__shParallax || { x: 0, y: 0, sd: 0 };
+        var px = pr2.x * 6 + pr2.sd * 3;
+        var py = pr2.y * 5;
+        var activeId = 'decision';
+        try {
+          if (typeof document !== 'undefined' && document.body) {
+            activeId = document.body.getAttribute('data-pricing-cei') || 'decision';
+          }
+        } catch (eP) {}
+        var ceiOrder = ['behavior', 'environment', 'decision', 'time', 'revenue', 'friction', 'attention'];
+        var selIdx = ceiOrder.indexOf(activeId);
+        if (selIdx < 0) selIdx = 2;
+        var nodeXY = [
+          [0.12, 0.28],
+          [0.36, 0.28],
+          [0.6, 0.28],
+          [0.84, 0.28],
+          [0.24, 0.72],
+          [0.5, 0.72],
+          [0.76, 0.72]
+        ];
+        ctx.fillStyle = 'rgba(10,10,8,0.55)';
+        ctx.fillRect(0, 0, w, h);
+        ctx.strokeStyle = 'rgba(244,237,224,0.055)';
+        ctx.lineWidth = 1;
+        var gs = 22;
+        var gx2;
+        for (gx2 = 0; gx2 < w; gx2 += gs) {
+          ctx.beginPath();
+          ctx.moveTo(gx2 + px, 0);
+          ctx.lineTo(gx2 + px, h);
+          ctx.stroke();
+        }
+        var gy2;
+        for (gy2 = 0; gy2 < h; gy2 += gs) {
+          ctx.beginPath();
+          ctx.moveTo(0, gy2 + py);
+          ctx.lineTo(w, gy2 + py);
+          ctx.stroke();
+        }
+        ctx.strokeStyle = 'rgba(92,118,72,0.07)';
+        ctx.beginPath();
+        ctx.moveTo(w * 0.08 + px, h * 0.5 + py);
+        ctx.lineTo(w * 0.92 + px, h * 0.5 + py);
+        ctx.stroke();
+        function traceFullPath() {
+          ctx.beginPath();
+          ctx.moveTo(w * nodeXY[0][0] + px, h * nodeXY[0][1] + py);
+          var pi;
+          for (pi = 1; pi < nodeXY.length; pi++) {
+            ctx.lineTo(w * nodeXY[pi][0] + px, h * nodeXY[pi][1] + py);
+          }
+        }
+        ctx.strokeStyle = 'rgba(88,108,62,0.11)';
+        ctx.lineWidth = 1;
+        ctx.setLineDash([4, 10]);
+        traceFullPath();
+        ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.strokeStyle = 'rgba(196,163,90,' + (0.14 + Math.sin(t * 0.55) * 0.04) + ')';
+        ctx.lineWidth = 1.35;
+        traceFullPath();
+        ctx.stroke();
+        var traceA = (t * 0.09) % 1;
+        ctx.strokeStyle = 'rgba(212,180,120,0.32)';
+        ctx.lineWidth = 1.05;
+        ctx.setLineDash([3, 44]);
+        ctx.lineDashOffset = -traceA * 120;
+        traceFullPath();
+        ctx.stroke();
+        ctx.lineDashOffset = 0;
+        ctx.setLineDash([]);
+        var hiSeg = Math.min(selIdx, nodeXY.length - 2);
+        ctx.strokeStyle = 'rgba(196,163,90,0.38)';
+        ctx.lineWidth = 1.6;
+        ctx.beginPath();
+        var a0 = nodeXY[hiSeg];
+        var a1 = nodeXY[hiSeg + 1];
+        ctx.moveTo(w * a0[0] + px, h * a0[1] + py);
+        ctx.lineTo(w * a1[0] + px, h * a1[1] + py);
+        ctx.stroke();
+        var ci;
+        for (ci = 0; ci < nodeXY.length; ci++) {
+          var np = nodeXY[ci];
+          var pulseN = 0.55 + 0.45 * Math.sin(t * 0.7 + ci * 0.85);
+          var isSel = ci === selIdx;
+          var isOnPath = ci <= selIdx;
+          var rad = isSel ? 4.5 + pulseN * 1.2 : 3 + pulseN * 0.8;
+          ctx.beginPath();
+          ctx.arc(w * np[0] + px, h * np[1] + py, rad, 0, Math.PI * 2);
+          ctx.fillStyle = isSel
+            ? 'rgba(196,163,90,' + (0.38 + pulseN * 0.2) + ')'
+            : isOnPath
+              ? 'rgba(132,148,98,' + (0.18 + pulseN * 0.1) + ')'
+              : 'rgba(244,237,224,' + (0.06 + pulseN * 0.05) + ')';
+          ctx.fill();
+          if (isSel || (isOnPath && ci === selIdx - 1)) {
+            ctx.strokeStyle = 'rgba(196,163,90,0.35)';
+            ctx.lineWidth = 1;
+            ctx.stroke();
+          }
+        }
       } else if (type === 'grid') {
         var pr = window.__shParallax || { x: 0, y: 0, sd: 0 };
         var gox = pr.x * 10 + pr.sd * 6;
@@ -904,26 +1007,113 @@
           ctx.fillRect(gxd, gyd, 2, 2);
         }
       } else if (type === 'systemmap') {
-        ctx.strokeStyle = 'rgba(244,237,224,0.08)';
-        for (var g = 0; g < w; g += 32) {
+        var prm = window.__shParallax || { x: 0, y: 0, sd: 0 };
+        var ox = prm.x * 5 + prm.sd * 2;
+        var oy = prm.y * 4;
+        var hoverId = '';
+        try {
+          if (typeof document !== 'undefined' && document.body && document.body.dataset) {
+            hoverId = document.body.dataset.sysMapHover || '';
+          }
+        } catch (eM) {}
+        ctx.fillStyle = 'rgba(8,8,7,0.35)';
+        ctx.fillRect(0, 0, w, h);
+        ctx.strokeStyle = 'rgba(244,237,224,0.04)';
+        ctx.lineWidth = 1;
+        var gs3;
+        for (gs3 = 0; gs3 < w; gs3 += 26) {
           ctx.beginPath();
-          ctx.moveTo(g, 0);
-          ctx.lineTo(g, h);
+          ctx.moveTo(gs3 + ox, 0);
+          ctx.lineTo(gs3 + ox, h);
           ctx.stroke();
         }
-        var nx = [0.12, 0.35, 0.55, 0.75, 0.9];
-        var ny = h * 0.5;
-        ctx.strokeStyle = 'rgba(58,107,255,' + (0.2 + Math.sin(t) * 0.08) + ')';
-        ctx.beginPath();
-        ctx.moveTo(w * nx[0], ny);
-        for (var j = 1; j < nx.length; j++) ctx.lineTo(w * nx[j], ny + Math.sin(t + j) * 3);
-        ctx.stroke();
-        nx.forEach(function (xi, k) {
+        var gs4;
+        for (gs4 = 0; gs4 < h; gs4 += 26) {
           ctx.beginPath();
-          ctx.arc(w * xi, ny, 5, 0, Math.PI * 2);
-          ctx.fillStyle = k === 0 ? 'rgba(43,79,212,0.45)' : 'rgba(255,255,255,0.12)';
+          ctx.moveTo(0, gs4 + oy);
+          ctx.lineTo(w, gs4 + oy);
+          ctx.stroke();
+        }
+        ctx.strokeStyle = 'rgba(92,118,72,0.06)';
+        ctx.beginPath();
+        ctx.moveTo(w * 0.08 + ox, h * 0.88 + oy);
+        ctx.lineTo(w * 0.92 + ox, h * 0.12 + oy);
+        ctx.stroke();
+        var phaseIds = ['capture', 'monetize', 'structure', 'automation', 'sovereignty'];
+        var pts = [
+          [0.07, 0.44],
+          [0.28, 0.38],
+          [0.5, 0.44],
+          [0.72, 0.38],
+          [0.93, 0.44]
+        ];
+        ctx.strokeStyle = 'rgba(58,107,255,0.07)';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(w * 0.07 + ox, h * 0.5 + oy);
+        for (var q = 1; q < pts.length; q++) {
+          ctx.lineTo(w * pts[q][0] + ox, h * (0.5 + Math.sin(t * 0.25 + q) * 0.02) + oy);
+        }
+        ctx.stroke();
+        function strokePhasePath(dash, lineW, strokeStyle) {
+          ctx.strokeStyle = strokeStyle;
+          ctx.lineWidth = lineW;
+          if (dash) {
+            ctx.setLineDash(dash);
+            ctx.lineDashOffset = -t * 8;
+          } else {
+            ctx.setLineDash([]);
+            ctx.lineDashOffset = 0;
+          }
+          ctx.beginPath();
+          ctx.moveTo(w * pts[0][0] + ox, h * pts[0][1] + oy);
+          var pj;
+          for (pj = 1; pj < pts.length; pj++) {
+            var p0a = pts[pj - 1];
+            var p1a = pts[pj];
+            var mxa = (p0a[0] + p1a[0]) / 2;
+            var mya = (p0a[1] + p1a[1]) / 2 - 0.04;
+            ctx.quadraticCurveTo(w * mxa + ox, h * mya + oy, w * p1a[0] + ox, h * p1a[1] + oy);
+          }
+          ctx.stroke();
+          ctx.setLineDash([]);
+          ctx.lineDashOffset = 0;
+        }
+        strokePhasePath(null, 1.35, 'rgba(196,163,90,0.16)');
+        strokePhasePath([4, 16], 1, 'rgba(196,163,90,0.28)');
+        ctx.beginPath();
+        ctx.strokeStyle = 'rgba(244,237,224,0.07)';
+        ctx.moveTo(w * 0.5 + ox, h * 0.44 + oy);
+        ctx.lineTo(w * 0.5 + ox, h * 0.76 + oy);
+        ctx.stroke();
+        var pbX = w * 0.5 + ox;
+        var pbY = h * 0.76 + oy;
+        var pk;
+        for (pk = 0; pk < pts.length; pk++) {
+          var hx = phaseIds[pk] === hoverId;
+          var pulseP = 0.6 + 0.4 * Math.sin(t * 0.65 + pk * 0.7);
+          var xr = w * pts[pk][0] + ox;
+          var yr = h * pts[pk][1] + oy;
+          ctx.beginPath();
+          ctx.arc(xr, yr, hx ? 5.5 + pulseP * 0.8 : 4 + pulseP * 0.6, 0, Math.PI * 2);
+          ctx.fillStyle = hx
+            ? 'rgba(196,163,90,' + (0.42 + pulseP * 0.15) + ')'
+            : 'rgba(58,107,255,' + (0.18 + pulseP * 0.1) + ')';
           ctx.fill();
-        });
+          if (hx) {
+            ctx.strokeStyle = 'rgba(212,180,120,0.4)';
+            ctx.lineWidth = 1;
+            ctx.stroke();
+          }
+        }
+        var pbHover = hoverId === 'playbooks';
+        var pulseB = 0.55 + 0.45 * Math.sin(t * 0.7 + 2.1);
+        ctx.beginPath();
+        ctx.arc(pbX, pbY, pbHover ? 4.5 + pulseB * 0.7 : 3.2 + pulseB * 0.5, 0, Math.PI * 2);
+        ctx.fillStyle = pbHover
+          ? 'rgba(244,237,224,' + (0.22 + pulseB * 0.12) + ')'
+          : 'rgba(244,237,224,' + (0.08 + pulseB * 0.06) + ')';
+        ctx.fill();
       }
 
       requestAnimationFrame(draw);

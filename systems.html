@@ -596,6 +596,31 @@
   <script src="/stephuary-progress.js"></script>
   <script>
     (function () {
+      if (!document.body.classList.contains('page-systems')) return;
+      document.querySelectorAll('.sh-map-node[data-constellation-id]').forEach(function (n) {
+        var id = n.getAttribute('data-constellation-id');
+        if (!id) return;
+        n.addEventListener('mouseenter', function () {
+          document.body.setAttribute('data-sys-map-hover', id);
+        });
+        n.addEventListener('mouseleave', function () {
+          if (document.body.getAttribute('data-sys-map-hover') === id) {
+            document.body.removeAttribute('data-sys-map-hover');
+          }
+        });
+        n.addEventListener('focus', function () {
+          document.body.setAttribute('data-sys-map-hover', id);
+        });
+        n.addEventListener('blur', function () {
+          if (document.body.getAttribute('data-sys-map-hover') === id) {
+            document.body.removeAttribute('data-sys-map-hover');
+          }
+        });
+      });
+    })();
+  </script>
+  <script>
+    (function () {
       var tries = 0;
       function applyResume() {
         if (!window.StephuaryProgress || typeof window.StephuaryProgress.getResumeLabel !== 'function') {
