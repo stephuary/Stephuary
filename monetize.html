@@ -20,6 +20,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=DM+Mono:wght@300;400&family=Lato:wght@300;400&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/stephuary-interactive.css" />
+  <link rel="stylesheet" href="/stephuary-system-output.css" />
 
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -761,10 +762,13 @@
       </div>
 
       <div id="summary">
+        <div id="sys-output-mount-revenue" class="sys-output-mount"></div>
+
         <p class="summary-phase-tag">Phase 02 · Position</p>
         <h2 class="summary-title">Position diagnostic complete</h2>
         <p class="summary-sub">This is what showed up when instinct was compared to market reality.</p>
 
+        <div class="sys-output-legacy-hidden" aria-hidden="true">
         <div class="diag-section">
           <p class="diag-h">1. Position summary</p>
           <div class="diag-body" id="out-s1"></div>
@@ -802,6 +806,7 @@
         <div class="diag-section">
           <p class="diag-h">7. Next step</p>
           <div class="diag-body" id="out-s7"></div>
+        </div>
         </div>
 
         <p class="capture-flow-saved">Your progress is saved automatically on this device.</p>
@@ -857,6 +862,7 @@
   </div>
 </div>
 
+<script src="/stephuary-system-output.js"></script>
 <script>
 (function(){
   var STORAGE_KEY = 'stephuary_monetize_p02_v1';
@@ -1201,6 +1207,20 @@
     var b = state.bits.map(function(x) { return x; });
     buildOutputs(b, loadP01Profile());
     updateRail();
+    var sum = document.getElementById('summary');
+    if (sum) {
+      sum.classList.add('sys-output-summary-wrap', 'sys-output-hide-legacy-cta');
+    }
+    var m = document.getElementById('sys-output-mount-revenue');
+    if (m && window.StephuarySystemOutput) {
+      var ctaR =
+        '<div class="sys-output__cta">' +
+        '<div class="sys-output__cta-row">' +
+        '<a href="/structure" class="sys-output__btn sys-output__btn--pri magnetic">View next step</a>' +
+        '<a href="/systems" class="sys-output__btn sys-output__btn--sec magnetic">Back to system</a>' +
+        '</div></div>';
+      window.StephuarySystemOutput.mountRevenue(m, ctaR);
+    }
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
@@ -1283,7 +1303,13 @@
     } catch (e) {}
     state.bits = Array(TOTAL_Q).fill(null);
     state.currentStep = 1;
-    document.getElementById('summary').style.display = 'none';
+    var sumEl = document.getElementById('summary');
+    if (sumEl) {
+      sumEl.classList.remove('sys-output-summary-wrap', 'sys-output-hide-legacy-cta');
+    }
+    var mnt = document.getElementById('sys-output-mount-revenue');
+    if (mnt) mnt.innerHTML = '';
+    if (sumEl) sumEl.style.display = 'none';
     document.getElementById('flow').style.display = 'block';
     document.querySelectorAll('.step').forEach(function(s, i) {
       s.classList.toggle('active', i === 0);

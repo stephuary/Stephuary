@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Room 2 — What to change this week · Stephuary</title>
   <link rel="stylesheet" href="/stephuary-interactive.css" />
+  <link rel="stylesheet" href="/stephuary-system-output.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=DM+Mono:wght@300;400&family=Lato:wght@300;400&display=swap" rel="stylesheet" />
@@ -1136,10 +1137,11 @@ Reduce anything that is not building or multiplying.</pre>
     </section>
 
     <!-- 14 Final -->
-    <section class="panel" data-step="14" id="panel-14">
+    <section class="panel sys-output-panel" data-step="14" id="panel-14">
+      <div id="sys-output-mount-direction" class="sys-output-mount"></div>
       <h2 class="panel-title">Your Direction System</h2>
       <p class="panel-instruction">This is what you are running now.</p>
-      <div class="summary-card">
+      <div class="summary-card sys-output-legacy-hidden" aria-hidden="true">
         <h3>Summary</h3>
         <div class="viz-lock-stack" id="viz-lock-alloc" aria-label="Locked time allocation">
           <p class="viz-label">Locked · time allocation (revised)</p>
@@ -1173,6 +1175,7 @@ Reduce anything that is not building or multiplying.</pre>
 
   <script src="/stephuary-os.js"></script>
   <script src="/stephuary-progress.js"></script>
+  <script src="/stephuary-system-output.js"></script>
   <script>
 (function () {
   var HANDOFF_KEY = 'stephuary_room02_handoff';
@@ -1875,6 +1878,37 @@ Reduce anything that is not building or multiplying.</pre>
         '<p style="margin-top:12px;">If this holds (4 weeks): ' + rm.fourWkH.toFixed(1) + ' h · ' + fmtMoney(rm.fourWkMoney) + '</p>';
     }
     saveHandoff();
+
+    var mount = document.getElementById('sys-output-mount-direction');
+    if (mount && window.StephuarySystemOutput) {
+      var wk = (state.weeklyPlanText || '')
+        .trim()
+        .split(/\n/)
+        .map(function (l) {
+          return l.trim();
+        })
+        .filter(Boolean);
+      var startLine = wk[0] || completeLineForPriority();
+      var fitParts = [];
+      if (state.income) fitParts.push(fmtMoney(state.income) + '/mo');
+      fitParts.push(state.hours + ' h/wk');
+      if ((state.obligations || '').trim()) fitParts.push(state.obligations.trim());
+      var dirData = {
+        identity: state.priority || '—',
+        focus: 'Revised build · ' + state.timeRev.b + '% time · ' + state.moneyRev.b + '% money',
+        ignore: stopLabel() || '—',
+        why: interpretSystem(),
+        fit: fitParts.join(' · ') || '—',
+        start: startLine
+      };
+      var ctaD =
+        '<div class="sys-output__cta">' +
+        '<div class="sys-output__cta-row">' +
+        '<a href="/room-03-transaction" class="sys-output__btn sys-output__btn--pri magnetic">View next step</a>' +
+        '<a href="/systems" class="sys-output__btn sys-output__btn--sec magnetic">Back to system</a>' +
+        '</div></div>';
+      window.StephuarySystemOutput.mountDirection(mount, dirData, ctaD);
+    }
   }
 
   function buildSummaryPlainText() {
