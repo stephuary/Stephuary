@@ -7,6 +7,31 @@
   var el = null;
   var timers = [];
   var done = false;
+  var touchBlock = null;
+
+  function lockSiteShell() {
+    var shell = document.getElementById('site-shell');
+    if (shell && 'inert' in shell) shell.inert = true;
+  }
+
+  function releaseSiteShell() {
+    var shell = document.getElementById('site-shell');
+    if (shell && 'inert' in shell) shell.inert = false;
+  }
+
+  function attachTouchBlock() {
+    if (touchBlock) return;
+    touchBlock = function (e) {
+      e.preventDefault();
+    };
+    document.addEventListener('touchmove', touchBlock, { passive: false, capture: true });
+  }
+
+  function detachTouchBlock() {
+    if (!touchBlock) return;
+    document.removeEventListener('touchmove', touchBlock, { capture: true });
+    touchBlock = null;
+  }
 
   function isHome() {
     try {
@@ -65,33 +90,42 @@
     if (done) return;
     done = true;
     clearTimers();
+    detachTouchBlock();
     markSeen();
     applySettled();
-    root.classList.remove('cosmic-intro--pending');
+
+    function revealSite() {
+      root.classList.remove('cosmic-intro--pending');
+      releaseSiteShell();
+      try {
+        window.dispatchEvent(new CustomEvent('cosmicmetropolisdone'));
+      } catch (e) {}
+    }
+
     if (el) {
       el.setAttribute('aria-hidden', 'true');
       if (instant) {
         stripPhaseClasses();
         el.style.display = 'none';
         el.classList.remove('cosmic-metropolis--exit');
+        revealSite();
       } else {
         el.classList.add('cosmic-metropolis--exit');
         window.setTimeout(function () {
           stripPhaseClasses();
           el.style.display = 'none';
           el.classList.remove('cosmic-metropolis--exit');
+          revealSite();
         }, 680);
       }
     } else {
       stripPhaseClasses();
+      revealSite();
     }
-    try {
-      window.dispatchEvent(new CustomEvent('cosmicmetropolisdone'));
-    } catch (e) {}
   }
 
   function skip() {
-    finish(true);
+    finish(false);
   }
 
   function bindSkip() {
@@ -105,7 +139,8 @@
       window.removeEventListener('keydown', onKey, true);
     }
     function onKey(e) {
-      if (e.key === 'Escape' || e.key === ' ' || e.key === 'Enter') onFirstInteract();
+      if (e.repeat) return;
+      onFirstInteract();
     }
     window.addEventListener('click', onFirstInteract, true);
     window.addEventListener('scroll', onFirstInteract, opts);
@@ -183,10 +218,13 @@
       markSeen();
       applySettled();
       root.classList.remove('cosmic-intro--pending');
+      releaseSiteShell();
       return;
     }
 
     el.setAttribute('aria-hidden', 'false');
+    lockSiteShell();
+    attachTouchBlock();
     bindSkip();
     runSequence();
   }
