@@ -76,7 +76,8 @@
       'cosmic-intro--phase-copy',
       'cosmic-intro--phase-copy-a',
       'cosmic-intro--phase-copy-b',
-      'cosmic-intro--phase-cta'
+      'cosmic-intro--phase-cta',
+      'cosmic-intro--phase-hold'
     ].forEach(function (c) {
       cl.remove(c);
     });
@@ -155,9 +156,11 @@
 
   function runSequence() {
     var short = lowPower();
+    /** Final hold after all copy is visible (ms); exit fade runs after this. */
+    var HOLD_MS = 2500;
     var t = short
-      ? { g: 200, s: 450, o: 700, c: 950, r: 1100, f: 1180, x: 1250, ca: 1350, cb: 1550, ct: 1750, end: 2100 }
-      : { g: 520, s: 1280, o: 2080, c: 2880, r: 3180, f: 3280, x: 3420, ca: 3680, cb: 4480, ct: 5180, end: 5980 };
+      ? { g: 200, s: 450, o: 700, c: 950, r: 1100, f: 1180, x: 1250, ca: 1350, cb: 1550, ct: 1750 }
+      : { g: 520, s: 1280, o: 2080, c: 2880, r: 3180, f: 3280, x: 3420, ca: 3680, cb: 4480, ct: 5180 };
 
     root.classList.add('cosmic-intro--running');
 
@@ -198,12 +201,12 @@
     }, t.cb);
 
     schedule(function () {
-      root.classList.add('cosmic-intro--phase-cta');
+      root.classList.add('cosmic-intro--phase-cta', 'cosmic-intro--phase-hold');
     }, t.ct);
 
     schedule(function () {
       finish(false);
-    }, t.end);
+    }, t.ct + HOLD_MS);
   }
 
   function init() {
