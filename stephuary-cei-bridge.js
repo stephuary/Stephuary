@@ -79,8 +79,8 @@
     var m = {
       diagnostic: '/capture',
       rooms: '/playbooks',
-      'direction-system': '/phases/direction',
-      'revenue-system': '/phases/revenue',
+      'direction-system': '/direction-system',
+      'revenue-system': '/revenue-system',
       'direction-lock': '/focused-review',
       'concept-build': '/access',
       snapshot: '/snapshot'

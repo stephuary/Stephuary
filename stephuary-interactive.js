@@ -6,8 +6,8 @@
     var _PAID = {
       diagnostic: '/capture',
       rooms: '/playbooks',
-      'direction-system': '/phases/direction',
-      'revenue-system': '/phases/revenue',
+      'direction-system': '/direction-system',
+      'revenue-system': '/revenue-system',
       'direction-lock': '/focused-review',
       'concept-build': '/access',
       snapshot: '/snapshot'
@@ -283,6 +283,28 @@
         });
       });
     }
+
+    window.addEventListener(
+      'pageshow',
+      function (ev) {
+        if (!ev.persisted) return;
+        try {
+          var o = document.getElementById('page-transition');
+          if (o) o.classList.remove('is-active', 'sh-outgoing', 'sh-landing', 'sh-revealing');
+          document.documentElement.classList.remove('sh-landing-pending');
+          document.body.classList.remove(
+            'sh-transition-out',
+            'sh-page-entry',
+            'sh-page-entry--reveal',
+            'sh-spatial-from-nav',
+            'sh-page-soft-entry',
+            'sh-page-soft-entry--on'
+          );
+          document.body.classList.add('sh-page-ready');
+        } catch (err) {}
+      },
+      false
+    );
   }
 
   function magneticStrength() {

@@ -21,13 +21,13 @@
     {
       id: 'direction',
       label: 'Direction System',
-      path: '/phases/direction',
+      path: '/direction-system',
       tip: 'Choose one path that makes sense'
     },
     {
       id: 'revenue',
       label: 'Revenue System',
-      path: '/phases/revenue',
+      path: '/revenue-system',
       tip: 'Turn direction into something that pays'
     },
     {

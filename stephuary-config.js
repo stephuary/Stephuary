@@ -8,8 +8,8 @@
   var PAID_TIER_HREF = {
     diagnostic: '/capture',
     rooms: '/playbooks',
-    'direction-system': '/phases/direction',
-    'revenue-system': '/phases/revenue',
+    'direction-system': '/direction-system',
+    'revenue-system': '/revenue-system',
     'direction-lock': '/focused-review',
     'concept-build': '/access',
     snapshot: '/snapshot'
@@ -18,8 +18,8 @@
   var FREE_TIER_HREF = {
     diagnostic: '/capture',
     rooms: '/playbooks',
-    'direction-system': '/room-02-direction',
-    'revenue-system': '/monetize',
+    'direction-system': '/direction-system',
+    'revenue-system': '/revenue-system',
     'direction-lock': '/focused-review',
     'concept-build': '/access',
     snapshot: '/snapshot#free-flow'
