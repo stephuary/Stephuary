@@ -766,6 +766,34 @@ body.sh-behavior--fast {
   color: rgba(110, 101, 88, 0.95);
   margin: 0 0 10px;
 }
+.sh-global-map__path {
+  height: 2px;
+  margin: 0 0 12px;
+  border-radius: 1px;
+  background: rgba(244, 237, 224, 0.06);
+  overflow: hidden;
+}
+.sh-global-map__path-fill {
+  display: block;
+  height: 100%;
+  width: 100%;
+  transform-origin: left center;
+  transform: scaleX(0);
+  background: linear-gradient(
+    90deg,
+    rgba(196, 163, 90, 0.88) 0%,
+    rgba(196, 163, 90, 0.88) var(--sh-gold-end, 32%),
+    rgba(43, 79, 212, 0.78) var(--sh-gold-end, 32%),
+    rgba(43, 79, 212, 0.72) var(--sh-blue-mid, 52%),
+    rgba(43, 79, 212, 0.18) 100%
+  );
+  animation: shMapPathIn 0.55s ease forwards;
+}
+@keyframes shMapPathIn {
+  to {
+    transform: scaleX(1);
+  }
+}
 .sh-global-map__track {
   display: flex;
   flex-wrap: wrap;
@@ -773,8 +801,12 @@ body.sh-behavior--fast {
   justify-content: flex-start;
   gap: 4px 2px;
   row-gap: 8px;
+  position: relative;
+  overflow: visible;
 }
 .sh-global-map__node {
+  position: relative;
+  z-index: 1;
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -789,6 +821,55 @@ body.sh-behavior--fast {
   transition: color 0.25s ease, box-shadow 0.3s ease, transform 0.25s ease, opacity 0.25s ease;
   border: 1px solid transparent;
   opacity: 0.72;
+  cursor: pointer;
+}
+.sh-global-map__tip {
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 8px);
+  transform: translateX(-50%) translateY(4px);
+  width: max-content;
+  max-width: min(240px, 70vw);
+  padding: 8px 10px;
+  border-radius: 2px;
+  border: 1px solid rgba(244, 237, 224, 0.1);
+  background: rgba(8, 8, 7, 0.94);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.22s ease, transform 0.22s ease;
+  z-index: 8;
+  text-transform: none;
+  letter-spacing: 0.02em;
+  font-family: 'Lato', sans-serif;
+  font-size: 11px;
+  font-weight: 300;
+  line-height: 1.35;
+  color: rgba(203, 195, 180, 0.92);
+}
+.sh-global-map__tip-line {
+  display: block;
+}
+.sh-global-map__tip-line--future {
+  margin-top: 6px;
+  padding-top: 6px;
+  border-top: 1px solid rgba(59, 13, 13, 0.35);
+  font-size: 10px;
+  color: rgba(160, 152, 137, 0.78);
+}
+@media (hover: hover) and (pointer: fine) {
+  .sh-global-map__node:hover .sh-global-map__tip,
+  .sh-global-map__node:focus-visible .sh-global-map__tip {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+@media (hover: none) {
+  .sh-global-map__node.is-tip-open .sh-global-map__tip {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+    pointer-events: auto;
+  }
 }
 .sh-global-map__dot {
   width: 5px;
@@ -801,7 +882,7 @@ body.sh-behavior--fast {
 .sh-global-map__node:hover {
   color: rgba(203, 195, 180, 0.92);
   opacity: 1;
-  transform: translateY(-1px);
+  transform: translateY(-1px) scale(1.03);
 }
 .sh-global-map__node.is-done {
   opacity: 0.95;
@@ -812,20 +893,45 @@ body.sh-behavior--fast {
   background: rgba(196, 163, 90, 0.35);
   box-shadow: 0 0 0 1px rgba(196, 163, 90, 0.2);
 }
-.sh-global-map__node.is-current {
+.sh-global-map__node.is-current,
+.sh-global-map__node.is-scroll-current {
   opacity: 1;
   color: rgba(244, 237, 224, 0.95);
   border-color: rgba(43, 79, 212, 0.45);
   box-shadow: 0 0 0 1px rgba(43, 79, 212, 0.2), 0 0 22px rgba(43, 79, 212, 0.12);
   transform: scale(1.02);
 }
-.sh-global-map__node.is-current .sh-global-map__dot {
+.sh-global-map__node.is-current .sh-global-map__dot,
+.sh-global-map__node.is-scroll-current .sh-global-map__dot {
   background: rgba(58, 107, 255, 0.65);
   box-shadow: 0 0 12px rgba(43, 79, 212, 0.35);
 }
-.sh-global-map__node.is-rec:not(.is-current) {
+.sh-global-map__node.is-future {
+  opacity: 0.52;
+}
+.sh-global-map__node.is-future:hover {
+  opacity: 0.82;
+}
+.sh-global-map__node.is-rec:not(.is-current):not(.is-scroll-current) {
   border-color: rgba(43, 79, 212, 0.22);
   opacity: 0.9;
+  animation: shMapRecPulse 2.8s ease-in-out infinite;
+}
+@keyframes shMapRecPulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 1px rgba(43, 79, 212, 0.18), 0 0 10px rgba(43, 79, 212, 0.06);
+  }
+  50% {
+    box-shadow: 0 0 0 1px rgba(43, 79, 212, 0.32), 0 0 18px rgba(43, 79, 212, 0.12);
+  }
+}
+.sh-global-map__soft {
+  margin: 10px 0 0;
+  font-size: 11px;
+  line-height: 1.4;
+  color: rgba(160, 152, 137, 0.75);
+  max-width: 48ch;
 }
 .sh-global-map__arrow {
   color: rgba(110, 101, 88, 0.35);
@@ -875,6 +981,12 @@ body.sh-behavior--fast {
   }
   .sh-global-map__node {
     flex-shrink: 0;
+    min-height: 44px;
+    padding: 10px 12px 10px 10px;
+    align-items: center;
+  }
+  .sh-global-map__tip {
+    max-width: min(260px, 85vw);
   }
 }
 
@@ -896,5 +1008,12 @@ body.sh-behavior--fast {
   }
   .sh-live-panel {
     transition: none !important;
+  }
+  .sh-global-map__path-fill {
+    animation: none !important;
+    transform: scaleX(1) !important;
+  }
+  .sh-global-map__node.is-rec:not(.is-current):not(.is-scroll-current) {
+    animation: none !important;
   }
 }
