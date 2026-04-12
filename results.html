@@ -178,7 +178,7 @@
     }
     .type-pill span { color: var(--muted); }
 
-    .signals {
+    .result-readout {
       margin-top: 20px;
       padding-top: 18px;
       border-top: 1px solid var(--line-soft);
@@ -191,16 +191,65 @@
       line-height: 1.45;
     }
     @media (max-width: 520px) {
-      .signals { grid-template-columns: 1fr; }
+      .result-readout { grid-template-columns: 1fr; }
     }
-    .signals dt {
+    .result-readout dt {
       font-size: 9px;
       letter-spacing: 0.2em;
       text-transform: uppercase;
       color: var(--faint);
       margin-bottom: 2px;
     }
-    .signals dd { color: var(--muted); margin: 0 0 6px 0; }
+    .result-readout dd { color: var(--muted); margin: 0 0 6px 0; }
+
+    .result-outcome {
+      margin-top: 24px;
+      padding: 22px 20px;
+      border: 1px solid var(--line-blue);
+      background: rgba(13, 13, 11, 0.45);
+      max-width: 560px;
+    }
+    .result-outcome__label {
+      font-size: 9px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--blue-hi);
+      margin-bottom: 16px;
+      font-family: 'Lato', sans-serif;
+    }
+    .result-outcome__grid {
+      display: grid;
+      grid-template-columns: minmax(auto, 140px) 1fr;
+      gap: 8px 18px;
+      margin: 0;
+      align-items: baseline;
+    }
+    .result-outcome__grid dt {
+      font-size: 9px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--faint);
+      margin: 0;
+    }
+    .result-outcome__grid dd {
+      margin: 0 0 12px;
+      font-size: 15px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+    .result-outcome__static {
+      margin: 16px 0 0;
+      padding-top: 14px;
+      border-top: 1px solid var(--line-soft);
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+    @media (max-width: 520px) {
+      .result-outcome__grid {
+        grid-template-columns: 1fr;
+      }
+    }
 
     .diag-wrap {
       margin-top: 28px;
@@ -514,6 +563,15 @@
       max-width: 560px;
       margin: 0 auto;
     }
+    .foot-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 12px;
+      justify-content: center;
+      align-items: center;
+      font-size: 11px;
+    }
+    .foot-actions__sep { color: var(--faint); opacity: 0.5; }
     .foot-line {
       font-family: 'Cormorant Garamond', serif;
       font-size: clamp(20px, 2.8vw, 26px);
@@ -569,6 +627,22 @@
         <p class="hero-hit" id="heroHit">We found the main issue.</p>
         <h1 class="hero-h1" id="openingRead"></h1>
         <div class="type-pill" id="typePill" aria-label="Detected types"></div>
+        <div class="result-outcome" id="resultOutcome" hidden>
+          <p class="result-outcome__label">At a glance</p>
+          <dl class="result-outcome__grid">
+            <dt>Main issue</dt>
+            <dd id="outMainIssue"></dd>
+            <dt>Est. time loss</dt>
+            <dd id="outTimeLoss"></dd>
+            <dt>Est. money loss</dt>
+            <dd id="outMoneyLoss"></dd>
+            <dt>If nothing changes</dt>
+            <dd id="outStagnant"></dd>
+            <dt>Next step</dt>
+            <dd id="outNextStep"></dd>
+          </dl>
+          <p class="result-outcome__static">If nothing changes, this continues over the next 30–90 days.</p>
+        </div>
         <div class="diag-wrap" id="diagnosticBlock" hidden>
           <dl class="diag-grid">
             <dt>What it is costing</dt>
@@ -585,7 +659,7 @@
             <p class="diag-next-reason" id="diagNextReason"></p>
           </div>
         </div>
-        <dl class="signals" id="signalsBlock" hidden></dl>
+        <dl class="result-readout" id="resultReadoutBlock" hidden></dl>
       </div>
     </section>
 
@@ -632,11 +706,11 @@
         <div class="help-box">
           <h2 class="sec-h2" style="margin-bottom: 12px;">If you want help applying this</h2>
           <p class="help-body">If you want another set of eyes on this, there are a few ways to do that.</p>
-          <p class="help-body" style="font-size:14px;margin-bottom:12px;">You don’t move up because you want more.<br />You move up because what you have isn’t working cleanly.</p>
+          <p class="help-body" style="font-size:14px;margin-bottom:12px;">You move up when what you have is not working cleanly enough on its own.</p>
           <ul class="help-options">
-            <li><strong>Focused Review</strong> — Fix what’s not converting. You’ve already done the work. This makes it land.</li>
-            <li><strong>Snapshot</strong> — Remove guesswork in 48 hours. You already see the problem. This makes it usable. Clear direction. No overthinking.</li>
-            <li><strong>Advisory</strong> — Make this work consistently. This is about execution, not ideas.</li>
+            <li><strong>Focused Review</strong> — Tighten what you already built so it converts.</li>
+            <li><strong>Snapshot</strong> — Written review in about 48 hours. Clear read on what to change.</li>
+            <li><strong>Advisory</strong> — Ongoing help so execution stays on track.</li>
           </ul>
           <a href="/access" class="btn btn-ghost" data-sh-flow-secondary>Request access →</a>
         </div>
@@ -645,7 +719,11 @@
 
     <footer class="foot-close">
       <p class="foot-line">You have enough to move now.</p>
-      <a href="/capture" class="foot-link">Start again →</a>
+      <p class="foot-actions">
+        <a href="/pricing" class="foot-link">See pricing →</a>
+        <span class="foot-actions__sep" aria-hidden="true">·</span>
+        <a href="/capture" class="foot-link">Start again →</a>
+      </p>
     </footer>
   </main>
 
@@ -726,7 +804,7 @@
     interpreter_avoidance_wrongpeople: {
       opening: 'You read people well and hold back too much around them.',
       whatThisShows: [
-        { p: 'You pick up tone, hesitation, mixed signals, and what people actually mean.' },
+        { p: 'You pick up tone, hesitation, and what people actually mean before they say it plainly.' },
         { p: 'That makes you careful.' },
         { p: 'It also makes you adjust too much.' },
         { p: 'You already know what you want to say or do.' },
@@ -888,7 +966,7 @@
     var a = document.createElement('a');
     a.href = diag.next_room.path;
     a.setAttribute('data-sh-flow-primary', '');
-    a.textContent = 'See Your Next Step →';
+    a.textContent = 'See Next Step →';
     row.appendChild(a);
     steps.appendChild(row);
   }
@@ -1040,32 +1118,72 @@
         diag.next_room && diag.next_room.title ? diag.next_room.title : '';
       document.getElementById('diagNextReason').textContent = diag.next_reason || '';
       if (confEl) {
-        confEl.textContent =
-          'This is based on your actual responses, not a preset category.';
+        confEl.textContent = 'From your answers, not a generic label.';
       }
     } else {
       diagEl.hidden = true;
       if (confEl) confEl.textContent = '';
     }
 
-    var sigEl = document.getElementById('signalsBlock');
-    sigEl.innerHTML = '';
-    sigEl.hidden = true;
+    var readoutEl = document.getElementById('resultReadoutBlock');
+    readoutEl.innerHTML = '';
+    readoutEl.hidden = true;
     if (!diag && data.signals && typeof data.signals === 'object') {
       var keys = Object.keys(data.signals).filter(function (k) {
         return String(data.signals[k] || '').trim();
       });
       if (keys.length) {
-        sigEl.hidden = false;
+        readoutEl.hidden = false;
         keys.forEach(function (k) {
           var dt = document.createElement('dt');
           dt.textContent = k.replace(/_/g, ' ');
           var dd = document.createElement('dd');
           dd.textContent = String(data.signals[k]);
-          sigEl.appendChild(dt);
-          sigEl.appendChild(dd);
+          readoutEl.appendChild(dt);
+          readoutEl.appendChild(dd);
         });
       }
+    }
+
+    function readLiveEstimates() {
+      try {
+        var raw = localStorage.getItem('stephuary_live_output_v1');
+        if (!raw) return null;
+        var o = JSON.parse(raw);
+        if (typeof o.smoothMoney !== 'number' || typeof o.smoothHours !== 'number') return null;
+        return o;
+      } catch (e) {
+        return null;
+      }
+    }
+
+    function fmtMoney(n) {
+      return '$' + Math.round(n).toLocaleString(undefined, { maximumFractionDigits: 0 });
+    }
+    function fmtH(h) {
+      return h.toFixed(1) + ' h / week';
+    }
+
+    var outcomeEl = document.getElementById('resultOutcome');
+    if (outcomeEl) {
+      outcomeEl.hidden = false;
+      var lo = readLiveEstimates();
+      var mainIssueText = diag && diag.main_problem ? diag.main_problem : version.opening;
+      document.getElementById('outMainIssue').textContent = mainIssueText || '';
+      document.getElementById('outTimeLoss').textContent = lo ? fmtH(lo.smoothHours) + ' (estimate)' : '—';
+      document.getElementById('outMoneyLoss').textContent = lo ? fmtMoney(lo.smoothMoney) + '/yr (estimate)' : '—';
+      var stagn = '';
+      if (diag && diag.what_it_costs) {
+        stagn = String(diag.what_it_costs).trim();
+        if (stagn.length > 240) stagn = stagn.slice(0, 237) + '…';
+      } else {
+        stagn = 'The same leaks keep draining time and money.';
+      }
+      document.getElementById('outStagnant').textContent = stagn;
+      var nextS = '';
+      if (diag && diag.fix_first) nextS = String(diag.fix_first);
+      else if (diag && diag.next_room && diag.next_room.title) nextS = String(diag.next_room.title);
+      document.getElementById('outNextStep').textContent = nextS || '—';
     }
 
     renderBlocks(document.getElementById('whatShows'), version.whatThisShows);

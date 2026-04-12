@@ -184,8 +184,8 @@
     #hero {
       position: relative;
       overflow: hidden;
-      min-height: 100vh;
-      min-height: 100dvh;
+      min-height: min(100vh, 920px);
+      min-height: min(100dvh, 920px);
       min-height: -webkit-fill-available;
       padding: 0;
     }
@@ -194,9 +194,11 @@
     .hero-container {
       position: relative;
       overflow: hidden;
-      min-height: 100vh;
-      min-height: 100dvh;
+      min-height: min(100vh, 920px);
+      min-height: min(100dvh, 920px);
       min-height: -webkit-fill-available;
+      display: flex;
+      flex-direction: column;
       /* Fallback if canvas is late or unavailable — avoids flat black */
       background:
         radial-gradient(ellipse 120% 85% at 50% 18%, rgba(72, 14, 14, 0.52) 0%, transparent 58%),
@@ -244,12 +246,12 @@
     .hero-content {
       position: relative;
       z-index: 2;
-      min-height: 65vh;
-      min-height: 65dvh;
+      flex: 1 1 auto;
+      min-height: min(88vh, 860px);
       display: flex;
       flex-direction: column;
       justify-content: flex-start;
-      padding: 92px 40px 12px;
+      padding: 88px 40px 8px;
       width: 100%;
     }
 
@@ -351,6 +353,8 @@
       flex-wrap: wrap;
       gap: 12px 14px;
       align-items: flex-start;
+      position: relative;
+      z-index: 4;
     }
     .hero-cta-micro {
       width: 100%;
@@ -1254,10 +1258,22 @@
       margin: 0 0 14px;
       max-width: 36ch;
     }
+    .home-os-discover__example {
+      font-family: 'Lato', sans-serif;
+      font-size: 13px;
+      font-weight: 300;
+      line-height: 1.55;
+      color: rgba(122, 114, 104, 0.85);
+      margin: 18px 0 0;
+      max-width: 38ch;
+    }
 
     @media (max-width: 767px) {
       #hero {
-        min-height: min(100dvh, 820px);
+        min-height: min(100dvh, 760px);
+      }
+      .hero-container {
+        min-height: min(100dvh, 760px);
       }
       .hero-content {
         padding: 80px 20px 0;
@@ -1324,9 +1340,9 @@
             <p class="hero-lead" id="hero-lead">This is a short diagnostic that shows you what’s not working, what it’s costing you, and what to change first.</p>
             <p class="hero-personal-line" id="hero-personal-line" hidden></p>
             <div class="hero-actions" id="hero-actions">
-              <a href="/capture" class="btn btn--pri" id="hero-cta-primary" data-sh-flow-primary>Start Free Diagnostic</a>
+              <a href="/capture" class="btn btn--pri" id="hero-cta-primary" data-sh-flow-primary>Start Diagnostic</a>
               <a href="#system" class="btn btn--ghost" id="hero-cta-secondary" data-sh-flow-secondary>See How It Works</a>
-              <p class="hero-cta-micro" id="hero-cta-micro">Takes about 2–3 minutes</p>
+              <p class="hero-cta-micro" id="hero-cta-micro" hidden></p>
               <p class="hero-tier-hint" id="hero-tier-hint" hidden></p>
             </div>
           </div>
@@ -1492,7 +1508,7 @@
       <div class="diag-inner st-reveal">
         <h2>Start here</h2>
         <p>Answer a few questions.<br />See where you’re losing time, money, or attention.<br />Get one clear action to fix it this week.</p>
-        <a href="/capture" class="btn btn--pri" id="diag-cta-primary" data-sh-flow-secondary>Start Free Diagnostic</a>
+        <a href="/capture" class="btn btn--pri" id="diag-cta-primary" data-sh-flow-secondary>Start Diagnostic</a>
       </div>
     </section>
 
@@ -1503,6 +1519,7 @@
         <p class="home-os-discover__osc-line">I take what’s already there and make it work.</p>
         <p class="home-os-discover__lead">If you want this built for your business:</p>
         <p><a href="https://onlysometimesclub.com" class="home-os-discover__link" target="_blank" rel="noopener noreferrer">Request access</a></p>
+        <p class="home-os-discover__example">This site is one example of what that can look like.</p>
       </div>
     </section>
 
@@ -2274,9 +2291,8 @@
         var completed = localStorage.getItem('diagnosticCompleted') === 'true';
         var primary = document.getElementById('hero-cta-primary');
         var secondary = document.getElementById('hero-cta-secondary');
-        var micro = document.getElementById('hero-cta-micro');
         var diagBtn = document.getElementById('diag-cta-primary');
-        if (!primary || !secondary || !micro) return;
+        if (!primary || !secondary) return;
 
         var resumeHref =
           window.StephuarySession && typeof window.StephuarySession.getResumeDiagnosticHref === 'function'
@@ -2284,7 +2300,9 @@
             : '/capture';
 
         function wireRestart(secEl) {
-          secEl.addEventListener('click', function (e) {
+          var nu = secEl.cloneNode(true);
+          secEl.parentNode.replaceChild(nu, secEl);
+          nu.addEventListener('click', function (e) {
             e.preventDefault();
             clearDiagnosticForRestart();
             window.location.href = '/capture';
@@ -2294,10 +2312,9 @@
         if (completed) {
           primary.textContent = 'View Your Results';
           primary.href = '/results';
-          secondary.textContent = 'See Recommended Next Step';
+          secondary.textContent = 'See Next Step';
           secondary.href = '/pricing';
           secondary.onclick = null;
-          micro.textContent = 'Your results are ready';
           if (diagBtn) {
             diagBtn.textContent = 'View Your Results';
             diagBtn.href = '/results';
@@ -2308,10 +2325,9 @@
         if (started) {
           primary.textContent = 'Continue Where You Left Off';
           primary.href = resumeHref;
-          secondary.textContent = 'Restart Diagnostic';
+          secondary.textContent = 'Start Over';
           secondary.href = '/capture';
           wireRestart(secondary);
-          micro.textContent = 'Picks up exactly where you stopped';
           if (diagBtn) {
             diagBtn.textContent = 'Continue Where You Left Off';
             diagBtn.href = resumeHref;
@@ -2319,13 +2335,13 @@
           return;
         }
 
-        primary.textContent = 'Start Free Diagnostic';
+        primary.textContent = 'Start Diagnostic';
         primary.href = '/capture';
         secondary.textContent = 'See How It Works';
         secondary.href = '#system';
-        micro.textContent = 'Takes about 2–3 minutes';
+        secondary.onclick = null;
         if (diagBtn) {
-          diagBtn.textContent = 'Start Free Diagnostic';
+          diagBtn.textContent = 'Start Diagnostic';
           diagBtn.href = '/capture';
         }
       }

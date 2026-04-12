@@ -634,18 +634,18 @@
       } catch (e) {}
     }
     var PATH_PHASES = [
-      { path: '/', n: 0, name: 'Home', where: 'Home', cat: 'Overview', act: 'Open Capture when you want a structured read on leaks.' },
-      { path: '/capture', n: 1, name: 'Extraction', where: "You're in Capture", cat: 'Leak visibility', act: 'Finish one full pass of the diagnostic.' },
-      { path: '/monetize', n: 2, name: 'Position', where: "You're in Position", cat: 'Offer clarity', act: 'Name one buyer and one price before you add tools.' },
-      { path: '/structure', n: 3, name: 'Structure', where: "You're in Structure", cat: 'Delivery & packaging', act: 'Turn the concept into one page you can send.' },
+      { path: '/', n: 0, name: 'Home', where: 'Home', cat: 'Overview', act: 'Start the diagnostic when you want numbers on leaks.' },
+      { path: '/capture', n: 1, name: 'Extraction', where: "You're in Capture", cat: 'Leak visibility', act: 'Finish the full diagnostic once.' },
+      { path: '/monetize', n: 2, name: 'Position', where: "You're in Position", cat: 'Offer clarity', act: 'Name one buyer and one price next.' },
+      { path: '/structure', n: 3, name: 'Structure', where: "You're in Structure", cat: 'Delivery & packaging', act: 'Turn your concept into one page you can send.' },
       { path: '/automation', n: 4, name: 'Automation', where: "You're in Automation", cat: 'Execution load', act: 'Automate one repeat step this week.' },
-      { path: '/sovereignty', n: 5, name: 'Sovereignty', where: "You're in Sovereignty", cat: 'Ownership', act: 'Pick one system you control end to end.' },
-      { path: '/systems', n: 0, name: 'System', where: 'System map', cat: 'Flow overview', act: 'Open the phase that matches your next decision.' },
-      { path: '/pricing', n: 0, name: 'Pricing', where: 'Pricing', cat: 'Entry choice', act: 'Pick one tier that matches how much support you want.' },
-      { path: '/results', n: 0, name: 'Results', where: 'Results', cat: 'Readout', act: 'Note one cut and one keep from the readout.' },
-      { path: '/playbooks', n: 0, name: 'Rooms', where: 'Rooms', cat: 'Focused topic', act: 'Complete one room before starting another.' },
-      { path: '/access', n: 0, name: 'Access', where: 'Club access', cat: 'Request', act: 'Send the form when your situation needs direct work.' },
-      { path: '/snapshot', n: 0, name: 'Snapshot', where: 'Snapshot', cat: 'Full review', act: 'Book the snapshot when you want the full written pass.' }
+      { path: '/sovereignty', n: 5, name: 'Sovereignty', where: "You're in Sovereignty", cat: 'Ownership', act: 'Choose one system you own end to end.' },
+      { path: '/systems', n: 0, name: 'System', where: 'System map', cat: 'Flow overview', act: 'Open the step that matches your next decision.' },
+      { path: '/pricing', n: 0, name: 'Pricing', where: 'Pricing', cat: 'Entry choice', act: 'Pick one tier that matches how much help you want.' },
+      { path: '/results', n: 0, name: 'Results', where: 'Results', cat: 'Readout', act: 'Do one thing from this page today.' },
+      { path: '/playbooks', n: 0, name: 'Rooms', where: 'Rooms', cat: 'Focused topic', act: 'Finish one room before opening another.' },
+      { path: '/access', n: 0, name: 'Access', where: 'Club access', cat: 'Request', act: 'Send the form if you need direct work.' },
+      { path: '/snapshot', n: 0, name: 'Snapshot', where: 'Snapshot', cat: 'Full review', act: 'Book a snapshot when you want the full written review.' }
     ];
 
     function pathInfo() {
@@ -667,7 +667,7 @@
         name: 'Site',
         where: 'Browsing',
         cat: 'Operating clarity',
-        act: 'Open Capture when you want a structured read on leaks.'
+        act: 'Start the diagnostic when you want numbers on leaks.'
       };
     }
 
@@ -763,7 +763,7 @@
         return;
       }
       var pad = 24;
-      var maxW = Math.min(380, Math.max(0, vw - pad * 2));
+      var maxW = Math.min(340, Math.max(0, vw - pad * 2));
       root.style.boxSizing = 'border-box';
       root.style.left = 'auto';
       root.style.right = pad + 'px';
@@ -779,7 +779,7 @@
       if (rect.left < 8) {
         root.style.left = '8px';
         root.style.right = 'auto';
-        var wFix = Math.min(380, vw - 16);
+        var wFix = Math.min(340, vw - 16);
         root.style.width = wFix + 'px';
         root.style.maxWidth = wFix + 'px';
         root.style.minWidth = Math.min(300, wFix) + 'px';
@@ -865,7 +865,7 @@
       var now = Date.now();
       if (lastStatusTick > 0 && now - lastStatusTick < 2800) return;
       lastStatusTick = now;
-      if (scrollAcc > 400 && interactAcc > 8) statusText = 'Most time is lost here';
+      if (scrollAcc > 400 && interactAcc > 8) statusText = 'Refining estimate';
       else if (scrollAcc > 120 || interactAcc > 3) statusText = 'Updating…';
       else if (now - pageEnter < 4000) statusText = 'Calculating…';
       else statusText = 'Updating…';

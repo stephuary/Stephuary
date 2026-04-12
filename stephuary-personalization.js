@@ -251,7 +251,7 @@
     if (/not making money|no clients|no money|monetiz|revenue|paid work|buyer/.test(t)) return 'revenue';
     if (/doing everything|scattered|jumping|fragment|everything at once/.test(t)) return 'lock';
     if (/ideas but not structured|not formed|one page|packaging|offer description/.test(t)) return 'concept';
-    if (/multiple problems|not working overall|layered|full rebuild|several/.test(t)) return 'snapshot';
+    if (/multiple problems|not working overall|full rebuild|several/.test(t)) return 'snapshot';
     return '';
   }
 
@@ -727,8 +727,8 @@
       add('revenue', 2, 'money loss high');
       add('snapshot', 2, 'money loss high');
     }
-    if (mit) add(mit, 3, 'main issue signal');
-    if (nmt) add(nmt, 2, 'next move signal');
+    if (mit) add(mit, 3, 'main issue text');
+    if (nmt) add(nmt, 2, 'next move text');
 
     if (pricingHits > 1) {
       add('snapshot', 2, 'repeat pricing');
@@ -818,7 +818,7 @@
 
     if (roomsDone >= 2 && pricingHits >= 2 && (b.advisoryClicks || 0) + (b.onlySometimesClicks || 0) >= 2) {
       scores.snapshot += 6;
-      reasons.snapshot.push('override: high-intent layered behavior');
+      reasons.snapshot.push('override: high-intent repeat visits');
     }
 
     var picked = pickWinnerByOrder(scores);
@@ -850,6 +850,12 @@
       (s.behavior && s.behavior.pricingVisits > 0) ||
       ((s.behavior && s.behavior.clickedPhases && s.behavior.clickedPhases.length) || 0) > 0
     );
+  }
+
+  /** Use for tier highlight and panel recommendations only (not generic “visited site”). */
+  function hasStrongRecommendation(s) {
+    if (!s) return false;
+    return s.stageConfidence === 'high' || s.stageConfidence === 'medium';
   }
 
   function uniqPush(arr, item, max) {
@@ -906,20 +912,21 @@
     refresh();
     var line = global.document.getElementById('hero-personal-line');
     var hint = global.document.getElementById('hero-tier-hint');
-    var sec = global.document.getElementById('hero-cta-secondary');
-    var micro = global.document.getElementById('hero-cta-micro');
     if (line) {
-      line.textContent = HERO_LINE[state.stage] || '';
-      line.hidden = !line.textContent;
+      var pl = '';
+      if (state.diagnosticCompleted && state.outputs && state.outputs.nextMove) {
+        pl = trimStr(state.outputs.nextMove, 140);
+      } else if (HERO_LINE[state.stage]) {
+        pl = HERO_LINE[state.stage];
+      } else if (state.stageReason && hasStrongRecommendation(state)) {
+        pl = String(state.stageReason);
+      }
+      line.textContent = pl;
+      line.hidden = !pl;
     }
     if (hint) {
-      if (state.recommendedTierName && hasStrongSignal(state)) {
-        hint.textContent = 'Best next step: ' + state.recommendedTierName;
-        hint.hidden = false;
-      } else {
-        hint.textContent = '';
-        hint.hidden = true;
-      }
+      hint.textContent = '';
+      hint.hidden = true;
     }
     var osc = state.behavior.onlySometimesClicks || 0;
     if (osc > 2) {
@@ -928,8 +935,8 @@
     }
 
     if (state.behavior.lingerPulse) {
-      var pl = global.document.getElementById('hero-personal-line');
-      if (pl) pl.classList.add('hero-personal-line--linger');
+      var plEl = global.document.getElementById('hero-personal-line');
+      if (plEl) plEl.classList.add('hero-personal-line--linger');
     }
   }
 
@@ -956,7 +963,7 @@
       sub.hidden = true;
     }
 
-    if (!hasStrongSignal(state)) {
+    if (!hasStrongRecommendation(state)) {
       return;
     }
 
@@ -968,8 +975,7 @@
         tierEl.classList.add('inner-tier--recommended');
         var badge = global.document.createElement('span');
         badge.className = 'pricing-rec-badge';
-        badge.textContent =
-          state.behavior.pricingVisits > 1 ? 'Recommended for you — still the best fit' : 'Recommended for you';
+        badge.textContent = 'Recommended for you';
         tierEl.insertBefore(badge, tierEl.firstChild);
         pad.insertBefore(tierEl, pad.firstChild);
         foundDetails = details;
@@ -984,7 +990,7 @@
 
     if (sub) {
       sub.textContent =
-        'Based on where you are: consider ' + state.recommendedTierName + ' when you are ready to pay for clarity.';
+        'When you are ready to pay for clarity: ' + state.recommendedTierName + '.';
       sub.hidden = false;
     }
 
@@ -1031,7 +1037,7 @@
       if (top) top.appendChild(recEl);
     }
     var line =
-      state.stage && hasStrongSignal(state) ? PANEL_REC_LINE[state.stage] || '' : '';
+      state.stage && hasStrongRecommendation(state) ? PANEL_REC_LINE[state.stage] || '' : '';
     if (line) {
       recEl.textContent = line;
       recEl.hidden = false;
@@ -1062,6 +1068,23 @@
     }
     if (o.nextMove) els.elAction.textContent = trimStr(o.nextMove, 180);
     if (o.timeLoss) els.elTime.textContent = trimStr(o.timeLoss, 85);
+
+    var lo = null;
+    try {
+      lo = JSON.parse(global.localStorage.getItem('stephuary_live_output_v1') || 'null');
+    } catch (e1) {
+      lo = null;
+    }
+    if (hasDiag && lo && typeof lo.smoothMoney === 'number') {
+      els.elMoney.textContent = els.formatMoney(Math.round(lo.smoothMoney)) + '/yr est.';
+      var dtm = els.elMoney.previousElementSibling;
+      if (dtm && dtm.tagName === 'DT') dtm.textContent = 'Est. money loss';
+    }
+    if (hasDiag && lo && typeof lo.smoothHours === 'number' && !o.timeLoss) {
+      els.elTime.textContent = els.formatHours(lo.smoothHours) + ' est.';
+      var dtt = els.elTime.previousElementSibling;
+      if (dtt && dtt.tagName === 'DT') dtt.textContent = 'Est. time loss';
+    }
 
     applyLivePanel(global.document.getElementById('sh-live-panel'));
   }
