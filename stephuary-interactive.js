@@ -48,7 +48,7 @@
     '/monetize': '/structure',
     '/structure': '/automation',
     '/automation': '/sovereignty',
-    '/sovereignty': '/systems'
+    '/sovereignty': '/results'
   };
 
   function normPath(p) {
@@ -105,6 +105,7 @@
         if (localStorage.getItem('capture_complete') === 'true') return '/monetize';
         return '/capture';
       }
+      if (n === '/results') return '/execution';
       if (PHASE_CHAIN[n]) return PHASE_CHAIN[n];
       for (var i = 0; i < ROOM_CHAIN.length; i++) {
         if (ROOM_CHAIN[i] === n) return i < ROOM_CHAIN.length - 1 ? ROOM_CHAIN[i + 1] : '/systems';
@@ -449,7 +450,7 @@
     var zone = 'default';
     if (path === '/systems' || path === '/') zone = 'cei';
     else if (path === '/pricing') zone = 'pricing';
-    else if (path.indexOf('/room-') === 0 || path === '/capture' || path === '/results' || path === '/playbooks') zone = 'cei';
+    else if (path.indexOf('/room-') === 0 || path === '/capture' || path === '/results' || path === '/execution' || path === '/playbooks') zone = 'cei';
 
     var mobileLight = isMobile;
     var body = document.body;
@@ -464,6 +465,7 @@
     }
     body.classList.add('sh-zone--' + zone);
     if (path === '/results') body.classList.add('sh-page--results');
+    if (path === '/execution') body.classList.add('sh-page--execution');
 
     var root = document.createElement('div');
     root.id = 'sh-env-depth';
@@ -1407,6 +1409,7 @@
       { path: '/systems', n: 0, name: 'System', where: 'System map', cat: 'Flow overview', act: 'Open the step that matches your next decision.' },
       { path: '/pricing', n: 0, name: 'Pricing', where: 'Pricing', cat: 'Entry choice', act: 'Pick one tier that matches how much help you want.' },
       { path: '/results', n: 0, name: 'Results', where: 'Results', cat: 'Readout', act: 'Do one thing from this page today.' },
+      { path: '/execution', n: 0, name: 'Execution', where: 'Execution layer', cat: 'Next moves', act: 'Choose one action and schedule it.' },
       { path: '/playbooks', n: 0, name: 'Rooms', where: 'Rooms', cat: 'Focused topic', act: 'Finish one room before opening another.' },
       { path: '/access', n: 0, name: 'Access', where: 'Club access', cat: 'Request', act: 'Request .5% Club access when you need it.' },
       {
@@ -1916,13 +1919,27 @@
     el.className = 'sh-flow-end';
     el.setAttribute('role', 'region');
     el.setAttribute('aria-label', 'Next steps');
+    var priLabel = 'Continue to next step';
+    var secHref = '/results';
+    var secLabel = 'View full results';
+    if (next === '/results') {
+      priLabel = 'View your readout →';
+      secHref = '/systems';
+      secLabel = 'System map';
+    }
     el.innerHTML =
       '<p class="sh-flow-end__saved">Your progress is saved automatically on this device.</p>' +
       '<div class="sh-flow-end__row">' +
       '<a class="sh-flow-end__pri" href="' +
       next +
-      '">Continue to next step</a>' +
-      '<a class="sh-flow-end__sec" href="/results">View full results</a>' +
+      '">' +
+      priLabel +
+      '</a>' +
+      '<a class="sh-flow-end__sec" href="' +
+      secHref +
+      '">' +
+      secLabel +
+      '</a>' +
       '<a class="sh-flow-end__ter" href="/">Exit and save progress</a>' +
       '</div>';
     document.body.appendChild(el);

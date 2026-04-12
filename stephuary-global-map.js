@@ -70,6 +70,7 @@
     '/': '',
     '/capture': 'diagnostic',
     '/results': 'diagnostic',
+    '/execution': 'diagnostic',
     '/rooms': 'rooms',
     '/playbooks': 'rooms',
     '/room-01-extraction': 'rooms',

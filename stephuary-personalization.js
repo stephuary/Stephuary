@@ -1141,6 +1141,7 @@
           href.indexOf('/structure') === 0 ||
           href.indexOf('/automation') === 0 ||
           href.indexOf('/sovereignty') === 0 ||
+          href.indexOf('/execution') === 0 ||
           href.indexOf('/systems') === 0 ||
           href.indexOf('/phases/') === 0 ||
           href.indexOf('/direction-system') === 0 ||
