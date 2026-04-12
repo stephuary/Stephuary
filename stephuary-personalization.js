@@ -1141,7 +1141,10 @@
           href.indexOf('/structure') === 0 ||
           href.indexOf('/automation') === 0 ||
           href.indexOf('/sovereignty') === 0 ||
-          href.indexOf('/systems') === 0
+          href.indexOf('/systems') === 0 ||
+          href.indexOf('/phases/') === 0 ||
+          href.indexOf('/direction-system') === 0 ||
+          href.indexOf('/revenue-system') === 0
         ) {
           uniqPush(state.behavior.clickedPhases, href.split('?')[0]);
         }

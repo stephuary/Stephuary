@@ -72,8 +72,8 @@
 
   function tierHref(tierId) {
     var m = {
-      'direction-system': '/room-02-direction',
-      'revenue-system': '/monetize',
+      'direction-system': '/phases/direction',
+      'revenue-system': '/phases/revenue',
       'direction-lock': '/focused-review',
       'concept-build': '/access',
       snapshot: '/snapshot'

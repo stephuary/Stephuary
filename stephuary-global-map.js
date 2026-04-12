@@ -20,13 +20,13 @@
     },
     {
       id: 'direction',
-      label: 'Direction',
+      label: 'Direction System',
       path: '/phases/direction',
       tip: 'Choose one path that makes sense'
     },
     {
       id: 'revenue',
-      label: 'Revenue',
+      label: 'Revenue System',
       path: '/phases/revenue',
       tip: 'Turn direction into something that pays'
     },
@@ -78,8 +78,10 @@
     '/room-04-infrastructure': 'rooms',
     '/room-05-cognition': 'rooms',
     '/phases/direction': 'direction',
+    '/direction-system': 'direction',
     '/monetize': 'revenue',
     '/phases/revenue': 'revenue',
+    '/revenue-system': 'revenue',
     '/structure': 'revenue',
     '/automation': 'revenue',
     '/sovereignty': 'revenue',
