@@ -199,8 +199,8 @@
     var pri = root.getElementById('results-primary-cta');
     var priSub = root.getElementById('results-primary-sub');
     if (pri) {
-      pri.href = '/execution';
-      pri.textContent = 'Continue to execution layer →';
+      pri.href = '/playbooks';
+      pri.textContent = 'View Results →';
     }
     if (priSub) {
       priSub.textContent = '';

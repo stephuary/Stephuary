@@ -105,7 +105,7 @@
         if (localStorage.getItem('capture_complete') === 'true') return '/monetize';
         return '/capture';
       }
-      if (n === '/results') return '/execution';
+      if (n === '/results') return '/playbooks';
       if (PHASE_CHAIN[n]) return PHASE_CHAIN[n];
       for (var i = 0; i < ROOM_CHAIN.length; i++) {
         if (ROOM_CHAIN[i] === n) return i < ROOM_CHAIN.length - 1 ? ROOM_CHAIN[i + 1] : '/systems';
@@ -1924,23 +1924,26 @@
     var secLabel = 'View full results';
     if (next === '/results') {
       priLabel = 'View your readout →';
-      secHref = '/systems';
-      secLabel = 'System map';
     }
-    el.innerHTML =
-      '<p class="sh-flow-end__saved">Your progress is saved automatically on this device.</p>' +
-      '<div class="sh-flow-end__row">' +
+    var rowInner =
       '<a class="sh-flow-end__pri" href="' +
       next +
       '">' +
       priLabel +
-      '</a>' +
-      '<a class="sh-flow-end__sec" href="' +
-      secHref +
-      '">' +
-      secLabel +
-      '</a>' +
-      '<a class="sh-flow-end__ter" href="/">Exit and save progress</a>' +
+      '</a>';
+    if (next !== '/results') {
+      rowInner +=
+        '<a class="sh-flow-end__sec" href="' +
+        secHref +
+        '">' +
+        secLabel +
+        '</a>';
+    }
+    rowInner += '<a class="sh-flow-end__ter" href="/">Exit and save progress</a>';
+    el.innerHTML =
+      '<p class="sh-flow-end__saved">Your progress is saved automatically on this device.</p>' +
+      '<div class="sh-flow-end__row">' +
+      rowInner +
       '</div>';
     document.body.appendChild(el);
     document.body.classList.add('has-flow-end');
