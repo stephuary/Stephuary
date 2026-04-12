@@ -678,6 +678,48 @@
       .rail { order: 1; }
     }
 
+    .phase-conversion-mid {
+      margin: 22px auto 6px;
+      padding: 20px 18px 22px;
+      max-width: 520px;
+      text-align: center;
+      border: 1px solid rgba(154, 130, 96, 0.16);
+      background: rgba(18, 16, 14, 0.55);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.22);
+    }
+    .phase-conversion-mid__lead {
+      font-size: 15px;
+      color: rgba(232, 224, 212, 0.88);
+      line-height: 1.45;
+      margin: 0 0 8px;
+      font-weight: 300;
+    }
+    .phase-conversion-mid__sub {
+      font-size: 13px;
+      color: rgba(184, 174, 160, 0.75);
+      margin: 0 0 16px;
+      line-height: 1.5;
+    }
+    .phase-conversion-mid__snap {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px 20px;
+      border: 1px solid rgba(58, 107, 255, 0.35);
+      background: rgba(43, 79, 212, 0.12);
+      color: rgba(232, 224, 212, 0.92);
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      text-decoration: none;
+      transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+    }
+    .phase-conversion-mid__snap:hover {
+      border-color: rgba(58, 107, 255, 0.5);
+      background: rgba(43, 79, 212, 0.2);
+      box-shadow: 0 4px 24px rgba(43, 79, 212, 0.15);
+    }
+
     @media (max-width: 480px) {
       .step-instruction { font-size: 22px; }
       .nav-row { flex-direction: column-reverse; align-items: stretch; }
@@ -807,9 +849,13 @@
         <div class="action-primary">
           <a href="/sovereignty" class="btn btn-solid" data-sh-flow-primary>Continue to Sovereignty →</a>
         </div>
+        <div id="phase-conversion-mid" class="phase-conversion-mid" hidden>
+          <p class="phase-conversion-mid__lead">You've seen enough to know where this is going.</p>
+          <p class="phase-conversion-mid__sub">If you want this built around your business:</p>
+          <a href="/snapshot" class="btn phase-conversion-mid__snap magnetic">Start Snapshot →</a>
+        </div>
         <p class="phase-result-links">
-          <a href="/systems">View system</a> · <a href="/pricing">View pricing</a> ·
-          <a href="/private-access">Request custom help</a>
+          <a href="/systems">View system</a> · <a href="/pricing">View pricing</a>
         </p>
         <div class="action-primary capture-flow-tools">
           <button type="button" class="btn" id="btnCopy">Copy All</button>
@@ -1264,6 +1310,43 @@
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
+  function phaseVisitCount() {
+    try {
+      var raw = localStorage.getItem('stephuary_phases_visited');
+      var arr = raw ? JSON.parse(raw) : [];
+      return Array.isArray(arr) ? arr.length : 0;
+    } catch (e) {
+      return 0;
+    }
+  }
+
+  function priorPhaseDataCount() {
+    var keys = [
+      'stephuary_capture_p01_v2',
+      'stephuary_monetize_p02_v1',
+      'stephuary_structure_p03_v1'
+    ];
+    var n = 0;
+    var i;
+    try {
+      for (i = 0; i < keys.length; i++) {
+        if (localStorage.getItem(keys[i])) n++;
+      }
+    } catch (e) {}
+    return n;
+  }
+
+  function shouldShowMidConversion() {
+    if (phaseVisitCount() >= 2) return true;
+    return priorPhaseDataCount() >= 2;
+  }
+
+  function updateMidConversionVisibility() {
+    var el = document.getElementById('phase-conversion-mid');
+    if (!el) return;
+    el.hidden = !shouldShowMidConversion();
+  }
+
   function showSummary() {
     state.currentStep = 11;
     saveStorage();
@@ -1271,6 +1354,7 @@
     document.getElementById('summary').style.display = 'flex';
     buildSummaryOutputs(state.bits.map(function(x) { return x; }));
     updateRail();
+    updateMidConversionVisibility();
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
