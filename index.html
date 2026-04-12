@@ -12,6 +12,21 @@
       document.documentElement.setAttribute('data-early-mode', 'false');
     }
   </script>
+  <script>
+    (function () {
+      try {
+        var p = location.pathname || '/';
+        var home = p === '/' || p === '/index' || p === '/index.html';
+        if (!home) return;
+        var k = 'stephuary_cosmic_metropolis';
+        if (sessionStorage.getItem(k) === '1') {
+          document.documentElement.classList.add('cosmic-intro--skipped');
+        } else {
+          document.documentElement.classList.add('cosmic-intro--pending');
+        }
+      } catch (e) {}
+    })();
+  </script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Stephuary</title>
   <link rel="stylesheet" href="/stephuary-interactive.css" />
@@ -1253,14 +1268,58 @@
   <link rel="stylesheet" href="/stephuary-early-mode.css" />
   <link rel="stylesheet" href="/stephuary-private-selection.css" />
   <link rel="stylesheet" href="/stephuary-home-finale.css" />
+  <link rel="stylesheet" href="/cosmic-metropolis.css" />
 </head>
 <body>
+
+  <div id="cosmic-metropolis" aria-hidden="true">
+    <div class="cosmic-metropolis__camera">
+      <div class="cosmic-metropolis__dim"></div>
+      <div class="cosmic-metropolis__particles" aria-hidden="true">
+        <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+      </div>
+      <div class="cosmic-metropolis__grid" aria-hidden="true"></div>
+      <svg class="cosmic-metropolis__signals" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+        <path class="cosmic-metropolis__signals-line" d="M0,52 Q28,46 52,52 T100,50" />
+        <path class="cosmic-metropolis__signals-line cosmic-metropolis__signals-line--b" d="M0,58 Q32,62 56,58 T100,54" />
+      </svg>
+      <div class="cosmic-metropolis__orbits" aria-hidden="true">
+        <div class="cosmic-metropolis__orbit cosmic-metropolis__orbit--a"></div>
+        <div class="cosmic-metropolis__orbit cosmic-metropolis__orbit--b"></div>
+        <div class="cosmic-metropolis__orbit cosmic-metropolis__orbit--c"></div>
+      </div>
+      <div class="cosmic-metropolis__nodes" aria-hidden="true">
+        <span class="cosmic-metropolis__node-dot"></span>
+        <span class="cosmic-metropolis__node-dot"></span>
+        <span class="cosmic-metropolis__node-dot"></span>
+      </div>
+      <div class="cosmic-metropolis__halo" aria-hidden="true"></div>
+      <div class="cosmic-metropolis__core" aria-hidden="true"></div>
+      <div class="cosmic-metropolis__ripple" aria-hidden="true"></div>
+      <div class="cosmic-metropolis__calibration" aria-hidden="true"></div>
+    </div>
+    <div class="cosmic-metropolis__copy">
+      <p class="cosmic-metropolis__line cosmic-metropolis__line--a">System active</p>
+      <div class="cosmic-metropolis__sub">
+        <p class="cosmic-metropolis__line--b">This isn’t a template.</p>
+        <p class="cosmic-metropolis__line--c">It’s a working system.</p>
+      </div>
+      <a href="#system" class="cosmic-metropolis__cta">See the system</a>
+    </div>
+  </div>
 
   <div class="ambient" aria-hidden="true">
     <div class="ambient__grad"></div>
     <div class="ambient__noise"></div>
     <div class="ambient__particles">
       <span></span><span></span><span></span><span></span><span></span>
+    </div>
+  </div>
+
+  <div id="cosmic-settled" aria-hidden="true">
+    <div class="cosmic-settled__grid" aria-hidden="true"></div>
+    <div class="cosmic-settled__particles" aria-hidden="true">
+      <span></span><span></span><span></span><span></span>
     </div>
   </div>
 
@@ -1658,6 +1717,7 @@
   <script src="/stephuary-os.js"></script>
   <script src="/stephuary-progress.js"></script>
   <script src="/stephuary-config.js"></script>
+  <script src="/cosmic-metropolis.js" defer></script>
   <script src="/stephuary-interactive.js" defer></script>
   <script src="/stephuary-early-mode.js" defer></script>
   <script src="/stephuary-personalization.js" defer></script>

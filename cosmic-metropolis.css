@@ -1,0 +1,542 @@
+/* Cosmic Metropolis — home arrival layer only (html.cosmic-intro--pending) */
+
+#cosmic-metropolis {
+  position: fixed;
+  inset: 0;
+  z-index: 2147483000;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+html.cosmic-intro--pending #cosmic-metropolis {
+  display: flex;
+  pointer-events: auto;
+}
+
+html.cosmic-intro--pending body {
+  overflow: hidden;
+  height: 100%;
+}
+
+html.cosmic-intro--pending .page {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.cosmic-metropolis__camera {
+  position: absolute;
+  inset: -6%;
+  transform: scale(0.988) translateZ(0);
+  transform-origin: 50% 46%;
+  will-change: transform;
+  transition: transform 4.85s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+html.cosmic-intro--running .cosmic-metropolis__camera {
+  transform: scale(1.016) translateZ(0);
+}
+
+.cosmic-metropolis__dim {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 85% 70% at 50% 42%, rgba(4, 6, 14, 0.2), #020203 72%);
+  opacity: 1;
+}
+
+.cosmic-metropolis__particles {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  opacity: 0.55;
+}
+
+.cosmic-metropolis__particles span {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  border-radius: 50%;
+  background: rgba(244, 237, 224, 0.2);
+  animation: cosmicFloat 14s ease-in-out infinite;
+}
+
+.cosmic-metropolis__particles span:nth-child(1) {
+  left: 14%;
+  top: 20%;
+  animation-delay: 0s;
+}
+.cosmic-metropolis__particles span:nth-child(2) {
+  left: 72%;
+  top: 16%;
+  animation-delay: -3s;
+}
+.cosmic-metropolis__particles span:nth-child(3) {
+  left: 48%;
+  top: 58%;
+  animation-delay: -6s;
+}
+.cosmic-metropolis__particles span:nth-child(4) {
+  left: 86%;
+  top: 68%;
+  animation-delay: -2s;
+}
+.cosmic-metropolis__particles span:nth-child(5) {
+  left: 22%;
+  top: 78%;
+  animation-delay: -9s;
+}
+.cosmic-metropolis__particles span:nth-child(6) {
+  left: 58%;
+  top: 32%;
+  animation-delay: -5s;
+}
+.cosmic-metropolis__particles span:nth-child(7) {
+  left: 38%;
+  top: 12%;
+  animation-delay: -11s;
+}
+.cosmic-metropolis__particles span:nth-child(8) {
+  left: 92%;
+  top: 44%;
+  animation-delay: -7s;
+}
+
+@media (max-width: 767px) {
+  .cosmic-metropolis__particles span:nth-child(n + 5) {
+    display: none;
+  }
+}
+
+@keyframes cosmicFloat {
+  0%,
+  100% {
+    transform: translate(0, 0);
+    opacity: 0.35;
+  }
+  50% {
+    transform: translate(6px, -10px);
+    opacity: 0.75;
+  }
+}
+
+.cosmic-metropolis__grid {
+  position: absolute;
+  inset: -5%;
+  opacity: 0;
+  transform: perspective(520px) rotateX(68deg);
+  transform-origin: center 75%;
+  background-image:
+    linear-gradient(rgba(58, 94, 220, 0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(244, 237, 224, 0.04) 1px, transparent 1px);
+  background-size: 42px 42px;
+  mask-image: linear-gradient(to top, rgba(0, 0, 0, 0.55), transparent 88%);
+  -webkit-mask-image: linear-gradient(to top, rgba(0, 0, 0, 0.55), transparent 88%);
+  transition: opacity 1.1s ease;
+  pointer-events: none;
+}
+
+html.cosmic-intro--phase-grid .cosmic-metropolis__grid {
+  opacity: 0.38;
+}
+
+.cosmic-metropolis__signals {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: opacity 0.9s ease;
+  pointer-events: none;
+}
+
+html.cosmic-intro--phase-signals .cosmic-metropolis__signals {
+  opacity: 1;
+}
+
+.cosmic-metropolis__signals-line {
+  fill: none;
+  stroke: rgba(90, 130, 255, 0.14);
+  stroke-width: 1;
+  stroke-linecap: round;
+  stroke-dasharray: 8 22;
+  animation: cosmicSignalFlow 5.5s linear infinite;
+}
+
+.cosmic-metropolis__signals-line--b {
+  animation-delay: -1.8s;
+  opacity: 0.65;
+}
+
+@keyframes cosmicSignalFlow {
+  to {
+    stroke-dashoffset: -120;
+  }
+}
+
+.cosmic-metropolis__orbits {
+  position: absolute;
+  left: 50%;
+  top: 44%;
+  width: min(72vw, 420px);
+  height: min(72vw, 420px);
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  transition: opacity 0.85s ease;
+  pointer-events: none;
+}
+
+html.cosmic-intro--phase-orbits .cosmic-metropolis__orbits {
+  opacity: 1;
+}
+
+.cosmic-metropolis__orbit {
+  position: absolute;
+  border: 1px solid rgba(58, 107, 255, 0.12);
+  border-radius: 50%;
+  box-shadow: 0 0 24px rgba(43, 79, 212, 0.08);
+}
+
+.cosmic-metropolis__orbit--a {
+  inset: 8%;
+  animation: cosmicOrbitDrift 12s ease-in-out infinite;
+}
+.cosmic-metropolis__orbit--b {
+  inset: 22%;
+  animation: cosmicOrbitDrift 14s ease-in-out infinite reverse;
+  opacity: 0.75;
+}
+.cosmic-metropolis__orbit--c {
+  inset: 38%;
+  border-color: rgba(196, 163, 90, 0.1);
+  opacity: 0.55;
+}
+
+@keyframes cosmicOrbitDrift {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  50% {
+    transform: rotate(4deg);
+  }
+}
+
+.cosmic-metropolis__nodes {
+  position: absolute;
+  left: 50%;
+  top: 44%;
+  width: min(64vw, 360px);
+  height: min(64vw, 360px);
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  transition: opacity 0.7s ease;
+  pointer-events: none;
+}
+
+html.cosmic-intro--phase-orbits .cosmic-metropolis__nodes {
+  opacity: 0.85;
+}
+
+.cosmic-metropolis__node-dot {
+  position: absolute;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: rgba(244, 237, 224, 0.15);
+  box-shadow: 0 0 10px rgba(43, 79, 212, 0.15);
+}
+
+.cosmic-metropolis__node-dot:nth-child(1) {
+  left: 8%;
+  top: 42%;
+}
+.cosmic-metropolis__node-dot:nth-child(2) {
+  right: 10%;
+  top: 38%;
+}
+.cosmic-metropolis__node-dot:nth-child(3) {
+  left: 42%;
+  bottom: 12%;
+}
+
+html.cosmic-intro--phase-core .cosmic-metropolis__node-dot {
+  background: rgba(120, 155, 255, 0.35);
+  box-shadow: 0 0 14px rgba(43, 79, 212, 0.25);
+}
+
+.cosmic-metropolis__core {
+  position: absolute;
+  left: 50%;
+  top: 44%;
+  width: 12px;
+  height: 12px;
+  margin: -6px 0 0 -6px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, rgba(255, 255, 255, 0.35), rgba(58, 107, 255, 0.45));
+  box-shadow:
+    0 0 20px rgba(43, 79, 212, 0.45),
+    0 0 48px rgba(43, 79, 212, 0.22);
+  opacity: 0;
+  transform: scale(0.6);
+  transition:
+    opacity 0.55s ease,
+    transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  pointer-events: none;
+}
+
+html.cosmic-intro--phase-core .cosmic-metropolis__core {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.cosmic-metropolis__halo {
+  position: absolute;
+  left: 50%;
+  top: 44%;
+  width: 120px;
+  height: 120px;
+  margin: -60px 0 0 -60px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(58, 107, 255, 0.12), transparent 68%);
+  opacity: 0;
+  transform: scale(0.85);
+  transition:
+    opacity 0.65s ease,
+    transform 0.85s cubic-bezier(0.22, 1, 0.36, 1);
+  pointer-events: none;
+}
+
+html.cosmic-intro--phase-orbits .cosmic-metropolis__halo {
+  opacity: 0.55;
+  transform: scale(1);
+}
+
+html.cosmic-intro--phase-core .cosmic-metropolis__halo {
+  opacity: 0.85;
+  transform: scale(1.05);
+}
+
+.cosmic-metropolis__ripple {
+  position: absolute;
+  left: 50%;
+  top: 44%;
+  width: 28px;
+  height: 28px;
+  margin: -14px 0 0 -14px;
+  border-radius: 50%;
+  border: 1px solid rgba(58, 107, 255, 0.22);
+  opacity: 0;
+  pointer-events: none;
+}
+
+html.cosmic-intro--phase-ripple .cosmic-metropolis__ripple {
+  animation: cosmicRippleOnce 1.35s ease-out forwards;
+}
+
+@keyframes cosmicRippleOnce {
+  0% {
+    transform: scale(0.65);
+    opacity: 0.45;
+  }
+  100% {
+    transform: scale(14);
+    opacity: 0;
+  }
+}
+
+.cosmic-metropolis__calibration {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 44%, rgba(255, 255, 255, 0.04), transparent 42%);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.12s ease;
+}
+
+html.cosmic-intro--phase-flash .cosmic-metropolis__calibration {
+  opacity: 1;
+}
+
+.cosmic-metropolis__copy {
+  position: relative;
+  z-index: 2;
+  max-width: min(92vw, 520px);
+  text-align: center;
+  padding: 24px 20px;
+  opacity: 0;
+  transform: translateY(8px);
+  transition:
+    opacity 0.65s ease,
+    transform 0.75s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+html.cosmic-intro--phase-copy .cosmic-metropolis__copy {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.cosmic-metropolis__line {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 300;
+  color: rgba(244, 237, 224, 0.92);
+  letter-spacing: 0.02em;
+  line-height: 1.35;
+}
+
+.cosmic-metropolis__line--a {
+  font-size: clamp(22px, 4.2vw, 34px);
+  margin-bottom: 18px;
+  opacity: 0;
+  transition: opacity 0.55s ease 0.05s;
+}
+
+html.cosmic-intro--phase-copy-a .cosmic-metropolis__line--a {
+  opacity: 1;
+}
+
+.cosmic-metropolis__sub {
+  opacity: 0;
+  transition: opacity 0.55s ease;
+}
+
+html.cosmic-intro--phase-copy-b .cosmic-metropolis__sub {
+  opacity: 1;
+}
+
+.cosmic-metropolis__line--b,
+.cosmic-metropolis__line--c {
+  font-size: clamp(17px, 2.8vw, 22px);
+  color: rgba(180, 172, 158, 0.88);
+  margin: 0.25em 0;
+}
+
+.cosmic-metropolis__cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 28px;
+  padding: 14px 26px;
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: #f4ede0;
+  background: linear-gradient(165deg, rgba(43, 79, 212, 0.95), rgba(35, 62, 168, 0.98));
+  border: 1px solid rgba(120, 155, 255, 0.35);
+  border-radius: 2px;
+  box-shadow: 0 4px 28px rgba(43, 79, 212, 0.28);
+  opacity: 0;
+  transform: translateY(6px);
+  transition:
+    opacity 0.55s ease,
+    transform 0.55s ease,
+    box-shadow 0.3s ease;
+}
+
+html.cosmic-intro--phase-cta .cosmic-metropolis__cta {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.cosmic-metropolis__cta:hover {
+  box-shadow: 0 8px 36px rgba(43, 79, 212, 0.38);
+}
+
+#cosmic-metropolis.cosmic-metropolis--exit {
+  animation: cosmicOverlayOut 0.65s ease forwards;
+}
+
+@keyframes cosmicOverlayOut {
+  to {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
+/* Post-intro: faint grid + particles — system already running */
+#cosmic-settled {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+  opacity: 0;
+  transition: opacity 1.1s ease;
+}
+
+html.cosmic-metropolis--settled #cosmic-settled {
+  opacity: 1;
+}
+
+.cosmic-settled__particles {
+  position: absolute;
+  inset: 0;
+  opacity: 0.4;
+}
+
+.cosmic-settled__particles span {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  border-radius: 50%;
+  background: rgba(244, 237, 224, 0.14);
+  animation: cosmicFloat 16s ease-in-out infinite;
+}
+
+.cosmic-settled__particles span:nth-child(1) {
+  left: 18%;
+  top: 24%;
+}
+.cosmic-settled__particles span:nth-child(2) {
+  left: 76%;
+  top: 30%;
+}
+.cosmic-settled__particles span:nth-child(3) {
+  left: 52%;
+  top: 62%;
+}
+.cosmic-settled__particles span:nth-child(4) {
+  left: 34%;
+  top: 78%;
+}
+
+@media (max-width: 767px) {
+  .cosmic-settled__particles span:nth-child(n + 3) {
+    display: none;
+  }
+}
+
+.cosmic-settled__grid {
+  position: absolute;
+  inset: -4%;
+  opacity: 0.14;
+  transform: perspective(480px) rotateX(66deg);
+  transform-origin: center 78%;
+  background-image:
+    linear-gradient(rgba(58, 94, 220, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(244, 237, 224, 0.025) 1px, transparent 1px);
+  background-size: 48px 48px;
+  mask-image: linear-gradient(to top, rgba(0, 0, 0, 0.4), transparent 90%);
+  -webkit-mask-image: linear-gradient(to top, rgba(0, 0, 0, 0.4), transparent 90%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cosmic-metropolis__camera {
+    transition: none;
+    transform: scale(1) translateZ(0);
+  }
+  .cosmic-metropolis__signals-line {
+    animation: none;
+  }
+  .cosmic-metropolis__orbit--a,
+  .cosmic-metropolis__orbit--b {
+    animation: none;
+  }
+  .cosmic-settled__particles span {
+    animation: none;
+  }
+}
