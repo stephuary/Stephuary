@@ -1153,9 +1153,18 @@
     document.head.appendChild(sg);
   }
 
+  function ensureMagneticFlowScript() {
+    if (document.querySelector('script[src*="stephuary-magnetic-flow"]')) return;
+    var mf = document.createElement('script');
+    mf.src = '/stephuary-magnetic-flow.js';
+    mf.defer = true;
+    document.head.appendChild(mf);
+  }
+
   function boot() {
     ensurePersonalizeScript();
     ensureGlobalMapScript();
+    ensureMagneticFlowScript();
     initPageTransition();
     initMagnetic();
     initAdaptiveLayer();
@@ -1199,7 +1208,15 @@
         if (window.StephuaryGlobalMap && typeof window.StephuaryGlobalMap.init === 'function') {
           window.StephuaryGlobalMap.init();
         }
+        if (window.StephuaryMagneticFlow && typeof window.StephuaryMagneticFlow.refresh === 'function') {
+          window.StephuaryMagneticFlow.refresh();
+        }
       }, 120);
+      window.setTimeout(function () {
+        if (window.StephuaryMagneticFlow && typeof window.StephuaryMagneticFlow.refresh === 'function') {
+          window.StephuaryMagneticFlow.refresh();
+        }
+      }, 320);
     });
   }
 

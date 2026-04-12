@@ -990,7 +990,89 @@ body.sh-behavior--fast {
   }
 }
 
+/* Magnetic flow: one primary next action (subtle gravity, no modals) */
+body.sh-magnetic-flow-on {
+  --sh-magnetic-glow: rgba(43, 79, 212, 0.28);
+}
+
+.sh-magnetic--ready {
+  transition:
+    box-shadow 0.45s ease,
+    transform 0.4s ease,
+    filter 0.4s ease,
+    opacity 0.35s ease;
+}
+
+a.sh-magnetic--active,
+button.sh-magnetic--active,
+.sh-magnetic--active.tier-cta--pri,
+.sh-magnetic--active.btn--pri,
+.sh-magnetic--active.btn-primary,
+.sh-magnetic--active.btn-terminal,
+.sh-magnetic--active.btn-solid {
+  transform: translate(var(--sh-mx, 0), var(--sh-my, 0)) scale(1.045);
+  box-shadow:
+    0 0 0 1px rgba(43, 79, 212, 0.32),
+    0 0 28px rgba(43, 79, 212, 0.22);
+  filter: brightness(1.06);
+}
+
+.sh-flow-dim:not(.sh-magnetic--active) {
+  opacity: 0.68;
+  filter: contrast(0.94);
+}
+
+.sh-flow-output-anchor .action-steps {
+  margin-top: 2px;
+}
+
+body.sh-magnetic-idle-hint a.sh-magnetic--active,
+body.sh-magnetic-idle-hint .sh-magnetic--active.tier-cta--pri,
+body.sh-magnetic-idle-hint .sh-magnetic--active.btn-primary,
+body.sh-magnetic-idle-hint .sh-magnetic--active.btn-solid {
+  filter: brightness(1.1);
+  box-shadow:
+    0 0 0 1px rgba(43, 79, 212, 0.38),
+    0 0 32px rgba(43, 79, 212, 0.26);
+}
+
+body.sh-magnetic-idle-hint .sh-flow-dim {
+  opacity: 0.58;
+}
+
+[data-sh-flow-section].sh-flow-section--soft {
+  opacity: 0.78;
+  transition: opacity 0.35s ease;
+}
+
+[data-sh-flow-section].sh-flow-section--focus {
+  opacity: 1;
+  transition: opacity 0.35s ease;
+}
+
+@media (max-width: 720px) {
+  a.sh-magnetic--active,
+  .sh-magnetic--active.tier-cta--pri,
+  .sh-magnetic--active.btn-primary,
+  .sh-magnetic--active.btn-solid {
+    min-height: 46px;
+    padding-left: 18px;
+    padding-right: 18px;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
+  .sh-magnetic--ready,
+  a.sh-magnetic--active,
+  .sh-magnetic--active.tier-cta--pri {
+    transition: none !important;
+  }
+  a.sh-magnetic--active,
+  .sh-magnetic--active.tier-cta--pri,
+  .sh-magnetic--active.btn-primary,
+  .sh-magnetic--active.btn-solid {
+    transform: none !important;
+  }
   .sys-btn,
   .sh-map-node,
   .sh-global-map__node,

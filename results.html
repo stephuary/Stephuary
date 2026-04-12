@@ -559,11 +559,11 @@
     <p class="missing-kicker">Result</p>
     <h1 class="missing-h1">No diagnostic result on file.</h1>
     <p class="missing-p">Finish the diagnostic first. Your read saves when the flow completes.</p>
-    <a href="/capture" class="btn btn-primary">Return to diagnostic</a>
+    <a href="/capture" class="btn btn-primary" data-sh-flow-primary>Return to diagnostic</a>
   </div>
 
   <main id="state-result">
-    <section class="hero-result">
+    <section class="hero-result" data-sh-flow-section>
       <div class="wrap">
         <p class="hero-kicker">Phase 01 · Diagnostic</p>
         <p class="hero-hit" id="heroHit">We found the main issue.</p>
@@ -591,14 +591,14 @@
 
     <div class="rule"></div>
 
-    <section class="block alt">
+    <section class="block alt" data-sh-flow-section>
       <div class="wrap-wide">
         <p class="sec-label">What this shows</p>
         <div id="whatShows"></div>
       </div>
     </section>
 
-    <section class="block">
+    <section class="block" data-sh-flow-section>
       <div class="wrap-wide">
         <p class="sec-label">Where this shows up</p>
         <div id="whereShows"></div>
@@ -607,9 +607,9 @@
 
     <div class="rule"></div>
 
-    <section class="action-section">
+    <section class="action-section" data-sh-flow-section>
       <div class="wrap-wide">
-        <div class="action-card">
+        <div class="action-card sh-flow-output-anchor">
           <h3>Open this section next</h3>
           <p class="body-text" id="actionIntro" style="margin-bottom:12px;"></p>
           <p class="action-momentum" id="actionMomentum"></p>
@@ -620,14 +620,14 @@
 
     <div class="rule"></div>
 
-    <section class="play-wrap">
+    <section class="play-wrap" data-sh-flow-section>
       <div class="wrap-wide">
         <p class="sec-label">Section details</p>
         <div class="play-grid" id="playGrid"></div>
       </div>
     </section>
 
-    <section class="block alt">
+    <section class="block alt" data-sh-flow-section>
       <div class="wrap-wide">
         <div class="help-box">
           <h2 class="sec-h2" style="margin-bottom: 12px;">If you want help applying this</h2>
@@ -638,7 +638,7 @@
             <li><strong>Snapshot</strong> — Remove guesswork in 48 hours. You already see the problem. This makes it usable. Clear direction. No overthinking.</li>
             <li><strong>Advisory</strong> — Make this work consistently. This is about execution, not ideas.</li>
           </ul>
-          <a href="/access" class="btn btn-primary">Request access →</a>
+          <a href="/access" class="btn btn-ghost" data-sh-flow-secondary>Request access →</a>
         </div>
       </div>
     </section>
@@ -887,7 +887,8 @@
     row.className = 'action-step action-step--cta';
     var a = document.createElement('a');
     a.href = diag.next_room.path;
-    a.textContent = 'Open ' + diag.next_room.title + ' →';
+    a.setAttribute('data-sh-flow-primary', '');
+    a.textContent = 'See Your Next Step →';
     row.appendChild(a);
     steps.appendChild(row);
   }
@@ -921,8 +922,8 @@
         '<div class="play-name">' + esc(name) + '</div>' +
         '<p class="play-desc">' + esc(meta.desc) + '</p>' +
         '<div class="play-actions">' +
-        '<a class="btn btn-primary" href="' + esc(playbookHref(name, 'open')) + '">Open</a>' +
-        '<a class="btn btn-ghost" href="' + esc(playbookHref(name, 'download')) + '">Download ($' + playbookDownloadPrice(name) + ')</a>' +
+        '<a class="btn btn-ghost" data-sh-flow-secondary href="' + esc(playbookHref(name, 'open')) + '">Open</a>' +
+        '<a class="btn btn-ghost" data-sh-flow-secondary href="' + esc(playbookHref(name, 'download')) + '">Download ($' + playbookDownloadPrice(name) + ')</a>' +
         '</div>';
       grid.appendChild(card);
     });
@@ -1089,6 +1090,19 @@
 
   var version = resolveVersion(data);
   showResult(data, version);
+
+  function scheduleMagneticRefresh() {
+    var tries = 0;
+    function tick() {
+      if (window.StephuaryMagneticFlow && typeof window.StephuaryMagneticFlow.refresh === 'function') {
+        window.StephuaryMagneticFlow.refresh();
+        return;
+      }
+      if (++tries < 30) setTimeout(tick, 50);
+    }
+    tick();
+  }
+  scheduleMagneticRefresh();
 })();
   </script>
   <script src="/stephuary-progress.js"></script>
