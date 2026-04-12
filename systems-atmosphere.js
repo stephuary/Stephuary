@@ -67,8 +67,12 @@
   }
 
   function runStarfield(starsEl, nearEl) {
-    var nStar = mobile ? 52 : 118;
-    var nNear = mobile ? 10 : 22;
+    var early =
+      typeof document !== 'undefined' &&
+      document.documentElement &&
+      document.documentElement.classList.contains('early-mode');
+    var nStar = early ? (mobile ? 14 : 28) : mobile ? 52 : 118;
+    var nNear = early ? (mobile ? 5 : 9) : mobile ? 10 : 22;
     var starPts = makeStars(nStar);
     var nearPts = makeNear(nNear);
     var t = 0;
@@ -106,7 +110,7 @@
       var h = getH();
       var i;
       var p;
-      t += reduceMotion ? 0 : 0.008;
+      t += reduceMotion ? 0 : early ? 0.007 : 0.008;
       var bmul = document.body.classList.contains('systems-breath') ? 1.1 : 1;
 
       sctx.fillStyle = 'rgba(5,6,8,0.14)';
@@ -118,7 +122,9 @@
         if (a > 0.22) a = 0.22;
         sctx.beginPath();
         sctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-        sctx.fillStyle = 'rgba(255,255,255,' + a + ')';
+        sctx.fillStyle = early
+          ? 'rgba(255,228,210,' + (a * 0.55) + ')'
+          : 'rgba(255,255,255,' + a + ')';
         sctx.fill();
       }
       if (!reduceMotion) stepPts(starPts, w, h, true);
@@ -129,9 +135,15 @@
         p = nearPts[i];
         var a2 = p.a * (0.85 + 0.15 * Math.sin(t * 0.9 + p.y * 0.002)) * bmul;
         var grd = nctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r * 3);
-        grd.addColorStop(0, 'rgba(120, 155, 255,' + (a2 * 0.55) + ')');
-        grd.addColorStop(0.45, 'rgba(43, 79, 212,' + (a2 * 0.22) + ')');
-        grd.addColorStop(1, 'rgba(43, 79, 212,0)');
+        if (early) {
+          grd.addColorStop(0, 'rgba(255, 190, 150,' + (a2 * 0.42) + ')');
+          grd.addColorStop(0.45, 'rgba(200, 120, 95,' + (a2 * 0.2) + ')');
+          grd.addColorStop(1, 'rgba(140, 80, 60,0)');
+        } else {
+          grd.addColorStop(0, 'rgba(120, 155, 255,' + (a2 * 0.55) + ')');
+          grd.addColorStop(0.45, 'rgba(43, 79, 212,' + (a2 * 0.22) + ')');
+          grd.addColorStop(1, 'rgba(43, 79, 212,0)');
+        }
         nctx.beginPath();
         nctx.arc(p.x, p.y, p.r * 2.4, 0, Math.PI * 2);
         nctx.fillStyle = grd;

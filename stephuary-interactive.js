@@ -421,6 +421,15 @@
 
     var mobileLight = isMobile;
     var body = document.body;
+    var earlySky =
+      typeof document !== 'undefined' &&
+      document.documentElement &&
+      document.documentElement.classList.contains('early-mode');
+    if (earlySky) {
+      try {
+        body.classList.add('sh-env-early-sky');
+      } catch (e) {}
+    }
     body.classList.add('sh-zone--' + zone);
     if (path === '/results') body.classList.add('sh-page--results');
 
@@ -476,10 +485,96 @@
     var nBg = mobileLight ? 28 : 68;
     var nMid = mobileLight ? 22 : 46;
     var nFg = mobileLight ? 0 : 24;
+    if (earlySky) {
+      nBg = mobileLight ? 2 : 3;
+      nMid = 0;
+      nFg = 0;
+    }
 
-    var ptsBg = makePts(nBg, { r0: 0.12, r1: 0.55, a0: 0.012, a1: 0.042, vx: 0.05, vy: 0.05 });
-    var ptsMid = makePts(nMid, { r0: 0.35, r1: 1.15, a0: 0.035, a1: 0.1, vx: 0.14, vy: 0.14 });
-    var ptsFg = nFg ? makePts(nFg, { r0: 1.0, r1: 2.6, a0: 0.07, a1: 0.16, vx: 0.28, vy: 0.28 }) : [];
+    var ptsBg = makePts(
+      nBg,
+      earlySky
+        ? { r0: 0.12, r1: 0.45, a0: 0.008, a1: 0.028, vx: 0.04, vy: 0.04 }
+        : { r0: 0.12, r1: 0.55, a0: 0.012, a1: 0.042, vx: 0.05, vy: 0.05 }
+    );
+    var ptsMid = earlySky ? [] : makePts(nMid, { r0: 0.35, r1: 1.15, a0: 0.035, a1: 0.1, vx: 0.14, vy: 0.14 });
+    var ptsFg = !earlySky && nFg ? makePts(nFg, { r0: 1.0, r1: 2.6, a0: 0.07, a1: 0.16, vx: 0.28, vy: 0.28 }) : [];
+
+    var cloudPts = [];
+    function makeCloudPts(w, h) {
+      var out = [];
+      var i;
+      for (i = 0; i < 5; i++) {
+        out.push({
+          x: Math.random() * w,
+          y: Math.random() * h * 0.72,
+          rx: 72 + Math.random() * 108,
+          ry: 26 + Math.random() * 42,
+          a: 0.032 + Math.random() * 0.048,
+          vx: 0.1 + Math.random() * 0.18,
+          vy: (Math.random() - 0.5) * 0.055
+        });
+      }
+      return out;
+    }
+
+    function stepCloudPts(pts, w, h, mult) {
+      var i;
+      var p;
+      for (i = 0; i < pts.length; i++) {
+        p = pts[i];
+        p.x += p.vx * mult;
+        p.y += p.vy * mult;
+        if (p.x > w + p.rx * 1.2) p.x = -p.rx * 1.2;
+        if (p.x < -p.rx * 1.2) p.x = w + p.rx * 1.2;
+        if (p.y < -p.ry) p.y = h * 0.15;
+        if (p.y > h + p.ry) p.y = h * 0.1;
+      }
+    }
+
+    function drawEarlySkyLayers() {
+      var w = cBg.width / dprCap;
+      var h = cBg.height / dprCap;
+      var fadeBg = 'rgba(18,10,12,0.11)';
+      var fadeMid = 'rgba(22,14,12,0.1)';
+      ctxBg.fillStyle = fadeBg;
+      ctxBg.fillRect(0, 0, w, h);
+      ctxMid.fillStyle = fadeMid;
+      ctxMid.fillRect(0, 0, w, h);
+      var i;
+      var p;
+      var a;
+      for (i = 0; i < ptsBg.length; i++) {
+        p = ptsBg[i];
+        a = p.a * (0.82 + 0.18 * Math.sin(t + p.x * 0.005));
+        if (a > 0.08) a = 0.08;
+        ctxBg.beginPath();
+        ctxBg.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctxBg.fillStyle = 'rgba(255,232,210,' + a + ')';
+        ctxBg.fill();
+      }
+      var pulse = document.body.classList.contains('sh-env-pulse') ? 1.18 : 1;
+      for (i = 0; i < cloudPts.length; i++) {
+        p = cloudPts[i];
+        var cx = p.x;
+        var cy = p.y;
+        var ca = p.a * pulse;
+        var grd = ctxMid.createRadialGradient(cx, cy, 0, cx, cy, p.rx * 1.15 * pulse);
+        grd.addColorStop(0, 'rgba(255,215,185,' + ca * 0.9 + ')');
+        grd.addColorStop(0.4, 'rgba(255,175,130,' + ca * 0.45 + ')');
+        grd.addColorStop(0.75, 'rgba(200,120,95,' + ca * 0.12 + ')');
+        grd.addColorStop(1, 'rgba(160,90,70,0)');
+        ctxMid.save();
+        ctxMid.translate(cx, cy);
+        ctxMid.scale(1, Math.max(0.35, p.ry / p.rx));
+        ctxMid.translate(-cx, -cy);
+        ctxMid.beginPath();
+        ctxMid.arc(cx, cy, p.rx, 0, Math.PI * 2);
+        ctxMid.fillStyle = grd;
+        ctxMid.fill();
+        ctxMid.restore();
+      }
+    }
 
     var t = 0;
     var dprCap = Math.min(window.devicePixelRatio || 1, mobileLight ? 1.5 : 2);
@@ -507,6 +602,9 @@
           pts[i].x = Math.random() * w;
           pts[i].y = Math.random() * h;
         }
+      }
+      if (earlySky) {
+        cloudPts = makeCloudPts(w, h);
       }
     }
 
@@ -555,13 +653,25 @@
 
     function frame() {
       var homeBoost = path === '/' ? 1.14 : 1;
-      t += 0.01 * homeBoost;
+      var slowSky = earlySky ? 0.88 : 1;
+      t += 0.01 * homeBoost * slowSky;
       var w = cBg.width / dprCap;
       var h = cBg.height / dprCap;
       var slow = document.body.classList.contains('sys-scroll--slow') ? 0.72 : 1;
       var fast = document.body.classList.contains('sys-scroll--fast') ? 1.18 : 1;
       var vm = slow * fast;
       var navB = document.body.classList.contains('sh-transition-out') ? 2.35 : 1;
+
+      if (earlySky) {
+        stepParticles(ptsBg, w, h, true, 0.48 * vm * navB * homeBoost * slowSky);
+        stepCloudPts(cloudPts, w, h, 0.88 * vm * navB * slowSky);
+        drawEarlySkyLayers();
+        var wf = cFg.width / dprCap;
+        var hf = cFg.height / dprCap;
+        ctxFg.clearRect(0, 0, wf, hf);
+        requestAnimationFrame(frame);
+        return;
+      }
 
       stepParticles(ptsBg, w, h, true, 0.55 * vm * navB * homeBoost);
       stepParticles(ptsMid, w, h, false, 1 * vm * navB * homeBoost);
