@@ -215,6 +215,241 @@
   }
 
   /* ——— Compact header particles ——— */
+  /* ——— Global environment depth (particles + horizon + parallax) ——— */
+  function initParallaxDepthVars() {
+    var doc = document.documentElement;
+    var mx = 0;
+    var my = 0;
+    var ticking = false;
+    function apply() {
+      ticking = false;
+      var w = window.innerWidth || 1;
+      var h = window.innerHeight || 1;
+      var px = (mx / w - 0.5) * 2;
+      var py = (my / h - 0.5) * 2;
+      var maxS = Math.max(1, (document.documentElement.scrollHeight || 1) - h);
+      var sd = Math.min(1, (window.scrollY || 0) / maxS);
+      doc.style.setProperty('--sh-parallax-x', px.toFixed(5));
+      doc.style.setProperty('--sh-parallax-y', py.toFixed(5));
+      doc.style.setProperty('--sh-scroll-d', sd.toFixed(5));
+      window.__shParallax = { x: px, y: py, sd: sd };
+    }
+    function req() {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(apply);
+    }
+    document.addEventListener(
+      'mousemove',
+      function (e) {
+        mx = e.clientX;
+        my = e.clientY;
+        req();
+      },
+      { passive: true }
+    );
+    window.addEventListener(
+      'scroll',
+      function () {
+        req();
+      },
+      { passive: true }
+    );
+    apply();
+  }
+
+  function initEnvironmentPulse() {
+    document.addEventListener(
+      'sh-env-pulse',
+      function () {
+        document.body.classList.add('sh-env-pulse');
+        window.setTimeout(function () {
+          document.body.classList.remove('sh-env-pulse');
+        }, 720);
+      },
+      false
+    );
+  }
+
+  function initPricingImmersiveZone() {
+    var path = normPath(window.location.pathname);
+    if (path !== '/pricing') return;
+    function bind() {
+      var cb = document.getElementById('tier-custom-build');
+      if (!cb) return;
+      cb.addEventListener('toggle', function () {
+        document.body.classList.toggle('sh-zone--immersive', !!cb.open);
+      });
+      if (cb.open) document.body.classList.add('sh-zone--immersive');
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', bind);
+    else bind();
+    window.setTimeout(bind, 400);
+  }
+
+  function initEnvironmentDepth() {
+    if (document.getElementById('sh-env-depth')) return;
+    if (!document.body) return;
+
+    var path = normPath(window.location.pathname);
+    var zone = 'default';
+    if (path === '/systems' || path === '/') zone = 'cei';
+    else if (path === '/pricing') zone = 'pricing';
+    else if (path.indexOf('/room-') === 0 || path === '/capture' || path === '/results' || path === '/playbooks') zone = 'cei';
+
+    var mobileLight = isMobile;
+    var body = document.body;
+    body.classList.add('sh-zone--' + zone);
+
+    var root = document.createElement('div');
+    root.id = 'sh-env-depth';
+    root.setAttribute('aria-hidden', 'true');
+    root.innerHTML =
+      '<div class="sh-depth-field" aria-hidden="true"></div>' +
+      '<div class="sh-horizon" aria-hidden="true">' +
+      '<div class="sh-horizon__radial"></div>' +
+      '<div class="sh-horizon__grid"></div>' +
+      '</div>' +
+      '<canvas class="sh-depth-canvas sh-depth-canvas--bg"></canvas>' +
+      '<canvas class="sh-depth-canvas sh-depth-canvas--mid"></canvas>' +
+      '<div class="sh-depth-fg-wrap"><canvas class="sh-depth-canvas sh-depth-canvas--fg"></canvas></div>';
+
+    body.insertBefore(root, body.firstChild);
+    body.classList.add('sh-has-env-depth');
+    if (mobileLight) body.classList.add('sh-mobile-depth');
+
+    initParallaxDepthVars();
+    initEnvironmentPulse();
+    initPricingImmersiveZone();
+
+    if (reduceMotion) return;
+
+    var cBg = root.querySelector('.sh-depth-canvas--bg');
+    var cMid = root.querySelector('.sh-depth-canvas--mid');
+    var cFg = root.querySelector('.sh-depth-canvas--fg');
+    if (!cBg || !cMid || !cFg) return;
+
+    var ctxBg = cBg.getContext('2d');
+    var ctxMid = cMid.getContext('2d');
+    var ctxFg = cFg.getContext('2d');
+    if (!ctxBg || !ctxMid || !ctxFg) return;
+
+    function makePts(n, opts) {
+      var out = [];
+      var i;
+      for (i = 0; i < n; i++) {
+        out.push({
+          x: Math.random() * 400,
+          y: Math.random() * 400,
+          r: opts.r0 + Math.random() * (opts.r1 - opts.r0),
+          a: opts.a0 + Math.random() * (opts.a1 - opts.a0),
+          vx: (Math.random() - 0.5) * opts.vx,
+          vy: (Math.random() - 0.5) * opts.vy
+        });
+      }
+      return out;
+    }
+
+    var nBg = mobileLight ? 28 : 68;
+    var nMid = mobileLight ? 22 : 46;
+    var nFg = mobileLight ? 0 : 24;
+
+    var ptsBg = makePts(nBg, { r0: 0.12, r1: 0.55, a0: 0.012, a1: 0.042, vx: 0.05, vy: 0.05 });
+    var ptsMid = makePts(nMid, { r0: 0.35, r1: 1.15, a0: 0.035, a1: 0.1, vx: 0.14, vy: 0.14 });
+    var ptsFg = nFg ? makePts(nFg, { r0: 1.0, r1: 2.6, a0: 0.07, a1: 0.16, vx: 0.28, vy: 0.28 }) : [];
+
+    var t = 0;
+    var dprCap = Math.min(window.devicePixelRatio || 1, mobileLight ? 1.5 : 2);
+
+    function sizeAll() {
+      var w = window.innerWidth || 400;
+      var h = window.innerHeight || 400;
+      var dpr = dprCap;
+      [cBg, cMid, cFg].forEach(function (c) {
+        c.width = w * dpr;
+        c.height = h * dpr;
+        c.style.width = w + 'px';
+        c.style.height = h + 'px';
+      });
+      var ctxs = [ctxBg, ctxMid, ctxFg];
+      ctxs.forEach(function (x) {
+        x.setTransform(dpr, 0, 0, dpr, 0, 0);
+      });
+      var i;
+      var pts;
+      for (var pass = 0; pass < 3; pass++) {
+        pts = pass === 0 ? ptsBg : pass === 1 ? ptsMid : ptsFg;
+        if (!pts.length) continue;
+        for (i = 0; i < pts.length; i++) {
+          pts[i].x = Math.random() * w;
+          pts[i].y = Math.random() * h;
+        }
+      }
+    }
+
+    sizeAll();
+    window.addEventListener('resize', sizeAll, { passive: true });
+
+    function stepParticles(pts, w, h, wrap, mult) {
+      var i;
+      var p;
+      for (i = 0; i < pts.length; i++) {
+        p = pts[i];
+        p.x += p.vx * mult;
+        p.y += p.vy * mult;
+        if (wrap) {
+          if (p.x < -4) p.x = w + 4;
+          if (p.x > w + 4) p.x = -4;
+          if (p.y < -4) p.y = h + 4;
+          if (p.y > h + 4) p.y = -4;
+        } else {
+          if (p.x < 0 || p.x > w) p.vx *= -1;
+          if (p.y < 0 || p.y > h) p.vy *= -1;
+        }
+      }
+    }
+
+    function drawLayer(ctx, pts, fade, t0, isWhite) {
+      var w = cBg.width / dprCap;
+      var h = cBg.height / dprCap;
+      ctx.fillStyle = fade;
+      ctx.fillRect(0, 0, w, h);
+      var i;
+      var p;
+      var a;
+      for (i = 0; i < pts.length; i++) {
+        p = pts[i];
+        a = p.a * (0.88 + 0.12 * Math.sin(t0 + p.x * 0.004 + p.y * 0.003));
+        if (document.body.classList.contains('sh-env-pulse')) a *= 1.22;
+        if (a > 0.28) a = 0.28;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fillStyle = isWhite ? 'rgba(255,255,255,' + a + ')' : 'rgba(58,107,255,' + (a * 0.85) + ')';
+        ctx.fill();
+      }
+    }
+
+    function frame() {
+      t += 0.01;
+      var w = cBg.width / dprCap;
+      var h = cBg.height / dprCap;
+      var slow = document.body.classList.contains('sys-scroll--slow') ? 0.72 : 1;
+      var fast = document.body.classList.contains('sys-scroll--fast') ? 1.18 : 1;
+      var vm = slow * fast;
+
+      stepParticles(ptsBg, w, h, true, 0.55 * vm);
+      stepParticles(ptsMid, w, h, false, 1 * vm);
+      if (ptsFg.length) stepParticles(ptsFg, w, h, false, 1.35 * vm);
+
+      drawLayer(ctxBg, ptsBg, 'rgba(5,5,5,0.1)', t, true);
+      drawLayer(ctxMid, ptsMid, 'rgba(7,7,8,0.14)', t + 1.2, true);
+      if (ptsFg.length) drawLayer(ctxFg, ptsFg, 'rgba(6,8,12,0.18)', t + 2.4, true);
+
+      requestAnimationFrame(frame);
+    }
+    frame();
+  }
+
   function initHeaderParticles(canvas) {
     if (!canvas || reduceMotion) return;
     var ctx = canvas.getContext('2d');
@@ -383,24 +618,27 @@
         }
         ctx.stroke();
       } else if (type === 'grid') {
+        var pr = window.__shParallax || { x: 0, y: 0, sd: 0 };
+        var gox = pr.x * 10 + pr.sd * 6;
+        var goy = pr.y * 8;
         ctx.strokeStyle = 'rgba(244,237,224,0.06)';
         for (var gx = 0; gx < w; gx += 24) {
           ctx.beginPath();
-          ctx.moveTo(gx, 0);
-          ctx.lineTo(gx, h);
+          ctx.moveTo(gx + gox, 0);
+          ctx.lineTo(gx + gox, h);
           ctx.stroke();
         }
         for (var gy = 0; gy < h; gy += 24) {
           ctx.beginPath();
-          ctx.moveTo(0, gy);
-          ctx.lineTo(w, gy);
+          ctx.moveTo(0, gy + goy);
+          ctx.lineTo(w, gy + goy);
           ctx.stroke();
         }
         for (var d = 0; d < 12; d++) {
-          var gx = ((t * 20 + d * 37) % (w + 40)) - 20;
-          var gy = (h * 0.3 + (d * 17) % h) % h;
+          var gxd = ((t * 20 + d * 37) % (w + 40)) - 20 + gox;
+          var gyd = (h * 0.3 + (d * 17) % h) % h + goy;
           ctx.fillStyle = 'rgba(58,107,255,' + (0.15 + (d % 3) * 0.05) + ')';
-          ctx.fillRect(gx, gy, 2, 2);
+          ctx.fillRect(gxd, gyd, 2, 2);
         }
       } else if (type === 'systemmap') {
         ctx.strokeStyle = 'rgba(244,237,224,0.08)';
@@ -1162,6 +1400,7 @@
   }
 
   function boot() {
+    initEnvironmentDepth();
     ensurePersonalizeScript();
     ensureGlobalMapScript();
     ensureMagneticFlowScript();

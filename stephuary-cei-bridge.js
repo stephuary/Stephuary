@@ -164,6 +164,9 @@
         tierCta2.textContent = 'View pricing';
       }
     }
+    try {
+      if (strong) document.dispatchEvent(new CustomEvent('sh-env-pulse', { bubbles: true }));
+    } catch (e) {}
   }
 
   function applyPricing(root, stateIn) {
@@ -182,6 +185,11 @@
       ctx.textContent = strong ? 'This is the next step based on what the system picked up.' : '';
       ctx.hidden = !strong;
     }
+    try {
+      if (state.stageConfidence === 'high' || state.stageConfidence === 'medium') {
+        document.dispatchEvent(new CustomEvent('sh-env-pulse', { bubbles: true }));
+      }
+    } catch (e) {}
   }
 
   global.StephuaryCeiBridge = {

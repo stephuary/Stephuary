@@ -1098,4 +1098,195 @@ body.sh-magnetic-idle-hint .sh-flow-dim {
   .sh-global-map__node.is-rec:not(.is-current):not(.is-scroll-current) {
     animation: none !important;
   }
+  #sh-env-depth,
+  #sh-env-depth .sh-depth-field,
+  #sh-env-depth .sh-horizon,
+  #sh-env-depth .sh-depth-canvas,
+  #sh-env-depth .sh-depth-fg-wrap {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* ——— Global environment depth: layered particles, horizon, parallax ——— */
+html {
+  --sh-parallax-x: 0;
+  --sh-parallax-y: 0;
+  --sh-scroll-d: 0;
+}
+
+#sh-env-depth {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+  contain: layout paint;
+}
+
+#sh-env-depth .sh-depth-field {
+  position: absolute;
+  left: 50%;
+  top: 42%;
+  width: min(120vw, 820px);
+  height: min(120vw, 820px);
+  transform: translate(-50%, -50%) scale(1);
+  background: radial-gradient(circle at 38% 42%, rgba(43, 79, 212, 0.085), transparent 52%),
+    radial-gradient(circle at 72% 58%, rgba(59, 13, 13, 0.06), transparent 48%);
+  z-index: 0;
+  transition: transform 0.75s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.5s ease;
+}
+
+body.sh-zone--cei #sh-env-depth .sh-depth-field {
+  opacity: 1;
+}
+body.sh-zone--pricing #sh-env-depth .sh-depth-field {
+  opacity: 0.88;
+  background: radial-gradient(circle at 45% 40%, rgba(43, 79, 212, 0.07), transparent 55%),
+    radial-gradient(circle at 60% 65%, rgba(196, 163, 90, 0.04), transparent 50%);
+}
+body.sh-zone--immersive #sh-env-depth .sh-depth-field {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1.06);
+  background: radial-gradient(circle at 40% 38%, rgba(43, 79, 212, 0.11), transparent 50%),
+    radial-gradient(circle at 68% 62%, rgba(196, 163, 90, 0.07), transparent 46%);
+}
+
+#sh-env-depth .sh-horizon {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  transform: translate3d(calc(var(--sh-parallax-x, 0) * 14px), calc(var(--sh-parallax-y, 0) * 10px), 0);
+  transition: opacity 0.45s ease;
+}
+
+#sh-env-depth .sh-horizon__radial {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 90% 65% at 50% 108%, rgba(43, 79, 212, 0.07), transparent 58%);
+  pointer-events: none;
+  transform: translate(calc(var(--sh-parallax-x, 0) * -10px), calc(var(--sh-scroll-d, 0) * -18px));
+}
+
+#sh-env-depth .sh-horizon__grid {
+  position: absolute;
+  left: 50%;
+  bottom: -8%;
+  width: 220%;
+  height: 75%;
+  margin-left: -110%;
+  transform: translate3d(calc(var(--sh-parallax-x, 0) * 20px), calc(var(--sh-scroll-d, 0) * -28px), 0)
+    perspective(520px) rotateX(74deg);
+  transform-origin: center bottom;
+  opacity: 0.42;
+  background-image: linear-gradient(rgba(43, 79, 212, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(244, 237, 224, 0.035) 1px, transparent 1px);
+  background-size: 44px 44px;
+  mask-image: linear-gradient(to top, rgba(0, 0, 0, 0.55), transparent 78%);
+  -webkit-mask-image: linear-gradient(to top, rgba(0, 0, 0, 0.55), transparent 78%);
+}
+
+body.sh-zone--cei #sh-env-depth .sh-horizon__grid {
+  opacity: 0.48;
+  background-size: 40px 40px;
+}
+body.sh-zone--pricing #sh-env-depth .sh-horizon__grid {
+  opacity: 0.38;
+  background-size: 36px 36px;
+}
+body.sh-zone--immersive #sh-env-depth .sh-horizon__grid {
+  opacity: 0.55;
+}
+
+body.sh-env-pulse #sh-env-depth .sh-horizon__grid {
+  opacity: 0.62;
+}
+body.sh-env-pulse #sh-env-depth .sh-depth-field {
+  transform: translate(-50%, -50%) scale(1.03);
+}
+
+body.sh-env-pulse .cei-node-strip {
+  border-color: rgba(43, 79, 212, 0.38);
+  box-shadow: 0 0 22px rgba(43, 79, 212, 0.12);
+  transition: border-color 0.45s ease, box-shadow 0.45s ease;
+}
+
+#sh-env-depth .sh-depth-canvas {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  display: block;
+}
+#sh-env-depth .sh-depth-canvas--bg {
+  z-index: 2;
+}
+#sh-env-depth .sh-depth-canvas--mid {
+  z-index: 3;
+}
+#sh-env-depth .sh-depth-fg-wrap {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+  filter: blur(1.05px);
+  opacity: 0.88;
+  transform: translate3d(calc(var(--sh-parallax-x, 0) * 6px), calc(var(--sh-parallax-y, 0) * 4px), 0);
+}
+body.sh-mobile-depth #sh-env-depth .sh-depth-fg-wrap {
+  display: none;
+}
+
+body.sh-has-env-depth {
+  isolation: isolate;
+}
+body.sh-has-env-depth > :not(#sh-env-depth):not(#page-transition) {
+  position: relative;
+  z-index: 1;
+}
+
+#page-transition {
+  z-index: 100000 !important;
+}
+
+/* Planes: content slightly forward, dominant glows concentrated */
+body.sh-has-env-depth .sys-compact__inner,
+body.sh-has-env-depth .sh-global-map-wrap,
+body.sh-has-env-depth .pricing-layout__main {
+  transform: translateZ(0);
+}
+
+body.sh-has-env-depth .inner-tier--recommended {
+  box-shadow:
+    0 0 0 1px rgba(43, 79, 212, 0.42),
+    0 0 36px rgba(43, 79, 212, 0.22),
+    0 16px 48px rgba(0, 0, 0, 0.28) !important;
+}
+
+body.sh-has-env-depth .sys-btn--pri {
+  box-shadow: 0 3px 20px rgba(43, 79, 212, 0.28);
+}
+body.sh-has-env-depth .sys-btn--pri:hover {
+  box-shadow: 0 7px 30px rgba(43, 79, 212, 0.34);
+}
+
+body.sh-zone--cei .sh-system-map .sh-map-node,
+body.sh-zone--cei .sh-global-map__node {
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.35s ease, border-color 0.3s ease;
+}
+body.sh-zone--cei .sh-system-map .sh-map-node:hover,
+body.sh-zone--cei .sh-global-map__node:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 22px rgba(43, 79, 212, 0.18);
+}
+
+@media (max-width: 767px) {
+  #sh-env-depth .sh-horizon__grid {
+    opacity: 0.28;
+  }
+  #sh-env-depth .sh-depth-field {
+    opacity: 0.75;
+  }
 }
