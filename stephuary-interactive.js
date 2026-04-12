@@ -851,7 +851,26 @@
       if (idx === i) s.classList.add('is-current');
       rail.appendChild(s);
     }
-    document.body.appendChild(rail);
+    var wrap = document.createElement('div');
+    wrap.className = 'sys-phase-rail-wrap';
+    wrap.id = 'sys-phase-rail-wrap';
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'sys-phase-rail-toggle';
+    btn.setAttribute('aria-expanded', 'false');
+    btn.setAttribute('aria-controls', 'sys-phase-rail-dots');
+    btn.setAttribute('title', 'Phase progress');
+    btn.setAttribute('aria-label', 'Show or hide phase progress');
+    btn.textContent = 'Progress';
+    rail.id = 'sys-phase-rail-dots';
+    wrap.appendChild(btn);
+    wrap.appendChild(rail);
+    document.body.appendChild(wrap);
+    btn.addEventListener('click', function () {
+      var open = wrap.classList.toggle('sys-phase-rail-wrap--open');
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+      rail.setAttribute('aria-hidden', open ? 'false' : 'true');
+    });
   }
 
   function initAdaptiveLayer() {
@@ -982,14 +1001,6 @@
 
     var STORAGE = 'stephuary_live_output_v1';
     var STORAGE_PANEL_CLOSED = 'outputPanelClosed';
-
-    function getPanelClosed() {
-      try {
-        return localStorage.getItem(STORAGE_PANEL_CLOSED) === '1';
-      } catch (e) {
-        return false;
-      }
-    }
 
     function setPanelClosed(closed) {
       try {
@@ -1412,13 +1423,7 @@
     collapseBtn.setAttribute('title', 'Minimize');
     collapseBtn.textContent = '−';
 
-    var revealTimer = null;
-
     collapseBtn.addEventListener('click', function () {
-      if (revealTimer) {
-        window.clearTimeout(revealTimer);
-        revealTimer = null;
-      }
       setPanelClosed(true);
       root.classList.add('sh-live-panel--collapsed');
       btnDock.setAttribute('aria-hidden', 'false');
@@ -1430,19 +1435,9 @@
     window.setInterval(tick, 1100);
     tick();
 
-    if (getPanelClosed()) {
-      root.classList.add('sh-live-panel--collapsed');
-      btnDock.setAttribute('aria-hidden', 'false');
-      root.classList.add('sh-live-panel--visible');
-    } else {
-      revealTimer = window.setTimeout(
-        function () {
-          revealTimer = null;
-          root.classList.add('sh-live-panel--visible');
-        },
-        reduceMotion ? 400 : 2400
-      );
-    }
+    root.classList.add('sh-live-panel--collapsed');
+    btnDock.setAttribute('aria-hidden', 'false');
+    root.classList.add('sh-live-panel--visible');
 
     clampLivePanelToViewport();
     window.setTimeout(clampLivePanelToViewport, 0);
