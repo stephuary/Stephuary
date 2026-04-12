@@ -429,6 +429,90 @@
     }
     .resume-banner a:hover { color: var(--muted); }
 
+    /* Cinematic Stream window — layered above aura, below hero copy */
+    .systems-cine-window {
+      position: relative;
+      z-index: 1;
+      width: min(82%, 740px);
+      margin: 4px auto 30px;
+      isolation: isolate;
+      --cine-y: 0px;
+      transform: translate3d(0, var(--cine-y), 0);
+    }
+    .systems-cine-window__frame {
+      position: relative;
+      border-radius: 14px;
+      overflow: hidden;
+      aspect-ratio: 16 / 10;
+      max-height: min(52vh, 420px);
+      background: rgba(6, 5, 8, 0.65);
+      box-shadow:
+        0 0 0 1px rgba(244, 237, 224, 0.09),
+        0 0 0 1px rgba(196, 163, 90, 0.06) inset,
+        0 24px 64px rgba(0, 0, 0, 0.55),
+        0 0 80px rgba(130, 48, 88, 0.08),
+        0 0 100px rgba(52, 78, 62, 0.06);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      animation: systemsCineReveal 1.1s ease-out both;
+    }
+    .systems-cine-window--inview .systems-cine-window__frame {
+      box-shadow:
+        0 0 0 1px rgba(244, 237, 224, 0.11),
+        0 0 0 1px rgba(196, 163, 90, 0.09) inset,
+        0 28px 72px rgba(0, 0, 0, 0.58),
+        0 0 96px rgba(130, 48, 88, 0.12),
+        0 0 120px rgba(52, 78, 62, 0.09);
+    }
+    .systems-cine-window__video {
+      position: absolute;
+      inset: 0;
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: 50% 45%;
+      transform: scale(1.01);
+      z-index: 0;
+    }
+    .systems-cine-window__veil {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+      background:
+        linear-gradient(180deg, rgba(8, 6, 10, 0.14) 0%, transparent 35%, transparent 65%, rgba(6, 4, 8, 0.2) 100%),
+        radial-gradient(ellipse 95% 90% at 50% 50%, transparent 52%, rgba(4, 2, 6, 0.22) 100%);
+      border-radius: inherit;
+    }
+    .systems-cine-window__frame::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      pointer-events: none;
+      border-radius: inherit;
+      box-shadow: inset 0 0 48px rgba(0, 0, 0, 0.35);
+      mix-blend-mode: multiply;
+      opacity: 0.55;
+    }
+    @keyframes systemsCineReveal {
+      from {
+        opacity: 0.82;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .systems-cine-window__frame {
+        animation: none;
+      }
+      .systems-cine-window {
+        transform: none !important;
+      }
+    }
+
     .hub-foot {
       margin-top: 28px;
       padding: 16px 12px 0;
@@ -784,6 +868,16 @@
         white-space: normal;
         line-height: 1.4;
       }
+      .systems-cine-window {
+        width: 100%;
+        max-width: 100%;
+        margin-bottom: 24px;
+      }
+      .systems-cine-window__frame {
+        aspect-ratio: 16 / 10;
+        max-height: min(42vh, 360px);
+        border-radius: 12px;
+      }
     }
   </style>
   <link rel="stylesheet" href="/stephuary-early-mode.css" />
@@ -833,6 +927,21 @@
   <div class="wrap">
     <div class="resume-banner" id="resume-banner" aria-live="polite">
       <a href="/capture" id="resume-link">Continue where you left off</a>
+    </div>
+
+    <div class="systems-cine-window" data-systems-cine aria-label="System atmosphere" role="region">
+      <div class="systems-cine-window__frame">
+        <video
+          class="systems-cine-window__video"
+          muted
+          playsinline
+          loop
+          autoplay
+          preload="metadata"
+          poster="https://customer-vjyp7ff1wau3k7is.cloudflarestream.com/1f4bd2ff44b75a12d97d0629b29340b4/thumbnails/thumbnail.jpg?height=720"
+        ></video>
+        <div class="systems-cine-window__veil" aria-hidden="true"></div>
+      </div>
     </div>
 
     <div class="sh-global-map-wrap" style="margin-bottom: 28px">
@@ -906,8 +1015,65 @@
     <p class="footer-micro-line">Built by Stephanie. Designed to work without you.</p>
   </footer>
 
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.7/dist/hls.min.js" crossorigin="anonymous"></script>
   <script src="/stephuary-os.js"></script>
   <script src="/stephuary-progress.js"></script>
+  <script>
+    (function () {
+      var src =
+        'https://customer-vjyp7ff1wau3k7is.cloudflarestream.com/1f4bd2ff44b75a12d97d0629b29340b4/manifest/video.m3u8';
+      var v = document.querySelector('.systems-cine-window__video');
+      if (!v) return;
+      function tryPlay() {
+        var p = v.play();
+        if (p && typeof p.catch === 'function') p.catch(function () {});
+      }
+      if (v.canPlayType('application/vnd.apple.mpegurl')) {
+        v.src = src;
+        tryPlay();
+      } else if (typeof Hls !== 'undefined' && Hls.isSupported()) {
+        var hls = new Hls({ capLevelToPlayerSize: true, maxBufferLength: 24 });
+        hls.loadSource(src);
+        hls.attachMedia(v);
+        v.addEventListener('loadeddata', tryPlay, { once: true });
+      } else {
+        v.src = src;
+        tryPlay();
+      }
+    })();
+  </script>
+  <script>
+    (function () {
+      var root = document.querySelector('[data-systems-cine]');
+      if (!root) return;
+      var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (!reduce) {
+        function onScroll() {
+          var r = root.getBoundingClientRect();
+          var mid = r.top + r.height * 0.5;
+          var center = window.innerHeight * 0.48;
+          var y = (center - mid) * 0.018;
+          if (y > 6) y = 6;
+          if (y < -6) y = -6;
+          root.style.setProperty('--cine-y', y + 'px');
+        }
+        window.addEventListener('scroll', onScroll, { passive: true });
+        onScroll();
+      }
+      try {
+        var io = new IntersectionObserver(
+          function (entries) {
+            entries.forEach(function (e) {
+              if (e.isIntersecting) root.classList.add('systems-cine-window--inview');
+              else root.classList.remove('systems-cine-window--inview');
+            });
+          },
+          { threshold: [0, 0.15, 0.35] }
+        );
+        io.observe(root);
+      } catch (e) {}
+    })();
+  </script>
   <script>
     (function () {
       if (!document.body.classList.contains('page-systems')) return;
