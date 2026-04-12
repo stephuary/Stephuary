@@ -586,6 +586,20 @@
       margin-bottom: 8px;
     }
 
+    .capture-flow-saved {
+      margin: 0 0 14px;
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--gold-dim);
+      text-align: center;
+    }
+
+    .capture-flow-tools {
+      margin-top: 4px;
+    }
+
     .copy-confirm {
       font-size: 11px;
       color: var(--gold);
@@ -771,8 +785,13 @@
           <p id="out-direction"></p>
         </div>
 
+        <p class="capture-flow-saved">Your progress is saved automatically on this device.</p>
         <div class="action-primary">
-          <a href="/room-01-extraction" class="btn btn-terminal">Enter Room 1 · Extraction</a>
+          <a href="/monetize" class="btn btn-terminal">Continue to next step</a>
+          <a href="/results" class="btn">View full results</a>
+          <a href="/" class="btn btn-ghost">Exit and save progress</a>
+        </div>
+        <div class="action-primary capture-flow-tools">
           <button type="button" class="btn" id="btnCopy">Copy All</button>
           <button type="button" class="btn" id="btnExport">Export</button>
         </div>
@@ -1460,6 +1479,17 @@
     });
   }
 
+  function syncCaptureShFlowEnd() {
+    var fe = document.getElementById('sh-flow-end');
+    if (!fe) return;
+    var sum = document.getElementById('summary');
+    var showing =
+      sum &&
+      (sum.style.display === 'flex' || window.getComputedStyle(sum).display === 'flex');
+    if (showing) fe.setAttribute('hidden', '');
+    else fe.removeAttribute('hidden');
+  }
+
   function goTo(n) {
     state.currentStep = n;
     saveStorage();
@@ -1483,6 +1513,7 @@
     updateStepValidation(n);
     updateRail();
     window.scrollTo({ top: 0, behavior: 'smooth' });
+    syncCaptureShFlowEnd();
   }
 
   function showSummary() {
@@ -1539,6 +1570,7 @@
 
     updateRail();
     window.scrollTo({ top: 0, behavior: 'smooth' });
+    syncCaptureShFlowEnd();
   }
 
   function exportText() {
@@ -1633,6 +1665,7 @@
     var ph = document.getElementById('phase-header');
     if (ph) ph.style.display = 'none';
     window.scrollTo({ top: 0, behavior: 'smooth' });
+    syncCaptureShFlowEnd();
   }
 
   function startFlow(skipLanding) {
@@ -1707,6 +1740,10 @@
       document.getElementById('btnSkip').textContent = 'Resume where you left off';
     }
   })();
+
+  setTimeout(function() {
+    syncCaptureShFlowEnd();
+  }, 0);
 })();
 </script>
 <script src="/stephuary-progress.js"></script>

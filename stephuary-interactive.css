@@ -399,11 +399,19 @@ a.phase-card.is-phase-current {
 
 /* ——— Live output panel ——— */
 .sh-live-panel {
+  --sh-panel-bottom: 56px;
   position: fixed;
   right: 12px;
-  bottom: 56px;
+  bottom: var(--sh-panel-bottom);
   z-index: 165;
   max-width: min(320px, calc(100vw - 24px));
+  /* Keep panel inside viewport when tall content or raised bottom (flow bar) */
+  max-height: calc(100vh - var(--sh-panel-bottom) - 20px);
+  max-height: calc(100dvh - var(--sh-panel-bottom) - 20px);
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
   font-family: 'DM Mono', ui-monospace, monospace;
   font-size: 10px;
   letter-spacing: 0.06em;
@@ -548,7 +556,7 @@ a.phase-card.is-phase-current {
   display: none;
   position: fixed;
   right: 12px;
-  bottom: 56px;
+  bottom: var(--sh-panel-bottom, 56px);
   z-index: 165;
   padding: 8px 12px;
   border-radius: 2px;
@@ -575,15 +583,125 @@ a.phase-card.is-phase-current {
 }
 @media (max-width: 767px) {
   .sh-live-panel {
+    --sh-panel-bottom: 48px;
     right: 8px;
     left: 8px;
-    bottom: 48px;
+    bottom: var(--sh-panel-bottom);
     max-width: none;
   }
   .sh-live-panel__dock {
     right: 8px;
     left: auto;
   }
+}
+
+/* Flow bar sits above page content; keep scroll clearance when CTAs wrap on small screens */
+body.has-flow-end {
+  padding-bottom: max(120px, min(28vh, 200px));
+}
+@media (max-width: 767px) {
+  body.has-flow-end {
+    padding-bottom: max(140px, min(36vh, 220px));
+  }
+}
+
+/* Live panel stacks above the flow bar; --sh-panel-bottom drives max-height so top is never clipped */
+body.has-flow-end .sh-live-panel {
+  --sh-panel-bottom: calc(56px + min(100px, 22vh));
+  bottom: var(--sh-panel-bottom);
+}
+@media (max-width: 767px) {
+  body.has-flow-end .sh-live-panel {
+    --sh-panel-bottom: calc(48px + min(108px, 26vh));
+    bottom: var(--sh-panel-bottom);
+  }
+}
+
+.sh-flow-end[hidden] {
+  display: none !important;
+}
+
+.sh-flow-end {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 150;
+  padding: 12px 16px calc(14px + env(safe-area-inset-bottom, 0));
+  border-top: 1px solid rgba(244, 237, 224, 0.08);
+  background: rgba(5, 5, 5, 0.92);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  font-family: 'DM Mono', ui-monospace, monospace;
+}
+.sh-flow-end__saved {
+  margin: 0 0 10px;
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(196, 163, 90, 0.75);
+  text-align: center;
+}
+.sh-flow-end__row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 10px;
+  justify-content: center;
+  align-items: center;
+  max-width: 920px;
+  margin: 0 auto;
+}
+.sh-flow-end__pri,
+.sh-flow-end__sec,
+.sh-flow-end__ter {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 16px;
+  border-radius: 2px;
+  font-size: 8px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease;
+}
+.sh-flow-end__pri {
+  background: linear-gradient(165deg, #4d7cff 0%, #3a6bff 100%);
+  color: #fff;
+  border: 1px solid transparent;
+}
+.sh-flow-end__sec {
+  background: rgba(43, 79, 212, 0.18);
+  color: rgba(244, 237, 224, 0.9);
+  border: 1px solid rgba(244, 237, 224, 0.12);
+}
+.sh-flow-end__ter {
+  background: transparent;
+  color: rgba(180, 172, 160, 0.9);
+  border: 1px solid rgba(244, 237, 224, 0.08);
+}
+.sh-flow-end__pri:hover {
+  filter: brightness(1.06);
+}
+.sh-flow-end__sec:hover,
+.sh-flow-end__ter:hover {
+  border-color: rgba(58, 107, 255, 0.35);
+  color: #f4ede0;
+}
+
+.sh-live-panel__note {
+  margin: 8px 0 0;
+  font-size: 9px;
+  line-height: 1.45;
+  letter-spacing: 0.04em;
+  color: rgba(203, 195, 180, 0.88);
+}
+.sh-live-panel__save {
+  margin: 8px 0 0;
+  text-align: center;
 }
 
 @media (prefers-reduced-motion: reduce) {

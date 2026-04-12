@@ -6,6 +6,162 @@
   var isMobile = window.matchMedia('(max-width: 767px)').matches;
   var PHASE_PATHS = ['/capture', '/monetize', '/structure', '/automation', '/sovereignty'];
   var STORAGE_VISITED = 'stephuary_phases_visited';
+  var SESSION_SNAPSHOT_KEY = 'stephuary_session_snapshot_v1';
+  var CAPTURE_STORE_KEY = 'stephuary_capture_p01_v2';
+  var RESULT_STORE_KEY = 'stephuary_result_v1';
+  var PROGRESS_KEY = 'stephuary_system_progress_v1';
+  var OS_KEY = 'stephuary_os_v1';
+  var ROOM_CHAIN = [
+    '/room-01-extraction',
+    '/room-02-direction',
+    '/room-03-transaction',
+    '/room-04-infrastructure',
+    '/room-05-cognition'
+  ];
+  var PHASE_CHAIN = {
+    '/capture': '/monetize',
+    '/monetize': '/structure',
+    '/structure': '/automation',
+    '/automation': '/sovereignty',
+    '/sovereignty': '/systems'
+  };
+
+  function normPath(p) {
+    if (!p || p === '') return '/';
+    var x = String(p).replace(/\/$/, '') || '/';
+    return x;
+  }
+
+  function lsGetJson(k) {
+    try {
+      var r = localStorage.getItem(k);
+      return r ? JSON.parse(r) : null;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function lsSetJson(k, o) {
+    try {
+      localStorage.setItem(k, JSON.stringify(o));
+    } catch (e) {}
+  }
+
+  var StephuarySession = {
+    hasActiveSession: function () {
+      try {
+        if (localStorage.getItem('capture_complete') === 'true') return true;
+        var cap = lsGetJson(CAPTURE_STORE_KEY);
+        if (cap && typeof cap.currentStep === 'number' && cap.currentStep > 1) return true;
+        if (cap && cap.bits && cap.bits.some(function (b) { return b !== null && b !== undefined; })) return true;
+        var res = lsGetJson(RESULT_STORE_KEY);
+        if (res && (res.type_primary || res.diagnostic)) return true;
+        var pr = lsGetJson(PROGRESS_KEY);
+        if (pr && ((pr.completed && pr.completed.length) || (pr.phase && pr.phase > 1))) return true;
+        var os = lsGetJson(OS_KEY);
+        if (os && os.lastRoomId) return true;
+      } catch (e) {}
+      return false;
+    },
+
+    getResumeDiagnosticHref: function () {
+      if (window.StephuaryProgress && typeof window.StephuaryProgress.getResumeLabel === 'function') {
+        var lbl = window.StephuaryProgress.getResumeLabel();
+        if (lbl && lbl.href) return lbl.href;
+      }
+      var cap = lsGetJson(CAPTURE_STORE_KEY);
+      if (cap && cap.currentStep) return '/capture';
+      return '/capture';
+    },
+
+    suggestNextHref: function (path) {
+      var n = normPath(path);
+      if (n === '/capture') {
+        if (localStorage.getItem('capture_complete') === 'true') return '/monetize';
+        return '/capture';
+      }
+      if (PHASE_CHAIN[n]) return PHASE_CHAIN[n];
+      for (var i = 0; i < ROOM_CHAIN.length; i++) {
+        if (ROOM_CHAIN[i] === n) return i < ROOM_CHAIN.length - 1 ? ROOM_CHAIN[i + 1] : '/systems';
+      }
+      return '/systems';
+    },
+
+    getContextualOutput: function () {
+      var res = lsGetJson(RESULT_STORE_KEY);
+      if (res && res.diagnostic) {
+        var d = res.diagnostic;
+        var ver = res.result_version || 'mixed_general';
+        var h = 5.5 + (ver.length % 7) * 1.35 + (res.type_primary ? res.type_primary.length * 0.04 : 0);
+        h = Math.min(28, Math.max(2.5, h));
+        var rate = 52 + (String(ver).split('').reduce(function (a, c) { return a + c.charCodeAt(0); }, 0) % 38);
+        var money = Math.round(h * rate * 48 / 100) * 100;
+        return {
+          targetMoney: money,
+          targetHours: h,
+          cat: res.type_primary || 'Diagnostic profile',
+          act: d.fix_first || 'Pick one move from your results and schedule it.',
+          timeLine: d.what_it_costs || d.main_problem || '',
+          useContextual: true
+        };
+      }
+      var cap = lsGetJson(CAPTURE_STORE_KEY);
+      if (cap && cap.bits && cap.bits.length) {
+        var filled = 0;
+        for (var i = 0; i < cap.bits.length; i++) {
+          if (cap.bits[i] !== null && cap.bits[i] !== undefined) filled++;
+        }
+        if (filled > 0) {
+          var h2 = 2.2 + filled * 0.85 + (cap.currentStep || 1) * 0.12;
+          h2 = Math.min(22, h2);
+          var money2 = Math.round(12000 + filled * 2400 + (cap.currentStep || 1) * 400);
+          var lines = [
+            'Incomplete passes keep attention split across open threads.',
+            'Each unanswered step leaves cost unmeasured.',
+            'Stopping mid-diagnostic freezes the pattern before it is named.'
+          ];
+          return {
+            targetMoney: money2,
+            targetHours: h2,
+            cat: 'In-progress diagnostic',
+            act: 'Finish the remaining questions so the readout can lock.',
+            timeLine: lines[Math.min(lines.length - 1, Math.floor(filled / 3))],
+            useContextual: true
+          };
+        }
+      }
+      return null;
+    },
+
+    persistSnapshot: function (extra) {
+      var snap = {
+        at: Date.now(),
+        path: normPath(window.location.pathname),
+        phase: null,
+        room: null,
+        captureStep: null,
+        resultType: null
+      };
+      try {
+        var pr = lsGetJson(PROGRESS_KEY);
+        if (pr) snap.phase = pr.phase;
+        var os = lsGetJson(OS_KEY);
+        if (os && os.lastRoomId) snap.room = os.lastRoomId;
+        var cap = lsGetJson(CAPTURE_STORE_KEY);
+        if (cap && cap.currentStep != null) snap.captureStep = cap.currentStep;
+        var res = lsGetJson(RESULT_STORE_KEY);
+        if (res && res.type_primary) snap.resultType = res.type_primary;
+      } catch (e) {}
+      if (extra && typeof extra === 'object') {
+        for (var k in extra) {
+          if (Object.prototype.hasOwnProperty.call(extra, k)) snap[k] = extra[k];
+        }
+      }
+      lsSetJson(SESSION_SNAPSHOT_KEY, snap);
+    }
+  };
+
+  window.StephuarySession = StephuarySession;
 
   /* ——— Page transition ——— */
   function initPageTransition() {
@@ -273,12 +429,6 @@
     draw();
   }
 
-  function normPath(p) {
-    if (!p || p === '') return '/';
-    var x = p.replace(/\/$/, '') || '/';
-    return x;
-  }
-
   function getPrimaryCta() {
     var el = document.querySelector('[data-adaptive-primary]');
     if (el) return el;
@@ -526,6 +676,11 @@
     var lastScrollY = window.scrollY;
     var smoothMoney = store.smoothMoney;
     var smoothHours = store.smoothHours;
+    var ctxPre = StephuarySession.getContextualOutput();
+    if (ctxPre && ctxPre.useContextual) {
+      smoothMoney = ctxPre.targetMoney;
+      smoothHours = ctxPre.targetHours;
+    }
     var statusText = 'Calculating…';
     var lastStatusTick = 0;
 
@@ -545,6 +700,9 @@
       '<div><dt>Category</dt><dd id="sh-live-cat">—</dd></div>' +
       '<div><dt>Next move</dt><dd id="sh-live-action">—</dd></div>' +
       '</dl>' +
+      '<p class="sh-live-panel__note" id="sh-live-note" hidden></p>' +
+      '<p class="sh-live-panel__save" id="sh-live-save-wrap" hidden>' +
+      '<button type="button" class="sh-live-panel__btn" id="sh-live-save-btn">Save your results</button></p>' +
       '<div class="sh-live-panel__summary" id="sh-live-summary-block" hidden>' +
       '<pre class="sh-live-panel__summary-pre" id="sh-live-summary-text"></pre>' +
       '</div>' +
@@ -592,7 +750,28 @@
 
     function computeTargets() {
       var info = pathInfo();
+      var ctx = StephuarySession.getContextualOutput();
       var tOnPage = (Date.now() - pageEnter) / 1000;
+      if (ctx && ctx.useContextual) {
+        var scrollBoost = Math.min(9000, scrollAcc * 0.014);
+        var interactBoost = Math.min(7000, interactAcc * 45);
+        var wave = Math.sin(Date.now() / 8200) * 520;
+        return {
+          info: {
+            n: info.n,
+            name: info.name,
+            where: info.where,
+            cat: ctx.cat,
+            act: ctx.act
+          },
+          targetMoney: Math.round(ctx.targetMoney + scrollBoost + interactBoost + wave),
+          targetHours: Math.min(
+            38,
+            Math.max(2.1, ctx.targetHours + scrollAcc * 0.0001 + interactAcc * 0.035 + tOnPage * 0.015)
+          ),
+          timeLine: ctx.timeLine || ''
+        };
+      }
       var pathBoost = info.n > 0 ? info.n * 900 : 400;
       var scrollBoost = Math.min(28000, scrollAcc * 0.018);
       var interactBoost = Math.min(22000, interactAcc * 85);
@@ -602,7 +781,7 @@
       var targetMoney = Math.round(base + wave);
       var hBase = 3.2 + info.n * 0.35 + scrollAcc * 0.00012 + interactAcc * 0.04 + tOnPage * 0.028;
       var targetHours = Math.min(38, Math.max(2.1, hBase + Math.sin(Date.now() / 6400) * 0.35));
-      return { info: info, targetMoney: targetMoney, targetHours: targetHours };
+      return { info: info, targetMoney: targetMoney, targetHours: targetHours, timeLine: '' };
     }
 
     function updateStatus() {
@@ -639,6 +818,9 @@
         'Time loss / week: ' +
         formatHours(smoothHours) +
         '\n' +
+        'Time pattern: ' +
+        (comp.timeLine || '—') +
+        '\n' +
         'Category: ' +
         comp.info.cat +
         '\n' +
@@ -665,9 +847,24 @@
       elTime.textContent = formatHours(smoothHours);
       elCat.textContent = comp.info.cat;
       elAction.textContent = comp.info.act;
+      var noteEl = document.getElementById('sh-live-note');
+      if (noteEl) {
+        if (comp.timeLine) {
+          noteEl.textContent = comp.timeLine;
+          noteEl.hidden = false;
+        } else {
+          noteEl.textContent = '';
+          noteEl.hidden = true;
+        }
+      }
+      var saveWrap = document.getElementById('sh-live-save-wrap');
+      if (saveWrap) saveWrap.hidden = interactAcc < 22;
       elSummaryText.textContent = buildSummaryText(comp);
       updateStatus();
       persist();
+      try {
+        StephuarySession.persistSnapshot({ smoothMoney: smoothMoney, smoothHours: smoothHours });
+      } catch (e2) {}
     }
 
     window.addEventListener(
@@ -715,7 +912,7 @@
       }, 1400);
     });
 
-    document.getElementById('sh-live-download').addEventListener('click', function () {
+    function doDownloadSummary() {
       var t = elSummaryText.textContent || '';
       var blob = new Blob([t], { type: 'text/plain;charset=utf-8' });
       var a = document.createElement('a');
@@ -723,7 +920,12 @@
       a.download = 'stephuary-output.txt';
       a.click();
       URL.revokeObjectURL(a.href);
-    });
+    }
+
+    document.getElementById('sh-live-download').addEventListener('click', doDownloadSummary);
+
+    var saveBtn = document.getElementById('sh-live-save-btn');
+    if (saveBtn) saveBtn.addEventListener('click', doDownloadSummary);
 
     document.getElementById('sh-live-share').addEventListener('click', function () {
       var t = elSummaryText.textContent || '';
@@ -766,11 +968,58 @@
     );
   }
 
+  function initHomeReturn() {
+    if (normPath(window.location.pathname) !== '/') return;
+    var def = document.getElementById('hero-actions-default');
+    var ret = document.getElementById('hero-actions-return');
+    if (!def || !ret) return;
+    if (!StephuarySession.hasActiveSession()) return;
+    def.setAttribute('hidden', '');
+    ret.removeAttribute('hidden');
+    var lead = document.getElementById('hero-lead');
+    if (lead) {
+      lead.textContent =
+        'Your diagnostic and outputs are saved on this device. Continue where you left off.';
+    }
+    var rd = document.getElementById('hero-resume-diag');
+    var vr = document.getElementById('hero-view-results');
+    if (rd) rd.href = StephuarySession.getResumeDiagnosticHref();
+    if (vr) vr.href = '/results';
+    var pill = document.getElementById('home-resume');
+    if (pill) pill.style.display = 'none';
+  }
+
+  function initFlowEndBar() {
+    var p = normPath(window.location.pathname);
+    var phaseOnly = ['/capture', '/monetize', '/structure', '/automation', '/sovereignty'];
+    if (phaseOnly.indexOf(p) === -1) return;
+    if (document.getElementById('sh-flow-end')) return;
+    var next = StephuarySession.suggestNextHref(p);
+    var el = document.createElement('div');
+    el.id = 'sh-flow-end';
+    el.className = 'sh-flow-end';
+    el.setAttribute('role', 'region');
+    el.setAttribute('aria-label', 'Next steps');
+    el.innerHTML =
+      '<p class="sh-flow-end__saved">Your progress is saved automatically on this device.</p>' +
+      '<div class="sh-flow-end__row">' +
+      '<a class="sh-flow-end__pri" href="' +
+      next +
+      '">Continue to next step</a>' +
+      '<a class="sh-flow-end__sec" href="/results">View full results</a>' +
+      '<a class="sh-flow-end__ter" href="/">Exit and save progress</a>' +
+      '</div>';
+    document.body.appendChild(el);
+    document.body.classList.add('has-flow-end');
+  }
+
   function boot() {
     initPageTransition();
     initMagnetic();
     initAdaptiveLayer();
     initLiveOutput();
+    initHomeReturn();
+    initFlowEndBar();
 
     var hCanvas = document.querySelector('.sys-compact__bg canvas');
     if (hCanvas) initHeaderParticles(hCanvas);

@@ -75,9 +75,12 @@ h1{font-family:var(--serif);font-weight:300;font-size:clamp(42px,8vw,70px);line-
 /* ACCORDION TIERS */
 .tier-stack{display:flex;flex-direction:column;gap:0;}
 .price-acc{
+  position:relative;z-index:0;
   border:1px solid var(--line);border-radius:var(--r);
-  background:var(--bg-1);overflow:hidden;
+  background:var(--bg-1);overflow:visible;
+  transition:z-index 0s;
 }
+.price-acc:hover,.price-acc:focus-within{z-index:8;}
 .price-acc+.price-acc{margin-top:12px;}
 .price-acc--featured{
   border-color:var(--gold-line);
@@ -104,12 +107,45 @@ h1{font-family:var(--serif);font-weight:300;font-size:clamp(42px,8vw,70px);line-
 .price-acc[open] > summary::after{content:"−";}
 .price-acc > summary:hover::after{color:var(--text-3);}
 .price-acc[open] > summary{border-bottom:1px solid var(--line-2);}
+.price-acc:not([open]) > summary{border-radius:var(--r);}
+.price-acc[open] > summary{border-radius:var(--r) var(--r) 0 0;}
+.price-acc__body{
+  padding:0 26px 28px;
+  border-radius:0 0 var(--r) var(--r);
+  background:var(--bg-1);
+}
+.price-acc--featured .price-acc__body{
+  background:linear-gradient(160deg,rgba(196,163,90,0.06),var(--bg-1));
+}
+.price-acc--ongoing .price-acc__body{
+  background:linear-gradient(160deg,rgba(196,163,90,0.04),var(--bg-1));
+}
 .price-acc__peek{
   font-size:14px;color:var(--text-4);line-height:1.45;
   margin-top:10px;padding-right:8px;
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  max-width:100%;
 }
-.price-acc__body{padding:0 26px 28px;}
+.price-acc__hover-preview{
+  display:none;
+  position:absolute;left:-1px;right:-1px;top:calc(100% + 6px);
+  padding:14px 18px 16px;
+  background:var(--bg-2);
+  border:1px solid var(--line);
+  border-radius:var(--r);
+  box-shadow:0 18px 48px rgba(0,0,0,0.45);
+  font-size:13px;line-height:1.55;color:var(--text-3);
+  z-index:12;
+  pointer-events:none;
+}
+.price-acc__hover-preview p{margin:0;}
+@media(hover:hover) and (pointer:fine){
+  .price-acc:not([open]) > summary:hover .price-acc__hover-preview,
+  .price-acc:not([open]) > summary:focus-visible .price-acc__hover-preview{
+    display:block;
+  }
+}
+.price-acc[open] .price-acc__hover-preview{display:none !important;}
 .price-acc .tier-label{margin-bottom:6px;}
 .price-acc .tier-price{
   font-family:var(--serif);font-size:clamp(28px,5vw,42px);font-weight:300;color:var(--text);
@@ -270,7 +306,8 @@ h1{font-family:var(--serif);font-weight:300;font-size:clamp(42px,8vw,70px);line-
         <div class="price-acc__bar" aria-hidden="true"></div>
         <span class="tier-label">Free Diagnostic</span>
         <div class="tier-price">Free</div>
-        <p class="price-acc__peek">A guided set of questions to assess your current situation.</p>
+        <p class="price-acc__peek">Guided questions → a short readout of leaks and costs.</p>
+        <div class="price-acc__hover-preview"><p>Browser questionnaire with a readout of what works, what doesn’t, and initial direction—best before paid help or tools.</p></div>
       </summary>
       <div class="price-acc__body">
         <div class="tier-block"><h4>What it is</h4><p class="tier-meta">A browser questionnaire. Your answers produce a short readout of leaks and costs.</p></div>
@@ -290,7 +327,8 @@ h1{font-family:var(--serif);font-weight:300;font-size:clamp(42px,8vw,70px);line-
         <div class="price-acc__bar" aria-hidden="true"></div>
         <span class="tier-label gold">Rooms</span>
         <div class="tier-price">$1 each</div>
-        <p class="price-acc__peek">Focused deep-dives into specific areas.</p>
+        <p class="price-acc__peek">One room, one topic—$1 per focused deep-dive.</p>
+        <div class="price-acc__hover-preview"><p>Paid add-on pages: walk one topic end to end. Isolate a problem, one decision, or one area without the full path.</p></div>
       </summary>
       <div class="price-acc__body">
         <div class="tier-block"><h4>What it is</h4><p class="tier-meta">Paid add-on pages. Each one walks one topic end to end.</p></div>
@@ -312,7 +350,8 @@ h1{font-family:var(--serif);font-weight:300;font-size:clamp(42px,8vw,70px);line-
         <div class="price-acc__bar" aria-hidden="true"></div>
         <span class="tier-label gold">Direction Lock</span>
         <div class="tier-price">$150</div>
-        <p class="price-acc__peek">A focused review of your situation to determine what to pursue and what to ignore.</p>
+        <p class="price-acc__peek">Written decision: what to pursue, what to drop—$150.</p>
+        <div class="price-acc__hover-preview"><p>A written pass on what to move on, what to stop, and the most valuable use of your time—next steps for 7–14 days, delivered within 48 hours.</p></div>
       </summary>
       <div class="price-acc__body">
         <div class="tier-block"><h4>What it is</h4><p class="tier-meta">A written pass on your situation: what to pursue, what to drop, what to do next.</p></div>
@@ -336,7 +375,8 @@ h1{font-family:var(--serif);font-weight:300;font-size:clamp(42px,8vw,70px);line-
         <div class="price-acc__bar" aria-hidden="true"></div>
         <span class="tier-label gold">Concept Build</span>
         <div class="tier-price">$379</div>
-        <p class="price-acc__peek">A structured concept built from your inputs, experience, and interests.</p>
+        <p class="price-acc__peek">Packaged offer + outline from your inputs—$379.</p>
+        <div class="price-acc__hover-preview"><p>2–3 concept directions, one chosen path, buyers, price, opening lines, and a 1-page brief + first-week outline—delivered within 72 hours.</p></div>
       </summary>
       <div class="price-acc__body">
         <div class="tier-block"><h4>What it is</h4><p class="tier-meta">A packaged offer idea: buyers, price, opening lines, and a two-week outline.</p></div>
@@ -368,7 +408,8 @@ h1{font-family:var(--serif);font-weight:300;font-size:clamp(42px,8vw,70px);line-
         <div class="price-acc__bar" aria-hidden="true"></div>
         <span class="tier-label">Snapshot</span>
         <div class="tier-price">$750</div>
-        <p class="price-acc__peek">A full diagnostic of your current situation.</p>
+        <p class="price-acc__peek">Full written diagnostic of time, money, and gaps—$750.</p>
+        <div class="price-acc__hover-preview"><p>Complete review: where time and money leak, what’s broken, what to change, and clear next steps in one document.</p></div>
       </summary>
       <div class="price-acc__body">
         <div class="tier-block"><h4>What it is</h4><p class="tier-meta">A full written review of your business situation with costs, gaps, and next moves.</p></div>
@@ -389,7 +430,8 @@ h1{font-family:var(--serif);font-weight:300;font-size:clamp(42px,8vw,70px);line-
         <div class="price-acc__bar" aria-hidden="true"></div>
         <span class="tier-label" style="color:var(--gold);">Private Access</span>
         <div class="tier-price" style="font-size:clamp(26px,4.5vw,40px);">$1,500+</div>
-        <p class="price-acc__peek">Direct work.</p>
+        <p class="price-acc__peek">Direct calls, reviews, and follow-up—starting at $1,500+.</p>
+        <div class="price-acc__hover-preview"><p>Ongoing advisory: deeper diagnostics, material review, and follow-up when your situation needs back-and-forth outside self-serve tiers.</p></div>
       </summary>
       <div class="price-acc__body">
         <div class="tier-block"><h4>What it is</h4><p class="tier-meta">Direct work with you: calls, review of materials, and follow-up notes.</p></div>
@@ -400,7 +442,7 @@ h1{font-family:var(--serif);font-weight:300;font-size:clamp(42px,8vw,70px);line-
           <li>ongoing advisory</li>
           <li>complex situations that require direct involvement</li>
         </ul>
-        <a href="/access" class="tier-cta tier-cta-gold magnetic" style="margin-top:22px;">Request access &rarr;</a>
+        <a href="/private-access.html" class="tier-cta tier-cta-gold magnetic" style="margin-top:22px;">Request access &rarr;</a>
       </div>
     </details>
 
@@ -413,24 +455,10 @@ h1{font-family:var(--serif);font-weight:300;font-size:clamp(42px,8vw,70px);line-
       <details class="price-acc">
         <summary>
           <div class="price-acc__bar" aria-hidden="true"></div>
-          <span class="tier-label">Custom Business Operating System</span>
-          <div class="tier-price" style="font-size:clamp(26px,4vw,38px);">$3,500+</div>
-          <p class="price-acc__peek">One browser app for clients, tasks, and money in one place.</p>
-        </summary>
-        <div class="price-acc__body">
-          <div class="tier-block"><h4>What it is</h4><p class="tier-meta">A private web app shaped to your workflow—not a generic dashboard template.</p></div>
-          <div class="tier-block"><h4>What you get</h4><p class="tier-meta">Screens and flows you approve, wired to your data, with handoff notes your team can follow.</p></div>
-          <div class="tier-block"><h4>Who it’s for</h4><p class="tier-meta">You outgrew spreadsheets and want one place your team actually uses.</p></div>
-          <p class="tier-tagline" style="margin-bottom:16px;">Built to match how the business runs day to day.</p>
-          <a href="https://onlysometimesclub.com" class="tier-cta tier-cta-primary magnetic" target="_blank" rel="noopener noreferrer">Request via Only Sometimes Club &rarr;</a>
-        </div>
-      </details>
-      <details class="price-acc">
-        <summary>
-          <div class="price-acc__bar" aria-hidden="true"></div>
           <span class="tier-label">Interactive Website Experiences</span>
           <div class="tier-price" style="font-size:clamp(26px,4vw,38px);">$2,500+</div>
-          <p class="price-acc__peek">Sites built as interactive pages, not static brochures.</p>
+          <p class="price-acc__peek">Interactive pages—not static brochures—from $2,500+.</p>
+          <div class="price-acc__hover-preview"><p>Custom click-through paths: quotes, demos, guided flows. Layouts, interaction notes, and a launch checklist your team can maintain.</p></div>
         </summary>
         <div class="price-acc__body">
           <div class="tier-block"><h4>What it is</h4><p class="tier-meta">Custom pages visitors click through—quotes, demos, or guided paths you define.</p></div>
@@ -448,9 +476,26 @@ h1{font-family:var(--serif);font-weight:300;font-size:clamp(42px,8vw,70px);line-
       <details class="price-acc">
         <summary>
           <div class="price-acc__bar" aria-hidden="true"></div>
+          <span class="tier-label">Custom Business Operating System</span>
+          <div class="tier-price" style="font-size:clamp(26px,4vw,38px);">$3,500+</div>
+          <p class="price-acc__peek">One private app for clients, tasks, and money—from $3,500+.</p>
+          <div class="price-acc__hover-preview"><p>Workflow-shaped web app—not a generic dashboard. Screens you approve, wired to your data, with handoff notes for your team.</p></div>
+        </summary>
+        <div class="price-acc__body">
+          <div class="tier-block"><h4>What it is</h4><p class="tier-meta">A private web app shaped to your workflow—not a generic dashboard template.</p></div>
+          <div class="tier-block"><h4>What you get</h4><p class="tier-meta">Screens and flows you approve, wired to your data, with handoff notes your team can follow.</p></div>
+          <div class="tier-block"><h4>Who it’s for</h4><p class="tier-meta">You outgrew spreadsheets and want one place your team actually uses.</p></div>
+          <p class="tier-tagline" style="margin-bottom:16px;">Built to match how the business runs day to day.</p>
+          <a href="https://onlysometimesclub.com" class="tier-cta tier-cta-primary magnetic" target="_blank" rel="noopener noreferrer">Request via Only Sometimes Club &rarr;</a>
+        </div>
+      </details>
+      <details class="price-acc">
+        <summary>
+          <div class="price-acc__bar" aria-hidden="true"></div>
           <span class="tier-label">Combined Systems</span>
           <div class="tier-price" style="font-size:clamp(26px,4vw,38px);">$7,000+</div>
-          <p class="price-acc__peek">The browser app plus the public site, shipped together.</p>
+          <p class="price-acc__peek">Internal OS + public site in one coordinated build—$7,000+.</p>
+          <div class="price-acc__hover-preview"><p>One build cycle: internal app and customer-facing site share design and data hooks—single launch, one design language.</p></div>
         </summary>
         <div class="price-acc__body">
           <div class="tier-block"><h4>What it is</h4><p class="tier-meta">One build cycle: internal OS and customer-facing site share design and data hooks.</p></div>
