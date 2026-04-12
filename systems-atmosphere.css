@@ -1,5 +1,10 @@
 /* System page only — solar / layered depth. Scoped to body.page-systems */
 
+body.page-systems {
+  --systems-stack-visibility: 0.5;
+  --systems-stack-center: 0.5;
+}
+
 body.page-systems .sh-global-map {
   overflow: visible;
 }
@@ -75,6 +80,25 @@ body.page-systems #systems-near-glow-layer {
   }
   body.page-systems .systems-atmo-gradient {
     opacity: 0.07;
+  }
+  body.page-systems.systems-flow-ambient #systems-stars-layer {
+    opacity: 0.4;
+  }
+  body.page-systems.systems-flow-ambient #systems-near-glow-layer {
+    opacity: 0.48;
+  }
+  body.page-systems.systems-flow-ambient .systems-atmo-gradient {
+    opacity: 0.085;
+  }
+
+  body.page-systems #sh-env-depth {
+    transform: translate3d(0, calc(var(--sh-scroll-bg, 0px) * 1.28), 0);
+  }
+}
+
+@media (max-width: 767px) and (prefers-reduced-motion: reduce) {
+  body.page-systems #sh-env-depth {
+    transform: translate3d(0, var(--sh-scroll-bg, 0px), 0);
   }
 }
 
@@ -303,10 +327,10 @@ body.page-systems .systems-flow-wrap.systems-flow-stack::after {
 
 @media (max-width: 767px) {
   body.page-systems .systems-flow-wrap.systems-flow-stack::before {
-    opacity: 0.4;
+    opacity: 0.32;
   }
   body.page-systems .systems-flow-wrap.systems-flow-stack::after {
-    opacity: 0.65;
+    opacity: 0.28;
     inset: -4% -8% 0 -8%;
   }
 }
@@ -476,5 +500,120 @@ body.page-systems .systems-constellation-ripple--run {
   body.page-systems .systems-constellation-ripple--run {
     animation: none !important;
     opacity: 0 !important;
+  }
+}
+
+/* ——— Mobile stack: depth bloom + orbit halo (system section only) ——— */
+body.page-systems .systems-flow-stack-depth {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: visible;
+}
+
+body.page-systems .systems-flow-stack-atmo,
+body.page-systems .systems-flow-stack-orbit {
+  position: absolute;
+  left: 50%;
+  pointer-events: none;
+}
+
+@media (max-width: 767px) {
+  body.page-systems .sh-map-node--tier-phase.sh-map-node--sovereignty {
+    box-shadow:
+      0 0 0 1px rgba(43, 79, 212, 0.17),
+      0 14px 44px rgba(0, 0, 0, 0.44),
+      0 0 58px rgba(58, 94, 220, 0.26),
+      0 0 128px rgba(43, 79, 212, 0.11);
+  }
+
+  body.page-systems .sh-map-node--tier-phase.sh-map-node--sovereignty:hover {
+    box-shadow:
+      0 0 0 1px rgba(58, 107, 255, 0.42),
+      0 16px 48px rgba(43, 79, 212, 0.28),
+      0 0 76px rgba(58, 94, 220, 0.24),
+      0 0 148px rgba(43, 79, 212, 0.13);
+  }
+
+  body.page-systems .systems-flow-wrap.systems-flow-stack {
+    isolation: isolate;
+  }
+
+  body.page-systems .systems-flow-stack-depth {
+    inset: -3% -8% -6% -8%;
+  }
+
+  body.page-systems .systems-flow-stack-atmo {
+    top: calc(36% + (0.5 - var(--systems-stack-center, 0.5)) * 18%);
+    width: min(140vw, 540px);
+    height: 62%;
+    transform: translate(
+      -50%,
+      calc(-50% + (0.45 - var(--systems-stack-visibility, 0.5)) * 28px)
+    );
+    background:
+      radial-gradient(ellipse 72% 68% at 48% 44%, rgba(105, 88, 195, 0.14) 0%, transparent 64%),
+      radial-gradient(ellipse 58% 52% at 52% 54%, rgba(43, 79, 212, 0.11) 0%, transparent 60%);
+    filter: blur(48px);
+    opacity: calc(0.36 + var(--systems-stack-visibility, 0.5) * 0.32);
+    mix-blend-mode: screen;
+    transition: opacity 0.55s ease;
+  }
+
+  body.page-systems .systems-flow-stack-orbit {
+    top: 41%;
+    width: min(122vw, 488px);
+    height: 80%;
+    transform: translate(-50%, -50%) rotate(-11deg);
+    border-radius: 50%;
+    border: 1px solid rgba(95, 115, 205, 0.1);
+    box-shadow:
+      0 0 72px rgba(43, 79, 212, 0.06),
+      inset 0 0 48px rgba(30, 45, 120, 0.04);
+    opacity: 0.4;
+    filter: blur(0.35px);
+    animation: systemsOrbitBreath 52s ease-in-out infinite;
+  }
+}
+
+@media (min-width: 768px) {
+  body.page-systems .systems-flow-stack-atmo {
+    top: 40%;
+    width: min(88vw, 760px);
+    height: 52%;
+    transform: translate(-50%, -50%);
+    background: radial-gradient(
+      ellipse 62% 58% at 50% 46%,
+      rgba(55, 75, 185, 0.07) 0%,
+      rgba(43, 79, 212, 0.04) 38%,
+      transparent 68%
+    );
+    filter: blur(58px);
+    opacity: 0.18;
+    mix-blend-mode: normal;
+  }
+
+  body.page-systems .systems-flow-stack-orbit {
+    display: none;
+  }
+}
+
+@keyframes systemsOrbitBreath {
+  0%,
+  100% {
+    transform: translate(-50%, -50%) rotate(-11deg) scale(1);
+    opacity: 0.36;
+  }
+  50% {
+    transform: translate(-50%, -50%) rotate(-9deg) scale(1.018);
+    opacity: 0.46;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body.page-systems .systems-flow-stack-orbit {
+    animation: none;
+    opacity: 0.32;
   }
 }

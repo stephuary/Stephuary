@@ -212,7 +212,12 @@
     lg.appendChild(s2);
     defs.appendChild(lg);
     svg.appendChild(defs);
-    wrap.insertBefore(svg, wrap.firstChild);
+    var depthAnchor = wrap.querySelector('.systems-flow-stack-depth');
+    if (depthAnchor) {
+      depthAnchor.insertAdjacentElement('afterend', svg);
+    } else {
+      wrap.insertBefore(svg, wrap.firstChild);
+    }
 
     var resizeTimer = 0;
     function draw() {
@@ -269,6 +274,46 @@
     schedule();
   }
 
+  function initStackScrollAtmo() {
+    var wrap = document.querySelector('.systems-flow-wrap.systems-flow-stack');
+    if (!wrap) return;
+    function tick() {
+      var r = wrap.getBoundingClientRect();
+      var vh = window.innerHeight || 600;
+      var overlap = Math.min(r.bottom, vh) - Math.max(r.top, 0);
+      var denom = r.height + vh;
+      var vis = denom > 0 ? Math.min(Math.max(overlap / denom, 0), 1) : 0;
+      var mid = 0.5;
+      if (r.height > 8 && r.top < vh && r.bottom > 0) {
+        mid = Math.min(
+          Math.max((vh * 0.5 - r.top) / r.height, 0),
+          1
+        );
+      }
+      document.documentElement.style.setProperty('--systems-stack-visibility', vis.toFixed(4));
+      document.documentElement.style.setProperty('--systems-stack-center', mid.toFixed(4));
+    }
+    window.addEventListener('scroll', tick, { passive: true });
+    window.addEventListener('resize', tick, { passive: true });
+    tick();
+  }
+
+  function initFlowSectionPresence() {
+    var wrap = document.querySelector('.systems-flow-wrap.systems-flow-stack');
+    if (!wrap || !window.IntersectionObserver) return;
+    var io = new IntersectionObserver(
+      function (entries) {
+        var on = false;
+        entries.forEach(function (e) {
+          if (e.isIntersecting && e.intersectionRatio > 0.08) on = true;
+        });
+        document.body.classList.toggle('systems-flow-ambient', on);
+      },
+      { root: null, rootMargin: '12% 0px 8% 0px', threshold: [0, 0.1, 0.25, 0.5] }
+    );
+    io.observe(wrap);
+  }
+
   var injectTries = 0;
   function boot() {
     if (!injectLayers()) {
@@ -279,6 +324,8 @@
       return;
     }
     initEnergyLines();
+    initStackScrollAtmo();
+    initFlowSectionPresence();
     initBreath();
     if (window.SystemsConstellation && typeof window.SystemsConstellation.init === 'function') {
       window.SystemsConstellation.init();
