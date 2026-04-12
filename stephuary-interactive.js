@@ -285,27 +285,39 @@
       });
     }
 
+    function recoverPageInteractable() {
+      try {
+        var o = document.getElementById('page-transition');
+        if (o) o.classList.remove('is-active', 'sh-outgoing', 'sh-landing', 'sh-revealing');
+        document.documentElement.classList.remove('sh-landing-pending');
+        document.body.classList.remove(
+          'sh-transition-out',
+          'sh-page-entry',
+          'sh-page-entry--reveal',
+          'sh-spatial-from-nav',
+          'sh-page-soft-entry',
+          'sh-page-soft-entry--on'
+        );
+        document.body.classList.add('sh-page-ready');
+      } catch (err) {}
+    }
+
     window.addEventListener(
       'pageshow',
       function (ev) {
         if (!ev.persisted) return;
-        try {
-          var o = document.getElementById('page-transition');
-          if (o) o.classList.remove('is-active', 'sh-outgoing', 'sh-landing', 'sh-revealing');
-          document.documentElement.classList.remove('sh-landing-pending');
-          document.body.classList.remove(
-            'sh-transition-out',
-            'sh-page-entry',
-            'sh-page-entry--reveal',
-            'sh-spatial-from-nav',
-            'sh-page-soft-entry',
-            'sh-page-soft-entry--on'
-          );
-          document.body.classList.add('sh-page-ready');
-        } catch (err) {}
+        recoverPageInteractable();
       },
       false
     );
+
+    /* If boot() or env init fails before soft-entry finishes, the page can stay invisible. */
+    window.setTimeout(function () {
+      try {
+        if (!document.body || document.body.classList.contains('sh-page-ready')) return;
+        recoverPageInteractable();
+      } catch (err2) {}
+    }, 2800);
   }
 
   function magneticStrength() {
@@ -1691,7 +1703,9 @@
       countEl.parentNode.insertBefore(end, countEl);
       end.appendChild(countEl);
       end.appendChild(btn);
-      btn.addEventListener('click', function () {
+      btn.addEventListener('click', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
         var collapsed = wrap.classList.toggle('progress-bar-wrap--collapsed');
         btn.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
         btn.setAttribute('aria-label', collapsed ? 'Show progress bar' : 'Hide progress bar');
@@ -1700,6 +1714,9 @@
   }
 
   function boot() {
+    /* Entry state must recover even if later init throws — run first. */
+    initSpatialNavigation();
+
     initEnvironmentDepth();
     ensurePersonalizeScript();
     ensureGlobalMapScript();
@@ -1711,8 +1728,6 @@
     initLiveOutput();
     initHomeReturn();
     initFlowEndBar();
-
-    initSpatialNavigation();
 
     var hCanvas = document.querySelector('.sys-compact__bg canvas');
     if (hCanvas) initHeaderParticles(hCanvas);

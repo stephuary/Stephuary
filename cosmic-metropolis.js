@@ -214,7 +214,13 @@
     if (!root.classList.contains('cosmic-intro--pending')) return;
 
     el = document.getElementById('cosmic-metropolis');
-    if (!el) return;
+    if (!el) {
+      stripPhaseClasses();
+      root.classList.remove('cosmic-intro--pending');
+      releaseSiteShell();
+      markSeen();
+      return;
+    }
 
     if (reduceMotion()) {
       el.style.display = 'none';
