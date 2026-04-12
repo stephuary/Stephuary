@@ -108,11 +108,17 @@
     .resume-banner a:hover { color: var(--muted); }
 
     .hub-foot {
-      margin-top: 40px;
-      padding-top: 28px;
+      margin-top: 32px;
+      padding: 18px 12px 0;
       border-top: 1px solid var(--border);
-      font-size: 14px;
       color: var(--dim);
+      max-width: min(100%, 50%);
+      min-width: min(100%, 280px);
+      margin-left: auto;
+      margin-right: auto;
+      font-size: 12px;
+      line-height: 1.45;
+      text-align: center;
     }
     .hub-foot a {
       color: var(--muted);
@@ -122,26 +128,70 @@
     }
     .hub-foot a:hover { color: var(--text); }
 
-    .system-phase5 {
-      text-align: center;
-      margin-top: 28px;
-      font-size: 18px;
-      font-family: 'Cormorant Garamond', serif;
-      font-weight: 300;
+    /* Five phases in one row on desktop without orphaning phase 5 */
+    .sh-system-map {
+      max-width: min(100%, 920px);
     }
-    .system-phase5 a {
-      font-family: 'DM Mono', monospace;
-      font-size: 9px;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
+    .sh-system-map .sh-map-node {
+      flex: 1 1 110px;
+      min-width: 96px;
+      max-width: 150px;
+      padding: 18px 10px 16px;
+    }
+    .sh-system-map .sh-map-connector {
+      width: 22px;
+    }
+    @media (max-width: 720px) {
+      .sh-system-map .sh-map-node {
+        max-width: 280px;
+      }
+    }
+
+    .sh-map-node {
+      position: relative;
+      z-index: 1;
+      overflow: visible;
+    }
+    .sh-map-node:hover,
+    .sh-map-node:focus-within {
+      z-index: 20;
+    }
+    .sh-map-node__one {
+      display: block;
+      margin-top: 8px;
+      font-size: 11px;
+      line-height: 1.35;
       color: var(--dim);
-      border-bottom: 1px solid rgba(244, 237, 224, 0.12);
-      padding-bottom: 2px;
-      transition: color 0.25s ease, border-color 0.25s ease;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 100%;
     }
-    .system-phase5 a:hover {
-      color: rgba(58, 107, 255, 0.95);
-      border-color: rgba(58, 107, 255, 0.35);
+    .sh-map-node__hint {
+      display: none;
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: calc(100% + 6px);
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      background: rgba(18, 17, 15, 0.98);
+      font-size: 12px;
+      line-height: 1.45;
+      color: var(--muted);
+      text-align: left;
+      font-weight: 300;
+      box-shadow: 0 14px 40px rgba(0, 0, 0, 0.5);
+      pointer-events: none;
+    }
+    @media (hover: hover) and (pointer: fine) {
+      .sh-map-node:hover .sh-map-node__hint {
+        display: block;
+      }
+    }
+    .sh-map-node:focus-within .sh-map-node__hint {
+      display: block;
     }
 
     footer {
@@ -220,29 +270,42 @@
       <a href="/capture" id="resume-link">Continue where you left off</a>
     </div>
 
-    <div class="sh-system-map" aria-label="Flow from diagnostic to execution">
+    <div class="sh-system-map" aria-label="Five phases from diagnostic through sovereignty">
       <a href="/capture" class="sh-map-node magnetic" data-sh-hover>
         <span class="sh-map-node__label">Diagnostic</span>
         <span class="sh-map-node__name">Capture</span>
+        <span class="sh-map-node__one">Find and measure one active loss.</span>
+        <span class="sh-map-node__hint">Surface spend and time you are not protecting. You leave with one removal and clear boundaries.</span>
       </a>
       <span class="sh-map-connector" aria-hidden="true">→</span>
       <a href="/monetize" class="sh-map-node magnetic" data-sh-hover>
         <span class="sh-map-node__label">Direction</span>
         <span class="sh-map-node__name">Position</span>
+        <span class="sh-map-node__one">Move time or money into something useful.</span>
+        <span class="sh-map-node__hint">Rebuild the week around what you said matters. You leave with a weekly structure you can follow.</span>
       </a>
       <span class="sh-map-connector" aria-hidden="true">→</span>
       <a href="/structure" class="sh-map-node magnetic" data-sh-hover>
         <span class="sh-map-node__label">Concept</span>
         <span class="sh-map-node__name">Structure</span>
+        <span class="sh-map-node__one">Turn it into something that produces value.</span>
+        <span class="sh-map-node__hint">Offer, buyer, price, first outbound. You leave with copy you can send.</span>
       </a>
       <span class="sh-map-connector" aria-hidden="true">→</span>
       <a href="/automation" class="sh-map-node magnetic" data-sh-hover>
         <span class="sh-map-node__label">Execution</span>
         <span class="sh-map-node__name">Automation</span>
+        <span class="sh-map-node__one">Reduce manual effort and repetition.</span>
+        <span class="sh-map-node__hint">Keep delivery working when work gets busy. You leave with steps you can repeat without thinking.</span>
+      </a>
+      <span class="sh-map-connector" aria-hidden="true">→</span>
+      <a href="/sovereignty" class="sh-map-node magnetic" data-sh-hover>
+        <span class="sh-map-node__label">Phase 5</span>
+        <span class="sh-map-node__name">Sovereignty</span>
+        <span class="sh-map-node__one">Stabilize what you built so it holds.</span>
+        <span class="sh-map-node__hint">Rules for tools on paid work. You leave with rules you actually follow.</span>
       </a>
     </div>
-
-    <p class="system-phase5">Phase 5 · <a href="/sovereignty">Sovereignty</a></p>
 
     <p class="hub-foot">Diagnostic first: <a href="/capture">Capture</a>. Results: <a href="/results">Results</a>. <a href="/snapshot">Snapshot</a> if you want it done with you.</p>
   </div>
