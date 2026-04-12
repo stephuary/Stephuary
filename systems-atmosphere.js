@@ -335,7 +335,7 @@
       }
       return;
     }
-    initEnergyLines();
+    /* Energy SVG node-to-node lines removed — portal field + thread carry progression. */
     initStackScrollAtmo();
     initFlowSectionPresence();
     initBreath();

@@ -880,6 +880,29 @@
           else ctx.lineTo(px, yy);
         }
         ctx.stroke();
+      } else if (type === 'portal-haze') {
+        var th = t * 0.011;
+        ctx.fillStyle = 'rgba(5,4,5,0.92)';
+        ctx.fillRect(0, 0, w, h);
+        var cx = w * 0.5;
+        var cy = h * 0.45;
+        var pulse = 0.92 + Math.sin(th * 1.1) * 0.08;
+        var g0 = ctx.createRadialGradient(cx, cy, 0, cx, cy, Math.max(w, h) * 0.62);
+        g0.addColorStop(0, 'rgba(59,15,25,' + (0.14 * pulse) + ')');
+        g0.addColorStop(0.35, 'rgba(110,48,88,' + (0.07 * pulse) + ')');
+        g0.addColorStop(0.65, 'rgba(62,38,72,' + (0.05 * pulse) + ')');
+        g0.addColorStop(1, 'transparent');
+        ctx.globalCompositeOperation = 'source-over';
+        ctx.fillStyle = g0;
+        ctx.fillRect(0, 0, w, h);
+        var g1 = ctx.createRadialGradient(cx * 0.85, cy * 1.1, 0, cx, cy, w * 0.55);
+        g1.addColorStop(0, 'rgba(196,163,90,' + (0.09 + Math.sin(th * 0.8) * 0.02) + ')');
+        g1.addColorStop(0.5, 'rgba(180,90,130,0.05)');
+        g1.addColorStop(1, 'transparent');
+        ctx.globalCompositeOperation = 'screen';
+        ctx.fillStyle = g1;
+        ctx.fillRect(0, 0, w, h);
+        ctx.globalCompositeOperation = 'source-over';
       } else if (type === 'pricing-field') {
         var pr2 = window.__shParallax || { x: 0, y: 0, sd: 0 };
         var px = pr2.x * 6 + pr2.sd * 3;
@@ -1943,7 +1966,10 @@
     }
 
     var sv = document.getElementById('sys-visual');
-    if (sv) setupVisual(sv, 'systemmap');
+    if (sv) {
+      var svTyp = sv.getAttribute('data-visual') || 'systemmap';
+      if (svTyp !== 'layers') setupVisual(sv, svTyp);
+    }
 
     /* Layer parallax */
     var layers = document.querySelector('.sys-layers');
