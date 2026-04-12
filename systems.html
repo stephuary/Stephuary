@@ -157,52 +157,92 @@
       }
     }
 
-    .systems-phase-trace {
+    /* Option C: vertical guided flow (non-uniform rhythm) */
+    .systems-flow-stack {
+      position: relative;
       display: flex;
+      flex-direction: column;
       align-items: center;
-      gap: 3px;
       width: 100%;
-      max-width: min(100%, 960px);
-      margin: 0 auto 8px;
-      padding: 0 8px;
-      opacity: 0.65;
+      max-width: min(100%, 720px);
+      margin: 0 auto;
+      padding: 8px 8px 40px;
     }
-    .systems-phase-trace span {
-      flex: 1;
-      height: 1px;
-      background: linear-gradient(
-        90deg,
-        rgba(58, 107, 255, 0.35),
-        rgba(196, 163, 90, 0.45),
-        rgba(58, 107, 255, 0.35)
-      );
-      border-radius: 1px;
-    }
-    .sh-flow-grid {
+    .systems-flow-row {
+      position: relative;
+      z-index: 2;
       display: flex;
-      flex-wrap: wrap;
       justify-content: center;
       align-items: stretch;
-      gap: 10px;
-      max-width: min(100%, 960px);
-      margin: 0 auto 12px;
-      padding: 0 8px;
+      width: 100%;
     }
-    .sh-flow-grid--phases {
+    .systems-flow-row--center .sh-map-node {
+      max-width: 220px;
+      width: 100%;
+    }
+    .systems-flow-row--split {
+      justify-content: center;
+      gap: 22px 28px;
+      flex-wrap: wrap;
+      max-width: 520px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .systems-flow-row--split .sh-map-node {
+      flex: 1 1 200px;
+      min-width: 140px;
+      max-width: 240px;
+    }
+    .systems-flow-row--r1 {
+      margin-bottom: 22px;
+    }
+    .systems-flow-row--r2 {
+      margin-bottom: 28px;
+    }
+    .systems-flow-row--bridge {
+      margin-bottom: 32px;
+    }
+    .systems-flow-row--fin {
+      margin-bottom: 38px;
+    }
+    .systems-flow-row--support {
+      flex-direction: column;
+      align-items: center;
+      margin-top: 4px;
       margin-bottom: 6px;
     }
-    .sh-flow-grid--phases .sh-map-node__one,
-    .sh-flow-grid--tools .sh-map-node__one {
+    .systems-support-eyebrow {
+      font-family: 'DM Mono', monospace;
+      font-size: 8px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(196, 163, 90, 0.55);
+      margin-bottom: 12px;
+      text-align: center;
+    }
+    .systems-flow-spacer {
+      width: 100%;
+      height: 1px;
+      margin: 0 auto 18px;
+      max-width: 120px;
+      background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(58, 107, 255, 0.22),
+        rgba(196, 163, 90, 0.2),
+        transparent
+      );
+      opacity: 0.75;
+    }
+    .systems-flow-stack .sh-map-node__one,
+    .systems-flow-stack .sh-map-node--tier-tool .sh-map-node__one {
       white-space: normal;
       line-height: 1.42;
     }
-    .sh-flow-grid--phases .sh-map-node__name {
+    .systems-flow-stack .sh-map-node__name {
       margin-top: 0;
     }
-    .sh-flow-grid .sh-map-node {
-      flex: 1 1 140px;
-      min-width: 118px;
-      max-width: 200px;
+    .systems-flow-stack .sh-map-node {
       margin: 0;
       padding: 18px 12px 16px;
     }
@@ -216,6 +256,21 @@
       border-color: rgba(58, 107, 255, 0.5);
       box-shadow: 0 10px 40px rgba(43, 79, 212, 0.22);
     }
+    .sh-map-node--tier-phase.sh-map-node--sovereignty {
+      transform: scale(1.045);
+      border-color: rgba(58, 107, 255, 0.34);
+      box-shadow:
+        0 0 0 1px rgba(43, 79, 212, 0.14),
+        0 12px 42px rgba(0, 0, 0, 0.42),
+        0 0 48px rgba(43, 79, 212, 0.14);
+    }
+    .sh-map-node--tier-phase.sh-map-node--sovereignty:hover {
+      transform: scale(1.05);
+      border-color: rgba(58, 107, 255, 0.55);
+      box-shadow:
+        0 10px 44px rgba(43, 79, 212, 0.26),
+        0 0 56px rgba(43, 79, 212, 0.18);
+    }
     .sh-map-node--tier-tool {
       border-color: rgba(244, 237, 224, 0.1);
       box-shadow: 0 6px 22px rgba(0, 0, 0, 0.28);
@@ -225,9 +280,8 @@
       border-color: rgba(58, 107, 255, 0.3);
       box-shadow: 0 8px 28px rgba(43, 79, 212, 0.14);
     }
-    .sh-flow-grid--tools {
-      margin-top: 18px;
-      margin-bottom: 4px;
+    .systems-flow-stack .sh-map-node--tier-tool {
+      max-width: 260px;
     }
     .sys-lead-note {
       margin-top: 12px;
@@ -386,10 +440,33 @@
     @media (max-width: 640px) {
       .wrap { padding-left: 20px; padding-right: 20px; }
       nav { padding: 16px 20px; }
-      .sh-flow-grid .sh-map-node {
-        min-width: min(100%, 160px);
-        padding: 20px 14px 18px;
+      .systems-flow-stack {
+        max-width: 100%;
+        padding-bottom: 36px;
       }
+      .systems-flow-row--split {
+        flex-direction: column;
+        align-items: center;
+        gap: 16px;
+        max-width: 100%;
+      }
+      .systems-flow-row--split .sh-map-node {
+        max-width: min(100%, 300px);
+        width: 100%;
+      }
+      .systems-flow-row--center .sh-map-node {
+        max-width: min(100%, 300px);
+      }
+      .sh-map-node--tier-phase.sh-map-node--sovereignty {
+        transform: scale(1.03);
+      }
+      .sh-map-node--tier-phase.sh-map-node--sovereignty:hover {
+        transform: scale(1.04);
+      }
+      .systems-flow-row--r1 { margin-bottom: 18px; }
+      .systems-flow-row--r2 { margin-bottom: 20px; }
+      .systems-flow-row--bridge { margin-bottom: 24px; }
+      .systems-flow-row--fin { margin-bottom: 28px; }
       .sh-map-node__one {
         font-size: 12px;
         white-space: normal;
@@ -438,13 +515,14 @@
       <div data-global-system-map="full"></div>
     </div>
 
-    <div class="systems-flow-wrap">
-      <div class="systems-phase-trace" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>
-      <div class="sh-flow-grid sh-flow-grid--phases" aria-label="Five phases">
+    <div class="systems-flow-wrap systems-flow-stack">
+      <div class="systems-flow-row systems-flow-row--center systems-flow-row--r1" aria-label="Phase 1">
         <a href="/capture" class="sh-map-node sh-map-node--tier-phase magnetic" data-sh-hover data-constellation-id="capture">
           <span class="sh-map-node__name">Capture</span>
           <span class="sh-map-node__one">See what's actually happening.<br />Where time and money are lost.</span>
         </a>
+      </div>
+      <div class="systems-flow-row systems-flow-row--split systems-flow-row--r2" aria-label="Phases 2 and 3">
         <a href="/monetize" class="sh-map-node sh-map-node--tier-phase magnetic" data-sh-hover data-constellation-id="monetize">
           <span class="sh-map-node__name">Monetize</span>
           <span class="sh-map-node__one">Turn it into something that pays.<br />Clear offer. Clear path.</span>
@@ -453,18 +531,23 @@
           <span class="sh-map-node__name">Structure</span>
           <span class="sh-map-node__one">Build what holds it together.<br />So it works more than once.</span>
         </a>
+      </div>
+      <div class="systems-flow-row systems-flow-row--center systems-flow-row--bridge" aria-label="Phase 4">
         <a href="/automation" class="sh-map-node sh-map-node--tier-phase magnetic" data-sh-hover data-constellation-id="automation">
           <span class="sh-map-node__name">Automation</span>
           <span class="sh-map-node__one">Remove what should not stay manual.<br />Speed without more effort.</span>
         </a>
-        <a href="/sovereignty" class="sh-map-node sh-map-node--tier-phase magnetic" data-sh-hover data-constellation-id="sovereignty">
+      </div>
+      <div class="systems-flow-row systems-flow-row--center systems-flow-row--fin" aria-label="Phase 5">
+        <a href="/sovereignty" class="sh-map-node sh-map-node--tier-phase sh-map-node--sovereignty magnetic" data-sh-hover data-constellation-id="sovereignty">
           <span class="sh-map-node__name">Sovereignty</span>
           <span class="sh-map-node__one">Own the system.<br />Not just the output.</span>
         </a>
       </div>
-      <div class="sh-flow-grid sh-flow-grid--tools" aria-label="Playbooks">
+      <div class="systems-flow-spacer" aria-hidden="true"></div>
+      <div class="systems-flow-row systems-flow-row--support" aria-label="Support">
+        <p class="systems-support-eyebrow">Support</p>
         <a href="/playbooks" class="sh-map-node sh-map-node--tier-tool magnetic" data-sh-hover data-constellation-id="playbooks">
-          <span class="sh-map-node__label">Support</span>
           <span class="sh-map-node__name">Playbooks</span>
           <span class="sh-map-node__one">One problem. One system.<br />Used when something keeps repeating.</span>
         </a>
