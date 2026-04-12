@@ -17,9 +17,9 @@ try{var h=new Date().getHours();var em=h>=3&&h<7;document.documentElement.classL
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 
 :root{
-  --bg:#0a0908;
-  --bg-1:#0e0c0a;
-  --bg-2:#131210;
+  --bg:#100e0b;
+  --bg-1:#14110e;
+  --bg-2:#181510;
   --gold:#c4a35a;
   --gold-hi:#d4b46a;
   --gold-dim:#8a7040;
@@ -48,7 +48,9 @@ try{var h=new Date().getHours();var em=h>=3&&h<7;document.documentElement.classL
 }
 
 html,body.pricing-page{
-  background:var(--bg);color:var(--text);
+  background:var(--bg);
+  background-image:linear-gradient(180deg,#16130f 0%,#100d0a 48%,#0b0908 100%);
+  color:var(--text);
   font-family:var(--sans);font-weight:300;
   font-size:15px;line-height:1.55;min-height:100%;
   -webkit-font-smoothing:antialiased;
@@ -56,34 +58,42 @@ html,body.pricing-page{
 }
 a{color:inherit;text-decoration:none}
 
-/* Earth-tone atmospheric field (behind content) */
-body.pricing-page::before{
-  content:"";position:fixed;inset:-18%;
-  z-index:0;pointer-events:none;
+/* Dedicated earth aura (below .page). Not on body pseudos — avoids conflict with #sh-env-depth / isolation. */
+.pricing-aura{
+  position:fixed;
+  inset:0;
+  z-index:0;
+  pointer-events:none;
+  overflow:visible;
+}
+.pricing-aura__glow{
+  position:absolute;
+  inset:-24%;
   background:
-    radial-gradient(ellipse 38% 34% at 46% 36%,rgba(132,118,78,0.28) 0%,rgba(98,88,58,0.12) 52%,transparent 68%),
-    radial-gradient(ellipse 52% 48% at 58% 52%,rgba(58,74,52,0.22) 0%,rgba(44,58,40,0.1) 55%,transparent 70%),
-    radial-gradient(ellipse 78% 68% at 48% 58%,rgba(72,48,38,0.16) 0%,rgba(48,36,30,0.08) 50%,transparent 72%),
-    radial-gradient(ellipse 110% 92% at 50% 50%,rgba(14,24,18,0.14) 0%,rgba(8,12,10,0.45) 55%,transparent 78%);
+    radial-gradient(ellipse 44% 40% at 50% 36%,rgba(214,168,96,0.58) 0%,rgba(168,118,68,0.28) 38%,transparent 58%),
+    radial-gradient(ellipse 52% 48% at 28% 58%,rgba(78,112,52,0.5) 0%,rgba(52,72,38,0.22) 45%,transparent 65%),
+    radial-gradient(ellipse 56% 50% at 78% 42%,rgba(118,72,48,0.42) 0%,rgba(72,42,28,0.18) 48%,transparent 62%),
+    radial-gradient(ellipse 70% 62% at 48% 62%,rgba(92,58,42,0.35) 0%,transparent 55%),
+    radial-gradient(ellipse 100% 88% at 50% 52%,rgba(32,44,30,0.72) 0%,rgba(22,30,22,0.82) 42%,rgba(14,12,10,0.94) 100%);
   filter:blur(28px);
-  opacity:0.92;
-  mix-blend-mode:normal;
-  animation:pricingAuraField 96s ease-in-out infinite;
+  opacity:0.98;
+  transform:translate3d(0,0,0);
+  animation:pricingAuraDrift 100s ease-in-out infinite;
 }
-/* Subtle grain — sits above aura, below .page */
-body.pricing-page::after{
-  content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
-  opacity:0.052;
-  mix-blend-mode:overlay;
-  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
-  background-size:180px 180px;
+.pricing-aura__grain{
+  position:absolute;
+  inset:0;
+  opacity:0.055;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.78' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+  background-size:200px 200px;
 }
-@keyframes pricingAuraField{
+@keyframes pricingAuraDrift{
   0%,100%{transform:translate3d(0,0,0) scale(1);}
-  50%{transform:translate3d(-0.6%,0.45%,0) scale(1.005);}
+  50%{transform:translate3d(-0.9%,0.55%,0) scale(1.018);}
 }
 
 .page{max-width:1040px;margin:0 auto;padding:0 20px 56px;position:relative;z-index:1}
+body.pricing-page .pricing-layout__main{transform:translateZ(0);}
 
 .top-nav{
   padding:18px 0 0;display:flex;justify-content:space-between;align-items:center;
@@ -180,9 +190,8 @@ body.pricing-page::after{
 .pricing-hero__viz{position:relative;z-index:1;}
 .pricing-hero__viz::after{
   content:"";position:absolute;inset:-1px;border-radius:var(--r);pointer-events:none;z-index:2;
-  opacity:0.45;
-  background:radial-gradient(ellipse 80% 70% at 50% 50%,transparent 35%,rgba(58,68,48,0.12) 50%,transparent 72%);
-  mix-blend-mode:soft-light;
+  opacity:0.35;
+  background:radial-gradient(ellipse 80% 70% at 50% 50%,transparent 38%,rgba(88,108,62,0.18) 52%,transparent 72%);
 }
 .pricing-hero__viz .sys-visual{
   margin:0;width:100%;max-width:100%;height:88px;opacity:0.94;
@@ -578,12 +587,18 @@ body.pricing-page .sh-global-map__arrow{color:rgba(88,82,58,0.42);}
 }
 @media (prefers-reduced-motion: reduce) {
   .pricing-identity-line{opacity:1;animation:none;}
-  body.pricing-page::before{animation:none!important;}
+  .pricing-aura__glow{animation:none!important;}
   body.pricing-page .sh-global-map__node.is-rec:not(.is-current):not(.is-scroll-current){animation:none!important;}
 }
 </style>
 <link rel="stylesheet" href="/stephuary-early-mode.css"/>
 <link rel="stylesheet" href="/stephuary-free-mode.css"/>
+<style>
+/* After global sheets: warm earth base (early-mode otherwise wins on body background). */
+html.early-mode body.pricing-page{
+  background:linear-gradient(180deg,#181510 0%,#100d0a 52%,#0a0807 100%)!important;
+}
+</style>
 </head>
 <body class="pricing-page">
 <script>
@@ -621,6 +636,10 @@ body.pricing-page .sh-global-map__arrow{color:rgba(88,82,58,0.42);}
   }
 })();
 </script>
+<div class="pricing-aura" aria-hidden="true">
+  <div class="pricing-aura__glow"></div>
+  <div class="pricing-aura__grain"></div>
+</div>
 <div id="page-transition" aria-hidden="true"></div>
 <script src="/stephuary-config.js" defer></script>
 <script src="/stephuary-interactive.js" defer></script>

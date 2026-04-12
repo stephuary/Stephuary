@@ -432,6 +432,14 @@
     if (!document.body) return;
 
     var path = normPath(window.location.pathname);
+
+    /* Pricing uses its own earth aura in pricing.html. The global #sh-env-depth layer
+       (blue grid + particles) stacks above body::before and hid the aura after JS ran. */
+    if (path === '/pricing') {
+      initPricingImmersiveZone();
+      return;
+    }
+
     var zone = 'default';
     if (path === '/systems' || path === '/') zone = 'cei';
     else if (path === '/pricing') zone = 'pricing';
