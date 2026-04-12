@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Your result · Stephuary</title>
   <link rel="stylesheet" href="/stephuary-interactive.css" />
+  <link rel="stylesheet" href="/stephuary-founder-reveal.css" />
   <meta name="description" content="Structured read of how you operate. Next steps, no noise." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet" />
@@ -901,6 +902,7 @@
   <script src="/stephuary-result.js"></script>
   <script src="/stephuary-personalization.js"></script>
   <script src="/stephuary-cei-bridge.js"></script>
+  <script src="/stephuary-founder-reveal.js"></script>
   <script>
 (function () {
   var STORAGE_KEY = 'stephuary_result_v1';
@@ -1429,9 +1431,15 @@
         var st = window.StephuaryPersonalize.getState();
         sp.textContent = st && st.recommendedTierName ? 'Suggested tier: ' + st.recommendedTierName : '';
       } catch (e3) {
-        sp.textContent = '';
+          sp.textContent = '';
       }
     }
+
+    try {
+      if (window.StephuaryFounderReveal && typeof window.StephuaryFounderReveal.scheduleDiagnostic === 'function') {
+        window.StephuaryFounderReveal.scheduleDiagnostic();
+      }
+    } catch (fr) {}
   }
 
   var loaded = loadResult();
