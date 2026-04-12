@@ -9,7 +9,7 @@
       'direction-system': '/direction-system',
       'revenue-system': '/revenue-system',
       'direction-lock': '/focused-review',
-      'concept-build': '/access',
+      'concept-build': '/private-access',
       snapshot: '/snapshot'
     };
     window.STEPHUARY_CONFIG = {
@@ -1052,7 +1052,15 @@
       { path: '/pricing', n: 0, name: 'Pricing', where: 'Pricing', cat: 'Entry choice', act: 'Pick one tier that matches how much help you want.' },
       { path: '/results', n: 0, name: 'Results', where: 'Results', cat: 'Readout', act: 'Do one thing from this page today.' },
       { path: '/playbooks', n: 0, name: 'Rooms', where: 'Rooms', cat: 'Focused topic', act: 'Finish one room before opening another.' },
-      { path: '/access', n: 0, name: 'Access', where: 'Club access', cat: 'Request', act: 'Send the form if you need direct work.' },
+      { path: '/access', n: 0, name: 'Access', where: 'Club access', cat: 'Request', act: 'Request .5% Club access when you need it.' },
+      {
+        path: '/private-access',
+        n: 0,
+        name: 'Private build',
+        where: 'Private access',
+        cat: 'Concept build',
+        act: 'Request private build when you need a usable concept and offer.'
+      },
       { path: '/snapshot', n: 0, name: 'Snapshot', where: 'Snapshot', cat: 'Full review', act: 'Book a snapshot when you want the full written review.' }
     ];
 

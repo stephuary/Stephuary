@@ -11,7 +11,7 @@
     'direction-system': '/direction-system',
     'revenue-system': '/revenue-system',
     'direction-lock': '/focused-review',
-    'concept-build': '/access',
+    'concept-build': '/private-access',
     snapshot: '/snapshot'
   };
 
@@ -21,7 +21,7 @@
     'direction-system': '/direction-system',
     'revenue-system': '/revenue-system',
     'direction-lock': '/focused-review',
-    'concept-build': '/access',
+    'concept-build': '/private-access',
     snapshot: '/snapshot#free-flow'
   };
 

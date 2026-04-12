@@ -39,7 +39,7 @@
     {
       id: 'concept',
       label: 'Concept',
-      path: '/phases/concept',
+      path: '/private-access',
       tip: 'Build a clear, usable offer'
     },
     {
@@ -87,7 +87,7 @@
     '/sovereignty': 'revenue',
     '/focused-review': 'lock',
     '/phases/lock': 'lock',
-    '/access': 'concept',
+    '/private-access': 'concept',
     '/phases/concept': 'concept',
     '/snapshot': 'snapshot',
     '/pricing': '',
@@ -157,7 +157,7 @@
     }
     if (visited.indexOf('/room-02-direction') >= 0 || completed.indexOf('02') >= 0) done.direction = true;
     if (visited.indexOf('/focused-review') >= 0) done.lock = true;
-    if (visited.indexOf('/access') >= 0) done.concept = true;
+    if (visited.indexOf('/private-access') >= 0) done.concept = true;
     if (visited.indexOf('/snapshot') >= 0) done.snapshot = true;
 
     var recNode = '';
