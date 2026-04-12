@@ -1,0 +1,284 @@
+/**
+ * Early Mode (3–7 AM local): sunrise-warm dark atmosphere.
+ * Requires html.early-mode on documentElement.
+ */
+
+html.early-mode {
+  --blue: #c9784a;
+  --blue-soft: rgba(201, 120, 74, 0.18);
+  --blue-glow: rgba(212, 148, 88, 0.38);
+  --blue-hi: #d4905c;
+  --sys-blue: #c9784a;
+  --sys-blue-hi: #d4905c;
+}
+
+/* ——— Homepage ambient ——— */
+html.early-mode .ambient__grad {
+  background: linear-gradient(
+    125deg,
+    #060504 0%,
+    rgba(58, 22, 18, 0.68) 34%,
+    rgba(72, 38, 82, 0.45) 56%,
+    rgba(48, 14, 12, 0.52) 76%,
+    #050403 100%
+  );
+  background-size: 200% 200%;
+}
+
+html.early-mode .ambient__particles span {
+  background: rgba(255, 210, 185, 0.26);
+  animation-name: shEarlyFloatP !important;
+}
+
+@keyframes shEarlyFloatP {
+  0%,
+  100% {
+    transform: translate(0, 0);
+    opacity: 0.5;
+  }
+  50% {
+    transform: translate(8px, -12px);
+    opacity: 0.82;
+  }
+}
+
+html.early-mode .ambient__noise {
+  opacity: 0.055;
+}
+
+/* ——— Homepage hero shell ——— */
+html.early-mode .hero-container {
+  background:
+    radial-gradient(ellipse 120% 85% at 50% 18%, rgba(92, 36, 28, 0.52) 0%, transparent 58%),
+    radial-gradient(ellipse 95% 65% at 82% 88%, rgba(72, 42, 88, 0.4) 0%, transparent 52%),
+    linear-gradient(160deg, #050403 0%, #120a0a 38%, #0c0808 72%, #040406 100%);
+}
+
+html.early-mode .hero-overlay {
+  background: radial-gradient(ellipse 85% 75% at 50% 45%, rgba(0, 0, 0, 0.12) 0%, rgba(0, 0, 0, 0.38) 100%);
+}
+
+html.early-mode .hero-leak-entry {
+  box-shadow:
+    0 0 0 1px rgba(201, 120, 74, 0.12),
+    0 20px 56px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+html.early-mode .leak-trigger::after {
+  background: linear-gradient(90deg, var(--blue), rgba(212, 148, 88, 0.35));
+}
+
+html.early-mode .leak-trigger:hover::after {
+  box-shadow: 0 0 16px rgba(212, 148, 88, 0.32);
+}
+
+html.early-mode .btn--pri {
+  background: linear-gradient(165deg, #d4905c 0%, #b86238 100%);
+  box-shadow: 0 4px 32px rgba(201, 120, 74, 0.32);
+}
+
+html.early-mode .btn--pri:hover {
+  box-shadow: 0 8px 48px rgba(212, 148, 88, 0.42);
+}
+
+html.early-mode .btn--ghost:hover {
+  border-color: rgba(201, 120, 74, 0.42);
+}
+
+html.early-mode .nav-link::after {
+  background: var(--blue);
+}
+
+/* ——— Homepage copy slots ——— */
+.home-early-hint {
+  display: none;
+  font-family: 'Lato', sans-serif;
+  font-size: 12px;
+  font-weight: 300;
+  line-height: 1.5;
+  color: rgba(200, 175, 150, 0.72);
+  margin: 14px 0 0;
+  max-width: 38ch;
+  letter-spacing: 0.02em;
+}
+
+html.early-mode .home-early-hint {
+  display: block;
+}
+
+.home-interactive-disclosure {
+  font-family: 'Lato', sans-serif;
+  font-size: 12px;
+  font-weight: 300;
+  line-height: 1.55;
+  color: rgba(160, 152, 137, 0.65);
+  max-width: min(52ch, 92vw);
+  margin: 0 auto;
+  padding: 20px 40px 8px;
+  letter-spacing: 0.02em;
+}
+
+.home-foot-note {
+  font-family: 'Lato', sans-serif;
+  font-size: 11px;
+  font-weight: 300;
+  line-height: 1.5;
+  color: rgba(110, 101, 88, 0.55);
+  max-width: 40ch;
+  margin: 0 0 28px;
+  padding: 0 40px;
+  letter-spacing: 0.03em;
+}
+
+@media (max-width: 640px) {
+  .home-interactive-disclosure {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+  .home-foot-note {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+}
+
+/* ——— Early-only “Private layer” slot ——— */
+.early-private-slot {
+  position: fixed;
+  z-index: 120;
+  left: max(20px, env(safe-area-inset-left, 0px));
+  bottom: max(100px, calc(24px + env(safe-area-inset-bottom, 0px)));
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.7s ease;
+}
+
+.early-private-slot--visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.early-private-slot__link {
+  font-family: 'DM Mono', monospace;
+  font-size: 8px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(180, 150, 120, 0.45);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(180, 150, 120, 0.22);
+  padding-bottom: 2px;
+  transition: color 0.25s ease, border-color 0.25s ease;
+}
+
+.early-private-slot__link:hover {
+  color: rgba(212, 168, 120, 0.75);
+  border-color: rgba(212, 168, 120, 0.4);
+}
+
+html:not(.early-mode) .early-private-slot {
+  display: none !important;
+}
+
+/* ——— Global map (interactive.css) ——— */
+html.early-mode .sh-global-map__path-fill {
+  background: linear-gradient(
+    90deg,
+    rgba(196, 163, 90, 0.88) 0%,
+    rgba(196, 163, 90, 0.88) var(--sh-gold-end, 32%),
+    rgba(201, 120, 74, 0.75) var(--sh-gold-end, 32%),
+    rgba(120, 72, 108, 0.55) var(--sh-blue-mid, 52%),
+    rgba(201, 120, 74, 0.15) 100%
+  );
+}
+
+html.early-mode .sh-global-map__node.is-current,
+html.early-mode .sh-global-map__node.is-scroll-current {
+  border-color: rgba(201, 120, 74, 0.5);
+  box-shadow: 0 0 0 1px rgba(201, 120, 74, 0.22), 0 0 22px rgba(212, 148, 88, 0.18);
+}
+
+html.early-mode .sh-global-map__node.is-current .sh-global-map__dot,
+html.early-mode .sh-global-map__node.is-scroll-current .sh-global-map__dot {
+  background: rgba(212, 148, 88, 0.75);
+  box-shadow: 0 0 12px rgba(201, 120, 74, 0.38);
+}
+
+html.early-mode .sh-global-map__node.is-rec:not(.is-current):not(.is-scroll-current) {
+  border-color: rgba(201, 120, 74, 0.28);
+  animation: shMapRecPulseEarly 2.8s ease-in-out infinite;
+}
+
+@keyframes shMapRecPulseEarly {
+  0%,
+  100% {
+    box-shadow: 0 0 0 1px rgba(201, 120, 74, 0.2), 0 0 10px rgba(212, 148, 88, 0.08);
+  }
+  50% {
+    box-shadow: 0 0 0 1px rgba(201, 120, 74, 0.34), 0 0 18px rgba(212, 148, 88, 0.14);
+  }
+}
+
+html.early-mode .sh-global-map__rec-inline {
+  color: rgba(212, 148, 88, 0.55);
+}
+
+html.early-mode .sh-global-map__node.is-current .sh-global-map__rec-inline {
+  color: rgba(212, 168, 120, 0.78);
+}
+
+/* ——— Live panel ——— */
+html.early-mode .sh-live-panel__btn:hover {
+  border-color: rgba(201, 120, 74, 0.45);
+  background: rgba(201, 120, 74, 0.15);
+}
+
+html.early-mode .sh-live-panel__min:hover {
+  background: rgba(201, 120, 74, 0.18);
+  border-color: rgba(201, 120, 74, 0.42);
+}
+
+/* ——— Systems page body ——— */
+html.early-mode body {
+  background: linear-gradient(180deg, #070605 0%, #080706 45%, #060504 100%);
+}
+
+html.early-mode nav {
+  background: rgba(8, 6, 5, 0.92);
+  border-bottom-color: rgba(201, 120, 74, 0.12);
+}
+
+/* ——— Pricing page ——— */
+html.early-mode body.pricing-page {
+  background: radial-gradient(ellipse 120% 80% at 50% 0%, rgba(58, 22, 18, 0.35) 0%, transparent 55%), var(--bg);
+}
+
+html.early-mode body.pricing-page::after {
+  opacity: 0.035;
+}
+
+html.early-mode .tier-cta--pri {
+  box-shadow: 0 3px 18px rgba(201, 120, 74, 0.22);
+}
+
+html.early-mode .tier-cta--pri:hover {
+  box-shadow: 0 8px 28px rgba(212, 148, 88, 0.32);
+}
+
+html.early-mode .inner-tier--recommended {
+  border-color: rgba(201, 120, 74, 0.45);
+  box-shadow: 0 0 0 1px rgba(201, 120, 74, 0.22), 0 12px 40px rgba(212, 148, 88, 0.12);
+}
+
+/* ——— Phase pages (capture / monetize / …): minimal ——— */
+html.early-mode.phase-page-min body {
+  background: linear-gradient(165deg, #0a0807 0%, #0c0a09 50%, #080605 100%);
+}
+
+html.early-mode .sys-btn--pri {
+  background: linear-gradient(165deg, #d4905c 0%, #b86238 100%);
+  box-shadow: 0 4px 24px rgba(201, 120, 74, 0.32);
+}
+
+html.early-mode .sys-btn--pri:hover {
+  box-shadow: 0 8px 36px rgba(212, 148, 88, 0.4);
+}
