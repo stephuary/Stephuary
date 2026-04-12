@@ -440,6 +440,9 @@
       return;
     }
 
+    /* Access page: local screening-room atmosphere only — no CEI depth layer. */
+    if (path === '/access') return;
+
     var zone = 'default';
     if (path === '/systems' || path === '/') zone = 'cei';
     else if (path === '/pricing') zone = 'pricing';
