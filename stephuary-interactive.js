@@ -254,6 +254,12 @@
       if (landing) sessionStorage.removeItem(SPATIAL_NAV_KEY);
     } catch (e) {}
 
+    /* Pricing: skip soft-entry (opacity:0 on body children) — avoids blank/stuck paint on heavy CSS. */
+    if (document.body.classList.contains('pricing-page') && !landing) {
+      document.body.classList.add('sh-page-ready');
+      return;
+    }
+
     var ov = ensurePageTransitionOverlay();
 
     if (landing) {
