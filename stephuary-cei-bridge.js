@@ -219,8 +219,23 @@
     if (!state && SP && typeof SP.refresh === 'function') state = SP.refresh();
     if (!state) return;
 
+    var hot = getHotNodeIds(state);
+    var pick = hot[0] || 'decision';
+    try {
+      document.body.setAttribute('data-pricing-cei', pick);
+    } catch (eAttr) {}
+    try {
+      document.dispatchEvent(
+        new CustomEvent('pricing-cei-select', { detail: { id: pick }, bubbles: true })
+      );
+    } catch (eEv) {}
+
     var strip = root.getElementById('pricing-cei-strip');
-    renderNodeStrip(strip, state);
+    if (strip) {
+      strip.innerHTML = '';
+      strip.setAttribute('hidden', '');
+      strip.setAttribute('aria-hidden', 'true');
+    }
 
     var ctx = root.getElementById('pricing-rec-context');
     if (ctx) {

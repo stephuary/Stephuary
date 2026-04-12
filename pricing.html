@@ -48,12 +48,7 @@ try{var h=new Date().getHours();var em=h>=3&&h<7;document.documentElement.classL
 }
 
 html,body.pricing-page{
-  background:#120d09;
-  background-image:
-    linear-gradient(165deg,#1a120c 0%,#142018 42%,#120f0a 100%),
-    radial-gradient(ellipse 80% 55% at 50% 0%,rgba(90,58,26,0.22) 0%,transparent 55%),
-    radial-gradient(ellipse 70% 50% at 20% 60%,rgba(42,58,38,0.18) 0%,transparent 50%),
-    radial-gradient(ellipse 65% 48% at 82% 45%,rgba(74,48,32,0.16) 0%,transparent 52%);
+  background:#030201;
   color:var(--text);
   font-family:var(--sans);font-weight:300;
   font-size:15px;line-height:1.55;min-height:100%;
@@ -62,38 +57,63 @@ html,body.pricing-page{
 }
 a{color:inherit;text-decoration:none}
 
-/* Dedicated earth aura (below .page). Not on body pseudos — avoids conflict with #sh-env-depth / isolation. */
+/* Centered spotlight — gold/amber → olive → black; edges fall into shadow */
 .pricing-aura{
   position:fixed;
   inset:0;
   z-index:0;
   pointer-events:none;
-  overflow:visible;
+  overflow:hidden;
 }
-.pricing-aura__glow{
+.pricing-aura__spot{
   position:absolute;
-  inset:-24%;
-  background:
-    radial-gradient(ellipse 42% 38% at 50% 34%,rgba(180,120,52,0.42) 0%,rgba(90,58,26,0.22) 42%,transparent 58%),
-    radial-gradient(ellipse 55% 48% at 22% 58%,rgba(48,68,42,0.38) 0%,rgba(30,42,32,0.2) 48%,transparent 64%),
-    radial-gradient(ellipse 52% 46% at 78% 40%,rgba(92,62,38,0.34) 0%,rgba(48,32,22,0.16) 50%,transparent 62%),
-    radial-gradient(ellipse 68% 58% at 48% 62%,rgba(58,42,30,0.28) 0%,transparent 55%),
-    radial-gradient(ellipse 100% 90% at 50% 52%,rgba(26,36,28,0.75) 0%,rgba(18,14,10,0.9) 45%,rgba(10,8,6,0.97) 100%);
-  filter:blur(32px);
-  opacity:0.96;
+  inset:-18% -8% -28% -8%;
+  background:radial-gradient(
+    ellipse 48% 72% at 50% 36%,
+    rgba(238,200,120,0.5) 0%,
+    rgba(118,128,72,0.38) 38%,
+    rgba(32,42,28,0.55) 62%,
+    rgba(6,5,4,0.97) 100%
+  );
+  filter:blur(36px);
+  opacity:0.92;
   transform:translate3d(0,0,0);
-  animation:pricingAuraDrift 100s ease-in-out infinite;
+  animation:pricingSpotDrift 32s ease-in-out infinite;
+}
+.pricing-aura__spot-b{
+  inset:-22% -12% -32% -12%;
+  background:radial-gradient(
+    ellipse 56% 68% at 48% 40%,
+    rgba(200,155,72,0.22) 0%,
+    rgba(62,78,48,0.28) 45%,
+    transparent 70%
+  );
+  filter:blur(52px);
+  opacity:0.45;
+  transform:translate3d(1.5%,-1.2%,0);
+}
+.pricing-aura__vignette{
+  position:absolute;
+  inset:0;
+  background:
+    radial-gradient(ellipse 88% 78% at 50% 42%,transparent 0%,transparent 38%,rgba(0,0,0,0.55) 100%),
+    linear-gradient(180deg,rgba(0,0,0,0.35) 0%,transparent 22%,transparent 78%,rgba(0,0,0,0.5) 100%);
+  mix-blend-mode:multiply;
+  opacity:0.9;
 }
 .pricing-aura__grain{
   position:absolute;
   inset:0;
-  opacity:0.055;
+  opacity:0.04;
   background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.78' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
   background-size:200px 200px;
 }
-@keyframes pricingAuraDrift{
-  0%,100%{transform:translate3d(0,0,0) scale(1);}
-  50%{transform:translate3d(-0.9%,0.55%,0) scale(1.018);}
+@keyframes pricingSpotDrift{
+  0%,100%{opacity:0.9;filter:blur(36px);}
+  50%{opacity:0.97;filter:blur(38px);}
+}
+@media (prefers-reduced-motion:reduce){
+  .pricing-aura__spot{animation:none;opacity:0.92;}
 }
 
 .page{max-width:1040px;margin:0 auto;padding:0 20px 56px;position:relative;z-index:1}
@@ -166,178 +186,23 @@ body.pricing-page .pricing-layout__main{transform:translateZ(0);}
   color:var(--text-4);margin:10px 0 6px;max-width:48ch;line-height:1.5;
 }
 .pricing-rec-context:not([hidden]){display:block;}
-.cei-node-strip{
-  display:flex;flex-wrap:wrap;gap:6px 8px;align-items:center;position:relative;
-  padding:10px 12px;border:1px solid rgba(58,68,48,0.38);border-radius:var(--r);
-  background:rgba(10,11,9,0.62);max-width:100%;
-}
-.cei-node-strip--split{
-  flex-direction:column;align-items:stretch;flex-wrap:nowrap;gap:0;
-}
-.cei-node-strip--split .cei-node-strip__rows{
-  display:flex;flex-direction:column;gap:8px;width:100%;
-}
-.cei-node-strip--split .cei-node-strip__row--primary{
-  display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px 4px;width:100%;
-}
-.cei-node-strip--split .cei-node-strip__row--secondary{
-  display:flex;justify-content:center;align-items:center;gap:6px;flex-wrap:nowrap;width:100%;
-}
-@media (min-width:721px){
-  .cei-node-strip--split .cei-node-strip__rows{
-    flex-direction:row;flex-wrap:nowrap;align-items:center;justify-content:center;gap:10px;
-  }
-  .cei-node-strip--split .cei-node-strip__row--primary,
-  .cei-node-strip--split .cei-node-strip__row--secondary{
-    display:flex;width:auto;flex:0 0 auto;
-  }
-  .cei-node-strip--split .cei-node-strip__row--primary{gap:6px;}
-  .cei-node-strip--split .cei-node-strip__row--primary .cei-node{flex:1 1 0;min-width:0;text-align:center;}
-  .cei-node-strip--split .cei-node-strip__row--secondary .cei-node{flex:0 0 auto;}
-}
-@media (max-width:720px) and (min-width:400px){
-  .cei-node-strip--split .cei-node-strip__rows{
-    flex-direction:row;flex-wrap:nowrap;align-items:center;gap:5px;
-    overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:thin;
-    padding-bottom:6px;
-  }
-  .cei-node-strip--split .cei-node-strip__row--primary,
-  .cei-node-strip--split .cei-node-strip__row--secondary{display:flex;flex:0 0 auto;gap:5px;}
-}
-@media (max-width:720px){
-  .cei-node-strip--split{padding:8px 8px;}
-  .cei-node-strip--split .cei-node{font-size:6.5px;letter-spacing:0.1em;padding:4px 3px;}
-}
-button.cei-node{
-  font:inherit;font-family:var(--mono);cursor:pointer;appearance:none;-webkit-appearance:none;
-  text-align:center;
-}
-.cei-node--selected{
-  border-color:rgba(196,163,90,0.48)!important;
-  color:var(--text-3)!important;
-  box-shadow:0 0 12px rgba(58,62,48,0.28),0 0 1px rgba(196,163,90,0.35);
-}
-.cei-node-strip__pulse{
-  position:absolute;inset:-1px;border-radius:var(--r);pointer-events:none;
-  background:linear-gradient(120deg,transparent 38%,rgba(92,88,58,0.14) 50%,transparent 62%);
-  background-size:200% 100%;
-  animation:pricingCeiPulse 16s ease-in-out infinite;opacity:0.65;
-}
-@keyframes pricingCeiPulse{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
-@media (prefers-reduced-motion:reduce){.cei-node-strip__pulse{animation:none;opacity:0.35}}
-.cei-node{
-  font-family:var(--mono);font-size:7px;letter-spacing:0.12em;text-transform:uppercase;
-  color:var(--text-5);padding:4px 6px;border:1px solid rgba(52,48,40,0.35);border-radius:var(--r);
-  background:rgba(8,8,7,0.72);transition:border-color .2s,box-shadow .25s,color .15s;
-}
-.cei-node--hot{
-  color:var(--text);border-color:rgba(108,98,68,0.55);
-  box-shadow:0 0 12px rgba(42,48,32,0.22),0 0 1px rgba(118,108,78,0.35);
-}
-.pricing-cei-strip{margin:12px 0 14px;}
-.pricing-decision-field{
-  position:relative;z-index:2;
-  display:flex;align-items:center;justify-content:center;
-  min-height:64px;margin:8px 0 4px;
-  isolation:isolate;
-}
-.pricing-decision-shadows{
-  position:absolute;inset:-12% -20%;pointer-events:none;z-index:0;
-}
-.pricing-decision-shadows span{
-  position:absolute;left:50%;top:58%;width:56px;height:16px;margin-left:-28px;
-  border-radius:50%;
-  background:radial-gradient(ellipse at center,rgba(0,0,0,0.5) 0%,transparent 72%);
-  opacity:0.1;
-}
-.pricing-decision-shadows span:nth-child(1){transform:translate(-18px,6px) rotate(-14deg);}
-.pricing-decision-shadows span:nth-child(2){transform:translate(8px,4px) rotate(6deg);opacity:0.08;}
-.pricing-decision-shadows span:nth-child(3){transform:translate(-6px,0) rotate(-4deg);opacity:0.08;}
-.pricing-decision-shadows span:nth-child(4){transform:translate(16px,8px) rotate(12deg);opacity:0.06;}
-.pricing-decision-shadows span:nth-child(5){transform:translate(0,2px) rotate(0deg);opacity:0.08;width:64px;margin-left:-32px;}
-.pricing-decision-chess{
-  position:relative;z-index:2;width:38px;height:auto;color:#0a0908;
-  filter:drop-shadow(0 3px 14px rgba(196,163,90,0.12)) drop-shadow(0 0 1px rgba(88,72,52,0.35));
-}
+.pricing-cei-strip{display:none!important;}
 details.price-group--pricing-field-focus > summary{
   box-shadow:0 0 0 1px rgba(196,163,90,0.18),0 4px 28px rgba(42,48,36,0.18);
   transition:box-shadow .45s ease;
 }
 
-/* Two-column: main + live */
 .pricing-layout{
-  display:grid;
-  grid-template-columns:minmax(0,1fr) minmax(220px,280px);
-  gap:20px 22px;
-  align-items:start;
+  display:block;
+  max-width:min(100%,920px);
+  margin:0 auto;
 }
-.pricing-layout__aside{
-  position:sticky;top:56px;
-  align-self:start;
-  min-width:0;
-}
-.pricing-live-wrap{
-  position:relative;
-  border:1px solid rgba(244,237,224,0.1);
-  border-radius:var(--r);
-  background:rgba(8,8,7,0.55);
-  padding:8px;
-  overflow:visible;
-  max-width:100%;
-}
-.pricing-live-wrap::before{
-  content:"";position:absolute;right:100%;top:50%;margin-top:-1px;
-  width:min(72vw,520px);height:2px;
-  background:linear-gradient(90deg,transparent 0%,rgba(196,163,90,0.1) 24%,rgba(196,163,90,0.06) 100%);
-  pointer-events:none;z-index:0;
-}
-@media(max-width:900px){
-  .pricing-live-wrap::before{display:none;}
-}
-.pricing-live-wrap__label{
-  font-family:var(--mono);font-size:8px;letter-spacing:0.16em;text-transform:uppercase;
-  color:var(--text-5);padding:4px 6px 8px;
-}
+.pricing-layout__main{width:100%;}
 
-/* Live panel when docked in page (moved by script) */
-body.pricing-page #sh-live-panel{
-  position:relative!important;
-  right:auto!important;bottom:auto!important;left:auto!important;top:auto!important;
-  width:100%!important;max-width:100%!important;
-  margin:0!important;
-  z-index:4!important;
-  transform:none!important;
-  opacity:1!important;
-  pointer-events:auto!important;
-  max-height:min(480px,calc(100vh - 100px))!important;
-  overflow-x:hidden!important;
-  overflow-y:auto!important;
-}
-/* Collapsed live panel: not a scroll trap; wheel/touch pass through to the page */
-body.pricing-page #sh-live-panel.sh-live-panel--collapsed{
-  max-height:none!important;
-  overflow:visible!important;
-  overscroll-behavior:auto!important;
-  pointer-events:none!important;
-}
-body.pricing-page #sh-live-panel.sh-live-panel--collapsed .sh-live-panel__dock{
-  pointer-events:auto!important;
-}
-body.pricing-page #sh-live-panel.sh-live-panel--visible{
-  opacity:1!important;transform:none!important;pointer-events:auto!important;
-}
-body.pricing-page #sh-live-panel .sh-live-panel__dock{
-  position:absolute!important;
-  right:6px!important;top:6px!important;bottom:auto!important;left:auto!important;
-  max-width:min(100%,calc(100% - 12px))!important;
-  white-space:normal!important;
-  text-align:center!important;
-}
-
-/* Major groups */
+/* Major groups — read inside the spotlight */
 .price-group{
-  border:1px solid var(--line);border-radius:var(--r);
-  background:var(--bg-1);
+  border:1px solid rgba(244,237,224,0.1);border-radius:var(--r);
+  background:rgba(14,12,10,0.78);
   margin-bottom:8px;
   transition:box-shadow .3s ease,border-color .2s ease,transform .2s ease;
   position:relative;z-index:0;
@@ -361,8 +226,8 @@ body.pricing-page #sh-live-panel .sh-live-panel__dock{
   content:"+";position:absolute;right:14px;top:16px;font-size:13px;color:var(--text-5);
   transition:color .2s;
 }
-.price-group[open] > summary::after{content:"−";color:var(--blue-hi);}
-.price-group > summary:hover::after{color:var(--blue-hi);}
+.price-group[open] > summary::after{content:"−";color:var(--gold-hi);}
+.price-group > summary:hover::after{color:var(--gold-hi);}
 
 .price-group__kicker{
   font-family:var(--mono);font-size:8px;letter-spacing:0.18em;text-transform:uppercase;
@@ -459,14 +324,19 @@ body.pricing-page #sh-live-panel .sh-live-panel__dock{
   text-decoration:none;margin-top:8px;
 }
 .tier-cta--pri{
-  background:var(--blue);color:#fff;border:none;
-  box-shadow:0 3px 18px var(--blue-glow);
+  background:linear-gradient(180deg,rgba(72,58,42,0.95) 0%,rgba(38,32,26,0.98) 100%);
+  color:var(--text);border:1px solid rgba(196,163,90,0.38);
+  box-shadow:0 4px 22px rgba(0,0,0,0.45);
 }
-.tier-cta--pri:hover{background:var(--blue-hi);transform:translateY(-1px);box-shadow:0 8px 28px rgba(43,79,212,0.28);}
+.tier-cta--pri:hover{
+  background:linear-gradient(180deg,rgba(88,72,52,0.98) 0%,rgba(48,40,32,0.99) 100%);
+  transform:translateY(-1px);
+  box-shadow:0 8px 28px rgba(0,0,0,0.5);
+}
 .tier-cta--ghost{
   background:transparent;border:1px solid var(--line);color:var(--text-3);margin-left:8px;
 }
-.tier-cta--ghost:hover{border-color:rgba(43,79,212,0.4);color:var(--text-2);}
+.tier-cta--ghost:hover{border-color:rgba(196,163,90,0.35);color:var(--text-2);}
 .tier-cta:active{transform:scale(0.98);}
 .tier-cta-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;}
 
@@ -491,51 +361,10 @@ body.pricing-page #sh-live-panel .sh-live-panel__dock{
   font-family:var(--mono);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;
   color:var(--text-5);transition:color .15s;
 }
-.foot a:hover{color:var(--blue-hi);}
+.foot a:hover{color:var(--gold-hi);}
 .foot a.foot-club{color:var(--gold-dim);}
 .foot a.foot-club:hover{color:var(--gold-hi);}
 
-.custom-build-showcase{
-  position:relative;margin:0 0 18px;padding:22px 18px 20px;
-  border:1px solid rgba(196,163,90,0.22);
-  background:linear-gradient(145deg,rgba(20,18,14,0.94) 0%,rgba(10,12,10,0.9) 100%);
-  overflow:hidden;--mx:0;
-  transition:box-shadow .35s ease;
-}
-.price-group--custom-build[open] .custom-build-showcase{
-  box-shadow:0 14px 52px rgba(0,0,0,0.38),0 0 0 1px rgba(58,52,40,0.12);
-}
-.custom-build-showcase__glow{
-  position:absolute;inset:-50% -20%;
-  background:radial-gradient(ellipse 70% 50% at 50% 35%,rgba(72,82,52,0.14),transparent 58%);
-  pointer-events:none;
-  transform:translateX(calc(var(--mx) * 22px));
-  transition:transform .35s ease-out;
-}
-.custom-build-showcase__orbit{
-  position:relative;height:76px;margin-bottom:14px;display:flex;align-items:center;justify-content:center;gap:22px;
-}
-.custom-build-showcase__dot{
-  width:10px;height:10px;border-radius:50%;background:var(--gold-dim);
-  box-shadow:0 0 18px rgba(196,163,90,0.4);
-  animation:cbDot 5s ease-in-out infinite;
-}
-.custom-build-showcase__dot--b{animation-delay:.45s;background:rgba(62,78,52,0.95);box-shadow:0 0 18px rgba(42,52,38,0.4);}
-.custom-build-showcase__dot--c{animation-delay:.9s;background:var(--text-4);box-shadow:0 0 12px rgba(244,237,224,0.12);}
-@keyframes cbDot{
-  0%,100%{transform:translateY(0);opacity:0.88}
-  50%{transform:translateY(-8px);opacity:1}
-}
-@media (prefers-reduced-motion:reduce){
-  .custom-build-showcase__dot{animation:none}
-}
-.custom-build-showcase__proof{
-  font-family:var(--serif);font-size:clamp(20px,2.5vw,28px);font-weight:300;
-  color:var(--text);line-height:1.18;margin:0 0 10px;letter-spacing:-0.02em;position:relative;z-index:1;
-}
-.custom-build-showcase__sub{
-  font-size:13px;color:var(--text-3);line-height:1.55;max-width:52ch;margin:0;position:relative;z-index:1;
-}
 .deliver-note--limited{
   font-family:var(--mono);font-size:7px;letter-spacing:0.14em;text-transform:uppercase;
   color:rgba(110,101,88,0.65);text-align:center;margin-top:14px;padding-top:12px;
@@ -599,16 +428,15 @@ body.pricing-page.fe-env--s3 .fe-env-cta .tier-cta--pri{
   body.pricing-page .fe-env-tier2{transition:none;}
 }
 
-/* Mobile / tablet: live block between hero and groups */
-/* Compact path: earth gradient · nodes read against aura */
+/* Compact map path — warm gold into olive, no blue segment */
 body.pricing-page .sh-global-map__path-fill{
   background:linear-gradient(
     90deg,
-    rgba(148,128,88,0.88) 0%,
-    rgba(148,128,88,0.88) var(--sh-gold-end,32%),
-    rgba(58,74,48,0.78) var(--sh-gold-end,32%),
-    rgba(48,62,42,0.68) var(--sh-blue-mid,52%),
-    rgba(32,38,28,0.22) 100%
+    rgba(196,163,90,0.65) 0%,
+    rgba(196,163,90,0.65) var(--sh-gold-end,32%),
+    rgba(72,88,52,0.62) var(--sh-gold-end,32%),
+    rgba(42,52,38,0.45) 72%,
+    rgba(24,28,20,0.15) 100%
   );
 }
 body.pricing-page .sh-global-map__node.is-current,
@@ -623,26 +451,12 @@ body.pricing-page .sh-global-map__node.is-scroll-current .sh-global-map__dot{
 }
 body.pricing-page .sh-global-map__node.is-rec:not(.is-current):not(.is-scroll-current){
   border-color:rgba(72,78,58,0.34);
-  animation:pricingMapRecPulse 5.2s ease-in-out infinite;
-}
-@keyframes pricingMapRecPulse{
-  0%,100%{box-shadow:0 0 0 1px rgba(58,64,48,0.22),0 0 10px rgba(24,28,20,0.18);}
-  50%{box-shadow:0 0 0 1px rgba(88,82,62,0.32),0 0 20px rgba(42,48,36,0.26);}
 }
 body.pricing-page .sh-global-map__rec-inline{color:rgba(132,118,88,0.58);}
 body.pricing-page .sh-global-map__node.is-current .sh-global-map__rec-inline{color:rgba(158,142,108,0.78);}
 body.pricing-page .sh-global-map__arrow{color:rgba(88,82,58,0.42);}
 
 @media(max-width:900px){
-  .pricing-layout{
-    grid-template-columns:1fr;
-  }
-  .pricing-layout__aside{
-    position:relative;top:auto;
-    max-width:100%;
-    order:1;
-  }
-  .pricing-layout__main{order:2;}
   .pricing-hero{margin-bottom:14px;padding-bottom:12px;}
 }
 @media(max-width:480px){
@@ -651,22 +465,19 @@ body.pricing-page .sh-global-map__arrow{color:rgba(88,82,58,0.42);}
 }
 @media (prefers-reduced-motion: reduce) {
   .pricing-identity-line{opacity:1;animation:none;}
-  .pricing-aura__glow{animation:none!important;}
-  body.pricing-page .sh-global-map__node.is-rec:not(.is-current):not(.is-scroll-current){animation:none!important;}
+  .pricing-aura__spot{animation:none!important;}
 }
 </style>
 <link rel="stylesheet" href="/stephuary-early-mode.css"/>
 <link rel="stylesheet" href="/stephuary-free-mode.css"/>
 <style>
-/* After global sheets: warm earth base (early-mode otherwise wins on body background). */
+/* Early mode: same spotlight stack; base stays dark */
 html.early-mode body.pricing-page{
-  background:
-    linear-gradient(165deg,#1a140f 0%,#142018 48%,#0c0a08 100%),
-    radial-gradient(ellipse 70% 45% at 50% 0%,rgba(90,58,26,0.2) 0%,transparent 55%)!important;
+  background:#030201!important;
 }
 </style>
 </head>
-<body class="pricing-page">
+<body class="pricing-page" data-live-output="off">
 <script>
 (function () {
   try {
@@ -703,7 +514,9 @@ html.early-mode body.pricing-page{
 })();
 </script>
 <div class="pricing-aura" aria-hidden="true">
-  <div class="pricing-aura__glow"></div>
+  <div class="pricing-aura__spot"></div>
+  <div class="pricing-aura__spot-b"></div>
+  <div class="pricing-aura__vignette"></div>
   <div class="pricing-aura__grain"></div>
 </div>
 <div id="page-transition" aria-hidden="true"></div>
@@ -737,16 +550,8 @@ html.early-mode body.pricing-page{
       <p class="pricing-identity-line">I design systems so your work's usable, visible, and paid.</p>
       <p class="pricing-hero__sub">Start free. Unlock only what you need.</p>
       <p class="pricing-rec-context" id="pricing-rec-context" hidden></p>
-      <div id="pricing-cei-strip" class="pricing-cei-strip" aria-label="Pressure map"></div>
+      <div id="pricing-cei-strip" class="pricing-cei-strip" hidden aria-hidden="true"></div>
       <p class="pricing-hero__personal" id="pricing-hero-personal" hidden></p>
-    </div>
-    <div class="pricing-decision-field" aria-hidden="true">
-      <div class="pricing-decision-shadows">
-        <span></span><span></span><span></span><span></span><span></span>
-      </div>
-      <svg class="pricing-decision-chess" viewBox="0 0 48 80" xmlns="http://www.w3.org/2000/svg" focusable="false">
-        <path fill="currentColor" d="M24 5.5c-3.8 0-7 3-7 7.2 0 2.8 1.6 5.2 3.8 6.4v2.9h-4.6l-1.8 9.2h17.2l-1.8-9.2H23.2v-2.9c2.2-1.2 3.8-3.6 3.8-6.4 0-4.2-3.2-7.2-7-7.2zm-7.2 28.4h14.4l-1 38.6H18l-1-38.6z"/>
-      </svg>
     </div>
   </header>
 
@@ -1009,13 +814,6 @@ html.early-mode body.pricing-page{
       </details>
 
     </div>
-
-    <aside class="pricing-layout__aside" aria-label="Live output">
-      <div class="pricing-live-wrap">
-        <p class="pricing-live-wrap__label">Live output</p>
-        <div id="pricing-live-slot"></div>
-      </div>
-    </aside>
   </div>
 
   <footer class="foot">
@@ -1041,23 +839,6 @@ html.early-mode body.pricing-page{
   var FEK = 'stephuary_pricing_fe_env';
   var IXK = 'stephuary_pricing_fe_ix';
 
-  function placeLivePanel() {
-    var panel = document.getElementById('sh-live-panel');
-    var slot = document.getElementById('pricing-live-slot');
-    if (!panel || !slot) return;
-    if (slot.contains(panel)) return;
-    slot.appendChild(panel);
-  }
-  function initLiveDock() {
-    placeLivePanel();
-    if (!document.getElementById('pricing-live-slot').querySelector('#sh-live-panel')) {
-      setTimeout(placeLivePanel, 80);
-    }
-  }
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initLiveDock);
-  else initLiveDock();
-  window.addEventListener('load', placeLivePanel);
-
   var CEI_CLUSTER = {
     revenue: 'B',
     attention: 'A',
@@ -1067,22 +848,11 @@ html.early-mode body.pricing-page{
     environment: 'D',
     decision: 'B'
   };
-  var CEI_LIVE = {
-    behavior: 'Next move: behavior shapes what people trust first.',
-    environment: 'Next move: align environment with how you want to be read.',
-    decision: 'Next move: narrow decisions before you scale surface area.',
-    time: 'Next move: time cost is the hidden price—tighten throughput.',
-    revenue: 'Next move: revenue path aligns with Core Decision & Build.',
-    friction: 'Next move: friction maps to Diagnostic & Advisory depth.',
-    attention: 'Next move: attention budget fits Free & Low Cost entry.'
-  };
   function applyPricingFieldUi(id) {
     var cl = CEI_CLUSTER[id];
     document.querySelectorAll('[data-pricing-cluster]').forEach(function (d) {
       d.classList.toggle('price-group--pricing-field-focus', cl && d.getAttribute('data-pricing-cluster') === cl);
     });
-    var act = document.getElementById('sh-live-action');
-    if (act && CEI_LIVE[id]) act.textContent = CEI_LIVE[id];
   }
   document.addEventListener('pricing-cei-select', function (e) {
     var id = e.detail && e.detail.id;
@@ -1096,14 +866,7 @@ html.early-mode body.pricing-page{
     } catch (err) {}
   }
   window.addEventListener('load', function () {
-    var tries = 0;
-    function tick() {
-      syncPricingFieldFromBody();
-      var act = document.getElementById('sh-live-action');
-      if (act && act.textContent && act.textContent !== '—') return;
-      if (tries++ < 25) setTimeout(tick, 120);
-    }
-    setTimeout(tick, 200);
+    syncPricingFieldFromBody();
   });
 
   var groups = document.querySelectorAll('[data-pricing-group]');
@@ -1225,8 +988,6 @@ html.early-mode body.pricing-page{
           t.closest &&
           (t.closest('.top-nav') ||
             t.closest('.sh-global-map-wrap') ||
-            t.closest('#pricing-live-slot') ||
-            t.closest('#sh-live-panel') ||
             t.closest('.pricing-hero'))
         ) {
           tryFeEngage(2, false);
