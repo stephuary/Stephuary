@@ -15,6 +15,13 @@
     4: '/automation',
     5: '/sovereignty'
   };
+  var PHASE_LABEL = {
+    1: 'Capture',
+    2: 'Monetize',
+    3: 'Structure',
+    4: 'Automation',
+    5: 'Sovereignty'
+  };
   var ROOM_PATH = {
     '01': '/room-01-extraction',
     '02': '/room-02-direction',
@@ -106,7 +113,7 @@
     var ph = ROOM_PHASE[id];
     return {
       href: ROOM_PATH[id] + '?step=' + step,
-      line: 'Continue where you left off → Phase ' + ph
+      line: 'Continue where you left off → ' + (PHASE_LABEL[ph] || 'Phase ' + ph)
     };
   }
 
@@ -139,6 +146,7 @@
     clearProgress: clearProgress,
     confirmRestart: confirmRestart,
     PHASE_PATH: PHASE_PATH,
+    PHASE_LABEL: PHASE_LABEL,
     ROOM_PATH: ROOM_PATH,
     ROOM_ORDER: ROOM_ORDER
   };

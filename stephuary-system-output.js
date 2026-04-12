@@ -189,7 +189,7 @@
           '</dd></dl>'
       ) +
       section(
-        'Position clarity',
+        'Monetize clarity',
         '<dl class="sys-output__dl"><dt>One-line positioning</dt><dd>' +
           esc(posLine || '—') +
           '</dd><dt>Audience</dt><dd>' +

@@ -1399,8 +1399,8 @@
     }
     var PATH_PHASES = [
       { path: '/', n: 0, name: 'Home', where: 'Home', cat: 'Overview', act: 'Start the diagnostic when you want numbers on leaks.' },
-      { path: '/capture', n: 1, name: 'Extraction', where: "You're in Capture", cat: 'Leak visibility', act: 'Finish the full diagnostic once.' },
-      { path: '/monetize', n: 2, name: 'Position', where: "You're in Position", cat: 'Offer clarity', act: 'Name one buyer and one price next.' },
+      { path: '/capture', n: 1, name: 'Capture', where: "You're in Capture", cat: 'Leak visibility', act: 'Finish the full diagnostic once.' },
+      { path: '/monetize', n: 2, name: 'Monetize', where: "You're in Monetize", cat: 'Offer clarity', act: 'Name one buyer and one price next.' },
       { path: '/structure', n: 3, name: 'Structure', where: "You're in Structure", cat: 'Delivery & packaging', act: 'Turn your concept into one page you can send.' },
       { path: '/automation', n: 4, name: 'Automation', where: "You're in Automation", cat: 'Execution load', act: 'Automate one repeat step this week.' },
       { path: '/sovereignty', n: 5, name: 'Sovereignty', where: "You're in Sovereignty", cat: 'Ownership', act: 'Choose one system you own end to end.' },
@@ -1505,6 +1505,39 @@
       '<button type="button" class="sh-live-panel__dock" id="sh-live-dock" title="View live output" aria-label="View results">View Results</button>';
 
     document.body.appendChild(root);
+    document.body.classList.add('sh-has-live-panel');
+
+    var mqLiveMobile = window.matchMedia ? window.matchMedia('(max-width: 979px)') : { matches: false };
+    if (mqLiveMobile.addEventListener) {
+      mqLiveMobile.addEventListener('change', function () {
+        if (!mqLiveMobile.matches) document.body.classList.remove('sh-live-panel-expanded-mobile');
+      });
+    }
+    function setLivePanelMobileExpanded(on) {
+      if (!mqLiveMobile.matches) return;
+      document.body.classList.toggle('sh-live-panel-expanded-mobile', !!on);
+    }
+    var livePanelScrollCollapseTimer = null;
+    function scheduleMobileScrollCollapse() {
+      if (!mqLiveMobile.matches) return;
+      if (reduceMotion) return;
+      if (root.classList.contains('sh-live-panel--collapsed')) return;
+      window.clearTimeout(livePanelScrollCollapseTimer);
+      livePanelScrollCollapseTimer = window.setTimeout(function () {
+        if (!mqLiveMobile.matches) return;
+        if (root.classList.contains('sh-live-panel--collapsed')) return;
+        setPanelClosed(true);
+        root.classList.add('sh-live-panel--collapsed');
+        if (btnDock) btnDock.setAttribute('aria-hidden', 'false');
+        root.classList.add('sh-live-panel--visible');
+        setLivePanelMobileExpanded(false);
+        clampLivePanelToViewport();
+      }, 1200);
+    }
+    function onLivePanelScroll() {
+      scheduleMobileScrollCollapse();
+    }
+    window.addEventListener('scroll', onLivePanelScroll, { passive: true });
 
     var elPhase = document.getElementById('sh-live-phase');
     var elStatus = document.getElementById('sh-live-status');
@@ -1810,13 +1843,14 @@
       root.classList.remove('sh-live-panel--collapsed');
       btnDock.setAttribute('aria-hidden', 'true');
       root.classList.add('sh-live-panel--visible');
+      setLivePanelMobileExpanded(true);
       clampLivePanelToViewport();
     });
 
     var collapseBtn = document.createElement('button');
     collapseBtn.type = 'button';
     collapseBtn.className = 'sh-live-panel__min';
-    collapseBtn.setAttribute('aria-label', 'Minimize live output');
+    collapseBtn.setAttribute('aria-label', 'Collapse View Results');
     collapseBtn.setAttribute('title', 'Minimize');
     collapseBtn.textContent = '−';
 
@@ -1825,6 +1859,8 @@
       root.classList.add('sh-live-panel--collapsed');
       btnDock.setAttribute('aria-hidden', 'false');
       root.classList.add('sh-live-panel--visible');
+      setLivePanelMobileExpanded(false);
+      window.clearTimeout(livePanelScrollCollapseTimer);
       clampLivePanelToViewport();
     });
     chrome.insertBefore(collapseBtn, chrome.firstChild);

@@ -6,7 +6,7 @@
   var KEY = 'stephuary_os_v1';
 
   var META = {
-    '01': { path: '/room-01-extraction', title: 'Room 1 · Extraction', statuses: ['exposed', 'reducing', 'controlled'] },
+    '01': { path: '/room-01-extraction', title: 'Room 1 · Capture', statuses: ['exposed', 'reducing', 'controlled'] },
     '02': { path: '/room-02-direction', title: 'Room 2 · Direction', statuses: ['scattered', 'shifting', 'locked'] },
     '03': { path: '/room-03-transaction', title: 'Room 3 · Transaction', statuses: ['unsent', 'active', 'closed'] },
     '04': { path: '/room-04-infrastructure', title: 'Room 4 · Infrastructure', statuses: ['fragile', 'stabilizing', 'durable'] },
