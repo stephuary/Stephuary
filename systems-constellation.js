@@ -12,10 +12,18 @@
   var STORAGE_DIASPORA = 'stephuary_diaspora_index';
 
   var REL = {
-    capture: ['playbooks', 'direction'],
-    playbooks: ['direction', 'revenue'],
-    direction: ['revenue', '_off'],
-    revenue: ['_off', '_diaspora']
+    capture: ['monetize', 'playbooks'],
+    monetize: ['structure', 'capture'],
+    structure: ['automation', 'monetize'],
+    automation: ['sovereignty', 'structure'],
+    sovereignty: ['snapshot', 'automation'],
+    playbooks: ['direction', 'capture'],
+    direction: ['revenue', 'structure'],
+    revenue: ['lock', 'monetize'],
+    lock: ['concept', 'snapshot'],
+    concept: ['custom', '_off'],
+    snapshot: ['sovereignty', 'lock'],
+    custom: ['concept', '_diaspora']
   };
 
   var svgNS = 'http://www.w3.org/2000/svg';
@@ -116,7 +124,12 @@
         var off = pointOffscreen(x1, y1, w, h, sourceId);
         x2 = off.x;
         y2 = off.y;
-        bend = sourceId === 'direction' ? 22 : 12;
+        bend =
+          sourceId === 'direction'
+            ? 22
+            : sourceId === 'sovereignty' || sourceId === 'concept'
+              ? 18
+              : 12;
       } else if (tid === '_diaspora') {
         if (!diasporaUnlocked()) continue;
         var dia = pointDiaspora(w, h);

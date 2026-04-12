@@ -463,58 +463,102 @@ body.sys-adaptive--dwell3 .tier-cta-ghost {
   bottom: max(14px, env(safe-area-inset-bottom, 0px));
   z-index: 152;
   display: flex;
-  flex-direction: column-reverse;
+  flex-direction: column;
   align-items: flex-start;
-  gap: 8px;
+  gap: 10px;
   pointer-events: none;
 }
-.sys-phase-rail-wrap--open {
+.sys-phase-rail-wrap > * {
   pointer-events: auto;
 }
-.sys-phase-rail-toggle {
-  pointer-events: auto;
-  padding: 8px 12px;
+.sys-phase-rail-nav {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+  max-width: min(100vw - 24px, 420px);
+}
+.sys-phase-rail-nav__link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 36px;
+  padding: 6px 10px;
   border-radius: 2px;
-  border: 1px solid rgba(196, 163, 90, 0.25);
-  background: rgba(8, 8, 7, 0.9);
-  color: rgba(196, 163, 90, 0.95);
+  border: 1px solid rgba(154, 130, 96, 0.22);
+  background: rgba(10, 9, 8, 0.92);
+  color: rgba(232, 224, 212, 0.82);
   font-family: 'DM Mono', ui-monospace, monospace;
   font-size: 9px;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
-  cursor: pointer;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+  text-decoration: none;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+  transition: border-color 0.25s ease, color 0.25s ease, box-shadow 0.25s ease;
 }
-.sys-phase-rail-toggle:hover {
+.sys-phase-rail-nav__link:hover {
   border-color: rgba(58, 107, 255, 0.38);
-  background: rgba(43, 79, 212, 0.18);
+  color: rgba(244, 237, 224, 0.95);
 }
-.sys-phase-rail-wrap:not(.sys-phase-rail-wrap--open) .sys-phase-rail {
-  display: none;
+.sys-phase-rail-nav__hub {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 36px;
+  min-height: 36px;
+  padding: 6px 8px;
+  border-radius: 2px;
+  border: 1px solid rgba(43, 79, 212, 0.28);
+  background: rgba(43, 79, 212, 0.12);
+  color: rgba(196, 163, 90, 0.95);
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 15px;
+  line-height: 1;
+  text-decoration: none;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+  transition: border-color 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+}
+.sys-phase-rail-nav__hub:hover {
+  border-color: rgba(58, 107, 255, 0.45);
+  background: rgba(43, 79, 212, 0.2);
 }
 .sys-phase-rail {
   position: relative;
   display: flex;
-  gap: 7px;
+  flex-wrap: wrap;
+  gap: 6px;
   align-items: center;
-  pointer-events: none;
 }
-.sys-phase-rail span {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: rgba(244, 237, 224, 0.1);
-  border: 1px solid rgba(244, 237, 224, 0.08);
-  transition: background 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease;
+.sys-phase-rail__dot {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 32px;
+  min-height: 32px;
+  padding: 4px;
+  border-radius: 2px;
+  font-family: 'DM Mono', ui-monospace, monospace;
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  text-decoration: none;
+  color: rgba(244, 237, 224, 0.45);
+  border: 1px solid rgba(244, 237, 224, 0.1);
+  background: rgba(244, 237, 224, 0.04);
+  transition: background 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease, color 0.35s ease;
 }
-.sys-phase-rail span.is-visited {
+.sys-phase-rail__dot:hover {
+  color: rgba(244, 237, 224, 0.88);
+  border-color: rgba(58, 107, 255, 0.28);
+}
+.sys-phase-rail__dot.is-visited {
   border-color: rgba(196, 163, 90, 0.42);
-  background: rgba(196, 163, 90, 0.16);
+  background: rgba(196, 163, 90, 0.12);
+  color: rgba(232, 224, 212, 0.75);
 }
-.sys-phase-rail span.is-current {
-  background: rgba(43, 79, 212, 0.55);
+.sys-phase-rail__dot.is-current {
+  background: rgba(43, 79, 212, 0.45);
   border-color: rgba(58, 107, 255, 0.48);
-  box-shadow: 0 0 12px rgba(43, 79, 212, 0.28);
+  color: rgba(244, 237, 224, 0.95);
+  box-shadow: 0 0 14px rgba(43, 79, 212, 0.28);
 }
 
 .sh-map-node.is-phase-visited {
@@ -1461,4 +1505,9 @@ body.sh-zone--cei .sh-global-map__node:hover {
   body.sh-spatial-from-nav.sh-page-entry > *:not(#page-transition):not(#sh-env-depth):not(#sh-live-panel):not(#sh-flow-end):not(.sys-phase-rail-wrap) {
     transform: translateY(12px) scale(0.999);
   }
+}
+
+/* Injected phase rail (prev / map / next + jump): keep scroll end clear on phase flows */
+html.phase-page-min body {
+  padding-bottom: max(140px, min(28vh, 240px));
 }

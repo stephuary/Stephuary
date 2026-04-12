@@ -14,7 +14,7 @@
   </script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>System · Stephuary</title>
-  <meta name="description" content="All phases: enter any room, resume progress, move forward." />
+  <meta name="description" content="Five phases—Capture through Sovereignty—plus rooms, review, and private build. Resume anywhere." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400&family=DM+Mono:wght@300;400&family=Lato:wght@300;400&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/stephuary-interactive.css" />
@@ -158,6 +158,27 @@
       }
     }
 
+    .systems-phase-trace {
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      width: 100%;
+      max-width: min(100%, 960px);
+      margin: 0 auto 8px;
+      padding: 0 8px;
+      opacity: 0.65;
+    }
+    .systems-phase-trace span {
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(
+        90deg,
+        rgba(58, 107, 255, 0.35),
+        rgba(196, 163, 90, 0.45),
+        rgba(58, 107, 255, 0.35)
+      );
+      border-radius: 1px;
+    }
     .sh-flow-grid {
       display: flex;
       flex-wrap: wrap;
@@ -168,12 +189,35 @@
       margin: 0 auto 12px;
       padding: 0 8px;
     }
+    .sh-flow-grid--phases {
+      margin-bottom: 6px;
+    }
     .sh-flow-grid .sh-map-node {
       flex: 1 1 140px;
       min-width: 118px;
       max-width: 200px;
       margin: 0;
       padding: 18px 12px 16px;
+    }
+    .sh-map-node--tier-phase {
+      border-color: rgba(58, 107, 255, 0.26);
+      box-shadow:
+        0 0 0 1px rgba(43, 79, 212, 0.1),
+        0 10px 32px rgba(0, 0, 0, 0.38);
+    }
+    .sh-map-node--tier-phase:hover {
+      border-color: rgba(58, 107, 255, 0.5);
+      box-shadow: 0 10px 40px rgba(43, 79, 212, 0.22);
+    }
+    .sh-map-node--tier-tool {
+      border-color: rgba(244, 237, 224, 0.12);
+    }
+    .sh-map-node--tier-layer {
+      border-color: rgba(196, 163, 90, 0.28);
+      box-shadow: 0 0 24px rgba(196, 163, 90, 0.08);
+    }
+    .sh-map-node--tier-layer:hover {
+      border-color: rgba(196, 163, 90, 0.42);
     }
 
     .sh-map-node {
@@ -297,6 +341,15 @@
     @media (max-width: 640px) {
       .wrap { padding-left: 20px; padding-right: 20px; }
       nav { padding: 16px 20px; }
+      .sh-flow-grid .sh-map-node {
+        min-width: min(100%, 160px);
+        padding: 20px 14px 18px;
+      }
+      .sh-map-node__one {
+        font-size: 12px;
+        white-space: normal;
+        line-height: 1.4;
+      }
     }
   </style>
   <link rel="stylesheet" href="/stephuary-early-mode.css" />
@@ -324,9 +377,9 @@
   <header class="sys-compact" style="margin-top:0">
     <div class="sys-compact__bg"><canvas aria-hidden="true"></canvas></div>
     <div class="sys-compact__inner">
-      <p class="sys-label">Flow</p>
+      <p class="sys-label">Stephuary system</p>
       <h1 class="sys-title">System</h1>
-      <p class="sys-lead">Diagnostic through custom: open a step and save progress as you go.</p>
+      <p class="sys-lead">Five phases in order—then rooms, review, and private build. Open anywhere; progress saves.</p>
       <div id="sys-visual" class="sys-visual" data-visual="systemmap"></div>
     </div>
   </header>
@@ -341,59 +394,88 @@
     </div>
 
     <div class="systems-flow-wrap">
-    <div class="sh-flow-grid" aria-label="Stephuary system path">
-      <a href="/capture" class="sh-map-node magnetic" data-sh-hover data-constellation-id="capture">
-        <span class="sh-map-node__label">Diagnostic</span>
-        <span class="sh-map-node__name">Capture</span>
-        <span class="sh-map-node__one">Where time and money are lost.</span>
-        <span class="sh-map-node__hint">Identify where time and money are being lost. Free.</span>
-      </a>
-      <a href="/playbooks" class="sh-map-node magnetic" data-sh-hover data-constellation-id="playbooks">
-        <span class="sh-map-node__label">Rooms</span>
-        <span class="sh-map-node__name">Playbooks</span>
-        <span class="sh-map-node__one">One problem, one room.</span>
-        <span class="sh-map-node__hint">Break down one problem clearly.</span>
-      </a>
-      <a href="/direction-system" class="sh-map-node magnetic" data-sh-hover data-constellation-id="direction">
-        <span class="sh-map-node__label">Direction System</span>
-        <span class="sh-map-node__name">Choose a path</span>
-        <span class="sh-map-node__one">One direction that makes sense.</span>
-        <span class="sh-map-node__hint">Choose one path that makes sense.</span>
-      </a>
-      <a href="/revenue-system" class="sh-map-node magnetic" data-sh-hover data-constellation-id="revenue">
-        <span class="sh-map-node__label">Revenue System</span>
-        <span class="sh-map-node__name">Money path</span>
-        <span class="sh-map-node__one">Turn direction into revenue.</span>
-        <span class="sh-map-node__hint">Turn direction into something that pays.</span>
-      </a>
-      <a href="/focused-review" class="sh-map-node magnetic" data-sh-hover data-constellation-id="lock">
-        <span class="sh-map-node__label">Direction Lock</span>
-        <span class="sh-map-node__name">Focused review</span>
-        <span class="sh-map-node__one">Fix order. Cut noise.</span>
-        <span class="sh-map-node__hint">Fix order and remove unnecessary work.</span>
-      </a>
-      <a href="/access" class="sh-map-node magnetic" data-sh-hover data-constellation-id="concept">
-        <span class="sh-map-node__label">Concept Build</span>
-        <span class="sh-map-node__name">Access</span>
-        <span class="sh-map-node__one">A usable concept and offer.</span>
-        <span class="sh-map-node__hint">Build a clear, usable offer.</span>
-      </a>
-      <a href="/snapshot" class="sh-map-node magnetic" data-sh-hover data-constellation-id="snapshot">
-        <span class="sh-map-node__label">Snapshot</span>
-        <span class="sh-map-node__name">Full read</span>
-        <span class="sh-map-node__one">Diagnostic in depth.</span>
-        <span class="sh-map-node__hint">Full review of what is working and what is not.</span>
-      </a>
-      <a href="https://onlysometimesclub.com" class="sh-map-node magnetic" data-sh-hover data-constellation-id="custom" target="_blank" rel="noopener noreferrer">
-        <span class="sh-map-node__label">Custom</span>
-        <span class="sh-map-node__name">OSC</span>
-        <span class="sh-map-node__one">Built around your business.</span>
-        <span class="sh-map-node__hint">Custom system built around your business.</span>
-      </a>
-    </div>
+      <div class="systems-phase-trace" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>
+      <div class="sh-flow-grid sh-flow-grid--phases" aria-label="Five phases">
+        <a href="/capture" class="sh-map-node sh-map-node--tier-phase magnetic" data-sh-hover data-constellation-id="capture">
+          <span class="sh-map-node__label">Phase 01</span>
+          <span class="sh-map-node__name">Capture</span>
+          <span class="sh-map-node__one">Where time and money leak.</span>
+          <span class="sh-map-node__hint">Map perception, avoidance, and loss. Free.</span>
+        </a>
+        <a href="/monetize" class="sh-map-node sh-map-node--tier-phase magnetic" data-sh-hover data-constellation-id="monetize">
+          <span class="sh-map-node__label">Phase 02</span>
+          <span class="sh-map-node__name">Monetize</span>
+          <span class="sh-map-node__one">Price and position for buyers.</span>
+          <span class="sh-map-node__hint">Name how you work against what people pay for.</span>
+        </a>
+        <a href="/structure" class="sh-map-node sh-map-node--tier-phase magnetic" data-sh-hover data-constellation-id="structure">
+          <span class="sh-map-node__label">Phase 03</span>
+          <span class="sh-map-node__name">Structure</span>
+          <span class="sh-map-node__one">Offer, delivery, execution.</span>
+          <span class="sh-map-node__hint">Structure so it can convert and get paid.</span>
+        </a>
+        <a href="/automation" class="sh-map-node sh-map-node--tier-phase magnetic" data-sh-hover data-constellation-id="automation">
+          <span class="sh-map-node__label">Phase 04</span>
+          <span class="sh-map-node__name">Automation</span>
+          <span class="sh-map-node__one">Validation and systems that hold.</span>
+          <span class="sh-map-node__hint">Proof in the world, then repeatable systems.</span>
+        </a>
+        <a href="/sovereignty" class="sh-map-node sh-map-node--tier-phase magnetic" data-sh-hover data-constellation-id="sovereignty">
+          <span class="sh-map-node__label">Phase 05</span>
+          <span class="sh-map-node__name">Sovereignty</span>
+          <span class="sh-map-node__one">Rules for tools and attention.</span>
+          <span class="sh-map-node__hint">Control where output and income depend on you.</span>
+        </a>
+      </div>
+      <div class="sh-flow-grid sh-flow-grid--tools" aria-label="Rooms and tools">
+        <a href="/playbooks" class="sh-map-node sh-map-node--tier-tool magnetic" data-sh-hover data-constellation-id="playbooks">
+          <span class="sh-map-node__label">Tool</span>
+          <span class="sh-map-node__name">Playbooks</span>
+          <span class="sh-map-node__one">One problem, one room.</span>
+          <span class="sh-map-node__hint">Break down one problem with clarity.</span>
+        </a>
+        <a href="/direction-system" class="sh-map-node sh-map-node--tier-tool magnetic" data-sh-hover data-constellation-id="direction">
+          <span class="sh-map-node__label">Direction system</span>
+          <span class="sh-map-node__name">Commit a path</span>
+          <span class="sh-map-node__one">One direction that holds.</span>
+          <span class="sh-map-node__hint">Choose and document a single strategic path.</span>
+        </a>
+        <a href="/revenue-system" class="sh-map-node sh-map-node--tier-tool magnetic" data-sh-hover data-constellation-id="revenue">
+          <span class="sh-map-node__label">Revenue system</span>
+          <span class="sh-map-node__name">Revenue model</span>
+          <span class="sh-map-node__one">Turn direction into revenue.</span>
+          <span class="sh-map-node__hint">Align how you earn with the path you chose.</span>
+        </a>
+        <a href="/focused-review" class="sh-map-node sh-map-node--tier-tool magnetic" data-sh-hover data-constellation-id="lock">
+          <span class="sh-map-node__label">Direction lock</span>
+          <span class="sh-map-node__name">Focused review</span>
+          <span class="sh-map-node__one">Fix order. Cut noise.</span>
+          <span class="sh-map-node__hint">Tighten sequence and remove unnecessary work.</span>
+        </a>
+        <a href="/snapshot" class="sh-map-node sh-map-node--tier-tool magnetic" data-sh-hover data-constellation-id="snapshot">
+          <span class="sh-map-node__label">Snapshot</span>
+          <span class="sh-map-node__name">Deep diagnostic</span>
+          <span class="sh-map-node__one">Full read of your system.</span>
+          <span class="sh-map-node__hint">In-depth review of what works and what does not.</span>
+        </a>
+      </div>
+      <div class="sh-flow-grid sh-flow-grid--layer" aria-label="Private and custom">
+        <a href="/access" class="sh-map-node sh-map-node--tier-layer magnetic" data-sh-hover data-constellation-id="concept">
+          <span class="sh-map-node__label">Private build</span>
+          <span class="sh-map-node__name">Concept build</span>
+          <span class="sh-map-node__one">Membership, offer, and build.</span>
+          <span class="sh-map-node__hint">.5% Club: usable concept and offer.</span>
+        </a>
+        <a href="https://onlysometimesclub.com" class="sh-map-node sh-map-node--tier-layer magnetic" data-sh-hover data-constellation-id="custom" target="_blank" rel="noopener noreferrer">
+          <span class="sh-map-node__label">Custom layer</span>
+          <span class="sh-map-node__name">Only Sometimes Club</span>
+          <span class="sh-map-node__one">Built around your business.</span>
+          <span class="sh-map-node__hint">Custom system and cultural intelligence.</span>
+        </a>
+      </div>
     </div>
 
-    <p class="hub-foot">Diagnostic: <a href="/capture">Capture</a>. Results: <a href="/results">Results</a>. <a href="/pricing">Pricing</a> for systems. <a href="/snapshot">Snapshot</a> for a full read.</p>
+    <p class="hub-foot">Phases <a href="/capture">01–05</a>. Outcomes: <a href="/results">Results</a>. <a href="/pricing">Pricing</a>. <a href="/snapshot">Snapshot</a> for depth.</p>
   </div>
 
   <footer>

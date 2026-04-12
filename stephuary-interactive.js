@@ -29,6 +29,7 @@
   var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var isMobile = window.matchMedia('(max-width: 767px)').matches;
   var PHASE_PATHS = ['/capture', '/monetize', '/structure', '/automation', '/sovereignty'];
+  var PHASE_SHORT = ['Capture', 'Monetize', 'Structure', 'Automation', 'Sovereignty'];
   var STORAGE_VISITED = 'stephuary_phases_visited';
   var SESSION_SNAPSHOT_KEY = 'stephuary_session_snapshot_v1';
   var CAPTURE_STORE_KEY = 'stephuary_capture_p01_v2';
@@ -835,42 +836,74 @@
   function injectPhaseRail() {
     var path = normPath(window.location.pathname);
     var idx = PHASE_PATHS.indexOf(path);
-    if (idx < 0 && path !== '/systems') return;
-    var rail = document.createElement('div');
-    rail.className = 'sys-phase-rail';
-    rail.setAttribute('aria-hidden', 'true');
+    if (idx < 0) return;
+
     var arr = [];
     try {
       var raw = localStorage.getItem(STORAGE_VISITED);
       arr = raw ? JSON.parse(raw) : [];
     } catch (e) {}
-    for (var i = 0; i < 5; i++) {
-      var s = document.createElement('span');
-      var pth = PHASE_PATHS[i];
-      if (arr.indexOf(pth) >= 0) s.classList.add('is-visited');
-      if (idx === i) s.classList.add('is-current');
-      rail.appendChild(s);
-    }
+
     var wrap = document.createElement('div');
     wrap.className = 'sys-phase-rail-wrap';
     wrap.id = 'sys-phase-rail-wrap';
-    var btn = document.createElement('button');
-    btn.type = 'button';
-    btn.className = 'sys-phase-rail-toggle';
-    btn.setAttribute('aria-expanded', 'false');
-    btn.setAttribute('aria-controls', 'sys-phase-rail-dots');
-    btn.setAttribute('title', 'Phase progress');
-    btn.setAttribute('aria-label', 'Show or hide phase progress');
-    btn.textContent = 'Progress';
+    wrap.setAttribute('aria-label', 'Phase navigation');
+
+    var nav = document.createElement('div');
+    nav.className = 'sys-phase-rail-nav';
+
+    var prevHref = idx === 0 ? '/systems' : PHASE_PATHS[idx - 1];
+    var prev = document.createElement('a');
+    prev.href = prevHref;
+    prev.className = 'sys-phase-rail-nav__link sys-phase-rail-nav__link--prev magnetic';
+    prev.textContent = idx === 0 ? '← System' : '← ' + PHASE_SHORT[idx - 1];
+    prev.setAttribute('title', idx === 0 ? 'System map' : 'Previous phase');
+
+    var hub = document.createElement('a');
+    hub.href = '/systems';
+    hub.className = 'sys-phase-rail-nav__hub magnetic';
+    hub.textContent = '◇';
+    hub.setAttribute('title', 'Five phases map');
+    hub.setAttribute('aria-label', 'Open system map');
+
+    var nextHref = idx === PHASE_PATHS.length - 1 ? '/results' : PHASE_PATHS[idx + 1];
+    var next = document.createElement('a');
+    next.href = nextHref;
+    next.className = 'sys-phase-rail-nav__link sys-phase-rail-nav__link--next magnetic';
+    next.textContent =
+      idx === PHASE_PATHS.length - 1 ? 'Results →' : PHASE_SHORT[idx + 1] + ' →';
+    next.setAttribute('title', idx === PHASE_PATHS.length - 1 ? 'Results' : 'Next phase');
+
+    nav.appendChild(prev);
+    nav.appendChild(hub);
+    nav.appendChild(next);
+
+    var rail = document.createElement('div');
+    rail.className = 'sys-phase-rail';
     rail.id = 'sys-phase-rail-dots';
-    wrap.appendChild(btn);
+    rail.setAttribute('role', 'list');
+
+    var pi;
+    for (pi = 0; pi < 5; pi++) {
+      var dot = document.createElement('a');
+      var pth = PHASE_PATHS[pi];
+      dot.href = pth;
+      dot.className = 'sys-phase-rail__dot';
+      dot.setAttribute('role', 'listitem');
+      dot.setAttribute('title', 'Phase ' + (pi + 1) + ' · ' + PHASE_SHORT[pi]);
+      dot.setAttribute('aria-label', 'Phase ' + (pi + 1) + ' · ' + PHASE_SHORT[pi]);
+      if (arr.indexOf(pth) >= 0) dot.classList.add('is-visited');
+      if (idx === pi) {
+        dot.classList.add('is-current');
+        dot.setAttribute('aria-current', 'page');
+      }
+      dot.textContent = String(pi + 1);
+      rail.appendChild(dot);
+    }
+
+    wrap.appendChild(nav);
     wrap.appendChild(rail);
     document.body.appendChild(wrap);
-    btn.addEventListener('click', function () {
-      var open = wrap.classList.toggle('sys-phase-rail-wrap--open');
-      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
-      rail.setAttribute('aria-hidden', open ? 'false' : 'true');
-    });
   }
 
   function initAdaptiveLayer() {
