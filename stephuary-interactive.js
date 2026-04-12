@@ -616,6 +616,22 @@
     if (document.body.getAttribute('data-live-output') === 'off') return;
 
     var STORAGE = 'stephuary_live_output_v1';
+    var STORAGE_PANEL_CLOSED = 'outputPanelClosed';
+
+    function getPanelClosed() {
+      try {
+        return localStorage.getItem(STORAGE_PANEL_CLOSED) === '1';
+      } catch (e) {
+        return false;
+      }
+    }
+
+    function setPanelClosed(closed) {
+      try {
+        if (closed) localStorage.setItem(STORAGE_PANEL_CLOSED, '1');
+        else localStorage.removeItem(STORAGE_PANEL_CLOSED);
+      } catch (e) {}
+    }
     var PATH_PHASES = [
       { path: '/', n: 0, name: 'Home', where: 'Home', cat: 'Overview', act: 'Open Capture when you want a structured read on leaks.' },
       { path: '/capture', n: 1, name: 'Extraction', where: "You're in Capture", cat: 'Leak visibility', act: 'Finish one full pass of the diagnostic.' },
@@ -713,7 +729,7 @@
       '<button type="button" class="sh-live-panel__btn" id="sh-live-share">Share</button>' +
       '</div>' +
       '</div>' +
-      '<button type="button" class="sh-live-panel__dock" id="sh-live-dock" title="Show output estimate" aria-label="Show live output">Output</button>';
+      '<button type="button" class="sh-live-panel__dock" id="sh-live-dock" title="View live output" aria-label="View results">View Results</button>';
 
     document.body.appendChild(root);
 
@@ -942,30 +958,49 @@
 
     btnDock.setAttribute('aria-hidden', 'true');
     btnDock.addEventListener('click', function () {
+      setPanelClosed(false);
       root.classList.remove('sh-live-panel--collapsed');
       btnDock.setAttribute('aria-hidden', 'true');
+      root.classList.add('sh-live-panel--visible');
     });
 
     var collapseBtn = document.createElement('button');
     collapseBtn.type = 'button';
     collapseBtn.className = 'sh-live-panel__min';
-    collapseBtn.setAttribute('aria-label', 'Minimize panel');
+    collapseBtn.setAttribute('aria-label', 'Minimize live output');
+    collapseBtn.setAttribute('title', 'Minimize');
     collapseBtn.textContent = '−';
+
+    var revealTimer = null;
+
     collapseBtn.addEventListener('click', function () {
+      if (revealTimer) {
+        window.clearTimeout(revealTimer);
+        revealTimer = null;
+      }
+      setPanelClosed(true);
       root.classList.add('sh-live-panel--collapsed');
       btnDock.setAttribute('aria-hidden', 'false');
+      root.classList.add('sh-live-panel--visible');
     });
     chrome.insertBefore(collapseBtn, chrome.firstChild);
 
     window.setInterval(tick, 1100);
     tick();
 
-    window.setTimeout(
-      function () {
-        root.classList.add('sh-live-panel--visible');
-      },
-      reduceMotion ? 400 : 2400
-    );
+    if (getPanelClosed()) {
+      root.classList.add('sh-live-panel--collapsed');
+      btnDock.setAttribute('aria-hidden', 'false');
+      root.classList.add('sh-live-panel--visible');
+    } else {
+      revealTimer = window.setTimeout(
+        function () {
+          revealTimer = null;
+          root.classList.add('sh-live-panel--visible');
+        },
+        reduceMotion ? 400 : 2400
+      );
+    }
   }
 
   function initHomeReturn() {

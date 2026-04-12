@@ -400,11 +400,15 @@ a.phase-card.is-phase-current {
 /* ——— Live output panel ——— */
 .sh-live-panel {
   --sh-panel-bottom: 56px;
+  --sh-panel-inline: 24px;
+  box-sizing: border-box;
   position: fixed;
-  right: 12px;
+  left: auto;
+  right: var(--sh-panel-inline);
   bottom: var(--sh-panel-bottom);
-  z-index: 165;
-  max-width: min(320px, calc(100vw - 24px));
+  width: min(420px, calc(100vw - var(--sh-panel-inline) * 2));
+  max-width: min(420px, calc(100vw - var(--sh-panel-inline) * 2));
+  z-index: 158;
   /* Keep panel inside viewport when tall content or raised bottom (flow bar) */
   max-height: calc(100vh - var(--sh-panel-bottom) - 20px);
   max-height: calc(100dvh - var(--sh-panel-bottom) - 20px);
@@ -417,14 +421,14 @@ a.phase-card.is-phase-current {
   letter-spacing: 0.06em;
   pointer-events: none;
   opacity: 0;
-  transform: translateY(12px);
+  transform: translate3d(0, 12px, 0);
   transition:
     opacity 0.55s ease,
     transform 0.55s ease;
 }
 .sh-live-panel--visible {
   opacity: 1;
-  transform: translateY(0);
+  transform: translate3d(0, 0, 0);
   pointer-events: auto;
 }
 .sh-live-panel__chrome {
@@ -438,30 +442,32 @@ a.phase-card.is-phase-current {
 }
 .sh-live-panel__min {
   position: absolute;
-  top: 6px;
-  right: 6px;
-  width: 26px;
-  height: 26px;
+  top: 8px;
+  right: 8px;
+  z-index: 2;
+  width: 32px;
+  height: 32px;
   padding: 0;
-  border: none;
+  border: 1px solid rgba(244, 237, 224, 0.18);
   border-radius: 2px;
-  background: rgba(244, 237, 224, 0.06);
-  color: rgba(244, 237, 224, 0.55);
-  font-size: 16px;
+  background: rgba(18, 17, 15, 0.95);
+  color: rgba(244, 237, 224, 0.92);
+  font-size: 18px;
   line-height: 1;
   cursor: pointer;
-  transition: background 0.2s ease, color 0.2s ease;
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
 }
 .sh-live-panel__min:hover {
-  background: rgba(58, 107, 255, 0.15);
-  color: rgba(244, 237, 224, 0.9);
+  background: rgba(58, 107, 255, 0.2);
+  border-color: rgba(58, 107, 255, 0.45);
+  color: #f4ede0;
 }
 .sh-live-panel__top {
   display: flex;
   flex-direction: column;
   gap: 6px;
   margin-bottom: 10px;
-  padding-right: 28px;
+  padding-right: 40px;
 }
 .sh-live-panel__phase {
   font-family: 'Cormorant Garamond', Georgia, serif;
@@ -555,9 +561,11 @@ a.phase-card.is-phase-current {
 .sh-live-panel__dock {
   display: none;
   position: fixed;
-  right: 12px;
+  left: auto;
+  right: var(--sh-panel-inline, 24px);
   bottom: var(--sh-panel-bottom, 56px);
-  z-index: 165;
+  z-index: 158;
+  max-width: min(420px, calc(100vw - var(--sh-panel-inline, 24px) * 2));
   padding: 8px 12px;
   border-radius: 2px;
   border: 1px solid rgba(196, 163, 90, 0.25);
@@ -578,20 +586,23 @@ a.phase-card.is-phase-current {
 }
 .sh-live-panel--collapsed.sh-live-panel--visible {
   opacity: 1;
-  transform: none;
+  transform: translate3d(0, 0, 0);
   pointer-events: auto;
 }
 @media (max-width: 767px) {
   .sh-live-panel {
     --sh-panel-bottom: 48px;
-    right: 8px;
-    left: 8px;
+    --sh-panel-inline: 8px;
+    right: max(8px, env(safe-area-inset-right, 0px));
+    left: max(8px, env(safe-area-inset-left, 0px));
     bottom: var(--sh-panel-bottom);
+    width: auto;
     max-width: none;
   }
   .sh-live-panel__dock {
-    right: 8px;
+    right: max(8px, env(safe-area-inset-right, 0px));
     left: auto;
+    max-width: calc(100vw - 16px - env(safe-area-inset-left, 0px) - env(safe-area-inset-right, 0px));
   }
 }
 
