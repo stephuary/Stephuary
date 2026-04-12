@@ -225,10 +225,185 @@
     return { '--sh-gold-end': goldEnd + '%', '--sh-blue-mid': blueMid + '%' };
   }
 
+  /** System hub only: five phases + Playbooks (matches /systems grid). */
+  var SYSTEMS_FULL_LINEAR = ['s_cap', 's_mon', 's_str', 's_aut', 's_sov', 's_pb'];
+
+  function pathGradientVarsSystems(done, currentId, gapIdx) {
+    var n = SYSTEMS_FULL_LINEAR.length;
+    var goldEnd = 0;
+    var i;
+    for (i = 0; i < n; i++) {
+      if (done[SYSTEMS_FULL_LINEAR[i]]) goldEnd = ((i + 1) / n) * 100;
+    }
+    var curI = currentId ? SYSTEMS_FULL_LINEAR.indexOf(currentId) : -1;
+    var focus = curI >= 0 ? curI : gapIdx < n ? gapIdx : 0;
+    var blueMid = ((focus + 0.5) / n) * 100;
+    return { '--sh-gold-end': goldEnd + '%', '--sh-blue-mid': blueMid + '%' };
+  }
+
+  function computeSystemsFullModel(pathname) {
+    var path = normPath(pathname);
+    var diagDone = global.localStorage.getItem('diagnosticCompleted') === 'true';
+    var pr = lsGet('stephuary_system_progress_v1');
+    var completed = pr && Array.isArray(pr.completed) ? pr.completed : [];
+    var visited = getVisitedPhases();
+
+    var done = {};
+    done.s_cap = diagDone || visited.indexOf('/capture') >= 0;
+    done.s_mon = visited.indexOf('/monetize') >= 0;
+    done.s_str = visited.indexOf('/structure') >= 0;
+    done.s_aut = visited.indexOf('/automation') >= 0;
+    done.s_sov = visited.indexOf('/sovereignty') >= 0;
+    done.s_pb = visited.indexOf('/playbooks') >= 0 || completed.length > 0;
+
+    var pathToCurrent = {
+      '/capture': 's_cap',
+      '/monetize': 's_mon',
+      '/structure': 's_str',
+      '/automation': 's_aut',
+      '/sovereignty': 's_sov',
+      '/playbooks': 's_pb'
+    };
+    var currentId = pathToCurrent[path] || '';
+
+    var gapIdx = SYSTEMS_FULL_LINEAR.length;
+    var gi;
+    for (gi = 0; gi < SYSTEMS_FULL_LINEAR.length; gi++) {
+      if (!done[SYSTEMS_FULL_LINEAR[gi]]) {
+        gapIdx = gi;
+        break;
+      }
+    }
+
+    var nodes = [
+      {
+        id: 's_cap',
+        label: 'Capture',
+        path: '/capture',
+        hash: '#flow-wrap',
+        tip: 'See what is actually happening'
+      },
+      {
+        id: 's_mon',
+        label: 'Monetize',
+        path: '/monetize',
+        tip: 'Turn it into something that pays'
+      },
+      {
+        id: 's_str',
+        label: 'Structure',
+        path: '/structure',
+        tip: 'Build what holds it together'
+      },
+      {
+        id: 's_aut',
+        label: 'Automation',
+        path: '/automation',
+        tip: 'Remove what should not stay manual'
+      },
+      {
+        id: 's_sov',
+        label: 'Sovereignty',
+        path: '/sovereignty',
+        tip: 'Own the system'
+      },
+      {
+        id: 's_pb',
+        label: 'Playbooks',
+        path: '/playbooks',
+        tip: 'One problem. One system.'
+      }
+    ];
+
+    return {
+      done: done,
+      currentId: currentId,
+      recNode: '',
+      reason: '',
+      nodes: nodes,
+      gapIdx: gapIdx,
+      linear: SYSTEMS_FULL_LINEAR
+    };
+  }
+
+  function isFutureSystems(nid, idx, m) {
+    var isCurrent = m.currentId === nid;
+    var isDone = !!m.done[nid];
+    if (isDone || isCurrent) return false;
+    return idx > m.gapIdx;
+  }
+
   function renderInto(el) {
     if (!el) return;
     el.removeAttribute('data-sh-map-bound');
     var variant = el.getAttribute('data-global-system-map') || 'compact';
+
+    if (variant === 'full') {
+      var ms = computeSystemsFullModel(global.location.pathname);
+      var varsS = pathGradientVarsSystems(ms.done, ms.currentId, ms.gapIdx);
+      var htmlS =
+        '<div class="sh-global-map sh-global-map--full" role="navigation" aria-label="System path" style="--sh-gold-end:' +
+        varsS['--sh-gold-end'] +
+        ';--sh-blue-mid:' +
+        varsS['--sh-blue-mid'] +
+        '">' +
+        '<p class="sh-global-map__you">You are here</p>' +
+        '<div class="sh-global-map__path" aria-hidden="true"><span class="sh-global-map__path-fill"></span></div>' +
+        '<div class="sh-global-map__track">';
+      var si;
+      for (si = 0; si < ms.nodes.length; si++) {
+        var sn = ms.nodes[si];
+        var scls = 'sh-global-map__node';
+        if (ms.done[sn.id]) scls += ' is-done';
+        if (ms.currentId === sn.id) scls += ' is-current';
+        var sidx = SYSTEMS_FULL_LINEAR.indexOf(sn.id);
+        var sfuture = sidx >= 0 && isFutureSystems(sn.id, sidx, ms);
+        if (sfuture) scls += ' is-future';
+        var sfullHref = nodeHref(sn);
+        var stipMain = escapeHtml(sn.tip);
+        var sfutureHint = 'Complete earlier step for best results';
+        var stipFutureHtml = sfuture
+          ? '<span class="sh-global-map__tip-line sh-global-map__tip-line--future">' +
+            escapeHtml(sfutureHint) +
+            '</span>'
+          : '';
+        var saria = stipMain + (sfuture ? '. ' + sfutureHint : '');
+        var slabelBits =
+          '<span class="sh-global-map__dot"></span><span class="sh-global-map__label">' +
+          escapeHtml(sn.label) +
+          '</span>';
+        var stipBlock =
+          '<span class="sh-global-map__tip" role="tooltip">' +
+          '<span class="sh-global-map__tip-line">' +
+          stipMain +
+          '</span>' +
+          stipFutureHtml +
+          '</span>';
+        htmlS +=
+          '<a class="' +
+          scls +
+          '" href="' +
+          escapeHtml(sfullHref) +
+          '" data-sh-node="' +
+          escapeHtml(sn.id) +
+          '" aria-label="' +
+          escapeHtml(saria) +
+          '">' +
+          slabelBits +
+          stipBlock +
+          '</a>';
+        if (si < ms.nodes.length - 1) {
+          htmlS += '<span class="sh-global-map__arrow" aria-hidden="true">→</span>';
+        }
+      }
+      htmlS += '</div>';
+      htmlS +=
+        '<p class="sh-global-map__soft" hidden>You may want to complete earlier steps first.</p>';
+      htmlS += '</div>';
+      el.innerHTML = htmlS;
+      return;
+    }
+
     var m = computeModel(global.location.pathname);
     var nodes = m.nodes;
     var vars = pathGradientVars(m);

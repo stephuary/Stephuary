@@ -16,14 +16,8 @@
     monetize: ['structure', 'capture'],
     structure: ['automation', 'monetize'],
     automation: ['sovereignty', 'structure'],
-    sovereignty: ['snapshot', 'automation'],
-    playbooks: ['direction', 'capture'],
-    direction: ['revenue', 'structure'],
-    revenue: ['lock', 'monetize'],
-    lock: ['concept', 'snapshot'],
-    concept: ['custom', '_off'],
-    snapshot: ['sovereignty', 'lock'],
-    custom: ['concept', '_diaspora']
+    sovereignty: ['playbooks', 'automation'],
+    playbooks: ['capture', 'sovereignty']
   };
 
   var svgNS = 'http://www.w3.org/2000/svg';
