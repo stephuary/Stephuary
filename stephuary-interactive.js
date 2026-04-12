@@ -443,6 +443,9 @@
     /* Access page: local screening-room atmosphere only — no CEI depth layer. */
     if (path === '/access') return;
 
+    /* System map: CSS-only portal atmosphere in systems.html — no canvas/grid CEI layer. */
+    if (path === '/systems') return;
+
     var zone = 'default';
     if (path === '/systems' || path === '/') zone = 'cei';
     else if (path === '/pricing') zone = 'pricing';
@@ -1383,6 +1386,7 @@
   function initLiveOutput() {
     if (document.getElementById('sh-live-panel')) return;
     if (document.body.getAttribute('data-live-output') === 'off') return;
+    if (normPath(window.location.pathname) === '/pricing') return;
 
     var STORAGE = 'stephuary_live_output_v1';
     var STORAGE_PANEL_CLOSED = 'outputPanelClosed';
