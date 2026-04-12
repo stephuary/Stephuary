@@ -923,6 +923,21 @@
       elTime.textContent = formatHours(smoothHours);
       elCat.textContent = comp.info.cat;
       elAction.textContent = comp.info.act;
+      try {
+        if (
+          window.StephuaryPersonalize &&
+          typeof window.StephuaryPersonalize.afterLivePanelTick === 'function'
+        ) {
+          window.StephuaryPersonalize.afterLivePanelTick({
+            elMoney: elMoney,
+            elTime: elTime,
+            elCat: elCat,
+            elAction: elAction,
+            formatMoney: formatMoney,
+            formatHours: formatHours
+          });
+        }
+      } catch (eP) {}
       var noteEl = document.getElementById('sh-live-note');
       if (noteEl) {
         if (comp.timeLine) {
@@ -1067,6 +1082,12 @@
     clampLivePanelToViewport();
     window.setTimeout(clampLivePanelToViewport, 0);
     window.addEventListener('load', clampLivePanelToViewport, { passive: true });
+
+    window.setTimeout(function () {
+      if (window.StephuaryPersonalize && typeof window.StephuaryPersonalize.applyLivePanel === 'function') {
+        window.StephuaryPersonalize.applyLivePanel(root);
+      }
+    }, 0);
   }
 
   function initHomeReturn() {
@@ -1115,7 +1136,16 @@
     document.body.classList.add('has-flow-end');
   }
 
+  function ensurePersonalizeScript() {
+    if (document.querySelector('script[src*="stephuary-personalization"]')) return;
+    var sp = document.createElement('script');
+    sp.src = '/stephuary-personalization.js';
+    sp.defer = true;
+    document.head.appendChild(sp);
+  }
+
   function boot() {
+    ensurePersonalizeScript();
     initPageTransition();
     initMagnetic();
     initAdaptiveLayer();

@@ -333,6 +333,37 @@
       line-height: 1.5;
       color: var(--text-3);
     }
+    .hero-personal-line {
+      font-size: 14px;
+      line-height: 1.5;
+      color: var(--text-2);
+      max-width: 40ch;
+      margin-bottom: 18px;
+      transition: color 0.55s ease;
+    }
+    .hero-personal-line--linger {
+      color: rgba(244, 237, 224, 0.92);
+    }
+    .hero-tier-hint {
+      width: 100%;
+      flex-basis: 100%;
+      margin: 8px 0 0;
+      font-family: 'DM Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(198, 161, 91, 0.65);
+    }
+    .hero-cta--soft-emphasis {
+      box-shadow: 0 8px 40px rgba(58, 107, 255, 0.35);
+    }
+    .home-os-discover--emphasize {
+      border-color: rgba(58, 107, 255, 0.22);
+      box-shadow: 0 0 0 1px rgba(43, 79, 212, 0.15);
+    }
+    .home-os-discover--emphasize .home-os-discover__lead {
+      color: var(--text-2);
+    }
 
     .btn {
       display: inline-flex;
@@ -1152,10 +1183,12 @@
               </h1>
             </div>
             <p class="hero-lead" id="hero-lead">This is a short diagnostic that shows you what’s not working, what it’s costing you, and what to change first.</p>
+            <p class="hero-personal-line" id="hero-personal-line" hidden></p>
             <div class="hero-actions" id="hero-actions">
               <a href="/capture" class="btn btn--pri" id="hero-cta-primary">Start Free Diagnostic</a>
               <a href="#system" class="btn btn--ghost" id="hero-cta-secondary">See How It Works</a>
               <p class="hero-cta-micro" id="hero-cta-micro">Takes about 2–3 minutes</p>
+              <p class="hero-tier-hint" id="hero-tier-hint" hidden></p>
             </div>
           </div>
           <div class="hero-leak-dock">
@@ -1406,6 +1439,7 @@
   <script src="/stephuary-os.js"></script>
   <script src="/stephuary-progress.js"></script>
   <script src="/stephuary-interactive.js" defer></script>
+  <script src="/stephuary-personalization.js" defer></script>
   <script>
     (function () {
       gsap.registerPlugin(ScrollTrigger);
@@ -2060,6 +2094,9 @@
           localStorage.removeItem('capture_complete');
           localStorage.removeItem('stephuary_result_v1');
         } catch (e) {}
+        if (window.StephuaryPersonalize && typeof window.StephuaryPersonalize.clearDiagnosticSlice === 'function') {
+          window.StephuaryPersonalize.clearDiagnosticSlice();
+        }
       }
 
       function renderHeroCta() {
@@ -2088,9 +2125,9 @@
         if (completed) {
           primary.textContent = 'View Your Results';
           primary.href = '/results';
-          secondary.textContent = 'Start New Diagnostic';
-          secondary.href = '/capture';
-          wireRestart(secondary);
+          secondary.textContent = 'See Recommended Next Step';
+          secondary.href = '/pricing';
+          secondary.onclick = null;
           micro.textContent = 'Your results are ready';
           if (diagBtn) {
             diagBtn.textContent = 'View Your Results';
@@ -2130,6 +2167,11 @@
           return;
         }
         renderHeroCta();
+        window.setTimeout(function () {
+          if (window.StephuaryPersonalize && typeof window.StephuaryPersonalize.applyHomeHero === 'function') {
+            window.StephuaryPersonalize.applyHomeHero();
+          }
+        }, 80);
       }
       bootHeroCta();
 
