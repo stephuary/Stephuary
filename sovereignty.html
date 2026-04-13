@@ -355,6 +355,22 @@
       margin-bottom: 24px;
     }
 
+    .instinct-dl {
+      margin: 0;
+      font-size: 14px;
+      line-height: 1.5;
+      color: var(--text-muted);
+    }
+    .instinct-dl dt {
+      margin-top: 10px;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+    }
+    .instinct-dl dt:first-child { margin-top: 0; }
+    .instinct-dl dd { margin: 4px 0 0; }
+
     .instinct-row {
       font-size: 13px;
       color: var(--text-mid);
@@ -371,6 +387,8 @@
       padding-top: 16px;
       border-top: 1px solid var(--border-dim);
     }
+
+    .instinct-reality p { margin-bottom: 6px; }
 
     #flow { width: 100%; }
 
@@ -1115,25 +1133,31 @@
     return 'Hybrid: direct work with an advisory layer. One lane must lead.';
   }
 
-  function validatedOfferLine() {
-    var o = buildP3OfferAndEntry();
-    var p4 = loadP4Bits();
-    var tier = p4ValidationTier(p4);
-    if (!tier) return o.offer + ' · Automation: not finished in Phase 04.';
-    return o.offer + ' · Automation read: ' + tier + '.';
-  }
-
   function renderBridge() {
     var host = document.getElementById('bridgeRows');
     if (!host) return;
+    var o = buildP3OfferAndEntry();
     var p3 = loadP3Bits();
+    var p4 = loadP4Bits();
+    var tier = p4ValidationTier(p4);
+    var tierLine = tier
+      ? 'Validation tier: ' + tier + '.'
+      : 'Complete Phase 04 on this device to bind validation status here.';
     host.innerHTML =
-      '<p class="instinct-row"><strong>Your validated offer:</strong><br>' +
-      escapeHtml(validatedOfferLine()) +
-      '</p>' +
-      '<p class="instinct-row"><strong>Your current model:</strong><br>' +
+      '<dl class="instinct-dl">' +
+      '<dt>From Phase 03 — offer line</dt><dd>' +
+      escapeHtml(o.offer) +
+      '</dd>' +
+      '<dt>From Phase 03 — entry / first buyer step</dt><dd>' +
+      escapeHtml(o.entry) +
+      '</dd>' +
+      '<dt>From Phase 03 — delivery model</dt><dd>' +
       escapeHtml(p3ModelLabel(p3)) +
-      '</p>';
+      '</dd>' +
+      '<dt>From Phase 04 — market signal</dt><dd>' +
+      escapeHtml(tierLine) +
+      '</dd></dl>' +
+      '<p class="instinct-row" style="margin-top:10px">Phase 05 uses these inputs to lock dependency, ownership, portability, and leverage.</p>';
   }
 
   function escapeHtml(s) {
