@@ -18,7 +18,7 @@
   </script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>System · Stephuary</title>
-  <meta name="description" content="Five phases: Capture through Sovereignty. Pick where you are stuck; start there." />
+  <meta name="description" content="Five phases: Capture through Sovereignty — one diagnostic. Start where you are and move through all five." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
   <link rel="preconnect" href="https://customer-vjyp7ff1wau3k7is.cloudflarestream.com" crossorigin />
@@ -936,14 +936,14 @@
 
   <section class="sh-primary-flow" aria-label="Primary path">
     <p class="sh-primary-flow__steps">Start diagnostic → Complete phases → Unlock next step</p>
-    <a href="/capture" class="sh-primary-flow__link">Start diagnostic →</a>
+    <a href="/capture" class="sh-primary-flow__link" id="systems-diagnostic-flow-link">Continue diagnostic →</a>
   </section>
 
   <header class="sys-compact sys-compact--systems" style="margin-top:0">
     <div class="sys-compact__inner">
       <h1 class="sys-title">System</h1>
-      <p class="sys-lead">Pick the phase that matches where you're stuck.<br />Start there.</p>
-      <p class="sys-lead-note">The five phases are one diagnostic. You don't need to go in order.</p>
+      <p class="sys-lead">Start where you are. Move through all five.</p>
+      <p class="sys-lead-note">The diagnostic is one continuous path: Capture → Monetize → Structure → Automation → Sovereignty, then Results and Rooms.</p>
     </div>
   </header>
 
@@ -1044,6 +1044,7 @@
   <script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.7/dist/hls.min.js" crossorigin="anonymous" defer></script>
   <script src="/stephuary-hls-cine.js" defer></script>
   <script src="/stephuary-os.js" defer></script>
+  <script src="/stephuary-diagnostic-flow.js" defer></script>
   <script src="/stephuary-progress.js" defer></script>
   <script>
     document.addEventListener('DOMContentLoaded', function () {
@@ -1135,7 +1136,45 @@
       function applyResume() {
         var ban = document.getElementById('resume-banner');
         var link = document.getElementById('resume-link');
+        var flowA = document.getElementById('systems-diagnostic-flow-link');
         if (!ban || !link) return;
+        if (window.StephuaryDiagnosticFlow && typeof window.StephuaryDiagnosticFlow.getResumeHref === 'function') {
+          try {
+            window.StephuaryDiagnosticFlow.migrateCompletionFlags();
+          } catch (eM) {}
+          var pDone =
+            window.StephuaryDiagnosticFlow.phaseDone &&
+            window.StephuaryDiagnosticFlow.phaseDone(5);
+          var diagDone = false;
+          try {
+            diagDone = localStorage.getItem('diagnosticCompleted') === 'true';
+          } catch (eL) {}
+          if (pDone && diagDone) {
+            ban.classList.add('visible');
+            link.textContent = 'Enter Rooms';
+            link.href = '/playbooks';
+            if (flowA) {
+              flowA.textContent = 'Enter Rooms →';
+              flowA.href = '/playbooks';
+            }
+            return;
+          }
+          var ds = false;
+          var cc = false;
+          try {
+            ds = localStorage.getItem('diagnosticStarted') === 'true';
+            cc = localStorage.getItem('capture_complete') === 'true';
+          } catch (eS) {}
+          if (ds || cc || pDone) {
+            ban.classList.add('visible');
+            link.textContent = 'Continue Diagnostic';
+            link.href = window.StephuaryDiagnosticFlow.getResumeHref();
+            if (flowA) {
+              flowA.href = window.StephuaryDiagnosticFlow.getResumeHref();
+            }
+            return;
+          }
+        }
         if (!window.StephuaryProgress || typeof window.StephuaryProgress.getResumeLabel !== 'function') {
           if (tries++ < 50) setTimeout(applyResume, 50);
           return;
@@ -1151,6 +1190,7 @@
           ban.classList.add('visible');
           link.textContent = 'Continue Diagnostic';
           link.href = window.StephuarySession.getResumeDiagnosticHref();
+          if (flowA) flowA.href = window.StephuarySession.getResumeDiagnosticHref();
         }
       }
       if (document.readyState === 'loading') {

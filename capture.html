@@ -18,7 +18,7 @@
     }
   </script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Diagnostic · Phase 01 (Capture) · Stephuary</title>
+  <title>Diagnostic · Phase 01 — Capture · Stephuary</title>
   <meta name="description" content="Diagnostic phase 01 (Capture). How you perceive, respond, and where avoidance sits." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -336,6 +336,14 @@
       font-weight: 300;
       color: var(--text);
       letter-spacing: -0.02em;
+    }
+
+    .sys-lead-note {
+      font-size: 13px;
+      line-height: 1.55;
+      color: var(--text-dim);
+      margin: 0 0 10px;
+      max-width: 48ch;
     }
 
     .summary-hit {
@@ -770,13 +778,15 @@
   <header id="phase-header" class="sys-compact">
     <div class="sys-compact__bg"><canvas aria-hidden="true"></canvas></div>
     <div class="sys-compact__inner">
-      <p class="sys-label">Diagnostic · Phase 1 of 5 · Capture</p>
+      <p class="sys-label">Diagnostic · Phase 01 of 5 — Capture</p>
+      <p class="sys-lead-note">This maps what is happening. Next, we name what can earn.</p>
       <h1 class="sys-title">Capture</h1>
       <p class="sys-lead">You answer questions. You see where time and money leak and what to cut first.</p>
       <div id="phase-visual" class="sys-visual" data-visual="constellation"></div>
       <div class="sys-actions">
-        <button type="button" class="sys-btn sys-btn--pri magnetic" id="btnBegin">Begin</button>
-        <button type="button" class="sys-btn sys-btn--ghost magnetic" id="btnSkip">Continue</button>
+        <button type="button" class="sys-btn sys-btn--pri magnetic" id="btnSkip">Continue</button>
+        <button type="button" class="sys-btn sys-btn--ghost magnetic" id="btnBegin">Start over</button>
+        <a href="/systems" class="sys-btn sys-btn--ghost magnetic">Save and exit</a>
       </div>
     </div>
   </header>
@@ -804,7 +814,7 @@
       <div id="building-overlay" role="status" aria-live="assertive"><p>Building your result.</p></div>
 
       <div id="summary">
-        <p class="summary-phase-tag">Diagnostic · Phase 1 of 5 · Capture</p>
+        <p class="summary-phase-tag">Diagnostic · Phase 01 of 5 — Capture</p>
         <h2 class="summary-hit" id="summaryHitLine">We found the main issue.</h2>
         <p class="summary-confidence">This is based on your actual responses, not a preset category.</p>
 
@@ -850,10 +860,10 @@
 
         <p class="capture-flow-saved">Your progress is saved automatically on this device.</p>
         <div class="action-primary">
-          <a href="/monetize" class="btn btn-terminal" data-sh-flow-primary>Continue to Monetize →</a>
+          <a href="/monetize" class="btn btn-terminal" data-sh-flow-primary>Continue</a>
         </div>
         <p class="phase-result-links">
-          <a href="/systems">View system</a> · <a href="/pricing">View pricing</a>
+          <a href="/systems">Save and exit</a>
         </p>
         <div class="action-primary capture-flow-tools">
           <button type="button" class="btn" id="btnCopy">Copy All</button>
@@ -911,6 +921,7 @@
   </div>
 </div>
 
+<script src="/stephuary-diagnostic-flow.js"></script>
 <script src="/stephuary-result.js"></script>
 <script>
 (function(){
@@ -1593,27 +1604,6 @@
   function showSummary() {
     state.currentStep = 11;
     saveStorage();
-    try {
-      if (window.StephuaryResult && typeof window.StephuaryResult.buildFromPhase01 === 'function') {
-        try {
-          if (
-            window.StephuaryPersonalize &&
-            typeof window.StephuaryPersonalize.persistDiagnosticFromBits === 'function'
-          ) {
-            window.StephuaryPersonalize.persistDiagnosticFromBits(state.bits);
-          }
-        } catch (ePersist) {}
-        var resultObj = window.StephuaryResult.buildFromPhase01(state.bits);
-        resultObj.capture_bits = state.bits; /* optional replay; diagnostic output stays in diagnostic + playbooks */
-        localStorage.setItem(RESULT_KEY, JSON.stringify(resultObj));
-        try {
-          localStorage.setItem('diagnosticStarted', 'true');
-          localStorage.setItem('diagnosticCompleted', 'true');
-        } catch (e1) {}
-        window.location.replace('/results');
-        return;
-      }
-    } catch (err) {}
     document.getElementById('building-overlay').style.display = 'none';
     document.getElementById('flow').style.display = 'none';
     document.getElementById('summary').style.display = 'flex';
@@ -1651,9 +1641,19 @@
       'The issue is not ability. It is where and how it is used.';
 
     try {
-      localStorage.setItem('capture_complete', 'true');
       localStorage.setItem('diagnosticStarted', 'true');
-      localStorage.setItem('diagnosticCompleted', 'true');
+      localStorage.setItem('capture_complete', 'true');
+      if (window.StephuaryDiagnosticFlow && typeof window.StephuaryDiagnosticFlow.markPhaseComplete === 'function') {
+        window.StephuaryDiagnosticFlow.markPhaseComplete(1);
+      }
+      if (
+        window.StephuaryPersonalize &&
+        typeof window.StephuaryPersonalize.persistDiagnosticFromBits === 'function'
+      ) {
+        try {
+          window.StephuaryPersonalize.persistDiagnosticFromBits(state.bits);
+        } catch (ePersist) {}
+      }
     } catch (e) {}
 
     updateRail();
@@ -1671,7 +1671,7 @@
     var arch = scoreArchetype(bits);
     var block = COPY_BLOCKS[arch];
     var lines = [
-      'Stephuary · Phase 01 · Capture',
+      'Stephuary · Phase 01 — Capture',
       '',
       '1. You are',
       arch,
@@ -1738,6 +1738,9 @@
       localStorage.removeItem('diagnosticStarted');
       localStorage.removeItem('diagnosticCompleted');
       localStorage.removeItem(RESULT_KEY);
+      if (window.StephuaryDiagnosticFlow && typeof window.StephuaryDiagnosticFlow.clearCompletionFromPhase === 'function') {
+        window.StephuaryDiagnosticFlow.clearCompletionFromPhase(1);
+      }
     } catch (e) {}
     state.bits = Array(TOTAL_Q).fill(null);
     state.currentStep = 1;
@@ -1809,6 +1812,9 @@
       localStorage.removeItem('diagnosticCompleted');
       localStorage.removeItem(STORAGE_KEY);
       localStorage.removeItem(RESULT_KEY);
+      if (window.StephuaryDiagnosticFlow && typeof window.StephuaryDiagnosticFlow.clearCompletionFromPhase === 'function') {
+        window.StephuaryDiagnosticFlow.clearCompletionFromPhase(1);
+      }
     } catch (e) {}
     state.bits = Array(TOTAL_Q).fill(null);
     state.currentStep = 1;
@@ -1834,7 +1840,7 @@
   (function() {
     var st = loadStorage();
     if (st && st.bits && st.bits.some(function(b) { return b !== null && b !== undefined; })) {
-      document.getElementById('btnSkip').textContent = 'Resume where you left off';
+      document.getElementById('btnSkip').textContent = 'Continue';
     }
   })();
 

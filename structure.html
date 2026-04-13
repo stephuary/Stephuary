@@ -17,7 +17,7 @@
     }
   </script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Diagnostic · Phase 03 (Structure) · Stephuary</title>
+  <title>Diagnostic · Phase 03 — Structure · Stephuary</title>
   <meta name="description" content="Diagnostic phase 03 (Structure). Offer and execution—structure so it can convert and get paid." />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -723,6 +723,7 @@
 <body>
 <div id="page-transition" aria-hidden="true"></div>
 <script src="/stephuary-config.js"></script>
+<script src="/stephuary-diagnostic-flow.js"></script>
 <script src="/stephuary-interactive.js" defer></script>
 <script src="/stephuary-early-mode.js" defer></script>
 <script src="/stephuary-personalization.js" defer></script>
@@ -732,7 +733,8 @@
   <header id="phase-header" class="sys-compact" style="margin-top:0">
     <div class="sys-compact__bg"><canvas aria-hidden="true"></canvas></div>
     <div class="sys-compact__inner">
-      <p class="sys-label">Diagnostic · Phase 3 of 5 · Structure</p>
+      <p class="sys-label">Diagnostic · Phase 03 of 5 — Structure</p>
+      <p class="sys-lead-note">Finish Phase 02 — Monetize before this section.</p>
       <h1 class="sys-title">Structure</h1>
       <p class="sys-lead">You define price, buyer, and the first message someone can read and buy from.</p>
       <div id="phase-visual" class="sys-visual" data-visual="layers">
@@ -743,7 +745,8 @@
         </div>
       </div>
       <div class="sys-actions">
-        <a href="/monetize" class="sys-btn sys-btn--pri magnetic">Finish Monetize first</a>
+        <a href="/monetize" class="sys-btn sys-btn--pri magnetic" id="structure-locked-resume">Continue Diagnostic</a>
+        <a href="/systems" class="sys-btn sys-btn--ghost magnetic">Save and exit</a>
       </div>
     </div>
   </header>
@@ -796,7 +799,7 @@
       </div>
 
       <div id="summary">
-        <p class="summary-phase-tag">Diagnostic · Phase 3 of 5 · Structure</p>
+        <p class="summary-phase-tag">Diagnostic · Phase 03 of 5 — Structure</p>
         <h2 class="summary-title">Structure complete</h2>
         <p class="summary-sub">Offer, execution, and how money enters. No extra theory.</p>
 
@@ -848,16 +851,17 @@
         </div>
 
         <div class="diag-section">
-          <p class="diag-h">9. Next move</p>
+          <p class="diag-h">9. What follows</p>
           <div class="diag-body" id="out-9"></div>
         </div>
 
         <p class="capture-flow-saved">Your progress is saved automatically on this device.</p>
+        <p class="sys-lead-note" style="margin:0 0 14px;max-width:52ch">This turns value into an offer someone can buy. Next, we put it in front of real people.</p>
         <div class="action-primary">
-          <a href="/automation" class="btn btn-solid" data-sh-flow-primary>Continue to Automation →</a>
+          <a href="/automation" class="btn btn-solid" data-sh-flow-primary>Continue</a>
         </div>
         <p class="phase-result-links">
-          <a href="/systems">View system</a> · <a href="/pricing">View pricing</a>
+          <a href="/systems">Save and exit</a>
         </p>
         <div class="action-primary capture-flow-tools">
           <button type="button" class="btn" id="btnCopy">Copy All</button>
@@ -1383,6 +1387,11 @@
   function showSummary() {
     state.currentStep = 11;
     saveStorage();
+    try {
+      if (window.StephuaryDiagnosticFlow && typeof window.StephuaryDiagnosticFlow.markPhaseComplete === 'function') {
+        window.StephuaryDiagnosticFlow.markPhaseComplete(3);
+      }
+    } catch (eMark) {}
     document.getElementById('flow').style.display = 'none';
     document.getElementById('summary').style.display = 'flex';
     var b = state.bits.map(function(x) { return x; });
@@ -1422,7 +1431,7 @@
       '8. Hard truth',
       document.getElementById('out-8').innerText.trim(),
       '',
-      '9. Next move',
+      '9. What follows',
       document.getElementById('out-9').innerText.trim()
     ];
     return lines.join('\n');
@@ -1462,6 +1471,13 @@
   function resetAll() {
     try {
       localStorage.removeItem(STORAGE_KEY);
+      if (window.StephuaryDiagnosticFlow && typeof window.StephuaryDiagnosticFlow.clearCompletionFromPhase === 'function') {
+        window.StephuaryDiagnosticFlow.clearCompletionFromPhase(3);
+      } else {
+        localStorage.removeItem('structure_complete');
+        localStorage.removeItem('automation_complete');
+        localStorage.removeItem('sovereignty_complete');
+      }
     } catch (e) {}
     state.bits = Array(TOTAL_Q).fill(null);
     state.currentStep = 1;
@@ -1493,11 +1509,19 @@
   });
 
   function initUnlock() {
+    var lr = document.getElementById('structure-locked-resume');
+    if (lr && window.StephuaryDiagnosticFlow && typeof window.StephuaryDiagnosticFlow.getResumeHref === 'function') {
+      lr.href = window.StephuaryDiagnosticFlow.getResumeHref();
+    }
     var unlocked = false;
     try {
       if (window.STEPHUARY_CONFIG && window.STEPHUARY_CONFIG.shouldBypassPhasePaymentGate()) unlocked = true;
       if (localStorage.getItem('archive_unlocked') === 'true') unlocked = true;
-      if (localStorage.getItem('capture_complete') === 'true') unlocked = true;
+      if (window.StephuaryDiagnosticFlow && typeof window.StephuaryDiagnosticFlow.canEnterPhase === 'function') {
+        if (window.StephuaryDiagnosticFlow.canEnterPhase(3)) unlocked = true;
+      } else if (localStorage.getItem('capture_complete') === 'true') {
+        unlocked = true;
+      }
     } catch (err) {}
     if (!unlocked) return;
 

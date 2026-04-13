@@ -64,7 +64,8 @@
     if (path === '/systems') {
       var ban = doc.getElementById('resume-banner');
       if (ban && ban.classList.contains('visible')) {
-        return doc.querySelector('#resume-link');
+        var rl = doc.querySelector('#resume-link');
+        if (rl) return rl;
       }
       return doc.querySelector('.sh-system-map a[href="/capture"]');
     }

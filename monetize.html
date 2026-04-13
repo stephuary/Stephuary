@@ -17,7 +17,7 @@
     }
   </script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Diagnostic · Phase 02 (Monetize) · Stephuary</title>
+  <title>Diagnostic · Phase 02 — Monetize · Stephuary</title>
   <meta name="description" content="Diagnostic phase 02 (Monetize). Value translation—where instinct meets market." />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -740,12 +740,14 @@
   <header id="phase-header" class="sys-compact" style="margin-top:0">
     <div class="sys-compact__bg"><canvas aria-hidden="true"></canvas></div>
     <div class="sys-compact__inner">
-      <p class="sys-label">Diagnostic · Phase 2 of 5 · Monetize</p>
+      <p class="sys-label">Diagnostic · Phase 02 of 5 — Monetize</p>
+      <p class="sys-lead-note">Finish Phase 01 — Capture before this section.</p>
       <h1 class="sys-title">Monetize</h1>
       <p class="sys-lead">Name how you work against what buyers pay for, in plain language.</p>
       <div id="phase-visual" class="sys-visual" data-visual="orbit"></div>
       <div class="sys-actions">
-        <a href="/capture" class="sys-btn sys-btn--pri magnetic">Finish Capture first</a>
+        <a href="/capture" class="sys-btn sys-btn--pri magnetic" id="monetize-locked-resume">Continue Diagnostic</a>
+        <a href="/systems" class="sys-btn sys-btn--ghost magnetic">Save and exit</a>
       </div>
     </div>
   </header>
@@ -800,7 +802,7 @@
       <div id="summary">
         <div id="sys-output-mount-revenue" class="sys-output-mount"></div>
 
-        <p class="summary-phase-tag">Diagnostic · Phase 2 of 5 · Monetize</p>
+        <p class="summary-phase-tag">Diagnostic · Phase 02 of 5 — Monetize</p>
         <h2 class="summary-title">Monetize complete</h2>
         <p class="summary-sub">This is what showed up when instinct was compared to market reality.</p>
 
@@ -840,17 +842,18 @@
         </div>
 
         <div class="diag-section">
-          <p class="diag-h">7. Next step</p>
+          <p class="diag-h">7. What follows</p>
           <div class="diag-body" id="out-s7"></div>
         </div>
         </div>
 
         <p class="capture-flow-saved">Your progress is saved automatically on this device.</p>
+        <p class="sys-lead-note" style="margin:0 0 14px;max-width:52ch">This names value and fit. Next, we turn it into a concrete offer and entry.</p>
         <div class="action-primary">
-          <a href="/structure" class="btn btn-solid" data-sh-flow-primary>Continue to Structure →</a>
+          <a href="/structure" class="btn btn-solid" data-sh-flow-primary>Continue</a>
         </div>
         <p class="phase-result-links">
-          <a href="/systems">View system</a> · <a href="/pricing">View pricing</a>
+          <a href="/systems">Save and exit</a>
         </p>
         <div class="action-primary capture-flow-tools">
           <button type="button" class="btn" id="btnCopy">Copy All</button>
@@ -900,6 +903,7 @@
 </div>
 
 <script src="/stephuary-config.js"></script>
+<script src="/stephuary-diagnostic-flow.js"></script>
 <script src="/stephuary-system-output.js"></script>
 <script>
 (function(){
@@ -1239,6 +1243,11 @@
   function showSummary() {
     state.currentStep = 11;
     saveStorage();
+    try {
+      if (window.StephuaryDiagnosticFlow && typeof window.StephuaryDiagnosticFlow.markPhaseComplete === 'function') {
+        window.StephuaryDiagnosticFlow.markPhaseComplete(2);
+      }
+    } catch (eMark) {}
     document.getElementById('flow').style.display = 'none';
     document.getElementById('summary').style.display = 'flex';
 
@@ -1254,10 +1263,10 @@
       var ctaR =
         '<div class="sys-output__cta">' +
         '<div class="sys-output__cta-row">' +
-        '<a href="/structure" class="sys-output__btn sys-output__btn--pri magnetic">Continue to Structure →</a>' +
+        '<a href="/structure" class="sys-output__btn sys-output__btn--pri magnetic">Continue</a>' +
         '</div>' +
         '<p class="phase-result-links" style="margin-top:14px;text-align:center">' +
-        '<a href="/systems">View system</a> · <a href="/pricing">View pricing</a>' +
+        '<a href="/systems">Save and exit</a>' +
         '</p></div>';
       window.StephuarySystemOutput.mountRevenue(m, ctaR);
     }
@@ -1293,7 +1302,7 @@
       '6. Hard truth',
       document.getElementById('out-s6').innerText.trim(),
       '',
-      '7. Next step',
+      '7. What follows',
       document.getElementById('out-s7').innerText.trim(),
       '',
       'Live panel snapshot',
@@ -1340,6 +1349,11 @@
   function resetAll() {
     try {
       localStorage.removeItem(STORAGE_KEY);
+      if (window.StephuaryDiagnosticFlow && typeof window.StephuaryDiagnosticFlow.clearCompletionFromPhase === 'function') {
+        window.StephuaryDiagnosticFlow.clearCompletionFromPhase(2);
+      } else {
+        localStorage.removeItem('monetize_complete');
+      }
     } catch (e) {}
     state.bits = Array(TOTAL_Q).fill(null);
     state.currentStep = 1;
@@ -1377,11 +1391,19 @@
   });
 
   (function initUnlock() {
+    var lr = document.getElementById('monetize-locked-resume');
+    if (lr && window.StephuaryDiagnosticFlow && typeof window.StephuaryDiagnosticFlow.getResumeHref === 'function') {
+      lr.href = window.StephuaryDiagnosticFlow.getResumeHref();
+    }
     var unlocked = false;
     try {
       if (window.STEPHUARY_CONFIG && window.STEPHUARY_CONFIG.shouldBypassPhasePaymentGate()) unlocked = true;
       if (localStorage.getItem('archive_unlocked') === 'true') unlocked = true;
-      if (localStorage.getItem('capture_complete') === 'true') unlocked = true;
+      if (window.StephuaryDiagnosticFlow && typeof window.StephuaryDiagnosticFlow.canEnterPhase === 'function') {
+        if (window.StephuaryDiagnosticFlow.canEnterPhase(2)) unlocked = true;
+      } else if (localStorage.getItem('capture_complete') === 'true') {
+        unlocked = true;
+      }
     } catch (err) {}
     if (unlocked) {
       var ph = document.getElementById('phase-header');

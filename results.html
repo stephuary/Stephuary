@@ -859,7 +859,7 @@
     <p class="missing-kicker">Result</p>
     <h1 class="missing-h1">No diagnostic result on file.</h1>
     <p class="missing-p">Finish the diagnostic first. Your read saves when the flow completes.</p>
-    <a href="/capture" class="btn btn-primary" id="results-missing-cta">Return to diagnostic</a>
+    <a href="/capture" class="btn btn-primary" id="results-missing-cta">Continue Diagnostic</a>
   </div>
 
   <main id="state-result">
@@ -875,28 +875,9 @@
         <p class="hero-sub" id="results-hero-sub"></p>
         <div class="type-pill" id="typePill" aria-label="Detected types"></div>
         <div id="results-cei-strip" class="cei-node-strip" aria-label="Pressure map"></div>
-        <section class="sh-results-routes sh-results-routes--quiet" aria-label="Choose your next step">
-          <p class="sh-results-routes__label">After your readout</p>
-          <div class="sh-results-routes__grid">
-            <a class="sh-results-route" href="/systems">
-              <p class="sh-results-route__kicker">If you want structure</p>
-              <p class="sh-results-route__title">Open the system map</p>
-              <p class="sh-results-route__body">See where you sit in the diagnostic model and what unlocks next.</p>
-            </a>
-            <a class="sh-results-route" href="/playbooks">
-              <p class="sh-results-route__kicker">If you want execution</p>
-              <p class="sh-results-route__title">Enter a playbook room</p>
-              <p class="sh-results-route__body">Go deeper on one repeating problem—rooms extend the readout; they don’t replace it.</p>
-            </a>
-            <a class="sh-results-route" href="/snapshot">
-              <p class="sh-results-route__kicker">If you want speed</p>
-              <p class="sh-results-route__title">Book a snapshot</p>
-              <p class="sh-results-route__body">A written pass when you need decisions compressed on a clear deadline.</p>
-            </a>
-          </div>
-        </section>
+        <p class="sys-lead-note" style="margin:0 auto 16px;max-width:52ch;text-align:left">The readout names the pattern. Enter Rooms when one problem keeps repeating—the rooms extend this pass; they do not replace it.</p>
         <div class="results-hero-cta-row">
-          <a class="results-cta-pri magnetic" id="results-primary-cta" href="/playbooks" data-sh-flow-primary>Next: Playbooks →</a>
+          <a class="results-cta-pri magnetic" id="results-primary-cta" href="/playbooks" data-sh-flow-primary>Enter Rooms</a>
           <p class="results-flow-links results-flow-links--quiet" id="results-flow-links" hidden>
             <a href="/systems">View system</a>
             <span class="results-flow-links__sep" aria-hidden="true"> · </span>
@@ -904,9 +885,26 @@
           </p>
           <span class="results-cta-subnote" id="results-primary-sub" hidden></span>
           <p class="results-diag-esc">
-            <a href="/capture" class="sh-primary-flow__link">Run diagnostic again →</a>
+            <a href="/systems" class="sh-primary-flow__link">Save and exit</a>
+            <span class="results-flow-links__sep" aria-hidden="true"> · </span>
+            <a href="/capture" class="sh-primary-flow__link">Restart from Phase 01</a>
           </p>
         </div>
+        <section class="sh-results-routes sh-results-routes--quiet" aria-label="Other directions">
+          <p class="sh-results-routes__label">If you need a different next step</p>
+          <div class="sh-results-routes__grid">
+            <a class="sh-results-route" href="/systems">
+              <p class="sh-results-route__kicker">Orientation</p>
+              <p class="sh-results-route__title">Open the system map</p>
+              <p class="sh-results-route__body">See the full model and where paid layers sit relative to this readout.</p>
+            </a>
+            <a class="sh-results-route" href="/snapshot">
+              <p class="sh-results-route__kicker">Compressed pass</p>
+              <p class="sh-results-route__title">Book a snapshot</p>
+              <p class="sh-results-route__body">When you need decisions named on a clear deadline—not another open-ended thread.</p>
+            </a>
+          </div>
+        </section>
         <dl class="result-readout" id="resultReadoutBlock" hidden></dl>
       </div>
     </section>
@@ -972,6 +970,7 @@
     </footer>
   </main>
 
+  <script src="/stephuary-diagnostic-flow.js"></script>
   <script src="/stephuary-result.js"></script>
   <script src="/stephuary-personalization.js"></script>
   <script src="/stephuary-cei-bridge.js"></script>
@@ -1515,6 +1514,16 @@
 })();
   </script>
   <script src="/stephuary-progress.js"></script>
+  <script>
+    (function () {
+      var m = document.getElementById('results-missing-cta');
+      if (m && window.StephuaryDiagnosticFlow && typeof window.StephuaryDiagnosticFlow.getResumeHref === 'function') {
+        try {
+          m.href = window.StephuaryDiagnosticFlow.getResumeHref();
+        } catch (eM) {}
+      }
+    })();
+  </script>
   <script>
     (function () {
       var el = document.getElementById('results-nav-restart');

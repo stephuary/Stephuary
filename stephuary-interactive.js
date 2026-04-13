@@ -125,6 +125,12 @@
     },
 
     getResumeDiagnosticHref: function () {
+      if (window.StephuaryDiagnosticFlow && typeof window.StephuaryDiagnosticFlow.getResumeHref === 'function') {
+        try {
+          window.StephuaryDiagnosticFlow.migrateCompletionFlags();
+          return window.StephuaryDiagnosticFlow.getResumeHref();
+        } catch (eD) {}
+      }
       if (window.StephuaryProgress && typeof window.StephuaryProgress.getResumeLabel === 'function') {
         var lbl = window.StephuaryProgress.getResumeLabel();
         if (lbl && lbl.href) return lbl.href;

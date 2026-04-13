@@ -17,7 +17,7 @@
     }
   </script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Diagnostic · Phase 05 (Sovereignty) · Stephuary</title>
+  <title>Diagnostic · Phase 05 — Sovereignty · Stephuary</title>
   <meta name="description" content="Diagnostic phase 05 (Sovereignty). Control, not just growth." />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -760,6 +760,7 @@
 <body>
 <div id="page-transition" aria-hidden="true"></div>
 <script src="/stephuary-config.js"></script>
+<script src="/stephuary-diagnostic-flow.js"></script>
 <script src="/stephuary-interactive.js" defer></script>
 <script src="/stephuary-early-mode.js" defer></script>
 <script src="/stephuary-personalization.js" defer></script>
@@ -769,12 +770,14 @@
   <header id="phase-header" class="sys-compact" style="margin-top:0">
     <div class="sys-compact__bg"><canvas aria-hidden="true"></canvas></div>
     <div class="sys-compact__inner">
-      <p class="sys-label">Diagnostic · Phase 5 of 5 · Sovereignty</p>
+      <p class="sys-label">Diagnostic · Phase 05 of 5 — Sovereignty</p>
+      <p class="sys-lead-note">Finish Phase 04 — Automation before this section.</p>
       <h1 class="sys-title">Sovereignty</h1>
       <p class="sys-lead">You set rules for tools and attention on paid work so output stays under your control.</p>
       <div id="phase-visual" class="sys-visual" data-visual="grid"></div>
       <div class="sys-actions">
-        <a href="/automation" class="sys-btn sys-btn--pri magnetic">Finish Automation first</a>
+        <a href="/automation" class="sys-btn sys-btn--pri magnetic" id="sovereignty-locked-resume">Continue Diagnostic</a>
+        <a href="/systems" class="sys-btn sys-btn--ghost magnetic">Save and exit</a>
       </div>
     </div>
   </header>
@@ -825,7 +828,7 @@
       </div>
 
       <div id="summary">
-        <p class="summary-phase-tag">Diagnostic · Phase 5 of 5 · Sovereignty</p>
+        <p class="summary-phase-tag">Diagnostic · Phase 05 of 5 — Sovereignty</p>
         <h2 class="summary-title">Sovereignty complete</h2>
         <p class="summary-sub">Control, not just growth.</p>
 
@@ -875,10 +878,11 @@
         <div class="diag-section">
           <p class="diag-h">System</p>
           <div class="system-done" id="out-sys">
-            <p><strong>System complete.</strong> Continue refining or re-enter phases.</p>
+            <p><strong>Diagnostic complete through Phase 05.</strong> View your readout, then continue into Rooms.</p>
+            <p class="sys-lead-note" style="margin:12px 0 14px;max-width:52ch">This locks how you work. Next, you read the full pattern and enter Rooms.</p>
             <p class="capture-flow-saved">Your progress is saved automatically on this device.</p>
             <div class="action-primary" style="margin-bottom:0">
-              <a href="/systems" class="btn btn-solid" data-sh-flow-primary>Open system map →</a>
+              <button type="button" class="btn btn-solid" data-sh-flow-primary id="sovereignty-view-results">View Results</button>
             </div>
             <div class="phase-conversion-premium">
               <p class="phase-conversion-premium__line">You don't need more theory.</p>
@@ -886,10 +890,7 @@
               <a href="/private-access" class="phase-conversion-premium__cta magnetic">Request custom access</a>
             </div>
             <p class="phase-result-links" style="margin-top: 14px">
-              <a href="/systems">View system</a> · <a href="/pricing">View pricing</a>
-            </p>
-            <p class="phase-result-links phase-result-links--minor">
-              <a href="/capture">Re-enter Capture</a>
+              <a href="/systems">Save and exit</a>
             </p>
           </div>
         </div>
@@ -1281,7 +1282,7 @@
     var proof = p4ValidationTier(loadP4Bits());
     var proofLine = proof
       ? '<strong>' + proof + '</strong> (Phase 04)'
-      : 'not locked until Phase 04 is complete';
+      : 'complete Phase 04 — Automation to bind full proof here';
 
     document.getElementById('out-2').innerHTML =
       '<p>You now have:</p><ul class="diag-list">' +
@@ -1425,21 +1426,30 @@
     state.currentStep = 11;
     saveStorage();
     try {
+      if (window.StephuaryDiagnosticFlow && typeof window.StephuaryDiagnosticFlow.markPhaseComplete === 'function') {
+        window.StephuaryDiagnosticFlow.markPhaseComplete(5);
+      }
+    } catch (eMark) {}
+    document.getElementById('flow').style.display = 'none';
+    document.getElementById('summary').style.display = 'flex';
+    buildSummaryOutputs(state.bits.map(function(x) { return x; }));
+    updateRail();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function goToResultsFromSovereignty() {
+    try {
       var p01raw = localStorage.getItem(P01_KEY);
       var p01 = p01raw ? JSON.parse(p01raw) : null;
       var bits = p01 && p01.bits ? p01.bits : null;
       if (window.StephuaryResult && typeof window.StephuaryResult.buildFromPhase01 === 'function') {
         var resultObj = window.StephuaryResult.buildFromPhase01(bits);
         localStorage.setItem('stephuary_result_v1', JSON.stringify(resultObj));
-        window.location.replace('/results');
-        return;
       }
-    } catch (err) {}
-    document.getElementById('flow').style.display = 'none';
-    document.getElementById('summary').style.display = 'flex';
-    buildSummaryOutputs(state.bits.map(function(x) { return x; }));
-    updateRail();
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+      localStorage.setItem('diagnosticStarted', 'true');
+      localStorage.setItem('diagnosticCompleted', 'true');
+    } catch (eGo) {}
+    window.location.href = '/results';
   }
 
   function bridgePlainText() {
@@ -1517,6 +1527,11 @@
   function resetAll() {
     try {
       localStorage.removeItem(STORAGE_KEY);
+      if (window.StephuaryDiagnosticFlow && typeof window.StephuaryDiagnosticFlow.clearCompletionFromPhase === 'function') {
+        window.StephuaryDiagnosticFlow.clearCompletionFromPhase(5);
+      } else {
+        localStorage.removeItem('sovereignty_complete');
+      }
     } catch (e) {}
     state.bits = Array(TOTAL_Q).fill(null);
     state.currentStep = 1;
@@ -1548,11 +1563,19 @@
   });
 
   function initUnlock() {
+    var lr = document.getElementById('sovereignty-locked-resume');
+    if (lr && window.StephuaryDiagnosticFlow && typeof window.StephuaryDiagnosticFlow.getResumeHref === 'function') {
+      lr.href = window.StephuaryDiagnosticFlow.getResumeHref();
+    }
     var unlocked = false;
     try {
       if (window.STEPHUARY_CONFIG && window.STEPHUARY_CONFIG.shouldBypassPhasePaymentGate()) unlocked = true;
       if (localStorage.getItem('archive_unlocked') === 'true') unlocked = true;
-      if (localStorage.getItem('capture_complete') === 'true') unlocked = true;
+      if (window.StephuaryDiagnosticFlow && typeof window.StephuaryDiagnosticFlow.canEnterPhase === 'function') {
+        if (window.StephuaryDiagnosticFlow.canEnterPhase(5)) unlocked = true;
+      } else if (localStorage.getItem('capture_complete') === 'true') {
+        unlocked = true;
+      }
     } catch (err) {}
 
     if (!unlocked) return;
@@ -1578,6 +1601,13 @@
     } else {
       goTo(1);
     }
+  }
+
+  var viewRes = document.getElementById('sovereignty-view-results');
+  if (viewRes) {
+    viewRes.addEventListener('click', function () {
+      goToResultsFromSovereignty();
+    });
   }
 
   initUnlock();
