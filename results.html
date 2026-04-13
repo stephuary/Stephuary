@@ -875,9 +875,9 @@
         <p class="hero-sub" id="results-hero-sub"></p>
         <div class="type-pill" id="typePill" aria-label="Detected types"></div>
         <div id="results-cei-strip" class="cei-node-strip" aria-label="Pressure map"></div>
-        <p class="sys-lead-note" style="margin:0 auto 16px;max-width:52ch;text-align:left">The readout names the pattern. Enter Rooms when one problem keeps repeating—the rooms extend this pass; they do not replace it.</p>
+        <p class="sys-lead-note" style="margin:0 auto 16px;max-width:52ch;text-align:left">The readout names the pattern. When the diagnostic is complete, one Room holds the next pressure point — enter it and work the loop there.</p>
         <div class="results-hero-cta-row">
-          <a class="results-cta-pri magnetic" id="results-primary-cta" href="/playbooks" data-sh-flow-primary>Enter Rooms</a>
+          <a class="results-cta-pri magnetic" id="results-primary-cta" href="#" data-sh-flow-primary>Enter Your Room</a>
           <p class="results-flow-links results-flow-links--quiet" id="results-flow-links" hidden>
             <a href="/systems">View system</a>
             <span class="results-flow-links__sep" aria-hidden="true"> · </span>
@@ -906,6 +906,19 @@
           </div>
         </section>
         <dl class="result-readout" id="resultReadoutBlock" hidden></dl>
+      </div>
+    </section>
+
+    <section class="results-sec alt" id="results-recommended-room" data-sh-flow-section hidden>
+      <div class="wrap-wide">
+        <p class="sec-label">Recommended Room</p>
+        <div class="results-sec__card">
+          <p class="results-sec__lead" id="rec-room-name"></p>
+          <p class="body-text" id="rec-room-reason" style="margin-top:8px"></p>
+          <div style="margin-top:14px">
+            <a class="btn btn-ghost magnetic" id="rec-room-cta" href="/room-02-direction" data-sh-flow-secondary>Enter Room</a>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -1540,6 +1553,22 @@
     }
     if (diagEsc) {
       diagEsc.hidden = !!(diag && diag.cta_single);
+    }
+
+    var recSec = document.getElementById('results-recommended-room');
+    if (recSec) {
+      var bpRec = st && st.bitsPresent;
+      var showRoomRec = !!(bpRec && bpRec.p05 && diag && diag.recommended_room);
+      recSec.hidden = !showRoomRec;
+      if (showRoomRec) {
+        var rr = diag.recommended_room;
+        var rnEl = document.getElementById('rec-room-name');
+        var rrReason = document.getElementById('rec-room-reason');
+        var rcCta = document.getElementById('rec-room-cta');
+        if (rnEl) rnEl.textContent = rr.display_name || '';
+        if (rrReason) rrReason.textContent = rr.reason || '';
+        if (rcCta && rr.path) rcCta.setAttribute('href', rr.path);
+      }
     }
 
     function readLiveEstimates() {

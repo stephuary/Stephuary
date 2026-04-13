@@ -851,6 +851,7 @@
         <h2 class="summary-title">Sovereignty complete</h2>
         <p class="summary-sub">Control, not just growth.</p>
 
+        <div id="sovereignty-legacy-readout" hidden>
         <div class="diag-section">
           <p class="diag-h">1. Current state</p>
           <div class="diag-body" id="out-1"></div>
@@ -893,24 +894,22 @@
           <p class="diag-h">8. Final move</p>
           <div class="diag-body" id="out-8"></div>
         </div>
+        </div>
 
         <div class="diag-section">
-          <p class="diag-h">System</p>
-          <div class="system-done" id="out-sys">
-            <p><strong>Diagnostic complete through Phase 05.</strong> View your readout, then continue into Rooms.</p>
-            <p class="sys-lead-note" style="margin:12px 0 14px;max-width:52ch">Carry-forward: control model, income shape, portability, leverage bias. Results merges Phases 01–05 and sends you to the first Room that matches the bottleneck.</p>
+          <div class="system-done sovereignty-final-block" id="out-sys">
+            <p class="diag-h">Final state</p>
+            <p class="diag-body sovereignty-final-lead" id="sovereignty-final-state">You’ve proven something works.</p>
+            <p class="diag-h" style="margin-top:14px">What this means</p>
+            <div class="diag-body" id="sovereignty-what-means"></div>
+            <p class="diag-h" style="margin-top:14px">The gap</p>
+            <p class="diag-body" id="sovereignty-the-gap">The issue is not understanding. It’s where to apply pressure.</p>
+            <p class="diag-h" style="margin-top:14px">System handoff</p>
+            <p class="diag-body" id="sovereignty-handoff">You don’t need another pass. You need a controlled environment to fix what’s breaking.</p>
             <p class="capture-flow-saved">Your progress is saved automatically on this device.</p>
             <div class="action-primary" style="margin-bottom:0">
-              <button type="button" class="btn btn-solid" data-sh-flow-primary id="sovereignty-view-results">View Results</button>
+              <button type="button" class="btn btn-solid" data-sh-flow-primary id="sovereignty-view-results">Enter Your Room</button>
             </div>
-            <div class="phase-conversion-premium">
-              <p class="phase-conversion-premium__line">You don't need more theory.</p>
-              <p class="phase-conversion-premium__line">You need this applied.</p>
-              <a href="/private-access" class="phase-conversion-premium__cta magnetic">Request custom access</a>
-            </div>
-            <p class="phase-result-links" style="margin-top: 14px">
-              <a href="/systems">Save and exit</a>
-            </p>
           </div>
         </div>
 
@@ -1485,6 +1484,7 @@
     document.getElementById('flow').style.display = 'none';
     document.getElementById('summary').style.display = 'flex';
     buildSummaryOutputs(state.bits.map(function(x) { return x; }));
+    fillSovereigntyFinalBlock();
     updateRail();
     if (window.StephuaryDiagnosticMobile && typeof window.StephuaryDiagnosticMobile.scrollToSummary === 'function') {
       window.requestAnimationFrame(function () {
@@ -1513,45 +1513,55 @@
     window.location.href = '/results';
   }
 
+  function fillSovereigntyFinalBlock() {
+    var el = document.getElementById('sovereignty-what-means');
+    if (!el) return;
+    var text = '';
+    try {
+      if (window.StephuaryResult) {
+        var p01raw = localStorage.getItem(P01_KEY);
+        var p01 = p01raw ? JSON.parse(p01raw) : null;
+        var bits = p01 && p01.bits ? p01.bits : null;
+        var ro = window.StephuaryResult.buildFromPhase01(bits);
+        var lines = ro.diagnostic && ro.diagnostic.phase_chain_lines ? ro.diagnostic.phase_chain_lines.slice(0, 3) : [];
+        text = lines.length ? lines.join(' ') : '';
+      }
+    } catch (eFill) {}
+    if (!text) {
+      text =
+        'Phases 01–05 captured pattern, demand, offer shape, validation signal, and control — enough to choose a single next pressure point.';
+    }
+    el.textContent = text;
+  }
+
   function bridgePlainText() {
     var el = document.getElementById('bridgeRows');
     return el ? el.innerText.trim() : '';
   }
 
   function exportText() {
-    var lines = [
+    function gt(id) {
+      var n = document.getElementById(id);
+      return n ? n.innerText.trim() : '';
+    }
+    return [
       'Stephuary · Phase 05 · Sovereignty',
       '',
       'Bridge (Phase 4 → 5)',
       bridgePlainText(),
       '',
-      '1. Current state',
-      document.getElementById('out-1').innerText.trim(),
+      'Final state',
+      gt('sovereignty-final-state'),
       '',
-      '2. What you’ve built',
-      document.getElementById('out-2').innerText.trim(),
+      'What this means',
+      gt('sovereignty-what-means'),
       '',
-      '3. Risk',
-      document.getElementById('out-3').innerText.trim(),
+      'The gap',
+      gt('sovereignty-the-gap'),
       '',
-      '4. Sovereignty path',
-      document.getElementById('out-4').innerText.trim(),
-      '',
-      '5. Multiplier',
-      document.getElementById('out-5').innerText.trim(),
-      '',
-      '6. Hard truth',
-      document.getElementById('out-6').innerText.trim(),
-      '',
-      '7. Sovereign position',
-      document.getElementById('out-7').innerText.trim(),
-      '',
-      '8. Final move',
-      document.getElementById('out-8').innerText.trim(),
-      '',
-      document.getElementById('out-sys').innerText.trim()
-    ];
-    return lines.join('\n');
+      'System handoff',
+      gt('sovereignty-handoff')
+    ].join('\n');
   }
 
   function copyAll() {

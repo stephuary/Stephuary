@@ -424,22 +424,9 @@
     });
     moves = deduped.slice(0, 4);
 
-    var room = diag.next_room || {};
-    var roomPath = room.path || '/room-02-direction';
-    var roomTitle = room.title || 'the matching Room';
-    var handoff =
-      'Phase 01 locked how you notice and move. Phases 02–05 locked value, offer shape, validation, and control. Use ' +
-      roomTitle +
-      ' first because it matches the tightest bottleneck.';
-
     diag.phase_chain_lines = lines;
     diag.phase_issues = issues.slice(0, 5);
     diag.priority_moves = moves;
-    diag.results_handoff = handoff;
-    diag.rooms_entry_hint =
-      'Enter the Room that matches your primary playbook, then work down the list if more than one issue scored high. Primary door: ' +
-      roomPath +
-      '.';
 
     if (issues.length) {
       diag.synthesis_summary = issues.slice(0, 2).join(' · ');
@@ -458,40 +445,176 @@
     return p3.offer_definition.indexOf('invoice') >= 0;
   }
 
-  function resolveResultsCta(store, diag) {
+  /** Dynamic room labels + routes (maps onto existing Room playbooks). */
+  var RECOMMENDED_ROOM = {
+    positioning: {
+      display_name: 'Positioning Room',
+      playbook: 'Income Architecture',
+      path: '/room-03-transaction'
+    },
+    demand: { display_name: 'Demand Room', playbook: 'Reset', path: '/room-01-extraction' },
+    focus: { display_name: 'Focus Room', playbook: 'Ownership', path: '/room-04-infrastructure' },
+    system: { display_name: 'System Room', playbook: 'Reset', path: '/room-01-extraction' },
+    direction: { display_name: 'Direction Room', playbook: 'Execution', path: '/room-02-direction' }
+  };
+
+  function recommendedRoomRecord(key, reason) {
+    var base = RECOMMENDED_ROOM[key] || RECOMMENDED_ROOM.direction;
+    return {
+      key: key,
+      display_name: base.display_name,
+      playbook: base.playbook,
+      path: base.path,
+      reason: reason
+    };
+  }
+
+  function fallbackRecommendedFromVersion(version) {
+    var pb = primaryPlaybookForVersion(version || 'mixed_general');
+    if (pb === 'AI Control') {
+      return {
+        key: 'fallback',
+        display_name: 'System Room',
+        playbook: 'AI Control',
+        path: '/room-05-cognition',
+        reason: nextReason(pb)
+      };
+    }
+    var base = RECOMMENDED_ROOM.positioning;
+    if (pb === 'Income Architecture') base = RECOMMENDED_ROOM.positioning;
+    else if (pb === 'Reset') base = RECOMMENDED_ROOM.demand;
+    else if (pb === 'Ownership') base = RECOMMENDED_ROOM.focus;
+    else if (pb === 'Execution') base = RECOMMENDED_ROOM.direction;
+    return {
+      key: 'fallback',
+      display_name: base.display_name,
+      playbook: pb,
+      path: base.path,
+      reason: nextReason(pb)
+    };
+  }
+
+  /**
+   * Priority order: offer clarity → demand → execution/validation → structure → scattered direction → version fallback.
+   */
+  function computeRecommendedRoom(store, data) {
     var bp = store && store.bitsPresent;
-
-    if (!bp || !bp.p01) {
-      return { label: 'Open System Map', href: '/systems', kind: 'system_map' };
-    }
-    if (!bp.p02) {
-      return { label: 'Open System Map', href: '/systems', kind: 'system_map' };
-    }
-
     var p2 = store.phase02;
     var p3 = store.phase03;
     var p4 = store.phase04;
     var p5 = store.phase05;
+    var version = (data && data.result_version) || 'mixed_general';
 
-    if (!bp.p03 || !chargeableOffer(p3)) {
-      return { label: 'Enter Rooms', href: '/playbooks', kind: 'rooms' };
+    if (!bp || !bp.p03 || !p3 || !chargeableOffer(p3)) {
+      return recommendedRoomRecord(
+        'positioning',
+        'Offer shape is not priced to ship yet — tighten positioning before you scale demand.'
+      );
     }
 
-    if (!bp.p04 || !p4 || p4.validation_status === 'untested') {
+    if (
+      p2 &&
+      (String(p2.paid_problem || '').indexOf('not aligned') >= 0 ||
+        (String(p2.demand_signal || '').indexOf('Push') >= 0 &&
+          String(p2.buyer_type || '').indexOf('broad') >= 0))
+    ) {
+      return recommendedRoomRecord(
+        'demand',
+        'Paid-fit and demand motion are still misaligned — build pull before you push harder.'
+      );
+    }
+
+    if (
+      p4 &&
+      (p4.validation_status === 'untested' ||
+        (p4.validation_status === 'partial' && String(p4.response_type || '').indexOf('Silence') >= 0))
+    ) {
+      return recommendedRoomRecord(
+        'focus',
+        'Execution and market signal are out of sync — close the loop where work meets reality.'
+      );
+    }
+
+    if (
+      p5 &&
+      (String(p5.control_model || '').indexOf('Dependent') >= 0 ||
+        String(p5.scalability_status || '').indexOf('tied to direct') >= 0)
+    ) {
+      return recommendedRoomRecord(
+        'system',
+        'Structure and control are still external — shore up the system that holds revenue.'
+      );
+    }
+
+    if (version === 'connector_overthinking_scattered') {
+      return recommendedRoomRecord(
+        'direction',
+        'Direction is still scattered — pick one lane and hold it until it ships.'
+      );
+    }
+
+    return fallbackRecommendedFromVersion(version);
+  }
+
+  function assignRecommendedRoom(data) {
+    if (!data || !data.diagnostic) return;
+    var diag = data.diagnostic;
+    var store = data.structured;
+    if (!store || !store.bitsPresent) return;
+
+    var rec = computeRecommendedRoom(store, data);
+    diag.recommended_room = rec;
+
+    var roomMeta = PLAYBOOK_ROOM[rec.playbook] || PLAYBOOK_ROOM.Execution;
+    diag.next_playbook = rec.playbook;
+    diag.next_room = { num: roomMeta.room, title: roomMeta.title, path: rec.path };
+    diag.next_reason = rec.reason;
+
+    diag.results_handoff =
+      'Phase 01 locked how you notice and move. Phases 02–05 locked value, offer shape, validation, and control. Start with ' +
+      rec.display_name +
+      ' — it matches the tightest bottleneck right now.';
+
+    diag.rooms_entry_hint = 'Primary door: ' + rec.path + ' · ' + rec.display_name + '.';
+  }
+
+  function resolveResultsCta(store, diag) {
+    var bp = store && store.bitsPresent;
+
+    if (!bp || !bp.p01) {
+      return { label: 'Continue Diagnostic', href: '/capture', kind: 'continue_diag' };
+    }
+    if (!bp.p02) {
+      return { label: 'Continue Diagnostic', href: '/monetize', kind: 'continue_diag' };
+    }
+    if (!bp.p03) {
+      return { label: 'Continue Diagnostic', href: '/structure', kind: 'continue_diag' };
+    }
+
+    var p3 = store.phase03;
+    if (!chargeableOffer(p3)) {
+      var rec0 = diag && diag.recommended_room;
+      return {
+        label: 'Enter Your Room',
+        href: (rec0 && rec0.path) || '/room-03-transaction',
+        kind: 'enter_room'
+      };
+    }
+
+    if (!bp.p04) {
       return { label: 'Continue Diagnostic', href: '/automation', kind: 'continue_diag' };
     }
 
-    if (!bp.p05 || !p5) {
+    if (!bp.p05) {
       return { label: 'Continue Diagnostic', href: '/sovereignty', kind: 'continue_diag' };
     }
 
-    var validated = p4.validation_status === 'validated';
-    var independent = p5.control_model.indexOf('Independent') >= 0;
-    if (validated && independent) {
-      return { label: 'Book Snapshot', href: '/snapshot', kind: 'snapshot' };
-    }
-
-    return { label: 'Refine System', href: '/systems', kind: 'refine' };
+    var rec = diag && diag.recommended_room;
+    return {
+      label: 'Enter Your Room',
+      href: (rec && rec.path) || (diag.next_room && diag.next_room.path) || '/room-02-direction',
+      kind: 'enter_room'
+    };
   }
 
   function derivePrimaryIssue(diag, store, issues) {
@@ -579,6 +702,8 @@
       diag.fix_first = diag.primary_issue || diag.main_problem;
     }
 
+    assignRecommendedRoom(data);
+
     diag.results_cta = resolveResultsCta(store, diag);
     diag.cta_single = true;
 
@@ -631,6 +756,8 @@
     buildDiagnostic: buildDiagnostic,
     mergeCrossPhase: mergeCrossPhase,
     applyStructuredSynthesis: applyStructuredSynthesis,
+    computeRecommendedRoom: computeRecommendedRoom,
+    assignRecommendedRoom: assignRecommendedRoom,
     PLAYBOOK_ROOM: PLAYBOOK_ROOM,
     VERSION_PLAYBOOKS: VERSION_PLAYBOOKS
   };
