@@ -1,72 +1,15 @@
 <!DOCTYPE html>
 <!--
-  HOMEPAGE HERO / ENV — FORENSIC AUDIT (debug; trim later)
-  kept: #home-environment — single global full-viewport env (html.god-hour → .ambient__god-* only;
-        else → .home-env__default + #home-env-canvas + .home-env__layer--deep/mid/fg). Parallax: inline
-        homeEnvImmersive sets --env-parallax-y on #home-environment only.
-  kept: #hero — layout + copy only; .hero-overlay = hero-local vignette (not a second env system).
-  kept: #cosmic-metropolis — session intro overlay only (z-stacked above shell until done); not scrolling background.
-  removed: #cosmic-settled — duplicate fixed z-0 full-viewport grid/particles vs #home-environment (DOM + cosmic-metropolis.css).
-  removed: html.god-hour .hero-container::before/::after and .hero-inner::before — duplicate slabs vs .ambient__god-env (stephuary-god-hour.css).
-  removed: .ambient__noise / .ambient__particles under #home-environment — never painted on homepage (always suppressed); dead mounts removed.
-  GSAP: no second env init; ScrollTrigger animates hero UI motion only (see bottom inline script).
+  Homepage cleanup (single render path):
+  removed: early mode boot (head script + data-early-mode)
+  removed: god hour boot (head script + data-god-hour)
+  removed: cosmic metropolis intro (session script, cosmic-entry-shell, #cosmic-metropolis, listeners, linked CSS/JS)
+  kept: #home-environment + canvas + CSS layers (default stack only; god-hour sub-stack removed from DOM)
+  fixed: homepage top stack — nav → primary flow → hero; .page / #main-content margin & padding reset
 -->
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <script>
-    try {
-      var h = new Date().getHours();
-      var em = h >= 3 && h < 7;
-      var gh = h >= 4 && h < 7;
-      document.documentElement.classList.toggle('early-mode', em);
-      document.documentElement.classList.toggle('god-hour', gh);
-      document.documentElement.setAttribute('data-early-mode', em ? 'true' : 'false');
-      document.documentElement.setAttribute('data-god-hour', gh ? 'true' : 'false');
-    } catch (e) {
-      document.documentElement.setAttribute('data-early-mode', 'false');
-      document.documentElement.setAttribute('data-god-hour', 'false');
-    }
-  </script>
-  <script>
-    (function () {
-      try {
-        var p = location.pathname || '/';
-        var home = p === '/' || p === '/index' || p === '/index.html';
-        if (!home) return;
-        var k = 'stephuary_cosmic_metropolis';
-        if (sessionStorage.getItem(k) === '1') {
-          document.documentElement.classList.add('cosmic-intro--skipped');
-        } else {
-          document.documentElement.classList.add('cosmic-intro--pending');
-        }
-      } catch (e) {}
-    })();
-  </script>
-  <style id="cosmic-entry-shell">
-    /* First-paint: intro owns the screen; no header/hero/ambient flash (runs before body CSS). */
-    html.cosmic-intro--pending {
-      overflow: hidden;
-      height: 100%;
-    }
-    html.cosmic-intro--pending body {
-      margin: 0;
-      background: #030303;
-      overflow: hidden !important;
-      overscroll-behavior: none;
-      touch-action: none;
-    }
-    html.cosmic-intro--pending.early-mode body {
-      background: linear-gradient(180deg, #1a0f28 0%, #2d1830 45%, #4a2038 100%);
-    }
-    html.cosmic-intro--pending.god-hour body {
-      background: linear-gradient(185deg, #080706 0%, #0f0b0a 40%, #141014 72%, #0c0a0c 100%);
-    }
-    html.cosmic-intro--pending body > *:not(#cosmic-metropolis) {
-      visibility: hidden !important;
-      pointer-events: none !important;
-    }
-  </style>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Stephuary</title>
   <link rel="stylesheet" href="/stephuary-interactive.css" />
@@ -160,6 +103,8 @@
       z-index: 1;
       padding-bottom: 0;
       margin-bottom: 0;
+      margin-top: 0;
+      padding-top: 0;
     }
 
     /* Homepage: flow strip — no solid slab; continuous with fixed env */
@@ -306,6 +251,12 @@
       will-change: transform;
       flex: 0 0 auto;
       padding-top: 0;
+    }
+
+    /* Time-gated hint lines were styled by removed early/god CSS; show lead only on homepage */
+    body[data-sh-env='home'] .home-early-hint__std,
+    body[data-sh-env='home'] .home-early-hint__god {
+      display: none;
     }
 
     /* Lower third: live system entry — anchored, not floating mid-hero */
@@ -1273,11 +1224,8 @@
       }
     }
   </style>
-  <link rel="stylesheet" href="/stephuary-early-mode.css" />
-  <link rel="stylesheet" href="/stephuary-god-hour.css" />
   <link rel="stylesheet" href="/stephuary-private-selection.css" />
   <link rel="stylesheet" href="/stephuary-home-finale.css" />
-  <link rel="stylesheet" href="/cosmic-metropolis.css" />
   <style id="home-atmosphere-restoration">
     /*
       Global environment: same palette as hero canvas (linear stops + arcs + particles).
@@ -1305,7 +1253,7 @@
       }
     }
 
-    html:not(.god-hour) .home-env__default {
+.home-env__default {
       position: absolute;
       inset: 0;
       z-index: 1;
@@ -1314,8 +1262,8 @@
       isolation: isolate;
     }
 
-    /* Full-viewport canvas: same draw() as former hero — sits above god base when not god hour */
-    html:not(.god-hour) .home-env__canvas-wrap {
+    /* Full-viewport canvas — base layer under CSS env stacks */
+.home-env__canvas-wrap {
       position: absolute;
       inset: 0;
       z-index: 2;
@@ -1324,7 +1272,7 @@
       will-change: transform;
     }
 
-    html:not(.god-hour) #home-env-canvas {
+#home-env-canvas {
       display: block;
       width: 100%;
       height: 100%;
@@ -1332,7 +1280,7 @@
       opacity: 1;
     }
 
-    html:not(.god-hour) .home-env__sweep-host {
+.home-env__sweep-host {
       position: absolute;
       inset: 0;
       overflow: hidden;
@@ -1344,7 +1292,7 @@
       Deep field (6+ radials): oxblood, navy, electric blue, magenta/violet blend zones — balanced.
       Uses rgba(var(--sh-env-*)) + hero-adjacent tones; not purple-forward.
     */
-    html:not(.god-hour) .home-env__layer--deep {
+.home-env__layer--deep {
       position: absolute;
       inset: -12%;
       z-index: 3;
@@ -1369,7 +1317,7 @@
     }
 
     /* Mid aura: full-page color breathing — visible mid/lower viewport, not only hero */
-    html:not(.god-hour) .home-env__layer--mid {
+.home-env__layer--mid {
       position: absolute;
       inset: -22%;
       z-index: 4;
@@ -1388,7 +1336,7 @@
     }
 
     /* Foreground: gentle edge hold — must not crush global color */
-    html:not(.god-hour) .home-env__layer--fg {
+.home-env__layer--fg {
       position: absolute;
       inset: 0;
       z-index: 5;
@@ -1403,18 +1351,14 @@
       opacity: 0.38;
     }
 
-    html.god-hour #home-environment .home-env__default {
-      opacity: 0 !important;
-      visibility: hidden !important;
-      pointer-events: none !important;
-    }
-
-    html:not(.god-hour) body[data-sh-env='home'] {
+    body[data-sh-env='home'] {
       background-color: #0a0d18;
     }
 
     body[data-sh-env='home'] #main-content {
       background: transparent;
+      margin-top: 0;
+      padding-top: 0;
     }
 
     .hero-overlay::after {
@@ -1422,14 +1366,14 @@
     }
 
     @media (prefers-reduced-motion: reduce) {
-      html:not(.god-hour) .home-env__layer--deep,
-      html:not(.god-hour) .home-env__layer--mid {
+.home-env__layer--deep,
+.home-env__layer--mid {
         animation: none !important;
       }
-      html:not(.god-hour) .home-env__canvas-wrap,
-      html:not(.god-hour) .home-env__layer--deep,
-      html:not(.god-hour) .home-env__layer--mid,
-      html:not(.god-hour) .home-env__layer--fg {
+.home-env__canvas-wrap,
+.home-env__layer--deep,
+.home-env__layer--mid,
+.home-env__layer--fg {
         transform: none !important;
       }
     }
@@ -1476,75 +1420,7 @@
 </head>
 <body data-sh-env="home">
 
-  <div id="cosmic-metropolis" aria-hidden="true">
-    <div class="cosmic-metropolis__camera">
-      <div class="cosmic-metropolis__dim"></div>
-      <div class="cosmic-metropolis__particles" aria-hidden="true">
-        <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
-      </div>
-      <div class="cosmic-metropolis__grid" aria-hidden="true"></div>
-      <svg class="cosmic-metropolis__signals" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
-        <path class="cosmic-metropolis__signals-line" d="M0,52 Q28,46 52,52 T100,50" />
-        <path class="cosmic-metropolis__signals-line cosmic-metropolis__signals-line--b" d="M0,58 Q32,62 56,58 T100,54" />
-      </svg>
-      <div class="cosmic-metropolis__orbits" aria-hidden="true">
-        <div class="cosmic-metropolis__orbit cosmic-metropolis__orbit--a"></div>
-        <div class="cosmic-metropolis__orbit cosmic-metropolis__orbit--b"></div>
-        <div class="cosmic-metropolis__orbit cosmic-metropolis__orbit--c"></div>
-      </div>
-      <div class="cosmic-metropolis__nodes" aria-hidden="true">
-        <span class="cosmic-metropolis__node-dot"></span>
-        <span class="cosmic-metropolis__node-dot"></span>
-        <span class="cosmic-metropolis__node-dot"></span>
-      </div>
-      <div class="cosmic-metropolis__halo" aria-hidden="true"></div>
-      <div class="cosmic-metropolis__core" aria-hidden="true"></div>
-      <div class="cosmic-metropolis__ripple" aria-hidden="true"></div>
-      <div class="cosmic-metropolis__calibration" aria-hidden="true"></div>
-    </div>
-    <div class="cosmic-metropolis__copy">
-      <div class="cosmic-metropolis__copy-layout">
-        <div class="cosmic-metropolis__signal-rail" aria-hidden="true">
-          <span class="cosmic-metropolis__signal-node"></span>
-          <span class="cosmic-metropolis__signal-stem"></span>
-        </div>
-        <div class="cosmic-metropolis__copy-stack">
-          <p class="cosmic-metropolis__line cosmic-metropolis__line--a">
-            <span class="cm-default-only">Welcome in</span>
-            <span class="cm-early-only">You're doing what most people won't.</span>
-          </p>
-          <p class="cosmic-metropolis__line cosmic-metropolis__line--b">
-            <span class="cm-default-only">This is designed to show you</span>
-            <span class="cm-early-only">Now use it.</span>
-          </p>
-          <p class="cosmic-metropolis__line cosmic-metropolis__line--c">
-            <span class="cm-default-only">what most people miss</span>
-            <span class="cm-early-only cm-early-only--blank" aria-hidden="true"></span>
-          </p>
-        </div>
-      </div>
-      <div class="cosmic-metropolis__avatar-wrap" aria-hidden="true">
-        <img
-          class="cosmic-metropolis__avatar"
-          src="/cosmic-metropolis-avatar.png"
-          alt=""
-          width="220"
-          height="220"
-          decoding="async"
-          loading="eager"
-        />
-      </div>
-    </div>
-  </div>
-
   <div id="home-environment" class="home-env ambient" aria-hidden="true">
-    <div class="ambient__god-env" aria-hidden="true">
-      <div class="ambient__god-base"></div>
-      <div class="ambient__god-motion">
-        <div class="ambient__god-directional"></div>
-        <div class="ambient__god-diffuse"></div>
-      </div>
-    </div>
     <div class="home-env__default ambient__grad">
       <div id="home-env-canvas-wrap" class="home-env__canvas-wrap" aria-hidden="true">
         <canvas id="home-env-canvas"></canvas>
@@ -1986,9 +1862,7 @@
   <script src="/stephuary-os.js" defer></script>
   <script src="/stephuary-progress.js" defer></script>
   <script src="/stephuary-config.js" defer></script>
-  <script src="/cosmic-metropolis.js" defer></script>
   <script src="/stephuary-interactive.js" defer></script>
-  <script src="/stephuary-early-mode.js" defer></script>
   <script src="/stephuary-personalization.js" defer></script>
   <script src="/stephuary-private-selection.js" defer></script>
   <script src="/stephuary-global-map.js" defer></script>
@@ -2005,16 +1879,7 @@
 
         var BOOT_KEY = '__stephuaryHomeEnvImmersiveBooted';
 
-        function isGodHour() {
-          try {
-            return document.documentElement.classList.contains('god-hour');
-          } catch (eGh) {
-            return false;
-          }
-        }
-
         function boot() {
-          if (isGodHour()) return;
           if (window[BOOT_KEY]) return;
 
           var ctx = canvas.getContext('2d', { alpha: false });
@@ -2061,32 +1926,21 @@
 
         function draw() {
           t += 0.0019;
-          var em =
-            typeof document !== 'undefined' &&
-            document.documentElement &&
-            document.documentElement.classList.contains('early-mode');
           var ox = 0.62 + Math.sin(t * 0.85) * 0.14;
           var bl = 0.58 + Math.cos(t * 0.72) * 0.14;
           var grad = ctx.createLinearGradient(0, 0, width, height);
-          if (em) {
-            grad.addColorStop(0, '#070605');
-            grad.addColorStop(0.36, 'rgba(120, 38, 28, ' + ox + ')');
-            grad.addColorStop(0.63, 'rgba(88, 42, 92, ' + bl + ')');
-            grad.addColorStop(1, '#050408');
-          } else {
-            grad.addColorStop(0, '#0a0d18');
-            grad.addColorStop(0.36, 'rgba(118, 12, 12, ' + ox + ')');
-            grad.addColorStop(0.63, 'rgba(22, 48, 132, ' + bl + ')');
-            grad.addColorStop(1, '#080c16');
-          }
+          grad.addColorStop(0, '#0a0d18');
+          grad.addColorStop(0.36, 'rgba(118, 12, 12, ' + ox + ')');
+          grad.addColorStop(0.63, 'rgba(22, 48, 132, ' + bl + ')');
+          grad.addColorStop(1, '#080c16');
           ctx.fillStyle = grad;
           ctx.fillRect(0, 0, width, height);
 
           var ap = t * 0.437;
           ctx.save();
           ctx.lineWidth = 1;
-          ctx.globalAlpha = em ? 0.048 : 0.042;
-          ctx.strokeStyle = em ? 'rgba(212, 140, 88, 0.9)' : 'rgba(58, 107, 255, 0.95)';
+          ctx.globalAlpha = 0.042;
+          ctx.strokeStyle = 'rgba(58, 107, 255, 0.95)';
           ctx.beginPath();
           if (typeof ctx.ellipse === 'function') {
             ctx.ellipse(width * 0.27, height * 0.54, width * 0.44, height * 0.36, ap * 0.14, 0.15, Math.PI * 1.32);
@@ -2094,8 +1948,8 @@
             ctx.arc(width * 0.35, height * 0.5, width * 0.35, 0.2, Math.PI * 1.2);
           }
           ctx.stroke();
-          ctx.globalAlpha = em ? 0.042 : 0.036;
-          ctx.strokeStyle = em ? 'rgba(180, 64, 48, 0.88)' : 'rgba(140, 36, 36, 0.9)';
+          ctx.globalAlpha = 0.036;
+          ctx.strokeStyle = 'rgba(140, 36, 36, 0.9)';
           ctx.beginPath();
           if (typeof ctx.ellipse === 'function') {
             ctx.ellipse(width * 0.74, height * 0.4, width * 0.34, height * 0.29, -ap * 0.11, -0.08, Math.PI * 1.48);
@@ -2162,25 +2016,12 @@
         }
 
         boot();
-        window.addEventListener('earlymodechange', function (ev) {
-          try {
-            if (!ev || !ev.detail || ev.detail.isGodHour) return;
-            if (window[BOOT_KEY]) return;
-            boot();
-          } catch (eEarly) {}
-        });
       })();
 
       var hasGsap = typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined';
       if (hasGsap) {
         gsap.registerPlugin(ScrollTrigger);
       }
-
-      window.addEventListener('cosmicmetropolisdone', function () {
-        try {
-          if (typeof ScrollTrigger !== 'undefined') ScrollTrigger.refresh();
-        } catch (e) {}
-      });
 
       window.addEventListener(
         'pageshow',
