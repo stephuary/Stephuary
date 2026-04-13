@@ -242,9 +242,8 @@
       opacity: 0.85;
     }
 
-    /* Hero — overflow visible avoids hard clip seam vs fixed global environment */
+    /* Hero — single environment from #home-environment; no second atmospheric stack here */
     #hero {
-      --hero-scroll-y: 0px;
       position: relative;
       overflow: visible;
       min-height: min(100vh, 920px);
@@ -256,30 +255,13 @@
     /* Hero: content only — global canvas + environment live in #home-environment */
     .hero-container {
       position: relative;
-      overflow: hidden;
+      overflow: visible;
       min-height: min(100vh, 920px);
       min-height: min(100dvh, 920px);
       min-height: -webkit-fill-available;
       display: flex;
       flex-direction: column;
       background: transparent;
-    }
-
-    /* Homepage-only: soft blobs; subtle scroll parallax ties hero to page motion */
-    html:not(.god-hour) .hero-env-intensify {
-      position: absolute;
-      inset: 0;
-      z-index: 0;
-      pointer-events: none;
-      overflow: visible;
-      transform: translate3d(0, calc(var(--hero-scroll-y, 0px) * -0.018), 0);
-      will-change: transform;
-    }
-
-    .hero-env-intensify__layer {
-      position: absolute;
-      pointer-events: none;
-      border-radius: 50%;
     }
 
     .hero-overlay {
@@ -1443,8 +1425,7 @@
       html:not(.god-hour) .home-env__canvas-wrap,
       html:not(.god-hour) .home-env__layer--deep,
       html:not(.god-hour) .home-env__layer--mid,
-      html:not(.god-hour) .home-env__layer--fg,
-      html:not(.god-hour) .hero-env-intensify {
+      html:not(.god-hour) .home-env__layer--fg {
         transform: none !important;
       }
     }
@@ -1464,159 +1445,6 @@
     body[data-sh-env='home'] .home-cei::after {
       content: none;
       display: none;
-    }
-
-    /*
-      Hero-only intensification (homepage): same palette as global, stronger overlap / depth.
-      No layout/copy changes — layers sit above fixed global env, clipped to #hero.
-    */
-    @keyframes heroEnvOxDrift {
-      0%,
-      100% {
-        transform: translate(-50%, -50%) translate(0, 0) scale(1);
-      }
-      50% {
-        transform: translate(-50%, -50%) translate(10px, -8px) scale(1.04);
-      }
-    }
-    @keyframes heroEnvBlueDrift {
-      0%,
-      100% {
-        transform: translate(50%, -50%) translate(0, 0) scale(1);
-      }
-      50% {
-        transform: translate(50%, -50%) translate(-12px, 10px) scale(1.035);
-      }
-    }
-    @keyframes heroEnvMagDrift {
-      0%,
-      100% {
-        transform: translate(-50%, -50%) scale(1);
-        opacity: 0.85;
-      }
-      50% {
-        transform: translate(-50%, -50%) translate(6px, 4px) scale(1.06);
-        opacity: 0.95;
-      }
-    }
-    @keyframes heroEnvPlumDrift {
-      0%,
-      100% {
-        transform: translate(-50%, 0) translate(0, 0);
-      }
-      50% {
-        transform: translate(-50%, 0) translate(-8px, 6px);
-      }
-    }
-
-    html:not(.god-hour) .hero-env-intensify__layer--ox {
-      left: 18%;
-      top: 30%;
-      width: 44rem;
-      height: 44rem;
-      max-width: 140vw;
-      max-height: 140vw;
-      transform: translate(-50%, -50%);
-      background: radial-gradient(
-        ellipse 72% 68% at 42% 46%,
-        rgba(122, 11, 20, 0.42) 0%,
-        rgba(78, 7, 12, 0.18) 42%,
-        rgba(176, 18, 107, 0.1) 58%,
-        transparent 78%
-      );
-      filter: blur(88px);
-      mix-blend-mode: screen;
-      opacity: 0.58;
-      animation: heroEnvOxDrift 36s ease-in-out infinite;
-    }
-
-    html:not(.god-hour) .hero-env-intensify__layer--blue {
-      right: 8%;
-      top: 22%;
-      width: 48rem;
-      height: 48rem;
-      max-width: 145vw;
-      max-height: 145vw;
-      transform: translate(50%, -50%);
-      background: radial-gradient(
-        ellipse 70% 66% at 58% 44%,
-        rgba(13, 42, 122, 0.44) 0%,
-        rgba(5, 8, 22, 0.22) 40%,
-        rgba(176, 18, 107, 0.09) 58%,
-        transparent 78%
-      );
-      filter: blur(96px);
-      mix-blend-mode: soft-light;
-      opacity: 0.54;
-      animation: heroEnvBlueDrift 42s ease-in-out infinite;
-    }
-
-    html:not(.god-hour) .hero-env-intensify__layer--magenta {
-      left: 48%;
-      top: 34%;
-      width: 30rem;
-      height: 28rem;
-      max-width: 92vw;
-      max-height: 88vw;
-      transform: translate(-50%, -50%);
-      background: radial-gradient(
-        ellipse 65% 62% at 50% 48%,
-        rgba(176, 18, 107, 0.22) 0%,
-        rgba(74, 42, 106, 0.11) 45%,
-        rgba(13, 42, 122, 0.06) 62%,
-        transparent 82%
-      );
-      filter: blur(76px);
-      mix-blend-mode: screen;
-      opacity: 0.48;
-      animation: heroEnvMagDrift 33s ease-in-out infinite;
-    }
-
-    html:not(.god-hour) .hero-env-intensify__layer--plum {
-      left: 50%;
-      bottom: 8%;
-      width: 56rem;
-      height: 26rem;
-      max-width: 160vw;
-      transform: translate(-50%, 0);
-      background: radial-gradient(
-        ellipse 78% 88% at 50% 100%,
-        rgba(74, 42, 106, 0.16) 0%,
-        rgba(176, 18, 107, 0.06) 48%,
-        transparent 74%
-      );
-      filter: blur(118px);
-      mix-blend-mode: soft-light;
-      opacity: 0.38;
-      animation: heroEnvPlumDrift 39s ease-in-out infinite;
-    }
-
-    html:not(.god-hour) .hero-env-intensify__layer--amber {
-      left: 46%;
-      top: 18%;
-      width: 22rem;
-      height: 16rem;
-      max-width: 70vw;
-      transform: translate(-50%, -50%);
-      background: radial-gradient(ellipse 58% 56% at 50% 50%, rgba(255, 170, 70, 0.11) 0%, rgba(255, 170, 70, 0.05) 45%, transparent 72%);
-      filter: blur(52px);
-      mix-blend-mode: soft-light;
-      opacity: 0.48;
-      animation: heroEnvMagDrift 48s ease-in-out infinite reverse;
-    }
-
-    html.god-hour .hero-env-intensify {
-      display: none !important;
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      html:not(.god-hour) .hero-env-intensify__layer--ox,
-      html:not(.god-hour) .hero-env-intensify__layer--blue,
-      html:not(.god-hour) .hero-env-intensify__layer--magenta,
-      html:not(.god-hour) .hero-env-intensify__layer--plum,
-      html:not(.god-hour) .hero-env-intensify__layer--amber {
-        animation: none !important;
-      }
     }
 
     /* Repair: section surfaces let fixed global env read through (cards stay legible) */
@@ -1757,13 +1585,6 @@
     <main id="main-content">
     <section id="hero" data-sh-flow-section>
       <div class="hero-container">
-        <div class="hero-env-intensify" aria-hidden="true">
-          <div class="hero-env-intensify__layer hero-env-intensify__layer--ox"></div>
-          <div class="hero-env-intensify__layer hero-env-intensify__layer--blue"></div>
-          <div class="hero-env-intensify__layer hero-env-intensify__layer--magenta"></div>
-          <div class="hero-env-intensify__layer hero-env-intensify__layer--plum"></div>
-          <div class="hero-env-intensify__layer hero-env-intensify__layer--amber"></div>
-        </div>
         <div class="hero-overlay" aria-hidden="true"></div>
         <div class="hero-content">
           <div class="hero-inner" id="hero-parallax">
@@ -2337,12 +2158,10 @@
 
         var reduceMotion =
           window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-        var heroSec = document.getElementById('hero');
         function updateEnvParallax() {
           if (reduceMotion) return;
           var y = window.scrollY || window.pageYOffset || 0;
           if (homeEnv) homeEnv.style.setProperty('--env-parallax-y', y + 'px');
-          if (heroSec) heroSec.style.setProperty('--hero-scroll-y', y + 'px');
         }
         updateEnvParallax();
         window.addEventListener('scroll', updateEnvParallax, { passive: true });
