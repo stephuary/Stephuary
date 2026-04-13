@@ -81,7 +81,7 @@
     }
 
     :root {
-      --bg: #030303;
+      --bg: #03040c;
       --blue: #3A6BFF;
       --blue-soft: rgba(58, 107, 255, 0.14);
       --blue-glow: rgba(58, 107, 255, 0.35);
@@ -101,7 +101,7 @@
     }
 
     body {
-      background: var(--bg);
+      background: #03040c;
       color: var(--text);
       font-family: 'Lato', sans-serif;
       font-weight: 300;
@@ -119,46 +119,10 @@
       z-index: 0;
       pointer-events: none;
     }
+    /* Base ambient fill — full stack lives in #home-atmosphere-restoration (after theme CSS) */
     .ambient__grad {
       position: absolute;
       inset: 0;
-      background:
-        linear-gradient(125deg, #030303 0%, rgba(59, 13, 13, 0.55) 38%, rgba(15, 22, 48, 0.5) 62%, #030303 100%);
-      background-size: 200% 200%;
-      animation: gradDrift 24s ease-in-out infinite;
-    }
-    @keyframes gradDrift {
-      0%, 100% { background-position: 0% 40%; }
-      50% { background-position: 100% 60%; }
-    }
-    .ambient__noise {
-      position: absolute;
-      inset: 0;
-      opacity: 0.045;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-      background-size: 180px 180px;
-    }
-    .ambient__particles {
-      position: absolute;
-      inset: 0;
-      overflow: hidden;
-    }
-    .ambient__particles span {
-      position: absolute;
-      width: 2px;
-      height: 2px;
-      border-radius: 50%;
-      background: rgba(244, 237, 224, 0.15);
-      animation: floatP 15.5s ease-in-out infinite;
-    }
-    .ambient__particles span:nth-child(1) { left: 12%; top: 22%; animation-delay: 0s; }
-    .ambient__particles span:nth-child(2) { left: 78%; top: 18%; animation-delay: -4s; }
-    .ambient__particles span:nth-child(3) { left: 44%; top: 65%; animation-delay: -8s; }
-    .ambient__particles span:nth-child(4) { left: 88%; top: 72%; animation-delay: -2s; }
-    .ambient__particles span:nth-child(5) { left: 22%; top: 80%; animation-delay: -11s; }
-    @keyframes floatP {
-      0%, 100% { transform: translate(0, 0); opacity: 0.35; }
-      50% { transform: translate(8px, -12px); opacity: 0.7; }
     }
 
     .page {
@@ -272,11 +236,13 @@
       min-height: -webkit-fill-available;
       display: flex;
       flex-direction: column;
-      /* Fallback if canvas is late or unavailable — avoids flat black */
+      /* Fallback if canvas is late — layered depth (refined in #home-atmosphere-restoration) */
       background:
-        radial-gradient(ellipse 120% 85% at 50% 18%, rgba(72, 14, 14, 0.52) 0%, transparent 58%),
-        radial-gradient(ellipse 95% 65% at 82% 88%, rgba(28, 48, 118, 0.42) 0%, transparent 52%),
-        linear-gradient(160deg, #050505 0%, #120a0a 38%, #070a14 72%, #040406 100%);
+        radial-gradient(ellipse 100% 75% at 50% 12%, rgba(40, 58, 108, 0.4) 0%, transparent 58%),
+        radial-gradient(ellipse 70% 55% at 14% 45%, rgba(52, 28, 42, 0.28) 0%, transparent 54%),
+        radial-gradient(ellipse 75% 60% at 86% 38%, rgba(32, 52, 96, 0.32) 0%, transparent 55%),
+        radial-gradient(ellipse 90% 70% at 48% 78%, rgba(48, 22, 36, 0.22) 0%, transparent 52%),
+        linear-gradient(168deg, #05060e 0%, #070414 42%, #06021a 100%);
     }
 
     .hero-canvas-wrap {
@@ -308,12 +274,8 @@
     }
 
     .hero-overlay::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      opacity: 0.04;
-      background-image: url('https://grainy-gradients.vercel.app/noise.svg');
-      pointer-events: none;
+      content: none;
+      display: none;
     }
 
     .hero-content {
@@ -1308,6 +1270,100 @@
   <link rel="stylesheet" href="/stephuary-private-selection.css" />
   <link rel="stylesheet" href="/stephuary-home-finale.css" />
   <link rel="stylesheet" href="/cosmic-metropolis.css" />
+  <style id="home-atmosphere-restoration">
+    @keyframes homeAmbientDrift {
+      0%,
+      100% {
+        background-position: 0% 42%;
+      }
+      50% {
+        background-position: 100% 58%;
+      }
+    }
+
+    html:not(.god-hour) .ambient {
+      isolation: isolate;
+    }
+
+    html:not(.god-hour) .ambient::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(ellipse 130% 95% at 50% 118%, rgba(4, 8, 22, 0.97) 0%, transparent 50%),
+        linear-gradient(195deg, #010204 0%, #060a14 30%, #080416 58%, #040208 100%);
+    }
+
+    html:not(.god-hour) .ambient__grad {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      background:
+        radial-gradient(ellipse 72% 58% at 12% 18%, rgba(36, 52, 102, 0.55) 0%, transparent 58%),
+        radial-gradient(ellipse 62% 50% at 90% 14%, rgba(28, 44, 92, 0.48) 0%, transparent 56%),
+        radial-gradient(ellipse 58% 48% at 76% 28%, rgba(42, 68, 118, 0.32) 0%, transparent 55%),
+        radial-gradient(ellipse 50% 42% at 24% 38%, rgba(92, 42, 58, 0.22) 0%, transparent 56%),
+        radial-gradient(ellipse 54% 46% at 58% 44%, rgba(48, 32, 58, 0.18) 0%, transparent 58%),
+        radial-gradient(ellipse 68% 58% at 46% 68%, rgba(210, 165, 98, 0.16) 0%, transparent 56%),
+        radial-gradient(ellipse 76% 62% at 28% 72%, rgba(62, 28, 42, 0.24) 0%, transparent 54%),
+        radial-gradient(ellipse 88% 78% at 72% 58%, rgba(22, 35, 72, 0.38) 0%, transparent 62%),
+        radial-gradient(ellipse 100% 88% at 50% 52%, rgba(14, 18, 38, 0.45) 0%, transparent 68%),
+        linear-gradient(172deg, rgba(3, 5, 14, 0.98) 0%, rgba(12, 6, 20, 0.9) 48%, rgba(5, 4, 12, 0.96) 100%);
+      background-size: 200% 200%;
+      animation: homeAmbientDrift 30s ease-in-out infinite;
+    }
+
+    html:not(.god-hour) .ambient::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      pointer-events: none;
+      background:
+        radial-gradient(ellipse 98% 88% at 50% 45%, transparent 28%, rgba(0, 0, 0, 0.42) 100%),
+        radial-gradient(ellipse 55% 45% at 42% 24%, rgba(255, 220, 175, 0.07) 0%, transparent 62%),
+        radial-gradient(ellipse 60% 50% at 78% 30%, rgba(175, 195, 235, 0.05) 0%, transparent 58%);
+      opacity: 1;
+    }
+
+    html:not(.god-hour) .ambient__noise,
+    html:not(.god-hour) .ambient__particles {
+      display: none !important;
+    }
+
+    html.god-hour .ambient::before,
+    html.god-hour .ambient::after {
+      opacity: 0 !important;
+      visibility: hidden !important;
+      pointer-events: none !important;
+    }
+
+    html:not(.god-hour) body[data-sh-env='home'] {
+      background-color: #03040c;
+    }
+
+    html:not(.god-hour) .hero-container {
+      background:
+        radial-gradient(ellipse 95% 78% at 50% 10%, rgba(44, 62, 112, 0.42) 0%, transparent 58%),
+        radial-gradient(ellipse 68% 58% at 8% 42%, rgba(58, 32, 48, 0.26) 0%, transparent 54%),
+        radial-gradient(ellipse 72% 58% at 92% 48%, rgba(34, 54, 98, 0.34) 0%, transparent 55%),
+        radial-gradient(ellipse 85% 72% at 48% 82%, rgba(52, 24, 38, 0.2) 0%, transparent 52%),
+        radial-gradient(ellipse 70% 55% at 62% 28%, rgba(200, 158, 92, 0.1) 0%, transparent 56%),
+        linear-gradient(170deg, #05060e 0%, #070518 44%, #050208 100%);
+    }
+
+    .hero-overlay::after {
+      display: none !important;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html:not(.god-hour) .ambient__grad {
+        animation: none !important;
+      }
+    }
+  </style>
 </head>
 <body data-sh-env="home">
 
