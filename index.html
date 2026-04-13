@@ -1,11 +1,12 @@
 <!DOCTYPE html>
 <!--
   Homepage cleanup (single render path):
-  removed: early mode boot (head script + data-early-mode)
-  removed: god hour boot (head script + data-god-hour)
-  removed: cosmic metropolis intro (session script, cosmic-entry-shell, #cosmic-metropolis, listeners, linked CSS/JS)
-  kept: #home-environment + canvas + CSS layers (default stack only; god-hour sub-stack removed from DOM)
-  fixed: homepage top stack — nav → primary flow → hero; .page / #main-content margin & padding reset
+  removed: early mode
+  removed: god hour mode
+  removed: cosmic metropolis
+  removed: rotating hero-line system
+  kept: homepage global environment (#home-environment + canvas + layers)
+  fixed: hero text overlap and duplicate hero look
 -->
 <html lang="en">
 <head>
@@ -216,6 +217,9 @@
       min-height: auto;
       background: transparent;
     }
+    body[data-sh-env='home'] .hero-container {
+      background: transparent !important;
+    }
 
     .hero-overlay {
       position: absolute;
@@ -253,12 +257,6 @@
       padding-top: 0;
     }
 
-    /* Time-gated hint lines were styled by removed early/god CSS; show lead only on homepage */
-    body[data-sh-env='home'] .home-early-hint__std,
-    body[data-sh-env='home'] .home-early-hint__god {
-      display: none;
-    }
-
     /* Lower third: live system entry — anchored, not floating mid-hero */
     .hero-leak-dock {
       margin-top: auto;
@@ -286,11 +284,6 @@
       margin-bottom: 20px;
     }
 
-    .hero-h1--wrap {
-      position: relative;
-      min-height: clamp(100px, 16vw, 168px);
-      margin-bottom: 20px;
-    }
     .hero-h1 {
       font-family: 'Cormorant Garamond', serif;
       font-weight: 300;
@@ -298,18 +291,7 @@
       line-height: 1.08;
       letter-spacing: -0.03em;
       max-width: 26ch;
-    }
-    .hero-line {
-      position: absolute;
-      left: 0;
-      top: 0;
-      width: 100%;
-      max-width: 26ch;
-      opacity: 0;
-      pointer-events: none;
-    }
-    .hero-line.is-visible {
-      opacity: 1;
+      margin: 0 0 20px;
     }
 
     .hero-identity-line {
@@ -1457,13 +1439,7 @@
         <div class="hero-overlay" aria-hidden="true"></div>
         <div class="hero-content">
           <div class="hero-inner" id="hero-parallax">
-            <div class="hero-h1--wrap">
-              <h1 class="hero-h1" id="hero-h1">
-                <span class="hero-line">Recover 10+ hours/week</span>
-                <span class="hero-line">from hidden leaks in your time + money.</span>
-                <span class="hero-line">See your exact cost. Fix one leak now.</span>
-              </h1>
-            </div>
+            <h1 class="hero-h1" id="hero-h1">See your exact cost. Fix one leak now.</h1>
             <p class="hero-identity-line" id="hero-identity-line">I build systems that turn what you already know into income.</p>
             <p class="hero-payoff-line" id="hero-payoff-line">Build something that works for you every day.</p>
             <p class="hero-lead" id="hero-lead">One diagnostic across five phases (Capture through Sovereignty)—see what’s not working, what it costs, and what to change first.</p>
@@ -1474,9 +1450,6 @@
               <p class="hero-cta-micro" id="hero-cta-micro" hidden></p>
               <p class="hero-tier-hint" id="hero-tier-hint" hidden></p>
             </div>
-            <p class="home-early-hint">
-              <span class="home-early-hint__lead">You're early.</span><span class="home-early-hint__std"> Some parts only appear between 3 and 7.</span><span class="home-early-hint__god"> Between 4 and 7 local, the load stays execution-first—you're ahead of the day.</span>
-            </p>
           </div>
           <div class="hero-leak-dock">
             <div class="hero-leak-entry" id="hero-leak-entry">
@@ -2303,40 +2276,13 @@
       }
 
       if (hasGsap) {
-      var heroLines = document.querySelectorAll('#hero-h1 .hero-line');
-      if (heroLines.length) {
-        gsap.set(heroLines, { opacity: 0, y: 16 });
-        gsap.set(heroLines[0], { opacity: 1, y: 0 });
-      }
-
       var tlHero = gsap.timeline({ defaults: { ease: 'power3.out' } });
-      tlHero.from('.hero-h1--wrap', { opacity: 0, y: 18, duration: 0.65 }, 0);
-      if (heroLines.length) {
-        tlHero.from(heroLines[0], { opacity: 0, y: 22, duration: 0.75 }, 0.1);
-      }
+      tlHero.from('#hero-h1', { opacity: 0, y: 18, duration: 0.65 }, 0);
       tlHero.from('#hero-identity-line', { opacity: 0, duration: 0.55 }, 0.18);
       tlHero.from('#hero-payoff-line', { opacity: 0, duration: 0.5 }, 0.24);
       tlHero.from('#hero-lead', { opacity: 0, y: 16, duration: 0.65 }, 0.3);
       tlHero.from('#hero-actions', { opacity: 0, y: 12, duration: 0.55 }, 0.38);
       tlHero.from('.hero-leak-dock', { opacity: 0, y: 16, duration: 0.55 }, 0.44);
-
-      var heroLineIndex = 0;
-      function advanceHeroLine() {
-        if (heroLines.length < 2) return;
-        var prev = heroLineIndex;
-        heroLineIndex = (heroLineIndex + 1) % heroLines.length;
-        gsap.to(heroLines[prev], { opacity: 0, y: -10, duration: 0.42, ease: 'power2.in' });
-        gsap.fromTo(
-          heroLines[heroLineIndex],
-          { opacity: 0, y: 14 },
-          { opacity: 1, y: 0, duration: 0.55, ease: 'power2.out', delay: 0.08 }
-        );
-      }
-      if (heroLines.length > 1) {
-        window.setTimeout(function () {
-          window.setInterval(advanceHeroLine, 4200);
-        }, 3200);
-      }
 
       var heroParallax = document.getElementById('hero-parallax');
       var heroLeakDock = document.querySelector('.hero-leak-dock');
