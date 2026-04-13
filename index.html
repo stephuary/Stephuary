@@ -93,6 +93,14 @@
       --text-2: #b5aa9c;
       --text-3: #7a7268;
       --line: rgba(244, 237, 224, 0.08);
+      /* Hero / global environment — same stops as canvas draw() */
+      --sh-env-ink: #060608;
+      --sh-env-ink2: #050508;
+      --sh-env-ox: 118, 12, 12;
+      --sh-env-bl: 22, 48, 132;
+      --sh-env-bl2: 58, 107, 255;
+      --sh-env-magenta: 168, 52, 112;
+      --sh-env-violet: 92, 58, 132;
     }
 
     html {
@@ -112,17 +120,27 @@
       margin: 0;
     }
 
-    /* Ambient background */
-    .ambient {
+    /* Global environment (root-level #home-environment) — full viewport, behind all content */
+    .ambient,
+    #home-environment {
       position: fixed;
       inset: 0;
+      width: 100%;
+      min-height: 100vh;
+      min-height: 100dvh;
       z-index: 0;
       pointer-events: none;
+      overflow: hidden;
     }
-    /* Base ambient fill — full stack lives in #home-atmosphere-restoration (after theme CSS) */
-    .ambient__grad {
+    .ambient__grad,
+    .home-env__default {
       position: absolute;
       inset: 0;
+    }
+
+    .site-shell {
+      position: relative;
+      z-index: 1;
     }
 
     .page {
@@ -130,6 +148,11 @@
       z-index: 1;
       padding-bottom: 0;
       margin-bottom: 0;
+    }
+
+    /* Homepage: flow strip lets global environment show through */
+    body[data-sh-env='home'] .sh-primary-flow {
+      background: transparent;
     }
 
     #main-content {
@@ -227,7 +250,7 @@
       padding: 0;
     }
 
-    /* Hero immersive layer (canvas + overlay + content) */
+    /* Hero: content only — global canvas + environment live in #home-environment */
     .hero-container {
       position: relative;
       overflow: hidden;
@@ -236,32 +259,7 @@
       min-height: -webkit-fill-available;
       display: flex;
       flex-direction: column;
-      /* Fallback if canvas is late — same families as hero gradient: oxblood · navy blue · charcoal */
-      background:
-        radial-gradient(ellipse 100% 75% at 50% 12%, rgba(22, 48, 132, 0.35) 0%, transparent 58%),
-        radial-gradient(ellipse 70% 55% at 14% 45%, rgba(118, 12, 12, 0.22) 0%, transparent 54%),
-        radial-gradient(ellipse 75% 60% at 86% 38%, rgba(22, 48, 132, 0.28) 0%, transparent 55%),
-        radial-gradient(ellipse 90% 70% at 48% 78%, rgba(72, 14, 22, 0.18) 0%, transparent 52%),
-        linear-gradient(168deg, #060608 0%, #050508 42%, #06060a 100%);
-    }
-
-    .hero-canvas-wrap {
-      position: absolute;
-      inset: 0;
-      z-index: 0;
-      pointer-events: none;
-      /* Ensure fill when parent height is min-* only */
-      min-height: 100%;
-      min-height: 100vh;
-      min-height: 100dvh;
-    }
-
-    #hero-canvas {
-      display: block;
-      width: 100%;
-      height: 100%;
-      vertical-align: top;
-      opacity: 1;
+      background: transparent;
     }
 
     .hero-overlay {
@@ -854,7 +852,7 @@
       padding: 48px 40px 56px;
       border-top: 1px solid var(--line);
       border-bottom: 1px solid var(--line);
-      background: linear-gradient(180deg, rgba(59, 13, 13, 0.2) 0%, transparent 100%);
+      background: transparent;
     }
     .system-inner {
       max-width: 1100px;
@@ -1058,7 +1056,7 @@
     #diagnostic {
       padding: 36px 40px 48px;
       text-align: center;
-      background: linear-gradient(180deg, transparent, rgba(59, 13, 13, 0.28) 45%, rgba(58, 107, 255, 0.06) 100%);
+      background: transparent;
     }
     .diag-inner {
       max-width: 420px;
@@ -1098,9 +1096,8 @@
       background: linear-gradient(
         180deg,
         rgba(3, 3, 3, 0) 0%,
-        rgba(3, 3, 3, 0.12) 28%,
-        rgba(3, 3, 3, 0.38) 72%,
-        rgba(2, 2, 2, 0.82) 100%
+        rgba(3, 3, 3, 0.04) 40%,
+        rgba(3, 3, 3, 0.1) 100%
       );
     }
     .home-foot-note--finale {
@@ -1132,7 +1129,7 @@
       border-top: 1px solid var(--line);
       margin-bottom: 0;
       margin-top: 0;
-      background: var(--bg);
+      background: transparent;
       position: relative;
       z-index: 1;
     }
@@ -1272,103 +1269,127 @@
   <link rel="stylesheet" href="/cosmic-metropolis.css" />
   <style id="home-atmosphere-restoration">
     /*
-      Page background only (hero canvas unchanged): match hero gradient stops
-      rgb(118,12,12) · rgb(22,48,132) · #060608 / #050508 — layered radials, low purple.
+      Global environment: same palette as hero canvas (linear stops + arcs + particles).
+      Canvas = base; CSS layers sit above with soft-light / multiply — full page, fixed.
+      Parallax: --env-parallax-y set in JS (subtle translate on layer groups).
     */
     @keyframes homeAmbientDrift {
       0%,
       100% {
-        background-position: 0% 40%, 100% 52%;
+        background-position: 0% 42%, 100% 55%, 50% 50%;
       }
       50% {
-        background-position: 100% 48%, 0% 44%;
+        background-position: 100% 48%, 0% 40%, 48% 52%;
       }
     }
     @keyframes homeAuraShift {
       0%,
       100% {
         transform: translate3d(0, 0, 0) scale(1);
-        opacity: 0.5;
+        opacity: 0.72;
       }
       50% {
-        transform: translate3d(0.8%, -0.6%, 0) scale(1.01);
-        opacity: 0.58;
+        transform: translate3d(0.6%, -0.45%, 0) scale(1.008);
+        opacity: 0.82;
       }
     }
 
-    html:not(.god-hour) .ambient {
+    html:not(.god-hour) #home-environment {
       isolation: isolate;
     }
 
-    html:not(.god-hour) .ambient::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      z-index: 0;
-      pointer-events: none;
-      background:
-        radial-gradient(ellipse 140% 100% at 50% 100%, rgba(5, 6, 10, 0.96) 0%, transparent 48%),
-        linear-gradient(198deg, #060608 0%, #050508 45%, #07060c 100%);
-    }
-
-    html:not(.god-hour) .ambient__grad {
+    html:not(.god-hour) .home-env__default {
       position: absolute;
       inset: 0;
       z-index: 1;
-      overflow: visible;
-      background:
-        radial-gradient(ellipse 82% 68% at 10% 36%, rgba(118, 12, 12, 0.36) 0%, rgba(72, 14, 22, 0.14) 42%, transparent 58%),
-        radial-gradient(ellipse 70% 58% at 12% 72%, rgba(88, 18, 28, 0.2) 0%, transparent 54%),
-        radial-gradient(ellipse 85% 72% at 86% 26%, rgba(22, 48, 132, 0.4) 0%, rgba(18, 38, 95, 0.18) 44%, transparent 58%),
-        radial-gradient(ellipse 72% 60% at 82% 68%, rgba(28, 58, 130, 0.2) 0%, transparent 54%),
-        radial-gradient(ellipse 100% 88% at 50% 50%, rgba(8, 10, 22, 0.42) 0%, transparent 72%),
-        linear-gradient(168deg, rgba(6, 6, 8, 0.9) 0%, rgba(5, 6, 14, 0.88) 50%, rgba(5, 5, 10, 0.92) 100%);
-      background-size: 200% 200%, 180% 180%, 200% 200%, 190% 190%, 100% 100%, 100% 100%;
-      animation: homeAmbientDrift 38s ease-in-out infinite;
-    }
-
-    /* Mid-depth: cool navy haze only (no magenta / violet stack) */
-    html:not(.god-hour) .ambient__grad::before {
-      content: '';
-      position: absolute;
-      inset: -28%;
-      z-index: 1;
+      overflow: hidden;
       pointer-events: none;
-      background:
-        radial-gradient(ellipse 58% 50% at 48% 46%, rgba(18, 28, 58, 0.16) 0%, transparent 62%),
-        radial-gradient(ellipse 48% 42% at 58% 36%, rgba(12, 20, 48, 0.12) 0%, transparent 58%);
-      mix-blend-mode: normal;
-      filter: blur(44px);
-      opacity: 0.55;
-      animation: homeAuraShift 52s ease-in-out infinite;
     }
 
-    html:not(.god-hour) .ambient__grad::after {
-      content: '';
+    /* Full-viewport canvas: same draw() as former hero — sits above god base when not god hour */
+    html:not(.god-hour) .home-env__canvas-wrap {
       position: absolute;
-      inset: -14%;
+      inset: 0;
       z-index: 2;
       pointer-events: none;
-      background:
-        radial-gradient(ellipse 22% 18% at 58% 58%, rgba(210, 175, 95, 0.1) 0%, transparent 74%),
-        radial-gradient(ellipse 30% 26% at 80% 22%, rgba(22, 48, 132, 0.12) 0%, transparent 70%),
-        radial-gradient(ellipse 28% 24% at 16% 68%, rgba(118, 22, 32, 0.1) 0%, transparent 70%);
-      mix-blend-mode: overlay;
-      opacity: 0.62;
-      filter: blur(18px);
+      transform: translate3d(0, calc(var(--env-parallax-y, 0px) * 0.055), 0);
+      will-change: transform;
     }
 
-    html:not(.god-hour) .ambient::after {
-      content: '';
+    html:not(.god-hour) #home-env-canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+      vertical-align: top;
+      opacity: 1;
+    }
+
+    html:not(.god-hour) .home-env__sweep-host {
       position: absolute;
       inset: 0;
+      overflow: hidden;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /*
+      Deep field (6+ radials): oxblood, navy, electric blue, magenta/violet blend zones — balanced.
+      Uses rgba(var(--sh-env-*)) + hero-adjacent tones; not purple-forward.
+    */
+    html:not(.god-hour) .home-env__layer--deep {
+      position: absolute;
+      inset: -8%;
       z-index: 3;
       pointer-events: none;
+      transform: translate3d(0, calc(var(--env-parallax-y, 0px) * 0.035), 0);
+      will-change: transform;
       background:
-        radial-gradient(ellipse 105% 98% at 50% 46%, transparent 22%, rgba(0, 0, 0, 0.5) 100%),
-        radial-gradient(ellipse 58% 46% at 48% 28%, rgba(255, 250, 240, 0.022) 0%, transparent 58%);
+        radial-gradient(ellipse 88% 70% at 12% 28%, rgba(var(--sh-env-ox), 0.22) 0%, rgba(72, 14, 22, 0.08) 44%, transparent 58%),
+        radial-gradient(ellipse 76% 62% at 8% 78%, rgba(92, 20, 32, 0.14) 0%, transparent 54%),
+        radial-gradient(ellipse 90% 74% at 88% 22%, rgba(var(--sh-env-bl), 0.28) 0%, rgba(18, 38, 95, 0.12) 42%, transparent 56%),
+        radial-gradient(ellipse 68% 58% at 82% 72%, rgba(40, 78, 180, 0.14) 0%, transparent 52%),
+        radial-gradient(ellipse 52% 44% at 48% 48%, rgba(var(--sh-env-magenta), 0.11) 0%, transparent 58%),
+        radial-gradient(ellipse 46% 40% at 58% 42%, rgba(var(--sh-env-violet), 0.09) 0%, transparent 56%),
+        radial-gradient(ellipse 100% 92% at 50% 108%, rgba(4, 6, 14, 0.35) 0%, transparent 48%),
+        linear-gradient(165deg, rgba(6, 6, 8, 0.15) 0%, rgba(5, 5, 10, 0.12) 100%);
+      background-size: 200% 200%, 190% 190%, 200% 200%, 180% 180%, 200% 200%, 200% 200%, 100% 100%, 100% 100%;
+      mix-blend-mode: soft-light;
+      opacity: 0.55;
+      animation: homeAmbientDrift 42s ease-in-out infinite;
+    }
+
+    /* Mid aura: cooler haze + red/blue separation */
+    html:not(.god-hour) .home-env__layer--mid {
+      position: absolute;
+      inset: -20%;
+      z-index: 4;
+      pointer-events: none;
+      transform: translate3d(0, calc(var(--env-parallax-y, 0px) * 0.065), 0);
+      will-change: transform;
+      background:
+        radial-gradient(ellipse 62% 54% at 42% 44%, rgba(18, 32, 72, 0.14) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 44% at 62% 38%, rgba(132, 36, 48, 0.1) 0%, transparent 58%),
+        radial-gradient(ellipse 70% 58% at 70% 62%, rgba(var(--sh-env-bl), 0.1) 0%, transparent 56%);
+      filter: blur(38px);
+      mix-blend-mode: screen;
+      opacity: 0.38;
+      animation: homeAuraShift 48s ease-in-out infinite;
+    }
+
+    /* Foreground: vignette + specular (subtle) */
+    html:not(.god-hour) .home-env__layer--fg {
+      position: absolute;
+      inset: 0;
+      z-index: 5;
+      pointer-events: none;
+      transform: translate3d(0, calc(var(--env-parallax-y, 0px) * 0.085), 0);
+      will-change: transform;
+      background:
+        radial-gradient(ellipse 105% 98% at 50% 46%, transparent 24%, rgba(0, 0, 0, 0.42) 100%),
+        radial-gradient(ellipse 58% 46% at 48% 26%, rgba(255, 250, 240, 0.028) 0%, transparent 58%),
+        radial-gradient(ellipse 28% 22% at 56% 58%, rgba(210, 175, 95, 0.07) 0%, transparent 74%);
       mix-blend-mode: multiply;
-      opacity: 0.88;
+      opacity: 0.9;
     }
 
     html:not(.god-hour) .ambient__noise,
@@ -1376,22 +1397,14 @@
       display: none !important;
     }
 
-    html.god-hour .ambient::before,
-    html.god-hour .ambient::after {
-      opacity: 0 !important;
-      visibility: hidden !important;
-      pointer-events: none !important;
-    }
-
-    html.god-hour .ambient__grad::before,
-    html.god-hour .ambient__grad::after {
+    html.god-hour #home-environment .home-env__default {
       opacity: 0 !important;
       visibility: hidden !important;
       pointer-events: none !important;
     }
 
     html:not(.god-hour) body[data-sh-env='home'] {
-      background-color: #060608;
+      background-color: var(--sh-env-ink);
     }
 
     .hero-overlay::after {
@@ -1399,10 +1412,33 @@
     }
 
     @media (prefers-reduced-motion: reduce) {
-      html:not(.god-hour) .ambient__grad,
-      html:not(.god-hour) .ambient__grad::before {
+      html:not(.god-hour) .home-env__layer--deep,
+      html:not(.god-hour) .home-env__layer--mid {
         animation: none !important;
       }
+      html:not(.god-hour) .home-env__canvas-wrap,
+      html:not(.god-hour) .home-env__layer--deep,
+      html:not(.god-hour) .home-env__layer--mid,
+      html:not(.god-hour) .home-env__layer--fg {
+        transform: none !important;
+      }
+    }
+
+    /* Finale sections: let global environment read through (no competing gradient stacks) */
+    body[data-sh-env='home'] .home-origin--finale {
+      background: transparent;
+    }
+    body[data-sh-env='home'] .home-origin--finale::before,
+    body[data-sh-env='home'] .home-origin--finale::after {
+      content: none;
+      display: none;
+    }
+    body[data-sh-env='home'] .home-origin__shell {
+      background: transparent;
+    }
+    body[data-sh-env='home'] .home-cei::after {
+      content: none;
+      display: none;
     }
   </style>
 </head>
@@ -1469,8 +1505,7 @@
     </div>
   </div>
 
-  <div id="site-shell" class="site-shell">
-  <div class="ambient" aria-hidden="true">
+  <div id="home-environment" class="home-env ambient" aria-hidden="true">
     <div class="ambient__god-env" aria-hidden="true">
       <div class="ambient__god-base"></div>
       <div class="ambient__god-motion">
@@ -1478,7 +1513,15 @@
         <div class="ambient__god-diffuse"></div>
       </div>
     </div>
-    <div class="ambient__grad"></div>
+    <div class="home-env__default ambient__grad">
+      <div id="home-env-canvas-wrap" class="home-env__canvas-wrap" aria-hidden="true">
+        <canvas id="home-env-canvas"></canvas>
+        <div id="home-env-sweep-host" class="home-env__sweep-host" aria-hidden="true"></div>
+      </div>
+      <div class="home-env__layer home-env__layer--deep" aria-hidden="true"></div>
+      <div class="home-env__layer home-env__layer--mid" aria-hidden="true"></div>
+      <div class="home-env__layer home-env__layer--fg" aria-hidden="true"></div>
+    </div>
     <div class="ambient__noise"></div>
     <div class="ambient__particles">
       <span></span><span></span><span></span><span></span><span></span>
@@ -1492,6 +1535,7 @@
     </div>
   </div>
 
+  <div id="site-shell" class="site-shell">
   <div class="page">
     <!-- Phases: 1=/capture 2=/monetize 3=/structure 4=/automation 5=/sovereignty (vercel.json) -->
     <nav id="main-nav" class="sh-main-nav" aria-label="Primary">
@@ -1513,9 +1557,6 @@
     <main id="main-content">
     <section id="hero" data-sh-flow-section>
       <div class="hero-container">
-        <div class="hero-canvas-wrap" id="hero-canvas-wrap" aria-hidden="true">
-          <canvas id="hero-canvas"></canvas>
-        </div>
         <div class="hero-overlay" aria-hidden="true"></div>
         <div class="hero-content">
           <div class="hero-inner" id="hero-parallax">
@@ -1953,15 +1994,15 @@
         false
       );
 
-      /* Hero immersive: layered depth particles, faint arcs, gradient, sweep, parallax */
-      (function heroImmersive() {
-        var container = document.querySelector('.hero-container');
-        var heroEl = document.getElementById('hero');
-        var canvas = document.getElementById('hero-canvas');
-        var canvasWrap = document.getElementById('hero-canvas-wrap');
+      /* Global environment canvas: same draw() as former hero — full viewport, mounted once */
+      (function homeEnvImmersive() {
+        var container = document.getElementById('home-env-canvas-wrap');
+        var canvas = document.getElementById('home-env-canvas');
+        var sweepHost = document.getElementById('home-env-sweep-host');
+        var homeEnv = document.getElementById('home-environment');
         if (!container || !canvas) return;
 
-        var BOOT_KEY = '__stephuaryHeroImmersiveBooted';
+        var BOOT_KEY = '__stephuaryHomeEnvImmersiveBooted';
 
         function isGodHour() {
           try {
@@ -2009,9 +2050,9 @@
           var w = Math.max(1, width);
           var h = Math.max(1, height);
           var narrow = window.matchMedia('(max-width: 767px)').matches;
-          var nFar = narrow ? 42 : 68;
-          var nMid = narrow ? 32 : 52;
-          var nNear = narrow ? 11 : 18;
+          var nFar = narrow ? 36 : 60;
+          var nMid = narrow ? 28 : 46;
+          var nNear = narrow ? 10 : 16;
           particles = [];
           var i;
           for (i = 0; i < nFar; i++) particles.push(makeParticle('far', w, h));
@@ -2020,14 +2061,8 @@
         }
 
         function measure() {
-          var el = heroEl || container;
-          var rect = el.getBoundingClientRect();
-          var w = Math.floor(rect.width);
-          var h = Math.floor(rect.height);
-          if (w < 2 || h < 2) {
-            w = Math.max(2, Math.floor(window.innerWidth));
-            h = Math.max(2, Math.floor(window.innerHeight));
-          }
+          var w = Math.max(2, Math.floor(window.innerWidth));
+          var h = Math.max(2, Math.floor(window.innerHeight));
           return { w: w, h: h };
         }
 
@@ -2053,7 +2088,6 @@
             resize();
           });
           ro.observe(container);
-          if (heroEl) ro.observe(heroEl);
         }
 
         requestAnimationFrame(function () {
@@ -2139,6 +2173,8 @@
         }
 
         function lightSweep() {
+          var host = sweepHost || container;
+          if (!host) return;
           var sweep = document.createElement('div');
           sweep.setAttribute('aria-hidden', 'true');
           sweep.style.position = 'absolute';
@@ -2149,14 +2185,9 @@
           sweep.style.background =
             'linear-gradient(90deg, transparent, rgba(255,255,255,0.055), transparent)';
           sweep.style.transform = 'skewX(-18deg)';
-          sweep.style.zIndex = '1';
+          sweep.style.zIndex = '2';
           sweep.style.pointerEvents = 'none';
-          var heroContent = container.querySelector('.hero-content');
-          if (heroContent) {
-            container.insertBefore(sweep, heroContent);
-          } else {
-            container.appendChild(sweep);
-          }
+          host.appendChild(sweep);
           sweep.animate(
             [
               { transform: 'translateX(0) skewX(-18deg)' },
@@ -2174,20 +2205,15 @@
         scheduleSweep();
         window.setTimeout(lightSweep, 2800);
 
-        if (canvasWrap && typeof gsap !== 'undefined') {
-          try {
-            gsap.to(canvasWrap, {
-              y: 32,
-              ease: 'none',
-              scrollTrigger: {
-                trigger: '#hero',
-                start: 'top top',
-                end: 'bottom top',
-                scrub: 0.75
-              }
-            });
-          } catch (e1) {}
+        var reduceMotion =
+          window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        function updateEnvParallax() {
+          if (!homeEnv || reduceMotion) return;
+          var y = window.scrollY || window.pageYOffset || 0;
+          homeEnv.style.setProperty('--env-parallax-y', y + 'px');
         }
+        updateEnvParallax();
+        window.addEventListener('scroll', updateEnvParallax, { passive: true });
 
         }
 
