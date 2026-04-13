@@ -1,5 +1,6 @@
 /**
- * Early Mode: 3:00–7:00 local. Sets html.early-mode; optional easter egg + API.
+ * Early Mode: 3:00–7:00 local → html.early-mode.
+ * God Hour: 4:00–7:00 local → html.god-hour (subset of early; see stephuary-god-hour.css).
  */
 (function (global) {
   var CHECK_MS = 60000;
@@ -13,13 +14,27 @@
     }
   }
 
+  function computeGodHour() {
+    try {
+      var h = new Date().getHours();
+      return h >= 4 && h < 7;
+    } catch (e2) {
+      return false;
+    }
+  }
+
   function apply() {
     var on = compute();
+    var gh = computeGodHour();
     var el = global.document.documentElement;
     el.classList.toggle('early-mode', on);
+    el.classList.toggle('god-hour', gh);
     el.setAttribute('data-early-mode', on ? 'true' : 'false');
+    el.setAttribute('data-god-hour', gh ? 'true' : 'false');
     try {
-      global.dispatchEvent(new CustomEvent('earlymodechange', { detail: { isEarlyMode: on } }));
+      global.dispatchEvent(
+        new CustomEvent('earlymodechange', { detail: { isEarlyMode: on, isGodHour: gh } })
+      );
     } catch (e) {}
     return on;
   }
@@ -28,6 +43,14 @@
     try {
       return global.document.documentElement.classList.contains('early-mode');
     } catch (e) {
+      return false;
+    }
+  }
+
+  function getIsGodHour() {
+    try {
+      return global.document.documentElement.classList.contains('god-hour');
+    } catch (e3) {
       return false;
     }
   }
@@ -50,7 +73,9 @@
   var api = {
     refresh: apply,
     compute: compute,
-    getIsEarlyMode: getIsEarlyMode
+    computeGodHour: computeGodHour,
+    getIsEarlyMode: getIsEarlyMode,
+    getIsGodHour: getIsGodHour
   };
   try {
     Object.defineProperty(api, 'isEarlyMode', {

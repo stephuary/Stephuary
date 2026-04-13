@@ -6,10 +6,14 @@
     try {
       var h = new Date().getHours();
       var em = h >= 3 && h < 7;
+      var gh = h >= 4 && h < 7;
       document.documentElement.classList.toggle('early-mode', em);
+      document.documentElement.classList.toggle('god-hour', gh);
       document.documentElement.setAttribute('data-early-mode', em ? 'true' : 'false');
+      document.documentElement.setAttribute('data-god-hour', gh ? 'true' : 'false');
     } catch (e) {
       document.documentElement.setAttribute('data-early-mode', 'false');
+      document.documentElement.setAttribute('data-god-hour', 'false');
     }
   </script>
   <script>
@@ -42,6 +46,9 @@
     }
     html.cosmic-intro--pending.early-mode body {
       background: linear-gradient(180deg, #1a0f28 0%, #2d1830 45%, #4a2038 100%);
+    }
+    html.cosmic-intro--pending.god-hour body {
+      background: linear-gradient(185deg, #080706 0%, #0f0b0a 40%, #141014 72%, #0c0a0c 100%);
     }
     html.cosmic-intro--pending body > *:not(#cosmic-metropolis) {
       visibility: hidden !important;
@@ -1287,6 +1294,7 @@
     }
   </style>
   <link rel="stylesheet" href="/stephuary-early-mode.css" />
+  <link rel="stylesheet" href="/stephuary-god-hour.css" />
   <link rel="stylesheet" href="/stephuary-private-selection.css" />
   <link rel="stylesheet" href="/stephuary-home-finale.css" />
   <link rel="stylesheet" href="/cosmic-metropolis.css" />
@@ -1356,6 +1364,13 @@
 
   <div id="site-shell" class="site-shell">
   <div class="ambient" aria-hidden="true">
+    <div class="ambient__god-env" aria-hidden="true">
+      <div class="ambient__god-base"></div>
+      <div class="ambient__god-motion">
+        <div class="ambient__god-directional"></div>
+        <div class="ambient__god-diffuse"></div>
+      </div>
+    </div>
     <div class="ambient__grad"></div>
     <div class="ambient__noise"></div>
     <div class="ambient__particles">
@@ -1409,7 +1424,9 @@
               <p class="hero-cta-micro" id="hero-cta-micro" hidden></p>
               <p class="hero-tier-hint" id="hero-tier-hint" hidden></p>
             </div>
-            <p class="home-early-hint">You're early. Some parts only appear between 3 and 7.</p>
+            <p class="home-early-hint">
+              <span class="home-early-hint__lead">You're early.</span><span class="home-early-hint__std"> Some parts only appear between 3 and 7.</span><span class="home-early-hint__god"> Between 4 and 7 local, the load stays execution-first—you're ahead of the day.</span>
+            </p>
           </div>
           <div class="hero-leak-dock">
             <div class="hero-leak-entry" id="hero-leak-entry">
@@ -1832,8 +1849,23 @@
         var canvasWrap = document.getElementById('hero-canvas-wrap');
         if (!container || !canvas) return;
 
-        var ctx = canvas.getContext('2d', { alpha: false });
-        if (!ctx) return;
+        var BOOT_KEY = '__stephuaryHeroImmersiveBooted';
+
+        function isGodHour() {
+          try {
+            return document.documentElement.classList.contains('god-hour');
+          } catch (eGh) {
+            return false;
+          }
+        }
+
+        function boot() {
+          if (isGodHour()) return;
+          if (window[BOOT_KEY]) return;
+
+          var ctx = canvas.getContext('2d', { alpha: false });
+          if (!ctx) return;
+          window[BOOT_KEY] = true;
 
         var width = 300;
         var height = 300;
@@ -2045,6 +2077,16 @@
           } catch (e1) {}
         }
 
+        }
+
+        boot();
+        window.addEventListener('earlymodechange', function (ev) {
+          try {
+            if (!ev || !ev.detail || ev.detail.isGodHour) return;
+            if (window[BOOT_KEY]) return;
+            boot();
+          } catch (eEarly) {}
+        });
       })();
 
       var nav = document.getElementById('main-nav');
