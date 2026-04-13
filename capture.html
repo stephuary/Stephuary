@@ -700,6 +700,59 @@
       max-width: 520px;
     }
 
+    /* Capture — primary CTA layout (overrides global .sys-compact clipping; no color/type changes) */
+    .page-capture #phase-header.sys-compact {
+      max-height: none;
+      min-height: 0;
+      overflow: visible;
+      padding-bottom: max(28px, calc(20px + env(safe-area-inset-bottom, 0px)));
+    }
+
+    .page-capture #phase-header .sys-compact__inner {
+      overflow: visible;
+      position: relative;
+      z-index: 2;
+      padding-bottom: max(16px, calc(12px + env(safe-area-inset-bottom, 0px)));
+    }
+
+    .page-capture #phase-header .sys-compact__bg {
+      z-index: 0;
+    }
+
+    .page-capture #phase-header .sys-actions {
+      position: relative;
+      z-index: 3;
+      margin-top: 8px;
+    }
+
+    .page-capture #phase-header .sys-actions .sys-btn,
+    .page-capture #phase-header .sys-actions a {
+      position: relative;
+      z-index: 4;
+    }
+
+    .page-capture #flow-wrap {
+      overflow: visible;
+    }
+
+    .page-capture .capture-layout--chrome .main-col {
+      overflow: visible;
+    }
+
+    .page-capture #summary {
+      padding-bottom: max(32px, calc(24px + env(safe-area-inset-bottom, 0px)));
+    }
+
+    .page-capture #summary .action-primary {
+      position: relative;
+      z-index: 5;
+    }
+
+    .page-capture #summary .action-primary .btn-terminal {
+      position: relative;
+      z-index: 6;
+    }
+
     @media (max-width: 960px) {
       .capture-layout {
         grid-template-columns: 1fr;
@@ -711,13 +764,35 @@
       .capture-layout--chrome .live-panel--chrome {
         order: 2;
       }
+
+      .page-capture #phase-header.sys-compact {
+        padding-bottom: max(32px, calc(24px + env(safe-area-inset-bottom, 0px)));
+      }
+
+      body.page-capture.diag-has-live-chrome .capture-layout--chrome .main-col {
+        padding-bottom: max(80px, calc(56px + env(safe-area-inset-bottom, 0px)));
+      }
+
+      body.page-capture.diag-live-open .capture-layout--chrome .main-col {
+        padding-bottom: max(120px, calc(88px + env(safe-area-inset-bottom, 0px)));
+      }
+
+      body.page-capture.diag-has-live-chrome #summary {
+        padding-bottom: max(96px, calc(80px + env(safe-area-inset-bottom, 0px)));
+      }
+
+      body.page-capture.diag-live-open #summary {
+        padding-bottom: max(136px, calc(120px + env(safe-area-inset-bottom, 0px)));
+      }
     }
 
     @media (max-width: 720px) {
       .global-nav { padding-left: 24px; padding-right: 24px; }
     }
     @media (max-width: 480px) {
-      body { padding: 0 12px 80px; }
+      body {
+        padding: 0 12px max(100px, calc(80px + env(safe-area-inset-bottom, 0px)));
+      }
       .step-instruction { font-size: 24px; }
       .nav-row { flex-direction: column-reverse; align-items: stretch; }
       .nav-row .btn { justify-content: center; }
@@ -731,9 +806,21 @@
   <link rel="stylesheet" href="/stephuary-shell.css" />
   <link rel="stylesheet" href="/stephuary-diagnostic-mobile.css" />
   <link rel="stylesheet" href="/stephuary-diagnostic-chrome.css" />
+  <!-- After shared CSS: Capture-only body/hero CTA layout (safe-area + unclip) -->
+  <style>
+    html.phase-page-min body.page-capture {
+      padding-bottom: max(100px, calc(80px + env(safe-area-inset-bottom, 0px)));
+    }
+
+    @media (max-width: 768px) {
+      html.phase-page-min body.page-capture:has(.global-nav) {
+        padding-bottom: max(100px, calc(80px + env(safe-area-inset-bottom, 0px)));
+      }
+    }
+  </style>
   <script src="/stephuary-diagnostic-mobile.js"></script>
 </head>
-<body>
+<body class="page-capture">
 <div id="page-transition" aria-hidden="true"></div>
 <script src="/stephuary-interactive.js" defer></script>
 <script src="/stephuary-early-mode.js" defer></script>
