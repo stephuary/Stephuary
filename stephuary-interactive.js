@@ -1984,6 +1984,7 @@
   }
 
   function ensureGlobalMapScript() {
+    if (normPath(window.location.pathname) === '/pricing') return;
     if (document.querySelector('script[src*="stephuary-global-map"]')) return;
     var sg = document.createElement('script');
     sg.src = '/stephuary-global-map.js';
