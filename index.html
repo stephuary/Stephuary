@@ -262,11 +262,27 @@
       background: transparent;
     }
 
+    /* Homepage-only: stacked on global env — z-order below overlay + content */
+    .hero-env-intensify {
+      position: absolute;
+      inset: -14%;
+      z-index: 0;
+      pointer-events: none;
+      overflow: visible;
+      isolation: isolate;
+    }
+
+    .hero-env-intensify__layer {
+      position: absolute;
+      pointer-events: none;
+      border-radius: 50%;
+    }
+
     .hero-overlay {
       position: absolute;
       inset: 0;
-      /* Vignette only — was too opaque and hid the canvas entirely */
-      background: radial-gradient(ellipse 85% 75% at 50% 45%, rgba(0, 0, 0, 0.15) 0%, rgba(0, 0, 0, 0.42) 100%);
+      /* Softer center so local auras read; edges still hold depth */
+      background: radial-gradient(ellipse 92% 82% at 50% 44%, rgba(0, 0, 0, 0.06) 0%, rgba(0, 0, 0, 0.22) 48%, rgba(0, 0, 0, 0.48) 100%);
       z-index: 1;
       pointer-events: none;
     }
@@ -1440,6 +1456,210 @@
       content: none;
       display: none;
     }
+
+    /*
+      Hero-only intensification (homepage): same palette as global, stronger overlap / depth.
+      No layout/copy changes — layers sit above fixed global env, clipped to #hero.
+    */
+    @keyframes heroEnvOxDrift {
+      0%,
+      100% {
+        transform: translate(-50%, -50%) translate(0, 0) scale(1);
+      }
+      50% {
+        transform: translate(-50%, -50%) translate(10px, -8px) scale(1.04);
+      }
+    }
+    @keyframes heroEnvBlueDrift {
+      0%,
+      100% {
+        transform: translate(50%, -50%) translate(0, 0) scale(1);
+      }
+      50% {
+        transform: translate(50%, -50%) translate(-12px, 10px) scale(1.035);
+      }
+    }
+    @keyframes heroEnvMagDrift {
+      0%,
+      100% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 0.85;
+      }
+      50% {
+        transform: translate(-50%, -50%) translate(6px, 4px) scale(1.06);
+        opacity: 0.95;
+      }
+    }
+    @keyframes heroEnvPlumDrift {
+      0%,
+      100% {
+        transform: translate(-50%, 0) translate(0, 0);
+      }
+      50% {
+        transform: translate(-50%, 0) translate(-8px, 6px);
+      }
+    }
+
+    html:not(.god-hour) .hero-env-intensify__layer--ox {
+      left: 18%;
+      top: 30%;
+      width: 44rem;
+      height: 44rem;
+      max-width: 140vw;
+      max-height: 140vw;
+      transform: translate(-50%, -50%);
+      background: radial-gradient(
+        ellipse 72% 68% at 42% 46%,
+        rgba(122, 11, 20, 0.5) 0%,
+        rgba(78, 7, 12, 0.22) 42%,
+        rgba(176, 18, 107, 0.12) 58%,
+        transparent 72%
+      );
+      filter: blur(88px);
+      mix-blend-mode: screen;
+      opacity: 0.72;
+      animation: heroEnvOxDrift 36s ease-in-out infinite;
+    }
+
+    html:not(.god-hour) .hero-env-intensify__layer--blue {
+      right: 8%;
+      top: 22%;
+      width: 48rem;
+      height: 48rem;
+      max-width: 145vw;
+      max-height: 145vw;
+      transform: translate(50%, -50%);
+      background: radial-gradient(
+        ellipse 70% 66% at 58% 44%,
+        rgba(13, 42, 122, 0.52) 0%,
+        rgba(5, 8, 22, 0.28) 40%,
+        rgba(176, 18, 107, 0.1) 58%,
+        transparent 74%
+      );
+      filter: blur(96px);
+      mix-blend-mode: soft-light;
+      opacity: 0.68;
+      animation: heroEnvBlueDrift 42s ease-in-out infinite;
+    }
+
+    html:not(.god-hour) .hero-env-intensify__layer--magenta {
+      left: 48%;
+      top: 34%;
+      width: 30rem;
+      height: 28rem;
+      max-width: 92vw;
+      max-height: 88vw;
+      transform: translate(-50%, -50%);
+      background: radial-gradient(
+        ellipse 65% 62% at 50% 48%,
+        rgba(176, 18, 107, 0.28) 0%,
+        rgba(74, 42, 106, 0.14) 45%,
+        rgba(13, 42, 122, 0.08) 62%,
+        transparent 78%
+      );
+      filter: blur(76px);
+      mix-blend-mode: screen;
+      opacity: 0.55;
+      animation: heroEnvMagDrift 33s ease-in-out infinite;
+    }
+
+    html:not(.god-hour) .hero-env-intensify__layer--plum {
+      left: 50%;
+      bottom: 8%;
+      width: 56rem;
+      height: 26rem;
+      max-width: 160vw;
+      transform: translate(-50%, 0);
+      background: radial-gradient(
+        ellipse 78% 88% at 50% 100%,
+        rgba(74, 42, 106, 0.22) 0%,
+        rgba(176, 18, 107, 0.08) 48%,
+        transparent 70%
+      );
+      filter: blur(118px);
+      mix-blend-mode: soft-light;
+      opacity: 0.45;
+      animation: heroEnvPlumDrift 39s ease-in-out infinite;
+    }
+
+    html:not(.god-hour) .hero-env-intensify__layer--amber {
+      left: 46%;
+      top: 18%;
+      width: 22rem;
+      height: 16rem;
+      max-width: 70vw;
+      transform: translate(-50%, -50%);
+      background: radial-gradient(ellipse 58% 56% at 50% 50%, rgba(255, 170, 70, 0.14) 0%, rgba(255, 170, 70, 0.06) 45%, transparent 68%);
+      filter: blur(52px);
+      mix-blend-mode: soft-light;
+      opacity: 0.55;
+      animation: heroEnvMagDrift 48s ease-in-out infinite reverse;
+    }
+
+    @keyframes heroEnvDepthBreathe {
+      0%,
+      100% {
+        opacity: 0.46;
+      }
+      50% {
+        opacity: 0.56;
+      }
+    }
+
+    html:not(.god-hour) .hero-env-intensify__layer--depth {
+      inset: 0;
+      left: 0;
+      top: 0;
+      width: auto;
+      height: auto;
+      max-width: none;
+      border-radius: 0;
+      transform: none;
+      background:
+        radial-gradient(ellipse 120% 90% at 50% 0%, rgba(5, 8, 22, 0.35) 0%, transparent 52%),
+        radial-gradient(ellipse 95% 70% at 0% 50%, rgba(78, 7, 12, 0.18) 0%, transparent 45%),
+        radial-gradient(ellipse 95% 70% at 100% 40%, rgba(13, 42, 122, 0.2) 0%, transparent 46%);
+      filter: blur(64px);
+      mix-blend-mode: normal;
+      opacity: 0.5;
+      animation: heroEnvDepthBreathe 44s ease-in-out infinite;
+    }
+
+    /* Focal chamber behind headline — soft overlap read, not a lamp on the type */
+    html:not(.god-hour) .hero-inner::before {
+      content: '';
+      position: absolute;
+      z-index: -1;
+      left: 50%;
+      top: 36%;
+      width: min(118%, 880px);
+      height: clamp(220px, 52vh, 520px);
+      transform: translate(-50%, -50%);
+      background:
+        radial-gradient(ellipse 68% 58% at 48% 48%, rgba(176, 18, 107, 0.07) 0%, rgba(74, 42, 106, 0.05) 38%, transparent 62%),
+        radial-gradient(ellipse 88% 72% at 52% 55%, rgba(13, 42, 122, 0.06) 0%, transparent 58%);
+      filter: blur(48px);
+      opacity: 0.95;
+      pointer-events: none;
+    }
+
+    html.god-hour .hero-env-intensify {
+      display: none !important;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html:not(.god-hour) .hero-env-intensify__layer--ox,
+      html:not(.god-hour) .hero-env-intensify__layer--blue,
+      html:not(.god-hour) .hero-env-intensify__layer--magenta,
+      html:not(.god-hour) .hero-env-intensify__layer--plum,
+      html:not(.god-hour) .hero-env-intensify__layer--amber,
+      html:not(.god-hour) .hero-env-intensify__layer--depth {
+        animation: none !important;
+      }
+      html:not(.god-hour) .hero-env-intensify__layer--depth {
+        opacity: 0.5 !important;
+      }
+    }
   </style>
 </head>
 <body data-sh-env="home">
@@ -1557,6 +1777,14 @@
     <main id="main-content">
     <section id="hero" data-sh-flow-section>
       <div class="hero-container">
+        <div class="hero-env-intensify" aria-hidden="true">
+          <div class="hero-env-intensify__layer hero-env-intensify__layer--depth"></div>
+          <div class="hero-env-intensify__layer hero-env-intensify__layer--ox"></div>
+          <div class="hero-env-intensify__layer hero-env-intensify__layer--blue"></div>
+          <div class="hero-env-intensify__layer hero-env-intensify__layer--magenta"></div>
+          <div class="hero-env-intensify__layer hero-env-intensify__layer--plum"></div>
+          <div class="hero-env-intensify__layer hero-env-intensify__layer--amber"></div>
+        </div>
         <div class="hero-overlay" aria-hidden="true"></div>
         <div class="hero-content">
           <div class="hero-inner" id="hero-parallax">
@@ -2023,42 +2251,6 @@
         var width = 300;
         var height = 300;
         var t = 0;
-        var particles = [];
-
-        function makeParticle(layer, w, h) {
-          var cfg = {
-            far: { rMin: 0.18, rMax: 0.85, sp: 0.032, a: 0.048 },
-            mid: { rMin: 0.45, rMax: 1.45, sp: 0.075, a: 0.11 },
-            near: { rMin: 0.9, rMax: 2.35, sp: 0.048, a: 0.19 }
-          };
-          var c = cfg[layer];
-          var bright = layer === 'near' && Math.random() < 0.28;
-          var baseA = bright ? Math.min(0.38, c.a * 1.75) : c.a;
-          return {
-            layer: layer,
-            x: Math.random() * w,
-            y: Math.random() * h,
-            r: c.rMin + Math.random() * (c.rMax - c.rMin),
-            dx: (Math.random() - 0.5) * c.sp,
-            dy: (Math.random() - 0.5) * c.sp,
-            alpha: baseA,
-            twinkle: bright ? 0.35 + Math.random() * 0.5 : 0
-          };
-        }
-
-        function initParticles() {
-          var w = Math.max(1, width);
-          var h = Math.max(1, height);
-          var narrow = window.matchMedia('(max-width: 767px)').matches;
-          var nFar = narrow ? 36 : 60;
-          var nMid = narrow ? 28 : 46;
-          var nNear = narrow ? 10 : 16;
-          particles = [];
-          var i;
-          for (i = 0; i < nFar; i++) particles.push(makeParticle('far', w, h));
-          for (i = 0; i < nMid; i++) particles.push(makeParticle('mid', w, h));
-          for (i = 0; i < nNear; i++) particles.push(makeParticle('near', w, h));
-        }
 
         function measure() {
           var w = Math.max(2, Math.floor(window.innerWidth));
@@ -2077,7 +2269,6 @@
           canvas.style.height = height + 'px';
           ctx.setTransform(1, 0, 0, 1, 0, 0);
           ctx.scale(dpr, dpr);
-          initParticles();
         }
 
         resize();
@@ -2140,26 +2331,6 @@
           }
           ctx.stroke();
           ctx.restore();
-
-          var aBoost = em ? 1.14 : 1;
-          particles.forEach(function (p) {
-            p.x += p.dx;
-            p.y += p.dy;
-            if (p.x < -6 || p.x > width + 6) p.dx *= -1;
-            if (p.y < -6 || p.y > height + 6) p.dy *= -1;
-            var a = p.alpha * aBoost;
-            if (p.twinkle) {
-              a *= 0.82 + 0.18 * Math.sin(t * 2.2 + p.x * 0.008 + p.y * 0.006);
-            }
-            ctx.beginPath();
-            ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-            if (em) {
-              ctx.fillStyle = 'rgba(255, 220, 200,' + Math.min(0.95, a) + ')';
-            } else {
-              ctx.fillStyle = 'rgba(255,255,255,' + a + ')';
-            }
-            ctx.fill();
-          });
 
           requestAnimationFrame(draw);
         }
