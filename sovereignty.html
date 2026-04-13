@@ -945,28 +945,29 @@
       <div class="live-panel-head">Live Read</div>
       <div class="live-field">
         <div class="live-label">You are currently</div>
-        <div class="live-value" id="live-dep">Waiting.</div>
+        <div class="live-value" id="live-dep">—</div>
       </div>
       <div class="live-field">
         <div class="live-label">Your model is</div>
-        <div class="live-value" id="live-mod">Waiting.</div>
+        <div class="live-value" id="live-mod">—</div>
       </div>
       <div class="live-field">
         <div class="live-label">Your control level</div>
-        <div class="live-value" id="live-ctl">Waiting.</div>
+        <div class="live-value" id="live-ctl">—</div>
       </div>
       <div class="live-field">
         <div class="live-label">Your system is</div>
-        <div class="live-value" id="live-sys">Waiting.</div>
+        <div class="live-value" id="live-sys">—</div>
       </div>
       <div class="live-field">
         <div class="live-label">Your position is</div>
-        <div class="live-value" id="live-pos">Waiting.</div>
+        <div class="live-value" id="live-pos">—</div>
       </div>
     </aside>
   </div>
 </div>
 
+<script src="/stephuary-diagnostic-state.js"></script>
 <script src="/stephuary-result.js"></script>
 <script>
 (function(){
@@ -1147,9 +1148,18 @@
     var p3 = loadP3Bits();
     var p4 = loadP4Bits();
     var tier = p4ValidationTier(p4);
+    var st5 = window.StephuaryDiagnosticState && window.StephuaryDiagnosticState.collectAll();
     var tierLine = tier
       ? 'Validation tier: ' + tier + '.'
       : 'Complete Phase 04 on this device to bind validation status here.';
+    if (st5 && st5.phase04) {
+      tierLine =
+        st5.phase04.validation_status +
+        ' · ' +
+        st5.phase04.feedback_loop +
+        ' · ' +
+        st5.phase04.exposure_method;
+    }
     host.innerHTML =
       '<dl class="instinct-dl">' +
       '<dt>From Phase 03 — offer line</dt><dd>' +
@@ -1180,16 +1190,16 @@
   function panelFromBits(b) {
     function has(i) { return b[i] !== null && b[i] !== undefined; }
 
-    var dep = 'Waiting.';
+    var dep = '—';
     if (has(0)) dep = b[0] === 0 ? 'independent' : 'dependent';
 
-    var mod = 'Waiting.';
+    var mod = '—';
     if (has(1)) mod = b[1] === 0 ? 'leveraged' : 'active';
 
-    var ctl = 'Waiting.';
+    var ctl = '—';
     if (has(2)) ctl = b[2] === 0 ? 'high' : 'low';
 
-    var sys = 'Waiting.';
+    var sys = '—';
     if (has(4) && has(5)) {
       var sy = (b[4] === 0 ? 1 : 0) + (b[5] === 0 ? 1 : 0);
       sys = sy >= 1 ? 'scalable' : 'fragile';
@@ -1197,7 +1207,7 @@
       sys = b[4] === 0 ? 'leaning scalable' : 'leaning fragile';
     }
 
-    var pos = 'Waiting.';
+    var pos = '—';
     if (has(6) && has(7)) {
       var pt = (b[6] === 0 ? 1 : 0) + (b[7] === 0 ? 1 : 0);
       pos = pt >= 1 ? 'transferable' : 'fixed';
@@ -1486,6 +1496,9 @@
       var bits = p01 && p01.bits ? p01.bits : null;
       if (window.StephuaryResult && typeof window.StephuaryResult.buildFromPhase01 === 'function') {
         var resultObj = window.StephuaryResult.buildFromPhase01(bits);
+        if (window.StephuaryDiagnosticState && typeof window.StephuaryDiagnosticState.collectAll === 'function') {
+          resultObj.structured = window.StephuaryDiagnosticState.collectAll();
+        }
         localStorage.setItem('stephuary_result_v1', JSON.stringify(resultObj));
       }
       localStorage.setItem('diagnosticStarted', 'true');
@@ -1586,11 +1599,11 @@
       });
     });
     goTo(1);
-    document.getElementById('live-dep').textContent = 'Waiting.';
-    document.getElementById('live-mod').textContent = 'Waiting.';
-    document.getElementById('live-ctl').textContent = 'Waiting.';
-    document.getElementById('live-sys').textContent = 'Waiting.';
-    document.getElementById('live-pos').textContent = 'Waiting.';
+    document.getElementById('live-dep').textContent = '—';
+    document.getElementById('live-mod').textContent = '—';
+    document.getElementById('live-ctl').textContent = '—';
+    document.getElementById('live-sys').textContent = '—';
+    document.getElementById('live-pos').textContent = '—';
   }
 
   document.getElementById('btnCopy').addEventListener('click', copyAll);

@@ -889,23 +889,23 @@
       <div class="live-panel-head">Live Read</div>
       <div class="live-field">
         <div class="live-label">You are currently positioned as</div>
-        <div class="live-value" id="live-pos">Waiting.</div>
+        <div class="live-value" id="live-pos">—</div>
       </div>
       <div class="live-field">
         <div class="live-label">Your work is</div>
-        <div class="live-value" id="live-pull">Waiting.</div>
+        <div class="live-value" id="live-pull">—</div>
       </div>
       <div class="live-field">
         <div class="live-label">Your problem is</div>
-        <div class="live-value" id="live-prob">Waiting.</div>
+        <div class="live-value" id="live-prob">—</div>
       </div>
       <div class="live-field">
         <div class="live-label">Your buyer is</div>
-        <div class="live-value" id="live-buyer">Waiting.</div>
+        <div class="live-value" id="live-buyer">—</div>
       </div>
       <div class="live-field">
         <div class="live-label">Your value is</div>
-        <div class="live-value" id="live-val">Waiting.</div>
+        <div class="live-value" id="live-val">—</div>
       </div>
     </aside>
   </div>
@@ -913,6 +913,7 @@
 
 <script src="/stephuary-config.js"></script>
 <script src="/stephuary-diagnostic-flow.js"></script>
+<script src="/stephuary-diagnostic-state.js"></script>
 <script src="/stephuary-system-output.js"></script>
 <script>
 (function(){
@@ -978,12 +979,36 @@
     var host = document.getElementById('instinctRows');
     if (!host) return;
     if (!p) {
+      var capOnly = '';
+      if (window.StephuaryDiagnosticState && typeof window.StephuaryDiagnosticState.collectAll === 'function') {
+        var st0 = window.StephuaryDiagnosticState.collectAll();
+        if (st0 && st0.phase01) {
+          capOnly =
+            '<p class="instinct-row"><strong>From Capture:</strong> ' +
+            escapeHtml(st0.phase01.friction_source) +
+            '</p>';
+        }
+      }
       host.innerHTML =
+        capOnly +
         '<p class="instinct-row"><strong>You naturally:</strong></p>' +
         '<p class="instinct-row">Complete Phase 01 to populate this block from your diagnostic.</p>';
       return;
     }
+    var capRow = '';
+    if (window.StephuaryDiagnosticState && typeof window.StephuaryDiagnosticState.collectAll === 'function') {
+      var st = window.StephuaryDiagnosticState.collectAll();
+      if (st && st.phase01) {
+        capRow =
+          '<p class="instinct-row"><strong>From Capture:</strong> ' +
+          escapeHtml(st.phase01.friction_source) +
+          ' · ' +
+          escapeHtml(st.phase01.priority_cut) +
+          '</p>';
+      }
+    }
     host.innerHTML =
+      capRow +
       '<p class="instinct-row"><strong>Notice:</strong> ' + escapeHtml(p.notice) + '</p>' +
       '<p class="instinct-row"><strong>Correct:</strong> ' + escapeHtml(p.correct) + '</p>' +
       '<p class="instinct-row"><strong>Are sensitive to:</strong> ' + escapeHtml(p.sensitivity) + '</p>' +
@@ -999,7 +1024,7 @@
   function panelFromBits(b) {
     function has(i) { return b[i] !== null && b[i] !== undefined; }
 
-    var pos = 'Waiting.';
+    var pos = '—';
     if (has(0) && has(2) && has(5) && has(6)) {
       var clearScore = (b[0] === 0 ? 1 : 0) + (b[2] === 0 ? 1 : 0) + (b[5] === 0 ? 1 : 0) + (b[6] === 0 ? 1 : 0);
       pos = clearScore >= 3 ? 'clear' : 'unclear';
@@ -1007,20 +1032,20 @@
       pos = b[0] === 0 ? 'leaning clear' : 'leaning unclear';
     }
 
-    var pull = 'Waiting.';
+    var pull = '—';
     if (has(3)) pull = b[3] === 0 ? 'pulled' : 'pushed';
 
-    var prob = 'Waiting.';
+    var prob = '—';
     if (has(1) && has(5)) {
       prob = b[1] === 0 && b[5] === 0 ? 'monetizable' : 'non-monetizable';
     } else if (has(1)) {
       prob = b[1] === 0 ? 'leaning monetizable' : 'leaning non-monetizable';
     }
 
-    var buyer = 'Waiting.';
+    var buyer = '—';
     if (has(6)) buyer = b[6] === 0 ? 'defined' : 'undefined';
 
-    var val = 'Waiting.';
+    var val = '—';
     if (has(0) && has(2) && has(7)) {
       var vs = (b[0] === 0 ? 1 : 0) + (b[2] === 0 ? 1 : 0) + (b[7] === 0 ? 1 : 0);
       val = vs >= 2 ? 'obvious' : 'misunderstood';
@@ -1394,11 +1419,11 @@
       });
     });
     goTo(1);
-    document.getElementById('live-pos').textContent = 'Waiting.';
-    document.getElementById('live-pull').textContent = 'Waiting.';
-    document.getElementById('live-prob').textContent = 'Waiting.';
-    document.getElementById('live-buyer').textContent = 'Waiting.';
-    document.getElementById('live-val').textContent = 'Waiting.';
+    document.getElementById('live-pos').textContent = '—';
+    document.getElementById('live-pull').textContent = '—';
+    document.getElementById('live-prob').textContent = '—';
+    document.getElementById('live-buyer').textContent = '—';
+    document.getElementById('live-val').textContent = '—';
   }
 
   document.getElementById('btnCopy').addEventListener('click', copyAll);

@@ -782,6 +782,7 @@
 <div id="page-transition" aria-hidden="true"></div>
 <script src="/stephuary-config.js"></script>
 <script src="/stephuary-diagnostic-flow.js"></script>
+<script src="/stephuary-diagnostic-state.js"></script>
 <script src="/stephuary-interactive.js" defer></script>
 <script src="/stephuary-early-mode.js" defer></script>
 <script src="/stephuary-personalization.js" defer></script>
@@ -944,23 +945,23 @@
       <div class="live-panel-head">Live Read</div>
       <div class="live-field">
         <div class="live-label">You are currently</div>
-        <div class="live-value" id="live-test">Waiting.</div>
+        <div class="live-value" id="live-test">—</div>
       </div>
       <div class="live-field">
         <div class="live-label">Your offer is</div>
-        <div class="live-value" id="live-exp">Waiting.</div>
+        <div class="live-value" id="live-exp">—</div>
       </div>
       <div class="live-field">
         <div class="live-label">Your response is</div>
-        <div class="live-value" id="live-resp">Waiting.</div>
+        <div class="live-value" id="live-resp">—</div>
       </div>
       <div class="live-field">
         <div class="live-label">Your behavior is</div>
-        <div class="live-value" id="live-beh">Waiting.</div>
+        <div class="live-value" id="live-beh">—</div>
       </div>
       <div class="live-field">
         <div class="live-label">Your validation status</div>
-        <div class="live-value" id="live-val">Waiting.</div>
+        <div class="live-value" id="live-val">—</div>
       </div>
     </aside>
   </div>
@@ -1117,7 +1118,17 @@
       '<dt>From Phase 03 — entry / first buyer step</dt><dd>' +
       escapeHtml(o.entry) +
       '</dd></dl>' +
-      '<p class="instinct-row" style="margin-top:10px">Phase 04 uses this shell to force exposure, read signal, and tighten the loop after friction.</p>';
+        '<p class="instinct-row" style="margin-top:10px">Phase 04 uses this shell to force exposure, read signal, and tighten the loop after friction.</p>';
+    var stAu = window.StephuaryDiagnosticState && window.StephuaryDiagnosticState.collectAll();
+    if (stAu && stAu.phase02) {
+      host.innerHTML =
+        '<dl class="instinct-dl">' +
+        '<dt>From Monetize (structured)</dt><dd>' +
+        escapeHtml(stAu.phase02.value_source + ' · ' + stAu.phase02.paid_problem) +
+        '</dd>' +
+        '</dl>' +
+        host.innerHTML;
+    }
   }
 
   function escapeHtml(s) {
@@ -1134,16 +1145,16 @@
   function panelFromBits(b) {
     function has(i) { return b[i] !== null && b[i] !== undefined; }
 
-    var test = 'Waiting.';
+    var test = '—';
     if (has(0)) test = b[0] === 0 ? 'testing' : 'not testing';
 
-    var exp = 'Waiting.';
+    var exp = '—';
     if (has(1)) exp = b[1] === 0 ? 'exposed' : 'hidden';
 
-    var resp = 'Waiting.';
+    var resp = '—';
     if (has(2)) resp = b[2] === 0 ? 'active' : 'silent';
 
-    var beh = 'Waiting.';
+    var beh = '—';
     if (has(4) && has(8)) {
       var act = (b[4] === 0 ? 1 : 0) + (b[8] === 0 ? 1 : 0);
       beh = act >= 1 ? 'action' : 'avoidance';
@@ -1151,7 +1162,7 @@
       beh = b[8] === 0 ? 'leaning action' : 'leaning avoidance';
     }
 
-    var val = 'Waiting.';
+    var val = '—';
     if (has(1) && has(2) && has(3) && has(7)) {
       var sc = 0;
       if (b[1] === 0) sc += 2;
@@ -1524,11 +1535,11 @@
       });
     });
     goTo(1);
-    document.getElementById('live-test').textContent = 'Waiting.';
-    document.getElementById('live-exp').textContent = 'Waiting.';
-    document.getElementById('live-resp').textContent = 'Waiting.';
-    document.getElementById('live-beh').textContent = 'Waiting.';
-    document.getElementById('live-val').textContent = 'Waiting.';
+    document.getElementById('live-test').textContent = '—';
+    document.getElementById('live-exp').textContent = '—';
+    document.getElementById('live-resp').textContent = '—';
+    document.getElementById('live-beh').textContent = '—';
+    document.getElementById('live-val').textContent = '—';
   }
 
   document.getElementById('btnCopy').addEventListener('click', copyAll);

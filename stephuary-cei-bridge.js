@@ -196,15 +196,7 @@
     var strip = root.getElementById('results-cei-strip');
     renderNodeStrip(strip, state);
 
-    var pri = root.getElementById('results-primary-cta');
-    var priSub = root.getElementById('results-primary-sub');
-    if (pri) {
-      pri.href = '/playbooks';
-      pri.textContent = 'View Results →';
-    }
-    if (priSub) {
-      priSub.textContent = '';
-    }
+    /* Do not override diagnostic primary CTA — results page sets href/label from phase synthesis. */
     try {
       var strongPulse =
         state.stageConfidence === 'high' || state.stageConfidence === 'medium';

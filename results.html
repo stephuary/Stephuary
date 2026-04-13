@@ -884,13 +884,13 @@
             <a href="/pricing">View pricing</a>
           </p>
           <span class="results-cta-subnote" id="results-primary-sub" hidden></span>
-          <p class="results-diag-esc">
+          <p class="results-diag-esc" id="results-diag-esc">
             <a href="/systems" class="sh-primary-flow__link">Save and exit</a>
             <span class="results-flow-links__sep" aria-hidden="true"> · </span>
             <a href="/capture" class="sh-primary-flow__link">Restart from Phase 01</a>
           </p>
         </div>
-        <section class="sh-results-routes sh-results-routes--quiet" aria-label="Other directions">
+        <section class="sh-results-routes sh-results-routes--quiet" id="sh-results-routes" aria-label="Other directions" hidden>
           <p class="sh-results-routes__label">If you need a different next step</p>
           <div class="sh-results-routes__grid">
             <a class="sh-results-route" href="/systems">
@@ -913,7 +913,7 @@
 
     <section class="results-sec alt" data-sh-flow-section>
       <div class="wrap-wide">
-        <p class="sec-label">A · What the system picked up</p>
+        <p class="sec-label">A · Diagnosis</p>
         <div class="results-sec__card">
           <p class="results-sec__lead" id="picked-main"></p>
           <ul class="bullet-list" id="picked-bullets"></ul>
@@ -923,11 +923,11 @@
 
     <section class="results-sec" data-sh-flow-section>
       <div class="wrap-wide">
-        <p class="sec-label">B · What this is costing</p>
+        <p class="sec-label">B · What it costs · What you have</p>
         <div class="result-outcome" id="resultOutcome">
           <p class="result-outcome__label">Pressure and cost</p>
           <dl class="result-outcome__grid">
-            <dt>Main issue</dt>
+            <dt>Primary issue</dt>
             <dd id="outMainIssue"></dd>
             <dt>Time</dt>
             <dd id="outTimeLoss"></dd>
@@ -940,9 +940,7 @@
         </div>
         <div class="diag-wrap" id="diagnosticBlock" hidden style="margin-top:20px;">
           <dl class="diag-grid">
-            <dt>What it already costs</dt>
-            <dd id="diagCost"></dd>
-            <dt>What you already have</dt>
+            <dt>What you have</dt>
             <dd id="diagHave"></dd>
           </dl>
           <p class="diag-confidence" id="diagConfidence"></p>
@@ -971,6 +969,7 @@
   </main>
 
   <script src="/stephuary-diagnostic-flow.js"></script>
+  <script src="/stephuary-diagnostic-state.js"></script>
   <script src="/stephuary-result.js"></script>
   <script src="/stephuary-personalization.js"></script>
   <script src="/stephuary-cei-bridge.js"></script>
@@ -1208,10 +1207,23 @@
     var main = document.getElementById('picked-main');
     var ul = document.getElementById('picked-bullets');
     if (main) {
-      main.textContent = diag && diag.main_problem ? diag.main_problem : version.opening;
+      main.textContent =
+        diag && diag.primary_issue
+          ? diag.primary_issue
+          : diag && diag.main_problem
+            ? diag.main_problem
+            : version.opening;
     }
     if (!ul) return;
     ul.innerHTML = '';
+    if (diag && diag.diagnosis_issues && diag.diagnosis_issues.length) {
+      diag.diagnosis_issues.forEach(function (t) {
+        var li = document.createElement('li');
+        li.textContent = t;
+        ul.appendChild(li);
+      });
+      return;
+    }
     if (diag && diag.priority_moves && diag.priority_moves.length) {
       diag.priority_moves.slice(0, 3).forEach(function (t) {
         var li = document.createElement('li');
@@ -1365,7 +1377,13 @@
     document.getElementById('state-result').classList.add('visible');
 
     var diag = data.diagnostic;
-    var op = diag && diag.main_problem ? diag.main_problem : version.opening;
+    var st = data.structured;
+    var op =
+      diag && diag.primary_issue
+        ? diag.primary_issue
+        : diag && diag.main_problem
+          ? diag.main_problem
+          : version.opening;
     if (op && op.length > 140) op = op.slice(0, 137) + '…';
     document.getElementById('openingRead').textContent = op || '';
 
@@ -1395,10 +1413,9 @@
     var confEl = document.getElementById('diagConfidence');
     if (diag) {
       diagEl.hidden = false;
-      document.getElementById('diagCost').textContent = diag.what_it_costs || '';
       document.getElementById('diagHave').textContent = diag.what_you_have || '';
       if (confEl) {
-        confEl.textContent = 'Grounded in what you chose, not a generic type.';
+        confEl.textContent = 'Strengths and proof are drawn from phases 02–05.';
       }
     } else {
       diagEl.hidden = true;
@@ -1436,14 +1453,17 @@
     }
 
     if (diag) {
+      var quietReadout = !!diag.cta_single;
       if (diag.phase_chain_lines && diag.phase_chain_lines.length) {
-        appendReadoutList('Phases 02–05 (what you locked in)', diag.phase_chain_lines);
+        appendReadoutList('Phases 02–05 (locked in)', diag.phase_chain_lines);
       } else {
         appendReadoutList('Phases 02–05', ['Not finished on this device yet — resume the diagnostic for the full chain.']);
       }
       (function () {
         var issueItems;
-        if (diag.phase_issues && diag.phase_issues.length) {
+        if (diag.diagnosis_issues && diag.diagnosis_issues.length) {
+          issueItems = diag.diagnosis_issues;
+        } else if (diag.phase_issues && diag.phase_issues.length) {
           issueItems = diag.phase_issues;
         } else if (diag.phase_chain_lines && diag.phase_chain_lines.length >= 4) {
           issueItems = ['No single cross-phase issue dominated on this pass.'];
@@ -1452,8 +1472,13 @@
         }
         appendReadoutList('Key issues across phases', issueItems);
       })();
-      appendReadoutList('Prioritized next moves', diag.priority_moves && diag.priority_moves.length ? diag.priority_moves : [diag.fix_first || 'Pick one move you can finish this week.']);
-      if (String(diag.results_handoff || '').trim()) {
+      if (!quietReadout) {
+        appendReadoutList(
+          'Prioritized next moves',
+          diag.priority_moves && diag.priority_moves.length ? diag.priority_moves : [diag.fix_first || 'Pick one move you can finish this week.']
+        );
+      }
+      if (!quietReadout && String(diag.results_handoff || '').trim()) {
         readoutEl.hidden = false;
         var dtH = document.createElement('dt');
         dtH.textContent = 'How this connects to Rooms';
@@ -1462,7 +1487,7 @@
         readoutEl.appendChild(dtH);
         readoutEl.appendChild(ddH);
       }
-      if (String(diag.rooms_entry_hint || '').trim()) {
+      if (!quietReadout && String(diag.rooms_entry_hint || '').trim()) {
         readoutEl.hidden = false;
         var dtR = document.createElement('dt');
         dtR.textContent = 'Where to start';
@@ -1490,18 +1515,31 @@
 
     var ctaPri = document.getElementById('results-primary-cta');
     var ctaSub = document.getElementById('results-primary-sub');
-    if (ctaPri && diag && diag.next_room && diag.next_room.path) {
-      ctaPri.setAttribute('href', diag.next_room.path);
-      ctaPri.textContent = diag.next_room.title ? 'Open ' + diag.next_room.title : 'Open recommended Room';
+    var routesSec = document.getElementById('sh-results-routes');
+    var diagEsc = document.getElementById('results-diag-esc');
+    if (ctaPri && diag) {
+      if (diag.results_cta && diag.results_cta.href && diag.results_cta.label) {
+        ctaPri.setAttribute('href', diag.results_cta.href);
+        ctaPri.textContent = diag.results_cta.label;
+      } else if (diag.next_room && diag.next_room.path) {
+        ctaPri.setAttribute('href', diag.next_room.path);
+        ctaPri.textContent = diag.next_room.title ? 'Open ' + diag.next_room.title : 'Open recommended Room';
+      }
     }
     if (ctaSub) {
-      if (diag && String(diag.next_reason || '').trim()) {
+      if (diag && String(diag.next_reason || '').trim() && !(diag.results_cta && diag.cta_single)) {
         ctaSub.hidden = false;
         ctaSub.textContent = String(diag.next_reason).trim();
       } else {
         ctaSub.hidden = true;
         ctaSub.textContent = '';
       }
+    }
+    if (routesSec) {
+      routesSec.hidden = !!(diag && diag.cta_single);
+    }
+    if (diagEsc) {
+      diagEsc.hidden = !!(diag && diag.cta_single);
     }
 
     function readLiveEstimates() {
@@ -1528,10 +1566,19 @@
       outcomeEl.hidden = false;
       var lo = readLiveEstimates();
       var uo = readUserOutputs();
-      var mainIssueText = diag && diag.main_problem ? diag.main_problem : version.opening;
+      var mainIssueText =
+        diag && diag.primary_issue
+          ? diag.primary_issue
+          : diag && diag.main_problem
+            ? diag.main_problem
+            : version.opening;
       document.getElementById('outMainIssue').textContent = mainIssueText || '';
       var timeTxt = lo ? fmtH(lo.smoothHours) + ' (estimate)' : '—';
       var moneyTxt = lo ? fmtMoney(lo.smoothMoney) + '/yr (estimate)' : '—';
+      if (st && st.phase01) {
+        timeTxt = st.phase01.time_leak;
+        moneyTxt = st.phase01.money_leak;
+      }
       if (uo && uo.timeLoss && String(uo.timeLoss).trim()) timeTxt = String(uo.timeLoss).trim();
       if (uo && uo.moneyLoss && String(uo.moneyLoss).trim()) moneyTxt = String(uo.moneyLoss).trim();
       document.getElementById('outTimeLoss').textContent = timeTxt;
@@ -1542,6 +1589,14 @@
         if (uo.mainIssue) tail.push(String(uo.mainIssue).trim());
         if (diag && diag.what_it_costs) tail.push(String(diag.what_it_costs).trim());
         stagn = tail.filter(Boolean).join(' ');
+      } else if (st && st.phase04 && st.phase01) {
+        stagn =
+          'If nothing changes: ' +
+          st.phase04.validation_status +
+          ' signal · ' +
+          st.phase04.response_type +
+          ' · ' +
+          st.phase01.priority_cut;
       } else if (diag && diag.what_it_costs) {
         stagn = String(diag.what_it_costs).trim();
       } else {

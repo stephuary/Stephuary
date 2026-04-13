@@ -742,6 +742,7 @@
 <div id="page-transition" aria-hidden="true"></div>
 <script src="/stephuary-config.js"></script>
 <script src="/stephuary-diagnostic-flow.js"></script>
+<script src="/stephuary-diagnostic-state.js"></script>
 <script src="/stephuary-interactive.js" defer></script>
 <script src="/stephuary-early-mode.js" defer></script>
 <script src="/stephuary-personalization.js" defer></script>
@@ -911,23 +912,23 @@
       <div class="live-panel-head">Live Read</div>
       <div class="live-field">
         <div class="live-label">You currently have</div>
-        <div class="live-value" id="live-offer">Waiting.</div>
+        <div class="live-value" id="live-offer">—</div>
       </div>
       <div class="live-field">
         <div class="live-label">Your structure is</div>
-        <div class="live-value" id="live-struct">Waiting.</div>
+        <div class="live-value" id="live-struct">—</div>
       </div>
       <div class="live-field">
         <div class="live-label">Your execution is</div>
-        <div class="live-value" id="live-exec">Waiting.</div>
+        <div class="live-value" id="live-exec">—</div>
       </div>
       <div class="live-field">
         <div class="live-label">Your model is</div>
-        <div class="live-value" id="live-model">Waiting.</div>
+        <div class="live-value" id="live-model">—</div>
       </div>
       <div class="live-field">
         <div class="live-label">Your pricing is</div>
-        <div class="live-value" id="live-price">Waiting.</div>
+        <div class="live-value" id="live-price">—</div>
       </div>
     </aside>
   </div>
@@ -1086,8 +1087,16 @@
     var p1 = loadP01Profile();
     var p2 = loadP2Bits();
     var probLine = p2ProblemSummary(p2);
+    var stBr = window.StephuaryDiagnosticState && window.StephuaryDiagnosticState.collectAll();
+    var capBr =
+      stBr && stBr.phase01
+        ? '<dt>From Capture (structured)</dt><dd>' +
+          escapeHtml(stBr.phase01.time_leak + ' · ' + stBr.phase01.money_leak) +
+          '</dd>'
+        : '';
     host.innerHTML =
       '<dl class="instinct-dl">' +
+      capBr +
       '<dt>From Phase 02 — paid problem + buyer</dt><dd>' +
       escapeHtml(probLine) +
       '</dd>' +
@@ -1135,10 +1144,10 @@
   function panelFromBits(b) {
     function has(i) { return b[i] !== null && b[i] !== undefined; }
 
-    var offer = 'Waiting.';
+    var offer = '—';
     if (has(0)) offer = b[0] === 0 ? 'a real offer' : 'no real offer';
 
-    var struct = 'Waiting.';
+    var struct = '—';
     if (has(0) && has(1) && has(2)) {
       var sc = (b[0] === 0 ? 1 : 0) + (b[1] === 0 ? 1 : 0) + (b[2] === 0 ? 1 : 0);
       struct = sc >= 2 ? 'clear' : 'unclear';
@@ -1146,17 +1155,17 @@
       struct = b[0] === 0 ? 'leaning clear' : 'leaning unclear';
     }
 
-    var exec = 'Waiting.';
+    var exec = '—';
     if (has(8) && has(9)) {
       exec = b[8] === 0 && b[9] === 0 ? 'ready' : 'delayed';
     } else if (has(9)) {
       exec = b[9] === 0 ? 'leaning ready' : 'leaning delayed';
     }
 
-    var model = 'Waiting.';
+    var model = '—';
     if (has(6)) model = b[6] === 0 ? 'direct' : 'leveraged';
 
-    var price = 'Waiting.';
+    var price = '—';
     if (has(7)) price = b[7] === 0 ? 'confident' : 'hesitant';
 
     return { offer: offer, struct: struct, exec: exec, model: model, price: price };
@@ -1524,11 +1533,11 @@
       });
     });
     goTo(1);
-    document.getElementById('live-offer').textContent = 'Waiting.';
-    document.getElementById('live-struct').textContent = 'Waiting.';
-    document.getElementById('live-exec').textContent = 'Waiting.';
-    document.getElementById('live-model').textContent = 'Waiting.';
-    document.getElementById('live-price').textContent = 'Waiting.';
+    document.getElementById('live-offer').textContent = '—';
+    document.getElementById('live-struct').textContent = '—';
+    document.getElementById('live-exec').textContent = '—';
+    document.getElementById('live-model').textContent = '—';
+    document.getElementById('live-price').textContent = '—';
   }
 
   document.getElementById('btnCopy').addEventListener('click', copyAll);

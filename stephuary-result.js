@@ -449,6 +449,143 @@
       diag.synthesis_summary = '';
     }
 
+    applyStructuredSynthesis(data);
+    return data;
+  }
+
+  function chargeableOffer(p3) {
+    if (!p3 || !p3.offer_definition) return false;
+    return p3.offer_definition.indexOf('invoice') >= 0;
+  }
+
+  function resolveResultsCta(store, diag) {
+    var bp = store && store.bitsPresent;
+
+    if (!bp || !bp.p01) {
+      return { label: 'Open System Map', href: '/systems', kind: 'system_map' };
+    }
+    if (!bp.p02) {
+      return { label: 'Open System Map', href: '/systems', kind: 'system_map' };
+    }
+
+    var p2 = store.phase02;
+    var p3 = store.phase03;
+    var p4 = store.phase04;
+    var p5 = store.phase05;
+
+    if (!bp.p03 || !chargeableOffer(p3)) {
+      return { label: 'Enter Rooms', href: '/playbooks', kind: 'rooms' };
+    }
+
+    if (!bp.p04 || !p4 || p4.validation_status === 'untested') {
+      return { label: 'Continue Diagnostic', href: '/automation', kind: 'continue_diag' };
+    }
+
+    if (!bp.p05 || !p5) {
+      return { label: 'Continue Diagnostic', href: '/sovereignty', kind: 'continue_diag' };
+    }
+
+    var validated = p4.validation_status === 'validated';
+    var independent = p5.control_model.indexOf('Independent') >= 0;
+    if (validated && independent) {
+      return { label: 'Book Snapshot', href: '/snapshot', kind: 'snapshot' };
+    }
+
+    return { label: 'Refine System', href: '/systems', kind: 'refine' };
+  }
+
+  function derivePrimaryIssue(diag, store, issues) {
+    var p2 = store.phase02;
+    var p3 = store.phase03;
+    var p4 = store.phase04;
+    if (p3 && chargeableOffer(p3) && p4 && p4.validation_status === 'untested') {
+      return 'The tightest gap is exposure: the offer is shaped, but market signal is still thin or private.';
+    }
+    if (p2 && (!p3 || !chargeableOffer(p3))) {
+      if (p2.paid_problem && p2.paid_problem.indexOf('not aligned') >= 0) {
+        return 'Demand and problem shape are still misaligned — packaging lags what you can deliver.';
+      }
+      return 'Value reads in places, but the offer is not priced to ship yet — structure is the bottleneck.';
+    }
+    if (issues && issues.length) return issues[0];
+    return diag.main_problem || '';
+  }
+
+  function applyStructuredSynthesis(data) {
+    if (!data || typeof data !== 'object' || !data.diagnostic) return data;
+    var diag = data.diagnostic;
+    var store = null;
+    try {
+      if (global.StephuaryDiagnosticState && typeof global.StephuaryDiagnosticState.collectAll === 'function') {
+        store = global.StephuaryDiagnosticState.collectAll();
+      }
+    } catch (eS) {}
+    data.structured = store;
+    if (!store) return data;
+
+    var p1 = store.phase01;
+    var p2 = store.phase02;
+    var p3 = store.phase03;
+    var p4 = store.phase04;
+    var p5 = store.phase05;
+
+    var issues = [];
+    if (diag.phase_issues && diag.phase_issues.length) {
+      issues = diag.phase_issues.slice();
+    }
+    if (issues.length < 2 && p1) {
+      issues.push(p1.friction_source, p1.priority_cut);
+    }
+    if (issues.length < 2 && p2) {
+      issues.push(p2.paid_problem, p2.buyer_type);
+    }
+    var seenI = {};
+    var dedupIssues = [];
+    issues.forEach(function (x) {
+      var t = String(x || '').trim();
+      if (!t || seenI[t]) return;
+      seenI[t] = 1;
+      dedupIssues.push(t);
+    });
+    diag.diagnosis_issues = dedupIssues.slice(0, 4);
+
+    diag.primary_issue = derivePrimaryIssue(diag, store, diag.diagnosis_issues);
+
+    var costNarr = [];
+    if (p1) {
+      costNarr.push(p1.time_leak);
+      costNarr.push(p1.money_leak);
+    }
+    if (p4) {
+      costNarr.push('Loop: ' + p4.feedback_loop);
+      costNarr.push('Validation: ' + p4.validation_status);
+    }
+    if (costNarr.length) {
+      diag.what_it_costs = costNarr.join(' · ');
+    }
+
+    var haveN = [];
+    if (p2) haveN.push(p2.value_source, p2.demand_signal);
+    if (p3) haveN.push(p3.outcome, p3.entry_point);
+    if (p4) haveN.push(p4.exposure_method);
+    if (p5) haveN.push(p5.leverage_type, p5.scalability_status);
+    if (haveN.length) {
+      diag.what_you_have = haveN.join(' · ');
+    }
+
+    if (diag.priority_moves && diag.priority_moves.length) {
+      diag.fix_first = diag.priority_moves[0];
+    } else if (!diag.fix_first) {
+      diag.fix_first = diag.primary_issue || diag.main_problem;
+    }
+
+    diag.results_cta = resolveResultsCta(store, diag);
+    diag.cta_single = true;
+
+    if (String(diag.synthesis_summary || '').trim() === '' && diag.diagnosis_issues.length) {
+      diag.synthesis_summary = diag.diagnosis_issues.slice(0, 2).join(' · ');
+    }
+
     return data;
   }
 
@@ -493,6 +630,7 @@
     primaryPlaybookForVersion: primaryPlaybookForVersion,
     buildDiagnostic: buildDiagnostic,
     mergeCrossPhase: mergeCrossPhase,
+    applyStructuredSynthesis: applyStructuredSynthesis,
     PLAYBOOK_ROOM: PLAYBOOK_ROOM,
     VERSION_PLAYBOOKS: VERSION_PLAYBOOKS
   };
