@@ -36,9 +36,22 @@
   }
 
   function findPrimary() {
+    var path = getPath();
+    if (path === '/results') {
+      var miss = doc.getElementById('state-missing');
+      if (miss && miss.classList.contains('visible')) {
+        return doc.getElementById('results-missing-cta') || doc.querySelector('#state-missing a[href="/capture"]');
+      }
+      return (
+        doc.querySelector('#results-primary-cta') ||
+        doc.querySelector('#actionSteps a[data-sh-flow-primary]')
+      );
+    }
+    if (path === '/pricing') {
+      return doc.querySelector('.sh-pricing-rec__cta');
+    }
     var ex = doc.querySelector('[data-sh-flow-primary]');
     if (ex) return ex;
-    var path = getPath();
     if (path === '/') {
       return doc.querySelector('#hero-cta-primary');
     }
@@ -54,16 +67,6 @@
         return doc.querySelector('#resume-link');
       }
       return doc.querySelector('.sh-system-map a[href="/capture"]');
-    }
-    if (path === '/results') {
-      return doc.querySelector('#actionSteps a[data-sh-flow-primary]');
-    }
-    if (path === '/pricing') {
-      var pr =
-        doc.querySelector('.inner-tier--recommended .tier-cta--pri') ||
-        doc.querySelector('[data-sh-flow-primary].tier-cta') ||
-        doc.querySelector('#tier-diagnostic .tier-cta--pri');
-      return pr;
     }
     if (
       path === '/monetize' ||
@@ -93,7 +96,7 @@
     doc.querySelectorAll('.inner-tier--recommended').forEach(function (t) {
       t.classList.remove('inner-tier--recommended');
     });
-    doc.querySelectorAll('[data-sh-flow-primary].tier-cta').forEach(function (a) {
+    doc.querySelectorAll('.tier-cta[data-sh-flow-primary]').forEach(function (a) {
       a.removeAttribute('data-sh-flow-primary');
     });
     try {
@@ -104,8 +107,6 @@
       var tier = doc.querySelector('.inner-tier[data-tier-id="' + st.recommendedTier + '"]');
       if (tier) {
         tier.classList.add('inner-tier--recommended');
-        var cta = tier.querySelector('.tier-cta--pri');
-        if (cta) cta.setAttribute('data-sh-flow-primary', '');
       }
     } catch (e) {}
   }
@@ -121,10 +122,8 @@
       el.classList.add('sh-flow-dim');
     });
     if (getPath() === '/pricing') {
-      doc.querySelectorAll('.tier-cta--pri').forEach(function (cta) {
-        if (!cta.hasAttribute('data-sh-flow-primary')) {
-          cta.classList.add('sh-flow-dim');
-        }
+      doc.querySelectorAll('.tier-cta').forEach(function (cta) {
+        cta.classList.add('sh-flow-dim');
       });
     }
 
