@@ -2044,7 +2044,21 @@
     initSpatialNavigation();
 
     initEnvironmentDepth();
-    ensurePersonalizeScript();
+    var ric =
+      window.requestIdleCallback ||
+      function (cb, opts) {
+        return window.setTimeout(function () {
+          cb({ didTimeout: true, timeRemaining: function () { return 0; } });
+        }, (opts && opts.timeout) || 1);
+      };
+    ric(
+      function () {
+        try {
+          ensurePersonalizeScript();
+        } catch (e) {}
+      },
+      { timeout: 3200 }
+    );
     ensureGlobalMapScript();
     ensureMagneticFlowScript();
     initPageTransition();
