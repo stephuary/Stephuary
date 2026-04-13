@@ -2,10 +2,13 @@
   (function initTimeAtmosphere() {
     if (window.__STEPHUARY_TIME_ATMOSPHERE_INIT) return;
     window.__STEPHUARY_TIME_ATMOSPHERE_INIT = true;
-    var link = document.createElement('link');
-    link.rel = 'stylesheet';
-    link.href = '/stephuary-time-atmosphere.css';
-    document.head.appendChild(link);
+    try {
+      var link = document.createElement('link');
+      link.rel = 'stylesheet';
+      link.href = '/stephuary-time-atmosphere.css';
+      var head = document.head || document.getElementsByTagName('head')[0];
+      if (head) head.appendChild(link);
+    } catch (e) {}
 
     function computeTimeState() {
       var t = new Date().getHours() * 60 + new Date().getMinutes();
@@ -17,7 +20,9 @@
 
     function applyTimeState() {
       if (!document.body) return;
-      document.body.setAttribute('data-time', computeTimeState());
+      try {
+        document.body.setAttribute('data-time', computeTimeState());
+      } catch (e2) {}
     }
 
     if (document.body) applyTimeState();
@@ -48,7 +53,11 @@
       },
       shouldBypassPhasePaymentGate: function () {
         return false;
-      }
+      },
+      PRICING_STAIRCASE_VIDEO:
+        'https://customer-vjyp7ff1wau3k7is.cloudflarestream.com/482fd025db674eaf7f1246937e0145b2/manifest/video.m3u8',
+      PRICING_STAIRCASE_POSTER:
+        'https://customer-vjyp7ff1wau3k7is.cloudflarestream.com/482fd025db674eaf7f1246937e0145b2/thumbnails/thumbnail.jpg?height=1080'
     };
   }
 
