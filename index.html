@@ -81,7 +81,7 @@
     }
 
     :root {
-      --bg: #03040c;
+      --bg: #02030a;
       --blue: #3A6BFF;
       --blue-soft: rgba(58, 107, 255, 0.14);
       --blue-glow: rgba(58, 107, 255, 0.35);
@@ -101,7 +101,7 @@
     }
 
     body {
-      background: #03040c;
+      background: #02030a;
       color: var(--text);
       font-family: 'Lato', sans-serif;
       font-weight: 300;
@@ -1271,13 +1271,25 @@
   <link rel="stylesheet" href="/stephuary-home-finale.css" />
   <link rel="stylesheet" href="/cosmic-metropolis.css" />
   <style id="home-atmosphere-restoration">
+    /* Layered atmospheric system: navy · electric blue · oxblood · magenta · violet/plum (blend) · amber — not a single gradient */
     @keyframes homeAmbientDrift {
       0%,
       100% {
-        background-position: 0% 42%;
+        background-position: 0% 38%, 100% 62%, 0% 50%, 80% 40%;
       }
       50% {
-        background-position: 100% 58%;
+        background-position: 100% 55%, 0% 42%, 100% 48%, 20% 58%;
+      }
+    }
+    @keyframes homeAuraShift {
+      0%,
+      100% {
+        transform: translate3d(0, 0, 0) scale(1);
+        opacity: 0.9;
+      }
+      50% {
+        transform: translate3d(1.8%, -1.2%, 0) scale(1.03);
+        opacity: 1;
       }
     }
 
@@ -1285,6 +1297,7 @@
       isolation: isolate;
     }
 
+    /* L0 — floor: deep navy / blue-black only */
     html:not(.god-hour) .ambient::before {
       content: '';
       position: absolute;
@@ -1292,40 +1305,74 @@
       z-index: 0;
       pointer-events: none;
       background:
-        radial-gradient(ellipse 130% 95% at 50% 118%, rgba(4, 8, 22, 0.97) 0%, transparent 50%),
-        linear-gradient(195deg, #010204 0%, #060a14 30%, #080416 58%, #040208 100%);
+        radial-gradient(ellipse 150% 110% at 50% 108%, rgba(1, 3, 12, 0.98) 0%, transparent 48%),
+        linear-gradient(200deg, #01010a 0%, #040818 32%, #070214 68%, #020208 100%);
     }
 
+    /* L1 — primary fields: large electric blue (R), oxblood (L), supporting blues + dark veil */
     html:not(.god-hour) .ambient__grad {
       position: absolute;
       inset: 0;
       z-index: 1;
+      overflow: visible;
       background:
-        radial-gradient(ellipse 72% 58% at 12% 18%, rgba(36, 52, 102, 0.55) 0%, transparent 58%),
-        radial-gradient(ellipse 62% 50% at 90% 14%, rgba(28, 44, 92, 0.48) 0%, transparent 56%),
-        radial-gradient(ellipse 58% 48% at 76% 28%, rgba(42, 68, 118, 0.32) 0%, transparent 55%),
-        radial-gradient(ellipse 50% 42% at 24% 38%, rgba(92, 42, 58, 0.22) 0%, transparent 56%),
-        radial-gradient(ellipse 54% 46% at 58% 44%, rgba(48, 32, 58, 0.18) 0%, transparent 58%),
-        radial-gradient(ellipse 68% 58% at 46% 68%, rgba(210, 165, 98, 0.16) 0%, transparent 56%),
-        radial-gradient(ellipse 76% 62% at 28% 72%, rgba(62, 28, 42, 0.24) 0%, transparent 54%),
-        radial-gradient(ellipse 88% 78% at 72% 58%, rgba(22, 35, 72, 0.38) 0%, transparent 62%),
-        radial-gradient(ellipse 100% 88% at 50% 52%, rgba(14, 18, 38, 0.45) 0%, transparent 68%),
-        linear-gradient(172deg, rgba(3, 5, 14, 0.98) 0%, rgba(12, 6, 20, 0.9) 48%, rgba(5, 4, 12, 0.96) 100%);
-      background-size: 200% 200%;
-      animation: homeAmbientDrift 30s ease-in-out infinite;
+        radial-gradient(ellipse 92% 78% at 84% 22%, rgba(42, 115, 255, 0.5) 0%, rgba(28, 72, 210, 0.22) 38%, transparent 58%),
+        radial-gradient(ellipse 70% 62% at 88% 58%, rgba(55, 130, 255, 0.28) 0%, transparent 54%),
+        radial-gradient(ellipse 80% 70% at 6% 32%, rgba(92, 18, 38, 0.52) 0%, rgba(58, 12, 28, 0.28) 42%, transparent 62%),
+        radial-gradient(ellipse 75% 68% at 12% 78%, rgba(72, 22, 42, 0.38) 0%, transparent 56%),
+        radial-gradient(ellipse 65% 58% at 72% 72%, rgba(32, 78, 210, 0.26) 0%, transparent 55%),
+        radial-gradient(ellipse 110% 95% at 50% 48%, rgba(10, 14, 36, 0.5) 0%, transparent 72%),
+        linear-gradient(158deg, rgba(5, 8, 28, 0.94) 0%, rgba(18, 6, 22, 0.88) 48%, rgba(8, 3, 16, 0.92) 100%);
+      background-size: 200% 200%, 190% 190%, 200% 200%, 180% 180%, 200% 200%, 100% 100%, 100% 100%;
+      animation: homeAmbientDrift 38s ease-in-out infinite;
     }
 
+    /* L2 — blend zone: magenta / fuchsia / violet (red × blue), soft-light */
+    html:not(.god-hour) .ambient__grad::before {
+      content: '';
+      position: absolute;
+      inset: -32%;
+      z-index: 1;
+      pointer-events: none;
+      background:
+        radial-gradient(ellipse 58% 50% at 46% 44%, rgba(220, 72, 168, 0.32) 0%, rgba(175, 48, 130, 0.14) 42%, transparent 62%),
+        radial-gradient(ellipse 52% 46% at 54% 52%, rgba(200, 58, 155, 0.22) 0%, transparent 58%),
+        radial-gradient(ellipse 68% 58% at 50% 48%, rgba(110, 62, 165, 0.22) 0%, rgba(75, 42, 120, 0.1) 48%, transparent 64%),
+        radial-gradient(ellipse 45% 38% at 42% 56%, rgba(245, 95, 195, 0.14) 0%, transparent 58%);
+      mix-blend-mode: soft-light;
+      filter: blur(48px);
+      opacity: 0.94;
+      animation: homeAuraShift 44s ease-in-out infinite;
+    }
+
+    /* L3 — focal: amber highlight + tight electric blue + wine rim */
+    html:not(.god-hour) .ambient__grad::after {
+      content: '';
+      position: absolute;
+      inset: -18%;
+      z-index: 2;
+      pointer-events: none;
+      background:
+        radial-gradient(ellipse 26% 22% at 56% 60%, rgba(240, 195, 108, 0.22) 0%, transparent 72%),
+        radial-gradient(ellipse 38% 32% at 76% 18%, rgba(90, 155, 255, 0.2) 0%, transparent 68%),
+        radial-gradient(ellipse 34% 30% at 22% 68%, rgba(130, 35, 55, 0.18) 0%, transparent 70%);
+      mix-blend-mode: overlay;
+      opacity: 0.72;
+      filter: blur(22px);
+    }
+
+    /* L4 — depth: edge falloff + faint inner lift */
     html:not(.god-hour) .ambient::after {
       content: '';
       position: absolute;
       inset: 0;
-      z-index: 2;
+      z-index: 3;
       pointer-events: none;
       background:
-        radial-gradient(ellipse 98% 88% at 50% 45%, transparent 28%, rgba(0, 0, 0, 0.42) 100%),
-        radial-gradient(ellipse 55% 45% at 42% 24%, rgba(255, 220, 175, 0.07) 0%, transparent 62%),
-        radial-gradient(ellipse 60% 50% at 78% 30%, rgba(175, 195, 235, 0.05) 0%, transparent 58%);
-      opacity: 1;
+        radial-gradient(ellipse 105% 98% at 50% 46%, transparent 20%, rgba(0, 0, 0, 0.52) 100%),
+        radial-gradient(ellipse 60% 48% at 48% 30%, rgba(255, 248, 235, 0.035) 0%, transparent 58%);
+      mix-blend-mode: multiply;
+      opacity: 0.88;
     }
 
     html:not(.god-hour) .ambient__noise,
@@ -1340,18 +1387,28 @@
       pointer-events: none !important;
     }
 
-    html:not(.god-hour) body[data-sh-env='home'] {
-      background-color: #03040c;
+    html.god-hour .ambient__grad::before,
+    html.god-hour .ambient__grad::after {
+      opacity: 0 !important;
+      visibility: hidden !important;
+      pointer-events: none !important;
     }
 
+    html:not(.god-hour) body[data-sh-env='home'] {
+      background-color: #02030a;
+    }
+
+    /* Hero fallback: mirrors site ambient (stronger red/blue read) */
     html:not(.god-hour) .hero-container {
       background:
-        radial-gradient(ellipse 95% 78% at 50% 10%, rgba(44, 62, 112, 0.42) 0%, transparent 58%),
-        radial-gradient(ellipse 68% 58% at 8% 42%, rgba(58, 32, 48, 0.26) 0%, transparent 54%),
-        radial-gradient(ellipse 72% 58% at 92% 48%, rgba(34, 54, 98, 0.34) 0%, transparent 55%),
-        radial-gradient(ellipse 85% 72% at 48% 82%, rgba(52, 24, 38, 0.2) 0%, transparent 52%),
-        radial-gradient(ellipse 70% 55% at 62% 28%, rgba(200, 158, 92, 0.1) 0%, transparent 56%),
-        linear-gradient(170deg, #05060e 0%, #070518 44%, #050208 100%);
+        radial-gradient(ellipse 90% 76% at 80% 16%, rgba(48, 118, 255, 0.45) 0%, rgba(35, 85, 220, 0.2) 40%, transparent 58%),
+        radial-gradient(ellipse 72% 64% at 8% 36%, rgba(88, 22, 42, 0.48) 0%, rgba(52, 14, 32, 0.25) 45%, transparent 60%),
+        radial-gradient(ellipse 58% 50% at 48% 46%, rgba(210, 75, 155, 0.22) 0%, rgba(120, 55, 160, 0.12) 50%, transparent 62%),
+        radial-gradient(ellipse 52% 44% at 52% 50%, rgba(100, 58, 165, 0.16) 0%, transparent 60%),
+        radial-gradient(ellipse 30% 26% at 54% 64%, rgba(235, 190, 102, 0.16) 0%, transparent 75%),
+        radial-gradient(ellipse 82% 78% at 48% 88%, rgba(58, 18, 38, 0.28) 0%, transparent 54%),
+        radial-gradient(ellipse 70% 58% at 92% 48%, rgba(40, 95, 230, 0.22) 0%, transparent 56%),
+        linear-gradient(165deg, #030510 0%, #10041a 44%, #050208 100%);
     }
 
     .hero-overlay::after {
@@ -1359,7 +1416,8 @@
     }
 
     @media (prefers-reduced-motion: reduce) {
-      html:not(.god-hour) .ambient__grad {
+      html:not(.god-hour) .ambient__grad,
+      html:not(.god-hour) .ambient__grad::before {
         animation: none !important;
       }
     }

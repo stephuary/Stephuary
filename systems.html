@@ -35,7 +35,7 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg: #05060d;
+      --bg: #02030a;
       --text: #f4ede0;
       --muted: #a89f92;
       --dim: #6e6558;
@@ -48,74 +48,105 @@
 
     html { scroll-behavior: smooth; }
 
-    /* Retrofuturist crystal corridor — 3 depth layers, all fixed behind content */
+    /* Layered atmospheric system — blue/plum-forward, restrained red, all color families present */
     .systems-portal-atmosphere {
       position: fixed;
       inset: 0;
       z-index: 0;
       pointer-events: none;
       overflow: hidden;
+      isolation: isolate;
+    }
+    .systems-portal-atmosphere::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(ellipse 130% 100% at 50% 100%, rgba(2, 4, 14, 0.96) 0%, transparent 46%),
+        linear-gradient(198deg, #010108 0%, #050a18 40%, #060214 100%);
+    }
+    .systems-portal-atmosphere::after {
+      content: '';
+      position: absolute;
+      inset: -12%;
+      z-index: 5;
+      pointer-events: none;
+      background:
+        radial-gradient(ellipse 56% 48% at 46% 44%, rgba(190, 70, 150, 0.07) 0%, transparent 62%),
+        radial-gradient(ellipse 70% 58% at 62% 38%, rgba(55, 110, 255, 0.08) 0%, transparent 58%);
+      mix-blend-mode: soft-light;
+      filter: blur(56px);
+      opacity: 0.55;
     }
     .systems-portal-atmosphere__layer {
       position: absolute;
       inset: -15%;
       will-change: transform, opacity;
     }
-    /* Layer 1 — base: midnight blue floor + wine + restrained plum + amber focal (indigo-forward, not purple-wash) */
+    /* L1 — electric blue + indigo lift, plum haze, subtle oxblood (not dominant), amber micro-highlight */
     .systems-portal-atmosphere__base {
+      z-index: 1;
       background:
-        radial-gradient(ellipse 78% 58% at 48% 28%, rgba(32, 48, 92, 0.38) 0%, transparent 56%),
-        radial-gradient(ellipse 52% 40% at 18% 22%, rgba(28, 42, 78, 0.42) 0%, transparent 54%),
-        radial-gradient(ellipse 50% 38% at 88% 18%, rgba(24, 38, 72, 0.36) 0%, transparent 52%),
-        radial-gradient(ellipse 46% 36% at 50% 34%, rgba(255, 236, 210, 0.18) 0%, transparent 52%),
-        radial-gradient(ellipse 58% 46% at 44% 44%, rgba(245, 208, 168, 0.09) 0%, transparent 56%),
-        radial-gradient(ellipse 62% 50% at 56% 50%, rgba(72, 38, 52, 0.14) 0%, transparent 58%),
-        radial-gradient(ellipse 68% 56% at 36% 56%, rgba(52, 18, 28, 0.4) 0%, transparent 60%),
-        radial-gradient(ellipse 58% 48% at 68% 40%, rgba(58, 48, 88, 0.1) 0%, transparent 56%),
-        radial-gradient(ellipse 86% 64% at 12% 58%, rgba(38, 72, 62, 0.12) 0%, transparent 50%),
-        radial-gradient(ellipse 84% 60% at 86% 54%, rgba(34, 58, 52, 0.11) 0%, transparent 52%),
-        radial-gradient(ellipse 72% 52% at 72% 70%, rgba(48, 38, 36, 0.1) 0%, transparent 50%),
-        radial-gradient(ellipse 100% 88% at 50% 58%, rgba(12, 10, 22, 0.82) 0%, #020308 100%);
-      filter: blur(56px);
-      opacity: 0.96;
+        radial-gradient(ellipse 88% 72% at 78% 24%, rgba(38, 105, 240, 0.42) 0%, rgba(28, 72, 200, 0.2) 38%, transparent 58%),
+        radial-gradient(ellipse 62% 54% at 16% 28%, rgba(28, 48, 108, 0.45) 0%, transparent 56%),
+        radial-gradient(ellipse 70% 58% at 82% 52%, rgba(45, 95, 225, 0.28) 0%, transparent 54%),
+        radial-gradient(ellipse 58% 50% at 48% 42%, rgba(95, 58, 155, 0.2) 0%, rgba(62, 38, 115, 0.1) 48%, transparent 62%),
+        radial-gradient(ellipse 52% 44% at 44% 48%, rgba(175, 58, 135, 0.12) 0%, transparent 58%),
+        radial-gradient(ellipse 64% 56% at 22% 58%, rgba(72, 28, 48, 0.22) 0%, rgba(48, 16, 32, 0.12) 50%, transparent 60%),
+        radial-gradient(ellipse 48% 42% at 68% 62%, rgba(42, 22, 58, 0.18) 0%, transparent 58%),
+        radial-gradient(ellipse 42% 36% at 56% 36%, rgba(220, 175, 95, 0.1) 0%, transparent 62%),
+        radial-gradient(ellipse 100% 92% at 50% 54%, rgba(8, 12, 32, 0.55) 0%, transparent 70%),
+        radial-gradient(ellipse 105% 90% at 50% 58%, rgba(10, 8, 20, 0.78) 0%, #020308 100%);
+      filter: blur(52px);
+      opacity: 0.95;
       transform: translate3d(2%, -1%, 0);
     }
     .systems-portal-atmosphere__glow-a {
+      z-index: 2;
       background:
-        radial-gradient(ellipse 58% 46% at 42% 42%, rgba(255, 224, 188, 0.1) 0%, transparent 58%),
-        radial-gradient(ellipse 52% 52% at 34% 54%, rgba(42, 58, 108, 0.1) 0%, transparent 54%),
-        radial-gradient(ellipse 70% 50% at 78% 44%, rgba(48, 88, 72, 0.07) 0%, transparent 55%);
-      filter: blur(72px);
-      opacity: 0.44;
+        radial-gradient(ellipse 62% 50% at 38% 40%, rgba(255, 228, 195, 0.09) 0%, transparent 58%),
+        radial-gradient(ellipse 58% 52% at 52% 46%, rgba(120, 65, 165, 0.14) 0%, transparent 58%),
+        radial-gradient(ellipse 72% 58% at 72% 38%, rgba(55, 115, 235, 0.12) 0%, transparent 56%),
+        radial-gradient(ellipse 54% 48% at 28% 62%, rgba(88, 38, 58, 0.1) 0%, transparent 56%);
+      mix-blend-mode: soft-light;
+      filter: blur(68px);
+      opacity: 0.48;
       transform: translate3d(-4%, 3%, 0) scale(1.02);
       animation: systemsAtmoDriftA 56s ease-in-out infinite;
     }
     .systems-portal-atmosphere__glow-b {
+      z-index: 3;
       background:
-        radial-gradient(ellipse 54% 50% at 58% 34%, rgba(118, 48, 62, 0.1) 0%, transparent 56%),
-        radial-gradient(ellipse 48% 40% at 64% 46%, rgba(42, 22, 34, 0.18) 0%, transparent 60%),
-        radial-gradient(ellipse 62% 48% at 22% 62%, rgba(38, 58, 92, 0.09) 0%, transparent 50%);
-      filter: blur(78px);
-      opacity: 0.36;
+        radial-gradient(ellipse 56% 48% at 58% 32%, rgba(185, 65, 125, 0.1) 0%, transparent 58%),
+        radial-gradient(ellipse 50% 42% at 46% 52%, rgba(90, 55, 150, 0.14) 0%, transparent 60%),
+        radial-gradient(ellipse 64% 52% at 22% 48%, rgba(42, 85, 195, 0.12) 0%, transparent 54%),
+        radial-gradient(ellipse 48% 40% at 70% 58%, rgba(58, 22, 38, 0.14) 0%, transparent 58%);
+      mix-blend-mode: screen;
+      filter: blur(74px);
+      opacity: 0.38;
       transform: translate3d(5%, -2%, 0);
       animation: systemsAtmoDriftB 64s ease-in-out infinite;
     }
-    /* Midground haze — cool lift + warm band + floor depth */
     .systems-portal-atmosphere__glow-c {
+      z-index: 4;
       background:
-        radial-gradient(ellipse 92% 48% at 50% 38%, rgba(225, 195, 148, 0.06) 0%, transparent 52%),
-        radial-gradient(ellipse 78% 56% at 42% 58%, rgba(28, 42, 72, 0.12) 0%, transparent 58%),
-        radial-gradient(ellipse 100% 72% at 50% 88%, rgba(18, 28, 42, 0.16) 0%, transparent 42%),
-        radial-gradient(ellipse 110% 90% at 68% 72%, rgba(36, 52, 48, 0.08) 0%, transparent 46%);
-      filter: blur(48px);
-      opacity: 0.44;
+        radial-gradient(ellipse 95% 52% at 50% 36%, rgba(215, 185, 138, 0.06) 0%, transparent 54%),
+        radial-gradient(ellipse 82% 60% at 38% 56%, rgba(32, 52, 118, 0.14) 0%, transparent 58%),
+        radial-gradient(ellipse 100% 78% at 50% 88%, rgba(14, 22, 42, 0.2) 0%, transparent 42%),
+        radial-gradient(ellipse 95% 70% at 72% 68%, rgba(48, 72, 120, 0.1) 0%, transparent 48%),
+        radial-gradient(ellipse 70% 55% at 30% 72%, rgba(38, 22, 52, 0.08) 0%, transparent 52%);
+      mix-blend-mode: overlay;
+      filter: blur(46px);
+      opacity: 0.42;
       animation: systemsMidHaze 68s ease-in-out infinite;
     }
     /* Layer 2 — abstract luminous vertical forms + pseudo “skyline” masses */
     .systems-portal-atmosphere__crystal-field {
       position: absolute;
       inset: -5% -8% 0 -8%;
-      z-index: 1;
+      z-index: 6;
       pointer-events: none;
       animation: systemsCrystalFieldDrift 80s ease-in-out infinite;
     }
@@ -263,7 +294,7 @@
     /* Layer 3 — edge vignette: radial falloff + soft top/bottom corridor darkening */
     .systems-portal-atmosphere__vignette {
       inset: 0;
-      z-index: 2;
+      z-index: 7;
       background:
         radial-gradient(ellipse 90% 78% at 50% 42%, transparent 24%, rgba(0, 0, 0, 0.48) 100%),
         linear-gradient(180deg, rgba(0, 0, 0, 0.38) 0%, transparent 22%, transparent 78%, rgba(0, 0, 0, 0.55) 100%);
