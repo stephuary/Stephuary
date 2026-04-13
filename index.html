@@ -7,6 +7,7 @@
   removed: rotating hero-line system
   kept: homepage global environment (#home-environment + canvas + layers)
   fixed: hero text overlap and duplicate hero look
+  fixed: nav padding gap (empty block above hero) — April 2026
 -->
 <html lang="en">
 <head>
@@ -37,6 +38,7 @@
     }
 
     :root {
+      --nav-h: 64px;
       --bg: #060608;
       --blue: #3A6BFF;
       --blue-soft: rgba(58, 107, 255, 0.14);
@@ -121,7 +123,7 @@
       margin-bottom: 0;
     }
 
-    /* Nav */
+    /* ─── Nav ─── */
     nav#main-nav {
       position: fixed;
       top: 0;
@@ -132,7 +134,8 @@
       align-items: center;
       justify-content: space-between;
       gap: 16px;
-      padding: 16px 40px;
+      padding: 0 40px;
+      height: var(--nav-h);
       background: rgba(3, 3, 3, 0.65);
       backdrop-filter: blur(18px);
       -webkit-backdrop-filter: blur(18px);
@@ -200,12 +203,15 @@
       opacity: 0.85;
     }
 
-    /* Hero — single environment from #home-environment; no stacked viewport min-heights on nested wrappers */
+    /* ─── Hero ───
+       padding-top = var(--nav-h) so in-flow content clears the fixed nav.
+       Canvas still fills the viewport behind content via #home-environment. */
     #hero {
       position: relative;
       overflow: visible;
       padding: 0;
       min-height: auto;
+      padding-top: var(--nav-h);
     }
 
     /* Hero: content only — global canvas + environment live in #home-environment */
@@ -234,13 +240,14 @@
       display: none;
     }
 
+    /* In-flow padding only (nav offset is on #hero). */
     .hero-content {
       position: relative;
       z-index: 2;
       display: block;
       min-height: 0;
       width: 100%;
-      padding: 24px 40px 8px;
+      padding: 32px 40px 8px;
     }
 
     .hero-inner {
@@ -557,6 +564,7 @@
     }
     .leak-step.is-active {
       display: block;
+      opacity: 1;
     }
 
     .leak-intro-text {
@@ -1178,12 +1186,13 @@
     }
 
     @media (max-width: 767px) {
-      #hero,
-      .hero-container {
-        min-height: auto;
+      :root {
+        --nav-h: 56px;
+      }
+      #hero {
+        padding-top: var(--nav-h);
       }
       .hero-content {
-        min-height: 0;
         padding: 20px 20px 12px;
       }
       .hero-leak-dock {
@@ -1195,9 +1204,10 @@
     }
 
     @media (max-width: 640px) {
-      nav#main-nav { padding: 14px 20px; }
+      nav#main-nav {
+        padding: 0 20px;
+      }
       .hero-content {
-        min-height: 0;
         padding: 20px 20px 12px;
       }
       #proof, #system, .phase-head-wrap, .connector-wrap, .phase-rail { padding-left: 20px; padding-right: 20px; }
@@ -1338,8 +1348,9 @@
       opacity: 0.38;
     }
 
+    /* Match canvas base; avoids visible band above fixed env */
     body[data-sh-env='home'] {
-      background-color: #0a0d18;
+      background-color: #060608;
     }
 
     body[data-sh-env='home'] #main-content {
@@ -1421,7 +1432,7 @@
 
   <div id="site-shell" class="site-shell">
   <div class="page">
-    <!-- Phases: 1=/capture 2=/monetize 3=/structure 4=/automation 5=/sovereignty (vercel.json) -->
+    <!-- Phases: 1=/capture 2=/monetize 3=/structure 4=/automation 5=/sovereignty -->
     <nav id="main-nav" class="sh-main-nav" aria-label="Primary">
       <a href="/" class="nav-mark">Stephuary</a>
       <div class="nav-links">
@@ -1446,7 +1457,7 @@
             <h1 class="hero-h1" id="hero-h1">See your exact cost. Fix one leak now.</h1>
             <p class="hero-identity-line" id="hero-identity-line">I build systems that turn what you already know into income.</p>
             <p class="hero-payoff-line" id="hero-payoff-line">Build something that works for you every day.</p>
-            <p class="hero-lead" id="hero-lead">One diagnostic across five phases (Capture through Sovereignty)—see what’s not working, what it costs, and what to change first.</p>
+            <p class="hero-lead" id="hero-lead">One diagnostic across five phases (Capture through Sovereignty)—see what's not working, what it costs, and what to change first.</p>
             <p class="hero-personal-line" id="hero-personal-line" hidden></p>
             <div class="hero-actions" id="hero-actions">
               <a href="/capture" class="btn btn--pri" id="hero-cta-primary" data-sh-flow-primary>Start Diagnostic</a>
@@ -1832,7 +1843,7 @@
     <a href="#" class="early-private-slot__link">One Free Spot</a>
   </div>
 
-  </div>
+  </div><!-- /site-shell -->
 
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
@@ -2050,11 +2061,10 @@
       }
 
       function leakVerdict(d, h) {
-        var ds = '$' + d.toLocaleString();
         var hs = h % 1 === 0 ? String(Math.round(h)) : h.toFixed(1);
         return (
-          'You lose about ' +
-          ds +
+          'You lose about $' +
+          d.toLocaleString() +
           ' a year and ' +
           hs +
           ' hours a week on that pull. You had not added it up before.'
@@ -2076,21 +2086,25 @@
         var intro = document.getElementById('leak-step-intro');
         if (intro) {
           intro.classList.add('is-active');
-          gsap.set(intro, { opacity: 1 });
-          var it = intro.querySelector('.leak-intro-text');
-          if (it) gsap.set(it, { opacity: 1, y: 0 });
+          if (hasGsap) {
+            gsap.set(intro, { opacity: 1 });
+            var it = intro.querySelector('.leak-intro-text');
+            if (it) gsap.set(it, { opacity: 1, y: 0 });
+          }
         }
         if (leakOverlay) leakOverlay.classList.remove('is-deep');
-        var ld = document.getElementById('leak-out-dollar');
-        var lh = document.getElementById('leak-out-hours');
+        ['leak-out-dollar', 'leak-out-hours'].forEach(function (id) {
+          var el = document.getElementById(id);
+          if (el) el.textContent = id === 'leak-out-dollar' ? '$0' : '0';
+        });
         var lv = document.getElementById('leak-verdict');
-        if (ld) ld.textContent = '$0';
-        if (lh) lh.textContent = '0';
         if (lv) lv.textContent = '';
-        gsap.set('#leak-verdict, #leak-action-line, #leak-actions-block', { opacity: 0 });
+        if (hasGsap) {
+          gsap.set('#leak-verdict, #leak-action-line, #leak-actions-block', { opacity: 0 });
+        }
         ['leak-step-q1', 'leak-step-q2', 'leak-step-q3', 'leak-step-outcome'].forEach(function (id) {
           var el = document.getElementById(id);
-          if (el) gsap.set(el, { opacity: 1, y: 0 });
+          if (el && hasGsap) gsap.set(el, { opacity: 1, y: 0 });
         });
       }
 
@@ -2101,28 +2115,20 @@
           window.clearTimeout(leakIntroTimer);
           leakIntroTimer = null;
         }
-        if (cur && next && cur === next) return;
-        if (!next) return;
+        if (!next || (cur && cur === next)) return;
 
-        var showNextLeakStep = function () {
-          if (cur) {
-            cur.classList.remove('is-active');
-          }
+        function showNext() {
+          if (cur) cur.classList.remove('is-active');
           next.classList.add('is-active');
-          gsap.fromTo(next, { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.4, ease: 'power2.out' });
-        };
+          if (hasGsap) {
+            gsap.fromTo(next, { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.4, ease: 'power2.out' });
+          }
+        }
 
-        if (cur) {
-          gsap.to(cur, {
-            opacity: 0,
-            duration: 0.22,
-            ease: 'power2.in',
-            onComplete: function () {
-              showNextLeakStep();
-            }
-          });
+        if (cur && hasGsap) {
+          gsap.to(cur, { opacity: 0, duration: 0.22, ease: 'power2.in', onComplete: showNext });
         } else {
-          showNextLeakStep();
+          showNext();
         }
       }
 
@@ -2131,24 +2137,20 @@
         var res = leakCompute();
         if (!cur || !leakOverlay) return;
 
-        gsap.to(cur, {
-          opacity: 0,
-          duration: 0.28,
-          ease: 'power2.in',
-          onComplete: function () {
-            cur.classList.remove('is-active');
-            leakOverlay.classList.add('is-deep');
-            window.setTimeout(function () {
-              var out = document.getElementById('leak-step-outcome');
-              if (!out) return;
-              out.classList.add('is-active');
-              document.getElementById('leak-out-dollar').textContent = '$0';
-              document.getElementById('leak-out-hours').textContent = '0';
+        var doFinish = function () {
+          cur.classList.remove('is-active');
+          leakOverlay.classList.add('is-deep');
+          window.setTimeout(function () {
+            var out = document.getElementById('leak-step-outcome');
+            if (!out) return;
+            out.classList.add('is-active');
+            document.getElementById('leak-out-dollar').textContent = '$0';
+            document.getElementById('leak-out-hours').textContent = '0';
+            if (hasGsap) {
               gsap.set('#leak-verdict', { opacity: 0, y: 6 });
               gsap.set('#leak-action-line', { opacity: 0 });
               gsap.set('#leak-actions-block', { opacity: 0 });
               gsap.fromTo(out, { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 0.45, ease: 'power2.out' });
-
               var nums = { d: 0, h: 0 };
               gsap.to(nums, {
                 d: res.dollars,
@@ -2169,9 +2171,22 @@
                   gsap.to('#leak-actions-block', { opacity: 1, duration: 0.38, delay: 0.12 });
                 }
               });
-            }, 650);
-          }
-        });
+            } else {
+              var elD = document.getElementById('leak-out-dollar');
+              var elH = document.getElementById('leak-out-hours');
+              if (elD) elD.textContent = '$' + res.dollars.toLocaleString();
+              if (elH) elH.textContent = res.hours.toFixed(1);
+              var v = document.getElementById('leak-verdict');
+              if (v) v.textContent = leakVerdict(res.dollars, res.hours);
+            }
+          }, 650);
+        };
+
+        if (hasGsap) {
+          gsap.to(cur, { opacity: 0, duration: 0.28, ease: 'power2.in', onComplete: doFinish });
+        } else {
+          doFinish();
+        }
       }
 
       function leakClose() {
@@ -2196,16 +2211,18 @@
         leakOverlay.classList.add('is-open');
         leakOverlay.setAttribute('aria-hidden', 'false');
         document.body.classList.add('leak-open');
-        gsap.fromTo(
-          '.leak-panel',
-          { opacity: 0, scale: 0.98, y: 14 },
-          { opacity: 1, scale: 1, y: 0, duration: 0.5, ease: 'power3.out' }
-        );
-        gsap.fromTo(
-          '#leak-step-intro .leak-intro-text',
-          { opacity: 0, y: 8 },
-          { opacity: 1, y: 0, duration: 0.45, ease: 'power2.out', delay: 0.06 }
-        );
+        if (hasGsap) {
+          gsap.fromTo(
+            '.leak-panel',
+            { opacity: 0, scale: 0.98, y: 14 },
+            { opacity: 1, scale: 1, y: 0, duration: 0.5, ease: 'power3.out' }
+          );
+          gsap.fromTo(
+            '#leak-step-intro .leak-intro-text',
+            { opacity: 0, y: 8 },
+            { opacity: 1, y: 0, duration: 0.45, ease: 'power2.out', delay: 0.06 }
+          );
+        }
         leakIntroTimer = window.setTimeout(function () {
           leakGoTo('q1');
         }, 1700);
