@@ -1212,6 +1212,14 @@
     }
     if (!ul) return;
     ul.innerHTML = '';
+    if (diag && diag.priority_moves && diag.priority_moves.length) {
+      diag.priority_moves.slice(0, 3).forEach(function (t) {
+        var li = document.createElement('li');
+        li.textContent = t;
+        ul.appendChild(li);
+      });
+      return;
+    }
     var items = [];
     var w = version.whereShowsUp || [];
     var i;
@@ -1333,6 +1341,11 @@
         data.diagnostic = window.StephuaryResult.buildDiagnostic(ver, prim);
       } catch (e) {}
     }
+    if (data.diagnostic && typeof window.StephuaryResult !== 'undefined' && typeof window.StephuaryResult.mergeCrossPhase === 'function') {
+      try {
+        window.StephuaryResult.mergeCrossPhase(data);
+      } catch (eX) {}
+    }
     return data;
   }
 
@@ -1359,7 +1372,9 @@
     var subEl = document.getElementById('results-hero-sub');
     if (subEl) {
       var hl = '';
-      if (version.whatThisShows && version.whatThisShows[1] && version.whatThisShows[1].p) {
+      if (diag && String(diag.synthesis_summary || '').trim()) {
+        hl = String(diag.synthesis_summary).trim();
+      } else if (version.whatThisShows && version.whatThisShows[1] && version.whatThisShows[1].p) {
         hl = version.whatThisShows[1].p;
       } else if (version.whatThisShows && version.whatThisShows[0] && version.whatThisShows[0].p) {
         hl = version.whatThisShows[0].p;
@@ -1401,7 +1416,62 @@
     var readoutEl = document.getElementById('resultReadoutBlock');
     readoutEl.innerHTML = '';
     readoutEl.hidden = true;
-    if (!diag && data.signals && typeof data.signals === 'object') {
+
+    function appendReadoutList(title, items) {
+      if (!items || !items.length) return;
+      readoutEl.hidden = false;
+      var dt = document.createElement('dt');
+      dt.textContent = title;
+      var dd = document.createElement('dd');
+      var ul = document.createElement('ul');
+      ul.className = 'diag-list';
+      items.forEach(function (t) {
+        var li = document.createElement('li');
+        li.textContent = t;
+        ul.appendChild(li);
+      });
+      dd.appendChild(ul);
+      readoutEl.appendChild(dt);
+      readoutEl.appendChild(dd);
+    }
+
+    if (diag) {
+      if (diag.phase_chain_lines && diag.phase_chain_lines.length) {
+        appendReadoutList('Phases 02–05 (what you locked in)', diag.phase_chain_lines);
+      } else {
+        appendReadoutList('Phases 02–05', ['Not finished on this device yet — resume the diagnostic for the full chain.']);
+      }
+      (function () {
+        var issueItems;
+        if (diag.phase_issues && diag.phase_issues.length) {
+          issueItems = diag.phase_issues;
+        } else if (diag.phase_chain_lines && diag.phase_chain_lines.length >= 4) {
+          issueItems = ['No single cross-phase issue dominated on this pass.'];
+        } else {
+          issueItems = ['Finish phases 02–05 on this device to populate cross-phase issues.'];
+        }
+        appendReadoutList('Key issues across phases', issueItems);
+      })();
+      appendReadoutList('Prioritized next moves', diag.priority_moves && diag.priority_moves.length ? diag.priority_moves : [diag.fix_first || 'Pick one move you can finish this week.']);
+      if (String(diag.results_handoff || '').trim()) {
+        readoutEl.hidden = false;
+        var dtH = document.createElement('dt');
+        dtH.textContent = 'How this connects to Rooms';
+        var ddH = document.createElement('dd');
+        ddH.textContent = String(diag.results_handoff).trim();
+        readoutEl.appendChild(dtH);
+        readoutEl.appendChild(ddH);
+      }
+      if (String(diag.rooms_entry_hint || '').trim()) {
+        readoutEl.hidden = false;
+        var dtR = document.createElement('dt');
+        dtR.textContent = 'Where to start';
+        var ddR = document.createElement('dd');
+        ddR.textContent = String(diag.rooms_entry_hint).trim();
+        readoutEl.appendChild(dtR);
+        readoutEl.appendChild(ddR);
+      }
+    } else if (data.signals && typeof data.signals === 'object') {
       var keys = Object.keys(data.signals).filter(function (k) {
         return String(data.signals[k] || '').trim();
       });
@@ -1415,6 +1485,22 @@
           readoutEl.appendChild(dt);
           readoutEl.appendChild(dd);
         });
+      }
+    }
+
+    var ctaPri = document.getElementById('results-primary-cta');
+    var ctaSub = document.getElementById('results-primary-sub');
+    if (ctaPri && diag && diag.next_room && diag.next_room.path) {
+      ctaPri.setAttribute('href', diag.next_room.path);
+      ctaPri.textContent = diag.next_room.title ? 'Open ' + diag.next_room.title : 'Open recommended Room';
+    }
+    if (ctaSub) {
+      if (diag && String(diag.next_reason || '').trim()) {
+        ctaSub.hidden = false;
+        ctaSub.textContent = String(diag.next_reason).trim();
+      } else {
+        ctaSub.hidden = true;
+        ctaSub.textContent = '';
       }
     }
 

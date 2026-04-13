@@ -355,6 +355,22 @@
       margin-bottom: 24px;
     }
 
+    .instinct-dl {
+      margin: 0;
+      font-size: 14px;
+      line-height: 1.5;
+      color: var(--text-muted);
+    }
+    .instinct-dl dt {
+      margin-top: 10px;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--faint);
+    }
+    .instinct-dl dt:first-child { margin-top: 0; }
+    .instinct-dl dd { margin: 4px 0 0; }
+
     .instinct-row {
       font-size: 13px;
       color: var(--text-mid);
@@ -734,7 +750,7 @@
     <div class="sys-compact__bg"><canvas aria-hidden="true"></canvas></div>
     <div class="sys-compact__inner">
       <p class="sys-label">Diagnostic · Phase 03 of 5 — Structure</p>
-      <p class="sys-lead-note">Finish Phase 02 — Monetize before this section.</p>
+      <p class="sys-lead-note">Finish Phase 02 first. This phase only organizes: buyer, outcome, entry, price, delivery shape.</p>
       <h1 class="sys-title">Structure</h1>
       <p class="sys-lead">You define price, buyer, and the first message someone can read and buy from.</p>
       <div id="phase-visual" class="sys-visual" data-visual="layers">
@@ -856,7 +872,7 @@
         </div>
 
         <p class="capture-flow-saved">Your progress is saved automatically on this device.</p>
-        <p class="sys-lead-note" style="margin:0 0 14px;max-width:52ch">This turns value into an offer someone can buy. Next, we put it in front of real people.</p>
+        <p class="sys-lead-note" style="margin:0 0 14px;max-width:52ch">Carry-forward: chargeable shape, outcome line, entry, price posture, and ship rule. Phase 04 uses this to force exposure and measure response.</p>
         <div class="action-primary">
           <a href="/automation" class="btn btn-solid" data-sh-flow-primary>Continue</a>
         </div>
@@ -920,15 +936,15 @@
   var RAIL_LABELS = ['Offer','Outcome','Simplicity','Entry','Proof','Delivery','Leverage','Pricing','Build','Execute','Results'];
 
   var QUESTIONS = [
-    { instruction: 'Right now, do you have something someone could pay you for immediately?', a: 'Yes, even if it\'s not fully defined', b: 'No, it\'s still conceptual' },
-    { instruction: 'Can you clearly say what changes after someone works with you?', a: 'Yes, the before and after is clear', b: 'No, it\'s still broad or unclear' },
-    { instruction: 'What you offer is currently:', a: 'Simple enough to explain quickly', b: 'Complex or layered' },
-    { instruction: 'If someone wanted to work with you today:', a: 'There is a clear starting point', b: 'There is no clear way to begin' },
-    { instruction: 'Right now your work has:', a: 'Real examples or results', b: 'Mostly ideas or potential' },
-    { instruction: 'You naturally prefer to:', a: 'Solve problems directly', b: 'Guide or advise' },
-    { instruction: 'Your current model is:', a: 'Time for money', b: 'Scalable or leveraged' },
-    { instruction: 'If someone asked your price:', a: 'You would say it clearly', b: 'You would hesitate' },
-    { instruction: 'Right now you are:', a: 'Ready to start simple', b: 'Waiting to make it better first' },
+    { instruction: 'Could someone pay you for something this week (even rough)?', a: 'Yes, even if it\'s not fully defined', b: 'No, it\'s still conceptual' },
+    { instruction: 'Can you state the before → after in one sentence?', a: 'Yes, the before and after is clear', b: 'No, it\'s still broad or unclear' },
+    { instruction: 'How fast can a stranger understand the offer?', a: 'Simple enough to explain quickly', b: 'Complex or layered' },
+    { instruction: 'If a buyer said “start today,” your first step is:', a: 'There is a clear starting point', b: 'There is no clear way to begin' },
+    { instruction: 'Proof you can show today is:', a: 'Real examples or results', b: 'Mostly ideas or potential' },
+    { instruction: 'Default delivery shape you sell:', a: 'Solve problems directly', b: 'Guide or advise' },
+    { instruction: 'Revenue model today is closer to:', a: 'Time for money', b: 'Scalable or leveraged' },
+    { instruction: 'If someone asked your price right now:', a: 'You would say it clearly', b: 'You would hesitate' },
+    { instruction: 'Ship posture:', a: 'Ready to start simple', b: 'Waiting to make it better first' },
     { instruction: 'If someone said "start today":', a: 'You would begin immediately', b: 'You would still need to figure things out' }
   ];
 
@@ -1064,16 +1080,17 @@
     var p2 = loadP2Bits();
     var probLine = p2ProblemSummary(p2);
     host.innerHTML =
-      '<p class="instinct-row"><strong>You are best positioned to solve:</strong><br>' +
+      '<dl class="instinct-dl">' +
+      '<dt>From Phase 02 — paid problem + buyer</dt><dd>' +
       escapeHtml(probLine) +
-      '</p>' +
-      '<p class="instinct-row"><strong>You naturally:</strong></p>' +
-      '<p class="instinct-row">notice ' +
+      '</dd>' +
+      '<dt>From Phase 01 — detection line</dt><dd>' +
       (p1 && p1.notice ? escapeHtml(shorten(p1.notice, 140)) : 'Complete Phase 01 for your detection line.') +
-      '</p>' +
-      '<p class="instinct-row">correct ' +
+      '</dd>' +
+      '<dt>From Phase 01 — correction move</dt><dd>' +
       (p1 && p1.correct ? escapeHtml(shorten(p1.correct, 120)) : 'Complete Phase 01 for your correction pattern.') +
-      '</p>';
+      '</dd></dl>' +
+      '<p class="instinct-row" style="margin-top:10px">Phase 03 uses these to lock one offer shell: who, outcome, first step, price.</p>';
   }
 
   function shorten(s, n) {
@@ -1091,20 +1108,20 @@
     var p1 = loadP01Profile();
     var p2 = loadP2Bits();
     var pool = [
-      'You already see where your value exists.',
-      'Your challenge now is not clarity, it is structure.',
-      'You tend to think before acting.',
-      'You already know more than you execute.',
-      'Naming the offer forces a real decision.',
-      'Simple beats complete at the start.',
+      'Name one buyer noun before you widen scope.',
+      'Pick one entry shape — not ten.',
+      'Write before/after in one sentence.',
+      'Price clarity is part of the offer, not a later step.',
       'Money follows a visible starting point.',
       'Proof beats guesswork in the room.',
-      'Pick one entry, not ten.',
-      'Starting beats refining in private.'
+      'Simple offer beats complete deck.',
+      'Ship one slice; refine after contact.',
+      'If you cannot start today, cut scope until you can.',
+      'Structure is what turns Phase 02 into a invoice line.'
     ];
     var i = stepIdx % pool.length;
-    if (p2 && p2Complete(p2) && p2[2] === 1) pool[i] = 'Your challenge now is not clarity, it is structure.';
-    if (p1 && p1.notice && p1.notice.indexOf('hesitate') !== -1) pool[(stepIdx + 3) % pool.length] = 'You tend to think before acting.';
+    if (p2 && p2Complete(p2) && p2[2] === 1) pool[i] = 'If explanation repeats, narrow the buyer or outcome — not the pitch length.';
+    if (p1 && p1.notice && p1.notice.indexOf('hesitate') !== -1) pool[(stepIdx + 3) % pool.length] = 'If you hesitate until certainty, pick the smallest chargeable slice.';
     return pool[(stepIdx + (p2 && p2[8] === 1 ? 2 : 0)) % pool.length];
   }
 

@@ -774,7 +774,7 @@
     <div class="sys-compact__bg"><canvas aria-hidden="true"></canvas></div>
     <div class="sys-compact__inner">
       <p class="sys-label">Diagnostic · Phase 04 of 5 — Automation</p>
-      <p class="sys-lead-note">Finish Phase 03 — Structure before this section.</p>
+      <p class="sys-lead-note">Finish Phase 03 first. This phase only measures: exposure, signal, and your loop after friction.</p>
       <h1 class="sys-title">Automation</h1>
       <p class="sys-lead">You show the offer to real people and write down who replied and who paid.</p>
       <div id="phase-visual" class="sys-visual" data-visual="wave"></div>
@@ -884,7 +884,7 @@
         </div>
 
         <p class="capture-flow-saved">Your progress is saved automatically on this device.</p>
-        <p class="sys-lead-note" style="margin:0 0 14px;max-width:52ch">This proves what holds in contact. Next, we lock how you work so it stays under your control.</p>
+        <p class="sys-lead-note" style="margin:0 0 14px;max-width:52ch">Carry-forward: validation tier, exposure, response, feedback loop. Phase 05 uses this to decide dependency, ownership, and what must be controlled.</p>
         <div class="action-primary">
           <a href="/sovereignty" class="btn btn-solid" data-sh-flow-primary>Continue</a>
         </div>
@@ -954,16 +954,16 @@
   var RAIL_LABELS = ['Readiness','Exposure','Response','Outreach','Rejection','Feedback','Speed','Proof','Avoidance','Reality','Results'];
 
   var QUESTIONS = [
-    { instruction: 'Are you ready to put this in front of someone today?', a: 'Yes', b: 'No' },
-    { instruction: 'Right now, your offer has been:', a: 'Seen by real people', b: 'Only seen by you' },
+    { instruction: 'Are you ready to put the current offer in front of someone today?', a: 'Yes', b: 'No' },
+    { instruction: 'Exposure status:', a: 'Seen by real people', b: 'Only seen by you' },
     { instruction: 'When you share what you do:', a: 'People respond or engage', b: 'There is little or no response' },
-    { instruction: 'Have you directly offered this to someone?', a: 'Yes', b: 'No' },
+    { instruction: 'Have you directly offered this to a specific person (not just a feed)?', a: 'Yes', b: 'No' },
     { instruction: 'When people don\'t respond:', a: 'You adjust and try again', b: 'You hesitate or stop' },
     { instruction: 'When you get feedback:', a: 'You use it to refine quickly', b: 'You overthink or delay' },
-    { instruction: 'You tend to:', a: 'Test quickly', b: 'Wait until it feels ready' },
-    { instruction: 'Right now, you have:', a: 'Some level of proof', b: 'No real proof yet' },
-    { instruction: 'Be honest:', a: 'You are taking action', b: 'You are still preparing' },
-    { instruction: 'If no one buys or responds:', a: 'You will adjust and continue', b: 'You will question everything' }
+    { instruction: 'Validation speed:', a: 'Test quickly', b: 'Wait until it feels ready' },
+    { instruction: 'External proof today:', a: 'Some level of proof', b: 'No real proof yet' },
+    { instruction: 'Mode this week:', a: 'You are taking action', b: 'You are still preparing' },
+    { instruction: 'If the next five attempts fail:', a: 'You will adjust and continue', b: 'You will question everything' }
   ];
 
   var ADAPTIVE = [
@@ -1203,7 +1203,7 @@
     var tier = validationTier(b);
 
     document.getElementById('out-1').innerHTML =
-      '<p>Your offer is currently: <strong>' + tier + '</strong>.</p>';
+      '<p><strong>Validation tier</strong></p><ul class="diag-list"><li>Status: <strong>' + tier + '</strong></li></ul>';
 
     var works = [];
     var notWorks = [];
@@ -1215,12 +1215,13 @@
     else notWorks.push('proof still thin or internal');
     if (works.length === 0) works.push('readiness to test if you move');
     document.getElementById('out-2').innerHTML =
-      '<p>Right now what works: ' + works.join('; ') + '.</p>' +
-      '<p>What does not: ' + (notWorks.length ? notWorks.join('; ') : 'nothing obvious yet') + '.</p>';
+      '<p><strong>Signal inventory</strong></p><ul class="diag-list"><li>Working: ' + works.join('; ') + '</li>' +
+      '<li>Not working: ' + (notWorks.length ? notWorks.join('; ') : 'nothing obvious yet') + '</li></ul>';
 
     document.getElementById('out-3').innerHTML =
-      '<p>If people respond: <strong>you have signal</strong>.</p>' +
-      '<p>If they do not: <strong>you need adjustment, not reinvention</strong>.</p>';
+      '<p><strong>Decision rule</strong></p><ul class="diag-list">' +
+      '<li>If people respond → treat it as signal; iterate the same offer shape.</li>' +
+      '<li>If they do not → adjust one variable at a time; do not restart from zero.</li></ul>';
 
     var person =
       b[1] === 0
@@ -1229,14 +1230,16 @@
     var format = b[6] === 0 ? 'a short post or one direct message' : 'one calendar invite and a one-page summary';
     var hours = b[6] === 0 ? '24' : '72';
     document.getElementById('out-4').innerHTML =
-      '<p>You should:</p>' +
-      '<p>show this to <strong>' +
+      '<p><strong>Next exposure batch (do this)</strong></p><ul class="diag-list">' +
+      '<li>Audience: <strong>' +
       person +
-      '</strong><br>in <strong>' +
+      '</strong></li>' +
+      '<li>Format: <strong>' +
       format +
-      '</strong><br>within <strong>' +
+      '</strong></li>' +
+      '<li>Deadline: <strong>' +
       hours +
-      ' hours</strong>.</p>';
+      ' hours</strong></li></ul>';
 
     document.getElementById('out-5').innerHTML =
       '<ul class="diag-list">' +
@@ -1256,11 +1259,9 @@
         : '');
 
     document.getElementById('out-8').innerHTML =
-      '<p>Do this:</p><ul class="diag-list">' +
-      '<li>put your offer in front of real people</li>' +
-      '<li>observe response</li>' +
-      '<li>adjust immediately</li>' +
-      '</ul>';
+      '<p><strong>Handoff to Phase 05</strong></p><ul class="diag-list">' +
+      '<li>You now know whether the loop is real or still private.</li>' +
+      '<li>Next: lock dependency, ownership, and what must stay under your control.</li></ul>';
 
     var fin = panelFromBits(b);
     document.getElementById('live-test').textContent = fin.test;

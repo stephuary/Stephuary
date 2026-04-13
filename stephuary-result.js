@@ -266,6 +266,192 @@
     };
   }
 
+  var LS_P02 = 'stephuary_monetize_p02_v1';
+  var LS_P03 = 'stephuary_structure_p03_v1';
+  var LS_P04 = 'stephuary_validation_p04_v1';
+  var LS_P05 = 'stephuary_sovereignty_p05_v1';
+
+  function loadStoredBits(key) {
+    try {
+      if (typeof localStorage === 'undefined') return null;
+      var raw = localStorage.getItem(key);
+      if (!raw) return null;
+      var d = JSON.parse(raw);
+      return d.bits || null;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function phaseBitsComplete(bits) {
+    if (!bits || bits.length < TOTAL_Q) return false;
+    for (var i = 0; i < TOTAL_Q; i++) {
+      if (bits[i] === null || bits[i] === undefined) return false;
+    }
+    return true;
+  }
+
+  function validationTierP4(b) {
+    var sc = 0;
+    if (b[1] === 0) sc += 2;
+    if (b[2] === 0) sc += 2;
+    if (b[3] === 0) sc += 2;
+    if (b[7] === 0) sc += 1;
+    if (b[0] === 0) sc += 1;
+    if (sc >= 6) return 'validated';
+    if (sc >= 3) return 'partially validated';
+    return 'untested';
+  }
+
+  function lineMonetize(b) {
+    if (!phaseBitsComplete(b)) return null;
+    var clearScore = (b[0] === 0 ? 1 : 0) + (b[2] === 0 ? 1 : 0) + (b[5] === 0 ? 1 : 0) + (b[6] === 0 ? 1 : 0);
+    var pos = clearScore >= 3 ? 'clear' : 'unclear';
+    var pull = b[3] === 0 ? 'pulled' : 'pushed';
+    var monet = b[1] === 0 && b[5] === 0 ? 'paid-fit strong' : 'paid-fit weak';
+    var buyer = b[6] === 0 ? 'buyer named' : 'buyer fuzzy';
+    var vs = (b[0] === 0 ? 1 : 0) + (b[2] === 0 ? 1 : 0) + (b[7] === 0 ? 1 : 0);
+    var val = vs >= 2 ? 'outcome obvious' : 'outcome subtle';
+    return 'Phase 02 · Value read: ' + pos + ' · Demand: ' + pull + ' · ' + monet + ' · ' + buyer + ' · ' + val + '.';
+  }
+
+  function lineStructure(b) {
+    if (!phaseBitsComplete(b)) return null;
+    var charge = b[0] === 0 ? 'chargeable shape exists' : 'not chargeable yet';
+    var outcome = b[1] === 0 ? 'before/after clear' : 'before/after fuzzy';
+    var entry = b[3] === 0 ? 'clear start' : 'no clear start';
+    var price = b[7] === 0 ? 'can state price' : 'hesitates on price';
+    var ship = b[9] === 0 ? 'would start today' : 'would delay for setup';
+    return 'Phase 03 · Offer: ' + charge + ' · ' + outcome + ' · Entry: ' + entry + ' · ' + price + ' · Ship rule: ' + ship + '.';
+  }
+
+  function lineAutomation(b) {
+    if (!phaseBitsComplete(b)) return null;
+    var tier = validationTierP4(b);
+    var vis = b[1] === 0 ? 'seen by others' : 'still private';
+    var sig = b[2] === 0 ? 'responses when shared' : 'silence when shared';
+    var loop = b[4] === 0 && b[8] === 0 ? 'adjusts after friction' : 'stalls on silence or prep';
+    return 'Phase 04 · Validation: ' + tier + ' · ' + vis + ' · ' + sig + ' · Loop: ' + loop + '.';
+  }
+
+  function lineSovereignty(b) {
+    if (!phaseBitsComplete(b)) return null;
+    var indScore = 0;
+    if (b[0] === 0) indScore += 2;
+    if (b[2] === 0) indScore += 2;
+    if (b[7] === 0) indScore += 2;
+    if (b[8] === 0) indScore += 1;
+    if (b[9] === 0) indScore += 2;
+    var om = indScore >= 5 ? 'independent-leaning' : 'dependent-leaning';
+    var inc = b[0] === 1 || b[2] === 1 || b[5] === 1 ? 'fragile income shape' : 'more durable income shape';
+    var lever = b[1] === 0 ? 'delivery can run without you' : 'delivery still needs you';
+    return 'Phase 05 · Control: ' + om + ' · ' + inc + ' · ' + lever + '.';
+  }
+
+  function mergeCrossPhase(data) {
+    if (!data || typeof data !== 'object' || !data.diagnostic) return data;
+    var diag = data.diagnostic;
+    var p2 = loadStoredBits(LS_P02);
+    var p3 = loadStoredBits(LS_P03);
+    var p4 = loadStoredBits(LS_P04);
+    var p5 = loadStoredBits(LS_P05);
+
+    var lines = [];
+    var l2 = lineMonetize(p2);
+    var l3 = lineStructure(p3);
+    var l4 = lineAutomation(p4);
+    var l5 = lineSovereignty(p5);
+    if (l2) lines.push(l2);
+    if (l3) lines.push(l3);
+    if (l4) lines.push(l4);
+    if (l5) lines.push(l5);
+
+    var issues = [];
+    if (p2 && phaseBitsComplete(p2)) {
+      if (!(p2[1] === 0 && p2[5] === 0)) issues.push('Paid problem + specificity not locked together');
+      if (p2[6] === 1) issues.push('Buyer still too broad to target');
+      if (p2[3] === 1) issues.push('Demand is push-led, not pull-led');
+    }
+    if (p3 && phaseBitsComplete(p3)) {
+      if (p3[0] === 1) issues.push('Nothing priced and deliverable without more definition');
+      if (p3[3] === 1) issues.push('No obvious first step for a buyer');
+      if (p3[7] === 1) issues.push('Price still uncomfortable to say aloud');
+    }
+    if (p4 && phaseBitsComplete(p4)) {
+      if (validationTierP4(p4) === 'untested') issues.push('Market signal still thin or private');
+      if (p4[2] === 1) issues.push('Little response when you share the offer');
+    }
+    if (p5 && phaseBitsComplete(p5)) {
+      var indScore =
+        (p5[0] === 0 ? 2 : 0) +
+        (p5[2] === 0 ? 2 : 0) +
+        (p5[7] === 0 ? 2 : 0) +
+        (p5[8] === 0 ? 1 : 0) +
+        (p5[9] === 0 ? 2 : 0);
+      if (indScore < 5) issues.push('Control and ownership still structurally external');
+    }
+
+    var moves = [];
+    if (diag.fix_first) moves.push(String(diag.fix_first));
+    if (p3 && phaseBitsComplete(p3) && p3[0] === 1) {
+      moves.push('Ship one smallest paid slice: one buyer noun, one deliverable, one price.');
+    }
+    if (p2 && phaseBitsComplete(p2) && p2[6] === 1) {
+      moves.push('Write the buyer as one job title or one situation in under 15 words.');
+    }
+    if (p4 && phaseBitsComplete(p4) && validationTierP4(p4) === 'untested') {
+      moves.push('Run one exposure batch: same message, five sends, log yes/no/silence.');
+    }
+    if (p5 && phaseBitsComplete(p5)) {
+      var ind =
+        (p5[0] === 0 ? 2 : 0) +
+        (p5[2] === 0 ? 2 : 0) +
+        (p5[7] === 0 ? 2 : 0) +
+        (p5[8] === 0 ? 1 : 0) +
+        (p5[9] === 0 ? 2 : 0);
+      if (ind < 5) {
+        moves.push('Pick one channel or asset you fully control end-to-end for the next 30 days.');
+      }
+    }
+
+    var seen = {};
+    var deduped = [];
+    moves.forEach(function (m) {
+      var t = String(m).trim();
+      if (!t || seen[t]) return;
+      seen[t] = 1;
+      deduped.push(t);
+    });
+    moves = deduped.slice(0, 4);
+
+    var room = diag.next_room || {};
+    var roomPath = room.path || '/room-02-direction';
+    var roomTitle = room.title || 'the matching Room';
+    var handoff =
+      'Phase 01 locked how you notice and move. Phases 02–05 locked value, offer shape, validation, and control. Use ' +
+      roomTitle +
+      ' first because it matches the tightest bottleneck.';
+
+    diag.phase_chain_lines = lines;
+    diag.phase_issues = issues.slice(0, 5);
+    diag.priority_moves = moves;
+    diag.results_handoff = handoff;
+    diag.rooms_entry_hint =
+      'Enter the Room that matches your primary playbook, then work down the list if more than one issue scored high. Primary door: ' +
+      roomPath +
+      '.';
+
+    if (issues.length) {
+      diag.synthesis_summary = issues.slice(0, 2).join(' · ');
+    } else if (lines.length) {
+      diag.synthesis_summary = lines[lines.length - 1].replace(/^Phase 0[2-5] · /, '');
+    } else {
+      diag.synthesis_summary = '';
+    }
+
+    return data;
+  }
+
   function buildFromPhase01(bits) {
     var fallback = {
       type_primary: '',
@@ -277,6 +463,7 @@
       result_version: 'mixed_general',
       diagnostic: buildDiagnostic('mixed_general', primaryPlaybookForVersion('mixed_general'))
     };
+    mergeCrossPhase(fallback);
 
     if (!bits || !bits.length) return fallback;
 
@@ -285,7 +472,7 @@
     var version = resolveResultVersion(archetype, bits, scored.scores, scored.maxScore);
     var primary = primaryPlaybookForVersion(version);
 
-    return {
+    var out = {
       type_primary: archetype,
       type_secondary: secondaryFromBits(bits),
       block: blockFromBits(bits),
@@ -295,6 +482,8 @@
       result_version: version,
       diagnostic: buildDiagnostic(version, primary)
     };
+    mergeCrossPhase(out);
+    return out;
   }
 
   global.StephuaryResult = {
@@ -303,6 +492,7 @@
     scoreArchetype: scoreArchetype,
     primaryPlaybookForVersion: primaryPlaybookForVersion,
     buildDiagnostic: buildDiagnostic,
+    mergeCrossPhase: mergeCrossPhase,
     PLAYBOOK_ROOM: PLAYBOOK_ROOM,
     VERSION_PLAYBOOKS: VERSION_PLAYBOOKS
   };
