@@ -44,11 +44,11 @@
     PAID_TIER_HREF: PAID_TIER_HREF,
     FREE_TIER_HREF: FREE_TIER_HREF,
     shouldBypassPhasePaymentGate: shouldBypassPhasePaymentGate,
-    /** Cloudflare Stream — staircase / atmosphere (same asset as systems cine; swap ID if pricing uses a dedicated upload). */
+    /** Cloudflare Stream — pricing staircase strip. */
     PRICING_STAIRCASE_VIDEO:
-      'https://customer-vjyp7ff1wau3k7is.cloudflarestream.com/1f4bd2ff44b75a12d97d0629b29340b4/manifest/video.m3u8',
+      'https://customer-vjyp7ff1wau3k7is.cloudflarestream.com/482fd025db674eaf7f1246937e0145b2/manifest/video.m3u8',
     PRICING_STAIRCASE_POSTER:
-      'https://customer-vjyp7ff1wau3k7is.cloudflarestream.com/1f4bd2ff44b75a12d97d0629b29340b4/thumbnails/thumbnail.jpg?height=720'
+      'https://customer-vjyp7ff1wau3k7is.cloudflarestream.com/482fd025db674eaf7f1246937e0145b2/thumbnails/thumbnail.jpg?height=720'
   };
 
   function onReady(fn) {
