@@ -150,9 +150,12 @@
       margin-bottom: 0;
     }
 
-    /* Homepage: flow strip lets global environment show through */
+    /* Homepage: flow strip — no solid slab; continuous with fixed env */
     body[data-sh-env='home'] .sh-primary-flow {
       background: transparent;
+      border-bottom-color: rgba(244, 237, 224, 0.05);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
     }
 
     #main-content {
@@ -239,10 +242,11 @@
       opacity: 0.85;
     }
 
-    /* Hero — no contain:paint (avoid rectangular slab artifacts vs fixed global env) */
+    /* Hero — overflow visible avoids hard clip seam vs fixed global environment */
     #hero {
+      --hero-scroll-y: 0px;
       position: relative;
-      overflow: hidden;
+      overflow: visible;
       min-height: min(100vh, 920px);
       min-height: min(100dvh, 920px);
       min-height: -webkit-fill-available;
@@ -261,13 +265,15 @@
       background: transparent;
     }
 
-    /* Homepage-only: soft blobs on top of fixed global env — no full-bleed slabs */
-    .hero-env-intensify {
+    /* Homepage-only: soft blobs; subtle scroll parallax ties hero to page motion */
+    html:not(.god-hour) .hero-env-intensify {
       position: absolute;
       inset: 0;
       z-index: 0;
       pointer-events: none;
-      overflow: hidden;
+      overflow: visible;
+      transform: translate3d(0, calc(var(--hero-scroll-y, 0px) * -0.018), 0);
+      will-change: transform;
     }
 
     .hero-env-intensify__layer {
@@ -1308,16 +1314,13 @@
       }
     }
 
-    html:not(.god-hour) #home-environment {
-      isolation: isolate;
-    }
-
     html:not(.god-hour) .home-env__default {
       position: absolute;
       inset: 0;
       z-index: 1;
       overflow: hidden;
       pointer-events: none;
+      isolation: isolate;
     }
 
     /* Full-viewport canvas: same draw() as former hero — sits above god base when not god hour */
@@ -1370,7 +1373,7 @@
         linear-gradient(175deg, rgba(8, 10, 22, 0.12) 0%, rgba(6, 6, 12, 0.08) 45%, rgba(10, 8, 18, 0.1) 100%);
       background-size: 200% 200%, 190% 190%, 200% 200%, 180% 180%, 200% 200%, 200% 200%, 200% 200%, 200% 200%, 100% 100%, 100% 100%;
       mix-blend-mode: soft-light;
-      opacity: 0.72;
+      opacity: 0.8;
       animation: homeAmbientDrift 42s ease-in-out infinite;
     }
 
@@ -1389,7 +1392,7 @@
         radial-gradient(ellipse 70% 58% at 70% 68%, rgba(var(--sh-env-bl), 0.14) 0%, transparent 56%);
       filter: blur(42px);
       mix-blend-mode: screen;
-      opacity: 0.52;
+      opacity: 0.62;
       animation: homeAuraShift 48s ease-in-out infinite;
     }
 
@@ -1402,11 +1405,11 @@
       transform: translate3d(0, calc(var(--env-parallax-y, 0px) * 0.085), 0);
       will-change: transform;
       background:
-        radial-gradient(ellipse 110% 100% at 50% 48%, transparent 32%, rgba(0, 0, 0, 0.26) 100%),
-        radial-gradient(ellipse 62% 50% at 48% 28%, rgba(255, 250, 240, 0.04) 0%, transparent 58%),
-        radial-gradient(ellipse 32% 26% at 56% 62%, rgba(210, 175, 95, 0.09) 0%, transparent 74%);
+        radial-gradient(ellipse 110% 100% at 50% 48%, transparent 38%, rgba(0, 0, 0, 0.18) 100%),
+        radial-gradient(ellipse 62% 50% at 48% 28%, rgba(255, 250, 240, 0.05) 0%, transparent 58%),
+        radial-gradient(ellipse 32% 26% at 56% 62%, rgba(210, 175, 95, 0.1) 0%, transparent 74%);
       mix-blend-mode: multiply;
-      opacity: 0.52;
+      opacity: 0.38;
     }
 
     html:not(.god-hour) .ambient__noise,
@@ -1421,7 +1424,7 @@
     }
 
     html:not(.god-hour) body[data-sh-env='home'] {
-      background-color: #080a12;
+      background-color: #0a0d18;
     }
 
     body[data-sh-env='home'] #main-content {
@@ -1440,7 +1443,8 @@
       html:not(.god-hour) .home-env__canvas-wrap,
       html:not(.god-hour) .home-env__layer--deep,
       html:not(.god-hour) .home-env__layer--mid,
-      html:not(.god-hour) .home-env__layer--fg {
+      html:not(.god-hour) .home-env__layer--fg,
+      html:not(.god-hour) .hero-env-intensify {
         transform: none !important;
       }
     }
@@ -1601,24 +1605,6 @@
       animation: heroEnvMagDrift 48s ease-in-out infinite reverse;
     }
 
-    /* Focal chamber — very soft so it never reads as a second panel */
-    html:not(.god-hour) .hero-inner::before {
-      content: '';
-      position: absolute;
-      z-index: -1;
-      left: 50%;
-      top: 36%;
-      width: min(118%, 880px);
-      height: clamp(220px, 52vh, 520px);
-      transform: translate(-50%, -50%);
-      background:
-        radial-gradient(ellipse 72% 62% at 48% 50%, rgba(176, 18, 107, 0.05) 0%, rgba(74, 42, 106, 0.04) 40%, transparent 65%),
-        radial-gradient(ellipse 92% 78% at 52% 55%, rgba(13, 42, 122, 0.045) 0%, transparent 62%);
-      filter: blur(56px);
-      opacity: 0.75;
-      pointer-events: none;
-    }
-
     html.god-hour .hero-env-intensify {
       display: none !important;
     }
@@ -1637,22 +1623,22 @@
     body[data-sh-env='home'] .proof-card {
       background: linear-gradient(
         155deg,
-        rgba(59, 13, 13, 0.28) 0%,
-        rgba(8, 10, 22, 0.55) 48%,
-        rgba(5, 6, 12, 0.72) 100%
+        rgba(59, 13, 13, 0.2) 0%,
+        rgba(8, 10, 22, 0.38) 48%,
+        rgba(5, 6, 14, 0.52) 100%
       );
     }
     body[data-sh-env='home'] .sys-block {
-      background: rgba(6, 8, 16, 0.22);
+      background: rgba(6, 10, 22, 0.14);
     }
     body[data-sh-env='home'] .phase-card {
-      background: rgba(8, 10, 18, 0.42);
+      background: rgba(8, 12, 22, 0.32);
     }
     body[data-sh-env='home'] .diag-inner {
-      background: rgba(6, 8, 14, 0.28);
+      background: rgba(6, 10, 20, 0.2);
     }
     body[data-sh-env='home'] .hero-leak-entry {
-      background: linear-gradient(165deg, rgba(10, 12, 22, 0.42) 0%, rgba(5, 6, 12, 0.55) 100%);
+      background: linear-gradient(165deg, rgba(10, 14, 26, 0.32) 0%, rgba(5, 8, 16, 0.42) 100%);
     }
   </style>
 </head>
@@ -2195,27 +2181,7 @@
   <script src="/stephuary-home-finale.js" defer></script>
   <script>
     (function () {
-      gsap.registerPlugin(ScrollTrigger);
-
-      window.addEventListener('cosmicmetropolisdone', function () {
-        try {
-          ScrollTrigger.refresh();
-        } catch (e) {}
-      });
-
-      window.addEventListener(
-        'pageshow',
-        function (ev) {
-          try {
-            if (ev.persisted && typeof ScrollTrigger !== 'undefined') {
-              ScrollTrigger.refresh(true);
-            }
-          } catch (e) {}
-        },
-        false
-      );
-
-      /* Global environment canvas: same draw() as former hero — full viewport, mounted once */
+      /* Global environment canvas runs first so env/parallax work even if GSAP CDN is slow or blocked */
       (function homeEnvImmersive() {
         var container = document.getElementById('home-env-canvas-wrap');
         var canvas = document.getElementById('home-env-canvas');
@@ -2294,10 +2260,10 @@
             grad.addColorStop(0.63, 'rgba(88, 42, 92, ' + bl + ')');
             grad.addColorStop(1, '#050408');
           } else {
-            grad.addColorStop(0, '#080a14');
+            grad.addColorStop(0, '#0a0d18');
             grad.addColorStop(0.36, 'rgba(118, 12, 12, ' + ox + ')');
             grad.addColorStop(0.63, 'rgba(22, 48, 132, ' + bl + ')');
-            grad.addColorStop(1, '#070810');
+            grad.addColorStop(1, '#080c16');
           }
           ctx.fillStyle = grad;
           ctx.fillRect(0, 0, width, height);
@@ -2371,10 +2337,12 @@
 
         var reduceMotion =
           window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        var heroSec = document.getElementById('hero');
         function updateEnvParallax() {
-          if (!homeEnv || reduceMotion) return;
+          if (reduceMotion) return;
           var y = window.scrollY || window.pageYOffset || 0;
-          homeEnv.style.setProperty('--env-parallax-y', y + 'px');
+          if (homeEnv) homeEnv.style.setProperty('--env-parallax-y', y + 'px');
+          if (heroSec) heroSec.style.setProperty('--hero-scroll-y', y + 'px');
         }
         updateEnvParallax();
         window.addEventListener('scroll', updateEnvParallax, { passive: true });
@@ -2390,6 +2358,29 @@
           } catch (eEarly) {}
         });
       })();
+
+      var hasGsap = typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined';
+      if (hasGsap) {
+        gsap.registerPlugin(ScrollTrigger);
+      }
+
+      window.addEventListener('cosmicmetropolisdone', function () {
+        try {
+          if (typeof ScrollTrigger !== 'undefined') ScrollTrigger.refresh();
+        } catch (e) {}
+      });
+
+      window.addEventListener(
+        'pageshow',
+        function (ev) {
+          try {
+            if (ev.persisted && typeof ScrollTrigger !== 'undefined') {
+              ScrollTrigger.refresh(true);
+            }
+          } catch (e) {}
+        },
+        false
+      );
 
       var nav = document.getElementById('main-nav');
       function updateNavScroll() {
@@ -2654,6 +2645,11 @@
         leakClose();
       });
 
+      if (!hasGsap) {
+        console.warn('Stephuary: GSAP/ScrollTrigger not loaded — homepage scroll motion disabled.');
+      }
+
+      if (hasGsap) {
       var heroLines = document.querySelectorAll('#hero-h1 .hero-line');
       if (heroLines.length) {
         gsap.set(heroLines, { opacity: 0, y: 16 });
@@ -2804,6 +2800,8 @@
         }
       });
 
+      } /* hasGsap: scroll + hero entrance animations */
+
       function syncDiagnosticFlags() {
         try {
           if (localStorage.getItem('capture_complete') === 'true') {
@@ -2933,7 +2931,7 @@
         var reduce =
           window.matchMedia &&
           window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-        if (reduce || typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') return;
+        if (reduce || !hasGsap) return;
         var foot = document.querySelector('.page > footer.home-footer');
         var note = document.querySelector('.home-foot-note--finale');
         var bridge = document.querySelector('.home-end-bridge');
@@ -2975,7 +2973,16 @@
       })();
 
       window.addEventListener('load', function () {
-        ScrollTrigger.refresh();
+        try {
+          if (typeof ScrollTrigger !== 'undefined') ScrollTrigger.refresh();
+        } catch (e) {}
+        window.requestAnimationFrame(function () {
+          window.requestAnimationFrame(function () {
+            try {
+              if (typeof ScrollTrigger !== 'undefined') ScrollTrigger.refresh();
+            } catch (e2) {}
+          });
+        });
       });
     })();
   </script>
