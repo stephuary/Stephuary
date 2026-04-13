@@ -2023,17 +2023,8 @@
         }
 
         function initParticles() {
-          var w = Math.max(1, width);
-          var h = Math.max(1, height);
-          var narrow = window.matchMedia('(max-width: 767px)').matches;
-          var nFar = narrow ? 42 : 68;
-          var nMid = narrow ? 32 : 52;
-          var nNear = narrow ? 11 : 18;
+          /* Atmospheric depth comes from layered radials — no starfield particles */
           particles = [];
-          var i;
-          for (i = 0; i < nFar; i++) particles.push(makeParticle('far', w, h));
-          for (i = 0; i < nMid; i++) particles.push(makeParticle('mid', w, h));
-          for (i = 0; i < nNear; i++) particles.push(makeParticle('near', w, h));
         }
 
         function measure() {
@@ -2084,27 +2075,151 @@
             typeof document !== 'undefined' &&
             document.documentElement &&
             document.documentElement.classList.contains('early-mode');
-          var ox = 0.62 + Math.sin(t * 0.85) * 0.14;
-          var bl = 0.58 + Math.cos(t * 0.72) * 0.14;
-          var grad = ctx.createLinearGradient(0, 0, width, height);
-          if (em) {
-            grad.addColorStop(0, '#070605');
-            grad.addColorStop(0.36, 'rgba(120, 38, 28, ' + ox + ')');
-            grad.addColorStop(0.63, 'rgba(88, 42, 92, ' + bl + ')');
-            grad.addColorStop(1, '#050408');
-          } else {
-            grad.addColorStop(0, '#060608');
-            grad.addColorStop(0.36, 'rgba(118, 12, 12, ' + ox + ')');
-            grad.addColorStop(0.63, 'rgba(22, 48, 132, ' + bl + ')');
-            grad.addColorStop(1, '#050508');
-          }
-          ctx.fillStyle = grad;
+          /* Breathing on aura intensities — not a full-screen red/blue linear blend (avoids purple wash) */
+          var ox = 0.62 + Math.sin(t * 0.85) * 0.1;
+          var bl = 0.58 + Math.cos(t * 0.72) * 0.1;
+          var ap = t * 0.437;
+
+          ctx.globalCompositeOperation = 'source-over';
+          ctx.globalAlpha = 1;
+
+          /* Deep floor */
+          ctx.fillStyle = em ? '#070605' : '#02030a';
           ctx.fillRect(0, 0, width, height);
 
-          var ap = t * 0.437;
+          if (em) {
+            var gWarm = ctx.createRadialGradient(
+              width * 0.14,
+              height * 0.46,
+              0,
+              width * 0.14,
+              height * 0.46,
+              Math.max(width, height) * 0.58
+            );
+            gWarm.addColorStop(0, 'rgba(125, 48, 38, ' + (0.42 + ox * 0.12) + ')');
+            gWarm.addColorStop(0.38, 'rgba(88, 36, 42, ' + (0.16 + ox * 0.06) + ')');
+            gWarm.addColorStop(0.72, 'rgba(40, 22, 28, 0.08)');
+            gWarm.addColorStop(1, 'rgba(0,0,0,0)');
+            ctx.fillStyle = gWarm;
+            ctx.fillRect(0, 0, width, height);
+
+            var gCool = ctx.createRadialGradient(
+              width * 0.86,
+              height * 0.36,
+              0,
+              width * 0.86,
+              height * 0.36,
+              Math.max(width, height) * 0.52
+            );
+            gCool.addColorStop(0, 'rgba(92, 58, 98, ' + (0.28 + bl * 0.08) + ')');
+            gCool.addColorStop(0.45, 'rgba(62, 38, 72, 0.14)');
+            gCool.addColorStop(1, 'rgba(0,0,0,0)');
+            ctx.fillStyle = gCool;
+            ctx.fillRect(0, 0, width, height);
+
+            var gEmVin = ctx.createRadialGradient(
+              width * 0.5,
+              height * 0.5,
+              0,
+              width * 0.5,
+              height * 0.5,
+              Math.max(width, height) * 0.75
+            );
+            gEmVin.addColorStop(0, 'rgba(6, 4, 10, 0)');
+            gEmVin.addColorStop(0.6, 'rgba(4, 3, 8, 0.28)');
+            gEmVin.addColorStop(1, 'rgba(2, 2, 6, 0.45)');
+            ctx.globalCompositeOperation = 'multiply';
+            ctx.fillStyle = gEmVin;
+            ctx.fillRect(0, 0, width, height);
+            ctx.globalCompositeOperation = 'source-over';
+          } else {
+            /* Left: oxblood / wine aura ring */
+            var gRed = ctx.createRadialGradient(
+              width * 0.1,
+              height * 0.5,
+              0,
+              width * 0.1,
+              height * 0.5,
+              Math.max(width, height) * 0.55
+            );
+            gRed.addColorStop(0, 'rgba(112, 22, 38, ' + (0.48 + ox * 0.1) + ')');
+            gRed.addColorStop(0.35, 'rgba(72, 18, 36, ' + (0.22 + ox * 0.06) + ')');
+            gRed.addColorStop(0.65, 'rgba(48, 14, 28, 0.1)');
+            gRed.addColorStop(1, 'rgba(0,0,0,0)');
+            ctx.fillStyle = gRed;
+            ctx.fillRect(0, 0, width, height);
+
+            /* Right: electric / navy blue aura ring */
+            var gBlue = ctx.createRadialGradient(
+              width * 0.9,
+              height * 0.38,
+              0,
+              width * 0.9,
+              height * 0.38,
+              Math.max(width, height) * 0.54
+            );
+            gBlue.addColorStop(0, 'rgba(42, 105, 245, ' + (0.38 + bl * 0.1) + ')');
+            gBlue.addColorStop(0.38, 'rgba(28, 62, 175, ' + (0.2 + bl * 0.06) + ')');
+            gBlue.addColorStop(0.7, 'rgba(18, 38, 92, 0.12)');
+            gBlue.addColorStop(1, 'rgba(0,0,0,0)');
+            ctx.fillStyle = gBlue;
+            ctx.fillRect(0, 0, width, height);
+
+            /* Small magenta / fuchsia bloom where fields meet (localized, not whole canvas) */
+            var gBlend = ctx.createRadialGradient(
+              width * 0.46,
+              height * 0.48,
+              0,
+              width * 0.46,
+              height * 0.48,
+              Math.max(width, height) * 0.22
+            );
+            gBlend.addColorStop(0, 'rgba(180, 55, 130, 0.14)');
+            gBlend.addColorStop(0.55, 'rgba(110, 45, 120, 0.06)');
+            gBlend.addColorStop(1, 'rgba(0,0,0,0)');
+            ctx.globalCompositeOperation = 'screen';
+            ctx.fillStyle = gBlend;
+            ctx.fillRect(0, 0, width, height);
+            ctx.globalCompositeOperation = 'source-over';
+
+            /* Amber micro-highlight */
+            var gGold = ctx.createRadialGradient(
+              width * 0.58,
+              height * 0.62,
+              0,
+              width * 0.58,
+              height * 0.62,
+              Math.max(width, height) * 0.14
+            );
+            gGold.addColorStop(0, 'rgba(230, 185, 95, 0.1)');
+            gGold.addColorStop(1, 'rgba(0,0,0,0)');
+            ctx.globalCompositeOperation = 'overlay';
+            ctx.fillStyle = gGold;
+            ctx.fillRect(0, 0, width, height);
+            ctx.globalCompositeOperation = 'source-over';
+
+            /* Vignette: keep center readable, edges darker (reduces flat purple read) */
+            var gVin = ctx.createRadialGradient(
+              width * 0.5,
+              height * 0.48,
+              0,
+              width * 0.5,
+              height * 0.48,
+              Math.max(width, height) * 0.72
+            );
+            gVin.addColorStop(0, 'rgba(3, 5, 16, 0)');
+            gVin.addColorStop(0.55, 'rgba(3, 4, 12, 0.22)');
+            gVin.addColorStop(1, 'rgba(1, 2, 8, 0.5)');
+            ctx.globalCompositeOperation = 'multiply';
+            ctx.fillStyle = gVin;
+            ctx.fillRect(0, 0, width, height);
+            ctx.globalCompositeOperation = 'source-over';
+          }
+
+          /* Soft aura ring strokes */
           ctx.save();
           ctx.lineWidth = 1;
-          ctx.globalAlpha = em ? 0.048 : 0.042;
+          ctx.globalAlpha = em ? 0.055 : 0.05;
           ctx.strokeStyle = em ? 'rgba(212, 140, 88, 0.9)' : 'rgba(58, 107, 255, 0.95)';
           ctx.beginPath();
           if (typeof ctx.ellipse === 'function') {
@@ -2113,8 +2228,8 @@
             ctx.arc(width * 0.35, height * 0.5, width * 0.35, 0.2, Math.PI * 1.2);
           }
           ctx.stroke();
-          ctx.globalAlpha = em ? 0.042 : 0.036;
-          ctx.strokeStyle = em ? 'rgba(180, 64, 48, 0.88)' : 'rgba(140, 36, 36, 0.9)';
+          ctx.globalAlpha = em ? 0.048 : 0.045;
+          ctx.strokeStyle = em ? 'rgba(180, 64, 48, 0.88)' : 'rgba(200, 70, 110, 0.75)';
           ctx.beginPath();
           if (typeof ctx.ellipse === 'function') {
             ctx.ellipse(width * 0.74, height * 0.4, width * 0.34, height * 0.29, -ap * 0.11, -0.08, Math.PI * 1.48);
@@ -2123,26 +2238,6 @@
           }
           ctx.stroke();
           ctx.restore();
-
-          var aBoost = em ? 1.14 : 1;
-          particles.forEach(function (p) {
-            p.x += p.dx;
-            p.y += p.dy;
-            if (p.x < -6 || p.x > width + 6) p.dx *= -1;
-            if (p.y < -6 || p.y > height + 6) p.dy *= -1;
-            var a = p.alpha * aBoost;
-            if (p.twinkle) {
-              a *= 0.82 + 0.18 * Math.sin(t * 2.2 + p.x * 0.008 + p.y * 0.006);
-            }
-            ctx.beginPath();
-            ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-            if (em) {
-              ctx.fillStyle = 'rgba(255, 220, 200,' + Math.min(0.95, a) + ')';
-            } else {
-              ctx.fillStyle = 'rgba(255,255,255,' + a + ')';
-            }
-            ctx.fill();
-          });
 
           requestAnimationFrame(draw);
         }
