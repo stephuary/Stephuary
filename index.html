@@ -239,11 +239,10 @@
       opacity: 0.85;
     }
 
-    /* Hero */
+    /* Hero — no contain:paint (avoid rectangular slab artifacts vs fixed global env) */
     #hero {
       position: relative;
       overflow: hidden;
-      contain: paint;
       min-height: min(100vh, 920px);
       min-height: min(100dvh, 920px);
       min-height: -webkit-fill-available;
@@ -262,14 +261,13 @@
       background: transparent;
     }
 
-    /* Homepage-only: stacked on global env — z-order below overlay + content */
+    /* Homepage-only: soft blobs on top of fixed global env — no full-bleed slabs */
     .hero-env-intensify {
       position: absolute;
-      inset: -14%;
+      inset: 0;
       z-index: 0;
       pointer-events: none;
-      overflow: visible;
-      isolation: isolate;
+      overflow: hidden;
     }
 
     .hero-env-intensify__layer {
@@ -281,8 +279,8 @@
     .hero-overlay {
       position: absolute;
       inset: 0;
-      /* Softer center so local auras read; edges still hold depth */
-      background: radial-gradient(ellipse 92% 82% at 50% 44%, rgba(0, 0, 0, 0.06) 0%, rgba(0, 0, 0, 0.22) 48%, rgba(0, 0, 0, 0.48) 100%);
+      /* Light touch — global env carries most atmosphere; no second dark slab */
+      background: radial-gradient(ellipse 100% 88% at 50% 42%, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.12) 52%, rgba(0, 0, 0, 0.28) 100%);
       z-index: 1;
       pointer-events: none;
     }
@@ -1354,45 +1352,48 @@
     */
     html:not(.god-hour) .home-env__layer--deep {
       position: absolute;
-      inset: -8%;
+      inset: -12%;
       z-index: 3;
       pointer-events: none;
       transform: translate3d(0, calc(var(--env-parallax-y, 0px) * 0.035), 0);
       will-change: transform;
       background:
-        radial-gradient(ellipse 88% 70% at 12% 28%, rgba(var(--sh-env-ox), 0.22) 0%, rgba(72, 14, 22, 0.08) 44%, transparent 58%),
-        radial-gradient(ellipse 76% 62% at 8% 78%, rgba(92, 20, 32, 0.14) 0%, transparent 54%),
-        radial-gradient(ellipse 90% 74% at 88% 22%, rgba(var(--sh-env-bl), 0.28) 0%, rgba(18, 38, 95, 0.12) 42%, transparent 56%),
-        radial-gradient(ellipse 68% 58% at 82% 72%, rgba(40, 78, 180, 0.14) 0%, transparent 52%),
-        radial-gradient(ellipse 52% 44% at 48% 48%, rgba(var(--sh-env-magenta), 0.11) 0%, transparent 58%),
-        radial-gradient(ellipse 46% 40% at 58% 42%, rgba(var(--sh-env-violet), 0.09) 0%, transparent 56%),
-        radial-gradient(ellipse 100% 92% at 50% 108%, rgba(4, 6, 14, 0.35) 0%, transparent 48%),
-        linear-gradient(165deg, rgba(6, 6, 8, 0.15) 0%, rgba(5, 5, 10, 0.12) 100%);
-      background-size: 200% 200%, 190% 190%, 200% 200%, 180% 180%, 200% 200%, 200% 200%, 100% 100%, 100% 100%;
+        radial-gradient(ellipse 88% 70% at 12% 22%, rgba(var(--sh-env-ox), 0.26) 0%, rgba(72, 14, 22, 0.1) 44%, transparent 58%),
+        radial-gradient(ellipse 76% 62% at 8% 65%, rgba(92, 20, 32, 0.16) 0%, transparent 54%),
+        radial-gradient(ellipse 90% 74% at 88% 18%, rgba(var(--sh-env-bl), 0.32) 0%, rgba(18, 38, 95, 0.14) 42%, transparent 56%),
+        radial-gradient(ellipse 68% 58% at 82% 58%, rgba(40, 78, 180, 0.16) 0%, transparent 52%),
+        radial-gradient(ellipse 52% 44% at 48% 42%, rgba(var(--sh-env-magenta), 0.14) 0%, transparent 58%),
+        radial-gradient(ellipse 46% 40% at 58% 38%, rgba(var(--sh-env-violet), 0.11) 0%, transparent 56%),
+        radial-gradient(ellipse 88% 72% at 18% 88%, rgba(122, 11, 20, 0.12) 0%, transparent 55%),
+        radial-gradient(ellipse 92% 68% at 82% 92%, rgba(22, 48, 132, 0.14) 0%, transparent 54%),
+        radial-gradient(ellipse 100% 95% at 50% 108%, rgba(6, 10, 28, 0.22) 0%, transparent 50%),
+        linear-gradient(175deg, rgba(8, 10, 22, 0.12) 0%, rgba(6, 6, 12, 0.08) 45%, rgba(10, 8, 18, 0.1) 100%);
+      background-size: 200% 200%, 190% 190%, 200% 200%, 180% 180%, 200% 200%, 200% 200%, 200% 200%, 200% 200%, 100% 100%, 100% 100%;
       mix-blend-mode: soft-light;
-      opacity: 0.55;
+      opacity: 0.72;
       animation: homeAmbientDrift 42s ease-in-out infinite;
     }
 
-    /* Mid aura: cooler haze + red/blue separation */
+    /* Mid aura: full-page color breathing — visible mid/lower viewport, not only hero */
     html:not(.god-hour) .home-env__layer--mid {
       position: absolute;
-      inset: -20%;
+      inset: -22%;
       z-index: 4;
       pointer-events: none;
       transform: translate3d(0, calc(var(--env-parallax-y, 0px) * 0.065), 0);
       will-change: transform;
       background:
-        radial-gradient(ellipse 62% 54% at 42% 44%, rgba(18, 32, 72, 0.14) 0%, transparent 60%),
-        radial-gradient(ellipse 50% 44% at 62% 38%, rgba(132, 36, 48, 0.1) 0%, transparent 58%),
-        radial-gradient(ellipse 70% 58% at 70% 62%, rgba(var(--sh-env-bl), 0.1) 0%, transparent 56%);
-      filter: blur(38px);
+        radial-gradient(ellipse 70% 58% at 45% 48%, rgba(18, 32, 72, 0.18) 0%, transparent 62%),
+        radial-gradient(ellipse 58% 50% at 58% 36%, rgba(132, 36, 48, 0.12) 0%, transparent 58%),
+        radial-gradient(ellipse 78% 62% at 50% 78%, rgba(74, 42, 106, 0.1) 0%, transparent 58%),
+        radial-gradient(ellipse 70% 58% at 70% 68%, rgba(var(--sh-env-bl), 0.14) 0%, transparent 56%);
+      filter: blur(42px);
       mix-blend-mode: screen;
-      opacity: 0.38;
+      opacity: 0.52;
       animation: homeAuraShift 48s ease-in-out infinite;
     }
 
-    /* Foreground: vignette + specular (subtle) */
+    /* Foreground: gentle edge hold — must not crush global color */
     html:not(.god-hour) .home-env__layer--fg {
       position: absolute;
       inset: 0;
@@ -1401,11 +1402,11 @@
       transform: translate3d(0, calc(var(--env-parallax-y, 0px) * 0.085), 0);
       will-change: transform;
       background:
-        radial-gradient(ellipse 105% 98% at 50% 46%, transparent 24%, rgba(0, 0, 0, 0.42) 100%),
-        radial-gradient(ellipse 58% 46% at 48% 26%, rgba(255, 250, 240, 0.028) 0%, transparent 58%),
-        radial-gradient(ellipse 28% 22% at 56% 58%, rgba(210, 175, 95, 0.07) 0%, transparent 74%);
+        radial-gradient(ellipse 110% 100% at 50% 48%, transparent 32%, rgba(0, 0, 0, 0.26) 100%),
+        radial-gradient(ellipse 62% 50% at 48% 28%, rgba(255, 250, 240, 0.04) 0%, transparent 58%),
+        radial-gradient(ellipse 32% 26% at 56% 62%, rgba(210, 175, 95, 0.09) 0%, transparent 74%);
       mix-blend-mode: multiply;
-      opacity: 0.9;
+      opacity: 0.52;
     }
 
     html:not(.god-hour) .ambient__noise,
@@ -1420,7 +1421,11 @@
     }
 
     html:not(.god-hour) body[data-sh-env='home'] {
-      background-color: var(--sh-env-ink);
+      background-color: #080a12;
+    }
+
+    body[data-sh-env='home'] #main-content {
+      background: transparent;
     }
 
     .hero-overlay::after {
@@ -1510,14 +1515,14 @@
       transform: translate(-50%, -50%);
       background: radial-gradient(
         ellipse 72% 68% at 42% 46%,
-        rgba(122, 11, 20, 0.5) 0%,
-        rgba(78, 7, 12, 0.22) 42%,
-        rgba(176, 18, 107, 0.12) 58%,
-        transparent 72%
+        rgba(122, 11, 20, 0.42) 0%,
+        rgba(78, 7, 12, 0.18) 42%,
+        rgba(176, 18, 107, 0.1) 58%,
+        transparent 78%
       );
       filter: blur(88px);
       mix-blend-mode: screen;
-      opacity: 0.72;
+      opacity: 0.58;
       animation: heroEnvOxDrift 36s ease-in-out infinite;
     }
 
@@ -1531,14 +1536,14 @@
       transform: translate(50%, -50%);
       background: radial-gradient(
         ellipse 70% 66% at 58% 44%,
-        rgba(13, 42, 122, 0.52) 0%,
-        rgba(5, 8, 22, 0.28) 40%,
-        rgba(176, 18, 107, 0.1) 58%,
-        transparent 74%
+        rgba(13, 42, 122, 0.44) 0%,
+        rgba(5, 8, 22, 0.22) 40%,
+        rgba(176, 18, 107, 0.09) 58%,
+        transparent 78%
       );
       filter: blur(96px);
       mix-blend-mode: soft-light;
-      opacity: 0.68;
+      opacity: 0.54;
       animation: heroEnvBlueDrift 42s ease-in-out infinite;
     }
 
@@ -1552,14 +1557,14 @@
       transform: translate(-50%, -50%);
       background: radial-gradient(
         ellipse 65% 62% at 50% 48%,
-        rgba(176, 18, 107, 0.28) 0%,
-        rgba(74, 42, 106, 0.14) 45%,
-        rgba(13, 42, 122, 0.08) 62%,
-        transparent 78%
+        rgba(176, 18, 107, 0.22) 0%,
+        rgba(74, 42, 106, 0.11) 45%,
+        rgba(13, 42, 122, 0.06) 62%,
+        transparent 82%
       );
       filter: blur(76px);
       mix-blend-mode: screen;
-      opacity: 0.55;
+      opacity: 0.48;
       animation: heroEnvMagDrift 33s ease-in-out infinite;
     }
 
@@ -1572,13 +1577,13 @@
       transform: translate(-50%, 0);
       background: radial-gradient(
         ellipse 78% 88% at 50% 100%,
-        rgba(74, 42, 106, 0.22) 0%,
-        rgba(176, 18, 107, 0.08) 48%,
-        transparent 70%
+        rgba(74, 42, 106, 0.16) 0%,
+        rgba(176, 18, 107, 0.06) 48%,
+        transparent 74%
       );
       filter: blur(118px);
       mix-blend-mode: soft-light;
-      opacity: 0.45;
+      opacity: 0.38;
       animation: heroEnvPlumDrift 39s ease-in-out infinite;
     }
 
@@ -1589,43 +1594,14 @@
       height: 16rem;
       max-width: 70vw;
       transform: translate(-50%, -50%);
-      background: radial-gradient(ellipse 58% 56% at 50% 50%, rgba(255, 170, 70, 0.14) 0%, rgba(255, 170, 70, 0.06) 45%, transparent 68%);
+      background: radial-gradient(ellipse 58% 56% at 50% 50%, rgba(255, 170, 70, 0.11) 0%, rgba(255, 170, 70, 0.05) 45%, transparent 72%);
       filter: blur(52px);
       mix-blend-mode: soft-light;
-      opacity: 0.55;
+      opacity: 0.48;
       animation: heroEnvMagDrift 48s ease-in-out infinite reverse;
     }
 
-    @keyframes heroEnvDepthBreathe {
-      0%,
-      100% {
-        opacity: 0.46;
-      }
-      50% {
-        opacity: 0.56;
-      }
-    }
-
-    html:not(.god-hour) .hero-env-intensify__layer--depth {
-      inset: 0;
-      left: 0;
-      top: 0;
-      width: auto;
-      height: auto;
-      max-width: none;
-      border-radius: 0;
-      transform: none;
-      background:
-        radial-gradient(ellipse 120% 90% at 50% 0%, rgba(5, 8, 22, 0.35) 0%, transparent 52%),
-        radial-gradient(ellipse 95% 70% at 0% 50%, rgba(78, 7, 12, 0.18) 0%, transparent 45%),
-        radial-gradient(ellipse 95% 70% at 100% 40%, rgba(13, 42, 122, 0.2) 0%, transparent 46%);
-      filter: blur(64px);
-      mix-blend-mode: normal;
-      opacity: 0.5;
-      animation: heroEnvDepthBreathe 44s ease-in-out infinite;
-    }
-
-    /* Focal chamber behind headline — soft overlap read, not a lamp on the type */
+    /* Focal chamber — very soft so it never reads as a second panel */
     html:not(.god-hour) .hero-inner::before {
       content: '';
       position: absolute;
@@ -1636,10 +1612,10 @@
       height: clamp(220px, 52vh, 520px);
       transform: translate(-50%, -50%);
       background:
-        radial-gradient(ellipse 68% 58% at 48% 48%, rgba(176, 18, 107, 0.07) 0%, rgba(74, 42, 106, 0.05) 38%, transparent 62%),
-        radial-gradient(ellipse 88% 72% at 52% 55%, rgba(13, 42, 122, 0.06) 0%, transparent 58%);
-      filter: blur(48px);
-      opacity: 0.95;
+        radial-gradient(ellipse 72% 62% at 48% 50%, rgba(176, 18, 107, 0.05) 0%, rgba(74, 42, 106, 0.04) 40%, transparent 65%),
+        radial-gradient(ellipse 92% 78% at 52% 55%, rgba(13, 42, 122, 0.045) 0%, transparent 62%);
+      filter: blur(56px);
+      opacity: 0.75;
       pointer-events: none;
     }
 
@@ -1652,13 +1628,31 @@
       html:not(.god-hour) .hero-env-intensify__layer--blue,
       html:not(.god-hour) .hero-env-intensify__layer--magenta,
       html:not(.god-hour) .hero-env-intensify__layer--plum,
-      html:not(.god-hour) .hero-env-intensify__layer--amber,
-      html:not(.god-hour) .hero-env-intensify__layer--depth {
+      html:not(.god-hour) .hero-env-intensify__layer--amber {
         animation: none !important;
       }
-      html:not(.god-hour) .hero-env-intensify__layer--depth {
-        opacity: 0.5 !important;
-      }
+    }
+
+    /* Repair: section surfaces let fixed global env read through (cards stay legible) */
+    body[data-sh-env='home'] .proof-card {
+      background: linear-gradient(
+        155deg,
+        rgba(59, 13, 13, 0.28) 0%,
+        rgba(8, 10, 22, 0.55) 48%,
+        rgba(5, 6, 12, 0.72) 100%
+      );
+    }
+    body[data-sh-env='home'] .sys-block {
+      background: rgba(6, 8, 16, 0.22);
+    }
+    body[data-sh-env='home'] .phase-card {
+      background: rgba(8, 10, 18, 0.42);
+    }
+    body[data-sh-env='home'] .diag-inner {
+      background: rgba(6, 8, 14, 0.28);
+    }
+    body[data-sh-env='home'] .hero-leak-entry {
+      background: linear-gradient(165deg, rgba(10, 12, 22, 0.42) 0%, rgba(5, 6, 12, 0.55) 100%);
     }
   </style>
 </head>
@@ -1778,7 +1772,6 @@
     <section id="hero" data-sh-flow-section>
       <div class="hero-container">
         <div class="hero-env-intensify" aria-hidden="true">
-          <div class="hero-env-intensify__layer hero-env-intensify__layer--depth"></div>
           <div class="hero-env-intensify__layer hero-env-intensify__layer--ox"></div>
           <div class="hero-env-intensify__layer hero-env-intensify__layer--blue"></div>
           <div class="hero-env-intensify__layer hero-env-intensify__layer--magenta"></div>
@@ -2301,10 +2294,10 @@
             grad.addColorStop(0.63, 'rgba(88, 42, 92, ' + bl + ')');
             grad.addColorStop(1, '#050408');
           } else {
-            grad.addColorStop(0, '#060608');
+            grad.addColorStop(0, '#080a14');
             grad.addColorStop(0.36, 'rgba(118, 12, 12, ' + ox + ')');
             grad.addColorStop(0.63, 'rgba(22, 48, 132, ' + bl + ')');
-            grad.addColorStop(1, '#050508');
+            grad.addColorStop(1, '#070810');
           }
           ctx.fillStyle = grad;
           ctx.fillRect(0, 0, width, height);
