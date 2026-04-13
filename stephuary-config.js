@@ -48,7 +48,7 @@
     PRICING_STAIRCASE_VIDEO:
       'https://customer-vjyp7ff1wau3k7is.cloudflarestream.com/482fd025db674eaf7f1246937e0145b2/manifest/video.m3u8',
     PRICING_STAIRCASE_POSTER:
-      'https://customer-vjyp7ff1wau3k7is.cloudflarestream.com/482fd025db674eaf7f1246937e0145b2/thumbnails/thumbnail.jpg?height=720'
+      'https://customer-vjyp7ff1wau3k7is.cloudflarestream.com/482fd025db674eaf7f1246937e0145b2/thumbnails/thumbnail.jpg?height=1080'
   };
 
   function onReady(fn) {

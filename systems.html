@@ -16,6 +16,13 @@
   <title>System · Stephuary</title>
   <meta name="description" content="Five phases: Capture through Sovereignty. Pick where you are stuck; start there." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://customer-vjyp7ff1wau3k7is.cloudflarestream.com" crossorigin />
+  <link
+    rel="preload"
+    as="image"
+    href="https://customer-vjyp7ff1wau3k7is.cloudflarestream.com/1f4bd2ff44b75a12d97d0629b29340b4/thumbnails/thumbnail.jpg?height=1080"
+    crossorigin
+  />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400&family=DM+Mono:wght@300;400&family=Lato:wght@300;400&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/stephuary-interactive.css" />
   <link rel="stylesheet" href="/systems-atmosphere.css" />
@@ -942,7 +949,8 @@
             loop
             autoplay
             preload="metadata"
-            poster="https://customer-vjyp7ff1wau3k7is.cloudflarestream.com/1f4bd2ff44b75a12d97d0629b29340b4/thumbnails/thumbnail.jpg?height=720"
+            fetchpriority="high"
+            poster="https://customer-vjyp7ff1wau3k7is.cloudflarestream.com/1f4bd2ff44b75a12d97d0629b29340b4/thumbnails/thumbnail.jpg?height=1080"
           ></video>
           <div class="systems-cine-window__veil" aria-hidden="true"></div>
         </div>
@@ -1021,6 +1029,7 @@
   </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.7/dist/hls.min.js" crossorigin="anonymous"></script>
+  <script src="/stephuary-hls-cine.js"></script>
   <script src="/stephuary-os.js"></script>
   <script src="/stephuary-progress.js"></script>
   <script>
@@ -1036,6 +1045,9 @@
       if (v.canPlayType('application/vnd.apple.mpegurl')) {
         v.src = src;
         tryPlay();
+      } else if (typeof stephuaryAttachHlsCine === 'function') {
+        stephuaryAttachHlsCine(v, src);
+        v.addEventListener('loadeddata', tryPlay, { once: true });
       } else if (typeof Hls !== 'undefined' && Hls.isSupported()) {
         var hls = new Hls({ capLevelToPlayerSize: true, maxBufferLength: 24 });
         hls.loadSource(src);

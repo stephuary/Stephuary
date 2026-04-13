@@ -10,6 +10,8 @@ try{var h=new Date().getHours();var em=h>=3&&h<7;document.documentElement.classL
 <meta name="description" content="Stephuary pricing: free diagnostic, rooms, Direction System, Revenue System, Direction Lock, concept build, snapshot, private access, and custom builds."/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link rel="preconnect" href="https://customer-vjyp7ff1wau3k7is.cloudflarestream.com" crossorigin/>
+<link rel="preload" as="image" href="https://customer-vjyp7ff1wau3k7is.cloudflarestream.com/482fd025db674eaf7f1246937e0145b2/thumbnails/thumbnail.jpg?height=1080" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Mono:wght@300;400&family=Lato:wght@300;400;500&display=swap" rel="stylesheet"/>
 <link rel="stylesheet" href="/stephuary-interactive.css"/>
 <link rel="stylesheet" href="/stephuary-founder-reveal.css"/>
@@ -615,7 +617,8 @@ html.early-mode body.pricing-page{
           playsinline
           loop
           autoplay
-          poster="https://customer-vjyp7ff1wau3k7is.cloudflarestream.com/482fd025db674eaf7f1246937e0145b2/thumbnails/thumbnail.jpg?height=720"
+          fetchpriority="high"
+          poster="https://customer-vjyp7ff1wau3k7is.cloudflarestream.com/482fd025db674eaf7f1246937e0145b2/thumbnails/thumbnail.jpg?height=1080"
         ></video>
       </div>
       <div class="pricing-cine-strip__color" aria-hidden="true"></div>
@@ -1081,6 +1084,7 @@ html.early-mode body.pricing-page{
 })();
 </script>
 <script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.7/dist/hls.min.js" crossorigin="anonymous"></script>
+<script src="/stephuary-hls-cine.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
   var cfg = window.STEPHUARY_CONFIG || {};
@@ -1101,6 +1105,9 @@ document.addEventListener('DOMContentLoaded', function () {
   if (v.canPlayType('application/vnd.apple.mpegurl')) {
     v.src = src;
     tryPlay();
+  } else if (typeof stephuaryAttachHlsCine === 'function') {
+    stephuaryAttachHlsCine(v, src);
+    v.addEventListener('loadeddata', tryPlay, { once: true });
   } else if (typeof Hls !== 'undefined' && Hls.isSupported()) {
     var hls = new Hls({ capLevelToPlayerSize: true, maxBufferLength: 24 });
     hls.loadSource(src);
