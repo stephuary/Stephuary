@@ -254,39 +254,22 @@
       opacity: 0.85;
     }
 
-    /* Hero — single environment from #home-environment; no second atmospheric stack here */
+    /* Hero — single environment from #home-environment; no stacked viewport min-heights on nested wrappers */
     #hero {
       position: relative;
       overflow: visible;
-      min-height: min(100vh, 920px);
-      min-height: min(100dvh, 920px);
-      min-height: -webkit-fill-available;
       padding: 0;
+      min-height: auto;
     }
 
     /* Hero: content only — global canvas + environment live in #home-environment */
     .hero-container {
       position: relative;
       overflow: visible;
-      min-height: min(100vh, 920px);
-      min-height: min(100dvh, 920px);
-      min-height: -webkit-fill-available;
       display: flex;
       flex-direction: column;
+      min-height: auto;
       background: transparent;
-    }
-
-    /* Home: primary path strip lives inside #hero (after .hero-container rules) — one fold; flex child replaces duplicate min-height */
-    body[data-sh-env='home'] #hero {
-      display: flex;
-      flex-direction: column;
-    }
-    body[data-sh-env='home'] .hero-container {
-      flex: 1 1 auto;
-      min-height: 0;
-    }
-    body[data-sh-env='home'] #hero > .sh-primary-flow {
-      flex-shrink: 0;
     }
 
     .hero-overlay {
@@ -306,17 +289,11 @@
     .hero-content {
       position: relative;
       z-index: 2;
-      flex: 1 1 auto;
-      min-height: min(88vh, 860px);
       display: flex;
       flex-direction: column;
       justify-content: flex-start;
-      padding: 88px 40px 8px;
+      min-height: 0;
       width: 100%;
-    }
-
-    /* Home: .sh-primary-flow--below-fixed-nav already clears the fixed nav — do not add second nav-height padding on .hero-content */
-    body[data-sh-env='home'] .hero-content {
       padding: 24px 40px 8px;
     }
 
@@ -328,7 +305,7 @@
       z-index: 2;
       will-change: transform;
       flex: 0 0 auto;
-      padding-top: clamp(8px, 3vh, 40px);
+      padding-top: 0;
     }
 
     /* Lower third: live system entry — anchored, not floating mid-hero */
@@ -1263,16 +1240,12 @@
     }
 
     @media (max-width: 767px) {
-      #hero {
-        min-height: min(100dvh, 760px);
-      }
+      #hero,
       .hero-container {
-        min-height: min(100dvh, 760px);
+        min-height: auto;
       }
       .hero-content {
-        padding: 80px 20px 0;
-      }
-      body[data-sh-env='home'] .hero-content {
+        min-height: 0;
         padding: 20px 20px 12px;
       }
       .hero-leak-dock {
@@ -1285,8 +1258,8 @@
 
     @media (max-width: 640px) {
       nav#main-nav { padding: 14px 20px; }
-      .hero-content { padding-top: 76px; }
-      body[data-sh-env='home'] .hero-content {
+      .hero-content {
+        min-height: 0;
         padding: 20px 20px 12px;
       }
       #proof, #system, .phase-head-wrap, .connector-wrap, .phase-rail { padding-left: 20px; padding-right: 20px; }
@@ -1598,11 +1571,12 @@
     </nav>
 
     <main id="main-content">
+    <section class="sh-primary-flow sh-primary-flow--below-fixed-nav" aria-label="Primary path">
+      <p class="sh-primary-flow__steps">Start diagnostic → Complete phases → Unlock next step</p>
+      <a href="/capture" class="sh-primary-flow__link">Start diagnostic →</a>
+    </section>
+
     <section id="hero" data-sh-flow-section>
-      <section class="sh-primary-flow sh-primary-flow--below-fixed-nav" aria-label="Primary path">
-        <p class="sh-primary-flow__steps">Start diagnostic → Complete phases → Unlock next step</p>
-        <a href="/capture" class="sh-primary-flow__link">Start diagnostic →</a>
-      </section>
       <div class="hero-container">
         <div class="hero-overlay" aria-hidden="true"></div>
         <div class="hero-content">
