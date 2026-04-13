@@ -17,7 +17,7 @@
       document.documentElement.setAttribute('data-god-hour', 'false');
     }
   </script>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>Diagnostic · Phase 01 — Capture · Stephuary</title>
   <meta name="description" content="Diagnostic phase 01 (Capture). How you perceive, respond, and where avoidance sits." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -752,6 +752,8 @@
   <link rel="stylesheet" href="/stephuary-god-hour.css" />
   <link rel="stylesheet" href="/stephuary-design-tokens.css" />
   <link rel="stylesheet" href="/stephuary-shell.css" />
+  <link rel="stylesheet" href="/stephuary-diagnostic-mobile.css" />
+  <script src="/stephuary-diagnostic-mobile.js"></script>
 </head>
 <body>
 <div id="page-transition" aria-hidden="true"></div>
@@ -1598,7 +1600,11 @@
     updateLivePanel(n - 1, state.bits);
     updateStepValidation(n);
     updateRail();
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (window.StephuaryDiagnosticMobile && typeof window.StephuaryDiagnosticMobile.scrollToActiveQuestion === 'function') {
+      window.StephuaryDiagnosticMobile.scrollToActiveQuestion();
+    } else {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
     syncCaptureShFlowEnd();
   }
 
@@ -1658,7 +1664,13 @@
     } catch (e) {}
 
     updateRail();
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (window.StephuaryDiagnosticMobile && typeof window.StephuaryDiagnosticMobile.scrollToSummary === 'function') {
+      window.requestAnimationFrame(function () {
+        window.StephuaryDiagnosticMobile.scrollToSummary({ behavior: 'auto' });
+      });
+    } else {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
     syncCaptureShFlowEnd();
     setTimeout(function () {
       if (window.StephuaryMagneticFlow && typeof window.StephuaryMagneticFlow.refresh === 'function') {
@@ -1763,7 +1775,13 @@
     document.getElementById('flow-wrap').style.display = 'block';
     var ph = document.getElementById('phase-header');
     if (ph) ph.style.display = 'none';
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (window.StephuaryDiagnosticMobile && typeof window.StephuaryDiagnosticMobile.scrollToActiveQuestion === 'function') {
+      window.requestAnimationFrame(function () {
+        window.StephuaryDiagnosticMobile.scrollToActiveQuestion({ behavior: 'auto' });
+      });
+    } else {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
     syncCaptureShFlowEnd();
   }
 

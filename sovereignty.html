@@ -16,7 +16,7 @@
       document.documentElement.setAttribute('data-god-hour', 'false');
     }
   </script>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>Diagnostic · Phase 05 — Sovereignty · Stephuary</title>
   <meta name="description" content="Diagnostic phase 05 (Sovereignty). Control, not just growth." />
 
@@ -774,6 +774,8 @@
   <link rel="stylesheet" href="/stephuary-design-tokens.css" />
   <link rel="stylesheet" href="/stephuary-shell.css" />
   <link rel="stylesheet" href="/stephuary-free-mode.css" />
+  <link rel="stylesheet" href="/stephuary-diagnostic-mobile.css" />
+  <script src="/stephuary-diagnostic-mobile.js"></script>
 </head>
 <body>
 <div id="page-transition" aria-hidden="true"></div>
@@ -802,15 +804,20 @@
 </div>
 
 <div id="flow-wrap">
-  <div class="top-nav" role="navigation" aria-label="Primary">
+  <div class="top-nav diag-phase-top-nav" role="navigation" aria-label="Primary">
     <a href="/" class="nav-brand">Stephuary</a>
-    <div class="top-nav-links">
-      <a href="/systems">System</a>
-      <a href="/pricing">Pricing</a>
-      <a href="/access" class="nav-club">.5% Club</a>
-      <a href="https://stephuary.substack.com" target="_blank" rel="noopener">Grown spaghetti</a>
-      <a href="https://onlysometimesclub.com" target="_blank" rel="noopener noreferrer">Only Sometimes Club</a>
-    </div>
+    <details class="diag-top-nav-details">
+      <summary class="diag-top-nav-more">Menu</summary>
+      <div class="diag-top-nav-dropdown">
+        <div class="top-nav-links">
+          <a href="/systems">System</a>
+          <a href="/pricing">Pricing</a>
+          <a href="/access" class="nav-club">.5% Club</a>
+          <a href="https://stephuary.substack.com" target="_blank" rel="noopener">Grown spaghetti</a>
+          <a href="https://onlysometimesclub.com" target="_blank" rel="noopener noreferrer">Only Sometimes Club</a>
+        </div>
+      </div>
+    </details>
   </div>
 
   <div class="sh-global-map-wrap" style="padding:6px 0 10px">
@@ -1444,7 +1451,11 @@
     }
     updateLivePanel();
     updateRail();
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (window.StephuaryDiagnosticMobile && typeof window.StephuaryDiagnosticMobile.scrollToActiveQuestion === 'function') {
+      window.StephuaryDiagnosticMobile.scrollToActiveQuestion();
+    } else {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
   }
 
   function showSummary() {
@@ -1459,7 +1470,13 @@
     document.getElementById('summary').style.display = 'flex';
     buildSummaryOutputs(state.bits.map(function(x) { return x; }));
     updateRail();
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (window.StephuaryDiagnosticMobile && typeof window.StephuaryDiagnosticMobile.scrollToSummary === 'function') {
+      window.requestAnimationFrame(function () {
+        window.StephuaryDiagnosticMobile.scrollToSummary({ behavior: 'auto' });
+      });
+    } else {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
   }
 
   function goToResultsFromSovereignty() {
@@ -1574,7 +1591,6 @@
     document.getElementById('live-ctl').textContent = 'Waiting.';
     document.getElementById('live-sys').textContent = 'Waiting.';
     document.getElementById('live-pos').textContent = 'Waiting.';
-    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   document.getElementById('btnCopy').addEventListener('click', copyAll);
