@@ -6,10 +6,14 @@
     try {
       var h = new Date().getHours();
       var em = h >= 3 && h < 7;
+      var gh = h >= 4 && h < 7;
       document.documentElement.classList.toggle('early-mode', em);
+      document.documentElement.classList.toggle('god-hour', gh);
       document.documentElement.setAttribute('data-early-mode', em ? 'true' : 'false');
+      document.documentElement.setAttribute('data-god-hour', gh ? 'true' : 'false');
     } catch (e) {
       document.documentElement.setAttribute('data-early-mode', 'false');
+      document.documentElement.setAttribute('data-god-hour', 'false');
     }
   </script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -892,6 +896,9 @@
     }
   </style>
   <link rel="stylesheet" href="/stephuary-early-mode.css" />
+  <link rel="stylesheet" href="/stephuary-god-hour.css" />
+  <link rel="stylesheet" href="/stephuary-design-tokens.css" />
+  <link rel="stylesheet" href="/stephuary-shell.css" />
 </head>
 <body class="page-systems">
   <div class="systems-portal-atmosphere" aria-hidden="true">
@@ -916,7 +923,7 @@
   <script src="/stephuary-personalization.js" defer></script>
   <script src="/stephuary-global-map.js" defer></script>
 
-  <nav aria-label="Main">
+  <nav id="main-nav" class="sh-main-nav" aria-label="Primary">
     <a href="/" class="nav-mark">Stephuary</a>
     <div class="nav-links">
       <a href="/systems">System</a>
@@ -927,17 +934,22 @@
     </div>
   </nav>
 
+  <section class="sh-primary-flow" aria-label="Primary path">
+    <p class="sh-primary-flow__steps">Start diagnostic → Complete phases → Unlock next step</p>
+    <a href="/capture" class="sh-primary-flow__cta">Start Diagnostic</a>
+  </section>
+
   <header class="sys-compact sys-compact--systems" style="margin-top:0">
     <div class="sys-compact__inner">
       <h1 class="sys-title">System</h1>
       <p class="sys-lead">Pick the phase that matches where you're stuck.<br />Start there.</p>
-      <p class="sys-lead-note">You don't need to go in order.</p>
+      <p class="sys-lead-note">The five phases are one diagnostic. You don't need to go in order.</p>
     </div>
   </header>
 
   <div class="wrap">
     <div class="resume-banner" id="resume-banner" aria-live="polite">
-      <a href="/capture" id="resume-link">Continue where you left off</a>
+      <a href="/capture" id="resume-link">Continue Diagnostic</a>
     </div>
 
     <div class="systems-cine-bleed">
@@ -1121,17 +1133,24 @@
     (function () {
       var tries = 0;
       function applyResume() {
+        var ban = document.getElementById('resume-banner');
+        var link = document.getElementById('resume-link');
+        if (!ban || !link) return;
         if (!window.StephuaryProgress || typeof window.StephuaryProgress.getResumeLabel !== 'function') {
-          if (tries++ < 40) setTimeout(applyResume, 50);
+          if (tries++ < 50) setTimeout(applyResume, 50);
           return;
         }
         var resume = window.StephuaryProgress.getResumeLabel();
-        var ban = document.getElementById('resume-banner');
-        var link = document.getElementById('resume-link');
-        if (resume && ban && link) {
+        if (resume) {
           ban.classList.add('visible');
           link.textContent = resume.line;
           link.href = resume.href;
+          return;
+        }
+        if (window.StephuarySession && typeof window.StephuarySession.hasActiveSession === 'function' && window.StephuarySession.hasActiveSession()) {
+          ban.classList.add('visible');
+          link.textContent = 'Continue Diagnostic';
+          link.href = window.StephuarySession.getResumeDiagnosticHref();
         }
       }
       if (document.readyState === 'loading') {

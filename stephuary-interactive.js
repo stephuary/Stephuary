@@ -1954,11 +1954,11 @@
     el.className = 'sh-flow-end';
     el.setAttribute('role', 'region');
     el.setAttribute('aria-label', 'Next steps');
-    var priLabel = 'Continue to next step';
+    var priLabel = 'Continue diagnostic →';
     var secHref = '/results';
-    var secLabel = 'View full results';
+    var secLabel = 'View full readout';
     if (next === '/results') {
-      priLabel = 'View your readout →';
+      priLabel = 'View diagnostic readout →';
     }
     var rowInner =
       '<a class="sh-flow-end__pri" href="' +

@@ -2,6 +2,20 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <script>
+    try {
+      var h = new Date().getHours();
+      var em = h >= 3 && h < 7;
+      var gh = h >= 4 && h < 7;
+      document.documentElement.classList.toggle('early-mode', em);
+      document.documentElement.classList.toggle('god-hour', gh);
+      document.documentElement.setAttribute('data-early-mode', em ? 'true' : 'false');
+      document.documentElement.setAttribute('data-god-hour', gh ? 'true' : 'false');
+    } catch (e) {
+      document.documentElement.setAttribute('data-early-mode', 'false');
+      document.documentElement.setAttribute('data-god-hour', 'false');
+    }
+  </script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Your result · Stephuary</title>
   <link rel="stylesheet" href="/stephuary-interactive.css" />
@@ -10,6 +24,12 @@
   <meta name="description" content="Structured read of how you operate. Next steps, no noise." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/stephuary-early-mode.css" />
+  <link rel="stylesheet" href="/stephuary-god-hour.css" />
+  <link rel="stylesheet" href="/stephuary-design-tokens.css" />
+  <link rel="stylesheet" href="/stephuary-shell.css" />
+  <script src="/stephuary-interactive.js" defer></script>
+  <script src="/stephuary-early-mode.js" defer></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
@@ -79,6 +99,27 @@
       text-decoration: none;
     }
     .top-bar-nav a:hover { color: var(--muted); }
+    .top-bar-nav a.nav-club-pri {
+      color: var(--gold);
+    }
+    .top-bar-nav__restart {
+      font: inherit;
+      font-size: 9px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: rgba(244, 237, 224, 0.45);
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+    }
+    .top-bar-nav__restart:hover {
+      color: var(--muted);
+    }
+    .results-flow-links--quiet {
+      opacity: 0.72;
+      font-size: 12px;
+    }
     .logo {
       font-size: 10px;
       letter-spacing: 0.3em;
@@ -801,12 +842,20 @@
 
   <header class="top-bar">
     <a href="/" class="logo">Stephuary</a>
-    <nav class="top-bar-nav" aria-label="Site">
+    <nav id="main-nav" class="top-bar-nav sh-main-nav" aria-label="Primary">
       <a href="/systems">System</a>
-      <a href="/systems#phases">Phases</a>
-      <a href="#" id="results-nav-restart">Restart</a>
+      <a href="/pricing">Pricing</a>
+      <a href="/access" class="nav-club-pri">.5% Club</a>
+      <a href="https://stephuary.substack.com" target="_blank" rel="noopener">Grown spaghetti</a>
+      <a href="https://onlysometimesclub.com" target="_blank" rel="noopener noreferrer">Only Sometimes Club</a>
+      <button type="button" class="top-bar-nav__restart" id="results-nav-restart">Restart</button>
     </nav>
   </header>
+
+  <section class="sh-primary-flow" aria-label="Primary path">
+    <p class="sh-primary-flow__steps">Start diagnostic → Complete phases → Unlock next step</p>
+    <a href="/capture" class="sh-primary-flow__cta">Start Diagnostic</a>
+  </section>
 
   <div id="state-missing">
     <p class="missing-kicker">Result</p>
@@ -828,9 +877,29 @@
         <p class="hero-sub" id="results-hero-sub"></p>
         <div class="type-pill" id="typePill" aria-label="Detected types"></div>
         <div id="results-cei-strip" class="cei-node-strip" aria-label="Pressure map"></div>
+        <section class="sh-results-routes" aria-label="Choose your next step">
+          <p class="sh-results-routes__label">After your readout</p>
+          <div class="sh-results-routes__grid">
+            <a class="sh-results-route" href="/systems">
+              <p class="sh-results-route__kicker">If you want structure</p>
+              <p class="sh-results-route__title">Open the system map</p>
+              <p class="sh-results-route__body">See where you sit in the diagnostic model and what unlocks next.</p>
+            </a>
+            <a class="sh-results-route" href="/playbooks">
+              <p class="sh-results-route__kicker">If you want execution</p>
+              <p class="sh-results-route__title">Enter a playbook room</p>
+              <p class="sh-results-route__body">Go deeper on one repeating problem—rooms extend the readout; they don’t replace it.</p>
+            </a>
+            <a class="sh-results-route" href="/snapshot">
+              <p class="sh-results-route__kicker">If you want speed</p>
+              <p class="sh-results-route__title">Book a snapshot</p>
+              <p class="sh-results-route__body">A written pass when you need decisions compressed on a clear deadline.</p>
+            </a>
+          </div>
+        </section>
         <div class="results-hero-cta-row">
-          <a class="results-cta-pri magnetic" id="results-primary-cta" href="/playbooks" data-sh-flow-primary>View Results →</a>
-          <p class="results-flow-links" id="results-flow-links" hidden>
+          <a class="results-cta-pri magnetic" id="results-primary-cta" href="/playbooks" data-sh-flow-primary>Next: Playbooks →</a>
+          <p class="results-flow-links results-flow-links--quiet" id="results-flow-links" hidden>
             <a href="/systems">View system</a>
             <span class="results-flow-links__sep" aria-hidden="true"> · </span>
             <a href="/pricing">View pricing</a>
@@ -1457,6 +1526,5 @@
     })();
   </script>
   <script src="/stephuary-config.js"></script>
-  <script src="/stephuary-interactive.js" defer></script>
 </body>
 </html>
