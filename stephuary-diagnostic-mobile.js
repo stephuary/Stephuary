@@ -153,9 +153,40 @@
     });
   }
 
+  function initLivePanelChrome() {
+    var shell = document.getElementById('livePanelShell');
+    if (!shell) return;
+    try {
+      document.body.classList.add('diag-has-live-chrome');
+    } catch (eL) {}
+    function applyDesktopOpen() {
+      try {
+        if (global.matchMedia && global.matchMedia('(min-width: 961px)').matches) {
+          shell.open = true;
+        }
+      } catch (e0) {}
+    }
+    applyDesktopOpen();
+    try {
+      var mq = global.matchMedia('(min-width: 961px)');
+      if (mq && mq.addEventListener) mq.addEventListener('change', applyDesktopOpen);
+      else if (mq && mq.addListener) mq.addListener(applyDesktopOpen);
+    } catch (e1) {}
+    shell.addEventListener('toggle', function () {
+      try {
+        if (global.matchMedia && !global.matchMedia('(min-width: 961px)').matches) {
+          document.body.classList.toggle('diag-live-open', !!shell.open);
+        } else {
+          document.body.classList.remove('diag-live-open');
+        }
+      } catch (e2) {}
+    });
+  }
+
   onReady(function () {
     syncTopNavDetailsOpen();
     bindTopNavDetailsMedia();
+    initLivePanelChrome();
     initialScrollFix();
   });
 

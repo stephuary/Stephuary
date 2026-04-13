@@ -705,35 +705,12 @@
         grid-template-columns: 1fr;
         gap: 20px;
       }
-      .rail {
-        position: relative;
-        top: 0;
-        flex-direction: row;
-        flex-wrap: wrap;
-        gap: 8px 12px;
-        padding: 0 0 8px;
-        border-bottom: 1px solid var(--border-dim);
+      .capture-layout--chrome .main-col {
+        order: 1;
       }
-      .rail-item {
-        border-left: none;
-        padding-left: 0;
-        padding: 4px 0;
-        font-size: 8px;
+      .capture-layout--chrome .live-panel--chrome {
+        order: 2;
       }
-      .rail-item::after {
-        content: '·';
-        margin-left: 8px;
-        color: var(--border);
-      }
-      .rail-item:last-child::after { content: none; }
-      .live-panel {
-        position: relative;
-        top: 0;
-        max-height: none;
-        order: 3;
-      }
-      .main-col { order: 2; }
-      .rail { order: 1; }
     }
 
     @media (max-width: 720px) {
@@ -753,6 +730,7 @@
   <link rel="stylesheet" href="/stephuary-design-tokens.css" />
   <link rel="stylesheet" href="/stephuary-shell.css" />
   <link rel="stylesheet" href="/stephuary-diagnostic-mobile.css" />
+  <link rel="stylesheet" href="/stephuary-diagnostic-chrome.css" />
   <script src="/stephuary-diagnostic-mobile.js"></script>
 </head>
 <body>
@@ -794,21 +772,37 @@
   </header>
 
 <div id="flow-wrap">
-  <div class="capture-layout">
-    <aside class="rail" id="rail" aria-hidden="true"></aside>
-
+  <div class="capture-layout capture-layout--chrome">
     <div class="main-col">
-      <div id="flow">
-        <div class="progress-bar-wrap">
-          <div class="progress-meta">
-            <span class="progress-label">Diagnostic</span>
-            <span class="progress-count" id="progressCount">Step 1 of 10</span>
-          </div>
-          <div class="progress-track">
-            <div class="progress-fill" id="progressFill" style="width:10%"></div>
-          </div>
-        </div>
+      <div id="flow" class="flow--chrome">
         <div id="steps-root"></div>
+        <div class="diag-progress-stack">
+          <div class="diag-progress-topline">
+            <span class="diag-progress-area">Diagnostic</span>
+            <span class="diag-progress-phase">Phase 1 of 5 · Capture</span>
+          </div>
+          <div class="progress-bar-wrap">
+            <div class="progress-meta">
+              <span class="progress-label progress-label--muted">Progress</span>
+              <span class="progress-count" id="progressCount">Step 1 of 10</span>
+            </div>
+            <div class="progress-track">
+              <div class="progress-fill" id="progressFill" style="width:10%"></div>
+            </div>
+          </div>
+          <details class="diag-details diag-details--steps">
+            <summary class="diag-details__summary">Step map</summary>
+            <div class="diag-details__body">
+              <aside class="rail rail--embedded" id="rail" aria-label="Steps in this phase"></aside>
+            </div>
+          </details>
+          <details class="diag-details diag-details--phases">
+            <summary class="diag-details__summary">Five-phase journey</summary>
+            <div class="diag-details__body">
+              <div id="diag-phase-rail-host" class="diag-phase-rail-host"></div>
+            </div>
+          </details>
+        </div>
       </div>
 
       <div id="capture-flash" class="capture-flash" aria-live="polite"></div>
@@ -898,28 +892,40 @@
       </div>
     </div>
 
-    <aside class="live-panel" id="livePanel" aria-live="polite">
-      <div class="live-panel-head">Live read</div>
-      <div class="live-field">
-        <div class="live-label">Main issue (emerging)</div>
-        <div class="live-value" id="live-notice">Answer to load the first signal.</div>
-      </div>
-      <div class="live-field">
-        <div class="live-label">Biggest loss (emerging)</div>
-        <div class="live-value" id="live-do">—</div>
-      </div>
-      <div class="live-field">
-        <div class="live-label">Current pattern</div>
-        <div class="live-value" id="live-hold">—</div>
-      </div>
-      <div class="live-field">
-        <div class="live-label">Likely next step</div>
-        <div class="live-value" id="live-env">—</div>
-      </div>
-      <div class="live-field">
-        <div class="live-label">Phase status</div>
-        <div class="live-value" id="live-status">Not started.</div>
-      </div>
+    <aside class="live-panel live-panel--chrome" id="livePanel" aria-live="polite">
+      <details class="live-panel__shell" id="livePanelShell">
+        <summary class="live-panel__summary">
+          <span class="live-panel__summary-title">Live read</span>
+          <span class="live-panel__summary-meta">3 signals</span>
+        </summary>
+        <div class="live-panel__inner">
+          <div class="live-panel__primary">
+            <div class="live-field">
+              <div class="live-label">Main issue</div>
+              <div class="live-value" id="live-notice">Answer to load the first signal.</div>
+            </div>
+            <div class="live-field">
+              <div class="live-label">Current pattern</div>
+              <div class="live-value" id="live-hold">—</div>
+            </div>
+            <div class="live-field">
+              <div class="live-label">Likely next step</div>
+              <div class="live-value" id="live-env">—</div>
+            </div>
+          </div>
+          <details class="live-panel__more">
+            <summary class="live-panel__more-sum">Full readout</summary>
+            <div class="live-field">
+              <div class="live-label">Biggest loss (emerging)</div>
+              <div class="live-value" id="live-do">—</div>
+            </div>
+            <div class="live-field">
+              <div class="live-label">Phase status</div>
+              <div class="live-value" id="live-status">Not started.</div>
+            </div>
+          </details>
+        </div>
+      </details>
     </aside>
   </div>
 </div>

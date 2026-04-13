@@ -1301,7 +1301,12 @@
 
     wrap.appendChild(nav);
     wrap.appendChild(rail);
-    document.body.appendChild(wrap);
+    var anchor = document.getElementById('diag-phase-rail-host');
+    if (anchor) {
+      anchor.appendChild(wrap);
+    } else {
+      document.body.appendChild(wrap);
+    }
   }
 
   function initAdaptiveLayer() {
