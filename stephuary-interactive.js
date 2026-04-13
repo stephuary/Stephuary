@@ -1,4 +1,30 @@
 (function () {
+  (function initTimeAtmosphere() {
+    if (window.__STEPHUARY_TIME_ATMOSPHERE_INIT) return;
+    window.__STEPHUARY_TIME_ATMOSPHERE_INIT = true;
+    var link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = '/stephuary-time-atmosphere.css';
+    document.head.appendChild(link);
+
+    function computeTimeState() {
+      var t = new Date().getHours() * 60 + new Date().getMinutes();
+      if (t >= 180 && t < 420) return 'early';
+      if (t >= 540 && t < 1020) return 'day';
+      if (t >= 1080 && t < 1320) return 'evening';
+      return 'night';
+    }
+
+    function applyTimeState() {
+      if (!document.body) return;
+      document.body.setAttribute('data-time', computeTimeState());
+    }
+
+    if (document.body) applyTimeState();
+    else document.addEventListener('DOMContentLoaded', applyTimeState);
+    setInterval(applyTimeState, 60000);
+  })();
+
   if (window.__STEPHUARY_INTERACTIVE_LOADED) return;
   window.__STEPHUARY_INTERACTIVE_LOADED = true;
 
