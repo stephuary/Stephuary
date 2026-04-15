@@ -209,6 +209,125 @@ details.price-group--pricing-field-focus > summary{
   .pricing-layout--after-cine{margin-top:-12px;padding-top:4px;}
 }
 
+/* Guided progression — vertical rhythm, same tokens */
+.pricing-flow{
+  display:flex;
+  flex-direction:column;
+  gap:0;
+}
+.pricing-flow-section{
+  margin:0 0 36px;
+  padding:0;
+}
+.pricing-flow-section__title{
+  font-family:var(--serif);
+  font-size:clamp(20px,2.8vw,26px);
+  font-weight:300;
+  color:var(--text);
+  letter-spacing:-0.02em;
+  line-height:1.12;
+  margin:0 0 10px;
+  max-width:42ch;
+}
+.pricing-flow-section__sub{
+  font-size:13px;
+  color:var(--text-3);
+  line-height:1.5;
+  max-width:48ch;
+  margin:0 0 16px;
+}
+.pricing-flow-section__cards{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+@media(max-width:600px){
+  .pricing-flow-section{margin-bottom:44px;}
+  .pricing-flow-section__cards{gap:12px;}
+  .pricing-flow-section__title{margin-bottom:12px;}
+  .pricing-flow-section__sub{margin-bottom:18px;}
+}
+.pricing-flow-section--installation{
+  margin:8px 0 40px;
+  padding:32px 20px 36px;
+  width:100%;
+  max-width:100%;
+  margin-left:calc(50% - 50vw);
+  margin-right:calc(50% - 50vw);
+  width:100vw;
+  max-width:100vw;
+  padding-left:max(20px, env(safe-area-inset-left));
+  padding-right:max(20px, env(safe-area-inset-right));
+  box-sizing:border-box;
+  border-top:1px solid rgba(52,44,36,0.38);
+  border-bottom:1px solid rgba(52,44,36,0.38);
+  background:rgba(10,9,8,0.35);
+}
+@media(min-width:1080px){
+  .pricing-flow-section--installation{
+    padding-left:max(40px, calc(50vw - 500px));
+    padding-right:max(40px, calc(50vw - 500px));
+  }
+}
+.pricing-flow-section--installation .pricing-flow-section__title{
+  font-size:clamp(24px,3.2vw,34px);
+  max-width:52ch;
+}
+.pricing-flow-section--installation .pricing-flow-section__sub{
+  font-size:14px;
+  max-width:52ch;
+  margin-bottom:20px;
+}
+.inner-tier--installation-hero{
+  position:relative;
+  border-radius:var(--r);
+  border:1px solid rgba(196,163,90,0.42);
+  box-shadow:
+    0 0 0 1px rgba(72,62,44,0.22),
+    0 0 32px rgba(43,79,212,0.12),
+    0 12px 40px rgba(0,0,0,0.38);
+}
+.pricing-flow-section__footer-line{
+  font-size:13px;
+  color:var(--text-4);
+  line-height:1.5;
+  max-width:48ch;
+  margin:18px 0 0;
+  font-style:italic;
+}
+.operator-access-tiers{
+  display:flex;
+  flex-direction:column;
+  gap:18px;
+  max-width:52ch;
+}
+@media(max-width:600px){
+  .operator-access-tiers{gap:22px;}
+}
+.pricing-flow-section--final-push{
+  margin-top:4px;
+  margin-bottom:40px;
+}
+@media(max-width:600px){
+  .pricing-flow-section--final-push{margin-bottom:48px;}
+}
+.pricing-final-push{
+  display:flex;
+  flex-wrap:wrap;
+  gap:28px 48px;
+  max-width:min(100%,52ch);
+}
+@media(max-width:600px){
+  .pricing-final-push{flex-direction:column;gap:22px;}
+}
+.pricing-final-push__label{
+  font-size:13px;
+  color:var(--text-3);
+  line-height:1.5;
+  margin:0 0 10px;
+}
+.pricing-final-push__list{margin-top:0;}
+
 /* Full-bleed cinematic strip — between intro and tiers */
 .pricing-cine-bleed{
   width:100vw;
@@ -641,26 +760,11 @@ html.early-mode body.pricing-page{
   </div>
 
   <div class="pricing-layout pricing-layout--after-cine">
-    <div class="pricing-layout__main" id="pricing-groups">
+    <div class="pricing-layout__main pricing-flow" id="pricing-groups">
 
-      <details class="price-group" data-pricing-group data-pricing-cluster="A">
-        <summary>
-          <div class="price-group__kicker">A</div>
-          <h2 class="price-group__title">Free and Low Cost</h2>
-          <p class="price-group__preview">Start free—then go deeper when you need to.</p>
-          <div class="price-group__hint">Open for diagnostic, rooms, direction system, and revenue system.</div>
-        </summary>
-        <div class="price-group__anim">
-          <div class="price-group__inner">
-            <div class="price-group__pad">
-
-              <div class="inner-tier inner-tier--recommended" id="tier-diagnostic" data-tier-id="diagnostic" data-sh-map-node="diagnostic">
-                <p class="inner-tier__label">Diagnostic</p>
-                <p class="inner-tier__price">Free</p>
-                <p class="inner-tier__desc">Answer a few questions and see where you're losing time and money.</p>
-                <p class="inner-tier__path-note">Use the recommended path above — same free entry.</p>
-              </div>
-
+      <section class="pricing-flow-section" aria-labelledby="pricing-flow-entry-title" data-pricing-cluster="A">
+        <h2 id="pricing-flow-entry-title" class="pricing-flow-section__title">Start here. Don’t overthink it.</h2>
+        <div class="pricing-flow-section__cards">
               <div class="inner-tier" id="tier-rooms" data-tier-id="rooms" data-sh-map-node="rooms">
                 <p class="inner-tier__label inner-tier__label--gold">Rooms</p>
                 <p class="inner-tier__price">$1 each</p>
@@ -668,7 +772,7 @@ html.early-mode body.pricing-page{
                 <div class="tier-cta-row"><a href="/playbooks" class="tier-cta tier-cta--ghost magnetic">Enter a Room</a></div>
               </div>
 
-              <div class="inner-tier" id="tier-direction" data-tier-id="direction-system" data-sh-map-node="direction">
+              <div class="inner-tier inner-tier--recommended" id="tier-direction" data-tier-id="direction-system" data-sh-map-node="direction">
                 <p class="inner-tier__label inner-tier__label--gold">Direction System</p>
                 <p class="inner-tier__price">$34</p>
                 <p class="inner-tier__desc">Pick one direction that actually works.</p>
@@ -681,23 +785,13 @@ html.early-mode body.pricing-page{
                 <p class="inner-tier__desc">See how that direction turns into money.</p>
                 <div class="tier-cta-row"><a href="/revenue-system" class="tier-cta tier-cta--ghost magnetic">Unlock Revenue Path</a></div>
               </div>
-
-            </div>
-          </div>
         </div>
-      </details>
+      </section>
 
-      <details class="price-group" data-pricing-group data-pricing-cluster="B">
-        <summary>
-          <div class="price-group__kicker">B</div>
-          <h2 class="price-group__title">Core Decision and Build</h2>
-          <p class="price-group__preview">Choose what to focus on—then turn it into something you can use.</p>
-          <div class="price-group__hint">Direction Lock and Concept Build—written deliverables with clear timelines.</div>
-        </summary>
-        <div class="price-group__anim">
-          <div class="price-group__inner">
-            <div class="price-group__pad">
-
+      <section class="pricing-flow-section" aria-labelledby="pricing-flow-decision-title" data-pricing-cluster="B">
+        <h2 id="pricing-flow-decision-title" class="pricing-flow-section__title">Make it clear</h2>
+        <p class="pricing-flow-section__sub">You know what you’re doing. Now lock it.</p>
+        <div class="pricing-flow-section__cards">
               <div class="inner-tier" id="tier-lock" data-tier-id="direction-lock" data-sh-map-node="lock">
                 <p class="inner-tier__label inner-tier__label--gold">Direction Lock</p>
                 <p class="inner-tier__price">$179</p>
@@ -713,7 +807,13 @@ html.early-mode body.pricing-page{
                 <p class="deliver-note">Delivered within 48 hours.</p>
                 <div class="tier-cta-row"><a href="/focused-review" class="tier-cta tier-cta--ghost magnetic">Lock Direction</a></div>
               </div>
+        </div>
+      </section>
 
+      <section class="pricing-flow-section" aria-labelledby="pricing-flow-build-title" data-pricing-cluster="B">
+        <h2 id="pricing-flow-build-title" class="pricing-flow-section__title">Turn it into something real</h2>
+        <p class="pricing-flow-section__sub">This is where it becomes usable.</p>
+        <div class="pricing-flow-section__cards">
               <div class="inner-tier" id="tier-concept" data-tier-id="concept-build" data-sh-map-node="concept">
                 <p class="inner-tier__label inner-tier__label--gold">Concept Build</p>
                 <p class="inner-tier__price">$379</p>
@@ -736,26 +836,16 @@ html.early-mode body.pricing-page{
                 <p class="note-bridge">Direction Lock defines what to focus on. Concept Build turns it into something you can use.</p>
                 <div class="tier-cta-row"><a href="/private-access" class="tier-cta tier-cta--ghost magnetic">Build Concept</a></div>
               </div>
-
-            </div>
-          </div>
         </div>
-      </details>
+      </section>
 
-      <details class="price-group" data-pricing-group data-pricing-cluster="C">
-        <summary>
-          <div class="price-group__kicker">C</div>
-          <h2 class="price-group__title">Diagnostic and Advisory</h2>
-          <p class="price-group__preview">Use this when you need a full review or direct involvement.</p>
-          <div class="price-group__hint">Snapshot in writing, or private access for ongoing work.</div>
-        </summary>
-        <div class="price-group__anim">
-          <div class="price-group__inner">
-            <div class="price-group__pad">
-
+      <section class="pricing-flow-section" aria-labelledby="pricing-flow-diagnose-title" data-pricing-cluster="C">
+        <h2 id="pricing-flow-diagnose-title" class="pricing-flow-section__title">See what’s actually happening</h2>
+        <p class="pricing-flow-section__sub">If something feels off, this shows you exactly why.</p>
+        <div class="pricing-flow-section__cards">
               <div class="inner-tier" id="tier-snapshot" data-tier-id="snapshot" data-sh-map-node="snapshot">
                 <p class="inner-tier__label">Snapshot</p>
-                <p class="inner-tier__price">$750</p>
+                <p class="inner-tier__price">$950</p>
                 <p class="inner-tier__desc">A full diagnostic of your current situation.</p>
                 <p class="inner-tier__sub">You’ll get</p>
                 <ul class="tier-bullets">
@@ -766,20 +856,75 @@ html.early-mode body.pricing-page{
                 </ul>
                 <div class="tier-cta-row"><a href="/snapshot" class="tier-cta tier-cta--ghost magnetic">Get Snapshot</a></div>
               </div>
+        </div>
+      </section>
 
-              <div class="inner-tier">
-                <p class="inner-tier__label inner-tier__label--gold">Private Access</p>
-                <p class="inner-tier__price">$1,500+</p>
+      <section class="pricing-flow-section pricing-flow-section--installation" aria-labelledby="pricing-flow-install-title" data-pricing-cluster="C">
+        <h2 id="pricing-flow-install-title" class="pricing-flow-section__title">Make it work</h2>
+        <p class="pricing-flow-section__sub">You don’t need more ideas. You need the right structure, applied correctly.</p>
+        <div class="pricing-flow-section__cards">
+              <div class="inner-tier inner-tier--installation-hero" id="tier-installation">
+                <p class="inner-tier__label inner-tier__label--gold">Installation</p>
+                <p class="inner-tier__price">$1,500</p>
                 <p class="inner-tier__desc">Direct work when you need deeper diagnostics, advisory, or a more complex situation.</p>
                 <div class="tier-cta-row"><a href="/private-access" class="tier-cta tier-cta--ghost magnetic">Request access</a></div>
               </div>
+        </div>
+        <p class="pricing-flow-section__footer-line">This is where most people realize the gap is bigger than they thought.</p>
+      </section>
 
-            </div>
+      <section class="pricing-flow-section pricing-flow-section--final-push" aria-labelledby="pricing-flow-final-push-title">
+        <h2 id="pricing-flow-final-push-title" class="pricing-flow-section__title">This is why this works</h2>
+        <div class="pricing-final-push">
+          <div class="pricing-final-push__col">
+            <p class="pricing-final-push__label">Before</p>
+            <ul class="tier-bullets pricing-final-push__list">
+              <li>you think</li>
+              <li>you compare</li>
+              <li>you delay</li>
+            </ul>
+          </div>
+          <div class="pricing-final-push__col">
+            <p class="pricing-final-push__label">After</p>
+            <ul class="tier-bullets pricing-final-push__list">
+              <li>you move</li>
+              <li>you escalate</li>
+              <li>you commit</li>
+            </ul>
           </div>
         </div>
-      </details>
+      </section>
 
-      <details class="price-group price-group--custom-build" data-pricing-group data-pricing-cluster="D" id="tier-custom-build" data-sh-map-node="custom">
+      <section class="pricing-flow-section" aria-labelledby="pricing-flow-operator-title" data-pricing-cluster="C">
+        <h2 id="pricing-flow-operator-title" class="pricing-flow-section__title">You don’t do this alone</h2>
+        <p class="pricing-flow-section__sub">You’ve seen how it works. Now you decide how involved I am.</p>
+        <div class="operator-access-tiers">
+              <div class="inner-tier" id="tier-operator-4k">
+                <p class="inner-tier__label inner-tier__label--gold">Operator access</p>
+                <p class="inner-tier__price">$4,000</p>
+                <p class="inner-tier__desc">Focused ongoing support—regular checkpoints, clear priorities, and direct input on what to do next.</p>
+                <div class="tier-cta-row"><a href="/private-access" class="tier-cta tier-cta--ghost magnetic">Discuss this tier</a></div>
+              </div>
+              <div class="inner-tier" id="tier-operator-6k">
+                <p class="inner-tier__label inner-tier__label--gold">Operator access</p>
+                <p class="inner-tier__price">$6,000</p>
+                <p class="inner-tier__desc">Deeper involvement: more surface area, faster iteration, and tighter alignment between strategy and execution.</p>
+                <div class="tier-cta-row"><a href="/private-access" class="tier-cta tier-cta--ghost magnetic">Discuss this tier</a></div>
+              </div>
+              <div class="inner-tier" id="tier-operator-8k">
+                <p class="inner-tier__label inner-tier__label--gold">Operator access</p>
+                <p class="inner-tier__price">$8,000+</p>
+                <p class="inner-tier__desc">Full partnership cadence for when the stakes are high and you need consistent operator-level judgment on the line.</p>
+                <div class="tier-cta-row"><a href="/private-access" class="tier-cta tier-cta--ghost magnetic">Discuss this tier</a></div>
+              </div>
+        </div>
+      </section>
+
+      <section class="pricing-flow-section pricing-flow-section--full-build" aria-labelledby="pricing-flow-full-title" data-pricing-cluster="D">
+        <h2 id="pricing-flow-full-title" class="pricing-flow-section__title">Full control</h2>
+        <p class="pricing-flow-section__sub">This is where everything is built, aligned, and controlled at scale.</p>
+
+        <details class="price-group price-group--custom-build" data-pricing-group data-pricing-cluster="D" id="tier-custom-build" data-sh-map-node="custom">
         <summary>
           <div class="price-group__kicker">D</div>
           <h2 class="price-group__title">Custom builds</h2>
@@ -896,7 +1041,8 @@ html.early-mode body.pricing-page{
             </div>
           </div>
         </div>
-      </details>
+        </details>
+      </section>
 
     </div>
   </div>
