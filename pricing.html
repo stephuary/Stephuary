@@ -38,10 +38,10 @@ try{var h=new Date().getHours();var em=h>=3&&h<7;var gh=h>=4&&h<7;document.docum
   --earth-umber:rgba(72,48,38,0.55);
   --earth-bronze:rgba(118,98,72,0.45);
   --text:#f4ede0;
-  --text-2:#cbc3b4;
-  --text-3:#b5ada2;
-  --text-4:#7d766c;
-  --text-5:#565049;
+  --text-2:#d8d2c8;
+  --text-3:#c9c3b8;
+  --text-4:#9a948a;
+  --text-5:#6a655c;
   --line:rgba(244,237,224,0.08);
   --line-2:rgba(244,237,224,0.05);
   --serif:"Cormorant Garamond",Georgia,serif;
@@ -54,9 +54,15 @@ html,body.pricing-page{
   background:#030201;
   color:var(--text);
   font-family:var(--sans);font-weight:300;
-  font-size:15px;line-height:1.55;min-height:100%;
+  font-size:15px;line-height:1.58;min-height:100%;
   -webkit-font-smoothing:antialiased;
   overflow-x:hidden;
+}
+@media(min-width:769px){
+  #pricing-groups{
+    font-size:16px;
+    line-height:1.6;
+  }
 }
 html.pricing-guided-html{
   scroll-snap-type:y proximity;
@@ -345,10 +351,10 @@ body.pricing-page .pricing-layout__main{transform:translateZ(0);}
 .pricing-entry-card__cta{
   margin-top:14px;
   font-family:var(--mono);
-  font-size:9px;
-  letter-spacing:0.16em;
+  font-size:10px;
+  letter-spacing:0.14em;
   text-transform:uppercase;
-  color:rgba(198,161,91,0.85);
+  color:rgba(212,180,110,0.95);
 }
 .pricing-entry-card:hover .pricing-entry-card__cta{color:var(--gold-hi);}
 .operator-tier--entry{
@@ -356,15 +362,15 @@ body.pricing-page .pricing-layout__main{transform:translateZ(0);}
   opacity:0.96;
 }
 .operator-tier--featured{
-  border-color:rgba(196,163,90,0.32)!important;
-  background:rgba(14,12,10,0.55)!important;
-  box-shadow:0 0 0 1px rgba(196,163,90,0.12),0 10px 36px rgba(0,0,0,0.35),0 0 32px rgba(196,163,90,0.1)!important;
-  transform:scale(1.03);
-  padding:20px 16px 22px!important;
+  border-color:rgba(196,163,90,0.38)!important;
+  background:rgba(14,12,10,0.58)!important;
+  box-shadow:0 0 0 1px rgba(196,163,90,0.14),0 10px 36px rgba(0,0,0,0.35),0 0 32px rgba(196,163,90,0.12)!important;
+  transform:scale(1.01);
+  padding:16px 14px 18px!important;
   z-index:2;
 }
 .operator-tier--exclusive{
-  padding:22px 18px 24px!important;
+  padding:16px 14px 18px!important;
   border-color:rgba(244,237,224,0.12)!important;
   background:rgba(5,5,5,0.55)!important;
   box-shadow:0 8px 28px rgba(0,0,0,0.3)!important;
@@ -452,7 +458,7 @@ details.price-group--pricing-field-focus > summary{
   grid-template-columns:repeat(3,1fr);
   gap:24px;
   width:100%;
-  max-width:900px;
+  max-width:1024px;
   margin:0 auto;
 }
 @media(max-width:768px){
@@ -468,18 +474,22 @@ details.price-group--pricing-field-focus > summary{
   border-bottom:1px solid var(--line);
 }
 .pricing-entry-foot{
-  font-size:13px;
-  color:var(--text-3);
-  line-height:1.5;
-  max-width:48ch;
+  font-size:clamp(15px,1rem,16px);
+  color:rgba(200,194,182,0.9);
+  line-height:1.58;
+  max-width:52ch;
   margin:20px 0 0;
   font-style:italic;
 }
 .pricing-tier-more__body{
   margin:0;
-  font-size:13px;
-  line-height:1.55;
-  color:var(--text-3);
+  font-size:clamp(15px,0.98rem,16px);
+  line-height:1.58;
+  color:rgba(214,208,196,0.92);
+}
+.operator-access-tiers .inner-tier:has(.pricing-tier-more--operator[open]){
+  border-color:rgba(196,163,90,0.3);
+  box-shadow:0 0 0 1px rgba(196,163,90,0.08),0 8px 28px rgba(0,0,0,0.28);
 }
 .pricing-tier-more{
   margin-top:10px;
@@ -488,18 +498,77 @@ details.price-group--pricing-field-focus > summary{
 }
 .pricing-tier-more summary{
   font-family:var(--mono);
-  font-size:8px;
-  letter-spacing:0.12em;
+  font-size:11px;
+  letter-spacing:0.1em;
   text-transform:uppercase;
-  color:var(--text-5);
+  color:var(--text-4);
   cursor:pointer;
   list-style:none;
-  padding:6px 0;
+  padding:8px 0;
+}
+@media(max-width:768px){
+  .pricing-tier-more summary{font-size:10px;}
 }
 .pricing-tier-more summary::-webkit-details-marker{display:none;}
 .pricing-tier-more[open] summary{color:var(--text-3);}
+.pricing-tier-more__anim{
+  display:grid;
+  grid-template-rows:0fr;
+  transition:grid-template-rows .34s cubic-bezier(0.22,1,0.36,1);
+}
+.pricing-tier-more[open] .pricing-tier-more__anim{grid-template-rows:1fr;}
+.pricing-tier-more__body-inner{
+  overflow:hidden;
+  min-height:0;
+}
+.pricing-tier-more[open] .pricing-tier-more__body-inner{overflow:visible;}
+.pricing-tier-card-more{
+  margin-top:12px;
+  border:1px solid rgba(244,237,224,0.1);
+  border-radius:var(--r);
+  background:rgba(6,6,6,0.42);
+  transition:border-color .28s ease, box-shadow .28s ease, background .28s ease;
+}
+.pricing-tier-card-more[open]{
+  border-color:rgba(196,163,90,0.32);
+  box-shadow:0 0 0 1px rgba(196,163,90,0.08),0 8px 28px rgba(0,0,0,0.28);
+  background:rgba(8,7,6,0.55);
+}
+.pricing-tier-card-more > summary.pricing-tier-card-more__summary{
+  list-style:none;
+  cursor:pointer;
+  padding:10px 14px;
+  font-family:var(--mono);
+  font-size:11px;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  color:var(--text-4);
+  line-height:1.35;
+}
+@media(max-width:768px){
+  .pricing-tier-card-more > summary.pricing-tier-card-more__summary{font-size:10px;}
+}
+.pricing-tier-card-more > summary::-webkit-details-marker{display:none;}
+.pricing-tier-card-more[open] > summary.pricing-tier-card-more__summary{color:var(--text-3);}
+.pricing-tier-card-more__anim{
+  display:grid;
+  grid-template-rows:0fr;
+  transition:grid-template-rows .36s cubic-bezier(0.22,1,0.36,1);
+}
+.pricing-tier-card-more[open] .pricing-tier-card-more__anim{grid-template-rows:1fr;}
+.pricing-tier-card-more__body{
+  overflow:hidden;
+  min-height:0;
+  padding:0 14px 14px;
+}
+.pricing-tier-card-more[open] .pricing-tier-card-more__body{overflow:visible;}
+.pricing-offer-card:has(.pricing-tier-card-more[open]){
+  border-color:rgba(196,163,90,0.28);
+  box-shadow:0 0 0 1px rgba(196,163,90,0.06),0 10px 36px rgba(0,0,0,0.28);
+}
 .pricing-snapshot-wrap{
-  max-width:520px;
+  width:100%;
+  max-width:720px;
   margin:0 auto;
 }
 .pricing-snapshot-wrap .inner-tier{
@@ -512,8 +581,11 @@ details.price-group--pricing-field-focus > summary{
 .pricing-install-split{
   display:grid;
   grid-template-columns:1fr 1fr;
-  gap:60px;
+  gap:clamp(40px,4vw,56px);
   align-items:start;
+}
+.pricing-install-split__col{
+  min-width:0;
 }
 @media(max-width:900px){
   .pricing-install-split{grid-template-columns:1fr;}
@@ -539,7 +611,8 @@ details.price-group--pricing-field-focus > summary{
 .operator-access-tiers{
   display:grid;
   grid-template-columns:repeat(3,minmax(0,1fr));
-  gap:16px;
+  gap:clamp(16px,2vw,24px);
+  width:100%;
   max-width:100%;
 }
 @media(max-width:900px){
@@ -553,9 +626,17 @@ details.price-group--pricing-field-focus > summary{
   display:flex;
   flex-direction:column;
   min-height:100%;
+  min-width:0;
   transition:border-color .35s ease, box-shadow .4s ease, transform .4s cubic-bezier(0.22,1,0.36,1);
 }
-.operator-access-tiers .tier-cta-row{margin-top:auto;}
+.operator-tier__lower{
+  margin-top:auto;
+  width:100%;
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+}
+.operator-access-tiers .tier-cta-row{margin-top:0;}
 .operator-access-tiers .inner-tier:hover{
   border-color:rgba(196,163,90,0.2);
 }
@@ -564,6 +645,10 @@ details.price-group--pricing-field-focus > summary{
 }
 .pricing-full-build-shell{
   padding:8px 0 24px;
+  width:100%;
+  max-width:1120px;
+  margin-left:auto;
+  margin-right:auto;
 }
 .pricing-full-build-shell .pricing-flow-section__sub{
   max-width:52ch;
@@ -578,12 +663,13 @@ details.price-group--pricing-field-focus > summary{
   line-height:1.12;
   margin:0 0 10px;
   max-width:42ch;
+  text-shadow:0 1px 18px rgba(3,2,1,0.75),0 0 1px rgba(3,2,1,0.9);
 }
 .pricing-flow-section__sub{
-  font-size:13px;
-  color:var(--text-3);
-  line-height:1.5;
-  max-width:48ch;
+  font-size:clamp(15px,1rem,16px);
+  color:rgba(214,208,196,0.92);
+  line-height:1.58;
+  max-width:52ch;
   margin:0 0 16px;
 }
 .pricing-flow-section__cards{
@@ -627,14 +713,14 @@ details.price-group--pricing-field-focus > summary{
   padding-bottom:clamp(52px,7vw,84px);
 }
 .pricing-installation-shell{
-  max-width:min(1120px, 100%);
+  max-width:min(1320px, 100%);
   margin:0 auto;
   width:100%;
 }
 @media(min-width:1080px){
   .pricing-flow-section--installation{
-    padding-left:max(32px, calc(50vw - 560px));
-    padding-right:max(32px, calc(50vw - 560px));
+    padding-left:max(32px, calc(50vw - 660px));
+    padding-right:max(32px, calc(50vw - 660px));
   }
 }
 .pricing-flow-section--installation .pricing-flow-section__title{
@@ -642,7 +728,7 @@ details.price-group--pricing-field-focus > summary{
   max-width:52ch;
 }
 .pricing-flow-section--installation .pricing-flow-section__sub{
-  font-size:14px;
+  font-size:clamp(15px,1rem,16px);
   max-width:52ch;
   margin-bottom:20px;
 }
@@ -717,10 +803,10 @@ details.price-group--pricing-field-focus > summary{
 /* Scroll focus + rail + sticky (same tokens) */
 .pricing-layout-inner{
   width:100%;
-  max-width:1200px;
+  max-width:1320px;
   margin:0 auto;
-  padding-left:40px;
-  padding-right:40px;
+  padding-left:48px;
+  padding-right:48px;
   box-sizing:border-box;
   display:flex;
   align-items:flex-start;
@@ -758,12 +844,15 @@ details.price-group--pricing-field-focus > summary{
   position:relative;
   padding-left:14px;
   font-family:var(--mono);
-  font-size:8px;
-  letter-spacing:0.1em;
+  font-size:11px;
+  letter-spacing:0.08em;
   text-transform:uppercase;
-  color:var(--text-5);
+  color:rgba(122,116,106,0.95);
   line-height:1.35;
   transition:color .35s ease, opacity .35s ease;
+}
+@media(max-width:768px){
+  .pricing-flow-rail__item{font-size:10px;letter-spacing:0.07em;}
 }
 .pricing-flow-rail__item::before{
   content:"";
@@ -819,8 +908,14 @@ details.price-group--pricing-field-focus > summary{
 .pricing-decision-split{
   display:grid;
   grid-template-columns:1fr 1fr;
-  gap:60px;
+  gap:clamp(40px,4vw,56px);
   align-items:start;
+  width:100%;
+  max-width:1180px;
+  margin:0 auto;
+}
+.pricing-decision-split > .inner-tier{
+  min-width:0;
 }
 @media(max-width:820px){
   .pricing-decision-split{grid-template-columns:1fr;}
@@ -852,7 +947,7 @@ details.price-group--pricing-field-focus > summary{
   display:flex;
   flex-direction:column;
   gap:12px;
-  max-width:min(100%,36rem);
+  max-width:min(100%,54rem);
   margin:8px 0 20px;
 }
 .pricing-transform-pair{
@@ -878,6 +973,10 @@ details.price-group--pricing-field-focus > summary{
     opacity:1;
     transform:none;
     animation:none;
+  }
+  .pricing-tier-card-more__anim,
+  .pricing-tier-more__anim{
+    transition:none!important;
   }
 }
 .pricing-transform-pair__before{
@@ -948,18 +1047,18 @@ details.price-group--pricing-field-focus > summary{
   }
 }
 .pricing-flow-micro{
-  font-size:13px;
-  color:var(--text-3);
-  line-height:1.55;
-  max-width:48ch;
+  font-size:clamp(15px,1rem,16px);
+  color:rgba(200,194,182,0.9);
+  line-height:1.58;
+  max-width:52ch;
   margin:18px 0 0;
   font-style:italic;
 }
 .pricing-flow-bridge{
-  font-size:14px;
-  color:var(--text-3);
-  line-height:1.5;
-  max-width:48ch;
+  font-size:clamp(15px,1rem,17px);
+  color:rgba(206,200,188,0.9);
+  line-height:1.58;
+  max-width:52ch;
   margin:0 0 24px;
 }
 .pricing-flow-bridge--operator{
@@ -1398,7 +1497,11 @@ details.price-group--pricing-field-focus > summary{
   opacity:0;transform:translateY(6px);
   transition:opacity .32s ease .04s,transform .32s cubic-bezier(0.22,1,0.36,1) .04s;
 }
-.price-group[open] .price-group__inner{opacity:1;transform:translateY(0);}
+.price-group[open] .price-group__inner{
+  opacity:1;
+  transform:translateY(0);
+  overflow:visible;
+}
 
 .price-group__pad{
   padding:0 16px 14px;
@@ -1432,41 +1535,47 @@ details.price-group--pricing-field-focus > summary{
   transform:translateY(-4px) scale(1.02);
 }
 .inner-tier__label{
-  font-family:var(--mono);font-size:8px;letter-spacing:0.18em;text-transform:uppercase;
-  color:rgba(188,178,158,0.92);margin-bottom:4px;
+  font-family:var(--mono);font-size:11px;letter-spacing:0.14em;text-transform:uppercase;
+  color:rgba(206,198,182,0.94);margin-bottom:4px;
+}
+@media(max-width:768px){
+  .inner-tier__label{font-size:10px;letter-spacing:0.12em;}
 }
 .inner-tier__label--gold{color:var(--gold-dim);}
 .inner-tier__price{
   font-family:var(--serif);font-size:clamp(22px,3vw,30px);font-weight:300;color:var(--gold);
   letter-spacing:-0.02em;line-height:1.05;margin-bottom:6px;
 }
-.inner-tier__desc{font-size:13px;color:var(--text-3);line-height:1.45;margin-bottom:10px;max-width:48ch;}
+.inner-tier__desc{font-size:clamp(15px,1rem,17px);color:var(--text-2);line-height:1.58;margin-bottom:10px;max-width:52ch;}
 .inner-tier__path-note{font-size:12px;color:var(--text-4);line-height:1.5;margin:0 0 4px;max-width:48ch;}
 .inner-tier__sub{
-  font-family:var(--mono);font-size:8px;letter-spacing:0.14em;text-transform:uppercase;
-  color:var(--gold-dim);margin:10px 0 6px;
+  font-family:var(--mono);font-size:11px;letter-spacing:0.12em;text-transform:uppercase;
+  color:rgba(196,163,90,0.88);margin:10px 0 6px;
+}
+@media(max-width:768px){
+  .inner-tier__sub{font-size:10px;}
 }
 .tier-bullets{
   list-style:none;margin:0 0 10px;padding:0;border-top:1px solid var(--line-2);
 }
 .tier-bullets li{
   padding:7px 0 7px 12px;border-bottom:1px solid var(--line-2);
-  font-size:13px;color:var(--text-2);line-height:1.45;position:relative;
+  font-size:clamp(15px,0.98rem,16px);color:var(--text-2);line-height:1.55;position:relative;
 }
 .tier-bullets li::before{
   content:"";position:absolute;left:0;top:0.62em;width:3px;height:3px;border-radius:1px;
   background:rgba(92,58,42,0.95);opacity:0.9;
 }
-.deliver-note{font-size:12px;color:var(--text-4);margin:6px 0 4px;line-height:1.45;}
+.deliver-note{font-size:clamp(14px,0.95rem,15px);color:var(--text-3);margin:6px 0 4px;line-height:1.55;}
 .note-bridge{
-  font-size:12px;color:var(--text-3);margin-top:12px;padding-top:10px;
-  border-top:1px solid rgba(59,13,13,0.25);line-height:1.5;max-width:48ch;
+  font-size:clamp(14px,0.95rem,15px);color:rgba(206,200,188,0.92);margin-top:12px;padding-top:10px;
+  border-top:1px solid rgba(59,13,13,0.25);line-height:1.55;max-width:52ch;
 }
 
 .tier-cta{
   display:inline-flex;align-items:center;justify-content:center;
   min-height:42px;padding:10px 16px;border-radius:var(--r);
-  font-family:var(--mono);font-size:9px;letter-spacing:0.16em;text-transform:uppercase;
+  font-family:var(--mono);font-size:10px;letter-spacing:0.14em;text-transform:uppercase;
   font-weight:400;cursor:pointer;
   transition:transform .15s ease,background .2s ease,box-shadow .25s ease;
   text-decoration:none;margin-top:8px;
@@ -1482,9 +1591,9 @@ details.price-group--pricing-field-focus > summary{
   box-shadow:0 8px 28px rgba(0,0,0,0.5);
 }
 .tier-cta--ghost{
-  background:transparent;border:1px solid var(--line);color:var(--text-3);margin-left:8px;
+  background:transparent;border:1px solid rgba(244,237,224,0.14);color:rgba(228,222,210,0.92);margin-left:8px;
 }
-.tier-cta--ghost:hover{border-color:rgba(196,163,90,0.35);color:var(--text-2);}
+.tier-cta--ghost:hover{border-color:rgba(196,163,90,0.35);color:var(--text);}
 .tier-cta:active{transform:scale(0.98);}
 .tier-cta-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;}
 
@@ -1537,6 +1646,10 @@ body.pricing-page.fe-env--s3 .fe-env-tier2{
   transition:grid-template-rows .48s cubic-bezier(0.22,1,0.36,1),opacity .45s ease .05s,visibility 0s;
 }
 .fe-env-tier2-inner{min-height:0;overflow:hidden;}
+body.pricing-page.fe-env--s2 .fe-env-tier2-inner,
+body.pricing-page.fe-env--s3 .fe-env-tier2-inner{
+  overflow:visible;
+}
 body.pricing-page.fe-env--s2 .fe-env-tier1 .fe-env__s1-only,
 body.pricing-page.fe-env--s3 .fe-env-tier1 .fe-env__s1-only{display:none;}
 .fe-env-tier1{position:relative;transition:opacity .3s ease;}
@@ -1759,6 +1872,11 @@ html.early-mode body.pricing-page{
                 <p class="inner-tier__label inner-tier__label--gold">Direction Lock</p>
                 <p class="inner-tier__price">$179</p>
                 <p class="inner-tier__desc">What to pursue — and what to ignore.</p>
+                <div class="tier-cta-row"><a href="/focused-review" class="tier-cta tier-cta--ghost magnetic">Lock Direction</a></div>
+                <details class="pricing-tier-card-more">
+                  <summary class="pricing-tier-card-more__summary">Details &amp; deliverables</summary>
+                  <div class="pricing-tier-card-more__anim">
+                    <div class="pricing-tier-card-more__body">
                 <p class="inner-tier__sub">You’ll get</p>
                 <ul class="tier-bullets">
                   <li>one clear direction</li>
@@ -1767,21 +1885,36 @@ html.early-mode body.pricing-page{
                 </ul>
                 <details class="pricing-tier-more">
                   <summary>Full deliverables</summary>
+                  <div class="pricing-tier-more__anim">
+                    <div class="pricing-tier-more__body-inner">
                   <ul class="tier-bullets">
                     <li>next steps for the next 7–14 days</li>
                   </ul>
+                    </div>
+                  </div>
                 </details>
                 <details class="pricing-tier-more">
                   <summary>Delivery &amp; timing</summary>
+                  <div class="pricing-tier-more__anim">
+                    <div class="pricing-tier-more__body-inner">
                   <p class="deliver-note">Delivered as: a short written decision brief.</p>
                   <p class="deliver-note">Delivered within 48 hours.</p>
+                    </div>
+                  </div>
                 </details>
-                <div class="tier-cta-row"><a href="/focused-review" class="tier-cta tier-cta--ghost magnetic">Lock Direction</a></div>
+                    </div>
+                  </div>
+                </details>
               </div>
               <div class="inner-tier pricing-offer-card pricing-guided-panel" id="tier-concept" data-tier-id="concept-build" data-sh-map-node="concept" data-guided-panel data-guided-stage="build">
                 <p class="inner-tier__label inner-tier__label--gold">Concept Build</p>
                 <p class="inner-tier__price">$379</p>
                 <p class="inner-tier__desc">A usable concept from your direction.</p>
+                <div class="tier-cta-row"><a href="/private-access" class="tier-cta tier-cta--ghost magnetic">Build Concept</a></div>
+                <details class="pricing-tier-card-more">
+                  <summary class="pricing-tier-card-more__summary">Details &amp; deliverables</summary>
+                  <div class="pricing-tier-card-more__anim">
+                    <div class="pricing-tier-card-more__body">
                 <p class="inner-tier__sub">You’ll get</p>
                 <ul class="tier-bullets">
                   <li>2–3 viable concept directions</li>
@@ -1790,6 +1923,8 @@ html.early-mode body.pricing-page{
                 </ul>
                 <details class="pricing-tier-more">
                   <summary>Full deliverables</summary>
+                  <div class="pricing-tier-more__anim">
+                    <div class="pricing-tier-more__body-inner">
                   <ul class="tier-bullets">
                     <li>how to start immediately</li>
                     <li>where it fits in the market</li>
@@ -1801,12 +1936,20 @@ html.early-mode body.pricing-page{
                     <li>a simple execution outline for the first 7–14 days</li>
                   </ul>
                   <p class="deliver-note">Delivered within 72 hours.</p>
+                    </div>
+                  </div>
                 </details>
                 <details class="pricing-tier-more">
                   <summary>How this fits with Direction Lock</summary>
+                  <div class="pricing-tier-more__anim">
+                    <div class="pricing-tier-more__body-inner">
                   <p class="note-bridge">Direction Lock defines what to focus on. Concept Build turns it into something you can use.</p>
+                    </div>
+                  </div>
                 </details>
-                <div class="tier-cta-row"><a href="/private-access" class="tier-cta tier-cta--ghost magnetic">Build Concept</a></div>
+                    </div>
+                  </div>
+                </details>
               </div>
         </div>
       </section>
@@ -1823,6 +1966,8 @@ html.early-mode body.pricing-page{
                 <div class="tier-cta-row pricing-snapshot-cta"><a href="/snapshot" class="tier-cta tier-cta--ghost magnetic">Get Snapshot</a></div>
                 <details class="pricing-tier-more pricing-snapshot-expand">
                   <summary>What you get</summary>
+                  <div class="pricing-tier-more__anim">
+                    <div class="pricing-tier-more__body-inner">
                 <p class="inner-tier__sub">You’ll get</p>
                 <ul class="tier-bullets">
                   <li>where time and money are being lost</li>
@@ -1833,6 +1978,8 @@ html.early-mode body.pricing-page{
                   <ul class="tier-bullets">
                     <li>clear direction on what to do next</li>
                   </ul>
+                    </div>
+                  </div>
                 </details>
               </div>
         </div>
@@ -1945,31 +2092,49 @@ html.early-mode body.pricing-page{
                 <p class="inner-tier__label inner-tier__label--gold">Operator access</p>
                 <p class="inner-tier__price">$4,000</p>
                 <p class="inner-tier__desc">Ongoing support and clear priorities.</p>
-                <details class="pricing-tier-more">
-                  <summary>More</summary>
-                  <p class="inner-tier__desc pricing-tier-more__body">Focused ongoing support—regular checkpoints, clear priorities, and direct input on what to do next.</p>
-                </details>
+                <div class="operator-tier__lower">
                 <div class="tier-cta-row"><a href="/private-access" class="tier-cta tier-cta--ghost magnetic">Discuss this tier</a></div>
+                <details class="pricing-tier-more pricing-tier-more--operator">
+                  <summary>More detail</summary>
+                  <div class="pricing-tier-more__anim">
+                    <div class="pricing-tier-more__body-inner">
+                  <p class="inner-tier__desc pricing-tier-more__body">Focused ongoing support—regular checkpoints, clear priorities, and direct input on what to do next.</p>
+                    </div>
+                  </div>
+                </details>
+                </div>
               </div>
               <div class="inner-tier operator-tier--featured" id="tier-operator-6k">
                 <p class="inner-tier__label inner-tier__label--gold">Operator access</p>
                 <p class="inner-tier__price">$6,000</p>
                 <p class="inner-tier__desc">Deeper involvement and faster iteration.</p>
-                <details class="pricing-tier-more">
-                  <summary>More</summary>
-                  <p class="inner-tier__desc pricing-tier-more__body">Deeper involvement: more surface area, faster iteration, and tighter alignment between strategy and execution.</p>
-                </details>
+                <div class="operator-tier__lower">
                 <div class="tier-cta-row"><a href="/private-access" class="tier-cta tier-cta--ghost magnetic">Discuss this tier</a></div>
+                <details class="pricing-tier-more pricing-tier-more--operator">
+                  <summary>More detail</summary>
+                  <div class="pricing-tier-more__anim">
+                    <div class="pricing-tier-more__body-inner">
+                  <p class="inner-tier__desc pricing-tier-more__body">Deeper involvement: more surface area, faster iteration, and tighter alignment between strategy and execution.</p>
+                    </div>
+                  </div>
+                </details>
+                </div>
               </div>
               <div class="inner-tier operator-tier--exclusive" id="tier-operator-8k">
                 <p class="inner-tier__label inner-tier__label--gold">Operator access</p>
                 <p class="inner-tier__price">$8,000+</p>
                 <p class="inner-tier__desc">Full partnership when stakes are high.</p>
-                <details class="pricing-tier-more">
-                  <summary>More</summary>
-                  <p class="inner-tier__desc pricing-tier-more__body">Full partnership cadence for when the stakes are high and you need consistent operator-level judgment on the line.</p>
-                </details>
+                <div class="operator-tier__lower">
                 <div class="tier-cta-row"><a href="/private-access" class="tier-cta tier-cta--ghost magnetic">Discuss this tier</a></div>
+                <details class="pricing-tier-more pricing-tier-more--operator">
+                  <summary>More detail</summary>
+                  <div class="pricing-tier-more__anim">
+                    <div class="pricing-tier-more__body-inner">
+                  <p class="inner-tier__desc pricing-tier-more__body">Full partnership cadence for when the stakes are high and you need consistent operator-level judgment on the line.</p>
+                    </div>
+                  </div>
+                </details>
+                </div>
               </div>
         </div>
       </section>
@@ -2190,6 +2355,40 @@ html.early-mode body.pricing-page{
         tryFeEngage(2, false);
       }
     });
+  });
+
+  function bindExclusiveWithin(root, selector) {
+    var r = document.querySelector(root);
+    if (!r) return;
+    r.addEventListener(
+      'toggle',
+      function (e) {
+        var t = e.target;
+        if (!t || t.tagName !== 'DETAILS' || !t.matches(selector)) return;
+        if (!t.open) return;
+        r.querySelectorAll(selector).forEach(function (d) {
+          if (d !== t) d.open = false;
+        });
+      },
+      true
+    );
+  }
+  bindExclusiveWithin('#pricing-flow-decision', 'details.pricing-tier-card-more');
+  bindExclusiveWithin('.operator-access-tiers', 'details.pricing-tier-more--operator');
+
+  document.querySelectorAll('.pricing-offer-card').forEach(function (card) {
+    card.addEventListener(
+      'toggle',
+      function (e) {
+        var t = e.target;
+        if (!t || t.tagName !== 'DETAILS' || !t.classList.contains('pricing-tier-more')) return;
+        if (!t.open) return;
+        card.querySelectorAll('details.pricing-tier-more').forEach(function (d) {
+          if (d !== t) d.open = false;
+        });
+      },
+      true
+    );
   });
 
   function getFeState() {
