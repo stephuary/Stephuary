@@ -1820,6 +1820,142 @@
       box-shadow: 0 8px 40px rgba(58, 107, 255, 0.28);
     }
 
+    .home-install-anchor {
+      font-size: 14px;
+      line-height: 1.55;
+      color: var(--text-3);
+      max-width: 48ch;
+      margin: 0 auto 28px;
+      padding: 0 40px;
+      text-align: left;
+    }
+    @media (max-width: 640px) {
+      .home-install-anchor {
+        padding: 0 20px;
+        margin-bottom: 32px;
+      }
+    }
+
+    .home-hesitation-toast {
+      position: fixed;
+      left: 16px;
+      bottom: calc(20px + env(safe-area-inset-bottom));
+      z-index: 10002;
+      max-width: min(340px, calc(100vw - 32px));
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px 12px;
+      padding: 28px 40px 12px 16px;
+      background: rgba(10, 9, 8, 0.94);
+      border: 1px solid rgba(244, 237, 224, 0.1);
+      border-radius: var(--home-r);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
+      transition: opacity 0.35s ease, transform 0.35s ease;
+    }
+    .home-hesitation-toast[hidden] {
+      display: none !important;
+    }
+    .home-hesitation-toast__text {
+      flex: 1 1 200px;
+      margin: 0;
+      font-size: 12px;
+      line-height: 1.45;
+      color: var(--text-2);
+      max-width: 32ch;
+    }
+    .home-hesitation-toast__cta {
+      margin-top: 0 !important;
+      min-height: 38px;
+      padding: 8px 12px;
+      font-size: 8px;
+    }
+    .home-hesitation-toast__close {
+      position: absolute;
+      top: 6px;
+      right: 8px;
+      width: 28px;
+      height: 28px;
+      border: none;
+      background: transparent;
+      color: var(--text-3);
+      font-size: 18px;
+      line-height: 1;
+      cursor: pointer;
+      border-radius: 2px;
+      transition: color 0.2s ease;
+    }
+    .home-hesitation-toast__close:hover {
+      color: var(--text);
+    }
+
+    .home-exit-sheet {
+      position: fixed;
+      right: max(16px, env(safe-area-inset-right));
+      bottom: max(16px, env(safe-area-inset-bottom));
+      z-index: 10003;
+      max-width: min(360px, calc(100vw - 32px));
+    }
+    .home-exit-sheet[hidden] {
+      display: none !important;
+    }
+    .home-exit-sheet__panel {
+      position: relative;
+      padding: 16px 40px 16px 16px;
+      background: rgba(10, 9, 8, 0.96);
+      border: 1px solid rgba(244, 237, 224, 0.12);
+      border-radius: var(--home-r);
+      box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5);
+    }
+    .home-exit-sheet__title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(17px, 2.2vw, 20px);
+      font-weight: 300;
+      color: var(--text);
+      margin: 0 0 10px;
+      letter-spacing: -0.02em;
+    }
+    .home-exit-sheet__body {
+      font-size: 13px;
+      line-height: 1.5;
+      color: var(--text-3);
+      margin: 0 0 14px;
+      max-width: 42ch;
+    }
+    .home-exit-sheet__cta {
+      margin-top: 0 !important;
+    }
+    .home-exit-sheet__close {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      width: 28px;
+      height: 28px;
+      border: none;
+      background: transparent;
+      color: var(--text-3);
+      font-size: 18px;
+      line-height: 1;
+      cursor: pointer;
+      transition: color 0.2s ease;
+    }
+    .home-exit-sheet__close:hover {
+      color: var(--text);
+    }
+    @media (max-width: 640px) {
+      .home-exit-sheet {
+        left: 16px;
+        right: 16px;
+        max-width: none;
+      }
+    }
+
+    .home-installation__replaces {
+      margin-top: 14px;
+      padding-top: 12px;
+      border-top: 1px solid var(--home-line-2);
+    }
+
     @media (max-width: 767px) {
       #hero {
         min-height: min(100dvh, 760px);
@@ -2062,10 +2198,12 @@
 
       <p class="home-flow-bridge" id="home-pre-install">If you already know what needs to happen, skip the analysis. Apply it.</p>
 
+      <p class="home-install-anchor" id="home-install-anchor">Most people spend weeks trying to figure this out. Nothing changes until it’s applied.</p>
+
       <section id="home-installation" class="home-flow-section home-flow-section--installation" data-home-stage="apply" data-sh-flow-section>
         <h2 class="home-flow-section__title">Make it work</h2>
-        <p class="home-flow-section__sub">You don’t need more ideas. You need the right structure, applied correctly.</p>
         <p class="home-installation__hook">You can figure this out over time. Or you can fix it now.</p>
+        <p class="home-flow-section__sub">You don’t need more ideas. You need the right structure, applied correctly.</p>
         <div class="inner-tier inner-tier--installation-hero" id="home-installation-card">
           <p class="inner-tier__label inner-tier__label--gold">Installation</p>
           <p class="inner-tier__price">$1,500</p>
@@ -2086,26 +2224,26 @@
             <p class="inner-tier__sub">What this is</p>
             <p class="inner-tier__desc">Not a document.<br />Not theory.</p>
             <p class="inner-tier__desc">A live system built around your situation.</p>
-          </div>
-          <div class="home-installation__replaces">
-            <p class="inner-tier__sub">What this replaces</p>
-            <ul class="tier-bullets">
-              <li>weeks of trial and error</li>
-              <li>underpriced offers</li>
-              <li>unclear positioning</li>
-              <li>stalled decisions</li>
-            </ul>
+            <div class="home-installation__replaces">
+              <p class="inner-tier__sub">What this replaces</p>
+              <ul class="tier-bullets">
+                <li>weeks of trial and error</li>
+                <li>underpriced offers</li>
+                <li>unclear positioning</li>
+                <li>stalled decisions</li>
+              </ul>
+            </div>
           </div>
           <div class="tier-cta-row home-installation__cta-row">
             <a href="/private-access" class="tier-cta tier-cta--pri magnetic" id="home-install-cta">Install the system</a>
           </div>
-          <p class="home-installation__under-cta">You can keep thinking about it. Or you can see it working.</p>
           <p class="home-installation__under-cta home-installation__under-cta--strong">If this doesn’t change how you see what you’re doing, you shouldn’t continue.</p>
+          <p class="home-installation__under-cta">You can keep thinking about it. Or you can see it working.</p>
         </div>
         <p class="home-flow-section__footer-line">This is where most people realize the gap is bigger than they thought.</p>
       </section>
 
-      <p class="home-flow-bridge home-flow-bridge--hesitation" id="home-post-install">This is usually where people hesitate. Not because it’s unclear. Because it works.</p>
+      <p class="home-flow-bridge home-flow-bridge--hesitation" id="home-post-install" hidden>This is usually where people hesitate. Not because it’s unclear. Because it works.</p>
 
       <section id="home-operator" class="home-flow-section" data-home-stage="access" data-sh-flow-section>
         <h2 class="home-flow-section__title">You don’t do this alone</h2>
@@ -2168,6 +2306,21 @@
 
     <div class="home-sticky-cta" id="home-sticky-cta" hidden>
       <a href="#home-installation" class="btn btn--pri home-sticky-cta__link" id="home-sticky-cta-link">Skip ahead → Installation</a>
+    </div>
+
+    <div class="home-hesitation-toast" id="home-scroll-pause-hint" hidden role="status" aria-live="polite">
+      <p class="home-hesitation-toast__text">Still figuring it out? Go straight to Installation.</p>
+      <a href="/private-access" class="tier-cta tier-cta--pri home-hesitation-toast__cta magnetic">Install the system</a>
+      <button type="button" class="home-hesitation-toast__close" id="home-scroll-pause-dismiss" aria-label="Dismiss">×</button>
+    </div>
+
+    <div class="home-exit-sheet" id="home-exit-intent" hidden>
+      <div class="home-exit-sheet__panel" role="dialog" aria-modal="false" aria-labelledby="home-exit-title">
+        <button type="button" class="home-exit-sheet__close" id="home-exit-dismiss" aria-label="Close">×</button>
+        <h3 class="home-exit-sheet__title" id="home-exit-title">Before you leave</h3>
+        <p class="home-exit-sheet__body">If you already know something isn’t working, don’t leave with the same problem. Start where things actually change.</p>
+        <a href="#home-installation" class="tier-cta tier-cta--pri home-exit-sheet__cta magnetic">Go to Installation</a>
+      </div>
     </div>
 
     <section class="home-origin home-origin--finale" id="home-origin" aria-label="Stephuary" data-sh-flow-section>
@@ -3106,6 +3259,185 @@
         window.addEventListener('scroll', updateSticky, { passive: true });
         window.addEventListener('resize', updateSticky, { passive: true });
         updateSticky();
+      })();
+
+      (function homeHesitationAnchors() {
+        var SK_PAUSE = 'home_pause_hint_dismissed';
+        var SK_EXIT = 'home_exit_intent_shown';
+        var SK_INSTALL = 'home_install_cta_clicked';
+
+        function installMarked() {
+          try {
+            return sessionStorage.getItem(SK_INSTALL) === '1';
+          } catch (e) {
+            return false;
+          }
+        }
+
+        function markInstallClicked() {
+          try {
+            sessionStorage.setItem(SK_INSTALL, '1');
+          } catch (e) {}
+        }
+
+        var installCta = document.getElementById('home-install-cta');
+        if (installCta) {
+          installCta.addEventListener('click', markInstallClicked);
+        }
+
+        var stickyLinkEl = document.getElementById('home-sticky-cta-link');
+        if (stickyLinkEl) {
+          stickyLinkEl.addEventListener('click', function () {
+            if (stickyLinkEl.getAttribute('href') === '/private-access') markInstallClicked();
+          });
+        }
+
+        var postInstall = document.getElementById('home-post-install');
+        var operatorSec = document.getElementById('home-operator');
+        if (postInstall && operatorSec && 'IntersectionObserver' in window) {
+          var postGate = false;
+          var ioPost = new IntersectionObserver(
+            function (entries) {
+              if (postGate) return;
+              if (installMarked()) return;
+              entries.forEach(function (en) {
+                if (en.isIntersecting && en.intersectionRatio > 0.12) {
+                  postGate = true;
+                  postInstall.removeAttribute('hidden');
+                  ioPost.disconnect();
+                }
+              });
+            },
+            { threshold: [0, 0.1, 0.18], rootMargin: '0px 0px -8% 0px' }
+          );
+          ioPost.observe(operatorSec);
+        }
+
+        var pauseHint = document.getElementById('home-scroll-pause-hint');
+        var pauseDismiss = document.getElementById('home-scroll-pause-dismiss');
+        var buildSec = document.getElementById('home-build');
+        var diagSec = document.getElementById('home-diagnose');
+        var pauseTimer = null;
+        var PAUSE_MS = 4600;
+
+        function pauseDismissed() {
+          try {
+            return sessionStorage.getItem(SK_PAUSE) === '1';
+          } catch (e) {
+            return false;
+          }
+        }
+
+        function inPauseZone() {
+          var vh = window.innerHeight || 600;
+          var band = vh * 0.42;
+          function hit(sec) {
+            if (!sec) return false;
+            var r = sec.getBoundingClientRect();
+            return r.top < band && r.bottom > vh * 0.28;
+          }
+          return hit(buildSec) || hit(diagSec);
+        }
+
+        function hidePauseHint() {
+          if (pauseHint) pauseHint.hidden = true;
+          if (pauseTimer) {
+            window.clearTimeout(pauseTimer);
+            pauseTimer = null;
+          }
+        }
+
+        function armPauseTimer() {
+          if (pauseDismissed() || !pauseHint || pauseHint.hidden === false) return;
+          if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+          if (pauseTimer) window.clearTimeout(pauseTimer);
+          pauseTimer = null;
+          if (!inPauseZone()) return;
+          pauseTimer = window.setTimeout(function () {
+            pauseTimer = null;
+            if (!inPauseZone() || pauseDismissed()) return;
+            if (pauseHint) pauseHint.hidden = false;
+          }, PAUSE_MS);
+        }
+
+        function onScrollPauseArm() {
+          if (pauseDismissed() || !pauseHint || pauseHint.hidden === false) return;
+          armPauseTimer();
+        }
+
+        window.addEventListener('scroll', onScrollPauseArm, { passive: true });
+
+        if (pauseDismiss) {
+          pauseDismiss.addEventListener('click', function () {
+            try {
+              sessionStorage.setItem(SK_PAUSE, '1');
+            } catch (e) {}
+            hidePauseHint();
+          });
+        }
+        if (pauseHint) {
+          pauseHint.querySelectorAll('a').forEach(function (a) {
+            a.addEventListener('click', function () {
+              markInstallClicked();
+              try {
+                sessionStorage.setItem(SK_PAUSE, '1');
+              } catch (e) {}
+              hidePauseHint();
+            });
+          });
+        }
+
+        var exitSheet = document.getElementById('home-exit-intent');
+        var exitDismiss = document.getElementById('home-exit-dismiss');
+
+        function showExitIntent() {
+          try {
+            if (sessionStorage.getItem(SK_EXIT) === '1') return;
+            sessionStorage.setItem(SK_EXIT, '1');
+          } catch (e) {}
+          if (exitSheet) exitSheet.hidden = false;
+        }
+
+        function hideExitIntent() {
+          if (exitSheet) exitSheet.hidden = true;
+        }
+
+        document.addEventListener('mouseout', function (e) {
+          if (e.relatedTarget) return;
+          if (e.clientY > 10) return;
+          showExitIntent();
+        });
+
+        var coarsePointer =
+          window.matchMedia &&
+          (window.matchMedia('(pointer: coarse)').matches || window.matchMedia('(max-width: 767px)').matches);
+        var lastSY = window.scrollY || 0;
+        var lastST = Date.now();
+        if (coarsePointer) {
+          window.addEventListener(
+            'scroll',
+            function () {
+              var y = window.scrollY || 0;
+              var t = Date.now();
+              var dt = t - lastST;
+              var dy = y - lastSY;
+              if (dt > 40 && dt < 520 && y < 130 && dy < -85) {
+                showExitIntent();
+              }
+              lastSY = y;
+              lastST = t;
+            },
+            { passive: true }
+          );
+        }
+
+        if (exitDismiss) {
+          exitDismiss.addEventListener('click', hideExitIntent);
+        }
+
+        window.setTimeout(function () {
+          armPauseTimer();
+        }, 400);
       })();
 
       function syncDiagnosticFlags() {
