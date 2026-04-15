@@ -218,6 +218,7 @@ details.price-group--pricing-field-focus > summary{
 .pricing-flow-section{
   margin:0 0 36px;
   padding:0;
+  transition:opacity .4s ease;
 }
 .pricing-flow-section__title{
   font-family:var(--serif);
@@ -327,6 +328,255 @@ details.price-group--pricing-field-focus > summary{
   margin:0 0 10px;
 }
 .pricing-final-push__list{margin-top:0;}
+
+/* Scroll focus + rail + sticky (same tokens) */
+.pricing-layout-inner{
+  display:flex;
+  align-items:flex-start;
+  justify-content:center;
+  gap:0;
+  max-width:min(100%,1080px);
+  margin:0 auto;
+  padding:0 16px;
+  box-sizing:border-box;
+}
+@media(min-width:1100px){
+  .pricing-layout-inner{padding:0 24px 0 max(16px, env(safe-area-inset-left));}
+}
+.pricing-flow-rail{
+  display:none;
+  flex:0 0 88px;
+  position:sticky;
+  top:min(120px, 18vh);
+  align-self:flex-start;
+  padding:8px 12px 8px 0;
+  border-left:1px solid rgba(244,237,224,0.08);
+  z-index:4;
+}
+@media(min-width:1100px){
+  .pricing-flow-rail{display:block;}
+}
+.pricing-flow-rail__list{
+  list-style:none;
+  margin:0;
+  padding:0;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+.pricing-flow-rail__item{
+  position:relative;
+  padding-left:14px;
+  font-family:var(--mono);
+  font-size:7px;
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  color:var(--text-5);
+  line-height:1.35;
+  transition:color .35s ease;
+}
+.pricing-flow-rail__item::before{
+  content:"";
+  position:absolute;
+  left:0;
+  top:0.35em;
+  width:4px;
+  height:4px;
+  border-radius:50%;
+  background:rgba(110,101,88,0.5);
+  transition:background .35s ease, box-shadow .35s ease;
+}
+.pricing-flow-rail__item.is-active{
+  color:rgba(198,161,91,0.92);
+}
+.pricing-flow-rail__item.is-active::before{
+  background:var(--gold);
+  box-shadow:0 0 10px rgba(198,161,91,0.28);
+}
+.pricing-layout-inner .pricing-layout__main{
+  flex:1;
+  min-width:0;
+}
+.pricing-flow-focusable{
+  transition:opacity .4s ease;
+}
+@media (prefers-reduced-motion:reduce){
+  .pricing-flow-section,
+  .pricing-flow-focusable{
+    transition:none;
+  }
+}
+.pricing-manifesto__sep{
+  font-family:var(--mono);
+  font-size:10px;
+  letter-spacing:0.2em;
+  color:var(--text-5);
+  margin:14px 0;
+  opacity:0.65;
+}
+.pricing-flow--focus-active .pricing-flow-section:not(.pricing-flow-section--in-focus),
+.pricing-flow--focus-active .pricing-flow-focusable:not(.pricing-flow-section--in-focus){
+  opacity:0.64;
+}
+.pricing-flow--focus-active .pricing-flow-section--in-focus{
+  opacity:1;
+}
+.pricing-flow--focus-active.pricing-flow--install-focus .pricing-flow-section:not(.pricing-flow-section--installation),
+.pricing-flow--focus-active.pricing-flow--install-focus .pricing-flow-focusable:not(.pricing-flow-section--in-focus){
+  opacity:0.58;
+}
+.pricing-flow--focus-active.pricing-flow--install-focus .pricing-flow-section--installation.pricing-flow-section--in-focus{
+  opacity:1;
+}
+.pricing-flow-section--installation.pricing-flow-section--in-focus .inner-tier--installation-hero{
+  transform:scale(1.03);
+  transform-origin:center top;
+  transition:transform .45s ease, box-shadow .45s ease;
+  box-shadow:
+    0 0 0 1px rgba(196,163,90,0.38),
+    0 0 40px rgba(43,79,212,0.16),
+    0 14px 44px rgba(0,0,0,0.4);
+}
+@media(prefers-reduced-motion:reduce){
+  .pricing-flow-section--installation.pricing-flow-section--in-focus .inner-tier--installation-hero{
+    transform:none;
+    transition:box-shadow .35s ease;
+  }
+}
+.pricing-flow-micro{
+  font-size:13px;
+  color:var(--text-3);
+  line-height:1.55;
+  max-width:48ch;
+  margin:18px 0 0;
+  font-style:italic;
+}
+.pricing-flow-bridge{
+  font-size:14px;
+  color:var(--text-3);
+  line-height:1.5;
+  max-width:48ch;
+  margin:0 0 24px;
+}
+.pricing-flow-bridge--operator{
+  margin:0 0 28px;
+  padding-top:8px;
+  border-top:1px solid rgba(244,237,224,0.06);
+}
+.pricing-install-gap-line{
+  font-size:13px;
+  color:var(--text-3);
+  font-style:italic;
+  margin:12px 0 14px;
+  line-height:1.45;
+  max-width:48ch;
+}
+.pricing-install-cta-prelude{
+  font-size:13px;
+  color:var(--text-3);
+  line-height:1.5;
+  margin:16px 0 10px;
+  max-width:48ch;
+}
+.pricing-flow-section--manifesto{
+  margin-top:8px;
+  margin-bottom:36px;
+}
+.pricing-manifesto__label{
+  font-family:var(--mono);
+  font-size:8px;
+  letter-spacing:0.16em;
+  text-transform:uppercase;
+  color:rgba(198,161,91,0.75);
+  margin:0 0 12px;
+}
+.pricing-manifesto__block{
+  font-size:14px;
+  line-height:1.55;
+  color:var(--text-2);
+  max-width:52ch;
+  margin:0 0 16px;
+}
+.pricing-manifesto__block ul{
+  list-style:none;
+  margin:8px 0 0;
+  padding:0;
+}
+.pricing-manifesto__block li{
+  padding:4px 0 4px 14px;
+  position:relative;
+  font-size:13px;
+  color:var(--text-3);
+}
+.pricing-manifesto__block li::before{
+  content:"";
+  position:absolute;
+  left:0;
+  top:0.65em;
+  width:4px;
+  height:4px;
+  border-radius:1px;
+  background:rgba(92,58,42,0.85);
+}
+.pricing-manifesto__resolve{
+  font-family:var(--serif);
+  font-size:clamp(17px,2.2vw,21px);
+  font-weight:300;
+  color:var(--text);
+  line-height:1.35;
+  max-width:46ch;
+  margin:20px 0 8px;
+}
+.pricing-manifesto__tag{
+  font-size:13px;
+  color:var(--text-3);
+  line-height:1.5;
+  max-width:48ch;
+  margin:0;
+}
+.pricing-sticky-cta{
+  position:fixed;
+  right:max(14px, env(safe-area-inset-right));
+  bottom:max(16px, env(safe-area-inset-bottom));
+  z-index:50;
+  max-width:min(calc(100vw - 28px), 280px);
+  pointer-events:none;
+}
+.pricing-sticky-cta[hidden]{display:none!important;}
+.pricing-sticky-cta__link{
+  pointer-events:auto;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:40px;
+  padding:10px 14px;
+  border-radius:var(--r);
+  font-family:var(--mono);
+  font-size:9px;
+  letter-spacing:0.14em;
+  text-transform:uppercase;
+  text-decoration:none;
+  background:linear-gradient(165deg, #4d7cff 0%, var(--blue) 100%);
+  color:#fff;
+  border:1px solid rgba(58,107,255,0.35);
+  box-shadow:0 4px 24px rgba(43,79,212,0.25);
+  transition:transform .2s ease, box-shadow .2s ease;
+}
+.pricing-sticky-cta__link:hover{
+  box-shadow:0 6px 28px rgba(43,79,212,0.35);
+  transform:translateY(-1px);
+}
+@media(max-width:600px){
+  .pricing-sticky-cta{
+    right:12px;
+    bottom:max(12px, env(safe-area-inset-bottom));
+    max-width:calc(100vw - 24px);
+  }
+  .pricing-sticky-cta__link{
+    width:100%;
+    justify-content:center;
+  }
+}
 
 /* Full-bleed cinematic strip — between intro and tiers */
 .pricing-cine-bleed{
@@ -760,9 +1010,21 @@ html.early-mode body.pricing-page{
   </div>
 
   <div class="pricing-layout pricing-layout--after-cine">
+    <div class="pricing-layout-inner">
+    <nav class="pricing-flow-rail" id="pricing-flow-rail" aria-label="Pricing progress">
+      <ol class="pricing-flow-rail__list">
+        <li class="pricing-flow-rail__item" data-rail-stage="start">Start</li>
+        <li class="pricing-flow-rail__item" data-rail-stage="decide">Decide</li>
+        <li class="pricing-flow-rail__item" data-rail-stage="build">Build</li>
+        <li class="pricing-flow-rail__item" data-rail-stage="diagnose">Diagnose</li>
+        <li class="pricing-flow-rail__item" data-rail-stage="apply">Apply</li>
+        <li class="pricing-flow-rail__item" data-rail-stage="access">Access</li>
+        <li class="pricing-flow-rail__item" data-rail-stage="scale">Scale</li>
+      </ol>
+    </nav>
     <div class="pricing-layout__main pricing-flow" id="pricing-groups">
 
-      <section class="pricing-flow-section" aria-labelledby="pricing-flow-entry-title" data-pricing-cluster="A">
+      <section class="pricing-flow-section" aria-labelledby="pricing-flow-entry-title" data-pricing-cluster="A" data-pricing-flow-stage="start">
         <h2 id="pricing-flow-entry-title" class="pricing-flow-section__title">Start here. Don’t overthink it.</h2>
         <div class="pricing-flow-section__cards">
               <div class="inner-tier" id="tier-rooms" data-tier-id="rooms" data-sh-map-node="rooms">
@@ -788,7 +1050,7 @@ html.early-mode body.pricing-page{
         </div>
       </section>
 
-      <section class="pricing-flow-section" aria-labelledby="pricing-flow-decision-title" data-pricing-cluster="B">
+      <section class="pricing-flow-section" aria-labelledby="pricing-flow-decision-title" data-pricing-cluster="B" data-pricing-flow-stage="decide">
         <h2 id="pricing-flow-decision-title" class="pricing-flow-section__title">Make it clear</h2>
         <p class="pricing-flow-section__sub">You know what you’re doing. Now lock it.</p>
         <div class="pricing-flow-section__cards">
@@ -810,7 +1072,7 @@ html.early-mode body.pricing-page{
         </div>
       </section>
 
-      <section class="pricing-flow-section" aria-labelledby="pricing-flow-build-title" data-pricing-cluster="B">
+      <section class="pricing-flow-section" id="pricing-flow-build" aria-labelledby="pricing-flow-build-title" data-pricing-cluster="B" data-pricing-flow-stage="build">
         <h2 id="pricing-flow-build-title" class="pricing-flow-section__title">Turn it into something real</h2>
         <p class="pricing-flow-section__sub">This is where it becomes usable.</p>
         <div class="pricing-flow-section__cards">
@@ -837,9 +1099,10 @@ html.early-mode body.pricing-page{
                 <div class="tier-cta-row"><a href="/private-access" class="tier-cta tier-cta--ghost magnetic">Build Concept</a></div>
               </div>
         </div>
+        <p class="pricing-flow-micro">Most people stop here and try to figure it out themselves. That’s usually where things slow down.</p>
       </section>
 
-      <section class="pricing-flow-section" aria-labelledby="pricing-flow-diagnose-title" data-pricing-cluster="C">
+      <section class="pricing-flow-section" aria-labelledby="pricing-flow-diagnose-title" data-pricing-cluster="C" data-pricing-flow-stage="diagnose">
         <h2 id="pricing-flow-diagnose-title" class="pricing-flow-section__title">See what’s actually happening</h2>
         <p class="pricing-flow-section__sub">If something feels off, this shows you exactly why.</p>
         <div class="pricing-flow-section__cards">
@@ -859,7 +1122,11 @@ html.early-mode body.pricing-page{
         </div>
       </section>
 
-      <section class="pricing-flow-section pricing-flow-section--installation" aria-labelledby="pricing-flow-install-title" data-pricing-cluster="C">
+      <div class="pricing-flow-focusable" id="pricing-pre-install-bridge" data-pricing-flow-stage="apply">
+      <p class="pricing-flow-bridge">If you already know what needs to happen, skip the analysis. Apply it.</p>
+      </div>
+
+      <section class="pricing-flow-section pricing-flow-section--installation" id="pricing-flow-installation" aria-labelledby="pricing-flow-install-title" data-pricing-cluster="C" data-pricing-flow-stage="apply">
         <h2 id="pricing-flow-install-title" class="pricing-flow-section__title">Make it work</h2>
         <p class="pricing-flow-section__sub">You don’t need more ideas. You need the right structure, applied correctly.</p>
         <div class="pricing-flow-section__cards">
@@ -867,13 +1134,15 @@ html.early-mode body.pricing-page{
                 <p class="inner-tier__label inner-tier__label--gold">Installation</p>
                 <p class="inner-tier__price">$1,500</p>
                 <p class="inner-tier__desc">Direct work when you need deeper diagnostics, advisory, or a more complex situation.</p>
-                <div class="tier-cta-row"><a href="/private-access" class="tier-cta tier-cta--ghost magnetic">Request access</a></div>
+                <p class="pricing-install-gap-line">This is usually where the gap becomes obvious.</p>
+                <p class="pricing-install-cta-prelude">You can keep thinking about it. Or you can see it working.</p>
+                <div class="tier-cta-row"><a href="/private-access" class="tier-cta tier-cta--pri magnetic" id="tier-installation-cta">Install the system</a></div>
               </div>
         </div>
         <p class="pricing-flow-section__footer-line">This is where most people realize the gap is bigger than they thought.</p>
       </section>
 
-      <section class="pricing-flow-section pricing-flow-section--final-push" aria-labelledby="pricing-flow-final-push-title">
+      <section class="pricing-flow-section pricing-flow-section--final-push" aria-labelledby="pricing-flow-final-push-title" data-pricing-flow-stage="apply">
         <h2 id="pricing-flow-final-push-title" class="pricing-flow-section__title">This is why this works</h2>
         <div class="pricing-final-push">
           <div class="pricing-final-push__col">
@@ -895,7 +1164,37 @@ html.early-mode body.pricing-page{
         </div>
       </section>
 
-      <section class="pricing-flow-section" aria-labelledby="pricing-flow-operator-title" data-pricing-cluster="C">
+      <section class="pricing-flow-section pricing-flow-section--manifesto" aria-labelledby="pricing-manifesto-label" data-pricing-flow-stage="apply">
+        <p id="pricing-manifesto-label" class="pricing-manifesto__label">Final piece · this is the difference</p>
+        <div class="pricing-manifesto__block">
+          <p>Most people:</p>
+          <ul>
+            <li>build pages</li>
+            <li>add animations</li>
+            <li>hope people convert</li>
+          </ul>
+        </div>
+        <p class="pricing-manifesto__sep" aria-hidden="true">⸻</p>
+        <div class="pricing-manifesto__block">
+          <p>You are now:</p>
+          <ul>
+            <li>👉 controlling attention</li>
+            <li>👉 controlling decision timing</li>
+            <li>👉 controlling escalation</li>
+          </ul>
+        </div>
+        <p class="pricing-manifesto__sep" aria-hidden="true">⸻</p>
+        <p class="pricing-manifesto__resolve">This is no longer a website.</p>
+        <p class="pricing-manifesto__resolve">It’s a decision environment</p>
+        <p class="pricing-manifesto__sep" aria-hidden="true">⸻</p>
+        <p class="pricing-manifesto__tag">If you want the final layer, I’ll add psychological pricing anchors (so $1,500 feels obvious) and exit-intent / hesitation triggers (to catch people before they leave). That’s what pushes this into elite conversion territory.</p>
+      </section>
+
+      <div class="pricing-flow-focusable" id="pricing-pre-operator-bridge" data-pricing-flow-stage="access">
+      <p class="pricing-flow-bridge pricing-flow-bridge--operator">Once this is working, the only question is how far you want to take it.</p>
+      </div>
+
+      <section class="pricing-flow-section" id="pricing-flow-operator" aria-labelledby="pricing-flow-operator-title" data-pricing-cluster="C" data-pricing-flow-stage="access">
         <h2 id="pricing-flow-operator-title" class="pricing-flow-section__title">You don’t do this alone</h2>
         <p class="pricing-flow-section__sub">You’ve seen how it works. Now you decide how involved I am.</p>
         <div class="operator-access-tiers">
@@ -920,7 +1219,7 @@ html.early-mode body.pricing-page{
         </div>
       </section>
 
-      <section class="pricing-flow-section pricing-flow-section--full-build" aria-labelledby="pricing-flow-full-title" data-pricing-cluster="D">
+      <section class="pricing-flow-section pricing-flow-section--full-build" aria-labelledby="pricing-flow-full-title" data-pricing-cluster="D" data-pricing-flow-stage="scale">
         <h2 id="pricing-flow-full-title" class="pricing-flow-section__title">Full control</h2>
         <p class="pricing-flow-section__sub">This is where everything is built, aligned, and controlled at scale.</p>
 
@@ -1045,6 +1344,11 @@ html.early-mode body.pricing-page{
       </section>
 
     </div>
+    </div>
+  </div>
+
+  <div class="pricing-sticky-cta" id="pricing-sticky-cta" hidden>
+    <a class="pricing-sticky-cta__link" id="pricing-sticky-cta-link" href="#pricing-flow-installation">Skip ahead → Installation</a>
   </div>
 
   <footer class="foot">
@@ -1239,6 +1543,123 @@ html.early-mode body.pricing-page{
   });
 
   window.setInterval(syncFeFromLs, 4000);
+})();
+</script>
+<script>
+(function () {
+  document.addEventListener('DOMContentLoaded', function () {
+    var flow = document.getElementById('pricing-groups');
+    if (!flow) return;
+
+    var focusables = Array.prototype.slice.call(
+      flow.querySelectorAll('.pricing-flow-section, .pricing-flow-focusable')
+    );
+    var rail = document.getElementById('pricing-flow-rail');
+    var railItems = rail
+      ? Array.prototype.slice.call(rail.querySelectorAll('[data-rail-stage]'))
+      : [];
+    var buildEl = document.getElementById('pricing-flow-build');
+    var installEl = document.getElementById('pricing-flow-installation');
+    var sticky = document.getElementById('pricing-sticky-cta');
+    var stickyLink = document.getElementById('pricing-sticky-cta-link');
+
+    function focusStageFromEl(el) {
+      if (!el) return null;
+      return el.getAttribute('data-pricing-flow-stage') || null;
+    }
+
+    function updateRail(stage) {
+      railItems.forEach(function (li) {
+        li.classList.toggle('is-active', Boolean(stage) && li.getAttribute('data-rail-stage') === stage);
+      });
+    }
+
+    function pickFocused() {
+      var vh = window.innerHeight;
+      var mid = vh * 0.42;
+      var best = null;
+      var bestScore = Infinity;
+      var fallback = null;
+      var fallbackDist = Infinity;
+      focusables.forEach(function (sec) {
+        var r = sec.getBoundingClientRect();
+        var c = (r.top + r.bottom) / 2;
+        var d = Math.abs(c - mid);
+        if (r.bottom < -vh || r.top > vh * 2) return;
+        if (d < fallbackDist) {
+          fallbackDist = d;
+          fallback = sec;
+        }
+        var overlap = Math.min(r.bottom, vh) - Math.max(r.top, 0);
+        if (overlap < 12) return;
+        var score = d - overlap * 0.012;
+        if (score < bestScore) {
+          bestScore = score;
+          best = sec;
+        }
+      });
+      return best || fallback;
+    }
+
+    function syncSticky(vh) {
+      if (!sticky || !stickyLink) return;
+      var pastBuild = buildEl && buildEl.getBoundingClientRect().bottom < 8;
+      if (!pastBuild) {
+        sticky.hidden = true;
+        return;
+      }
+      sticky.hidden = false;
+      var installInView = false;
+      if (installEl) {
+        var ir = installEl.getBoundingClientRect();
+        var visible = Math.min(ir.bottom, vh) - Math.max(ir.top, 0);
+        installInView = visible > Math.min(Math.max(ir.height * 0.32, 120), vh * 0.4);
+      }
+      if (installInView) {
+        stickyLink.textContent = 'Install the system';
+        stickyLink.setAttribute('href', '/private-access');
+      } else {
+        stickyLink.textContent = 'Skip ahead → Installation';
+        stickyLink.setAttribute('href', '#pricing-flow-installation');
+      }
+    }
+
+    var scheduled = null;
+    function tick() {
+      scheduled = null;
+      var vh = window.innerHeight;
+      var focused = pickFocused();
+      if (!focused) {
+        flow.classList.remove('pricing-flow--focus-active', 'pricing-flow--install-focus');
+        focusables.forEach(function (el) {
+          el.classList.remove('pricing-flow-section--in-focus');
+        });
+        updateRail(null);
+        syncSticky(vh);
+        return;
+      }
+
+      flow.classList.add('pricing-flow--focus-active');
+      var isInstall = focused.classList.contains('pricing-flow-section--installation');
+      flow.classList.toggle('pricing-flow--install-focus', isInstall);
+
+      focusables.forEach(function (el) {
+        el.classList.toggle('pricing-flow-section--in-focus', el === focused);
+      });
+
+      updateRail(focusStageFromEl(focused));
+      syncSticky(vh);
+    }
+
+    function onScrollOrResize() {
+      if (scheduled) return;
+      scheduled = window.requestAnimationFrame(tick);
+    }
+
+    window.addEventListener('scroll', onScrollOrResize, { passive: true });
+    window.addEventListener('resize', onScrollOrResize, { passive: true });
+    tick();
+  });
 })();
 </script>
 <script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.7/dist/hls.min.js" crossorigin="anonymous" defer></script>
