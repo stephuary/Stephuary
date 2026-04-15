@@ -351,7 +351,7 @@
   }
 
   function markResultsCtas() {
-    ['hero-cta-primary', 'diag-cta-primary'].forEach(function (id) {
+    ['hero-cta-primary', 'diag-cta-primary', 'hero-rotate-cta'].forEach(function (id) {
       var el = global.document.getElementById(id);
       if (!el) return;
       try {
@@ -425,8 +425,9 @@
     var cei = global.document.getElementById('home-cei');
     var viz = global.document.getElementById('home-cei-viz');
     var origin = global.document.getElementById('home-origin');
-    if (!cei || !global.gsap) return;
+    if (!global.gsap) return;
     if (!global.ScrollTrigger) return;
+    if (!cei && !origin) return;
 
     var reduced = initReduced();
     var mobile = isMobileCei();
@@ -439,126 +440,129 @@
     global.setTimeout(markResultsCtas, 2000);
 
     var ceiEngine = null;
-    if (viz) {
-      ceiEngine = initCeiCanvas(viz, { mobile: mobile, reduced: reduced });
-    }
 
-    var line1 = cei.querySelector('[data-cei-line="1"]');
-    var line2 = cei.querySelector('[data-cei-line="2"]');
-    var lead = cei.querySelector('.home-cei__lead');
-    var ctaW = cei.querySelector('.home-cei__cta-wrap');
-    var ex = cei.querySelector('.home-cei__example');
-    var cta = cei.querySelector('.home-cei__cta');
+    if (cei) {
+      if (viz) {
+        ceiEngine = initCeiCanvas(viz, { mobile: mobile, reduced: reduced });
+      }
 
-    var ceiIntroComplete = false;
-    var ceiTl = null;
+      var line1 = cei.querySelector('[data-cei-line="1"]');
+      var line2 = cei.querySelector('[data-cei-line="2"]');
+      var lead = cei.querySelector('.home-cei__lead');
+      var ctaW = cei.querySelector('.home-cei__cta-wrap');
+      var ex = cei.querySelector('.home-cei__example');
+      var cta = cei.querySelector('.home-cei__cta');
 
-    function finishCeiIntro() {
-      if (ceiIntroComplete) return;
-      ceiIntroComplete = true;
-      if (ceiTl) ceiTl.kill();
-      global.gsap.set([line1, line2, viz].filter(Boolean), { autoAlpha: 1, y: 0, scale: 1 });
-      if (line1) line1.classList.add('is-visible');
-      if (line2) line2.classList.add('is-visible');
-      global.gsap.to([lead, ctaW, ex].filter(Boolean), {
-        autoAlpha: 1,
-        y: 0,
-        duration: 0.68,
-        stagger: 0.06,
-        ease: 'power2.out',
-        onComplete: function () {
-          if (cta) cta.classList.add('is-revealed');
-        }
-      });
-    }
+      var ceiIntroComplete = false;
+      var ceiTl = null;
 
-    if (viz && !mobile && !reduced) {
-      viz.addEventListener(
-        'pointerdown',
-        function onceE() {
-          finishCeiIntro();
-        },
-        { once: true }
-      );
-      viz.addEventListener(
-        'pointermove',
-        function onceM() {
-          finishCeiIntro();
-        },
-        { once: true }
-      );
-    }
-
-    if (reduced) {
-      global.gsap.set([line1, line2, lead, ctaW, ex, viz].filter(Boolean), { autoAlpha: 1, y: 0 });
-      if (line1) line1.classList.add('is-visible');
-      if (line2) line2.classList.add('is-visible');
-      if (cta) cta.classList.add('is-revealed');
-      ceiIntroComplete = true;
-    } else {
-      ceiTl = global.gsap.timeline({
-        scrollTrigger: {
-          trigger: cei,
-          start: 'top 82%',
-          once: true
-        },
-        onComplete: function () {
-          ceiIntroComplete = true;
-          if (cta) cta.classList.add('is-revealed');
-        }
-      });
-
-      if (line1) {
-        ceiTl.to(line1, {
+      function finishCeiIntro() {
+        if (ceiIntroComplete) return;
+        ceiIntroComplete = true;
+        if (ceiTl) ceiTl.kill();
+        global.gsap.set([line1, line2, viz].filter(Boolean), { autoAlpha: 1, y: 0, scale: 1 });
+        if (line1) line1.classList.add('is-visible');
+        if (line2) line2.classList.add('is-visible');
+        global.gsap.to([lead, ctaW, ex].filter(Boolean), {
           autoAlpha: 1,
           y: 0,
-          duration: 0.75,
+          duration: 0.68,
+          stagger: 0.06,
           ease: 'power2.out',
-          onStart: function () {
-            line1.classList.add('is-visible');
+          onComplete: function () {
+            if (cta) cta.classList.add('is-revealed');
           }
         });
       }
-      if (line2) {
-        ceiTl.to(
-          line2,
-          {
+
+      if (viz && !mobile && !reduced) {
+        viz.addEventListener(
+          'pointerdown',
+          function onceE() {
+            finishCeiIntro();
+          },
+          { once: true }
+        );
+        viz.addEventListener(
+          'pointermove',
+          function onceM() {
+            finishCeiIntro();
+          },
+          { once: true }
+        );
+      }
+
+      if (reduced) {
+        global.gsap.set([line1, line2, lead, ctaW, ex, viz].filter(Boolean), { autoAlpha: 1, y: 0 });
+        if (line1) line1.classList.add('is-visible');
+        if (line2) line2.classList.add('is-visible');
+        if (cta) cta.classList.add('is-revealed');
+        ceiIntroComplete = true;
+      } else {
+        ceiTl = global.gsap.timeline({
+          scrollTrigger: {
+            trigger: cei,
+            start: 'top 82%',
+            once: true
+          },
+          onComplete: function () {
+            ceiIntroComplete = true;
+            if (cta) cta.classList.add('is-revealed');
+          }
+        });
+
+        if (line1) {
+          ceiTl.to(line1, {
             autoAlpha: 1,
             y: 0,
             duration: 0.75,
             ease: 'power2.out',
             onStart: function () {
-              line2.classList.add('is-visible');
+              line1.classList.add('is-visible');
             }
-          },
-          '-=0.35'
-        );
-      }
-      if (viz) {
-        ceiTl.fromTo(
-          viz,
-          { autoAlpha: 0, scale: 0.96 },
-          { autoAlpha: 1, scale: 1, duration: 1.05, ease: 'power2.out' },
-          '-=0.2'
-        );
-      }
-      if (lead) {
-        ceiTl.to(lead, { autoAlpha: 1, y: 0, duration: 0.65, ease: 'power2.out' }, '-=0.45');
-      }
-      if (ctaW) {
-        ceiTl.to(
-          ctaW,
-          {
-            autoAlpha: 1,
-            y: 0,
-            duration: 0.7,
-            ease: 'power2.out'
-          },
-          '-=0.25'
-        );
-      }
-      if (ex) {
-        ceiTl.to(ex, { autoAlpha: 1, y: 0, duration: 0.65, ease: 'power2.out' }, '-=0.35');
+          });
+        }
+        if (line2) {
+          ceiTl.to(
+            line2,
+            {
+              autoAlpha: 1,
+              y: 0,
+              duration: 0.75,
+              ease: 'power2.out',
+              onStart: function () {
+                line2.classList.add('is-visible');
+              }
+            },
+            '-=0.35'
+          );
+        }
+        if (viz) {
+          ceiTl.fromTo(
+            viz,
+            { autoAlpha: 0, scale: 0.96 },
+            { autoAlpha: 1, scale: 1, duration: 1.05, ease: 'power2.out' },
+            '-=0.2'
+          );
+        }
+        if (lead) {
+          ceiTl.to(lead, { autoAlpha: 1, y: 0, duration: 0.65, ease: 'power2.out' }, '-=0.45');
+        }
+        if (ctaW) {
+          ceiTl.to(
+            ctaW,
+            {
+              autoAlpha: 1,
+              y: 0,
+              duration: 0.7,
+              ease: 'power2.out'
+            },
+            '-=0.25'
+          );
+        }
+        if (ex) {
+          ceiTl.to(ex, { autoAlpha: 1, y: 0, duration: 0.65, ease: 'power2.out' }, '-=0.35');
+        }
       }
     }
 
