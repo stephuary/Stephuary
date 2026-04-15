@@ -56,7 +56,6 @@
     if (!panels.length || !flow) return;
 
     body.classList.add('pricing-page--guided');
-    document.documentElement.classList.add('pricing-guided-html');
 
     function scorePanel(el) {
       var r = el.getBoundingClientRect();
