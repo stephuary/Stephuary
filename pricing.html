@@ -2002,6 +2002,104 @@ body.pricing-page.fe-env--s3 .fe-env-cta .tier-cta--pri{
   color:rgba(200,194,182,0.45);
   line-height:1.4;
 }
+.snapshot-router{
+  position:fixed;
+  inset:0;
+  z-index:120;
+  background:rgba(5,4,3,0.88);
+  backdrop-filter:blur(2px);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+}
+.snapshot-router.is-open{display:flex;}
+.snapshot-router__panel{
+  width:min(680px,100%);
+  border:1px solid rgba(244,237,224,0.12);
+  background:rgba(12,10,8,0.96);
+  box-shadow:0 18px 44px rgba(0,0,0,0.48);
+  padding:20px 18px 18px;
+  position:relative;
+}
+.snapshot-router__close{
+  position:absolute;
+  top:10px;
+  right:10px;
+  border:1px solid rgba(244,237,224,0.14);
+  background:transparent;
+  color:var(--text-4);
+  font-family:var(--mono);
+  font-size:11px;
+  letter-spacing:0.08em;
+  text-transform:uppercase;
+  padding:6px 8px;
+  cursor:pointer;
+}
+.snapshot-router__kicker{
+  font-family:var(--mono);
+  font-size:9px;
+  letter-spacing:0.14em;
+  text-transform:uppercase;
+  color:var(--gold-dim);
+  margin:0 0 8px;
+}
+.snapshot-router__title{
+  font-family:var(--serif);
+  font-size:clamp(28px,4.5vw,38px);
+  font-weight:300;
+  line-height:1.05;
+  letter-spacing:-0.02em;
+  margin:0 0 10px;
+}
+.snapshot-router__copy{
+  font-size:14px;
+  line-height:1.5;
+  color:var(--text-3);
+  max-width:46ch;
+  margin:0 0 14px;
+}
+.snapshot-router__question{
+  font-size:16px;
+  line-height:1.4;
+  color:var(--text);
+  margin:0 0 10px;
+}
+.snapshot-router__options{
+  display:grid;
+  gap:8px;
+}
+.snapshot-router__option{
+  width:100%;
+  text-align:left;
+  border:1px solid rgba(244,237,224,0.1);
+  background:rgba(18,15,12,0.76);
+  color:var(--text-2);
+  font:inherit;
+  padding:10px 11px;
+  cursor:pointer;
+}
+.snapshot-router__option:hover{
+  border-color:rgba(196,163,90,0.3);
+  color:var(--text);
+}
+.snapshot-router__meta{
+  margin:10px 0 0;
+  font-size:11px;
+  color:var(--text-5);
+}
+.snapshot-router__actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  margin-top:14px;
+}
+.snapshot-router__secondary{
+  font-size:12px;
+  color:var(--text-4);
+  text-decoration:underline;
+  text-underline-offset:2px;
+}
 @media (prefers-reduced-motion:reduce){
   body.pricing-page .fe-env-tier2{transition:none;}
 }
@@ -2430,6 +2528,19 @@ html.early-mode body.pricing-page{
     </div>
   </div>
 
+  <div class="snapshot-router" id="snapshot-router" hidden aria-hidden="true">
+    <div class="snapshot-router__panel" role="dialog" aria-modal="true" aria-labelledby="snapshot-router-title">
+      <button type="button" class="snapshot-router__close" id="snapshot-router-close">Close</button>
+      <p class="snapshot-router__kicker" id="snapshot-router-kicker">Snapshot route</p>
+      <h2 class="snapshot-router__title" id="snapshot-router-title"></h2>
+      <p class="snapshot-router__copy" id="snapshot-router-copy"></p>
+      <p class="snapshot-router__question" id="snapshot-router-question"></p>
+      <div class="snapshot-router__options" id="snapshot-router-options"></div>
+      <p class="snapshot-router__meta" id="snapshot-router-meta"></p>
+      <div class="snapshot-router__actions" id="snapshot-router-actions"></div>
+    </div>
+  </div>
+
   <footer class="foot">
     <div class="foot-links-row">
       <a href="/systems">System</a>
@@ -2481,6 +2592,168 @@ html.early-mode body.pricing-page{
   var snapshot = document.getElementById('pricing-major-snapshot');
   if (snapshot) snapshot.open = true;
   syncMajorStates();
+})();
+</script>
+<script>
+(function () {
+  var overlay = document.getElementById('snapshot-router');
+  if (!overlay) return;
+  var closeBtn = document.getElementById('snapshot-router-close');
+  var titleEl = document.getElementById('snapshot-router-title');
+  var copyEl = document.getElementById('snapshot-router-copy');
+  var qEl = document.getElementById('snapshot-router-question');
+  var optionsEl = document.getElementById('snapshot-router-options');
+  var metaEl = document.getElementById('snapshot-router-meta');
+  var actionsEl = document.getElementById('snapshot-router-actions');
+  var state = { q1: null, q2: null, q3: null };
+  var step = 0;
+
+  var questions = [
+    {
+      key: 'q1',
+      text: 'What best describes where you are?',
+      options: [
+        { id: 'off-cant-define', label: 'I know something is off but can’t define it' },
+        { id: 'issue-cant-fix', label: 'I know the issue but can’t fix it' },
+        { id: 'know-exactly', label: 'I know exactly what needs to happen' }
+      ]
+    },
+    {
+      key: 'q2',
+      text: 'What do you need right now?',
+      options: [
+        { id: 'clarity', label: 'Clarity' },
+        { id: 'direction', label: 'Direction' },
+        { id: 'execution', label: 'Execution' }
+      ]
+    },
+    {
+      key: 'q3',
+      text: 'How do you want to handle this?',
+      options: [
+        { id: 'myself', label: 'I want to do it myself' },
+        { id: 'guidance', label: 'I want guidance' },
+        { id: 'handled', label: 'I want it handled' }
+      ]
+    }
+  ];
+
+  function openRouter() {
+    state = { q1: null, q2: null, q3: null };
+    step = 0;
+    overlay.hidden = false;
+    overlay.classList.add('is-open');
+    overlay.setAttribute('aria-hidden', 'false');
+    render();
+  }
+
+  function closeRouter() {
+    overlay.classList.remove('is-open');
+    overlay.hidden = true;
+    overlay.setAttribute('aria-hidden', 'true');
+  }
+
+  function choosePath() {
+    if (state.q3 === 'handled' || state.q2 === 'execution' || state.q1 === 'know-exactly') return 'C';
+    if (state.q2 === 'clarity' || state.q1 === 'off-cant-define') return 'A';
+    return 'B';
+  }
+
+  function resultFor(path) {
+    if (path === 'A') {
+      return {
+        title: 'You’re not stuck. You’re unclear.',
+        copy: 'Start with diagnostic clarity, then route into the system from signal instead of guesswork.',
+        primary: { label: 'Start Diagnostic', href: '/capture', cls: 'tier-cta tier-cta--pri magnetic' },
+        secondary: { label: 'Open System', href: '/systems' }
+      };
+    }
+    if (path === 'C') {
+      return {
+        title: 'You already know. This is execution.',
+        copy: 'Move directly into done-with-you support and shorten the path from decision to delivery.',
+        primary: { label: 'Request Access', href: '/private-access', cls: 'tier-cta tier-cta--pri magnetic' },
+        secondary: { label: 'Open Build', href: '#pricing-flow-scale' }
+      };
+    }
+    return {
+      title: 'You don’t need more thinking. You need structure.',
+      copy: 'Snapshot is the fastest structured read so you can route forward with precision.',
+      primary: { label: 'Start Snapshot', href: '/snapshot', cls: 'tier-cta tier-cta--pri magnetic' },
+      secondary: { label: 'Open System', href: '/systems' }
+    };
+  }
+
+  function renderResult() {
+    var result = resultFor(choosePath());
+    titleEl.textContent = result.title;
+    copyEl.textContent = result.copy;
+    qEl.textContent = '';
+    optionsEl.innerHTML = '';
+    metaEl.textContent = 'Routed from 3 quick decisions.';
+    actionsEl.innerHTML = '';
+
+    var primary = document.createElement('a');
+    primary.className = result.primary.cls;
+    primary.href = result.primary.href;
+    primary.textContent = result.primary.label;
+    actionsEl.appendChild(primary);
+
+    if (result.secondary) {
+      var secondary = document.createElement('a');
+      secondary.className = 'snapshot-router__secondary';
+      secondary.href = result.secondary.href;
+      secondary.textContent = result.secondary.label;
+      actionsEl.appendChild(secondary);
+    }
+  }
+
+  function renderQuestion() {
+    var q = questions[step];
+    titleEl.textContent = 'Start Snapshot';
+    copyEl.textContent = 'Three quick decisions. Then you move.';
+    qEl.textContent = q.text;
+    optionsEl.innerHTML = '';
+    metaEl.textContent = 'Step ' + (step + 1) + ' of ' + questions.length;
+    actionsEl.innerHTML = '';
+
+    q.options.forEach(function (opt) {
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'snapshot-router__option';
+      b.textContent = opt.label;
+      b.addEventListener('click', function () {
+        state[q.key] = opt.id;
+        step += 1;
+        render();
+      });
+      optionsEl.appendChild(b);
+    });
+  }
+
+  function render() {
+    if (step >= questions.length) renderResult();
+    else renderQuestion();
+  }
+
+  document.addEventListener('click', function (e) {
+    var link = e.target.closest('a[href]');
+    if (!link) return;
+    if (link.closest('#snapshot-router')) return;
+    var href = link.getAttribute('href') || '';
+    if (href === '/snapshot' || href.indexOf('/snapshot?') === 0 || href.indexOf('/snapshot#') === 0) {
+      e.preventDefault();
+      openRouter();
+    }
+  });
+
+  closeBtn.addEventListener('click', closeRouter);
+  overlay.addEventListener('click', function (e) {
+    if (e.target === overlay) closeRouter();
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && overlay.classList.contains('is-open')) closeRouter();
+  });
 })();
 </script>
 </body>
