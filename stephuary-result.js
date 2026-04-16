@@ -274,6 +274,27 @@
   var LS_P04 = 'stephuary_validation_p04_v1';
   var LS_P05 = 'stephuary_sovereignty_p05_v1';
 
+  var MONETIZE_Q = 5;
+
+  /** Legacy Monetize used 10 answers; current phase uses 5. */
+  function migrateMonetizeBits(bits) {
+    if (!bits) return null;
+    if (bits.length === 10) {
+      return [bits[0], bits[1], bits[3], bits[6], bits[7]];
+    }
+    if (bits.length > MONETIZE_Q) return bits.slice(0, MONETIZE_Q);
+    return bits;
+  }
+
+  function monetizeBitsComplete(bits) {
+    var b = migrateMonetizeBits(bits);
+    if (!b || b.length < MONETIZE_Q) return false;
+    for (var i = 0; i < MONETIZE_Q; i++) {
+      if (b[i] === null || b[i] === undefined) return false;
+    }
+    return true;
+  }
+
   function loadStoredBits(key) {
     try {
       if (typeof localStorage === 'undefined') return null;
@@ -307,15 +328,14 @@
   }
 
   function lineMonetize(b) {
-    if (!phaseBitsComplete(b)) return null;
-    var clearScore = (b[0] === 0 ? 1 : 0) + (b[2] === 0 ? 1 : 0) + (b[5] === 0 ? 1 : 0) + (b[6] === 0 ? 1 : 0);
-    var pos = clearScore >= 3 ? 'clear' : 'unclear';
-    var pull = b[3] === 0 ? 'pulled' : 'pushed';
-    var monet = b[1] === 0 && b[5] === 0 ? 'paid-fit strong' : 'paid-fit weak';
-    var buyer = b[6] === 0 ? 'buyer named' : 'buyer fuzzy';
-    var vs = (b[0] === 0 ? 1 : 0) + (b[2] === 0 ? 1 : 0) + (b[7] === 0 ? 1 : 0);
-    var val = vs >= 2 ? 'outcome obvious' : 'outcome subtle';
-    return 'Phase 02 · Value read: ' + pos + ' · Demand: ' + pull + ' · ' + monet + ' · ' + buyer + ' · ' + val + '.';
+    var bits = migrateMonetizeBits(b);
+    if (!monetizeBitsComplete(bits)) return null;
+    var vc = bits[0] === 0 ? 'clear' : 'unclear';
+    var pull = bits[2] === 0 ? 'pulled' : 'pushed';
+    var monet = bits[1] === 0 ? 'paid-shaped' : 'unpaid-shaped';
+    var buyer = bits[3] === 0 ? 'buyer named' : 'buyer fuzzy';
+    var out = bits[4] === 0 ? 'outcome visible' : 'outcome subtle';
+    return 'Phase 02 · Value read: ' + vc + ' · Demand: ' + pull + ' · ' + monet + ' · ' + buyer + ' · ' + out + '.';
   }
 
   function lineStructure(b) {
@@ -354,7 +374,7 @@
   function mergeCrossPhase(data) {
     if (!data || typeof data !== 'object' || !data.diagnostic) return data;
     var diag = data.diagnostic;
-    var p2 = loadStoredBits(LS_P02);
+    var p2 = migrateMonetizeBits(loadStoredBits(LS_P02));
     var p3 = loadStoredBits(LS_P03);
     var p4 = loadStoredBits(LS_P04);
     var p5 = loadStoredBits(LS_P05);
@@ -370,10 +390,10 @@
     if (l5) lines.push(l5);
 
     var issues = [];
-    if (p2 && phaseBitsComplete(p2)) {
-      if (!(p2[1] === 0 && p2[5] === 0)) issues.push('Paid problem + specificity not locked together');
-      if (p2[6] === 1) issues.push('Buyer still too broad to target');
-      if (p2[3] === 1) issues.push('Demand is push-led, not pull-led');
+    if (p2 && monetizeBitsComplete(p2)) {
+      if (p2[1] === 1) issues.push('Problem not aligned with paid demand');
+      if (p2[3] === 1) issues.push('Buyer still too broad to target');
+      if (p2[2] === 1) issues.push('Demand is push-led, not pull-led');
     }
     if (p3 && phaseBitsComplete(p3)) {
       if (p3[0] === 1) issues.push('Nothing priced and deliverable without more definition');
@@ -399,7 +419,7 @@
     if (p3 && phaseBitsComplete(p3) && p3[0] === 1) {
       moves.push('Ship one smallest paid slice: one buyer noun, one deliverable, one price.');
     }
-    if (p2 && phaseBitsComplete(p2) && p2[6] === 1) {
+    if (p2 && monetizeBitsComplete(p2) && p2[3] === 1) {
       moves.push('Write the buyer as one job title or one situation in under 15 words.');
     }
     if (p4 && phaseBitsComplete(p4) && validationTierP4(p4) === 'untested') {
@@ -691,7 +711,7 @@
     }
 
     var haveN = [];
-    if (p2) haveN.push(p2.value_source, p2.demand_signal);
+    if (p2) haveN.push(p2.value_source, p2.demand_signal, p2.outcome_visibility);
     if (p3) haveN.push(p3.outcome, p3.entry_point);
     if (p4) haveN.push(p4.exposure_method);
     if (p5) haveN.push(p5.leverage_type, p5.scalability_status);

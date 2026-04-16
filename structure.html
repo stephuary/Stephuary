@@ -1071,28 +1071,43 @@
     };
   }
 
+  function normalizeP2Bits(bits) {
+    if (!bits) return null;
+    if (window.StephuaryDiagnosticState && typeof window.StephuaryDiagnosticState.migrateP02Bits === 'function') {
+      return window.StephuaryDiagnosticState.migrateP02Bits(bits);
+    }
+    if (bits.length === 10) {
+      return [bits[0], bits[1], bits[3], bits[6], bits[7]];
+    }
+    return bits;
+  }
+
   function loadP2Bits() {
     try {
       var raw = localStorage.getItem(P02_KEY);
       if (!raw) return null;
       var d = JSON.parse(raw);
-      return d.bits || null;
+      return normalizeP2Bits(d.bits || null);
     } catch (e) { return null; }
   }
 
   function p2Complete(bits) {
-    return bits && bits.length >= 10 && bits.indexOf(null) < 0 && bits.indexOf(undefined) < 0;
+    var b = normalizeP2Bits(bits);
+    if (!b || b.length < 5) return false;
+    for (var i = 0; i < 5; i++) {
+      if (b[i] === null || b[i] === undefined) return false;
+    }
+    return true;
   }
 
   function p2ProblemSummary(bits) {
     if (!p2Complete(bits)) return 'Finish Phase 02 to anchor what you are best positioned to solve.';
-    var buyer = bits[6] === 0 ? 'a buyer you can name' : 'a buyer you still need to narrow';
+    var b = normalizeP2Bits(bits);
+    var buyer = b[3] === 0 ? 'a buyer you can name' : 'a buyer you still need to narrow';
     var prob =
-      bits[1] === 0 && bits[5] === 0
-        ? 'specific, paid problems'
-        : bits[1] === 1
-          ? 'problems people rarely pay to fix'
-          : 'problems that still need a sharper edge';
+      b[1] === 0
+        ? 'specific, paid-shaped problems'
+        : 'problems people rarely pay to fix at this framing';
     return prob + ' for ' + buyer + '.';
   }
 
@@ -1153,7 +1168,7 @@
     var i = stepIdx % pool.length;
     if (p2 && p2Complete(p2) && p2[2] === 1) pool[i] = 'If explanation repeats, narrow the buyer or outcome — not the pitch length.';
     if (p1 && p1.notice && p1.notice.indexOf('hesitate') !== -1) pool[(stepIdx + 3) % pool.length] = 'If you hesitate until certainty, pick the smallest chargeable slice.';
-    return pool[(stepIdx + (p2 && p2[8] === 1 ? 2 : 0)) % pool.length];
+    return pool[(stepIdx + (p2 && p2[4] === 1 ? 2 : 0)) % pool.length];
   }
 
   function panelFromBits(b) {
@@ -1280,13 +1295,13 @@
 
     var buyerN =
       p2 && p2Complete(p2)
-        ? p2[6] === 0
+        ? p2[3] === 0
           ? 'someone you can already describe'
           : 'someone you still need to name precisely'
         : 'your buyer (finish Phase 02 to tighten this)';
     var probN =
       p2 && p2Complete(p2)
-        ? p2[1] === 0 && p2[5] === 0
+        ? p2[1] === 0
           ? 'a concrete, paid problem'
           : 'a problem that still needs a paid shape'
         : 'the problem Phase 02 pointed at';

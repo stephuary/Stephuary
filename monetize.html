@@ -778,10 +778,10 @@
           <div class="progress-bar-wrap">
             <div class="progress-meta">
               <span class="progress-label progress-label--muted">Progress</span>
-              <span class="progress-count" id="progressCount">Step 1 of 10</span>
+              <span class="progress-count" id="progressCount">Step 1 of 5</span>
             </div>
             <div class="progress-track">
-              <div class="progress-fill" id="progressFill" style="width:10%"></div>
+              <div class="progress-fill" id="progressFill" style="width:20%"></div>
             </div>
           </div>
           <details class="diag-details diag-details--steps">
@@ -808,22 +808,22 @@
 
         <div class="sys-output-legacy-hidden" aria-hidden="true">
         <div class="diag-section">
-          <p class="diag-h">1. Monetize summary</p>
+          <p class="diag-h">1. Market position</p>
           <div class="diag-body" id="out-s1"></div>
         </div>
 
         <div class="diag-section">
-          <p class="diag-h">2. Where you have value</p>
+          <p class="diag-h">2. Where value exists</p>
           <div class="diag-body" id="out-s2"></div>
         </div>
 
         <div class="diag-section">
-          <p class="diag-h">3. Misalignment</p>
+          <p class="diag-h">3. Main gap</p>
           <div class="diag-body" id="out-s3"></div>
         </div>
 
         <div class="diag-section">
-          <p class="diag-h">4. Market reality</p>
+          <p class="diag-h">4. What this costs</p>
           <div class="diag-body" id="out-s4"></div>
         </div>
 
@@ -833,19 +833,8 @@
         </div>
 
         <div class="diag-section">
-          <p class="diag-h">6. Hard truth</p>
-          <div class="hard-truth" id="out-s6" style="margin-top:12px">
-            <p><strong>Hard truth</strong></p>
-            <ul class="diag-list">
-              <li>Not an ability gap.</li>
-              <li>Either positioning is unclear, or you are applying strength where buyers do not pay.</li>
-            </ul>
-          </div>
-        </div>
-
-        <div class="diag-section">
-          <p class="diag-h">7. What follows</p>
-          <div class="diag-body" id="out-s7"></div>
+          <p class="diag-h">6. Next move</p>
+          <div class="diag-body" id="out-s6"></div>
         </div>
         </div>
 
@@ -882,34 +871,27 @@
       <details class="live-panel__shell" id="livePanelShell">
         <summary class="live-panel__summary">
           <span class="live-panel__summary-title">Live read</span>
-          <span class="live-panel__summary-meta">3 signals</span>
+          <span class="live-panel__summary-meta">4 signals</span>
         </summary>
         <div class="live-panel__inner">
           <div class="live-panel__primary">
             <div class="live-field">
-              <div class="live-label">Main issue</div>
-              <div class="live-value" id="live-prob">—</div>
-            </div>
-            <div class="live-field">
-              <div class="live-label">Current pattern</div>
-              <div class="live-value" id="live-pos">—</div>
-            </div>
-            <div class="live-field">
-              <div class="live-label">Likely next step</div>
+              <div class="live-label">Value clarity</div>
               <div class="live-value" id="live-val">—</div>
             </div>
-          </div>
-          <details class="live-panel__more">
-            <summary class="live-panel__more-sum">Full readout</summary>
             <div class="live-field">
-              <div class="live-label">Demand mode</div>
+              <div class="live-label">Demand</div>
               <div class="live-value" id="live-pull">—</div>
+            </div>
+            <div class="live-field">
+              <div class="live-label">Problem</div>
+              <div class="live-value" id="live-prob">—</div>
             </div>
             <div class="live-field">
               <div class="live-label">Buyer</div>
               <div class="live-value" id="live-buyer">—</div>
             </div>
-          </details>
+          </div>
         </div>
       </details>
     </aside>
@@ -925,26 +907,33 @@
   var STORAGE_KEY = 'stephuary_monetize_p02_v1';
   var P01_KEY = 'stephuary_capture_p01_v2';
   var PROFILE_KEY = 'stephuary_p01_profile';
-  var TOTAL_Q = 10;
-  var RAIL_LABELS = ['Value','Proximity','Translation','Demand','Money','Specificity','Buyer','Outcome','Honesty','Misalignment','Results'];
+  var TOTAL_Q = 5;
+  var RAIL_LABELS = ['Value clarity','Paid problem','Demand','Buyer','Outcome','Results'];
 
   var QUESTIONS = [
-    { instruction: 'When people come to you, they are usually responding to:', a: 'They can clearly explain the value I bring', b: 'They like me, but cannot clearly define what I do' },
-    { instruction: 'The problems you notice most often are:', a: 'Problems people already pay to solve', b: 'Problems people do not usually pay to fix' },
-    { instruction: 'When you explain what you do in one pass:', a: 'People understand immediately', b: 'I have to explain it multiple times' },
-    { instruction: 'Demand right now is:', a: 'Being pulled from you', b: 'Something you have to offer or push' },
-    { instruction: 'When money enters the conversation:', a: 'It feels expected', b: 'It feels unclear or uncomfortable' },
-    { instruction: 'The problem you solve is:', a: 'Specific and repeatable', b: 'Broad or hard to define' },
-    { instruction: 'The person you help is:', a: 'Easy to identify', b: 'Hard to define or too broad' },
-    { instruction: 'The result of your work is:', a: 'Clear and visible', b: 'Subtle or hard to measure' },
-    { instruction: 'Revenue truth today:', a: 'Solving a real paid problem', b: 'Trying to turn something into value' },
-    { instruction: 'Calibration error (pick the closer one):', a: 'You are under-positioned', b: 'You are overestimating your value' }
+    { instruction: 'Value clarity — what you offer:', a: 'Strangers get what you do in one pass', b: 'It still takes translation before it lands' },
+    { instruction: 'Paid problem fit:', a: 'Problems people already pay to solve', b: 'Problems people rarely pay to fix at this framing' },
+    { instruction: 'Demand type:', a: 'Pulled — inbound interest and asks', b: 'Pushed — you initiate and convert' },
+    { instruction: 'Buyer clarity:', a: 'Defined — easy to name who pays', b: 'Undefined — too broad or fuzzy to target' },
+    { instruction: 'Outcome visibility:', a: 'Clear and visible', b: 'Subtle or hard to measure' }
   ];
 
   var state = {
     bits: Array(TOTAL_Q).fill(null),
     currentStep: 1
   };
+
+  function normalizeMonetizeBits(bits) {
+    if (!bits) return null;
+    if (window.StephuaryDiagnosticState && typeof window.StephuaryDiagnosticState.migrateP02Bits === 'function') {
+      return window.StephuaryDiagnosticState.migrateP02Bits(bits);
+    }
+    if (bits.length === 10) {
+      return [bits[0], bits[1], bits[3], bits[6], bits[7]];
+    }
+    if (bits.length > TOTAL_Q) return bits.slice(0, TOTAL_Q);
+    return bits;
+  }
 
   function loadP01Profile() {
     try {
@@ -1038,45 +1027,27 @@
   function panelFromBits(b) {
     function has(i) { return b[i] !== null && b[i] !== undefined; }
 
-    var pos = '—';
-    if (has(0) && has(2) && has(5) && has(6)) {
-      var clearScore = (b[0] === 0 ? 1 : 0) + (b[2] === 0 ? 1 : 0) + (b[5] === 0 ? 1 : 0) + (b[6] === 0 ? 1 : 0);
-      pos = clearScore >= 3 ? 'clear' : 'unclear';
-    } else if (has(0)) {
-      pos = b[0] === 0 ? 'leaning clear' : 'leaning unclear';
-    }
+    var val = '—';
+    if (has(0)) val = b[0] === 0 ? 'clear' : 'unclear';
 
     var pull = '—';
-    if (has(3)) pull = b[3] === 0 ? 'pulled' : 'pushed';
+    if (has(2)) pull = b[2] === 0 ? 'pulled' : 'pushed';
 
     var prob = '—';
-    if (has(1) && has(5)) {
-      prob = b[1] === 0 && b[5] === 0 ? 'monetizable' : 'non-monetizable';
-    } else if (has(1)) {
-      prob = b[1] === 0 ? 'leaning monetizable' : 'leaning non-monetizable';
-    }
+    if (has(1)) prob = b[1] === 0 ? 'paid' : 'unpaid';
 
     var buyer = '—';
-    if (has(6)) buyer = b[6] === 0 ? 'defined' : 'undefined';
+    if (has(3)) buyer = b[3] === 0 ? 'defined' : 'undefined';
 
-    var val = '—';
-    if (has(0) && has(2) && has(7)) {
-      var vs = (b[0] === 0 ? 1 : 0) + (b[2] === 0 ? 1 : 0) + (b[7] === 0 ? 1 : 0);
-      val = vs >= 2 ? 'obvious' : 'misunderstood';
-    } else if (has(0)) {
-      val = b[0] === 0 ? 'leaning obvious' : 'leaning misunderstood';
-    }
-
-    return { pos: pos, pull: pull, prob: prob, buyer: buyer, val: val };
+    return { val: val, pull: pull, prob: prob, buyer: buyer };
   }
 
   function updateLivePanel() {
     var p = panelFromBits(state.bits);
-    document.getElementById('live-pos').textContent = p.pos;
+    document.getElementById('live-val').textContent = p.val;
     document.getElementById('live-pull').textContent = p.pull;
     document.getElementById('live-prob').textContent = p.prob;
     document.getElementById('live-buyer').textContent = p.buyer;
-    document.getElementById('live-val').textContent = p.val;
   }
 
   function saveStorage() {
@@ -1107,10 +1078,13 @@
   function updateRail() {
     var phase = state.currentStep;
     var items = document.querySelectorAll('.rail-item');
+    var nRail = items.length;
+    var resultsIdx = nRail - 1;
+    var summaryPhase = nRail;
     items.forEach(function(el, i) {
       el.classList.remove('active', 'done');
-      if (i === 10) {
-        if (phase === 11) el.classList.add('active');
+      if (i === resultsIdx) {
+        if (phase === summaryPhase) el.classList.add('active');
       } else if (i + 1 < phase) el.classList.add('done');
       else if (i + 1 === phase) el.classList.add('active');
     });
@@ -1196,14 +1170,17 @@
   }
 
   function finalPanelLabels(b) {
-    var clearScore = (b[0] === 0 ? 1 : 0) + (b[2] === 0 ? 1 : 0) + (b[5] === 0 ? 1 : 0) + (b[6] === 0 ? 1 : 0);
-    var positioned = clearScore >= 3 ? 'clear' : 'unclear';
-    var pulled = b[3] === 0 ? 'pulled' : 'pushed';
-    var monet = b[1] === 0 && b[5] === 0 ? 'monetizable' : 'non-monetizable';
-    var buyer = b[6] === 0 ? 'defined' : 'undefined';
-    var vs = (b[0] === 0 ? 1 : 0) + (b[2] === 0 ? 1 : 0) + (b[7] === 0 ? 1 : 0);
-    var valueL = vs >= 2 ? 'obvious' : 'misunderstood';
-    return { positioned: positioned, pulled: pulled, monet: monet, buyer: buyer, valueL: valueL };
+    return {
+      valueClarity: b[0] === 0 ? 'clear' : 'unclear',
+      demand: b[2] === 0 ? 'pulled' : 'pushed',
+      problem: b[1] === 0 ? 'paid' : 'unpaid',
+      buyer: b[3] === 0 ? 'defined' : 'undefined'
+    };
+  }
+
+  function shortenText(s, n) {
+    if (!s || s.length <= n) return s;
+    return s.slice(0, n - 1).trim() + '…';
   }
 
   function buildOutputs(b, profile) {
@@ -1211,92 +1188,93 @@
     var p = profile || loadP01Profile() || {};
 
     var s1 =
-      '<ul class="diag-list">' +
-      '<li>Value clarity: <strong>' +
-      f.positioned +
-      '</strong></li>' +
-      '<li>Demand mode: <strong>' +
-      f.pulled +
-      '</strong> (affects repeat demand)</li></ul>';
+      '<p>Demand is <strong>' +
+      f.demand +
+      '</strong>. Value reads <strong>' +
+      f.valueClarity +
+      '</strong> in one pass. The problem shape looks <strong>' +
+      f.problem +
+      '</strong> relative to typical budgets, and the buyer is <strong>' +
+      f.buyer +
+      '</strong>.</p>';
 
-    var payLine = b[1] === 0 ? 'do' : 'do not';
+    var outVis =
+      b[4] === 0
+        ? 'Outcomes are visible enough to price and prove.'
+        : 'Outcomes are subtle — you will need tighter proof design.';
     var s2 =
-      '<p><strong>Strength window</strong> (from Phase 01)</p><ul class="diag-list">' +
-      '<li>Notice: ' +
-      (p.notice ? p.notice : 'Your detection pattern from Phase 01 applies.') +
+      '<ul class="diag-list">' +
+      '<li><strong>Legibility:</strong> ' +
+      (b[0] === 0 ? 'What you do can be stated without hand-waving.' : 'The value is real but still needs translation.') +
       '</li>' +
-      '<li>Operate: ' +
-      (p.operate ? p.operate : 'Your timing and approach favor a specific kind of move.') +
-      '</li></ul>' +
-      '<p>Market decision: these are problems people <strong>' +
-      payLine +
-      '</strong> pay to solve at the level you described.</p>';
-
-    var s3 =
-      '<p><strong>Alignment snapshot</strong></p><ul class="diag-list">' +
-      '<li>Problem edge: ' +
-      (b[5] === 0 ? 'specific' : 'broad or fuzzy') +
+      '<li><strong>From Capture:</strong> ' +
+      (p.notice ? shortenText(p.notice, 200) : 'Your detection pattern from Phase 01.') +
       '</li>' +
-      '<li>Buyer: ' +
-      (b[6] === 0 ? 'named / narrowable' : 'still too broad') +
-      '</li>' +
-      '<li>Demand: ' +
-      (b[3] === 0 ? 'pull-led' : 'push-led') +
+      '<li><strong>Proof path:</strong> ' +
+      outVis +
       '</li></ul>';
 
-    var present =
-      b[2] === 0 && b[0] === 0
-        ? 'a tight story: what you do reads fast.'
-        : b[2] === 1
-          ? 'a story that still needs repetition before it lands.'
-          : 'a value story that depends on context to make sense.';
+    var gap = '';
+    if (b[1] === 1) {
+      gap =
+        'The core gap is <strong>paid fit</strong>: the problem is not shaped like something buyers already fund at the level you want.';
+    } else if (b[3] === 1) {
+      gap =
+        'The core gap is <strong>buyer definition</strong>: the person who pays is still too broad to target.';
+    } else if (b[0] === 1) {
+      gap =
+        'The core gap is <strong>value translation</strong>: buyers cannot repeat what you do in one sentence yet.';
+    } else if (b[2] === 1) {
+      gap =
+        'The core gap is <strong>demand creation</strong>: you are carrying conversion instead of riding pull.';
+    } else if (b[4] === 1) {
+      gap =
+        'The core gap is <strong>outcome proof</strong>: results are hard to see — pricing and trust stay soft.';
+    } else {
+      gap =
+        'The tightest edge now is <strong>packaging</strong>: name one buyer, one outcome, one entry — not more explanation.';
+    }
+    var s3 = '<p>' + gap + '</p>';
 
-    var s4 =
-      '<p><strong>Offer story check</strong></p><ul class="diag-list">' +
-      '<li>Buyers pay for clear outcomes and specific problems.</li>' +
-      '<li>Your story today: ' +
-      present +
-      '</li></ul>';
+    var cost = '';
+    if (b[1] === 1 || b[3] === 1) {
+      cost =
+        'You pay in <strong>slow cycles</strong> and <strong>maybe-not buyers</strong> — energy goes to convincing instead of delivering.';
+    } else if (b[2] === 1 && b[0] === 1) {
+      cost =
+        'You pay in <strong>repetition and CAC</strong> — every conversation restarts from zero.';
+    } else if (b[4] === 1) {
+      cost =
+        'You pay in <strong>discount pressure</strong> and <strong>scope creep</strong> — without a visible after-state, buyers negotiate the work instead of the outcome.';
+    } else {
+      cost =
+        'You pay in <strong>scattered effort</strong> — clear pieces without one named buyer still dilute focus.';
+    }
+    var s4 = '<p>' + cost + '</p>';
 
-    var buyerNoun = b[6] === 0 ? 'a buyer you can name' : 'a buyer you still need to narrow';
+    var buyerNoun = b[3] === 0 ? 'a buyer you can name' : 'a buyer you still need to narrow';
     var probNoun =
-      b[1] === 0 && b[5] === 0
-        ? 'a specific problem with existing budgets'
-        : b[1] === 1
-          ? 'a problem that is real but not usually bought'
-          : 'a problem that still needs sharper edges';
+      b[1] === 0 ? 'a problem budgets already exist for' : 'a problem that is real but not bought at this framing';
     var method = p.operate ? p.operate : 'the way you naturally think and move';
+    var s5 = 'I help ' + buyerNoun + ' solve ' + probNoun + ' by ' + method + '.';
 
-    var s5 =
-      'I help ' +
-      buyerNoun +
-      ' solve ' +
-      probNoun +
-      ' by ' +
-      method +
-      '.';
-
-    var s7 =
-      '<p><strong>Handoff to Phase 03</strong></p><ul class="diag-list">' +
-      '<li>You now have a market-facing read on value and fit.</li>' +
-      '<li>Next: package one buyer, one outcome, one entry, one price posture.</li></ul>';
+    var s6 =
+      '<ul class="diag-list">' +
+      '<li>Name <strong>one buyer noun</strong> and <strong>one paid outcome</strong> Phase 03 will price.</li>' +
+      '<li>If demand is pushed, run <strong>one pull test</strong>: a narrow line, five conversations, log yes/no.</li>' +
+      '<li>Continue to Structure: entry, price posture, and first step.</li>' +
+      '</ul>';
 
     document.getElementById('out-s1').innerHTML = s1;
     document.getElementById('out-s2').innerHTML = s2;
     document.getElementById('out-s3').innerHTML = s3;
     document.getElementById('out-s4').innerHTML = s4;
     document.getElementById('out-s5').textContent = s5;
-    document.getElementById('out-s7').innerHTML = s7;
-
-    document.getElementById('live-pos').textContent = f.positioned;
-    document.getElementById('live-pull').textContent = f.pulled;
-    document.getElementById('live-prob').textContent = f.monet;
-    document.getElementById('live-buyer').textContent = f.buyer;
-    document.getElementById('live-val').textContent = f.valueL;
+    document.getElementById('out-s6').innerHTML = s6;
   }
 
   function showSummary() {
-    state.currentStep = 11;
+    state.currentStep = 6;
     saveStorage();
     try {
       if (window.StephuaryDiagnosticFlow && typeof window.StephuaryDiagnosticFlow.markPhaseComplete === 'function') {
@@ -1308,6 +1286,7 @@
 
     var b = state.bits.map(function(x) { return x; });
     buildOutputs(b, loadP01Profile());
+    updateLivePanel();
     updateRail();
     var sum = document.getElementById('summary');
     if (sum) {
@@ -1345,33 +1324,29 @@
       'Instinct profile (Phase 01)',
       profile ? 'Notice: ' + profile.notice : '(complete Phase 01 for full profile)',
       '',
-      '1. Monetize summary',
+      '1. Market position',
       document.getElementById('out-s1').innerText.trim(),
       '',
-      '2. Where you have value',
+      '2. Where value exists',
       document.getElementById('out-s2').innerText.trim(),
       '',
-      '3. Misalignment',
+      '3. Main gap',
       document.getElementById('out-s3').innerText.trim(),
       '',
-      '4. Market reality',
+      '4. What this costs',
       document.getElementById('out-s4').innerText.trim(),
       '',
       '5. Monetize shift',
       el5 ? el5.textContent.trim() : '',
       '',
-      '6. Hard truth',
+      '6. Next move',
       document.getElementById('out-s6').innerText.trim(),
       '',
-      '7. What follows',
-      document.getElementById('out-s7').innerText.trim(),
-      '',
       'Live panel snapshot',
-      'Monetize clarity: ' + f.positioned,
-      'Work: ' + f.pulled,
-      'Problem: ' + f.monet,
-      'Buyer: ' + f.buyer,
-      'Value: ' + f.valueL
+      'Value clarity: ' + f.valueClarity,
+      'Demand: ' + f.demand,
+      'Problem: ' + f.problem,
+      'Buyer: ' + f.buyer
     ];
     return lines.join('\n');
   }
@@ -1433,11 +1408,10 @@
       });
     });
     goTo(1);
-    document.getElementById('live-pos').textContent = '—';
+    document.getElementById('live-val').textContent = '—';
     document.getElementById('live-pull').textContent = '—';
     document.getElementById('live-prob').textContent = '—';
     document.getElementById('live-buyer').textContent = '—';
-    document.getElementById('live-val').textContent = '—';
   }
 
   document.getElementById('btnCopy').addEventListener('click', copyAll);
@@ -1475,8 +1449,10 @@
       renderInstinctProfile();
       var d = loadStorage();
       if (d && d.bits && d.bits.some(function(b) { return b !== null && b !== undefined; })) {
-        state.bits = d.bits.slice();
+        state.bits = normalizeMonetizeBits(d.bits.slice());
         while (state.bits.length < TOTAL_Q) state.bits.push(null);
+        if (state.bits.length > TOTAL_Q) state.bits = state.bits.slice(0, TOTAL_Q);
+        saveStorage();
         var fe = state.bits.indexOf(null);
         if (fe === -1) {
           showSummary();

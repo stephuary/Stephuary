@@ -1039,16 +1039,33 @@
     return { operate: operate.trim() };
   }
 
+  function normalizeP2Bits(bits) {
+    if (!bits) return null;
+    if (window.StephuaryDiagnosticState && typeof window.StephuaryDiagnosticState.migrateP02Bits === 'function') {
+      return window.StephuaryDiagnosticState.migrateP02Bits(bits);
+    }
+    if (bits.length === 10) {
+      return [bits[0], bits[1], bits[3], bits[6], bits[7]];
+    }
+    return bits;
+  }
+
   function loadP2Bits() {
     try {
       var raw = localStorage.getItem(P02_KEY);
       if (!raw) return null;
-      return JSON.parse(raw).bits;
+      var d = JSON.parse(raw);
+      return normalizeP2Bits(d.bits || null);
     } catch (e) { return null; }
   }
 
   function p2Complete(bits) {
-    return bits && bits.length >= 10 && bits.indexOf(null) < 0;
+    var b = normalizeP2Bits(bits);
+    if (!b || b.length < 5) return false;
+    for (var i = 0; i < 5; i++) {
+      if (b[i] === null || b[i] === undefined) return false;
+    }
+    return true;
   }
 
   function loadP3Bits() {
@@ -1086,13 +1103,13 @@
     var b = p3;
     var buyerN =
       p2 && p2Complete(p2)
-        ? p2[6] === 0
+        ? p2[3] === 0
           ? 'someone you can already describe'
           : 'someone you still need to name precisely'
         : 'your buyer (finish Phase 02 to tighten this)';
     var probN =
       p2 && p2Complete(p2)
-        ? p2[1] === 0 && p2[5] === 0
+        ? p2[1] === 0
           ? 'a concrete, paid problem'
           : 'a problem that still needs a paid shape'
         : 'the problem Phase 02 pointed at';

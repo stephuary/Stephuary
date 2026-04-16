@@ -100,7 +100,8 @@
   }
 
   function weekActionsFromS2() {
-    var el = global.document.getElementById('out-s2');
+    var el = global.document.getElementById('out-s6');
+    if (!el) el = global.document.getElementById('out-s2');
     var out = [];
     if (el) {
       el.querySelectorAll('li').forEach(function (li) {
@@ -114,7 +115,7 @@
 
   function mountRevenue(container, ctaHtml) {
     if (!container) return;
-    var startHere = textById('out-s7') || '—';
+    var startHere = textById('out-s6') || '—';
     var week = weekActionsFromS2();
     var ignore = truncate(textById('out-s3'), 280);
     var o1 = truncate(textById('out-s1'), 140);
@@ -122,11 +123,11 @@
     var o3 = truncate(textById('out-s3'), 140);
     var o4 = truncate(textById('out-s4'), 140);
     var leverageAction = textById('out-s5');
-    var s4html = global.document.getElementById('out-s4');
-    var reason = s4html ? firstP(s4html.innerHTML) : '';
-    if (!reason) reason = truncate(textById('out-s4'), 200);
+    var s3html = global.document.getElementById('out-s3');
+    var reason = s3html ? firstP(s3html.innerHTML) : '';
+    if (!reason) reason = truncate(textById('out-s3'), 200);
     var posLine = textById('out-s5');
-    var audience = truncate(textById('out-s3'), 220);
+    var audience = truncate(textById('out-s1'), 220);
 
     var fastestHead = truncate(textById('out-s1'), 320);
 

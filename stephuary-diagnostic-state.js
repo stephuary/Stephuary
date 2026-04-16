@@ -10,6 +10,17 @@
   var P05 = 'stephuary_sovereignty_p05_v1';
   var T = 10;
   var T01 = 6;
+  var T02 = 5;
+
+  /** Legacy Monetize stored 10 binary answers; map to the current 5-question set. */
+  function migrateP02Bits(bits) {
+    if (!bits) return null;
+    if (bits.length === 10) {
+      return [bits[0], bits[1], bits[3], bits[6], bits[7]];
+    }
+    if (bits.length > T02) return bits.slice(0, T02);
+    return bits;
+  }
 
   function migrateP01Bits(bits) {
     if (!bits) return null;
@@ -48,6 +59,15 @@
     return true;
   }
 
+  function completeP02(bits) {
+    var b = migrateP02Bits(bits);
+    if (!b || b.length < T02) return false;
+    for (var i = 0; i < T02; i++) {
+      if (b[i] === null || b[i] === undefined) return false;
+    }
+    return true;
+  }
+
   function phase01(bits) {
     var b = migrateP01Bits(bits);
     if (!completeP01(b)) return null;
@@ -72,16 +92,19 @@
   }
 
   function phase02(bits) {
-    if (!complete(bits)) return null;
+    var b = migrateP02Bits(bits);
+    if (!completeP02(b)) return null;
     return {
       value_source:
-        bits[0] === 0 ? 'Value is legible to others in one pass' : 'Value still needs translation before it lands',
-      buyer_type: bits[6] === 0 ? 'Buyer is narrow enough to name' : 'Buyer is still too broad to target',
+        b[0] === 0 ? 'Value is legible to others in one pass' : 'Value still needs translation before it lands',
+      buyer_type: b[3] === 0 ? 'Buyer is narrow enough to name' : 'Buyer is still too broad to target',
       paid_problem:
-        bits[1] === 0 && bits[5] === 0
+        b[1] === 0
           ? 'Problem shape matches what people already pay to fix'
           : 'Problem shape still not aligned with paid demand',
-      demand_signal: bits[3] === 0 ? 'Demand-led (pulled)' : 'Push-led (you initiate)'
+      demand_signal: b[2] === 0 ? 'Demand-led (pulled)' : 'Push-led (you initiate)',
+      outcome_visibility:
+        b[4] === 0 ? 'Outcome is visible enough to price' : 'Outcome is subtle — proof must be designed'
     };
   }
 
@@ -152,7 +175,7 @@
       phase05: phase05(b5),
       bitsPresent: {
         p01: completeP01(b1),
-        p02: complete(b2),
+        p02: completeP02(b2),
         p03: complete(b3),
         p04: complete(b4),
         p05: complete(b5)
@@ -189,6 +212,8 @@
     phase03: phase03,
     phase04: phase04,
     phase05: phase05,
+    migrateP02Bits: migrateP02Bits,
+    completeP02: completeP02,
     KEYS: { P01: P01, P02: P02, P03: P03, P04: P04, P05: P05 }
   };
 })(typeof window !== 'undefined' ? window : this);
