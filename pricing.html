@@ -161,6 +161,14 @@ body.pricing-page .pricing-layout__main{transform:translateZ(0);}
   border-bottom:1px solid rgba(52,44,36,0.42);
 }
 .pricing-hero__copy{width:100%;max-width:100%;}
+.pricing-hero-kicker{
+  font-family:var(--mono);
+  font-size:9px;
+  letter-spacing:0.22em;
+  text-transform:uppercase;
+  color:rgba(196,163,90,0.92);
+  margin:0 0 10px;
+}
 .pricing-hero__title{
   font-family:var(--serif);font-weight:300;
   font-size:clamp(26px,3.8vw,38px);line-height:1.08;letter-spacing:-0.02em;color:var(--text);
@@ -176,6 +184,51 @@ body.pricing-page .pricing-layout__main{transform:translateZ(0);}
   margin:12px 0 0;
   max-width:42ch;
   opacity:1;
+}
+.pricing-intro-block{
+  margin:12px 0 0;
+  max-width:44ch;
+}
+.pricing-intro-line{
+  display:block;
+  font-family:var(--sans);
+  font-size:14px;
+  font-weight:300;
+  line-height:1.5;
+  color:var(--text-3);
+}
+.pricing-intro-divider{
+  width:52px;
+  height:1px;
+  background:rgba(196,163,90,0.22);
+  margin:16px 0 10px;
+}
+.pricing-flow-strip{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px 14px;
+  align-items:center;
+  font-family:var(--mono);
+  font-size:9px;
+  letter-spacing:0.16em;
+  text-transform:uppercase;
+  color:rgba(220,208,190,0.9);
+  margin:12px 0 0;
+}
+.pricing-flow-strip__node{white-space:nowrap;}
+.pricing-flow-strip__arrow{color:rgba(196,163,90,0.55);}
+.pricing-hero-cta-box{
+  margin-top:18px;
+  padding:14px 14px 12px;
+  border:1px solid rgba(244,237,224,0.08);
+  background:rgba(10,10,8,0.44);
+  border-radius:var(--r);
+}
+.pricing-hero-cta-box .pricing-hero-cta-row{
+  margin-top:0;
+}
+.pricing-hero-cta-box .tier-cta--pri{
+  box-shadow:0 10px 34px rgba(0,0,0,0.34),0 0 0 1px rgba(43,79,212,0.16);
 }
 .pricing-hero__personal{
   font-size:12px;color:var(--text-4);line-height:1.45;max-width:42ch;margin-top:10px;
@@ -1594,8 +1647,21 @@ body.pricing-page.pricing-page--mobile-footer-cta{
   transition:box-shadow .3s ease,border-color .2s ease,transform .2s ease;
   position:relative;z-index:0;
 }
+.price-group::before{
+  content:"";
+  position:absolute;
+  left:0;
+  top:0;
+  bottom:0;
+  width:2px;
+  background:rgba(196,163,90,0.22);
+  opacity:0.18;
+  transition:opacity .2s ease, background .2s ease;
+  border-radius:var(--r) 0 0 var(--r);
+}
 .price-group:hover{
   z-index:3;
+  background:rgba(14,12,10,0.84);
   border-color:rgba(62,72,52,0.42);
   box-shadow:
     0 0 0 1px rgba(42,48,36,0.14),
@@ -1603,11 +1669,13 @@ body.pricing-page.pricing-page--mobile-footer-cta{
     0 0 36px rgba(43,79,212,0.09);
   transform:translateY(-2px);
 }
+.price-group:hover::before{opacity:0.34;}
 .price-group[open]{
   z-index:5;
   border-color:rgba(72,78,58,0.42);
   box-shadow:0 0 0 1px rgba(38,44,32,0.18),0 10px 36px rgba(0,0,0,0.4);
 }
+.price-group[open]::before{opacity:0.52;background:rgba(196,163,90,0.34);}
 details.price-group.price-group--guided-active{
   border-color:rgba(196,163,90,0.42);
   box-shadow:
@@ -1616,6 +1684,7 @@ details.price-group.price-group--guided-active{
     0 0 44px rgba(43,79,212,0.1);
   z-index:6;
 }
+details.price-group.price-group--guided-active::before{opacity:0.7;background:rgba(196,163,90,0.52);}
 details.price-group.price-group--peer-muted{
   opacity:0.93;
   border-color:rgba(244,237,224,0.07);
@@ -1640,6 +1709,24 @@ details.price-group.price-group--peer-muted:hover{
 .price-group > summary:hover::after{color:var(--gold-hi);}
 .pricing-major-section > summary{padding-right:36px;}
 .pricing-major-section > summary .price-group__title{margin:0;}
+.pricing-major-section > summary .pg-label{
+  display:block;
+  font-family:var(--mono);
+  font-size:9px;
+  letter-spacing:0.22em;
+  text-transform:uppercase;
+  color:rgba(196,163,90,0.88);
+  margin:0 0 4px;
+}
+.pricing-major-section > summary .pg-title{
+  margin:0;
+  font-family:var(--serif);
+  font-size:clamp(18px,2.4vw,22px);
+  font-weight:300;
+  color:var(--text);
+  letter-spacing:-0.02em;
+  line-height:1.15;
+}
 .pricing-tier-more--operator-levels{margin-top:10px;}
 
 /* Accordion stabilization overrides */
@@ -1647,7 +1734,7 @@ details.price-group.price-group--peer-muted:hover{
 .pricing-layout-inner{display:block;max-width:1040px;padding-left:0;padding-right:0;}
 .pricing-layout-inner .pricing-layout__main{display:block;width:100%;max-width:100%;}
 #pricing-groups{display:block;width:100%;max-width:100%;}
-#pricing-groups > details.price-group{display:block;width:100%;max-width:100%;margin:0 0 15px;}
+#pricing-groups > details.price-group{display:block;width:100%;max-width:100%;margin:0 0 18px;}
 #pricing-groups > details.price-group > .price-group__anim > .price-group__inner > .price-group__pad{padding:18px 16px 18px;}
 #pricing-groups .pricing-flow-section{padding:0!important;margin:0!important;min-height:0;height:auto;width:100%;max-width:100%;}
 #pricing-groups .pricing-flow-layer{margin-top:0;padding-top:0;border-top:none;}
@@ -2233,18 +2320,35 @@ html.early-mode body.pricing-page{
   <div class="pricing-hero-split pricing-rhythm--hero" id="pricing-guided-hero">
     <header class="pricing-hero pricing-hero-split__copy">
       <div class="pricing-hero__copy">
+        <p class="pricing-hero-kicker">SYSTEM</p>
         <h1 class="pricing-hero__title">Pricing follows the system</h1>
-        <p class="pricing-identity-line">I design systems so your work becomes usable, visible, and paid. Start where you are. Move forward when it’s clear.</p>
-        <p class="pricing-identity-line">This is the next step based on what the system picked up.</p>
-        <p class="pricing-identity-line">If you’re unsure, start with the diagnostic. The system will route you.</p>
-        <p class="pricing-hero-path-line">Diagnostic → Direction → Build → Access</p>
+        <div class="pricing-intro-block">
+          <span class="pricing-intro-line">I design systems so your work becomes usable, visible, and paid.</span>
+          <span class="pricing-intro-line">Start where you are. Move forward when it’s clear.</span>
+        </div>
+        <div class="pricing-intro-block">
+          <span class="pricing-intro-line">If you’re unsure, start with the diagnostic.</span>
+          <span class="pricing-intro-line">The system will route you.</span>
+        </div>
+        <div class="pricing-intro-divider" aria-hidden="true"></div>
+        <div class="pricing-flow-strip" aria-label="System flow">
+          <span class="pricing-flow-strip__node">DIAGNOSTIC</span>
+          <span class="pricing-flow-strip__arrow" aria-hidden="true">→</span>
+          <span class="pricing-flow-strip__node">DIRECTION</span>
+          <span class="pricing-flow-strip__arrow" aria-hidden="true">→</span>
+          <span class="pricing-flow-strip__node">BUILD</span>
+          <span class="pricing-flow-strip__arrow" aria-hidden="true">→</span>
+          <span class="pricing-flow-strip__node">ACCESS</span>
+        </div>
         <p class="pricing-rec-context" id="pricing-rec-context" hidden></p>
         <div id="pricing-cei-strip" class="pricing-cei-strip" hidden aria-hidden="true"></div>
         <p class="pricing-hero__personal" id="pricing-hero-personal" hidden></p>
-        <div class="pricing-hero-cta-row">
-          <a href="/capture" class="tier-cta tier-cta--pri magnetic">Start Diagnostic</a>
-          <a href="/systems" class="tier-cta tier-cta--ghost magnetic">Open System</a>
-          <a href="/snapshot" class="tier-cta tier-cta--ghost magnetic">Start Snapshot</a>
+        <div class="pricing-hero-cta-box">
+          <div class="pricing-hero-cta-row">
+            <a href="/capture" class="tier-cta tier-cta--pri magnetic">Start Diagnostic</a>
+            <a href="/systems" class="tier-cta tier-cta--ghost magnetic">Open System</a>
+            <a href="/snapshot" class="tier-cta tier-cta--ghost magnetic">Start Snapshot</a>
+          </div>
         </div>
         <p class="pricing-route-micro">You don’t need more information.<br /><br />You need the right entry point.<br /><br />You don't need options. You need the right entry point.</p>
       </div>
@@ -2278,7 +2382,8 @@ html.early-mode body.pricing-page{
       
       <details class="price-group pricing-major-section" id="pricing-major-entry" data-pricing-group data-pricing-major open>
       <summary>
-        <h2 class="price-group__title">Entry</h2>
+        <span class="pg-label">ENTRY</span>
+        <h2 class="pg-title">Start here</h2>
       </summary>
       <div class="price-group__anim"><div class="price-group__inner"><div class="price-group__pad">
       <section class="pricing-flow-section pricing-flow-section--rhythm-entry" id="pricing-flow-entry" aria-labelledby="pricing-flow-entry-title" data-pricing-cluster="A">
@@ -2311,7 +2416,8 @@ html.early-mode body.pricing-page{
       <span id="tier-revenue" aria-hidden="true"></span>
       <details class="price-group pricing-major-section" id="pricing-major-direction" data-pricing-group data-pricing-major>
       <summary>
-        <h2 class="price-group__title">Direction</h2>
+        <span class="pg-label">DIRECTION</span>
+        <h2 class="pg-title">Make it clear</h2>
       </summary>
       <div class="price-group__anim"><div class="price-group__inner"><div class="price-group__pad">
       <section class="pricing-flow-section pricing-rhythm--core pricing-flow-section--decision pricing-flow-layer" id="pricing-flow-decision" aria-labelledby="pricing-flow-decision-title" data-pricing-cluster="B">
@@ -2340,7 +2446,8 @@ html.early-mode body.pricing-page{
 
       <details class="price-group pricing-major-section" id="pricing-major-snapshot" data-pricing-group data-pricing-major>
       <summary>
-        <h2 class="price-group__title">Snapshot</h2>
+        <span class="pg-label">SNAPSHOT</span>
+        <h2 class="pg-title">See what’s happening</h2>
         <p class="pricing-snapshot-default" id="snapshot-intent-line">If it's not obvious, this is the move.</p>
       </summary>
       <div class="price-group__anim"><div class="price-group__inner"><div class="price-group__pad">
@@ -2381,7 +2488,8 @@ html.early-mode body.pricing-page{
 
       <details class="price-group pricing-major-section" id="pricing-major-access" data-pricing-group data-pricing-major>
       <summary>
-        <h2 class="price-group__title">Access</h2>
+        <span class="pg-label">ACCESS</span>
+        <h2 class="pg-title">Step in</h2>
       </summary>
       <div class="price-group__anim"><div class="price-group__inner"><div class="price-group__pad">
       <section class="pricing-flow-section pricing-flow-section--rhythm-operator pricing-flow-layer" id="pricing-flow-operator" aria-labelledby="pricing-flow-operator-title" data-pricing-cluster="C">
