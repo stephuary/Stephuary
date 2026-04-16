@@ -2278,7 +2278,7 @@ html.early-mode body.pricing-page{
       <section class="pricing-flow-section pricing-rhythm--core pricing-flow-section--decision pricing-flow-layer" id="pricing-flow-decision" aria-labelledby="pricing-flow-decision-title" data-pricing-cluster="B">
         <p class="pricing-flow-anchor" id="pricing-anchor-direction">Direction</p>
         <h2 id="pricing-flow-decision-title" class="pricing-flow-section__title">Make it clear</h2>
-        <p class="pricing-flow-section__sub">You see the issue. You need structure, not guessing.</p>
+        <p class="pricing-flow-section__sub" id="direction-intent-line">You see the issue. You need structure, not guessing.</p>
         <div class="pricing-decision-split direction-flow">
               <div class="inner-tier pricing-offer-card" id="tier-lock" data-tier-id="direction-lock" data-sh-map-node="lock">
                 <p class="inner-tier__label inner-tier__label--gold">Direction</p>
@@ -2302,7 +2302,7 @@ html.early-mode body.pricing-page{
       <details class="price-group pricing-major-section" id="pricing-major-snapshot" data-pricing-group data-pricing-major>
       <summary>
         <h2 class="price-group__title">Snapshot</h2>
-        <p class="pricing-snapshot-default">If it's not obvious, this is the move.</p>
+        <p class="pricing-snapshot-default" id="snapshot-intent-line">If it's not obvious, this is the move.</p>
       </summary>
       <div class="price-group__anim"><div class="price-group__inner"><div class="price-group__pad">
       <section class="pricing-flow-section pricing-flow-section--rhythm-diagnose pricing-flow-layer" id="pricing-flow-diagnose" aria-labelledby="pricing-flow-diagnose-title" data-pricing-cluster="C">
@@ -2725,6 +2725,8 @@ html.early-mode body.pricing-page{
   var total = document.getElementById('direction-total-value');
   var continueBtn = document.getElementById('direction-continue-btn');
   var helper = document.getElementById('direction-intent-helper');
+  var snapshotLine = document.getElementById('snapshot-intent-line');
+  var directionLine = document.getElementById('direction-intent-line');
   if (!conceptCheck || !total || !continueBtn) return;
 
   var startedAt = Date.now();
@@ -2762,6 +2764,19 @@ html.early-mode body.pricing-page{
     var intent = classifyIntent();
     conceptCheck.checked = intent === 'high';
     if (helper) helper.hidden = intent !== 'mid';
+    if (snapshotLine) {
+      if (intent === 'low') snapshotLine.textContent = 'This will show you what’s actually wrong.';
+      else if (intent === 'mid') snapshotLine.textContent = 'This gives you structure to move forward.';
+      else snapshotLine.textContent = 'This fixes it.';
+    }
+    if (directionLine) {
+      if (intent === 'low') directionLine.textContent = 'Start here if you’re not fully sure yet.';
+      else if (intent === 'mid') directionLine.textContent = 'This clarifies what to pursue and what to ignore.';
+      else directionLine.textContent = 'You already see it. This sharpens it.';
+    }
+    if (intent === 'low') continueBtn.textContent = 'Continue';
+    else if (intent === 'mid') continueBtn.textContent = 'Continue with direction';
+    else continueBtn.textContent = 'Move forward';
     syncDirectionTotal();
   }
 
