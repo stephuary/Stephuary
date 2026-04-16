@@ -593,32 +593,6 @@ details.price-group--pricing-field-focus > summary{
   border-bottom:1px solid rgba(244,237,224,0.08);
 }
 .pricing-entry-skip:hover{color:var(--text-4);border-color:rgba(244,237,224,0.16);}
-.pricing-entry-direction{
-  margin:12px 0 0;
-  padding:12px 14px;
-  border:1px solid rgba(244,237,224,0.08);
-  background:rgba(8,8,8,0.35);
-  max-width:620px;
-  margin-left:18px;
-  opacity:0;
-  max-height:0;
-  overflow:hidden;
-  transform:translateY(-4px);
-  transition:max-height .26s ease,opacity .2s ease,transform .2s ease,padding .2s ease;
-}
-.pricing-entry-direction.is-open{
-  opacity:1;
-  max-height:260px;
-  transform:translateY(0);
-}
-.pricing-entry-direction:not(.is-open){
-  padding-top:0;
-  padding-bottom:0;
-  border-width:0;
-}
-.pricing-entry-direction .inner-tier__label{margin-bottom:4px;}
-.pricing-entry-direction .inner-tier__price{margin-bottom:6px;}
-.pricing-entry-direction .pricing-entry-card__cta{margin-top:8px;}
 .pricing-tier-more__body{
   margin:0;
   font-size:clamp(15px,0.98rem,16px);
@@ -2428,7 +2402,6 @@ body.pricing-page.fe-env--s3 .fe-env-cta .tier-cta--pri{
   .page{padding:0 14px 44px;}
   .price-group > summary{padding-right:32px;}
   .pricing-hero-cta-box{padding:12px 12px 10px;}
-  .pricing-entry-direction{margin-left:10px;}
 }
 @media (prefers-reduced-motion: reduce) {
   .pricing-identity-line{opacity:1;animation:none;}
@@ -2603,23 +2576,16 @@ html.early-mode body.pricing-page{
       <section class="pricing-flow-section pricing-flow-section--rhythm-entry" id="pricing-flow-entry" aria-labelledby="pricing-flow-entry-title" data-pricing-cluster="A">
         <p class="pricing-flow-anchor" id="pricing-anchor-entry">Entry</p>
         <h2 id="pricing-flow-entry-title" class="pricing-flow-section__title">Start here. Don’t overthink it.</h2>
-        <p class="pricing-stage-line">Start here if the problem isn't clear yet.</p>
+        <p class="pricing-stage-line">Start here if the problem isn’t clear yet.</p>
         <div class="pricing-flow-section__cards pricing-entry-grid">
               <a class="inner-tier pricing-entry-card" href="/playbooks" id="tier-rooms" data-tier-id="rooms" data-sh-map-node="rooms">
                 <p class="inner-tier__label inner-tier__label--gold">Rooms</p>
                 <p class="inner-tier__price">$34</p>
                 <p class="inner-tier__desc">One focused problem.</p>
-                <p class="pricing-entry-card__peek">A single room, one outcome. no wandering.</p>
                 <span class="pricing-entry-card__cta">Open system</span>
               </a>
         </div>
-        <button type="button" class="pricing-entry-skip" id="entry-direction-reveal-trigger">If you already know what you're looking for, skip this.</button>
-        <div class="pricing-entry-direction" id="entry-direction-reveal" aria-hidden="true">
-          <p class="inner-tier__label inner-tier__label--gold">Start with direction instead.</p>
-          <p class="inner-tier__price">$34</p>
-          <p class="inner-tier__desc">Pick a direction that works.</p>
-          <a href="/direction-system" class="pricing-entry-card__cta" id="tier-direction" data-tier-id="direction-system" data-sh-map-node="direction">Go to direction</a>
-        </div>
+        <button type="button" class="pricing-entry-skip" id="entry-skip-to-direction">If you already know what you’re looking for, skip this.</button>
         <p class="pricing-entry-foot">This is where you start. Not where things change.</p>
       </section>
       </div></div></div>
@@ -2634,7 +2600,7 @@ html.early-mode body.pricing-page{
         <h2 class="pg-title">Make it clear</h2>
       </summary>
       <div class="price-group__anim"><div class="price-group__inner"><div class="price-group__pad">
-      <section class="pricing-flow-section pricing-rhythm--core pricing-flow-section--decision pricing-flow-layer" id="pricing-flow-decision" aria-labelledby="pricing-flow-decision-title" data-pricing-cluster="B">
+      <section class="pricing-flow-section pricing-rhythm--core pricing-flow-section--decision pricing-flow-layer" id="tier-direction" aria-labelledby="pricing-flow-decision-title" data-pricing-cluster="B">
         <p class="pricing-flow-anchor" id="pricing-anchor-direction">Direction</p>
         <h2 id="pricing-flow-decision-title" class="pricing-flow-section__title">Make it clear</h2>
         <p class="pricing-flow-section__sub" id="direction-intent-line">You see the issue. You need structure, not guessing.</p>
@@ -3194,103 +3160,15 @@ html.early-mode body.pricing-page{
 </script>
 <script>
 (function () {
-  var trigger = document.getElementById('entry-direction-reveal-trigger');
-  var panel = document.getElementById('entry-direction-reveal');
-  var entry = document.getElementById('pricing-flow-entry');
-  var primary = document.getElementById('tier-rooms');
-  if (!trigger || !panel || !entry) return;
-
-  var revealed = false;
-  var startedAt = Date.now();
-  var maxScrollRatio = 0;
-  var hoverTimer = null;
-  var sawEntryAtMs = null;
-
-  function updateScrollDepth() {
-    var doc = document.documentElement;
-    var scrollable = Math.max(1, doc.scrollHeight - window.innerHeight);
-    var ratio = Math.min(1, Math.max(0, window.scrollY / scrollable));
-    if (ratio > maxScrollRatio) maxScrollRatio = ratio;
-  }
-
-  function reveal(reason) {
-    if (revealed) return;
-    revealed = true;
-    panel.classList.add('is-open');
-    panel.setAttribute('aria-hidden', 'false');
-    if (hoverTimer) window.clearTimeout(hoverTimer);
-  }
-
-  function intentFromSource() {
-    try {
-      var ref = document.referrer || '';
-      if (!ref) return false;
-      var u = new URL(ref);
-      if (u.origin !== window.location.origin) return false;
-      var p = u.pathname || '';
-      return p.indexOf('direction') !== -1 || p.indexOf('focused-review') !== -1;
-    } catch (e) {
-      return false;
-    }
-  }
-
-  function shouldAutoReveal() {
-    var now = Date.now();
-    var quickToEntry = sawEntryAtMs !== null && sawEntryAtMs < 3500;
-    var deepScroll = maxScrollRatio >= 0.55;
-    var sourceIntent = intentFromSource();
-    return quickToEntry || deepScroll || sourceIntent;
-  }
-
-  // Manual reveal stays available.
-  trigger.addEventListener('click', function () {
-    reveal('manual');
-  });
-
-  // Track scroll depth/velocity signals.
-  window.addEventListener('scroll', updateScrollDepth, { passive: true });
-  updateScrollDepth();
-
-  if ('IntersectionObserver' in window) {
-    var io = new IntersectionObserver(function (entries) {
-      entries.forEach(function (en) {
-        if (en.isIntersecting && sawEntryAtMs === null) {
-          sawEntryAtMs = Date.now() - startedAt;
-          if (shouldAutoReveal()) reveal('auto');
-        }
-      });
-    }, { threshold: 0.35 });
-    io.observe(entry);
-  } else {
-    // Fallback: evaluate after a short delay.
+  var skip = document.getElementById('entry-skip-to-direction');
+  var directionGroup = document.getElementById('pricing-major-direction');
+  if (!skip || !directionGroup) return;
+  skip.addEventListener('click', function () {
+    directionGroup.open = true;
     window.setTimeout(function () {
-      if (shouldAutoReveal()) reveal('auto');
-    }, 900);
-  }
-
-  // Hesitation signal: hover/focus around Entry without clicking the $1 CTA.
-  function armHesitation() {
-    if (revealed) return;
-    if (hoverTimer) window.clearTimeout(hoverTimer);
-    hoverTimer = window.setTimeout(function () {
-      // Only reveal if user is lingering and hasn't clicked primary.
-      reveal('hesitation');
-    }, 4200);
-  }
-  function disarmHesitation() {
-    if (hoverTimer) window.clearTimeout(hoverTimer);
-    hoverTimer = null;
-  }
-
-  entry.addEventListener('mouseenter', armHesitation);
-  entry.addEventListener('focusin', armHesitation);
-  entry.addEventListener('mouseleave', disarmHesitation);
-
-  if (primary) {
-    primary.addEventListener('click', function () {
-      disarmHesitation();
-    });
-  }
+      directionGroup.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 80);
+  });
 })();
 </script>
 <script>
