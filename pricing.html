@@ -462,10 +462,10 @@ details.price-group--pricing-field-focus > summary{
 }
 .pricing-entry-grid{
   display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:24px;
+  grid-template-columns:1fr;
+  gap:14px;
   width:100%;
-  max-width:1024px;
+  max-width:680px;
   margin:0 auto;
 }
 @media(max-width:768px){
@@ -488,6 +488,45 @@ details.price-group--pricing-field-focus > summary{
   margin:20px 0 0;
   font-style:italic;
 }
+.pricing-entry-skip{
+  margin:8px 0 0;
+  background:transparent;
+  border:none;
+  padding:0;
+  font:inherit;
+  font-size:12px;
+  line-height:1.45;
+  color:var(--text-5);
+  cursor:pointer;
+  border-bottom:1px solid rgba(244,237,224,0.08);
+}
+.pricing-entry-skip:hover{color:var(--text-4);border-color:rgba(244,237,224,0.16);}
+.pricing-entry-direction{
+  margin:12px 0 0;
+  padding:12px 14px;
+  border:1px solid rgba(244,237,224,0.08);
+  background:rgba(8,8,8,0.35);
+  max-width:620px;
+  margin-left:18px;
+  opacity:0;
+  max-height:0;
+  overflow:hidden;
+  transform:translateY(-4px);
+  transition:max-height .26s ease,opacity .2s ease,transform .2s ease,padding .2s ease;
+}
+.pricing-entry-direction.is-open{
+  opacity:1;
+  max-height:260px;
+  transform:translateY(0);
+}
+.pricing-entry-direction:not(.is-open){
+  padding-top:0;
+  padding-bottom:0;
+  border-width:0;
+}
+.pricing-entry-direction .inner-tier__label{margin-bottom:4px;}
+.pricing-entry-direction .inner-tier__price{margin-bottom:6px;}
+.pricing-entry-direction .pricing-entry-card__cta{margin-top:8px;}
 .pricing-tier-more__body{
   margin:0;
   font-size:clamp(15px,0.98rem,16px);
@@ -2252,16 +2291,15 @@ html.early-mode body.pricing-page{
                 <p class="inner-tier__price">$1</p>
                 <p class="inner-tier__desc">One focused problem.</p>
                 <p class="pricing-entry-card__peek">A single room, one outcome—no wandering.</p>
-                <span class="pricing-entry-card__cta">Open System</span>
+                <span class="pricing-entry-card__cta">Open system</span>
               </a>
-
-              <a class="inner-tier pricing-entry-card pricing-entry-card--featured" href="/direction-system" id="tier-direction" data-tier-id="direction-system" data-sh-map-node="direction">
-                <p class="inner-tier__label inner-tier__label--gold">Direction</p>
-                <p class="inner-tier__price">$34</p>
-                <p class="inner-tier__desc">Pick a direction that works.</p>
-                <p class="pricing-entry-card__peek">The system that keeps you from circling.</p>
-                <span class="pricing-entry-card__cta">Open System</span>
-              </a>
+        </div>
+        <button type="button" class="pricing-entry-skip" id="entry-direction-reveal-trigger">If you already know what you're looking for, skip this.</button>
+        <div class="pricing-entry-direction" id="entry-direction-reveal" aria-hidden="true">
+          <p class="inner-tier__label inner-tier__label--gold">Start with direction instead.</p>
+          <p class="inner-tier__price">$34</p>
+          <p class="inner-tier__desc">Pick a direction that works.</p>
+          <a href="/direction-system" class="pricing-entry-card__cta" id="tier-direction" data-tier-id="direction-system" data-sh-map-node="direction">Go to direction</a>
         </div>
         <p class="pricing-entry-foot">This is where you start. Not where things change.</p>
       </section>
@@ -2270,6 +2308,7 @@ html.early-mode body.pricing-page{
 
       <p class="pricing-flow-bridge">You see something is off. This is where you stop guessing.</p>
 
+      <span id="tier-revenue" aria-hidden="true"></span>
       <details class="price-group pricing-major-section" id="pricing-major-direction" data-pricing-group data-pricing-major>
       <summary>
         <h2 class="price-group__title">Direction</h2>
@@ -2485,7 +2524,7 @@ html.early-mode body.pricing-page{
       <h2 id="pricing-exit-soft-title" class="pricing-exit-soft__title">Before you leave</h2>
       <p class="pricing-exit-soft__body">If you already know something isn’t working, don’t leave with the same problem. Start where things actually change.</p>
       <div class="pricing-exit-soft__actions">
-        <a href="#pricing-flow-installation" class="tier-cta tier-cta--pri magnetic" id="pricing-exit-soft-cta">Start Build</a>
+        <a href="#pricing-flow-scale" class="tier-cta tier-cta--pri magnetic" id="pricing-exit-soft-cta">Start Build</a>
         <button type="button" class="pricing-exit-soft__dismiss" id="pricing-exit-soft-dismiss">Not now</button>
       </div>
     </div>
@@ -2816,6 +2855,17 @@ html.early-mode body.pricing-page{
   conceptCheck.addEventListener('change', syncDirectionTotal);
   applyIntentDefault();
   syncDirectionTotal();
+})();
+</script>
+<script>
+(function () {
+  var trigger = document.getElementById('entry-direction-reveal-trigger');
+  var panel = document.getElementById('entry-direction-reveal');
+  if (!trigger || !panel) return;
+  trigger.addEventListener('click', function () {
+    var open = panel.classList.toggle('is-open');
+    panel.setAttribute('aria-hidden', open ? 'false' : 'true');
+  });
 })();
 </script>
 </body>
