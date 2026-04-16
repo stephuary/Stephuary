@@ -849,63 +849,41 @@
       <div id="summary">
         <p class="summary-phase-tag">Diagnostic · Phase 05 of 5 — Sovereignty</p>
         <h2 class="summary-title">Sovereignty complete</h2>
-        <p class="summary-sub">Control, not just growth.</p>
+        <p class="summary-sub">Final checkpoint.</p>
 
-        <div id="sovereignty-legacy-readout" hidden>
         <div class="diag-section">
-          <p class="diag-h">1. Current state</p>
+          <p class="diag-h">1. Control status</p>
           <div class="diag-body" id="out-1"></div>
         </div>
 
         <div class="diag-section">
-          <p class="diag-h">2. What you’ve built</p>
+          <p class="diag-h">2. Dependency</p>
           <div class="diag-body" id="out-2"></div>
         </div>
 
         <div class="diag-section">
-          <p class="diag-h">3. Risk</p>
+          <p class="diag-h">3. Leverage</p>
           <div class="diag-body" id="out-3"></div>
         </div>
 
         <div class="diag-section">
-          <p class="diag-h">4. Sovereignty path</p>
+          <p class="diag-h">4. Main gap</p>
           <div class="diag-body" id="out-4"></div>
         </div>
 
         <div class="diag-section">
-          <p class="diag-h">5. Multiplier</p>
-          <div class="diag-body" id="out-5"></div>
+          <p class="diag-h">5. Hard truth</p>
+          <div class="hard-truth-block diag-body" id="out-5"></div>
         </div>
 
         <div class="diag-section">
-          <p class="diag-h">6. Hard truth</p>
-          <div class="hard-truth-block" id="out-6">
-            <p>If everything depends on you: <strong>it does not scale</strong>.</p>
-            <p>If everything depends on one path: <strong>it breaks</strong>.</p>
-          </div>
-        </div>
-
-        <div class="diag-section">
-          <p class="diag-h">7. Sovereign position</p>
-          <div class="diag-body" id="out-7"></div>
-        </div>
-
-        <div class="diag-section">
-          <p class="diag-h">8. Final move</p>
-          <div class="diag-body" id="out-8"></div>
-        </div>
+          <p class="diag-h">6. Final move</p>
+          <div class="diag-body" id="out-6"></div>
         </div>
 
         <div class="diag-section">
           <div class="system-done sovereignty-final-block" id="out-sys">
-            <p class="diag-h">Final state</p>
-            <p class="diag-body sovereignty-final-lead" id="sovereignty-final-state">You’ve proven something works.</p>
-            <p class="diag-h" style="margin-top:14px">What this means</p>
-            <div class="diag-body" id="sovereignty-what-means"></div>
-            <p class="diag-h" style="margin-top:14px">The gap</p>
-            <p class="diag-body" id="sovereignty-the-gap">The issue is not understanding. It’s where to apply pressure.</p>
-            <p class="diag-h" style="margin-top:14px">System handoff</p>
-            <p class="diag-body" id="sovereignty-handoff">You don’t need another pass. You need a controlled environment to fix what’s breaking.</p>
+            <p class="diag-body sovereignty-final-lead" id="sovereignty-final-state">You’ve proven something works.<br /><br />Now decide if you own it.</p>
             <p class="capture-flow-saved">Your progress is saved automatically on this device.</p>
             <div class="action-primary" style="margin-bottom:0">
               <button type="button" class="btn btn-solid" data-sh-flow-primary id="sovereignty-view-results">Enter Your Room</button>
@@ -1324,118 +1302,52 @@
     });
   }
 
-  function operatingModel(b) {
-    var indScore = 0;
-    if (b[0] === 0) indScore += 2;
-    if (b[1] === 0) indScore += 2;
-    if (b[2] === 0) indScore += 2;
-    if (b[3] === 0) indScore += 2;
-    if (b[4] === 0) indScore += 1;
-    return indScore >= 5 ? 'independent' : 'dependent';
-  }
-
-  function incomeBand(b) {
-    var fragile = b[0] === 1 || b[1] === 1;
-    var scalable = b[2] === 0 && b[3] === 0 && b[4] === 0;
-    if (scalable && !fragile) return 'scalable';
-    if (fragile && !scalable) return 'fragile';
-    return 'stable';
-  }
-
-  function expansionPaths(p3, archetypeName) {
-    var pool = ['additional services', 'advisory', 'systems', 'content', 'licensing'];
-    if (!p3Complete(p3)) {
-      return pool.slice();
-    }
-    var direct = p3[3] === 0;
-    var adv = p3[3] === 1;
-    var ordered = [];
-    if (direct) {
-      ordered = ['additional services', 'systems', 'content', 'licensing', 'advisory'];
-    } else if (adv) {
-      ordered = ['advisory', 'licensing', 'content', 'systems', 'additional services'];
-    } else {
-      ordered = ['systems', 'advisory', 'additional services', 'content', 'licensing'];
-    }
-    var note = archetypeName
-      ? '<p>Given your <strong>' + escapeHtml(archetypeName) + '</strong> pattern, prioritize the first two first.</p>'
-      : '';
-    return { ordered: ordered, note: note };
-  }
-
-  function archetypeName() {
-    var p = loadP01Profile();
-    if (p && p.archetype) return String(p.archetype);
-    return '';
+  function dominantGapLabel(b) {
+    if (b[0] === 1) return 'dependency';
+    if (b[3] === 1) return 'lack of ownership';
+    if (b[2] === 1) return 'lack of repeatability';
+    if (b[4] === 1) return 'lack of leverage';
+    return 'lack of leverage';
   }
 
   function buildSummaryOutputs(b) {
-    var om = operatingModel(b);
-    var inc = incomeBand(b);
-    var p3 = loadP3Bits();
-    var o = buildP3OfferAndEntry();
-    var arch = archetypeName();
+    var controlled = b[0] === 0 && b[3] === 0 && b[2] === 0;
+    var statusWord = controlled ? 'controlled' : 'dependent';
 
     document.getElementById('out-1').innerHTML =
-      '<p><strong>Control snapshot</strong></p><ul class="diag-list">' +
-      '<li>Operating model: <strong>' + om + '</strong></li>' +
-      '<li>Income shape: <strong>' + inc + '</strong></li></ul>';
+      '<p>You are currently: <strong>' + statusWord + '</strong></p>';
 
-    var proof = p4ValidationTier(loadP4Bits());
-    var proofLine = proof
-      ? '<strong>' + proof + '</strong> (Phase 04)'
-      : 'complete Phase 04 — Automation to bind full proof here';
+    var depBullets = [];
+    if (b[0] === 1) depBullets.push('income tied to one source');
+    if (b[1] === 1) depBullets.push('reliance on external systems');
+    if (b[2] === 1) depBullets.push('reliance on your time');
+    document.getElementById('out-2').innerHTML = depBullets.length
+      ? '<ul class="diag-list">' + depBullets.map(function(x) { return '<li>' + x + '</li>'; }).join('') + '</ul>'
+      : '<p>—</p>';
 
-    document.getElementById('out-2').innerHTML =
-      '<p>You now have:</p><ul class="diag-list">' +
-      '<li>a validated offer: ' + escapeHtml(o.offer) + '</li>' +
-      '<li>a working entry point: ' + escapeHtml(o.entry) + '</li>' +
-      '<li>a proven ability: ' + proofLine + '</li>' +
-      '</ul>';
-
-    var risks = [];
-    if (b[0] === 1) risks.push('relying on one source');
-    if (b[1] === 1) risks.push('external control of income levers');
-    if (b[2] === 1) risks.push('rebuild-heavy work');
-    if (b[3] === 1) risks.push('lacking ownership of the container');
-    if (risks.length === 0) risks.push('no single risk dominated on this pass');
+    var levPresent = b[4] === 0;
     document.getElementById('out-3').innerHTML =
-      '<p>Your current risk is:</p><ul class="diag-list">' +
-      risks.map(function(r) { return '<li>' + r + '</li>'; }).join('') +
-      '</ul>';
+      '<p>Leverage: <strong>' + (levPresent ? 'present' : 'limited') + '</strong></p>' +
+      '<p>' +
+      (levPresent ? 'This can scale beyond your time' : 'This depends on your direct effort') +
+      '</p>';
 
-    var ep = expansionPaths(p3, arch);
     document.getElementById('out-4').innerHTML =
-      ep.note +
-      '<p>From what you already have, you can expand into:</p><ul class="diag-list">' +
-      ep.ordered.map(function(x) { return '<li>' + x + '</li>'; }).join('') +
-      '</ul>';
+      '<p>The gap is not skill.</p>' +
+      '<p>It is:<br /><strong>' + dominantGapLabel(b) + '</strong></p>';
 
     document.getElementById('out-5').innerHTML =
-      '<p>Your next level is:</p><ul class="diag-list">' +
-      '<li>turning one outcome into multiple formats</li>' +
-      '<li>turning one skill into multiple offers</li>' +
-      '</ul>';
+      '<p>If your income depends on:<br />one source<br />one system<br />or your time</p>' +
+      '<p>it is fragile.</p>';
 
-    document.getElementById('out-7').innerHTML =
-      '<p>You are heading toward:</p><ul class="diag-list">' +
-      '<li>' +
-      (b[1] === 0 ? 'control over your income levers' : 'less predictable control of income') +
-      '</li>' +
-      '<li>' +
-      (b[3] === 0 ? 'ownership of what you build' : 'operating inside someone else\'s system') +
-      '</li>' +
-      '<li>' +
-      (b[4] === 0 ? 'direction toward leverage' : 'direction toward maintenance') +
-      '</li>' +
-      '</ul>';
-
-    document.getElementById('out-8').innerHTML =
-      '<p>From here:</p><ul class="diag-list">' +
-      '<li>expand what works</li>' +
-      '<li>remove dependency</li>' +
-      '<li>build ownership</li>' +
-      '</ul>';
+    document.getElementById('out-6').innerHTML =
+      '<p>From here:</p>' +
+      '<ul class="diag-list">' +
+      '<li>remove one dependency</li>' +
+      '<li>build one owned path</li>' +
+      '<li>create one leveraged output</li>' +
+      '</ul>' +
+      '<p>Do not expand until this is true.</p>';
 
     var fin = panelFromBits(b);
     document.getElementById('live-dep').textContent = fin.dep;
@@ -1537,7 +1449,6 @@
     document.getElementById('flow').style.display = 'none';
     document.getElementById('summary').style.display = 'flex';
     buildSummaryOutputs(state.bits.map(function(x) { return x; }));
-    fillSovereigntyFinalBlock();
     updateRail();
     if (window.StephuaryDiagnosticMobile && typeof window.StephuaryDiagnosticMobile.scrollToSummary === 'function') {
       window.requestAnimationFrame(function () {
@@ -1566,27 +1477,6 @@
     window.location.href = '/results';
   }
 
-  function fillSovereigntyFinalBlock() {
-    var el = document.getElementById('sovereignty-what-means');
-    if (!el) return;
-    var text = '';
-    try {
-      if (window.StephuaryResult) {
-        var p01raw = localStorage.getItem(P01_KEY);
-        var p01 = p01raw ? JSON.parse(p01raw) : null;
-        var bits = p01 && p01.bits ? p01.bits : null;
-        var ro = window.StephuaryResult.buildFromPhase01(bits);
-        var lines = ro.diagnostic && ro.diagnostic.phase_chain_lines ? ro.diagnostic.phase_chain_lines.slice(0, 3) : [];
-        text = lines.length ? lines.join(' ') : '';
-      }
-    } catch (eFill) {}
-    if (!text) {
-      text =
-        'Phases 01–05 captured pattern, demand, offer shape, validation signal, and control — enough to choose a single next pressure point.';
-    }
-    el.textContent = text;
-  }
-
   function bridgePlainText() {
     var el = document.getElementById('bridgeRows');
     return el ? el.innerText.trim() : '';
@@ -1603,17 +1493,26 @@
       'Bridge (Phase 4 → 5)',
       bridgePlainText(),
       '',
-      'Final state',
-      gt('sovereignty-final-state'),
+      '1. Control status',
+      gt('out-1'),
       '',
-      'What this means',
-      gt('sovereignty-what-means'),
+      '2. Dependency',
+      gt('out-2'),
       '',
-      'The gap',
-      gt('sovereignty-the-gap'),
+      '3. Leverage',
+      gt('out-3'),
       '',
-      'System handoff',
-      gt('sovereignty-handoff')
+      '4. Main gap',
+      gt('out-4'),
+      '',
+      '5. Hard truth',
+      gt('out-5'),
+      '',
+      '6. Final move',
+      gt('out-6'),
+      '',
+      'Final bridge',
+      gt('sovereignty-final-state')
     ].join('\n');
   }
 
