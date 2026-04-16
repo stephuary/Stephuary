@@ -558,6 +558,18 @@
       line-height: 1.85;
     }
 
+    .diag-lead {
+      font-size: 13px;
+      color: var(--text-mid);
+      line-height: 1.75;
+      margin-bottom: 12px;
+    }
+
+    .instinct-row--lead {
+      color: var(--cream);
+      letter-spacing: 0.02em;
+    }
+
     .diag-body p { margin-bottom: 12px; }
     .diag-body p:last-child { margin-bottom: 0; }
 
@@ -757,14 +769,12 @@
   <div class="capture-layout capture-layout--chrome">
     <div class="main-col">
       <section class="instinct-block" id="instinctBlock">
-        <p class="instinct-kicker">Instinct profile</p>
-        <h2 class="instinct-h2">This is where your instincts either translate into value or disappear.</h2>
-        <p class="instinct-sub">You do not need new skills. You need alignment between how you think and where it is applied.</p>
+        <p class="instinct-kicker">From Phase 01</p>
+        <h2 class="instinct-h2">This is the pattern you bring before the market test.</h2>
+        <p class="instinct-sub">Monetize measures where that pattern earns — or where it burns effort without a buyer.</p>
         <div class="instinct-rows" id="instinctRows"></div>
         <div class="instinct-reality">
-          <p>Most people with this profile either:</p>
-          <p><strong>become extremely valuable</strong> or <strong>stay overlooked</strong>.</p>
-          <p>The difference is positioning.</p>
+          <p>The gap ahead is not talent. It is whether the market can see the value, fund the problem, and name who pays.</p>
         </div>
       </section>
 
@@ -804,37 +814,42 @@
 
         <p class="summary-phase-tag">Diagnostic · Phase 02 of 5 — Monetize</p>
         <h2 class="summary-title">Monetize complete</h2>
-        <p class="summary-sub">This is what showed up when instinct was compared to market reality.</p>
+        <p class="summary-sub">Instinct translated into market terms — where it pays and where it breaks.</p>
 
         <div class="sys-output-legacy-hidden" aria-hidden="true">
         <div class="diag-section">
-          <p class="diag-h">1. Market position</p>
+          <p class="diag-h">1. Core pattern (from Phase 01)</p>
           <div class="diag-body" id="out-s1"></div>
         </div>
 
         <div class="diag-section">
-          <p class="diag-h">2. Where value exists</p>
+          <p class="diag-h">2. Market collision</p>
           <div class="diag-body" id="out-s2"></div>
         </div>
 
         <div class="diag-section">
-          <p class="diag-h">3. Main gap</p>
+          <p class="diag-h">3. Current position</p>
           <div class="diag-body" id="out-s3"></div>
         </div>
 
         <div class="diag-section">
-          <p class="diag-h">4. What this costs</p>
+          <p class="diag-h">4. Main gap</p>
           <div class="diag-body" id="out-s4"></div>
         </div>
 
         <div class="diag-section">
-          <p class="diag-h">5. Monetize shift</p>
-          <p class="position-line" id="out-s5"></p>
+          <p class="diag-h">5. What this costs</p>
+          <div class="diag-body" id="out-s5"></div>
         </div>
 
         <div class="diag-section">
-          <p class="diag-h">6. Next move</p>
-          <div class="diag-body" id="out-s6"></div>
+          <p class="diag-h">6. Monetize shift</p>
+          <p class="position-line" id="out-s6"></p>
+        </div>
+
+        <div class="diag-section">
+          <p class="diag-h">7. Next move</p>
+          <div class="diag-body" id="out-s7"></div>
         </div>
         </div>
 
@@ -876,8 +891,8 @@
         <div class="live-panel__inner">
           <div class="live-panel__primary">
             <div class="live-field">
-              <div class="live-label">Value clarity</div>
-              <div class="live-value" id="live-val">—</div>
+              <div class="live-label">Position</div>
+              <div class="live-value" id="live-pos">—</div>
             </div>
             <div class="live-field">
               <div class="live-label">Demand</div>
@@ -982,40 +997,16 @@
     var host = document.getElementById('instinctRows');
     if (!host) return;
     if (!p) {
-      var capOnly = '';
-      if (window.StephuaryDiagnosticState && typeof window.StephuaryDiagnosticState.collectAll === 'function') {
-        var st0 = window.StephuaryDiagnosticState.collectAll();
-        if (st0 && st0.phase01) {
-          capOnly =
-            '<p class="instinct-row"><strong>From Capture:</strong> ' +
-            escapeHtml(st0.phase01.friction_source) +
-            '</p>';
-        }
-      }
       host.innerHTML =
-        capOnly +
-        '<p class="instinct-row"><strong>You naturally:</strong></p>' +
-        '<p class="instinct-row">Complete Phase 01 to populate this block from your diagnostic.</p>';
+        '<p class="instinct-row instinct-row--lead">This is what you are doing — once Phase 01 is complete, your detection pattern shows up here.</p>' +
+        '<p class="instinct-row">Finish Capture to lock <strong>notice</strong>, <strong>operate</strong>, and <strong>sensitivity</strong> before you test them against buyers.</p>';
       return;
     }
-    var capRow = '';
-    if (window.StephuaryDiagnosticState && typeof window.StephuaryDiagnosticState.collectAll === 'function') {
-      var st = window.StephuaryDiagnosticState.collectAll();
-      if (st && st.phase01) {
-        capRow =
-          '<p class="instinct-row"><strong>From Capture:</strong> ' +
-          escapeHtml(st.phase01.friction_source) +
-          ' · ' +
-          escapeHtml(st.phase01.priority_cut) +
-          '</p>';
-      }
-    }
     host.innerHTML =
-      capRow +
-      '<p class="instinct-row"><strong>Notice:</strong> ' + escapeHtml(p.notice) + '</p>' +
-      '<p class="instinct-row"><strong>Correct:</strong> ' + escapeHtml(p.correct) + '</p>' +
-      '<p class="instinct-row"><strong>Are sensitive to:</strong> ' + escapeHtml(p.sensitivity) + '</p>' +
-      '<p class="instinct-row"><strong>Operate:</strong> ' + escapeHtml(p.operate) + '</p>';
+      '<p class="instinct-row instinct-row--lead">This is what you are doing — the motion you will now run against market reality.</p>' +
+      '<p class="instinct-row"><strong>You notice:</strong> ' + escapeHtml(p.notice) + '</p>' +
+      '<p class="instinct-row"><strong>You operate:</strong> ' + escapeHtml(p.operate) + '</p>' +
+      '<p class="instinct-row"><strong>You are sensitive to:</strong> ' + escapeHtml(p.sensitivity) + '</p>';
   }
 
   function escapeHtml(s) {
@@ -1027,8 +1018,8 @@
   function panelFromBits(b) {
     function has(i) { return b[i] !== null && b[i] !== undefined; }
 
-    var val = '—';
-    if (has(0)) val = b[0] === 0 ? 'clear' : 'unclear';
+    var pos = '—';
+    if (has(0)) pos = b[0] === 0 ? 'clear' : 'unclear';
 
     var pull = '—';
     if (has(2)) pull = b[2] === 0 ? 'pulled' : 'pushed';
@@ -1039,12 +1030,12 @@
     var buyer = '—';
     if (has(3)) buyer = b[3] === 0 ? 'defined' : 'undefined';
 
-    return { val: val, pull: pull, prob: prob, buyer: buyer };
+    return { pos: pos, pull: pull, prob: prob, buyer: buyer };
   }
 
   function updateLivePanel() {
     var p = panelFromBits(state.bits);
-    document.getElementById('live-val').textContent = p.val;
+    document.getElementById('live-pos').textContent = p.pos;
     document.getElementById('live-pull').textContent = p.pull;
     document.getElementById('live-prob').textContent = p.prob;
     document.getElementById('live-buyer').textContent = p.buyer;
@@ -1171,7 +1162,7 @@
 
   function finalPanelLabels(b) {
     return {
-      valueClarity: b[0] === 0 ? 'clear' : 'unclear',
+      position: b[0] === 0 ? 'clear' : 'unclear',
       demand: b[2] === 0 ? 'pulled' : 'pushed',
       problem: b[1] === 0 ? 'paid' : 'unpaid',
       buyer: b[3] === 0 ? 'defined' : 'undefined'
@@ -1183,94 +1174,142 @@
     return s.slice(0, n - 1).trim() + '…';
   }
 
+  function marketCollisionHtml(b) {
+    var lines = [];
+    if (b[0] === 1) {
+      lines.push(
+        '<strong>Unclear value</strong> → explanation friction: new contacts keep retraining the room on what you do.'
+      );
+    }
+    if (b[1] === 1) {
+      lines.push('<strong>Unpaid problem</strong> → no budget: pain is real but not funded at the level you need.');
+    }
+    if (b[2] === 1) {
+      lines.push('<strong>Pushed demand</strong> → forced selling: you pay the full cost of creating and converting interest.');
+    }
+    if (b[3] === 1) {
+      lines.push('<strong>Undefined buyer</strong> → weak targeting: the message spreads because “who pays” is still fuzzy.');
+    }
+    if (b[4] === 1) {
+      lines.push(
+        '<strong>Invisible outcome</strong> → low perceived value: proof stays soft, so price stays negotiable.'
+      );
+    }
+    if (lines.length === 0) {
+      return (
+        '<p>Collision is contained: value reads fast enough, the problem carries a budget signal, demand is not only on you, the buyer can be named, and outcomes can be pointed at. The next tension is <strong>packaging and price</strong> — not translation.</p>'
+      );
+    }
+    return (
+      '<p>Where instinct meets market, the collision shows up as:</p><ul class="diag-list">' +
+      lines
+        .map(function (line) {
+          return '<li>' + line + '</li>';
+        })
+        .join('') +
+      '</ul>'
+    );
+  }
+
   function buildOutputs(b, profile) {
     var f = finalPanelLabels(b);
     var p = profile || loadP01Profile() || {};
 
-    var s1 =
-      '<p>Demand is <strong>' +
-      f.demand +
-      '</strong>. Value reads <strong>' +
-      f.valueClarity +
-      '</strong> in one pass. The problem shape looks <strong>' +
-      f.problem +
-      '</strong> relative to typical budgets, and the buyer is <strong>' +
-      f.buyer +
-      '</strong>.</p>';
+    var s1 = '';
+    if (p.notice || p.operate || p.sensitivity) {
+      s1 =
+        '<p class="diag-lead">This is what you are doing — the motion Phase 01 captured.</p><ul class="diag-list">' +
+        (p.notice
+          ? '<li><strong>You notice:</strong> ' + escapeHtml(shortenText(p.notice, 320)) + '</li>'
+          : '') +
+        (p.operate
+          ? '<li><strong>You operate:</strong> ' + escapeHtml(shortenText(p.operate, 320)) + '</li>'
+          : '') +
+        (p.sensitivity
+          ? '<li><strong>You are sensitive to:</strong> ' + escapeHtml(shortenText(p.sensitivity, 320)) + '</li>'
+          : '') +
+        '</ul>';
+    } else {
+      s1 =
+        '<p>Complete Phase 01 to anchor <strong>notice</strong>, <strong>operate</strong>, and <strong>sensitivity</strong> here — this summary will tie market answers directly to that motion.</p>';
+    }
 
-    var outVis =
-      b[4] === 0
-        ? 'Outcomes are visible enough to price and prove.'
-        : 'Outcomes are subtle — you will need tighter proof design.';
-    var s2 =
-      '<ul class="diag-list">' +
-      '<li><strong>Legibility:</strong> ' +
-      (b[0] === 0 ? 'What you do can be stated without hand-waving.' : 'The value is real but still needs translation.') +
-      '</li>' +
-      '<li><strong>From Capture:</strong> ' +
-      (p.notice ? shortenText(p.notice, 200) : 'Your detection pattern from Phase 01.') +
-      '</li>' +
-      '<li><strong>Proof path:</strong> ' +
-      outVis +
-      '</li></ul>';
+    var s2 = marketCollisionHtml(b);
+
+    var s3 =
+      '<p>Right now you read as <strong>' +
+      f.position +
+      '</strong> to outsiders on what you sell. The problem shape is <strong>' +
+      f.problem +
+      '</strong> relative to typical budgets. Demand is <strong>' +
+      f.demand +
+      '</strong>. The paying role is <strong>' +
+      f.buyer +
+      '</strong>. Outcomes are <strong>' +
+      (b[4] === 0 ? 'visible enough to point at' : 'hard to see — proof has to be designed, not assumed') +
+      '</strong>.</p>' +
+      (p.operate
+        ? '<p>Against that, your default move is still: ' + escapeHtml(shortenText(p.operate, 220)) + '</p>'
+        : '');
 
     var gap = '';
     if (b[1] === 1) {
       gap =
-        'The core gap is <strong>paid fit</strong>: the problem is not shaped like something buyers already fund at the level you want.';
+        'The decisive gap is <strong>paid fit</strong>: the work is not shaped like something buyers already line-item.';
     } else if (b[3] === 1) {
       gap =
-        'The core gap is <strong>buyer definition</strong>: the person who pays is still too broad to target.';
+        'The decisive gap is <strong>buyer definition</strong>: until “who pays” is narrow, channel and message stay diluted.';
     } else if (b[0] === 1) {
       gap =
-        'The core gap is <strong>value translation</strong>: buyers cannot repeat what you do in one sentence yet.';
+        'The decisive gap is <strong>translation</strong>: buyers cannot repeat your offer in one sentence — so every deal re-explains you.';
     } else if (b[2] === 1) {
       gap =
-        'The core gap is <strong>demand creation</strong>: you are carrying conversion instead of riding pull.';
+        'The decisive gap is <strong>demand creation</strong>: you are carrying interest that the market is not pulling yet.';
     } else if (b[4] === 1) {
       gap =
-        'The core gap is <strong>outcome proof</strong>: results are hard to see — pricing and trust stay soft.';
+        'The decisive gap is <strong>outcome proof</strong>: without a visible after-state, trust and price stay soft.';
     } else {
       gap =
-        'The tightest edge now is <strong>packaging</strong>: name one buyer, one outcome, one entry — not more explanation.';
+        'The decisive gap is <strong>packaging</strong>: one buyer, one outcome, one entry, one number — not a longer story.';
     }
-    var s3 = '<p>' + gap + '</p>';
+    var s4 = '<p>' + gap + '</p>';
 
     var cost = '';
     if (b[1] === 1 || b[3] === 1) {
       cost =
-        'You pay in <strong>slow cycles</strong> and <strong>maybe-not buyers</strong> — energy goes to convincing instead of delivering.';
+        'You pay in <strong>slow cycles</strong> and <strong>maybe-not buyers</strong> — energy goes to convincing instead of closing.';
     } else if (b[2] === 1 && b[0] === 1) {
       cost =
         'You pay in <strong>repetition and CAC</strong> — every conversation restarts from zero.';
     } else if (b[4] === 1) {
       cost =
-        'You pay in <strong>discount pressure</strong> and <strong>scope creep</strong> — without a visible after-state, buyers negotiate the work instead of the outcome.';
+        'You pay in <strong>discount pressure</strong> and <strong>scope creep</strong> — buyers haggle the work when the outcome is invisible.';
     } else {
       cost =
-        'You pay in <strong>scattered effort</strong> — clear pieces without one named buyer still dilute focus.';
+        'You pay in <strong>scattered leverage</strong> — strong instinct without a named buyer still splits your week.';
     }
-    var s4 = '<p>' + cost + '</p>';
+    var s5 = '<p>' + cost + '</p>';
 
     var buyerNoun = b[3] === 0 ? 'a buyer you can name' : 'a buyer you still need to narrow';
     var probNoun =
       b[1] === 0 ? 'a problem budgets already exist for' : 'a problem that is real but not bought at this framing';
     var method = p.operate ? p.operate : 'the way you naturally think and move';
-    var s5 = 'I help ' + buyerNoun + ' solve ' + probNoun + ' by ' + method + '.';
+    var s6 = 'I help ' + buyerNoun + ' solve ' + probNoun + ' by ' + method + '.';
 
-    var s6 =
+    var s7 =
       '<ul class="diag-list">' +
       '<li>Name <strong>one buyer noun</strong> and <strong>one paid outcome</strong> Phase 03 will price.</li>' +
-      '<li>If demand is pushed, run <strong>one pull test</strong>: a narrow line, five conversations, log yes/no.</li>' +
-      '<li>Continue to Structure: entry, price posture, and first step.</li>' +
+      '<li>If demand is pushed, run <strong>one pull test</strong>: one narrow line, five conversations, log yes/no.</li>' +
+      '<li>Go to Structure: entry, price posture, and first step.</li>' +
       '</ul>';
 
     document.getElementById('out-s1').innerHTML = s1;
     document.getElementById('out-s2').innerHTML = s2;
     document.getElementById('out-s3').innerHTML = s3;
     document.getElementById('out-s4').innerHTML = s4;
-    document.getElementById('out-s5').textContent = s5;
-    document.getElementById('out-s6').innerHTML = s6;
+    document.getElementById('out-s5').innerHTML = s5;
+    document.getElementById('out-s6').textContent = s6;
+    document.getElementById('out-s7').innerHTML = s7;
   }
 
   function showSummary() {
@@ -1317,33 +1356,38 @@
     var b = state.bits.map(function(x) { return x; });
     var f = finalPanelLabels(b);
     var profile = loadP01Profile();
-    var el5 = document.getElementById('out-s5');
+    var el6 = document.getElementById('out-s6');
     var lines = [
       'Stephuary · Phase 02 · Monetize',
       '',
-      'Instinct profile (Phase 01)',
-      profile ? 'Notice: ' + profile.notice : '(complete Phase 01 for full profile)',
+      'Phase 01 motion (if completed)',
+      profile
+        ? 'Notice: ' + profile.notice + '\nOperate: ' + profile.operate + '\nSensitivity: ' + profile.sensitivity
+        : '(complete Phase 01 to tie notice, operate, and sensitivity to this read)',
       '',
-      '1. Market position',
+      '1. Core pattern (from Phase 01)',
       document.getElementById('out-s1').innerText.trim(),
       '',
-      '2. Where value exists',
+      '2. Market collision',
       document.getElementById('out-s2').innerText.trim(),
       '',
-      '3. Main gap',
+      '3. Current position',
       document.getElementById('out-s3').innerText.trim(),
       '',
-      '4. What this costs',
+      '4. Main gap',
       document.getElementById('out-s4').innerText.trim(),
       '',
-      '5. Monetize shift',
-      el5 ? el5.textContent.trim() : '',
+      '5. What this costs',
+      document.getElementById('out-s5').innerText.trim(),
       '',
-      '6. Next move',
-      document.getElementById('out-s6').innerText.trim(),
+      '6. Monetize shift',
+      el6 ? el6.textContent.trim() : '',
       '',
-      'Live panel snapshot',
-      'Value clarity: ' + f.valueClarity,
+      '7. Next move',
+      document.getElementById('out-s7').innerText.trim(),
+      '',
+      'Live panel',
+      'Position: ' + f.position,
       'Demand: ' + f.demand,
       'Problem: ' + f.problem,
       'Buyer: ' + f.buyer
@@ -1408,7 +1452,7 @@
       });
     });
     goTo(1);
-    document.getElementById('live-val').textContent = '—';
+    document.getElementById('live-pos').textContent = '—';
     document.getElementById('live-pull').textContent = '—';
     document.getElementById('live-prob').textContent = '—';
     document.getElementById('live-buyer').textContent = '—';
