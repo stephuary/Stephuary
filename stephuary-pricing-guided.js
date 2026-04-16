@@ -202,9 +202,97 @@
     tick();
   }
 
+  function initMobilePackTierDetails() {
+    var mq = window.matchMedia('(max-width:768px)');
+    var packs = document.querySelectorAll('details.pricing-tier-more--mobile-pack');
+    if (!packs.length) return;
+    function apply() {
+      packs.forEach(function (d) {
+        d.open = !mq.matches;
+      });
+    }
+    if (mq.addEventListener) mq.addEventListener('change', apply);
+    apply();
+  }
+
+  function initPricingMobileFooterCta() {
+    var body = document.body;
+    if (!body.classList.contains('pricing-page')) return;
+    var mq = window.matchMedia('(max-width:768px)');
+    var bar = document.getElementById('pricing-mobile-footer-cta');
+    var link = document.getElementById('pricing-mobile-footer-cta-link');
+    var hero = document.getElementById('pricing-guided-hero');
+    if (!bar || !link) return;
+
+    var layers = [
+      { id: 'pricing-flow-scale', text: 'Start Build', href: '#tier-custom-build' },
+      { id: 'pricing-flow-operator', text: 'Request Access', href: '/private-access' },
+      { id: 'pricing-flow-diagnose', text: 'Start Snapshot', href: '/snapshot' }
+    ];
+
+    var scheduled = null;
+    function tick() {
+      scheduled = null;
+      if (!mq.matches) {
+        bar.hidden = true;
+        body.classList.remove('pricing-page--mobile-footer-cta');
+        return;
+      }
+
+      var heroPast = !hero || hero.getBoundingClientRect().bottom < 32;
+      if (!heroPast) {
+        bar.hidden = true;
+        body.classList.remove('pricing-page--mobile-footer-cta');
+        return;
+      }
+
+      var yLine = window.innerHeight * 0.34;
+      var hit = null;
+      var bestTop = -Infinity;
+      for (var j = 0; j < layers.length; j++) {
+        var el2 = document.getElementById(layers[j].id);
+        if (!el2) continue;
+        var r2 = el2.getBoundingClientRect();
+        if (yLine >= r2.top && yLine <= r2.bottom && r2.top > bestTop) {
+          bestTop = r2.top;
+          hit = layers[j];
+        }
+      }
+
+      if (hit) {
+        link.textContent = hit.text;
+        link.setAttribute('href', hit.href);
+      } else {
+        link.textContent = 'Start Diagnostic';
+        link.setAttribute('href', '/capture');
+      }
+
+      bar.hidden = false;
+      body.classList.add('pricing-page--mobile-footer-cta');
+    }
+
+    function onScrollOrResize() {
+      if (scheduled) return;
+      scheduled = window.requestAnimationFrame(tick);
+    }
+
+    window.addEventListener('scroll', onScrollOrResize, { passive: true });
+    window.addEventListener('resize', onScrollOrResize, { passive: true });
+    if (mq.addEventListener) {
+      mq.addEventListener('change', onScrollOrResize);
+    }
+    tick();
+  }
+
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initGuided);
+    document.addEventListener('DOMContentLoaded', function () {
+      initGuided();
+      initMobilePackTierDetails();
+      initPricingMobileFooterCta();
+    });
   } else {
     initGuided();
+    initMobilePackTierDetails();
+    initPricingMobileFooterCta();
   }
 })();

@@ -1093,8 +1093,15 @@ details.price-group--pricing-field-focus > summary{
 }
 @media(max-width:768px){
   .pricing-flow-layer{
-    margin-top:24px;
-    padding-top:18px;
+    margin-top:32px;
+    padding-top:22px;
+  }
+  .pricing-flow-section{
+    padding-top:clamp(72px,14vw,100px);
+    padding-bottom:clamp(72px,14vw,100px);
+  }
+  .pricing-flow-bridge{
+    margin-bottom:28px;
   }
 }
 .pricing-install-gap-line{
@@ -1344,6 +1351,52 @@ details.price-group--pricing-field-focus > summary{
   max-width:min(calc(100vw - 28px), 280px);
   pointer-events:none;
 }
+@media(max-width:768px){
+  .pricing-sticky-cta{display:none!important;}
+}
+.pricing-mobile-footer-cta{
+  display:none;
+  position:fixed;
+  left:0;
+  right:0;
+  bottom:0;
+  z-index:48;
+  padding:10px max(14px, env(safe-area-inset-left)) max(12px, env(safe-area-inset-bottom)) max(14px, env(safe-area-inset-right));
+  pointer-events:none;
+  background:linear-gradient(180deg,transparent 0%,rgba(6,6,6,0.92) 28%,rgba(6,6,6,0.97) 100%);
+  border-top:1px solid rgba(244,237,224,0.06);
+}
+.pricing-mobile-footer-cta:not([hidden]){
+  display:block;
+}
+.pricing-mobile-footer-cta__link{
+  pointer-events:auto;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  min-height:44px;
+  width:100%;
+  max-width:520px;
+  margin:0 auto;
+  padding:12px 16px;
+  border-radius:var(--r);
+  font-family:var(--mono);
+  font-size:9px;
+  letter-spacing:0.14em;
+  text-transform:uppercase;
+  text-decoration:none;
+  text-align:center;
+  color:#fff;
+  background:linear-gradient(165deg, #4d7cff 0%, var(--blue) 100%);
+  border:1px solid rgba(58,107,255,0.35);
+  box-shadow:0 4px 20px rgba(43,79,212,0.22);
+}
+body.pricing-page.pricing-page--mobile-footer-cta{
+  padding-bottom:max(72px, calc(env(safe-area-inset-bottom) + 56px));
+}
+@media(min-width:769px){
+  .pricing-mobile-footer-cta{display:none!important;}
+}
 .pricing-sticky-cta[hidden]{display:none!important;}
 .pricing-sticky-cta__link{
   pointer-events:auto;
@@ -1543,6 +1596,62 @@ details.price-group.price-group--peer-muted:hover{
   font-size:11px;
   letter-spacing:0.08em;
   text-transform:uppercase;
+}
+
+/* Diagnostic lead as single open price-group on mobile; desktop stays expanded */
+details.sh-pricing-rec.price-group--diagnostic-lead{
+  list-style:none;
+}
+details.sh-pricing-rec.price-group--diagnostic-lead > summary{
+  list-style:none;
+  cursor:pointer;
+}
+details.sh-pricing-rec.price-group--diagnostic-lead > summary::-webkit-details-marker{display:none;}
+@media(min-width:769px){
+  details.sh-pricing-rec.price-group--diagnostic-lead{
+    border:1px solid rgba(196, 163, 90, 0.28);
+    background:rgba(18, 16, 14, 0.65);
+    box-shadow:none;
+    transform:none;
+  }
+  details.sh-pricing-rec.price-group--diagnostic-lead:hover{
+    transform:none;
+    box-shadow:none;
+  }
+  details.sh-pricing-rec.price-group--diagnostic-lead > summary{
+    cursor:default;
+    pointer-events:none;
+  }
+  details.sh-pricing-rec.price-group--diagnostic-lead > summary::after{display:none!important;}
+}
+.sh-pricing-rec__drawer{
+  margin-top:0;
+}
+@media(max-width:768px){
+  .sh-pricing-rec__drawer{
+    margin-top:14px;
+    padding-top:14px;
+    border-top:1px solid rgba(244,237,224,0.08);
+  }
+}
+
+/* Custom build: collapsible detail packs on mobile only; full content on desktop */
+@media(min-width:769px){
+  details.pricing-tier-more--mobile-pack > summary{
+    display:none!important;
+  }
+  details.pricing-tier-more--mobile-pack > .pricing-tier-more__anim{
+    display:block;
+    grid-template-rows:none!important;
+  }
+  details.pricing-tier-more--mobile-pack .pricing-tier-more__body-inner{
+    overflow:visible!important;
+  }
+}
+@media(max-width:768px){
+  .price-group[open] .fe-env-tier1 .fe-env__tier-ladder{
+    display:none;
+  }
 }
 .price-group__hint{
   display:none;
@@ -1908,12 +2017,16 @@ html.early-mode body.pricing-page{
     </nav>
     <div class="pricing-layout__main pricing-flow" id="pricing-groups">
 
-      <section class="sh-pricing-rec pricing-guided-panel pricing-guided-snap" id="pricing-flow-diagnostic-lead" aria-label="Recommended starting point" data-guided-panel data-guided-stage="start">
-        <p class="sh-pricing-rec__label">Recommended path</p>
-        <p class="sh-pricing-rec__title">Finish the free diagnostic first</p>
-        <p class="sh-pricing-rec__sub">Phases 1–5 are the diagnostic. Your readout unlocks the right paid next step—nothing here replaces that sequence.</p>
-        <a href="/capture" class="sh-pricing-rec__cta magnetic" data-sh-flow-primary>Start Diagnostic</a>
-      </section>
+      <details class="sh-pricing-rec price-group price-group--diagnostic-lead pricing-guided-panel pricing-guided-snap" id="pricing-flow-diagnostic-lead" aria-label="Recommended starting point" open data-pricing-entry data-guided-panel data-guided-stage="start">
+        <summary class="sh-pricing-rec__summary">
+          <p class="sh-pricing-rec__label">Recommended path</p>
+          <p class="sh-pricing-rec__title">Finish the free diagnostic first</p>
+          <a href="/capture" class="sh-pricing-rec__cta magnetic" data-sh-flow-primary>Start Diagnostic</a>
+        </summary>
+        <div class="sh-pricing-rec__drawer">
+          <p class="sh-pricing-rec__sub">Phases 1–5 are the diagnostic. Your readout unlocks the right paid next step—nothing here replaces that sequence.</p>
+        </div>
+      </details>
 
       <p class="pricing-flow-bridge">If you’re unsure, start here.</p>
 
@@ -2279,6 +2392,10 @@ html.early-mode body.pricing-page{
                 <div class="inner-tier custom-build-tier" id="tier-experience-build">
                   <p class="inner-tier__label inner-tier__label--gold">Experience Build</p>
                   <p class="inner-tier__price">Starting at $7,500</p>
+                  <details class="pricing-tier-more pricing-tier-more--mobile-pack" open>
+                    <summary>View details</summary>
+                    <div class="pricing-tier-more__anim">
+                      <div class="pricing-tier-more__body-inner">
                   <p class="inner-tier__desc">A custom interactive website designed to improve how your business is perceived and understood.</p>
                   <p class="inner-tier__sub">Includes</p>
                   <ul class="tier-bullets">
@@ -2287,11 +2404,18 @@ html.early-mode body.pricing-page{
                     <li>conversion-aware layout</li>
                     <li>visual positioning upgrade</li>
                   </ul>
+                      </div>
+                    </div>
+                  </details>
                 </div>
 
                 <div class="inner-tier custom-build-tier" id="tier-system-build">
                   <p class="inner-tier__label inner-tier__label--gold">System Build</p>
                   <p class="inner-tier__price">Starting at $12,000</p>
+                  <details class="pricing-tier-more pricing-tier-more--mobile-pack" open>
+                    <summary>View details</summary>
+                    <div class="pricing-tier-more__anim">
+                      <div class="pricing-tier-more__body-inner">
                   <p class="inner-tier__desc">A structured business system that turns your offer into clear pathways, decisions, and outputs.</p>
                   <p class="inner-tier__sub">Includes</p>
                   <ul class="tier-bullets">
@@ -2300,12 +2424,19 @@ html.early-mode body.pricing-page{
                     <li>user flow design</li>
                     <li>decision architecture</li>
                   </ul>
+                      </div>
+                    </div>
+                  </details>
                 </div>
 
                 <div class="inner-tier custom-build-tier custom-build-tier--full">
                   <p class="inner-tier__label inner-tier__label--gold">Full Environment</p>
                   <p class="inner-tier__price">Starting at $22,000</p>
 
+                <details class="pricing-tier-more pricing-tier-more--mobile-pack" open>
+                  <summary>View details</summary>
+                  <div class="pricing-tier-more__anim">
+                    <div class="pricing-tier-more__body-inner">
                 <p class="inner-tier__sub">What this is</p>
                 <p class="inner-tier__desc">A custom-built, interactive system designed to control how people understand, move through, and decide on your business.</p>
                 <p class="inner-tier__desc">This is not a template or standard build.</p>
@@ -2346,6 +2477,9 @@ html.early-mode body.pricing-page{
                 </ul>
 
                 <p class="note-bridge">This is a custom-built experience system, not a standard website.</p>
+                    </div>
+                  </div>
+                </details>
 
                 <div class="fe-env-s3-wrap">
                   <div class="fe-env-s3-wrap-inner">
@@ -2376,6 +2510,10 @@ html.early-mode body.pricing-page{
 
   <div class="pricing-sticky-cta" id="pricing-sticky-cta" hidden>
     <a class="pricing-sticky-cta__link" id="pricing-sticky-cta-link" href="#pricing-flow-entry">Start here</a>
+  </div>
+
+  <div class="pricing-mobile-footer-cta" id="pricing-mobile-footer-cta" hidden>
+    <a href="/capture" class="pricing-mobile-footer-cta__link" id="pricing-mobile-footer-cta-link">Start Diagnostic</a>
   </div>
 
   <div id="pricing-scroll-pause-hint" class="pricing-scroll-pause-hint" hidden role="status">
@@ -2489,14 +2627,26 @@ html.early-mode body.pricing-page{
     updatePriceGroupPeerClasses();
   }
 
+  var pricingDiagToggleSuppress = false;
   var priceGroups = document.querySelectorAll('details.price-group');
   priceGroups.forEach(function (g) {
     g.addEventListener('toggle', function () {
       if (g.open) {
         priceGroups.forEach(function (o) {
-          if (o !== g) o.open = false;
+          if (o === g) return;
+          if (g.id === 'tier-custom-build' && o.id === 'pricing-flow-diagnostic-lead') {
+            pricingDiagToggleSuppress = true;
+            o.open = false;
+            window.setTimeout(function () {
+              pricingDiagToggleSuppress = false;
+            }, 0);
+          } else if (g.id === 'pricing-flow-diagnostic-lead' && o.id === 'tier-custom-build') {
+            o.open = false;
+          } else if (o.id !== 'pricing-flow-diagnostic-lead' && g.id !== 'pricing-flow-diagnostic-lead') {
+            o.open = false;
+          }
         });
-        if (g.id !== 'tier-custom-build') {
+        if (g.id !== 'tier-custom-build' && g.id !== 'pricing-flow-diagnostic-lead') {
           tryFeEngage(2, false);
         }
         scrollPriceGroupIntoComfortIfNeeded(g);
@@ -2504,6 +2654,23 @@ html.early-mode body.pricing-page{
       updatePriceGroupPeerClasses();
     });
   });
+
+  var diagLeadEl = document.getElementById('pricing-flow-diagnostic-lead');
+  if (diagLeadEl && diagLeadEl.tagName === 'DETAILS') {
+    var mqDiag = window.matchMedia('(min-width:769px)');
+    diagLeadEl.addEventListener('toggle', function () {
+      if (pricingDiagToggleSuppress) return;
+      if (mqDiag.matches) diagLeadEl.open = true;
+    });
+    window.addEventListener(
+      'resize',
+      function () {
+        if (mqDiag.matches) diagLeadEl.open = true;
+      },
+      { passive: true }
+    );
+  }
+
   initPriceGroupDefaultOpen();
 
   function bindExclusiveWithin(root, selector) {
