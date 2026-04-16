@@ -6,13 +6,12 @@
   var STORAGE_KEY = 'stephuary_result_v1';
 
   var ARCHETYPES = [
-    'Signal Stabilizer',
-    'Intent Reader',
-    'Context Misfit',
-    'Urgent Fixer',
-    'Read Ahead',
-    'Gap Spotter',
-    'Systems First'
+    'Hidden Operator',
+    'Delayed Builder',
+    'Miscast Strategist',
+    'Reactive Stabilizer',
+    'Structural Refiner',
+    'Unconverted Thinker'
   ];
 
   var PHASE_Q = 10;
@@ -48,12 +47,12 @@
     }
 
     var T = [
-      { a: { 'Intent Reader': 2, 'Signal Stabilizer': 1 }, b: { 'Gap Spotter': 2, 'Systems First': 1 } },
-      { a: { 'Systems First': 3, 'Gap Spotter': 1 }, b: { 'Urgent Fixer': 3 } },
-      { a: { 'Intent Reader': 3, 'Signal Stabilizer': 2 }, b: { 'Urgent Fixer': 2 } },
-      { a: { 'Context Misfit': 4 }, b: { 'Urgent Fixer': 2, 'Gap Spotter': 1 } },
-      { a: { 'Systems First': 3 }, b: { 'Urgent Fixer': 2 } },
-      { a: { 'Read Ahead': 3 }, b: { 'Systems First': 2, 'Gap Spotter': 1 } }
+      { a: { 'Hidden Operator': 2, 'Structural Refiner': 1 }, b: { 'Unconverted Thinker': 2, 'Miscast Strategist': 1 } },
+      { a: { 'Structural Refiner': 3, 'Hidden Operator': 2 }, b: { 'Reactive Stabilizer': 3, 'Unconverted Thinker': 1 } },
+      { a: { 'Hidden Operator': 3, 'Delayed Builder': 2 }, b: { 'Reactive Stabilizer': 2, 'Miscast Strategist': 1 } },
+      { a: { 'Miscast Strategist': 4 }, b: { 'Structural Refiner': 2, 'Reactive Stabilizer': 2 } },
+      { a: { 'Structural Refiner': 3 }, b: { 'Reactive Stabilizer': 3 } },
+      { a: { 'Delayed Builder': 3, 'Unconverted Thinker': 2 }, b: { 'Miscast Strategist': 2, 'Unconverted Thinker': 1 } }
     ];
 
     for (var i = 0; i < CAPTURE_Q; i++) {
@@ -74,9 +73,9 @@
       return s[a] === max;
     });
     if (tie.length > 1) {
-      if (bits[2] === 0) best = tie.indexOf('Intent Reader') >= 0 ? 'Intent Reader' : tie[0];
-      else if (bits[3] === 0) best = 'Context Misfit';
-      else if (bits[5] === 0) best = tie.indexOf('Read Ahead') >= 0 ? 'Read Ahead' : tie[0];
+      if (bits[2] === 0) best = tie.indexOf('Hidden Operator') >= 0 ? 'Hidden Operator' : tie[0];
+      else if (bits[3] === 0) best = tie.indexOf('Miscast Strategist') >= 0 ? 'Miscast Strategist' : tie[0];
+      else if (bits[5] === 0) best = tie.indexOf('Delayed Builder') >= 0 ? 'Delayed Builder' : tie[0];
       else best = tie[0];
     }
     return { archetype: best, scores: s, maxScore: max };
@@ -104,13 +103,12 @@
     if (scores[top] - scores[second] < 2) return 'mixed_general';
 
     var map = {
-      'Signal Stabilizer': 'spotter_delay_nopressure',
-      'Read Ahead': 'spotter_delay_nopressure',
-      'Intent Reader': 'interpreter_avoidance_wrongpeople',
-      'Context Misfit': 'reworker_delay_misaligned',
-      'Urgent Fixer': 'operator_distraction_misaligned',
-      'Gap Spotter': 'builder_delay_lowstandard',
-      'Systems First': 'connector_overthinking_scattered'
+      'Delayed Builder': 'spotter_delay_nopressure',
+      'Hidden Operator': 'interpreter_avoidance_wrongpeople',
+      'Miscast Strategist': 'reworker_delay_misaligned',
+      'Reactive Stabilizer': 'operator_distraction_misaligned',
+      'Structural Refiner': 'builder_delay_lowstandard',
+      'Unconverted Thinker': 'connector_overthinking_scattered'
     };
 
     return map[archetype] || 'mixed_general';

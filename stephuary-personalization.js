@@ -408,15 +408,19 @@
   function normalizeBottleneckFromArchetype(name) {
     var n = lc(name);
     if (!n) return '';
-    if (n.indexOf('systems first') >= 0 || n.indexOf('system rebuilder') >= 0 || n.indexOf('rebuilder') >= 0 || n.indexOf('connector') >= 0) {
+    if (n.indexOf('unconverted thinker') >= 0 || n.indexOf('systems first') >= 0 || n.indexOf('system rebuilder') >= 0 || n.indexOf('rebuilder') >= 0 || n.indexOf('connector') >= 0) {
       return 'too_many_ideas';
     }
-    if (n.indexOf('read ahead') >= 0 || n.indexOf('aware but idle') >= 0) return 'no_offer';
-    if (n.indexOf('context misfit') >= 0 || n.indexOf('wrong environment') >= 0) return 'weak_positioning';
+    if (n.indexOf('delayed builder') >= 0 || n.indexOf('read ahead') >= 0 || n.indexOf('aware but idle') >= 0) return 'no_offer';
+    if (n.indexOf('miscast strategist') >= 0 || n.indexOf('context misfit') >= 0 || n.indexOf('wrong environment') >= 0) {
+      return 'weak_positioning';
+    }
     if (n.indexOf('signal stabilizer') >= 0 || n.indexOf('pattern suppressor') >= 0) return 'scattered_focus';
-    if (n.indexOf('intent reader') >= 0 || n.indexOf('unspoken') >= 0) return 'execution_breakdown';
-    if (n.indexOf('urgent fixer') >= 0 || n.indexOf('live stabilizer') >= 0) return 'scattered_focus';
-    if (n.indexOf('gap spotter') >= 0 || n.indexOf('precision refiner') >= 0 || (n.indexOf('gap') >= 0 && n.indexOf('spot') >= 0)) {
+    if (n.indexOf('hidden operator') >= 0 || n.indexOf('intent reader') >= 0 || n.indexOf('unspoken') >= 0) return 'execution_breakdown';
+    if (n.indexOf('reactive stabilizer') >= 0 || n.indexOf('urgent fixer') >= 0 || n.indexOf('live stabilizer') >= 0) {
+      return 'scattered_focus';
+    }
+    if (n.indexOf('structural refiner') >= 0 || n.indexOf('gap spotter') >= 0 || n.indexOf('precision refiner') >= 0) {
       return 'weak_positioning';
     }
     return '';

@@ -1027,13 +1027,12 @@
   const RAIL_LABELS = ['Signal','Action','Expression','Environment','Failure','Block','Results'];
 
   const ARCHETYPES = [
-    'Signal Stabilizer',
-    'Intent Reader',
-    'Context Misfit',
-    'Urgent Fixer',
-    'Read Ahead',
-    'Gap Spotter',
-    'Systems First'
+    'Hidden Operator',
+    'Delayed Builder',
+    'Miscast Strategist',
+    'Reactive Stabilizer',
+    'Structural Refiner',
+    'Unconverted Thinker'
   ];
 
   const QUESTIONS = [
@@ -1089,12 +1088,12 @@
     }
 
     var T = [
-      { a: { 'Intent Reader': 2, 'Signal Stabilizer': 1 }, b: { 'Gap Spotter': 2, 'Systems First': 1 } },
-      { a: { 'Systems First': 3, 'Gap Spotter': 1 }, b: { 'Urgent Fixer': 3 } },
-      { a: { 'Intent Reader': 3, 'Signal Stabilizer': 2 }, b: { 'Urgent Fixer': 2 } },
-      { a: { 'Context Misfit': 4 }, b: { 'Urgent Fixer': 2, 'Gap Spotter': 1 } },
-      { a: { 'Systems First': 3 }, b: { 'Urgent Fixer': 2 } },
-      { a: { 'Read Ahead': 3 }, b: { 'Systems First': 2, 'Gap Spotter': 1 } }
+      { a: { 'Hidden Operator': 2, 'Structural Refiner': 1 }, b: { 'Unconverted Thinker': 2, 'Miscast Strategist': 1 } },
+      { a: { 'Structural Refiner': 3, 'Hidden Operator': 2 }, b: { 'Reactive Stabilizer': 3, 'Unconverted Thinker': 1 } },
+      { a: { 'Hidden Operator': 3, 'Delayed Builder': 2 }, b: { 'Reactive Stabilizer': 2, 'Miscast Strategist': 1 } },
+      { a: { 'Miscast Strategist': 4 }, b: { 'Structural Refiner': 2, 'Reactive Stabilizer': 2 } },
+      { a: { 'Structural Refiner': 3 }, b: { 'Reactive Stabilizer': 3 } },
+      { a: { 'Delayed Builder': 3, 'Unconverted Thinker': 2 }, b: { 'Miscast Strategist': 2, 'Unconverted Thinker': 1 } }
     ];
 
     for (var i = 0; i < TOTAL_Q; i++) {
@@ -1110,153 +1109,149 @@
     });
     var tie = ARCHETYPES.filter(function(a) { return s[a] === max; });
     if (tie.length > 1) {
-      if (bits[2] === 0) best = tie.indexOf('Intent Reader') >= 0 ? 'Intent Reader' : tie[0];
-      else if (bits[3] === 0) best = 'Context Misfit';
-      else if (bits[5] === 0) best = tie.indexOf('Read Ahead') >= 0 ? 'Read Ahead' : tie[0];
+      if (bits[2] === 0) best = tie.indexOf('Hidden Operator') >= 0 ? 'Hidden Operator' : tie[0];
+      else if (bits[3] === 0) best = tie.indexOf('Miscast Strategist') >= 0 ? 'Miscast Strategist' : tie[0];
+      else if (bits[5] === 0) best = tie.indexOf('Delayed Builder') >= 0 ? 'Delayed Builder' : tie[0];
       else best = tie[0];
     }
     return best;
   }
 
   const COPY_BLOCKS = {
-    'Signal Stabilizer': {
+    'Hidden Operator': {
       core: function(bits) {
         return (
-          '<p>You register friction before the room agrees on a label. You keep the surface workable while the read stays partly private.</p>' +
-          '<p>The failure mode is not missing the signal. It is how long the signal stays off the record.</p>'
+          '<p>You run intent under language and act on that model before it is public.</p>' +
+          '<p>Credit lags: the read is real before anyone can cite it.</p>'
         );
       },
       look: function(bits) {
         return [
-          'Mismatch and cost land before others name them.',
-          bits[1] === 0 ? 'You map cause before you touch anything.' : 'You change conditions before you explain them.',
-          bits[1] === 0 ? 'You wait on an internal green light before you move.' : 'You move and repair in motion.'
+          'Subtext and unstated stakes before content.',
+          bits[1] === 0 ? 'You stabilize by naming the frame.' : 'You stabilize by changing one lever.',
+          bits[1] === 0 ? 'Permission never arrives; you still hold the model.' : 'You move and absorb mess.'
+        ];
+      },
+      mainBlock: function(bits) {
+        return (
+          '<p>You trade visibility for continuity. ' +
+          (bits[3] === 0
+            ? 'Judgment gets used without authority.'
+            : 'Your thinking is relied on; exposure replaces cover.') +
+          '</p><p>' +
+          (bits[5] === 0
+            ? 'You avoid the moment that makes the read accountable.'
+            : 'Committing closes paths you keep open.') +
+          '</p>'
+        );
+      },
+      cost: function(bits) {
+        return [
+          'Best work happens where it cannot be quoted.',
+          'Outcomes improve while your line stays invisible.',
+          'Execution eats the credit for the read that enabled it.'
+        ];
+      },
+      next: function(bits) {
+        return (
+          '<p>Phase 02 needs a buyer and a paid problem in plain language — not a sharper private read.</p>' +
+          '<p>Next: one sentence a stranger repeats: who pays, for what outcome.</p>'
+        );
+      }
+    },
+    'Delayed Builder': {
+      core: function(bits) {
+        return (
+          '<p>Reads land early; motion lands late. The gap is commitment, not blindness.</p>' +
+          '<p>Knowing reads as partial credit until something ships.</p>'
+        );
+      },
+      look: function(bits) {
+        return [
+          bits[2] === 1 ? 'You track intent under the line.' : 'You work from what is stated.',
+          bits[1] === 0 ? 'You wait for certainty that matches your bar.' : 'You move, then over-correct.',
+          bits[5] === 0 ? 'Going public with the read is what stalls.' : 'Every lane feels like it closes too much.'
         ];
       },
       mainBlock: function(bits) {
         return (
           '<p>' +
           (bits[2] === 0
-            ? 'You hold important reads when speaking would spike cost in the room.'
-            : 'You push the read in when silence is more expensive than tension.') +
+            ? 'Naming the read feels like rupture; it stays private.'
+            : 'When you speak, it lands hard — it was queued too long.') +
           ' ' +
           (bits[3] === 0
-            ? 'The context rarely pulls for your sharpest gear.'
-            : 'What you are good at is load-bearing here.') +
-          '</p><p>' +
-          (bits[5] === 0
-            ? 'You already know the move; naming it binds you, so you buffer.'
-            : 'Direction still feels open; mapping can replace a ship date.') +
-          '</p>'
+            ? 'The room does not require your best contribution.'
+            : 'The room uses your thinking; pace still mis-matches.') +
+          '</p><p>Acting collapses ambiguity you still use as shelter.</p>'
         );
       },
       cost: function(bits) {
         return [
-          'Signal compresses until it shows up as tension or cynicism.',
-          'Others hear silence, not your standard.',
-          'You carry corrections before anyone asks for them.'
+          'Critiques stack where nobody hears them.',
+          'The internal case strengthens; the external one never opens.',
+          'Hesitation passes for discernment.'
         ];
       },
       next: function(bits) {
         return (
-          '<p>Phase 02 tests paid demand, not your radar. Bring one buyer-shaped noun and one problem people already pay to fix.</p>' +
-          '<p>Before you open Monetize: write one sentence that states the move you are not making yet — or one lane you will not touch for seven days.</p>'
+          '<p>Phase 02 forces one paid shape. This fails when the week has no visible close.</p>' +
+          '<p>Next: one deliverable with a date — smaller than you want, real enough to count.</p>'
         );
       }
     },
-    'Intent Reader': {
+    'Miscast Strategist': {
       core: function(bits) {
         return (
-          '<p>You model intent under language and act on that model before it is said out loud.</p>' +
-          '<p>The gap is credit: the work is real before anyone can point to it.</p>'
-        );
-      },
-      look: function(bits) {
-        return [
-          'Subtext, pace, and unstated stakes before content.',
-          bits[1] === 0 ? 'You stabilize by naming the frame.' : 'You stabilize by changing one lever.',
-          bits[1] === 0 ? 'You wait for permission that does not arrive.' : 'You move and absorb mess.'
-        ];
-      },
-      mainBlock: function(bits) {
-        return (
-          '<p>You trade some room-edge clarity for continuity. ' +
-          (bits[3] === 0
-            ? 'People use your judgment without giving you authority.'
-            : 'Your thinking is relied on; volume replaces invisibility.') +
-          '</p><p>' +
-          (bits[5] === 0
-            ? 'You dodge the moment that makes the read public and accountable.'
-            : 'Committing closes paths you still see; you keep them warm.') +
-          '</p>'
-        );
-      },
-      cost: function(bits) {
-        return [
-          'Your best calls happen where they cannot be quoted.',
-          'Outcomes improve while your line stays invisible.',
-          'You get pulled into execution, not credited for the read that enabled it.'
-        ];
-      },
-      next: function(bits) {
-        return (
-          '<p>Phase 02 needs a buyer and a paid-problem shape you can defend in one breath. Intent is not the deliverable.</p>' +
-          '<p>Next: one sentence a stranger could repeat that says who pays you for what outcome — no subtext.</p>'
-        );
-      }
-    },
-    'Context Misfit': {
-      core: function(bits) {
-        return (
-          '<p>Your strength is real; the fit is not. You bend into what the room rewards.</p>' +
-          '<p>The error reads as effort with thin returns — not confusion about what you can do.</p>'
+          '<p>Strength is real; fit is not. You shape yourself to what the room rewards.</p>' +
+          '<p>Effort with thin returns reads as hustle, not confusion about ability.</p>'
         );
       },
       look: function(bits) {
         return [
           bits[0] === 0 ? 'You prove value through granularity.' : 'You prove value through synthesis.',
           bits[1] === 0 ? 'You explain the mismatch in analysis.' : 'You patch what is in front of you.',
-          bits[2] === 0 ? 'You swallow the fit critique until it feels safe to say.' : 'You say the fit problem out loud.'
+          bits[2] === 0 ? 'You swallow the fit critique until it is safe to say.' : 'You say the misfit out loud.'
         ];
       },
       mainBlock: function(bits) {
         return (
-          '<p>Rewards point away from what you are strongest at. ' +
+          '<p>Rewards point away from your sharpest gear. ' +
           (bits[2] === 0
             ? 'You keep the critique internal so it does not read as complaint.'
             : 'You name the misfit even when it costs rapport.') +
           '</p><p>' +
           (bits[5] === 0
             ? 'Leaving is uncertain; staying is the known failure mode.'
-            : 'No lane here feels right, so you avoid picking one.') +
+            : 'No lane feels right; you avoid choosing one.') +
           '</p>'
         );
       },
       cost: function(bits) {
         return [
-          'Skill in the wrong frame reads as hustle without leverage.',
-          'Underuse becomes a habit you explain as temperament.',
-          'Proof stacks; bargaining power does not.'
+          'Skill in the wrong frame reads as effort without leverage.',
+          'Underuse becomes a story you call temperament.',
+          'Proof stacks; leverage does not.'
         ];
       },
       next: function(bits) {
         return (
-          '<p>Phase 02 is where who pays gets tested against fit, not effort. You need one context where your gear is load-bearing.</p>' +
-          '<p>Next: name the reward structure you are in — then one environment where your strength is the job, not the extra.</p>'
+          '<p>Phase 02 tests who pays against fit — not how hard you work.</p>' +
+          '<p>Next: one reward structure you are in, then one context where your strength is the job.</p>'
         );
       }
     },
-    'Urgent Fixer': {
+    'Reactive Stabilizer': {
       core: function(bits) {
         return (
-          '<p>You change what is broken in front of you before you finish the theory.</p>' +
-          '<p>Urgent repair beats structural repair — until the structure keeps breaking.</p>'
+          '<p>You change what is broken in front of you before the theory is closed.</p>' +
+          '<p>Urgent repair beats structural repair — until the structure keeps failing.</p>'
         );
       },
       look: function(bits) {
         return [
-          'What is loud in the room before what is load-bearing.',
-          bits[1] === 1 ? 'Intervention before full proof.' : 'A clean causal map before you touch anything.',
+          'What is loud before what is load-bearing.',
+          bits[1] === 1 ? 'Intervention before full proof.' : 'A clean map before you touch anything.',
           bits[1] === 1 ? 'Early motion, then correction.' : 'Motion after an internal threshold.'
         ];
       },
@@ -1269,10 +1264,10 @@
           ' ' +
           (bits[3] === 1
             ? 'The environment pulls on how you think.'
-            : 'The room does not ask for your best tool; you compensate with effort.') +
+            : 'The room does not ask for your best tool; you compensate.') +
           '</p><p>' +
           (bits[5] === 1
-            ? 'Closing one option feels like an error; search replaces commitment.'
+            ? 'Closing one option feels like error; search replaces commitment.'
             : 'You know the move and still buffer.') +
           '</p>'
         );
@@ -1280,70 +1275,29 @@
       cost: function(bits) {
         return [
           'You win fights and inherit systems that still fail quietly.',
-          'People learn to depend on rescue, not prevention.',
+          'People learn rescue, not prevention.',
           'Your bar for "handled" is higher than the room\'s.'
         ];
       },
       next: function(bits) {
         return (
           '<p>Phase 02 asks what people pay for before you optimize how you save the room.</p>' +
-          '<p>Next: one drain you will cut this week — before you add another fix.</p>'
+          '<p>Next: one drain you cut this week — before you add another fix.</p>'
         );
       }
     },
-    'Read Ahead': {
+    'Structural Refiner': {
       core: function(bits) {
         return (
-          '<p>Your reads land early. Motion lands late — the gap is public commitment, not blindness.</p>' +
-          '<p>Knowing reads as partial credit until something ships.</p>'
+          '<p>You reach for cause, prevention, and the delta between fine and finished.</p>' +
+          '<p>The room often wants motion; your eye stays on what is missing.</p>'
         );
       },
       look: function(bits) {
         return [
-          bits[2] === 1 ? 'You track intent under the line.' : 'You work from what is stated.',
-          bits[1] === 0 ? 'You wait for certainty that matches your bar.' : 'You move, then revise hard.',
-          bits[5] === 0 ? 'Going public with the read is what you stall on.' : 'Every lane feels like it closes too much.'
-        ];
-      },
-      mainBlock: function(bits) {
-        return (
-          '<p>' +
-          (bits[2] === 0
-            ? 'Naming the read feels like rupture, so it stays private.'
-            : 'When you speak, it lands hard — it was queued too long.') +
-          ' ' +
-          (bits[3] === 0
-            ? 'The room does not require your best contribution.'
-            : 'The room uses your thinking; pace still mis-matches.') +
-          '</p><p>Acting collapses ambiguity you still use as shelter.</p>'
-        );
-      },
-      cost: function(bits) {
-        return [
-          'Accurate critiques stack where nobody hears them.',
-          'The internal case gets stronger while the external one never opens.',
-          'Hesitation passes for discernment.'
-        ];
-      },
-      next: function(bits) {
-        return (
-          '<p>Phase 02 will force one paid shape. This pattern fails when the week has no visible close.</p>' +
-          '<p>Next: one deliverable with a date — smaller than what you see, big enough to be real.</p>'
-        );
-      }
-    },
-    'Gap Spotter': {
-      core: function(bits) {
-        return (
-          '<p>You see the gap between acceptable and done. That gap can eat the window.</p>' +
-          '<p>Shipping enough is often available; your eye keeps pulling toward complete.</p>'
-        );
-      },
-      look: function(bits) {
-        return [
-          bits[0] === 0 ? 'You spot faults and gaps others skim.' : 'You spot structural gaps across cases.',
+          bits[0] === 0 ? 'Faults and gaps others skim.' : 'Structural gaps across cases.',
           bits[4] === 0 ? 'You fault prevention first.' : 'You fault response quality first.',
-          bits[1] === 0 ? 'You hold until the work matches your bar.' : 'You ship, then tighten in passes.'
+          bits[1] === 0 ? 'You hold until work matches your bar.' : 'You ship, then tighten in passes.'
         ];
       },
       mainBlock: function(bits) {
@@ -1351,15 +1305,15 @@
           '<p>' +
           (bits[2] === 0
             ? 'You hold the gap until speaking feels cheaper than error.'
-            : 'You surface the gap directly; it can read as never satisfied.') +
+            : 'You surface the gap; it can read as never satisfied.') +
           ' ' +
           (bits[3] === 1
-            ? 'Thinking quality is load-bearing where you work.'
+            ? 'Thinking quality is load-bearing here.'
             : 'The room rewards fine; you see the missing slice.') +
           '</p><p>' +
           (bits[5] === 1
-            ? 'You search for a cleaner frame instead of shipping an imperfect one.'
-            : 'You negotiate with your own standard instead of closing.') +
+            ? 'Cleaner frames replace shipping imperfect work.'
+            : 'You negotiate with your standard instead of closing.') +
           '</p>'
         );
       },
@@ -1372,53 +1326,53 @@
       },
       next: function(bits) {
         return (
-          '<p>Phase 02 needs a price-shaped offer, not a tighter critique. Demand beats delta vision.</p>' +
-          '<p>Next: ship one rough slice with a number — then refine, not before.</p>'
+          '<p>Phase 02 needs price and demand — not a tighter gap analysis.</p>' +
+          '<p>Next: one rough slice with a number, then refine.</p>'
         );
       }
     },
-    'Systems First': {
+    'Unconverted Thinker': {
       core: function(bits) {
         return (
-          '<p>You reach for cause, structure, and prevention. The room often wants motion first.</p>' +
-          '<p>Full maps take longer than the calendar gives you.</p>'
+          '<p>You register friction and upgrade paths before the room settles — then the signal stays partly private.</p>' +
+          '<p>The leak is not detection. It is conversion: thought without a receipt.</p>'
         );
       },
       look: function(bits) {
         return [
-          'Chains and prerequisites before vibes.',
-          bits[1] === 0 ? 'Name the problem before you act.' : 'Patch fast, then rebuild underneath.',
-          bits[2] === 1 ? 'Intent reads as data.' : 'You fix the object level and move on.'
+          'Mismatch and cost land before others name them.',
+          bits[1] === 0 ? 'You map cause before you touch anything.' : 'You change conditions before you explain.',
+          bits[1] === 0 ? 'You wait on a green light.' : 'You move and repair in motion.'
         ];
       },
       mainBlock: function(bits) {
         return (
           '<p>' +
           (bits[2] === 0
-            ? 'You hold the systemic read so individuals do not feel accused.'
-            : 'You say the structural issue even when it implicates people.') +
+            ? 'You hold reads when speaking would spike cost.'
+            : 'You push the read when silence is more expensive than tension.') +
           ' ' +
           (bits[3] === 0
-            ? 'The environment wants motion, not architecture.'
-            : 'Build and repair are valued here.') +
+            ? 'Context rarely pulls for your sharpest gear.'
+            : 'What you are good at is load-bearing here.') +
           '</p><p>' +
-          (bits[5] === 1
-            ? 'Modeling stays safer than bets.'
-            : 'You know the fix and stall on the political price of installing it.') +
+          (bits[5] === 0
+            ? 'You know the move; naming it binds you, so you buffer.'
+            : 'Direction stays open; mapping replaces a ship date.') +
           '</p>'
         );
       },
       cost: function(bits) {
         return [
-          'You watch repeat failure while others move on.',
-          'You become the person who makes it heavy.',
-          'Systems work credits someone else’s urgency.'
+          'Signal compresses into tension or cynicism.',
+          'Others hear silence, not your standard.',
+          'You carry corrections before anyone asks.'
         ];
       },
       next: function(bits) {
         return (
-          '<p>Phase 02 still needs a buyer and a price — systems thinking is not the receipt.</p>' +
-          '<p>Next: one loop you will close end-to-end before you expand the map.</p>'
+          '<p>Phase 02 tests paid demand, not your radar. One buyer noun, one paid problem.</p>' +
+          '<p>Next: one sentence for the move you are not making — or one lane you close for seven days.</p>'
         );
       }
     }
