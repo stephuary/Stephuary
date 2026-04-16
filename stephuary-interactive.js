@@ -458,11 +458,23 @@
     if (path !== '/pricing') return;
     function bind() {
       var cb = document.getElementById('tier-custom-build');
-      if (!cb) return;
-      cb.addEventListener('toggle', function () {
-        document.body.classList.toggle('sh-zone--immersive', !!cb.open);
-      });
-      if (cb.open) document.body.classList.add('sh-zone--immersive');
+      var gate = document.getElementById('pricing-build-gate');
+      function setImmersive(on) {
+        document.body.classList.toggle('sh-zone--immersive', !!on);
+      }
+      if (cb) {
+        cb.addEventListener('toggle', function () {
+          setImmersive(!!cb.open);
+        });
+        if (cb.open) setImmersive(true);
+      }
+      if (gate) {
+        var obs = new MutationObserver(function () {
+          setImmersive(!gate.hasAttribute('hidden'));
+        });
+        obs.observe(gate, { attributes: true, attributeFilter: ['hidden'] });
+        if (!gate.hasAttribute('hidden')) setImmersive(true);
+      }
     }
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', bind);
     else bind();

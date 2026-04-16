@@ -170,7 +170,7 @@
 
       if (st === 'scale') {
         stickyLink.textContent = 'Custom builds';
-        stickyLink.setAttribute('href', '#tier-custom-build');
+        stickyLink.setAttribute('href', '#pricing-flow-scale');
         return;
       }
 
@@ -225,7 +225,7 @@
     if (!bar || !link) return;
 
     var layers = [
-      { id: 'pricing-flow-scale', text: 'Start Build', href: '#tier-custom-build' },
+      { id: 'pricing-flow-scale', text: 'Start Build', href: '#pricing-flow-scale' },
       { id: 'pricing-flow-operator', text: 'Request Access', href: '/private-access' },
       { id: 'pricing-flow-diagnose', text: 'Start Snapshot', href: '/snapshot' }
     ];
