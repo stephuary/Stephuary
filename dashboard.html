@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Dashboard · Stephuary</title>
   <link rel="stylesheet" href="/stephuary-interactive.css" />
-<meta name="description" content="Your room progress — status, next action, where to resume.">
+<meta name="description" content="Your room progress, status, next action, and where to resume.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400&family=Lato:wght@300;400&display=swap" rel="stylesheet">
 <style>
@@ -68,7 +68,7 @@ td strong{color:var(--white);font-weight:400}
   <header class="hero">
     <p class="eyebrow">Operating system</p>
     <h1 class="hero-h1">Dashboard</h1>
-    <p class="hero-lead">Local progress only — no account. This stays on your device until you clear site data.</p>
+    <p class="hero-lead">Local progress only .  no account. This stays on your device until you clear site data.</p>
   </header>
 
   <section class="sec" aria-labelledby="h-resume">
@@ -95,7 +95,7 @@ td strong{color:var(--white);font-weight:400}
 
   <section class="sec" aria-labelledby="h-next">
     <h2 id="h-next" class="sec-h">3 · Next action</h2>
-    <p class="next-action" id="next-action-line">—</p>
+    <p class="next-action" id="next-action-line">. </p>
     <p class="next-sub">Examples: “Send the message” · “Remove one drain” · “Shift time to priority”</p>
   </section>
 
@@ -119,12 +119,12 @@ td strong{color:var(--white);font-weight:400}
   }
 
   function fmtTime(iso) {
-    if (!iso) return '—';
+    if (!iso) return '. ';
     try {
       var d = new Date(iso);
       return d.toLocaleString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
     } catch (e) {
-      return '—';
+      return '. ';
     }
   }
 
@@ -135,7 +135,7 @@ td strong{color:var(--white);font-weight:400}
     resumeSlot.innerHTML =
       '<a class="resume-card" href="' + esc(d.resume.path) + '">' +
       '<p class="resume-label">Resume</p>' +
-      '<p class="resume-title">Room ' + esc(d.resume.id) + ' — ' + esc(d.resume.title) + '</p>' +
+      '<p class="resume-title">Room ' + esc(d.resume.id) + ' .  ' + esc(d.resume.title) + '</p>' +
       '<p class="resume-meta">' + esc(d.resume.lastAction) + '</p>' +
       '<p class="resume-pct">' + d.resume.completion + '% complete</p>' +
       '</a>';
@@ -154,12 +154,12 @@ td strong{color:var(--white);font-weight:400}
     tbody.appendChild(tr);
   });
 
-  document.getElementById('next-action-line').textContent = d.nextAction || '—';
+  document.getElementById('next-action-line').textContent = d.nextAction || '. ';
 
   var recSlot = document.getElementById('rec-slot');
   if (d.nextRoom) {
     recSlot.innerHTML =
-      '<p class="next-action" style="padding-top:0;">Room ' + esc(d.nextRoom.id) + ' — ' + esc(d.nextRoom.title) + '</p>' +
+      '<p class="next-action" style="padding-top:0;">Room ' + esc(d.nextRoom.id) + ' .  ' + esc(d.nextRoom.title) + '</p>' +
       '<div class="rec-row">' +
       '<a class="btn-pri" href="' + esc(d.nextRoom.path) + '">Open room ' + esc(d.nextRoom.id) + '</a>' +
       '</div>';
