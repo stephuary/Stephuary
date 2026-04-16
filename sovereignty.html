@@ -825,10 +825,10 @@
           <div class="progress-bar-wrap">
             <div class="progress-meta">
               <span class="progress-label progress-label--muted">Progress</span>
-              <span class="progress-count" id="progressCount">Step 1 of 10</span>
+              <span class="progress-count" id="progressCount">Step 1 of 5</span>
             </div>
             <div class="progress-track">
-              <div class="progress-fill" id="progressFill" style="width:10%"></div>
+              <div class="progress-fill" id="progressFill" style="width:20%"></div>
             </div>
           </div>
           <details class="diag-details diag-details--steps">
@@ -943,29 +943,18 @@
         <div class="live-panel__inner">
           <div class="live-panel__primary">
             <div class="live-field">
-              <div class="live-label">Main issue</div>
+              <div class="live-label">Dependency</div>
               <div class="live-value" id="live-dep">—</div>
             </div>
             <div class="live-field">
-              <div class="live-label">Current pattern</div>
-              <div class="live-value" id="live-ctl">—</div>
+              <div class="live-label">Ownership</div>
+              <div class="live-value" id="live-own">—</div>
             </div>
             <div class="live-field">
-              <div class="live-label">Likely next step</div>
-              <div class="live-value" id="live-pos">—</div>
+              <div class="live-label">Direction</div>
+              <div class="live-value" id="live-dir">—</div>
             </div>
           </div>
-          <details class="live-panel__more">
-            <summary class="live-panel__more-sum">Full readout</summary>
-            <div class="live-field">
-              <div class="live-label">Model</div>
-              <div class="live-value" id="live-mod">—</div>
-            </div>
-            <div class="live-field">
-              <div class="live-label">System</div>
-              <div class="live-value" id="live-sys">—</div>
-            </div>
-          </details>
         </div>
       </details>
     </aside>
@@ -982,33 +971,43 @@
   var PROFILE_KEY = 'stephuary_p01_profile';
   var P02_KEY = 'stephuary_monetize_p02_v1';
   var P01_KEY = 'stephuary_capture_p01_v2';
-  var TOTAL_Q = 10;
-  var RAIL_LABELS = ['Dependency','Leverage','Control','Repeat','Scaling','Monetize','Portability','Ownership','Sovereignty','Long-term','Results'];
+  var TOTAL_Q = 5;
+  var RAIL_LABELS = ['Dependency','Control','Repeatability','Ownership','Direction','Results'];
 
   var QUESTIONS = [
-    { instruction: 'Income concentration today:', a: 'Multiple sources or paths', b: 'One primary source' },
-    { instruction: 'Delivery without you (systems, assets, team):', a: 'Can happen without you', b: 'Requires you directly' },
-    { instruction: 'Who controls the levers that decide your income?', a: 'Decisions you control', b: 'Platforms, clients, or external factors' },
-    { instruction: 'How you deliver is:', a: 'Repeatable across situations', b: 'Custom every time' },
-    { instruction: 'Growth right now mostly means:', a: 'Expanding systems', b: 'Doing more work' },
-    { instruction: 'If your main path disappeared tomorrow:', a: 'You could rebuild quickly', b: 'You would have to start over' },
-    { instruction: 'Portability of your skill:', a: 'Works across industries or contexts', b: 'Is tied to one environment' },
-    { instruction: 'Ownership of the container you work in:', a: 'Building something you own', b: "Operating inside someone else's system" },
-    { instruction: 'Default leverage move:', a: 'Look for ways to multiply value', b: 'Focus on improving what exists' },
-    { instruction: 'Direction priority this season:', a: 'Moving toward independence', b: 'Maintaining stability' }
+    {
+      instruction: 'Right now, your income depends on:',
+      a: 'more than one source or path',
+      b: 'one main source or path'
+    },
+    {
+      instruction: 'Who controls the levers that affect your income?',
+      a: 'you do',
+      b: 'platforms, clients, or outside systems do'
+    },
+    {
+      instruction: 'Can this work repeat without rebuilding from scratch each time?',
+      a: 'yes',
+      b: 'no'
+    },
+    {
+      instruction: 'What are you actually building?',
+      a: 'something I own',
+      b: 'something inside someone else\'s system'
+    },
+    {
+      instruction: 'Your next move is closer to:',
+      a: 'leverage and independence',
+      b: 'stability and maintenance'
+    }
   ];
 
   var ADAPTIVE = [
-    'You already have proof.',
-    'Now this becomes about control.',
-    'This is where most people stay small.',
-    'Your ability is no longer the question.',
     'Dependency is a design problem.',
-    'Leverage is optional until volume hits.',
-    'External control raises risk.',
+    'Control is who moves the levers.',
     'Repeatability is how you escape the grind.',
     'Ownership is structure, not mood.',
-    'Independence is built, not felt.'
+    'Direction is leverage or maintenance — pick.'
   ];
 
   var state = {
@@ -1142,6 +1141,18 @@
     return 'untested';
   }
 
+  function normalizeP05Bits(bits) {
+    if (!bits) return null;
+    if (window.StephuaryDiagnosticState && typeof window.StephuaryDiagnosticState.migrateP05Bits === 'function') {
+      return window.StephuaryDiagnosticState.migrateP05Bits(bits);
+    }
+    if (bits.length === 10) {
+      return [bits[0], bits[2], bits[5], bits[7], bits[9]];
+    }
+    if (bits.length > TOTAL_Q) return bits.slice(0, TOTAL_Q);
+    return bits;
+  }
+
   function buildP3OfferAndEntry() {
     var p3 = loadP3Bits();
     var p1 = loadP01Profile() || (function() {
@@ -1258,40 +1269,22 @@
     function has(i) { return b[i] !== null && b[i] !== undefined; }
 
     var dep = '—';
-    if (has(0)) dep = b[0] === 0 ? 'independent' : 'dependent';
+    if (has(0)) dep = b[0] === 0 ? 'controlled' : 'dependent';
 
-    var mod = '—';
-    if (has(1)) mod = b[1] === 0 ? 'leveraged' : 'active';
+    var own = '—';
+    if (has(3)) own = b[3] === 0 ? 'owned' : 'external';
 
-    var ctl = '—';
-    if (has(2)) ctl = b[2] === 0 ? 'high' : 'low';
+    var dir = '—';
+    if (has(4)) dir = b[4] === 0 ? 'leverage' : 'maintenance';
 
-    var sys = '—';
-    if (has(4) && has(5)) {
-      var sy = (b[4] === 0 ? 1 : 0) + (b[5] === 0 ? 1 : 0);
-      sys = sy >= 1 ? 'scalable' : 'fragile';
-    } else if (has(4)) {
-      sys = b[4] === 0 ? 'leaning scalable' : 'leaning fragile';
-    }
-
-    var pos = '—';
-    if (has(6) && has(7)) {
-      var pt = (b[6] === 0 ? 1 : 0) + (b[7] === 0 ? 1 : 0);
-      pos = pt >= 1 ? 'transferable' : 'fixed';
-    } else if (has(6)) {
-      pos = b[6] === 0 ? 'transferable' : 'fixed';
-    }
-
-    return { dep: dep, mod: mod, ctl: ctl, sys: sys, pos: pos };
+    return { dep: dep, own: own, dir: dir };
   }
 
   function updateLivePanel() {
     var p = panelFromBits(state.bits);
     document.getElementById('live-dep').textContent = p.dep;
-    document.getElementById('live-mod').textContent = p.mod;
-    document.getElementById('live-ctl').textContent = p.ctl;
-    document.getElementById('live-sys').textContent = p.sys;
-    document.getElementById('live-pos').textContent = p.pos;
+    document.getElementById('live-own').textContent = p.own;
+    document.getElementById('live-dir').textContent = p.dir;
   }
 
   function saveStorage() {
@@ -1324,8 +1317,8 @@
     var items = document.querySelectorAll('.rail-item');
     items.forEach(function(el, i) {
       el.classList.remove('active', 'done');
-      if (i === 10) {
-        if (phase === 11) el.classList.add('active');
+      if (i === 5) {
+        if (phase === 6) el.classList.add('active');
       } else if (i + 1 < phase) el.classList.add('done');
       else if (i + 1 === phase) el.classList.add('active');
     });
@@ -1334,16 +1327,16 @@
   function operatingModel(b) {
     var indScore = 0;
     if (b[0] === 0) indScore += 2;
+    if (b[1] === 0) indScore += 2;
     if (b[2] === 0) indScore += 2;
-    if (b[7] === 0) indScore += 2;
-    if (b[8] === 0) indScore += 1;
-    if (b[9] === 0) indScore += 2;
+    if (b[3] === 0) indScore += 2;
+    if (b[4] === 0) indScore += 1;
     return indScore >= 5 ? 'independent' : 'dependent';
   }
 
   function incomeBand(b) {
-    var fragile = b[0] === 1 || b[2] === 1 || b[5] === 1;
-    var scalable = b[4] === 0 && b[5] === 0 && b[8] === 0 && b[9] === 0;
+    var fragile = b[0] === 1 || b[1] === 1;
+    var scalable = b[2] === 0 && b[3] === 0 && b[4] === 0;
     if (scalable && !fragile) return 'scalable';
     if (fragile && !scalable) return 'fragile';
     return 'stable';
@@ -1402,9 +1395,9 @@
 
     var risks = [];
     if (b[0] === 1) risks.push('relying on one source');
-    if (b[1] === 1) risks.push('requiring your time');
-    if (b[7] === 1) risks.push('lacking ownership');
-    if (b[2] === 1) risks.push('external control of income');
+    if (b[1] === 1) risks.push('external control of income levers');
+    if (b[2] === 1) risks.push('rebuild-heavy work');
+    if (b[3] === 1) risks.push('lacking ownership of the container');
     if (risks.length === 0) risks.push('no single risk dominated on this pass');
     document.getElementById('out-3').innerHTML =
       '<p>Your current risk is:</p><ul class="diag-list">' +
@@ -1427,13 +1420,13 @@
     document.getElementById('out-7').innerHTML =
       '<p>You are heading toward:</p><ul class="diag-list">' +
       '<li>' +
-      (b[2] === 0 ? 'control over your income' : 'less predictable control of income') +
+      (b[1] === 0 ? 'control over your income levers' : 'less predictable control of income') +
       '</li>' +
       '<li>' +
-      (b[1] === 0 ? 'control over your time' : 'time still tied to delivery') +
+      (b[3] === 0 ? 'ownership of what you build' : 'operating inside someone else\'s system') +
       '</li>' +
       '<li>' +
-      (b[9] === 0 ? 'control over your direction' : 'direction set by stability, not expansion') +
+      (b[4] === 0 ? 'direction toward leverage' : 'direction toward maintenance') +
       '</li>' +
       '</ul>';
 
@@ -1446,10 +1439,8 @@
 
     var fin = panelFromBits(b);
     document.getElementById('live-dep').textContent = fin.dep;
-    document.getElementById('live-mod').textContent = fin.mod;
-    document.getElementById('live-ctl').textContent = fin.ctl;
-    document.getElementById('live-sys').textContent = fin.sys;
-    document.getElementById('live-pos').textContent = fin.pos;
+    document.getElementById('live-own').textContent = fin.own;
+    document.getElementById('live-dir').textContent = fin.dir;
   }
 
   function buildSteps() {
@@ -1536,7 +1527,7 @@
   }
 
   function showSummary() {
-    state.currentStep = 11;
+    state.currentStep = 6;
     saveStorage();
     try {
       if (window.StephuaryDiagnosticFlow && typeof window.StephuaryDiagnosticFlow.markPhaseComplete === 'function') {
@@ -1678,10 +1669,8 @@
     });
     goTo(1);
     document.getElementById('live-dep').textContent = '—';
-    document.getElementById('live-mod').textContent = '—';
-    document.getElementById('live-ctl').textContent = '—';
-    document.getElementById('live-sys').textContent = '—';
-    document.getElementById('live-pos').textContent = '—';
+    document.getElementById('live-own').textContent = '—';
+    document.getElementById('live-dir').textContent = '—';
   }
 
   document.getElementById('btnCopy').addEventListener('click', copyAll);
@@ -1722,8 +1711,10 @@
 
     var d = loadStorage();
     if (d && d.bits && d.bits.some(function(b) { return b !== null && b !== undefined; })) {
-      state.bits = d.bits.slice();
+      state.bits = normalizeP05Bits(d.bits.slice()) || Array(TOTAL_Q).fill(null);
       while (state.bits.length < TOTAL_Q) state.bits.push(null);
+      if (state.bits.length > TOTAL_Q) state.bits = state.bits.slice(0, TOTAL_Q);
+      saveStorage();
       var fe = state.bits.indexOf(null);
       if (fe === -1) {
         showSummary();

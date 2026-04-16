@@ -8,11 +8,11 @@
   var P03 = 'stephuary_structure_p03_v1';
   var P04 = 'stephuary_validation_p04_v1';
   var P05 = 'stephuary_sovereignty_p05_v1';
-  var T = 10;
   var T01 = 6;
   var T02 = 5;
   var T03 = 5;
   var T04 = 5;
+  var T05 = 5;
 
   /** Legacy Automation stored 10 binary answers; map to the current 5-question set (exposure, response, direct ask, loop, speed). */
   function migrateP04Bits(bits) {
@@ -64,14 +64,6 @@
     }
   }
 
-  function complete(bits) {
-    if (!bits || bits.length < T) return false;
-    for (var i = 0; i < T; i++) {
-      if (bits[i] === null || bits[i] === undefined) return false;
-    }
-    return true;
-  }
-
   function completeP01(bits) {
     var b = migrateP01Bits(bits);
     if (!b || b.length < T01) return false;
@@ -103,6 +95,25 @@
     var b = migrateP04Bits(bits);
     if (!b || b.length < T04) return false;
     for (var i = 0; i < T04; i++) {
+      if (b[i] === null || b[i] === undefined) return false;
+    }
+    return true;
+  }
+
+  /** Legacy Sovereignty stored 10 binary answers; map to the current 5-question set. */
+  function migrateP05Bits(bits) {
+    if (!bits) return null;
+    if (bits.length === 10) {
+      return [bits[0], bits[2], bits[5], bits[7], bits[9]];
+    }
+    if (bits.length > T05) return bits.slice(0, T05);
+    return bits;
+  }
+
+  function completeP05(bits) {
+    var b = migrateP05Bits(bits);
+    if (!b || b.length < T05) return false;
+    for (var i = 0; i < T05; i++) {
       if (b[i] === null || b[i] === undefined) return false;
     }
     return true;
@@ -189,19 +200,20 @@
   }
 
   function phase05(bits) {
-    if (!complete(bits)) return null;
+    var b = migrateP05Bits(bits);
+    if (!completeP05(b)) return null;
     var ind =
-      (bits[0] === 0 ? 2 : 0) +
-      (bits[2] === 0 ? 2 : 0) +
-      (bits[7] === 0 ? 2 : 0) +
-      (bits[8] === 0 ? 1 : 0) +
-      (bits[9] === 0 ? 2 : 0);
+      (b[0] === 0 ? 2 : 0) +
+      (b[1] === 0 ? 2 : 0) +
+      (b[2] === 0 ? 2 : 0) +
+      (b[3] === 0 ? 2 : 0) +
+      (b[4] === 0 ? 1 : 0);
     return {
-      dependency_level: bits[0] === 0 ? 'Multiple income paths or options' : 'Single dominant income path',
-      leverage_type: bits[8] === 0 ? 'Bias toward multiplying leverage' : 'Bias toward improving existing work',
+      dependency_level: b[0] === 0 ? 'Multiple income paths or options' : 'Single dominant income path',
+      leverage_type: b[4] === 0 ? 'Bias toward multiplying leverage' : 'Bias toward improving existing work',
       control_model: ind >= 5 ? 'Independent-leaning controls' : 'Dependent-leaning controls',
       scalability_status:
-        bits[4] === 0 && bits[6] === 0 ? 'Model can scale beyond hourly' : 'Model still tied to direct delivery'
+        b[2] === 0 && b[3] === 0 ? 'Model can scale beyond hourly' : 'Model still tied to direct delivery'
     };
   }
 
@@ -222,7 +234,7 @@
         p02: completeP02(b2),
         p03: completeP03(b3),
         p04: completeP04(b4),
-        p05: complete(b5)
+        p05: completeP05(b5)
       }
     };
   }
@@ -262,6 +274,8 @@
     completeP03: completeP03,
     migrateP04Bits: migrateP04Bits,
     completeP04: completeP04,
+    migrateP05Bits: migrateP05Bits,
+    completeP05: completeP05,
     KEYS: { P01: P01, P02: P02, P03: P03, P04: P04, P05: P05 }
   };
 })(typeof window !== 'undefined' ? window : this);

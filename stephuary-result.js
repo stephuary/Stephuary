@@ -14,7 +14,6 @@
     'Unconverted Thinker'
   ];
 
-  var PHASE_Q = 10;
   var CAPTURE_Q = 6;
 
   function migrateCaptureBitsTenToSix(bits) {
@@ -277,6 +276,7 @@
   var MONETIZE_Q = 5;
   var STRUCTURE_Q = 5;
   var AUTOMATION_Q = 5;
+  var SOVEREIGNTY_Q = 5;
 
   /** Legacy Structure used 10 answers; current phase uses 5. */
   function migrateStructureBits(bits) {
@@ -335,6 +335,25 @@
     return true;
   }
 
+  /** Legacy Sovereignty used 10 answers; current phase uses 5. */
+  function migrateSovereigntyBits(bits) {
+    if (!bits) return null;
+    if (bits.length === 10) {
+      return [bits[0], bits[2], bits[5], bits[7], bits[9]];
+    }
+    if (bits.length > SOVEREIGNTY_Q) return bits.slice(0, SOVEREIGNTY_Q);
+    return bits;
+  }
+
+  function sovereigntyBitsComplete(bits) {
+    var b = migrateSovereigntyBits(bits);
+    if (!b || b.length < SOVEREIGNTY_Q) return false;
+    for (var i = 0; i < SOVEREIGNTY_Q; i++) {
+      if (b[i] === null || b[i] === undefined) return false;
+    }
+    return true;
+  }
+
   function loadStoredBits(key) {
     try {
       if (typeof localStorage === 'undefined') return null;
@@ -345,14 +364,6 @@
     } catch (e) {
       return null;
     }
-  }
-
-  function phaseBitsComplete(bits) {
-    if (!bits || bits.length < PHASE_Q) return false;
-    for (var i = 0; i < PHASE_Q; i++) {
-      if (bits[i] === null || bits[i] === undefined) return false;
-    }
-    return true;
   }
 
   function validationTierP4(b) {
@@ -402,16 +413,17 @@
   }
 
   function lineSovereignty(b) {
-    if (!phaseBitsComplete(b)) return null;
+    var bits = migrateSovereigntyBits(b);
+    if (!sovereigntyBitsComplete(bits)) return null;
     var indScore = 0;
-    if (b[0] === 0) indScore += 2;
-    if (b[2] === 0) indScore += 2;
-    if (b[7] === 0) indScore += 2;
-    if (b[8] === 0) indScore += 1;
-    if (b[9] === 0) indScore += 2;
+    if (bits[0] === 0) indScore += 2;
+    if (bits[1] === 0) indScore += 2;
+    if (bits[2] === 0) indScore += 2;
+    if (bits[3] === 0) indScore += 2;
+    if (bits[4] === 0) indScore += 1;
     var om = indScore >= 5 ? 'independent-leaning' : 'dependent-leaning';
-    var inc = b[0] === 1 || b[2] === 1 || b[5] === 1 ? 'fragile income shape' : 'more durable income shape';
-    var lever = b[1] === 0 ? 'delivery can run without you' : 'delivery still needs you';
+    var inc = bits[0] === 1 || bits[1] === 1 || bits[2] === 1 ? 'fragile income shape' : 'more durable income shape';
+    var lever = bits[3] === 0 ? 'building something you own' : 'inside someone else\'s system';
     return 'Phase 05 · Control: ' + om + ' · ' + inc + ' · ' + lever + '.';
   }
 
@@ -421,7 +433,7 @@
     var p2 = migrateMonetizeBits(loadStoredBits(LS_P02));
     var p3 = migrateStructureBits(loadStoredBits(LS_P03));
     var p4 = migrateAutomationBits(loadStoredBits(LS_P04));
-    var p5 = loadStoredBits(LS_P05);
+    var p5 = migrateSovereigntyBits(loadStoredBits(LS_P05));
 
     var lines = [];
     var l2 = lineMonetize(p2);
@@ -448,13 +460,13 @@
       if (validationTierP4(p4) === 'untested') issues.push('Market signal still thin or private');
       if (p4[1] === 1) issues.push('Little response when you share the offer');
     }
-    if (p5 && phaseBitsComplete(p5)) {
+    if (p5 && sovereigntyBitsComplete(p5)) {
       var indScore =
         (p5[0] === 0 ? 2 : 0) +
+        (p5[1] === 0 ? 2 : 0) +
         (p5[2] === 0 ? 2 : 0) +
-        (p5[7] === 0 ? 2 : 0) +
-        (p5[8] === 0 ? 1 : 0) +
-        (p5[9] === 0 ? 2 : 0);
+        (p5[3] === 0 ? 2 : 0) +
+        (p5[4] === 0 ? 1 : 0);
       if (indScore < 5) issues.push('Control and ownership still structurally external');
     }
 
@@ -469,13 +481,13 @@
     if (p4 && automationBitsComplete(p4) && validationTierP4(p4) === 'untested') {
       moves.push('Run one exposure batch: same message, five sends, log yes/no/silence.');
     }
-    if (p5 && phaseBitsComplete(p5)) {
+    if (p5 && sovereigntyBitsComplete(p5)) {
       var ind =
         (p5[0] === 0 ? 2 : 0) +
+        (p5[1] === 0 ? 2 : 0) +
         (p5[2] === 0 ? 2 : 0) +
-        (p5[7] === 0 ? 2 : 0) +
-        (p5[8] === 0 ? 1 : 0) +
-        (p5[9] === 0 ? 2 : 0);
+        (p5[3] === 0 ? 2 : 0) +
+        (p5[4] === 0 ? 1 : 0);
       if (ind < 5) {
         moves.push('Pick one channel or asset you fully control end-to-end for the next 30 days.');
       }
