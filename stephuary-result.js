@@ -6,13 +6,13 @@
   var STORAGE_KEY = 'stephuary_result_v1';
 
   var ARCHETYPES = [
-    'Pattern Suppressor',
-    'Unspoken Operator',
-    'Wrong Environment Operator',
-    'Live Stabilizer',
-    'Aware but Idle',
-    'Precision Refiner',
-    'System Rebuilder'
+    'Signal Stabilizer',
+    'Intent Reader',
+    'Context Misfit',
+    'Urgent Fixer',
+    'Read Ahead',
+    'Gap Spotter',
+    'Systems First'
   ];
 
   var PHASE_Q = 10;
@@ -48,12 +48,12 @@
     }
 
     var T = [
-      { a: { 'Unspoken Operator': 2, 'Pattern Suppressor': 1 }, b: { 'Precision Refiner': 2, 'System Rebuilder': 1 } },
-      { a: { 'System Rebuilder': 3, 'Precision Refiner': 1 }, b: { 'Live Stabilizer': 3 } },
-      { a: { 'Unspoken Operator': 3, 'Pattern Suppressor': 2 }, b: { 'Live Stabilizer': 2 } },
-      { a: { 'Wrong Environment Operator': 4 }, b: { 'Live Stabilizer': 2, 'Precision Refiner': 1 } },
-      { a: { 'System Rebuilder': 3 }, b: { 'Live Stabilizer': 2 } },
-      { a: { 'Aware but Idle': 3 }, b: { 'System Rebuilder': 2, 'Precision Refiner': 1 } }
+      { a: { 'Intent Reader': 2, 'Signal Stabilizer': 1 }, b: { 'Gap Spotter': 2, 'Systems First': 1 } },
+      { a: { 'Systems First': 3, 'Gap Spotter': 1 }, b: { 'Urgent Fixer': 3 } },
+      { a: { 'Intent Reader': 3, 'Signal Stabilizer': 2 }, b: { 'Urgent Fixer': 2 } },
+      { a: { 'Context Misfit': 4 }, b: { 'Urgent Fixer': 2, 'Gap Spotter': 1 } },
+      { a: { 'Systems First': 3 }, b: { 'Urgent Fixer': 2 } },
+      { a: { 'Read Ahead': 3 }, b: { 'Systems First': 2, 'Gap Spotter': 1 } }
     ];
 
     for (var i = 0; i < CAPTURE_Q; i++) {
@@ -74,9 +74,9 @@
       return s[a] === max;
     });
     if (tie.length > 1) {
-      if (bits[2] === 0) best = tie.indexOf('Unspoken Operator') >= 0 ? 'Unspoken Operator' : tie[0];
-      else if (bits[3] === 0) best = 'Wrong Environment Operator';
-      else if (bits[5] === 0) best = tie.indexOf('Aware but Idle') >= 0 ? 'Aware but Idle' : tie[0];
+      if (bits[2] === 0) best = tie.indexOf('Intent Reader') >= 0 ? 'Intent Reader' : tie[0];
+      else if (bits[3] === 0) best = 'Context Misfit';
+      else if (bits[5] === 0) best = tie.indexOf('Read Ahead') >= 0 ? 'Read Ahead' : tie[0];
       else best = tie[0];
     }
     return { archetype: best, scores: s, maxScore: max };
@@ -104,13 +104,13 @@
     if (scores[top] - scores[second] < 2) return 'mixed_general';
 
     var map = {
-      'Pattern Suppressor': 'spotter_delay_nopressure',
-      'Aware but Idle': 'spotter_delay_nopressure',
-      'Unspoken Operator': 'interpreter_avoidance_wrongpeople',
-      'Wrong Environment Operator': 'reworker_delay_misaligned',
-      'Live Stabilizer': 'operator_distraction_misaligned',
-      'Precision Refiner': 'builder_delay_lowstandard',
-      'System Rebuilder': 'connector_overthinking_scattered'
+      'Signal Stabilizer': 'spotter_delay_nopressure',
+      'Read Ahead': 'spotter_delay_nopressure',
+      'Intent Reader': 'interpreter_avoidance_wrongpeople',
+      'Context Misfit': 'reworker_delay_misaligned',
+      'Urgent Fixer': 'operator_distraction_misaligned',
+      'Gap Spotter': 'builder_delay_lowstandard',
+      'Systems First': 'connector_overthinking_scattered'
     };
 
     return map[archetype] || 'mixed_general';
