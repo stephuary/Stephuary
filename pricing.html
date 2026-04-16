@@ -2732,6 +2732,7 @@ html.early-mode body.pricing-page{
   var startedAt = Date.now();
   var lastSource = null;
   var maxScrollRatio = 0;
+  var currentIntent = 'mid';
 
   function updateScrollDepth() {
     var doc = document.documentElement;
@@ -2762,6 +2763,7 @@ html.early-mode body.pricing-page{
 
   function applyIntentDefault() {
     var intent = classifyIntent();
+    currentIntent = intent;
     conceptCheck.checked = intent === 'high';
     if (helper) helper.hidden = intent !== 'mid';
     if (snapshotLine) {
@@ -2783,7 +2785,7 @@ html.early-mode body.pricing-page{
   function syncDirectionTotal() {
     var withConcept = conceptCheck.checked;
     total.textContent = withConcept ? '$558' : '$179';
-    continueBtn.href = withConcept ? '/focused-review?direction=1&concept=1' : '/focused-review?direction=1&concept=0';
+    continueBtn.href = withConcept ? '/focused-review?direction=1&concept=1&intent=' + currentIntent : '/focused-review?direction=1&concept=0&intent=' + currentIntent;
   }
 
   window.addEventListener('scroll', updateScrollDepth, { passive: true });

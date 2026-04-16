@@ -130,6 +130,35 @@ p{color:var(--text-2);max-width:52ch}
   font-size:12px;color:var(--text-5);
   letter-spacing:0.08em;margin-top:14px;
 }
+.checkout-desc{
+  font-size:15px;
+  line-height:1.6;
+  color:var(--text-2);
+  max-width:46ch;
+  margin:0 0 22px;
+}
+.checkout-desc p{
+  margin:0 0 8px;
+  color:var(--text-2);
+}
+.checkout-desc ul{
+  list-style:none;
+  margin:0 0 8px;
+  padding:0;
+}
+.checkout-desc li{
+  color:var(--text-2);
+  line-height:1.55;
+}
+.checkout-desc li::before{
+  content:"• ";
+  color:var(--text-4);
+}
+.checkout-reassure{
+  font-size:12px;
+  color:var(--text-5);
+  margin-top:12px;
+}
 .delivery-dot{
   width:5px;height:5px;border-radius:50%;
   background:var(--gold);opacity:0.45;flex-shrink:0;
@@ -343,19 +372,20 @@ p{color:var(--text-2);max-width:52ch}
       Not sure what to fix yet? <a href="/capture" style="color:var(--text-4);border-bottom:1px solid rgba(244,237,224,0.1);transition:color 150ms,border-color 150ms;" onmouseover="this.style.color='var(--text-2)'" onmouseout="this.style.color='var(--text-4)'">Run a quick diagnosis &rarr;</a>
     </p>
     <span class="overline">Focused Review</span>
-    <h1>Fix what’s not converting</h1>
+    <h1 id="checkout-header">Fix what’s not converting</h1>
 
     <div class="hero-price">
-      <span class="hero-price-val">$197</span>
+      <span class="hero-price-val" id="checkout-total">$179</span>
       <span class="hero-price-note">one issue</span>
     </div>
 
-    <p class="hero-sub">You’ve already done the work. This makes it land.</p>
+    <div class="checkout-desc" id="checkout-desc"></div>
 
-    <a class="btn btn-primary" href="https://checkout.stripe.com/focused-review-placeholder">
-      Request a Focused Review
+    <a class="btn btn-primary" href="https://checkout.stripe.com/focused-review-placeholder" id="checkout-cta">
+      Continue
     </a>
-    <p style="font-size:12px;color:var(--text-5);letter-spacing:0.06em;margin-top:14px;line-height:1.5;max-width:42ch;">Fix what isn’t landing.</p>
+    <p class="checkout-reassure" id="checkout-reassure" hidden>You can adjust this after if needed.</p>
+    <p style="font-size:12px;color:var(--text-5);letter-spacing:0.06em;margin-top:14px;line-height:1.5;max-width:42ch;" id="checkout-micro">Fix what isn’t landing.</p>
     <div class="delivery-note">
       <span class="delivery-dot"></span>
       <span>Delivered within 48 hours</span>
@@ -520,8 +550,8 @@ p{color:var(--text-2);max-width:52ch}
   <section>
     <div class="div" style="margin-bottom:48px;"></div>
     <span class="overline-dim" style="margin-bottom:20px;">Ready to move</span>
-    <a class="btn btn-primary" href="https://checkout.stripe.com/focused-review-placeholder" style="margin-bottom:14px;">
-      Request a Focused Review
+    <a class="btn btn-primary" href="https://checkout.stripe.com/focused-review-placeholder" style="margin-bottom:14px;" id="checkout-cta-secondary">
+      Continue
     </a>
     <p style="font-size:12px;color:var(--text-5);letter-spacing:0.06em;margin-top:12px;">Fix what isn’t landing.</p>
     <div class="delivery-note">
@@ -545,6 +575,70 @@ function selectArea(el){
   document.querySelectorAll('.area-chip').forEach(function(c){c.classList.remove('selected');});
   el.classList.add('selected');
 }
+</script>
+<script>
+(function () {
+  var params = new URLSearchParams(window.location.search);
+  var intent = (params.get('intent') || 'mid').toLowerCase();
+  if (intent !== 'low' && intent !== 'mid' && intent !== 'high') intent = 'mid';
+  var concept = params.get('concept') === '1';
+
+  var header = document.getElementById('checkout-header');
+  var desc = document.getElementById('checkout-desc');
+  var cta = document.getElementById('checkout-cta');
+  var cta2 = document.getElementById('checkout-cta-secondary');
+  var reassure = document.getElementById('checkout-reassure');
+  var total = document.getElementById('checkout-total');
+  var ctaHref = concept
+    ? 'https://checkout.stripe.com/focused-review-placeholder?direction=1&concept=1'
+    : 'https://checkout.stripe.com/focused-review-placeholder?direction=1&concept=0';
+
+  if (total) total.textContent = concept ? '$558' : '$179';
+  if (cta) cta.href = ctaHref;
+  if (cta2) cta2.href = ctaHref;
+
+  if (intent === 'low') {
+    if (header) header.textContent = 'Make sure this is the right step';
+    if (desc) {
+      desc.innerHTML = [
+        '<p>You’ll leave with:</p>',
+        '<ul>',
+        '<li>a clear understanding of what’s wrong</li>',
+        '<li>what to focus on next</li>',
+        '<li>what to ignore</li>',
+        '</ul>',
+        '<p>Delivered within 48 hours.</p>'
+      ].join('');
+    }
+    if (cta) cta.textContent = 'Continue';
+    if (cta2) cta2.textContent = 'Continue';
+    if (reassure) reassure.hidden = false;
+    return;
+  }
+
+  if (intent === 'high') {
+    if (header) header.textContent = 'You’re moving forward';
+    if (desc) {
+      desc.innerHTML = concept
+        ? '<p>Direction — $179</p><p>+ Concept Build — $379</p>'
+        : '<p>Direction — $179</p>';
+    }
+    if (cta) cta.textContent = 'Move forward';
+    if (cta2) cta2.textContent = 'Move forward';
+    if (reassure) reassure.hidden = true;
+    return;
+  }
+
+  if (header) header.textContent = 'Confirm your direction';
+  if (desc) {
+    desc.innerHTML = concept
+      ? '<p>Direction — $179</p><p>Clarity on what to pursue and what to ignore.</p><p>+ Concept Build — $379</p>'
+      : '<p>Direction — $179</p><p>Clarity on what to pursue and what to ignore.</p>';
+  }
+  if (cta) cta.textContent = 'Continue with direction';
+  if (cta2) cta2.textContent = 'Continue with direction';
+  if (reassure) reassure.hidden = true;
+})();
 </script>
   <script src="/stephuary-interactive.js" defer></script>
 </body>
