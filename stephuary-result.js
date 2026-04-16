@@ -276,6 +276,7 @@
 
   var MONETIZE_Q = 5;
   var STRUCTURE_Q = 5;
+  var AUTOMATION_Q = 5;
 
   /** Legacy Structure used 10 answers; current phase uses 5. */
   function migrateStructureBits(bits) {
@@ -315,6 +316,25 @@
     return true;
   }
 
+  /** Legacy Automation used 10 answers; current phase uses 5 (exposure, response, direct ask, loop, speed). */
+  function migrateAutomationBits(bits) {
+    if (!bits) return null;
+    if (bits.length === 10) {
+      return [bits[1], bits[2], bits[3], bits[4], bits[6]];
+    }
+    if (bits.length > AUTOMATION_Q) return bits.slice(0, AUTOMATION_Q);
+    return bits;
+  }
+
+  function automationBitsComplete(bits) {
+    var b = migrateAutomationBits(bits);
+    if (!b || b.length < AUTOMATION_Q) return false;
+    for (var i = 0; i < AUTOMATION_Q; i++) {
+      if (b[i] === null || b[i] === undefined) return false;
+    }
+    return true;
+  }
+
   function loadStoredBits(key) {
     try {
       if (typeof localStorage === 'undefined') return null;
@@ -336,14 +356,16 @@
   }
 
   function validationTierP4(b) {
+    var bits = migrateAutomationBits(b);
+    if (!bits || !automationBitsComplete(bits)) return 'untested';
     var sc = 0;
-    if (b[1] === 0) sc += 2;
-    if (b[2] === 0) sc += 2;
-    if (b[3] === 0) sc += 2;
-    if (b[7] === 0) sc += 1;
-    if (b[0] === 0) sc += 1;
+    if (bits[0] === 0) sc += 2;
+    if (bits[1] === 0) sc += 2;
+    if (bits[2] === 0) sc += 2;
+    if (bits[3] === 0) sc += 2;
+    if (bits[4] === 0) sc += 1;
     if (sc >= 6) return 'validated';
-    if (sc >= 3) return 'partially validated';
+    if (sc >= 3) return 'partial';
     return 'untested';
   }
 
@@ -370,11 +392,12 @@
   }
 
   function lineAutomation(b) {
-    if (!phaseBitsComplete(b)) return null;
-    var tier = validationTierP4(b);
-    var vis = b[1] === 0 ? 'seen by others' : 'still private';
-    var sig = b[2] === 0 ? 'responses when shared' : 'silence when shared';
-    var loop = b[4] === 0 && b[8] === 0 ? 'adjusts after friction' : 'stalls on silence or prep';
+    var bits = migrateAutomationBits(b);
+    if (!automationBitsComplete(bits)) return null;
+    var tier = validationTierP4(bits);
+    var vis = bits[0] === 0 ? 'seen by others' : 'still private';
+    var sig = bits[1] === 0 ? 'responses when shared' : 'silence when shared';
+    var loop = bits[3] === 0 ? 'adjusts after friction' : 'stalls on silence';
     return 'Phase 04 · Validation: ' + tier + ' · ' + vis + ' · ' + sig + ' · Loop: ' + loop + '.';
   }
 
@@ -397,7 +420,7 @@
     var diag = data.diagnostic;
     var p2 = migrateMonetizeBits(loadStoredBits(LS_P02));
     var p3 = migrateStructureBits(loadStoredBits(LS_P03));
-    var p4 = loadStoredBits(LS_P04);
+    var p4 = migrateAutomationBits(loadStoredBits(LS_P04));
     var p5 = loadStoredBits(LS_P05);
 
     var lines = [];
@@ -421,9 +444,9 @@
       if (p3[2] === 1) issues.push('No obvious first step for a buyer');
       if (p3[4] === 1) issues.push('Price still uncomfortable to say aloud');
     }
-    if (p4 && phaseBitsComplete(p4)) {
+    if (p4 && automationBitsComplete(p4)) {
       if (validationTierP4(p4) === 'untested') issues.push('Market signal still thin or private');
-      if (p4[2] === 1) issues.push('Little response when you share the offer');
+      if (p4[1] === 1) issues.push('Little response when you share the offer');
     }
     if (p5 && phaseBitsComplete(p5)) {
       var indScore =
@@ -443,7 +466,7 @@
     if (p2 && monetizeBitsComplete(p2) && p2[3] === 1) {
       moves.push('Write the buyer as one job title or one situation in under 15 words.');
     }
-    if (p4 && phaseBitsComplete(p4) && validationTierP4(p4) === 'untested') {
+    if (p4 && automationBitsComplete(p4) && validationTierP4(p4) === 'untested') {
       moves.push('Run one exposure batch: same message, five sends, log yes/no/silence.');
     }
     if (p5 && phaseBitsComplete(p5)) {

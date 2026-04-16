@@ -12,6 +12,17 @@
   var T01 = 6;
   var T02 = 5;
   var T03 = 5;
+  var T04 = 5;
+
+  /** Legacy Automation stored 10 binary answers; map to the current 5-question set (exposure, response, direct ask, loop, speed). */
+  function migrateP04Bits(bits) {
+    if (!bits) return null;
+    if (bits.length === 10) {
+      return [bits[1], bits[2], bits[3], bits[4], bits[6]];
+    }
+    if (bits.length > T04) return bits.slice(0, T04);
+    return bits;
+  }
 
   /** Legacy Structure stored 10 binary answers; map to the current 5-question set. */
   function migrateP03Bits(bits) {
@@ -88,6 +99,15 @@
     return true;
   }
 
+  function completeP04(bits) {
+    var b = migrateP04Bits(bits);
+    if (!b || b.length < T04) return false;
+    for (var i = 0; i < T04; i++) {
+      if (b[i] === null || b[i] === undefined) return false;
+    }
+    return true;
+  }
+
   function phase01(bits) {
     var b = migrateP01Bits(bits);
     if (!completeP01(b)) return null;
@@ -144,26 +164,27 @@
 
   function tierP4(b) {
     var sc = 0;
+    if (b[0] === 0) sc += 2;
     if (b[1] === 0) sc += 2;
     if (b[2] === 0) sc += 2;
     if (b[3] === 0) sc += 2;
-    if (b[7] === 0) sc += 1;
-    if (b[0] === 0) sc += 1;
+    if (b[4] === 0) sc += 1;
     if (sc >= 6) return 'validated';
     if (sc >= 3) return 'partial';
     return 'untested';
   }
 
   function phase04(bits) {
-    if (!complete(bits)) return null;
+    var b = migrateP04Bits(bits);
+    if (!completeP04(b)) return null;
     return {
-      exposure_method: bits[1] === 0 ? 'Offer seen outside your own head' : 'Work still mostly private',
+      exposure_method: b[0] === 0 ? 'Offer seen outside your own head' : 'Work still mostly private',
       feedback_loop:
-        bits[4] === 0 && bits[8] === 0
+        b[3] === 0
           ? 'You adjust after silence or friction'
           : 'Loop stalls after silence or stays in prep',
-      validation_status: tierP4(bits),
-      response_type: bits[2] === 0 ? 'Responses when you share' : 'Silence or weak signal when you share'
+      validation_status: tierP4(b),
+      response_type: b[1] === 0 ? 'Responses when you share' : 'Silence or weak signal when you share'
     };
   }
 
@@ -200,7 +221,7 @@
         p01: completeP01(b1),
         p02: completeP02(b2),
         p03: completeP03(b3),
-        p04: complete(b4),
+        p04: completeP04(b4),
         p05: complete(b5)
       }
     };
@@ -239,6 +260,8 @@
     completeP02: completeP02,
     migrateP03Bits: migrateP03Bits,
     completeP03: completeP03,
+    migrateP04Bits: migrateP04Bits,
+    completeP04: completeP04,
     KEYS: { P01: P01, P02: P02, P03: P03, P04: P04, P05: P05 }
   };
 })(typeof window !== 'undefined' ? window : this);
