@@ -1561,6 +1561,21 @@ details.price-group.price-group--peer-muted:hover{
 .pricing-major-section > summary{padding-right:36px;}
 .pricing-major-section > summary .price-group__title{margin:0;}
 .pricing-tier-more--operator-levels{margin-top:10px;}
+.pricing-major-rec{
+  display:inline-block;
+  margin-top:6px;
+  font-family:var(--mono);
+  font-size:9px;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  color:var(--gold-hi);
+}
+.pricing-major-support{
+  margin-top:8px;
+  font-size:12px;
+  letter-spacing:0.02em;
+  color:var(--text-3);
+}
 
 .price-group__kicker{
   font-family:var(--mono);font-size:8px;letter-spacing:0.18em;text-transform:uppercase;
@@ -2653,40 +2668,186 @@ html.early-mode body.pricing-page{
     });
   }
 
+  function clearRecommendedMarkers() {
+    document.querySelectorAll('.pricing-major-rec').forEach(function (el) {
+      el.remove();
+    });
+    document.querySelectorAll('.pricing-major-support').forEach(function (el) {
+      el.remove();
+    });
+  }
+
+  function markRecommendedSection(sectionId) {
+    clearRecommendedMarkers();
+    var d = document.getElementById(sectionId);
+    if (!d) return;
+    var summary = d.querySelector(':scope > summary');
+    if (summary) {
+      var rec = document.createElement('span');
+      rec.className = 'pricing-major-rec';
+      rec.textContent = 'Recommended';
+      summary.appendChild(rec);
+    }
+    var support = {
+      'pricing-major-entry': 'Start here.',
+      'pricing-major-direction': 'This is the next move.',
+      'pricing-major-snapshot': 'This is where the problem gets named clearly.',
+      'pricing-major-access': 'This is where support becomes direct.',
+      'pricing-major-build': 'This is where it gets built correctly.'
+    };
+    var pad = d.querySelector(':scope > .price-group__anim .price-group__pad');
+    if (pad && support[sectionId]) {
+      var line = document.createElement('p');
+      line.className = 'pricing-major-support';
+      line.textContent = support[sectionId];
+      pad.insertBefore(line, pad.firstChild);
+    }
+  }
+
+  function textHasAny(text, needles) {
+    var t = String(text || '').toLowerCase();
+    for (var i = 0; i < needles.length; i++) {
+      if (t.indexOf(needles[i]) >= 0) return true;
+    }
+    return false;
+  }
+
+  function scorePricingSectionsFromDiagnostic(payload) {
+    var scores = {
+      'pricing-major-entry': 0,
+      'pricing-major-direction': 0,
+      'pricing-major-snapshot': 0,
+      'pricing-major-access': 0,
+      'pricing-major-build': 0
+    };
+    if (!payload || !payload.diagnostic) return scores;
+
+    var diag = payload.diagnostic || {};
+    var arch = String(payload.type_primary || '').toLowerCase();
+    var structured = payload.structured || {};
+    var p2 = structured.phase02 || {};
+    var p3 = structured.phase03 || {};
+    var p4 = structured.phase04 || {};
+    var p5 = structured.phase05 || {};
+    var recPath = String((diag.recommended_room && diag.recommended_room.path) || '').toLowerCase();
+
+    if (recPath.indexOf('/room-01') >= 0) scores['pricing-major-entry'] += 2;
+    if (recPath.indexOf('/room-02') >= 0) scores['pricing-major-direction'] += 2;
+    if (recPath.indexOf('/room-03') >= 0) scores['pricing-major-direction'] += 2;
+    if (recPath.indexOf('/room-04') >= 0) scores['pricing-major-access'] += 2;
+    if (recPath.indexOf('/room-05') >= 0) scores['pricing-major-build'] += 2;
+
+    if (textHasAny(arch, ['delayed builder', 'structural refiner'])) scores['pricing-major-direction'] += 3;
+    if (textHasAny(arch, ['hidden operator', 'reactive stabilizer', 'miscast strategist'])) scores['pricing-major-snapshot'] += 3;
+    if (textHasAny(arch, ['miscast strategist', 'reactive stabilizer'])) scores['pricing-major-access'] += 2;
+
+    if (textHasAny(String(p2.buyer_type || ''), ['broad'])) scores['pricing-major-entry'] += 3;
+    if (textHasAny(String(p2.paid_problem || ''), ['not aligned'])) scores['pricing-major-snapshot'] += 3;
+    if (textHasAny(String(p2.value_source || ''), ['needs translation'])) scores['pricing-major-entry'] += 2;
+    if (textHasAny(String(p2.outcome_visibility || ''), ['subtle'])) scores['pricing-major-entry'] += 1;
+
+    if (textHasAny(String(p3.offer_definition || ''), ['still conceptual'])) scores['pricing-major-entry'] += 4;
+    if (textHasAny(String(p3.outcome || ''), ['fuzzy'])) {
+      scores['pricing-major-direction'] += 2;
+      scores['pricing-major-snapshot'] += 2;
+    }
+    if (textHasAny(String(p3.pricing_position || ''), ['uncomfortable'])) scores['pricing-major-direction'] += 3;
+    if (textHasAny(String(p3.offer_definition || ''), ['invoice'])) {
+      scores['pricing-major-access'] += 2;
+      scores['pricing-major-build'] += 2;
+    }
+
+    if (textHasAny(String(p4.validation_status || ''), ['untested', 'partial'])) scores['pricing-major-snapshot'] += 3;
+    if (textHasAny(String(p4.response_type || ''), ['silence', 'weak'])) scores['pricing-major-snapshot'] += 3;
+    if (textHasAny(String(p4.validation_status || ''), ['validated'])) {
+      scores['pricing-major-access'] += 3;
+      scores['pricing-major-build'] += 3;
+    }
+
+    if (textHasAny(String(p5.control_model || ''), ['dependent'])) scores['pricing-major-access'] += 2;
+    if (textHasAny(String(p5.leverage_type || ''), ['multiplying leverage'])) scores['pricing-major-build'] += 2;
+    if (textHasAny(String(p5.scalability_status || ''), ['scale beyond hourly'])) scores['pricing-major-build'] += 2;
+    if (
+      textHasAny(String(p4.validation_status || ''), ['validated']) &&
+      textHasAny(String(p5.scalability_status || ''), ['scale beyond hourly'])
+    ) {
+      scores['pricing-major-build'] += 3;
+    }
+
+    if (textHasAny(String(diag.next_reason || ''), ['positioning', 'offer'])) scores['pricing-major-direction'] += 2;
+    if (textHasAny(String(diag.next_reason || ''), ['signal', 'loop', 'validation'])) scores['pricing-major-snapshot'] += 2;
+    if (textHasAny(String(diag.next_reason || ''), ['control', 'structure'])) scores['pricing-major-access'] += 1;
+
+    return scores;
+  }
+
+  function chooseRecommendedMajorSection() {
+    var raw = null;
+    try {
+      raw = localStorage.getItem('stephuary_result_v1');
+    } catch (e) {}
+    if (!raw) return null;
+
+    var payload = null;
+    try {
+      payload = JSON.parse(raw);
+    } catch (e2) {
+      return null;
+    }
+    if (!payload || !payload.diagnostic) return null;
+
+    var scores = scorePricingSectionsFromDiagnostic(payload);
+    var order = [
+      'pricing-major-entry',
+      'pricing-major-direction',
+      'pricing-major-snapshot',
+      'pricing-major-access',
+      'pricing-major-build'
+    ];
+    var best = order[0];
+    var top = -999;
+    for (var i = 0; i < order.length; i++) {
+      var id = order[i];
+      var sc = scores[id] || 0;
+      if (sc > top) {
+        top = sc;
+        best = id;
+      }
+    }
+    return best;
+  }
+
   function initPriceGroupDefaultOpen() {
     var all = document.querySelectorAll('details.price-group');
     suppressPriceGroupScroll = true;
     all.forEach(function (d) {
       d.open = false;
     });
-    var entry = document.querySelector('details.pricing-major-section#pricing-major-entry');
-    if (entry) entry.open = true;
+    var recommended = chooseRecommendedMajorSection();
+    var target = recommended
+      ? document.getElementById(recommended)
+      : document.querySelector('details.pricing-major-section#pricing-major-entry');
+    if (target) target.open = true;
+    if (recommended) {
+      markRecommendedSection(recommended);
+    } else {
+      clearRecommendedMarkers();
+    }
     suppressPriceGroupScroll = false;
     updatePriceGroupPeerClasses();
+    if (target) scrollPriceGroupIntoComfortIfNeeded(target);
   }
 
-  var pricingDiagToggleSuppress = false;
   var priceGroups = document.querySelectorAll('details.pricing-major-section');
   priceGroups.forEach(function (g) {
     g.addEventListener('toggle', function () {
       if (g.open) {
         priceGroups.forEach(function (o) {
           if (o === g) return;
-          if (g.id === 'tier-custom-build' && o.id === 'pricing-flow-diagnostic-lead') {
-            pricingDiagToggleSuppress = true;
-            o.open = false;
-            window.setTimeout(function () {
-              pricingDiagToggleSuppress = false;
-            }, 0);
-          } else if (g.id === 'pricing-flow-diagnostic-lead' && o.id === 'tier-custom-build') {
-            o.open = false;
-          } else if (o.id !== 'pricing-flow-diagnostic-lead' && g.id !== 'pricing-flow-diagnostic-lead') {
-            o.open = false;
-          }
+          o.open = false;
         });
-        if (g.id !== 'tier-custom-build' && g.id !== 'pricing-flow-diagnostic-lead') {
-          tryFeEngage(2, false);
-        }
+        clearRecommendedMarkers();
+        tryFeEngage(2, false);
         scrollPriceGroupIntoComfortIfNeeded(g);
       }
       updatePriceGroupPeerClasses();
