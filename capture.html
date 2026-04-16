@@ -401,20 +401,20 @@
       height: 100%;
       background: linear-gradient(90deg, var(--gold) 0%, rgba(58, 107, 255, 0.65) 100%);
       border-radius: 1px;
-      transition: width 450ms cubic-bezier(0.4,0,0.2,1);
+      transition: width 520ms cubic-bezier(0.4,0,0.2,1);
     }
 
     .step {
       display: none;
       flex-direction: column;
       width: 100%;
-      animation: stepIn 280ms ease forwards;
+      animation: stepIn 380ms ease forwards;
     }
 
     .step.active { display: flex; }
 
     @keyframes stepIn {
-      from { opacity: 0; transform: translateY(14px); }
+      from { opacity: 0; transform: translateY(12px); }
       to   { opacity: 1; transform: translateY(0); }
     }
 
@@ -850,10 +850,17 @@
       <h1 class="sys-title">Capture</h1>
       <p class="sys-lead">You answer questions. You see where time and money leak and what to cut first.</p>
       <div id="phase-visual" class="sys-visual" data-visual="constellation"></div>
-      <div class="sys-actions">
-        <button type="button" class="sys-btn sys-btn--pri magnetic" id="btnSkip">Continue</button>
-        <button type="button" class="sys-btn sys-btn--ghost magnetic" id="btnBegin">Start over</button>
-        <a href="/systems" class="sys-btn sys-btn--ghost magnetic">Save and exit</a>
+      <div class="sys-actions sys-actions--capture">
+        <div class="sys-actions__primary">
+          <button type="button" class="sys-btn sys-btn--pri magnetic" id="btnSkip">Continue</button>
+        </div>
+        <details class="sys-actions-more">
+          <summary class="sys-actions-more__summary">More</summary>
+          <div class="sys-actions-more__body">
+            <button type="button" class="sys-btn sys-btn--ghost magnetic" id="btnBegin">Start over</button>
+            <a href="/systems" class="sys-btn sys-btn--ghost magnetic">Save and exit</a>
+          </div>
+        </details>
       </div>
     </div>
   </header>
@@ -868,7 +875,7 @@
             <span class="diag-progress-area">Diagnostic</span>
             <span class="diag-progress-phase">Phase 1 of 5 · Capture</span>
           </div>
-          <div class="progress-bar-wrap">
+          <div class="progress-bar-wrap progress-bar-wrap--sticky-mobile">
             <div class="progress-meta">
               <span class="progress-label progress-label--muted">Progress</span>
               <span class="progress-count" id="progressCount">Step 1 of 10</span>
@@ -877,6 +884,7 @@
               <div class="progress-fill" id="progressFill" style="width:10%"></div>
             </div>
           </div>
+          <button type="button" class="live-read-drawer-toggle" id="liveReadDrawerToggle" aria-expanded="false" aria-controls="livePanel">View live read</button>
           <details class="diag-details diag-details--steps">
             <summary class="diag-details__summary">Step map</summary>
             <div class="diag-details__body">
@@ -1016,6 +1024,8 @@
     </aside>
   </div>
 </div>
+
+<div id="liveReadBackdrop" class="live-read-backdrop" aria-hidden="true"></div>
 
 <script src="/stephuary-diagnostic-flow.js"></script>
 <script src="/stephuary-result.js"></script>
@@ -1515,7 +1525,7 @@
       flash.style.display = 'none';
       flash.textContent = '';
       cb();
-    }, 400);
+    }, 560);
   }
 
   function earlyValidation(b0, b1) {
@@ -1693,10 +1703,21 @@
     updateLivePanel(n - 1, state.bits);
     updateStepValidation(n);
     updateRail();
-    if (window.StephuaryDiagnosticMobile && typeof window.StephuaryDiagnosticMobile.scrollToActiveQuestion === 'function') {
-      window.StephuaryDiagnosticMobile.scrollToActiveQuestion();
-    } else {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+    function doScrollToStep() {
+      if (window.StephuaryDiagnosticMobile && typeof window.StephuaryDiagnosticMobile.scrollToActiveQuestion === 'function') {
+        window.StephuaryDiagnosticMobile.scrollToActiveQuestion({ offsetExtra: 10 });
+      } else {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    }
+    try {
+      if (window.matchMedia && window.matchMedia('(max-width: 768px)').matches) {
+        window.setTimeout(doScrollToStep, 140);
+      } else {
+        doScrollToStep();
+      }
+    } catch (eScroll) {
+      doScrollToStep();
     }
     syncCaptureShFlowEnd();
   }
