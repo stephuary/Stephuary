@@ -601,6 +601,38 @@
       line-height: 1.45;
     }
 
+    .result-router {
+      border: 1px solid var(--border);
+      padding: 22px 24px;
+      margin: 28px 0;
+    }
+
+    .result-router-directive {
+      margin-bottom: 18px;
+    }
+
+    .result-router-line {
+      font-size: 14px;
+      color: var(--text-mid);
+      line-height: 1.75;
+      margin: 0 0 8px 0;
+    }
+
+    .result-router-line:last-child {
+      margin-bottom: 0;
+    }
+
+    .result-router-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .result-router-actions .btn-terminal {
+      box-shadow: 0 0 0 1px rgba(58, 107, 255, 0.08);
+    }
+
     .action-primary {
       display: flex;
       flex-wrap: wrap;
@@ -937,6 +969,15 @@
         <div class="result-direction">
           <p class="result-h" style="margin-bottom:10px">6. What happens next</p>
           <div class="result-body" id="out-next"></div>
+        </div>
+
+        <div class="result-section result-router" id="result-router-wrap" hidden>
+          <p class="result-h">7. Your next move</p>
+          <div class="result-router-directive" id="out-router-directive"></div>
+          <div class="result-router-actions">
+            <a href="/snapshot" class="btn btn-terminal magnetic" id="out-router-primary">Start Snapshot</a>
+            <a href="/focused-review" class="btn btn-ghost magnetic" id="out-router-secondary">Get Direction</a>
+          </div>
         </div>
 
         <p class="capture-flow-saved">Your progress is saved automatically on this device.</p>
@@ -1378,6 +1419,105 @@
     }
   };
 
+  var ROUTE_OFFERS = {
+    snapshot: { href: '/snapshot', label: 'Start Snapshot' },
+    focusedReview: { href: '/focused-review', label: 'Get Direction' },
+    playbooks: { href: '/playbooks', label: 'Open System' },
+    privateAccess: { href: '/access', label: 'Request Access' }
+  };
+
+  var ARCHETYPE_ROUTES = {
+    'Hidden Operator': {
+      lines: [
+        'Your read runs ahead of what others can see.',
+        'Snapshot documents it. Focused Review locks one decision.'
+      ],
+      primary: 'snapshot',
+      secondary: 'focusedReview'
+    },
+    'Delayed Builder': {
+      lines: [
+        'Knowing without shipping is the leak.',
+        'Get Direction on one move, or Open System in a room and close one thread.'
+      ],
+      primary: 'focusedReview',
+      secondary: 'playbooks'
+    },
+    'Miscast Strategist': {
+      lines: [
+        'Strength in the wrong frame burns leverage.',
+        'Request Access for fit, or Start Snapshot on the misalignment.'
+      ],
+      primary: 'privateAccess',
+      secondary: 'snapshot'
+    },
+    'Reactive Stabilizer': {
+      lines: [
+        'Rescue trains the room to need rescue.',
+        'Start Snapshot on the pattern, or Request Access when leverage is private.'
+      ],
+      primary: 'snapshot',
+      secondary: 'privateAccess'
+    },
+    'Structural Refiner': {
+      lines: [
+        'You see the gap; the system still needs a home.',
+        'Open System in a room, or Get Direction on one structural cut.'
+      ],
+      primary: 'playbooks',
+      secondary: 'focusedReview'
+    },
+    'Unconverted Thinker': {
+      lines: [
+        'Signal without conversion is noise.',
+        'Open System, or Start Snapshot until you have one receipt.'
+      ],
+      primary: 'playbooks',
+      secondary: 'snapshot'
+    }
+  };
+
+  function applyArchetypeRouting(arch) {
+    var wrap = document.getElementById('result-router-wrap');
+    var cfg = ARCHETYPE_ROUTES[arch];
+    if (!wrap) return;
+    if (!cfg) {
+      wrap.setAttribute('hidden', '');
+      return;
+    }
+    wrap.removeAttribute('hidden');
+    var dir = document.getElementById('out-router-directive');
+    dir.innerHTML = '';
+    cfg.lines.forEach(function(line) {
+      var p = document.createElement('p');
+      p.className = 'result-router-line';
+      p.textContent = line;
+      dir.appendChild(p);
+    });
+    var pri = ROUTE_OFFERS[cfg.primary];
+    var sec = ROUTE_OFFERS[cfg.secondary];
+    var a1 = document.getElementById('out-router-primary');
+    var a2 = document.getElementById('out-router-secondary');
+    if (a1 && pri) {
+      a1.href = pri.href;
+      a1.textContent = pri.label;
+    }
+    if (a2 && sec) {
+      a2.href = sec.href;
+      a2.textContent = sec.label;
+    }
+  }
+
+  function getArchetypeRoutingExport(arch) {
+    var cfg = ARCHETYPE_ROUTES[arch];
+    if (!cfg) return null;
+    return {
+      lines: cfg.lines,
+      primary: ROUTE_OFFERS[cfg.primary],
+      secondary: ROUTE_OFFERS[cfg.secondary]
+    };
+  }
+
   function answeredCount(bits) {
     var c = 0;
     for (var i = 0; i < TOTAL_Q; i++) {
@@ -1731,6 +1871,8 @@
 
     document.getElementById('out-next').innerHTML = block.next(bits);
 
+    applyArchetypeRouting(arch);
+
     try {
       localStorage.setItem('diagnosticStarted', 'true');
       localStorage.setItem('capture_complete', 'true');
@@ -1795,6 +1937,16 @@
       '6. What happens next',
       flattenHtml(block.next(bits))
     ];
+    var route = getArchetypeRoutingExport(arch);
+    if (route && route.primary && route.secondary) {
+      lines.push(
+        '',
+        '7. Your next move',
+        route.lines.join('\n'),
+        route.primary.label + ': ' + route.primary.href,
+        route.secondary.label + ': ' + route.secondary.href
+      );
+    }
     return lines.join('\n');
   }
 
