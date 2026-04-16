@@ -702,6 +702,7 @@
     </section>
 
     <section class="panel" data-step="3" id="panel-3">
+      <div id="delivery-fix" class="room-deep-target" aria-hidden="true"></div>
       <div class="section-rule" aria-hidden="true"></div>
       <h2 class="panel-title">Rails before depth</h2>
       <p class="truth-line">Software without payment, delivery, and comms clarity is overhead — and overhead doesn’t invoice.</p>
@@ -716,6 +717,7 @@
     </section>
 
     <section class="panel" data-step="4" id="panel-4">
+      <div id="consistency" class="room-deep-target" aria-hidden="true"></div>
       <div class="section-rule" aria-hidden="true"></div>
       <h2 class="panel-title">The Continuity Stack — what is already in place?</h2>
       <p class="truth-line">“Functional” means it protects income this week — not that you set it up once and forgot.</p>
@@ -730,6 +732,7 @@
     </section>
 
     <section class="panel" data-step="5" id="panel-5">
+      <div id="client-flow" class="room-deep-target" aria-hidden="true"></div>
       <div class="section-rule" aria-hidden="true"></div>
       <h2 class="panel-title">What fails first?</h2>
       <p class="truth-line">Operations rarely fail “everywhere at once.” One layer cracks — then invoices slip, delivery slips, or the client goes quiet.</p>
@@ -747,6 +750,7 @@
     </section>
 
     <section class="panel" data-step="6" id="panel-6">
+      <div id="handoff" class="room-deep-target" aria-hidden="true"></div>
       <div class="section-rule" aria-hidden="true"></div>
       <h2 class="panel-title">Coverage and backup</h2>
       <p class="truth-line">A contact in your head isn’t coverage. If you can’t reach them on short notice, they can’t protect a deadline or a client thread.</p>
@@ -891,6 +895,7 @@
 
   <script src="/stephuary-os.js"></script>
   <script src="/stephuary-progress.js"></script>
+  <script src="/stephuary-guided-room-entry.js"></script>
   <script>
 (function () {
   var HUMAN_DEFS = [
@@ -1650,13 +1655,31 @@
     });
   }
 
-  var params = new URLSearchParams(window.location.search);
-  var rs = params.get('step');
-  if (rs !== null && rs !== '') {
-    var sn = parseInt(rs, 10);
-    if (!isNaN(sn)) showStep(Math.min(Math.max(0, sn), totalSteps - 1));
-  } else {
-    showStep(0);
+  function applyGuidedDeepLink() {
+    if (!window.StephuaryGuidedRoomEntry) return false;
+    var res = window.StephuaryGuidedRoomEntry.getStepAndSlugForUrl(
+      window.location.pathname,
+      window.location.hash,
+      new URLSearchParams(window.location.search).get('start')
+    );
+    if (!res) return false;
+    showStep(res.step);
+    requestAnimationFrame(function () {
+      var marker = document.getElementById(res.slug);
+      if (marker) marker.scrollIntoView({ block: 'start', behavior: 'smooth' });
+    });
+    return true;
+  }
+
+  if (!applyGuidedDeepLink()) {
+    var params = new URLSearchParams(window.location.search);
+    var rs = params.get('step');
+    if (rs !== null && rs !== '') {
+      var sn = parseInt(rs, 10);
+      if (!isNaN(sn)) showStep(Math.min(Math.max(0, sn), totalSteps - 1));
+    } else {
+      showStep(0);
+    }
   }
 })();
   </script>

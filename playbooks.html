@@ -59,6 +59,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;opac
 .btn-pri{display:inline-flex;align-items:center;justify-content:center;background:transparent;color:var(--muted);border:1px solid var(--line-blue);font-size:10px;letter-spacing:0.2em;text-transform:uppercase;padding:11px 18px;text-decoration:none;font-weight:600;transition:border-color 0.2s,color 0.2s,background 0.2s}
 .btn-pri:hover{color:var(--white);border-color:rgba(43,79,212,0.45);background:rgba(43,79,212,0.08)}
 .pb-cta-note{font-size:10px;color:var(--muted);line-height:1.45;letter-spacing:0.06em;margin:10px 0 0;padding:0}
+.pb-dyn-start{font-size:10px;color:var(--muted);line-height:1.45;letter-spacing:0.06em;margin:10px 0 0;padding:0;max-width:560px}
 
 .mid-note{padding:24px 0 0;margin-top:4px;max-width:560px;font-size:14px;color:var(--muted);line-height:1.6}
 
@@ -253,6 +254,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;opac
 
 <script src="/stephuary-diagnostic-state.js"></script>
 <script src="/stephuary-result.js"></script>
+<script src="/stephuary-guided-room-entry.js"></script>
 <script>
 (function () {
   document.querySelectorAll('.pb-acc-item').forEach(function (d) {
@@ -291,6 +293,47 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;opac
       wrap = document.querySelector('.pb-room-wrap[data-pb-path="/room-01-extraction"]');
     }
     if (!wrap) return;
+
+    var raw = null;
+    try {
+      raw = localStorage.getItem('stephuary_result_v1');
+    } catch (eR) {}
+    if (raw && window.StephuaryGuidedRoomEntry && window.StephuaryDiagnosticState) {
+      try {
+        var pdata = JSON.parse(raw);
+        if (window.StephuaryResult && typeof window.StephuaryResult.mergeCrossPhase === 'function') {
+          window.StephuaryResult.mergeCrossPhase(pdata);
+        }
+        var store = window.StephuaryDiagnosticState.collectAll();
+        var first = window.StephuaryGuidedRoomEntry.resolveFirstAction(path, {
+          hasStoredResult: true,
+          store: store,
+          archetype: pdata.type_primary,
+          version: pdata.result_version,
+          diagnostic: pdata.diagnostic
+        });
+        if (first && first.hash) {
+          var btnPri = wrap.querySelector('a.btn-pri');
+          if (btnPri) {
+            var baseHref = btnPri.getAttribute('href');
+            if (baseHref) {
+              var clean = baseHref.split('#')[0];
+              btnPri.setAttribute('href', clean + first.hash);
+            }
+          }
+          if (!wrap.querySelector('.pb-dyn-start')) {
+            var actionsRow = wrap.querySelector('.pb-actions');
+            if (actionsRow) {
+              var startLine = document.createElement('p');
+              startLine.className = 'pb-dyn-start';
+              startLine.textContent = 'Start here: ' + first.label;
+              actionsRow.after(startLine);
+            }
+          }
+        }
+      } catch (eP) {}
+    }
+
     var label = wrap.querySelector('.pb-recommended');
     var details = wrap.querySelector('details.pb-acc-item');
     document.querySelectorAll('.pb-acc-item').forEach(function (o) {

@@ -850,6 +850,7 @@
     </section>
 
     <section class="panel" data-step="1" id="panel-1">
+      <div id="bounded-ai-use" class="room-deep-target" aria-hidden="true"></div>
       <div class="rule" aria-hidden="true"></div>
       <h2 class="panel-title">How are you actually using it?</h2>
       <p class="truth-line">If you cannot name what you use AI for in plain tasks, you do not have a policy — you have a habit — and habits leak into client-facing work.</p>
@@ -908,6 +909,7 @@
     </section>
 
     <section class="panel" data-step="4" id="panel-4">
+      <div id="quality-control" class="room-deep-target" aria-hidden="true"></div>
       <div class="rule" aria-hidden="true"></div>
       <h2 class="panel-title">Can you verify what it gives you?</h2>
       <p class="truth-line">If you cannot check it, you cannot ship it — and shipping is what gets paid.</p>
@@ -991,6 +993,7 @@
     </section>
 
     <section class="panel" data-step="8" id="panel-8">
+      <div id="leverage-stack" class="room-deep-target" aria-hidden="true"></div>
       <div class="rule" aria-hidden="true"></div>
       <h2 class="panel-title">Write your operating layer</h2>
       <p class="truth-line">Principles you do not act on do not protect your revenue — they decorate your notes.</p>
@@ -1010,6 +1013,7 @@
     </section>
 
     <section class="panel" data-step="9" id="panel-9-use">
+      <div id="prompt-system" class="room-deep-target" aria-hidden="true"></div>
       <div class="rule" aria-hidden="true"></div>
       <h2 class="panel-title">Use this</h2>
       <p class="panel-instruction">Take these with you.</p>
@@ -1437,6 +1441,7 @@ If output reads like a template, rewrite it.</pre>
 
   <script src="/stephuary-os.js"></script>
   <script src="/stephuary-progress.js"></script>
+  <script src="/stephuary-guided-room-entry.js"></script>
   <script>
 (function () {
   var CURRENT_USE_OPTS = [
@@ -2215,13 +2220,31 @@ If output reads like a template, rewrite it.</pre>
     });
   }
 
-  var params = new URLSearchParams(window.location.search);
-  var rs = params.get('step');
-  if (rs !== null && rs !== '') {
-    var sn = parseInt(rs, 10);
-    if (!isNaN(sn)) showStep(Math.min(Math.max(0, sn), totalSteps - 1));
-  } else {
-    showStep(0);
+  function applyGuidedDeepLink() {
+    if (!window.StephuaryGuidedRoomEntry) return false;
+    var res = window.StephuaryGuidedRoomEntry.getStepAndSlugForUrl(
+      window.location.pathname,
+      window.location.hash,
+      new URLSearchParams(window.location.search).get('start')
+    );
+    if (!res) return false;
+    showStep(res.step);
+    requestAnimationFrame(function () {
+      var marker = document.getElementById(res.slug);
+      if (marker) marker.scrollIntoView({ block: 'start', behavior: 'smooth' });
+    });
+    return true;
+  }
+
+  if (!applyGuidedDeepLink()) {
+    var params = new URLSearchParams(window.location.search);
+    var rs = params.get('step');
+    if (rs !== null && rs !== '') {
+      var sn = parseInt(rs, 10);
+      if (!isNaN(sn)) showStep(Math.min(Math.max(0, sn), totalSteps - 1));
+    } else {
+      showStep(0);
+    }
   }
 })();
   </script>

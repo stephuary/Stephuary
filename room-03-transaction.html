@@ -805,6 +805,7 @@
     </section>
 
     <section class="panel" data-step="2" id="panel-2">
+      <div id="offer-line" class="room-deep-target" aria-hidden="true"></div>
       <h2 class="panel-title">Say it simply</h2>
       <p class="truth-line">One sentence. If you need a paragraph, you don’t understand the offer yet.</p>
       <p class="panel-instruction">Locked from your recall — read it aloud. If it’s wrong, restart this section.</p>
@@ -903,6 +904,7 @@
     </section>
 
     <section class="panel" data-step="4" id="panel-3">
+      <div id="price-posture" class="room-deep-target" aria-hidden="true"></div>
       <h2 class="panel-title">Set a real number</h2>
       <p class="truth-line">A price you won’t say out loud is a price you won’t collect.</p>
       <p class="panel-instruction">No ranges. No “it depends.”</p>
@@ -928,6 +930,7 @@
     </section>
 
     <section class="panel" data-step="5" id="panel-4">
+      <div id="buyer-problem" class="room-deep-target" aria-hidden="true"></div>
       <h2 class="panel-title">Start with someone real</h2>
       <p class="truth-line">The first sale is to a human who already trusts you — not to a persona slide.</p>
       <p class="panel-instruction">Not your ideal client.<br />The most likely first yes.</p>
@@ -1022,6 +1025,7 @@
     </section>
 
     <section class="panel" data-step="9" id="panel-8">
+      <div id="outcome-clarity" class="room-deep-target" aria-hidden="true"></div>
       <h2 class="panel-title">Deliver something that matters</h2>
       <p class="truth-line">Delivery is what they tell someone else about — not what you felt while doing it.</p>
       <p class="panel-instruction">What would make this worth it for them?</p>
@@ -1167,6 +1171,7 @@
 
   <script src="/stephuary-os.js"></script>
   <script src="/stephuary-progress.js"></script>
+  <script src="/stephuary-guided-room-entry.js"></script>
   <script>
 (function () {
   var state = {
@@ -2486,13 +2491,31 @@
     });
   }
 
-  var params = new URLSearchParams(window.location.search);
-  var rs = params.get('step');
-  if (rs !== null && rs !== '') {
-    var sn = parseInt(rs, 10);
-    if (!isNaN(sn)) showStep(Math.min(Math.max(0, sn), totalSteps - 1));
-  } else {
-    showStep(0);
+  function applyGuidedDeepLink() {
+    if (!window.StephuaryGuidedRoomEntry) return false;
+    var res = window.StephuaryGuidedRoomEntry.getStepAndSlugForUrl(
+      window.location.pathname,
+      window.location.hash,
+      new URLSearchParams(window.location.search).get('start')
+    );
+    if (!res) return false;
+    showStep(res.step);
+    requestAnimationFrame(function () {
+      var marker = document.getElementById(res.slug);
+      if (marker) marker.scrollIntoView({ block: 'start', behavior: 'smooth' });
+    });
+    return true;
+  }
+
+  if (!applyGuidedDeepLink()) {
+    var params = new URLSearchParams(window.location.search);
+    var rs = params.get('step');
+    if (rs !== null && rs !== '') {
+      var sn = parseInt(rs, 10);
+      if (!isNaN(sn)) showStep(Math.min(Math.max(0, sn), totalSteps - 1));
+    } else {
+      showStep(0);
+    }
   }
 })();
   </script>

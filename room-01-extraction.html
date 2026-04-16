@@ -1126,6 +1126,8 @@
 
     <!-- 1 Reveal -->
     <section class="panel panel--reveal" data-step="1" id="panel-1">
+      <div id="drift-audit" class="room-deep-target" aria-hidden="true"></div>
+      <div id="time-leak" class="room-deep-target" aria-hidden="true"></div>
       <h2 class="panel-title">What’s been happening in the last 30 days</h2>
       <p class="truth-line">Money and time leave whether you have totaled them or not.</p>
       <p class="panel-instruction">Check what applies. Totals stack from what you select.</p>
@@ -1144,6 +1146,7 @@
         </div>
       </div>
       <div class="output-block output-block--reveal" id="reveal-output">
+        <div id="money-leak" class="room-deep-target" aria-hidden="true"></div>
         <p class="output-label">What this costs</p>
         <p class="output-big" id="out-yearly">—</p>
         <p class="reveal-per-year">per year (run rate)</p>
@@ -1279,6 +1282,7 @@
 
     <!-- 5 Stop this now (boundaries + elimination merged) -->
     <section class="panel" data-step="5" id="panel-stop-merged">
+      <div id="underuse-cut" class="room-deep-target" aria-hidden="true"></div>
       <h2 class="panel-title">Stop this now</h2>
       <p class="truth-line">Pick one thing that no longer happens. Then remove one source.</p>
       <p class="panel-instruction">Select at least one boundary. Set at least one row to remove.</p>
@@ -1344,6 +1348,7 @@
 
   <script src="/stephuary-os.js"></script>
   <script src="/stephuary-progress.js"></script>
+  <script src="/stephuary-guided-room-entry.js"></script>
   <script>
 (function () {
   var state = {
@@ -2325,11 +2330,29 @@
     });
   }
 
-  var params = new URLSearchParams(window.location.search);
-  var rs = params.get('step');
-  if (rs !== null && rs !== '') {
-    var sn = parseInt(rs, 10);
-    if (!isNaN(sn)) showStep(Math.min(Math.max(0, sn), totalSteps - 1));
+  function applyGuidedDeepLink() {
+    if (!window.StephuaryGuidedRoomEntry) return false;
+    var res = window.StephuaryGuidedRoomEntry.getStepAndSlugForUrl(
+      window.location.pathname,
+      window.location.hash,
+      new URLSearchParams(window.location.search).get('start')
+    );
+    if (!res) return false;
+    showStep(res.step);
+    requestAnimationFrame(function () {
+      var marker = document.getElementById(res.slug);
+      if (marker) marker.scrollIntoView({ block: 'start', behavior: 'smooth' });
+    });
+    return true;
+  }
+
+  if (!applyGuidedDeepLink()) {
+    var params = new URLSearchParams(window.location.search);
+    var rs = params.get('step');
+    if (rs !== null && rs !== '') {
+      var sn = parseInt(rs, 10);
+      if (!isNaN(sn)) showStep(Math.min(Math.max(0, sn), totalSteps - 1));
+    }
   }
 
   setProgress();
