@@ -972,6 +972,12 @@ details.price-group--pricing-field-focus > summary{
   letter-spacing:0.08em;
   color:var(--text-3);
 }
+.direction-intent-helper{
+  margin:0 0 8px;
+  font-size:11px;
+  line-height:1.4;
+  color:var(--text-5);
+}
 .pricing-snapshot-card .pricing-snapshot-expand{
   margin-top:4px;
 }
@@ -2282,6 +2288,7 @@ html.early-mode body.pricing-page{
                   <input type="checkbox" id="direction-concept-check" checked />
                   <span class="direction-continuation-label">Concept Build — $379</span>
                 </label>
+                <p class="direction-intent-helper" id="direction-intent-helper" hidden>Most people add this after</p>
                 <p class="direction-total">Total: <span id="direction-total-value">$558</span></p>
                 <div class="tier-cta-row"><a href="/focused-review?direction=1&concept=1" class="tier-cta tier-cta--ghost magnetic" id="direction-continue-btn">Continue</a></div>
               </div>
@@ -2717,7 +2724,46 @@ html.early-mode body.pricing-page{
   var conceptCheck = document.getElementById('direction-concept-check');
   var total = document.getElementById('direction-total-value');
   var continueBtn = document.getElementById('direction-continue-btn');
+  var helper = document.getElementById('direction-intent-helper');
   if (!conceptCheck || !total || !continueBtn) return;
+
+  var startedAt = Date.now();
+  var lastSource = null;
+  var maxScrollRatio = 0;
+
+  function updateScrollDepth() {
+    var doc = document.documentElement;
+    var scrollable = Math.max(1, doc.scrollHeight - window.innerHeight);
+    var ratio = Math.min(1, Math.max(0, window.scrollY / scrollable));
+    if (ratio > maxScrollRatio) maxScrollRatio = ratio;
+  }
+
+  function markSource(source) {
+    lastSource = source;
+  }
+
+  function elapsedMs() {
+    return Date.now() - startedAt;
+  }
+
+  function classifyIntent() {
+    var fast = elapsedMs() < 9000;
+    var lowScroll = maxScrollRatio < 0.25;
+    var moderateScroll = maxScrollRatio >= 0.25 && maxScrollRatio < 0.6;
+    var deepScroll = maxScrollRatio >= 0.6;
+
+    if (lastSource === 'snapshot' || deepScroll || fast) return 'high';
+    if (lastSource === 'direction' || moderateScroll) return 'mid';
+    if (lastSource === 'entry' || lowScroll) return 'low';
+    return 'mid';
+  }
+
+  function applyIntentDefault() {
+    var intent = classifyIntent();
+    conceptCheck.checked = intent === 'high';
+    if (helper) helper.hidden = intent !== 'mid';
+    syncDirectionTotal();
+  }
 
   function syncDirectionTotal() {
     var withConcept = conceptCheck.checked;
@@ -2725,7 +2771,33 @@ html.early-mode body.pricing-page{
     continueBtn.href = withConcept ? '/focused-review?direction=1&concept=1' : '/focused-review?direction=1&concept=0';
   }
 
+  window.addEventListener('scroll', updateScrollDepth, { passive: true });
+  updateScrollDepth();
+
+  var entrySummary = document.querySelector('#pricing-major-entry > summary');
+  var directionSummary = document.querySelector('#pricing-major-direction > summary');
+  var snapshotSummary = document.querySelector('#pricing-major-snapshot > summary');
+  if (entrySummary) entrySummary.addEventListener('click', function () { markSource('entry'); });
+  if (directionSummary) directionSummary.addEventListener('click', function () { markSource('direction'); });
+  if (snapshotSummary) snapshotSummary.addEventListener('click', function () { markSource('snapshot'); });
+
+  var entryLinks = document.querySelectorAll('#pricing-major-entry a[href]');
+  var directionLinks = document.querySelectorAll('#pricing-major-direction a[href]');
+  var snapshotLinks = document.querySelectorAll('#pricing-major-snapshot a[href]');
+  entryLinks.forEach(function (a) { a.addEventListener('click', function () { markSource('entry'); }); });
+  directionLinks.forEach(function (a) { a.addEventListener('click', function () { markSource('direction'); }); });
+  snapshotLinks.forEach(function (a) { a.addEventListener('click', function () { markSource('snapshot'); }); });
+
+  var directionDetails = document.getElementById('pricing-major-direction');
+  if (directionDetails) {
+    directionDetails.addEventListener('toggle', function () {
+      if (!directionDetails.open) return;
+      applyIntentDefault();
+    });
+  }
+
   conceptCheck.addEventListener('change', syncDirectionTotal);
+  applyIntentDefault();
   syncDirectionTotal();
 })();
 </script>
