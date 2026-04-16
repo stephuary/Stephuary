@@ -5,7 +5,7 @@
 (function () {
   'use strict';
 
-  var RAIL_ORDER = ['start', 'decide', 'build', 'diagnose', 'apply', 'scale'];
+  var RAIL_ORDER = ['start', 'decide', 'build', 'diagnose', 'access', 'apply', 'scale'];
 
   function initSmoothAnchors() {
     var reduce =
@@ -51,7 +51,7 @@
     var stickyLink = document.getElementById('pricing-sticky-cta-link');
 
     var installEl = document.getElementById('pricing-flow-installation');
-    var operatorEl = document.getElementById('pricing-flow-operator');
+    var scaleEl = document.getElementById('pricing-flow-scale');
 
     if (!panels.length || !flow) return;
 
@@ -107,7 +107,6 @@
     function syncSticky(activePanel) {
       if (!sticky || !stickyLink) return;
 
-      var vh = window.innerHeight;
       var scrollY = window.scrollY || window.pageYOffset;
 
       if (scrollY < 64) {
@@ -115,9 +114,9 @@
         return;
       }
 
-      if (operatorEl) {
-        var obr = operatorEl.getBoundingClientRect();
-        if (obr.bottom < 40) {
+      if (scaleEl) {
+        var sr = scaleEl.getBoundingClientRect();
+        if (sr.bottom < 48) {
           sticky.hidden = true;
           return;
         }
@@ -140,9 +139,9 @@
         return;
       }
 
-      if (pid === 'pricing-flow-installation' || st === 'installation') {
-        stickyLink.textContent = 'Install the system';
-        stickyLink.setAttribute('href', '/private-access');
+      if (st === 'access' || pid === 'pricing-flow-operator') {
+        stickyLink.textContent = 'Continue to installation';
+        stickyLink.setAttribute('href', '#pricing-flow-installation');
         return;
       }
 
@@ -152,39 +151,27 @@
         return;
       }
 
-      if (st === 'apply' && pid === 'pricing-flow-transformation') {
-        stickyLink.textContent = 'Continue → Operator Access';
-        stickyLink.setAttribute('href', '#pricing-flow-operator');
+      if (pid === 'pricing-flow-installation' || st === 'installation') {
+        stickyLink.textContent = 'Install the system';
+        stickyLink.setAttribute('href', '/private-access');
         return;
       }
 
-      if (st === 'scale') {
-        stickyLink.textContent = 'Continue → Operator Access';
+      if (st === 'apply' && pid === 'pricing-flow-transformation') {
+        stickyLink.textContent = 'Continue';
         stickyLink.setAttribute(
           'href',
           document.getElementById('pricing-flow-full-title')
             ? '#pricing-flow-full-title'
-            : '#pricing-flow-operator'
+            : '#pricing-flow-scale'
         );
         return;
       }
 
-      if (installEl) {
-        var ir = installEl.getBoundingClientRect();
-        if (ir.bottom < 56 && operatorEl && operatorEl.getBoundingClientRect().top < vh) {
-          stickyLink.textContent = 'Continue → Operator Access';
-          stickyLink.setAttribute('href', '#pricing-flow-operator');
-          return;
-        }
-      }
-
-      if (!activePanel && installEl) {
-        var ir2 = installEl.getBoundingClientRect();
-        if (ir2.bottom < 48) {
-          stickyLink.textContent = 'Continue → Operator Access';
-          stickyLink.setAttribute('href', '#pricing-flow-operator');
-          return;
-        }
+      if (st === 'scale') {
+        stickyLink.textContent = 'Custom builds';
+        stickyLink.setAttribute('href', '#tier-custom-build');
+        return;
       }
 
       stickyLink.textContent = "See what's broken";
