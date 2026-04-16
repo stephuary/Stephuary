@@ -571,6 +571,19 @@
     }
 
     .diag-body p { margin-bottom: 10px; }
+
+    .diag-line-truth {
+      font-size: 15px;
+      color: var(--cream);
+      margin: 6px 0;
+      letter-spacing: 0.02em;
+    }
+
+    .diag-list--tight {
+      margin-top: 6px;
+      margin-bottom: 10px;
+    }
+
     .diag-list {
       list-style: none;
       margin-top: 8px;
@@ -819,7 +832,7 @@
       <div id="summary">
         <p class="summary-phase-tag">Diagnostic · Phase 03 of 5 — Structure</p>
         <h2 class="summary-title">Structure complete</h2>
-        <p class="summary-sub">Offer, execution, and how money enters. No extra theory.</p>
+        <p class="summary-sub">One sellable thing. Then you expose it.</p>
 
         <div class="diag-section">
           <p class="diag-h">1. Current state</p>
@@ -837,7 +850,7 @@
         </div>
 
         <div class="diag-section">
-          <p class="diag-h">4. Entry offer</p>
+          <p class="diag-h">4. Entry offer · most important</p>
           <div class="diag-body" id="out-4"></div>
         </div>
 
@@ -847,7 +860,7 @@
         </div>
 
         <div class="diag-section">
-          <p class="diag-h">6. Main block</p>
+          <p class="diag-h">6. Main block · core truth</p>
           <div class="diag-body" id="out-6"></div>
         </div>
 
@@ -1269,113 +1282,99 @@
   function buildSummaryOutputs(b) {
     var p1 = loadP01Profile();
     var p2 = loadP2Bits();
-    var shellTight = b[0] === 0 && b[1] === 0 && b[2] === 0;
 
+    var lineReal = b[0] === 0 ? 'real' : 'not real';
+    var lineClear = b[1] === 0 ? 'clear' : 'unclear';
+    var lineReady = b[2] === 0 && b[4] === 0 ? 'ready' : 'delayed';
     document.getElementById('out-1').innerHTML =
-      '<p>Offer is <strong>' +
-      (b[0] === 0 ? 'invoice-shaped enough to sell' : 'still conceptual') +
-      '</strong>. Outcome + entry read as <strong>' +
-      (b[1] === 0 && b[2] === 0 ? 'one tight line' : 'still open — needs narrowing') +
-      '</strong>. Delivery defaults to <strong>' +
-      (b[3] === 0 ? 'hands-on execution' : 'advisory') +
-      '</strong>. Price is <strong>' +
-      (b[4] === 0 ? 'sayable' : 'hesitant') +
-      '</strong>.</p>';
+      '<p>Right now, this is:</p>' +
+      '<p class="diag-line-truth"><strong>' +
+      lineReal +
+      '</strong></p>' +
+      '<p class="diag-line-truth"><strong>' +
+      lineClear +
+      '</strong></p>' +
+      '<p class="diag-line-truth"><strong>' +
+      lineReady +
+      '</strong></p>';
 
-    var buyerN =
-      p2 && p2Complete(p2)
-        ? p2[3] === 0
-          ? 'someone you can already describe'
-          : 'someone you still need to name precisely'
-        : 'your buyer (finish Phase 02 to tighten this)';
-    var probN =
-      p2 && p2Complete(p2)
-        ? p2[1] === 0
-          ? 'a concrete, paid problem'
-          : 'a problem that still needs a paid shape'
-        : 'the problem Phase 02 pointed at';
-    var method = p1 && p1.operate ? p1.operate : p1 && p1.correct ? p1.correct : 'how you already think and move';
+    var buyerPhrase = 'one buyer you name before you sell';
+    var probPhrase = 'a problem buyers already pay someone to fix';
+    var outPhrase = 'a visible win they can recognize';
+    if (p2 && p2Complete(p2)) {
+      buyerPhrase = p2[3] === 0 ? 'a defined buyer' : 'one buyer locked by title or situation';
+      probPhrase = p2[1] === 0 ? 'a paid, budgeted problem' : 'a demand signal you reshape into a paid job';
+      outPhrase = p2[4] === 0 ? 'a visible, stated after-state' : 'one measurable outcome in plain language';
+    }
+    if (b[1] === 0 && (!p2 || !p2Complete(p2))) {
+      outPhrase = 'a clear after-state';
+    }
     document.getElementById('out-2').textContent =
-      'I help ' +
-      buyerN +
-      ' solve ' +
-      probN +
-      ' so they can ' +
-      (b[1] === 0 ? 'see a clear after-state' : 'get a defined outcome') +
-      ', by ' +
-      method +
-      '.';
+      'I help ' + buyerPhrase + ' solve ' + probPhrase + ' so they can ' + outPhrase + '.';
 
-    document.getElementById('out-3').innerHTML =
-      b[3] === 0
-        ? '<p><strong>Hands-on delivery.</strong> You sell doing the work — scope it, time-box it, put a number on the slice.</p>'
-        : '<p><strong>Advisory delivery.</strong> You sell judgment and direction — productize the container (cadence, deliverables, access).</p>';
+    var delivLine = '';
+    if (b[3] === 0 && b[1] === 1) {
+      delivLine = 'Hybrid — both, but one must lead until the outcome is locked.';
+    } else if (b[3] === 0) {
+      delivLine = 'Direct — you solve the problem.';
+    } else {
+      delivLine = 'Advisory — you guide the solution.';
+    }
+    document.getElementById('out-3').innerHTML = '<p>' + delivLine + '</p>';
 
-    var entryBullets = [];
-    if (b[2] === 0) {
-      entryBullets.push('A single first session with one written takeaway.');
-    } else {
-      entryBullets.push('A paid scoping step that ends in a fixed proposal — not an open conversation.');
-    }
-    if (b[1] === 0) {
-      entryBullets.push('Open with the before → after line from Monetize, unchanged.');
-    } else {
-      entryBullets.push('Draft one sentence of before → after before you name price.');
-    }
+    var entryClear = b[1] === 0 && b[2] === 0;
+    var entryDynamic = entryClear
+      ? 'This is enough to sell right now.'
+      : 'Reduce scope until someone can say yes immediately.';
     document.getElementById('out-4').innerHTML =
-      '<p><strong>Entry offer</strong> — smallest thing a buyer can buy:</p><ul class="diag-list">' +
-      entryBullets.map(function (x) {
-        return '<li>' + x + '</li>';
-      }).join('') +
-      '</ul>';
-
-    var pricePost =
-      b[4] === 0
-        ? '<p><strong>Confident posture:</strong> state a number with the offer, not after the pitch. Tie it to one outcome.</p>'
-        : '<p><strong>Soft posture:</strong> price still feels optional — fix that before you scale reach. Use a single anchor number.</p>';
-    if (b[0] === 1) {
-      pricePost +=
-        '<p>Until the thing is chargeable, price practice is rehearsal. Shrink scope until you can say a number.</p>';
-    }
-    document.getElementById('out-5').innerHTML = pricePost;
-
-    var blockers = [];
-    if (b[0] === 1) blockers.push('offer not invoice-shaped');
-    if (b[1] === 1) blockers.push('outcome line fuzzy');
-    if (b[2] === 1) blockers.push('no obvious first step');
-    if (b[4] === 1) blockers.push('price hesitation');
-    if (b[3] === 1 && b[0] === 0) blockers.push('advisory without a container');
-    if (blockers.length === 0) blockers.push('friction is packaging — not talent');
-    document.getElementById('out-6').innerHTML =
-      '<ul class="diag-list">' + blockers.map(function (x) { return '<li>' + x + '</li>'; }).join('') + '</ul>';
-
-    document.getElementById('out-7').innerHTML =
-      '<p><strong>' +
-      coreArchetypeName() +
-      '</strong> — ' +
-      modifierString(b) +
-      (shellTight
-        ? ' Structure matches a single sellable line.'
-        : ' Tighten one layer at a time: outcome, then entry, then price.') +
+      '<p>Start with:</p>' +
+      '<ul class="diag-list diag-list--tight">' +
+      '<li>one diagnostic</li>' +
+      '<li>one defined fix</li>' +
+      '<li>one visible outcome</li>' +
+      '</ul>' +
+      '<p>' +
+      entryDynamic +
       '</p>';
 
-    var ht =
-      '<p>You do not need more ideas. You need <strong>one chargeable shape</strong>, <strong>one first step</strong>, and <strong>one price you can say</strong>.</p>';
-    if (b[0] === 1) {
-      ht += '<p>Until something can be invoiced, structure is prep — not revenue.</p>';
-    } else if (!shellTight) {
-      ht += '<p>If the offer stays fuzzy, every channel test measures noise — not demand.</p>';
-    } else {
-      ht += '<p>If you do not ship this shell to a real buyer, the next phase has nothing to validate.</p>';
+    document.getElementById('out-5').innerHTML =
+      b[4] === 1
+        ? '<p>You hesitate to say the price because the offer is not tight yet.</p>'
+        : '<p>You can say the price. Hold the line.</p>';
+
+    var mod = 'You are adding complexity instead of selling the core.';
+    if (b[2] === 1 || b[4] === 1) {
+      mod = 'You are waiting instead of testing.';
+    } else if (b[0] === 1 || b[1] === 1) {
+      mod = 'You are trying to sell something that is not defined.';
+    } else if (p2 && p2Complete(p2) && (p2[0] === 1 || p2[2] === 1)) {
+      mod = 'You are adding complexity instead of selling the core.';
     }
-    document.getElementById('out-8').innerHTML = ht;
+    document.getElementById('out-6').innerHTML =
+      '<p>You are not blocked by skill.</p>' +
+      '<p>You are blocked by not committing to a simple, sellable version.</p>' +
+      '<p>' +
+      mod +
+      '</p>';
+
+    var arch = coreArchetypeName();
+    document.getElementById('out-7').innerHTML =
+      '<p>You are:</p>' +
+      '<p><strong>' +
+      escapeHtml(arch) +
+      '</strong></p>' +
+      '<p>This matches how you operate.</p>' +
+      '<p>It has not been turned into something someone can buy yet.</p>';
+
+    document.getElementById('out-8').innerHTML =
+      '<p>If this is not simple:</p>' +
+      '<p>it does not sell<br>it does not validate<br>it does not grow</p>';
 
     document.getElementById('out-9').innerHTML =
-      '<ul class="diag-list">' +
-      '<li>Phase 04: put this offer in front of real buyers — same message, measure response.</li>' +
-      '<li>Lock one exposure batch before you change the offer again.</li>' +
-      '<li><a href="/automation">Continue to Automation</a></li>' +
-      '</ul>';
+      '<p>Start with:<br>one person<br>one problem<br>one outcome</p>' +
+      '<p>Then sell it immediately.</p>' +
+      '<p>Phase 04 forces exposure.</p>' +
+      '<p class="phase-result-links" style="margin-top:12px"><a href="/automation">Continue to Automation</a></p>';
 
     var fin = panelFromBits(b);
     document.getElementById('live-offer').textContent = fin.offer;
