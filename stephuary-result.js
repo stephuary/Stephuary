@@ -275,6 +275,26 @@
   var LS_P05 = 'stephuary_sovereignty_p05_v1';
 
   var MONETIZE_Q = 5;
+  var STRUCTURE_Q = 5;
+
+  /** Legacy Structure used 10 answers; current phase uses 5. */
+  function migrateStructureBits(bits) {
+    if (!bits) return null;
+    if (bits.length === 10) {
+      return [bits[0], bits[1], bits[3], bits[5], bits[7]];
+    }
+    if (bits.length > STRUCTURE_Q) return bits.slice(0, STRUCTURE_Q);
+    return bits;
+  }
+
+  function structureBitsComplete(bits) {
+    var b = migrateStructureBits(bits);
+    if (!b || b.length < STRUCTURE_Q) return false;
+    for (var i = 0; i < STRUCTURE_Q; i++) {
+      if (b[i] === null || b[i] === undefined) return false;
+    }
+    return true;
+  }
 
   /** Legacy Monetize used 10 answers; current phase uses 5. */
   function migrateMonetizeBits(bits) {
@@ -339,13 +359,14 @@
   }
 
   function lineStructure(b) {
-    if (!phaseBitsComplete(b)) return null;
-    var charge = b[0] === 0 ? 'chargeable shape exists' : 'not chargeable yet';
-    var outcome = b[1] === 0 ? 'before/after clear' : 'before/after fuzzy';
-    var entry = b[3] === 0 ? 'clear start' : 'no clear start';
-    var price = b[7] === 0 ? 'can state price' : 'hesitates on price';
-    var ship = b[9] === 0 ? 'would start today' : 'would delay for setup';
-    return 'Phase 03 · Offer: ' + charge + ' · ' + outcome + ' · Entry: ' + entry + ' · ' + price + ' · Ship rule: ' + ship + '.';
+    var bits = migrateStructureBits(b);
+    if (!structureBitsComplete(bits)) return null;
+    var charge = bits[0] === 0 ? 'chargeable shape exists' : 'not chargeable yet';
+    var outcome = bits[1] === 0 ? 'before/after clear' : 'before/after fuzzy';
+    var entry = bits[2] === 0 ? 'clear start' : 'no clear start';
+    var deliv = bits[3] === 0 ? 'direct delivery' : 'advisory-led';
+    var price = bits[4] === 0 ? 'can state price' : 'hesitates on price';
+    return 'Phase 03 · Offer: ' + charge + ' · ' + outcome + ' · Entry: ' + entry + ' · ' + deliv + ' · ' + price + '.';
   }
 
   function lineAutomation(b) {
@@ -375,7 +396,7 @@
     if (!data || typeof data !== 'object' || !data.diagnostic) return data;
     var diag = data.diagnostic;
     var p2 = migrateMonetizeBits(loadStoredBits(LS_P02));
-    var p3 = loadStoredBits(LS_P03);
+    var p3 = migrateStructureBits(loadStoredBits(LS_P03));
     var p4 = loadStoredBits(LS_P04);
     var p5 = loadStoredBits(LS_P05);
 
@@ -395,10 +416,10 @@
       if (p2[3] === 1) issues.push('Buyer still too broad to target');
       if (p2[2] === 1) issues.push('Demand is push-led, not pull-led');
     }
-    if (p3 && phaseBitsComplete(p3)) {
+    if (p3 && structureBitsComplete(p3)) {
       if (p3[0] === 1) issues.push('Nothing priced and deliverable without more definition');
-      if (p3[3] === 1) issues.push('No obvious first step for a buyer');
-      if (p3[7] === 1) issues.push('Price still uncomfortable to say aloud');
+      if (p3[2] === 1) issues.push('No obvious first step for a buyer');
+      if (p3[4] === 1) issues.push('Price still uncomfortable to say aloud');
     }
     if (p4 && phaseBitsComplete(p4)) {
       if (validationTierP4(p4) === 'untested') issues.push('Market signal still thin or private');
@@ -416,7 +437,7 @@
 
     var moves = [];
     if (diag.fix_first) moves.push(String(diag.fix_first));
-    if (p3 && phaseBitsComplete(p3) && p3[0] === 1) {
+    if (p3 && structureBitsComplete(p3) && p3[0] === 1) {
       moves.push('Ship one smallest paid slice: one buyer noun, one deliverable, one price.');
     }
     if (p2 && monetizeBitsComplete(p2) && p2[3] === 1) {
@@ -712,7 +733,7 @@
 
     var haveN = [];
     if (p2) haveN.push(p2.value_source, p2.demand_signal, p2.outcome_visibility);
-    if (p3) haveN.push(p3.outcome, p3.entry_point);
+    if (p3) haveN.push(p3.outcome, p3.entry_point, p3.delivery_shape);
     if (p4) haveN.push(p4.exposure_method);
     if (p5) haveN.push(p5.leverage_type, p5.scalability_status);
     if (haveN.length) {

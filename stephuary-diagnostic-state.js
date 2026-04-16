@@ -11,6 +11,17 @@
   var T = 10;
   var T01 = 6;
   var T02 = 5;
+  var T03 = 5;
+
+  /** Legacy Structure stored 10 binary answers; map to the current 5-question set. */
+  function migrateP03Bits(bits) {
+    if (!bits) return null;
+    if (bits.length === 10) {
+      return [bits[0], bits[1], bits[3], bits[5], bits[7]];
+    }
+    if (bits.length > T03) return bits.slice(0, T03);
+    return bits;
+  }
 
   /** Legacy Monetize stored 10 binary answers; map to the current 5-question set. */
   function migrateP02Bits(bits) {
@@ -68,6 +79,15 @@
     return true;
   }
 
+  function completeP03(bits) {
+    var b = migrateP03Bits(bits);
+    if (!b || b.length < T03) return false;
+    for (var i = 0; i < T03; i++) {
+      if (b[i] === null || b[i] === undefined) return false;
+    }
+    return true;
+  }
+
   function phase01(bits) {
     var b = migrateP01Bits(bits);
     if (!completeP01(b)) return null;
@@ -109,13 +129,16 @@
   }
 
   function phase03(bits) {
-    if (!complete(bits)) return null;
+    var b = migrateP03Bits(bits);
+    if (!completeP03(b)) return null;
     return {
       offer_definition:
-        bits[0] === 0 ? 'Something you could invoice this week (even rough)' : 'Still conceptual — not priced to ship',
-      outcome: bits[1] === 0 ? 'Before/after is stated clearly' : 'Outcome language still fuzzy',
-      entry_point: bits[3] === 0 ? 'Obvious first step for a buyer' : 'No obvious first step yet',
-      pricing_position: bits[7] === 0 ? 'Can say a price out loud' : 'Price still uncomfortable to state'
+        b[0] === 0 ? 'Something you could invoice this week (even rough)' : 'Still conceptual — not priced to ship',
+      outcome: b[1] === 0 ? 'Before/after is stated clearly' : 'Outcome language still fuzzy',
+      entry_point: b[2] === 0 ? 'Obvious first step for a buyer' : 'No obvious first step yet',
+      delivery_shape:
+        b[3] === 0 ? 'Delivery is direct / hands-on problem-solving' : 'Delivery is guidance or advisory-led',
+      pricing_position: b[4] === 0 ? 'Can say a price out loud' : 'Price still uncomfortable to state'
     };
   }
 
@@ -176,7 +199,7 @@
       bitsPresent: {
         p01: completeP01(b1),
         p02: completeP02(b2),
-        p03: complete(b3),
+        p03: completeP03(b3),
         p04: complete(b4),
         p05: complete(b5)
       }
@@ -214,6 +237,8 @@
     phase05: phase05,
     migrateP02Bits: migrateP02Bits,
     completeP02: completeP02,
+    migrateP03Bits: migrateP03Bits,
+    completeP03: completeP03,
     KEYS: { P01: P01, P02: P02, P03: P03, P04: P04, P05: P05 }
   };
 })(typeof window !== 'undefined' ? window : this);

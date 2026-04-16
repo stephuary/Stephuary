@@ -1068,16 +1068,33 @@
     return true;
   }
 
+  function normalizeP3Bits(bits) {
+    if (!bits) return null;
+    if (window.StephuaryDiagnosticState && typeof window.StephuaryDiagnosticState.migrateP03Bits === 'function') {
+      return window.StephuaryDiagnosticState.migrateP03Bits(bits);
+    }
+    if (bits.length === 10) {
+      return [bits[0], bits[1], bits[3], bits[5], bits[7]];
+    }
+    return bits;
+  }
+
   function loadP3Bits() {
     try {
       var raw = localStorage.getItem(P03_KEY);
       if (!raw) return null;
-      return JSON.parse(raw).bits;
+      var d = JSON.parse(raw);
+      return normalizeP3Bits(d.bits || null);
     } catch (e) { return null; }
   }
 
   function p3Complete(bits) {
-    return bits && bits.length >= 10 && bits.indexOf(null) < 0;
+    var b = normalizeP3Bits(bits);
+    if (!b || b.length < 5) return false;
+    for (var i = 0; i < 5; i++) {
+      if (b[i] === null || b[i] === undefined) return false;
+    }
+    return true;
   }
 
   function buildP3OfferAndEntry() {
@@ -1126,10 +1143,10 @@
       '.';
 
     var examples = [];
-    if (b[4] === 0) examples.push('a 60-minute breakdown with a written takeaway');
-    else examples.push('a 48-hour audit with three concrete fixes');
-    if (b[2] === 1) examples.push('a targeted correction on one layer only');
-    else examples.push('one diagnostic session that names the bottleneck');
+    if (b[2] === 0) examples.push('one first session with a written takeaway');
+    else examples.push('a paid scoping step that ends in a fixed proposal');
+    if (b[3] === 0) examples.push('a hands-on delivery slice');
+    else examples.push('an advisory container: cadence, deliverables, access');
     var entry =
       'Start with one of these shapes: ' +
       examples.join('; ') +

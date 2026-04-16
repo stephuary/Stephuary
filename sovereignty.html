@@ -1070,16 +1070,33 @@
     return true;
   }
 
+  function normalizeP3Bits(bits) {
+    if (!bits) return null;
+    if (window.StephuaryDiagnosticState && typeof window.StephuaryDiagnosticState.migrateP03Bits === 'function') {
+      return window.StephuaryDiagnosticState.migrateP03Bits(bits);
+    }
+    if (bits.length === 10) {
+      return [bits[0], bits[1], bits[3], bits[5], bits[7]];
+    }
+    return bits;
+  }
+
   function loadP3Bits() {
     try {
       var raw = localStorage.getItem(P03_KEY);
       if (!raw) return null;
-      return JSON.parse(raw).bits;
+      var d = JSON.parse(raw);
+      return normalizeP3Bits(d.bits || null);
     } catch (e) { return null; }
   }
 
   function p3Complete(bits) {
-    return bits && bits.length >= 10 && bits.indexOf(null) < 0;
+    var b = normalizeP3Bits(bits);
+    if (!b || b.length < 5) return false;
+    for (var i = 0; i < 5; i++) {
+      if (b[i] === null || b[i] === undefined) return false;
+    }
+    return true;
   }
 
   function loadP4Bits() {
@@ -1153,10 +1170,10 @@
       '.';
 
     var examples = [];
-    if (b[4] === 0) examples.push('a 60-minute breakdown with a written takeaway');
-    else examples.push('a 48-hour audit with three concrete fixes');
-    if (b[2] === 1) examples.push('a targeted correction on one layer only');
-    else examples.push('one diagnostic session that names the bottleneck');
+    if (b[2] === 0) examples.push('one first session with a written takeaway');
+    else examples.push('a paid scoping step that ends in a fixed proposal');
+    if (b[3] === 0) examples.push('a hands-on delivery slice');
+    else examples.push('an advisory container: cadence, deliverables, access');
     var entry =
       'Start with one of these shapes: ' +
       examples.join('; ') +
@@ -1167,9 +1184,10 @@
 
   function p3ModelLabel(p3) {
     if (!p3Complete(p3)) return 'Complete Phase 03 for your model.';
-    if (p3[5] === 0 && p3[6] === 0) return 'Direct service: time-bound, hands-on delivery.';
-    if (p3[5] === 1 && p3[6] === 1) return 'Advisory / consulting: guidance and leverage.';
-    return 'Hybrid: direct work with an advisory layer. One lane must lead.';
+    var b = normalizeP3Bits(p3);
+    if (!b || b.length < 5) return 'Complete Phase 03 for your model.';
+    if (b[3] === 0) return 'Direct service: hands-on delivery.';
+    return 'Advisory: guidance-led delivery.';
   }
 
   function renderBridge() {
@@ -1318,8 +1336,8 @@
     if (!p3Complete(p3)) {
       return pool.slice();
     }
-    var direct = p3[5] === 0 && p3[6] === 0;
-    var adv = p3[5] === 1 && p3[6] === 1;
+    var direct = p3[3] === 0;
+    var adv = p3[3] === 1;
     var ordered = [];
     if (direct) {
       ordered = ['additional services', 'systems', 'content', 'licensing', 'advisory'];
