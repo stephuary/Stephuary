@@ -1561,21 +1561,24 @@ details.price-group.price-group--peer-muted:hover{
 .pricing-major-section > summary{padding-right:36px;}
 .pricing-major-section > summary .price-group__title{margin:0;}
 .pricing-tier-more--operator-levels{margin-top:10px;}
-.pricing-major-rec{
-  display:inline-block;
-  margin-top:6px;
-  font-family:var(--mono);
-  font-size:9px;
-  letter-spacing:0.12em;
-  text-transform:uppercase;
-  color:var(--gold-hi);
-}
-.pricing-major-support{
-  margin-top:8px;
-  font-size:12px;
-  letter-spacing:0.02em;
-  color:var(--text-3);
-}
+
+/* Accordion stabilization overrides */
+.pricing-flow-rail{display:none!important;}
+.pricing-layout-inner{display:block;max-width:1040px;padding-left:0;padding-right:0;}
+.pricing-layout-inner .pricing-layout__main{display:block;width:100%;max-width:100%;}
+#pricing-groups{display:block;width:100%;max-width:100%;}
+#pricing-groups > details.price-group{display:block;width:100%;max-width:100%;margin:0 0 20px;}
+#pricing-groups > details.price-group > .price-group__anim > .price-group__inner > .price-group__pad{padding:22px 18px 24px;}
+#pricing-groups .pricing-flow-section{padding:0!important;margin:0!important;min-height:0;height:auto;width:100%;max-width:100%;}
+#pricing-groups .pricing-flow-layer{margin-top:0;padding-top:0;border-top:none;}
+#pricing-groups .pricing-flow-section--installation{margin:0!important;width:100%!important;max-width:100%!important;padding:0!important;border:0!important;background:transparent!important;}
+#pricing-groups .pricing-flow-section--installation.pricing-rhythm--install{padding:0!important;background:transparent!important;box-shadow:none!important;border:0!important;}
+#pricing-groups .pricing-flow-section--transition,#pricing-groups .pricing-flow-section--transformation,#pricing-groups .pricing-flow-section--full-build{padding:0!important;margin:0!important;}
+#pricing-groups .pricing-flow-bridge{margin:0 0 14px;}
+#pricing-groups .pricing-flow-anchor{margin:0 0 10px;}
+#pricing-groups .pricing-flow-section__cards{gap:12px;}
+#pricing-groups .operator-access-tiers{grid-template-columns:1fr;gap:12px;}
+#pricing-groups .pricing-installation-shell,#pricing-groups .pricing-full-build-shell{padding:0;max-width:100%;}
 
 .price-group__kicker{
   font-family:var(--mono);font-size:8px;letter-spacing:0.18em;text-transform:uppercase;
@@ -1918,41 +1921,7 @@ html.early-mode body.pricing-page{
 </style>
 </head>
 <body class="pricing-page" data-sh-env="pricing" data-live-output="off">
-<script>
-(function () {
-  try {
-    var K = 'stephuary_pricing_fe_env';
-    function ls(k) {
-      try {
-        return localStorage.getItem(k);
-      } catch (e) {
-        return null;
-      }
-    }
-    function ss(k) {
-      try {
-        return sessionStorage.getItem(k);
-      } catch (e) {
-        return null;
-      }
-    }
-    var floor = 1;
-    if (ls('capture_complete') === 'true' || ls('stephuary_result_v1') || ls('diagnosticCompleted') === 'true') floor = 3;
-    else if (ls('diagnosticStarted') === 'true') floor = 2;
-    var saved = parseInt(ss(K) || '0', 10);
-    var n = saved >= 1 && saved <= 3 ? saved : 1;
-    if (floor > n) n = floor;
-    if (n < 1) n = 1;
-    if (n > 3) n = 3;
-    document.body.classList.add('fe-env--s' + n);
-    try {
-      sessionStorage.setItem(K, String(n));
-    } catch (e) {}
-  } catch (e) {
-    document.body.classList.add('fe-env--s1');
-  }
-})();
-</script>
+
 <div class="pricing-aura" aria-hidden="true">
   <div class="pricing-aura__spot"></div>
   <div class="pricing-aura__spot-b"></div>
@@ -1980,7 +1949,7 @@ html.early-mode body.pricing-page{
     </nav>
   </div>
 
-  <div class="pricing-hero-split pricing-rhythm--hero pricing-guided-panel pricing-guided-snap" id="pricing-guided-hero" data-guided-panel data-guided-stage="start">
+  <div class="pricing-hero-split pricing-rhythm--hero" id="pricing-guided-hero">
     <header class="pricing-hero pricing-hero-split__copy">
       <div class="pricing-hero__copy">
         <h1 class="pricing-hero__title">Pricing follows the system</h1>
@@ -2022,38 +1991,15 @@ html.early-mode body.pricing-page{
 
   <div class="pricing-layout pricing-layout--after-cine">
     <div class="pricing-layout-inner">
-    <nav class="pricing-flow-rail" id="pricing-flow-rail" aria-label="Pricing progress">
-      <ol class="pricing-flow-rail__list">
-        <li class="pricing-flow-rail__item" data-rail-stage="start">Start</li>
-        <li class="pricing-flow-rail__item" data-rail-stage="decide">Decide</li>
-        <li class="pricing-flow-rail__item" data-rail-stage="build">Build</li>
-        <li class="pricing-flow-rail__item" data-rail-stage="diagnose">Diagnose</li>
-        <li class="pricing-flow-rail__item" data-rail-stage="access">Access</li>
-        <li class="pricing-flow-rail__item" data-rail-stage="apply">Apply</li>
-        <li class="pricing-flow-rail__item" data-rail-stage="scale">Scale</li>
-      </ol>
-    </nav>
     <div class="pricing-layout__main pricing-flow" id="pricing-groups">
 
-      <details class="sh-pricing-rec price-group price-group--diagnostic-lead pricing-guided-panel pricing-guided-snap" id="pricing-flow-diagnostic-lead" aria-label="Recommended starting point" data-guided-panel data-guided-stage="start">
-        <summary class="sh-pricing-rec__summary">
-          <p class="sh-pricing-rec__label">Recommended path</p>
-          <p class="sh-pricing-rec__title">Finish the free diagnostic first</p>
-          <a href="/capture" class="sh-pricing-rec__cta magnetic" data-sh-flow-primary>Start Diagnostic</a>
-        </summary>
-        <div class="sh-pricing-rec__drawer">
-          <p class="sh-pricing-rec__sub">Phases 1–5 are the diagnostic. Your readout unlocks the right paid next step—nothing here replaces that sequence.</p>
-        </div>
-      </details>
-
-      <p class="pricing-flow-bridge">If you’re unsure, start here.</p>
-
+      
       <details class="price-group pricing-major-section" id="pricing-major-entry" data-pricing-group data-pricing-major open>
       <summary>
         <h2 class="price-group__title">Entry</h2>
       </summary>
       <div class="price-group__anim"><div class="price-group__inner"><div class="price-group__pad">
-      <section class="pricing-flow-section pricing-flow-section--rhythm-entry pricing-guided-panel pricing-guided-snap" id="pricing-flow-entry" aria-labelledby="pricing-flow-entry-title" data-pricing-cluster="A" data-pricing-flow-stage="start" data-guided-panel data-guided-stage="start">
+      <section class="pricing-flow-section pricing-flow-section--rhythm-entry" id="pricing-flow-entry" aria-labelledby="pricing-flow-entry-title" data-pricing-cluster="A">
         <p class="pricing-flow-anchor" id="pricing-anchor-entry">Entry</p>
         <h2 id="pricing-flow-entry-title" class="pricing-flow-section__title">Start here. Don’t overthink it.</h2>
         <div class="pricing-flow-section__cards pricing-entry-grid">
@@ -2085,12 +2031,12 @@ html.early-mode body.pricing-page{
         <h2 class="price-group__title">Direction</h2>
       </summary>
       <div class="price-group__anim"><div class="price-group__inner"><div class="price-group__pad">
-      <section class="pricing-flow-section pricing-rhythm--core pricing-flow-section--decision pricing-guided-snap pricing-flow-layer" id="pricing-flow-decision" aria-labelledby="pricing-flow-decision-title" data-pricing-cluster="B">
+      <section class="pricing-flow-section pricing-rhythm--core pricing-flow-section--decision pricing-flow-layer" id="pricing-flow-decision" aria-labelledby="pricing-flow-decision-title" data-pricing-cluster="B">
         <p class="pricing-flow-anchor" id="pricing-anchor-direction">Direction</p>
         <h2 id="pricing-flow-decision-title" class="pricing-flow-section__title">Make it clear</h2>
         <p class="pricing-flow-section__sub">You know what you’re doing. Now lock it.</p>
         <div class="pricing-decision-split">
-              <div class="inner-tier pricing-offer-card pricing-guided-panel" id="tier-lock" data-tier-id="direction-lock" data-sh-map-node="lock" data-guided-panel data-guided-stage="decide">
+              <div class="inner-tier pricing-offer-card" id="tier-lock" data-tier-id="direction-lock" data-sh-map-node="lock">
                 <p class="inner-tier__label inner-tier__label--gold">Direction Lock</p>
                 <p class="inner-tier__price">$179</p>
                 <p class="inner-tier__desc">What to pursue — and what to ignore.</p>
@@ -2128,7 +2074,7 @@ html.early-mode body.pricing-page{
                   </div>
                 </details>
               </div>
-              <div class="inner-tier pricing-offer-card pricing-guided-panel" id="tier-concept" data-tier-id="concept-build" data-sh-map-node="concept" data-guided-panel data-guided-stage="build">
+              <div class="inner-tier pricing-offer-card" id="tier-concept" data-tier-id="concept-build" data-sh-map-node="concept">
                 <p class="inner-tier__label inner-tier__label--gold">Concept Build</p>
                 <p class="inner-tier__price">$379</p>
                 <p class="inner-tier__desc">A usable concept from your direction.</p>
@@ -2185,7 +2131,7 @@ html.early-mode body.pricing-page{
         <h2 class="price-group__title">Snapshot</h2>
       </summary>
       <div class="price-group__anim"><div class="price-group__inner"><div class="price-group__pad">
-      <section class="pricing-flow-section pricing-flow-section--rhythm-diagnose pricing-guided-panel pricing-guided-snap pricing-flow-layer" id="pricing-flow-diagnose" aria-labelledby="pricing-flow-diagnose-title" data-pricing-cluster="C" data-pricing-flow-stage="diagnose" data-guided-panel data-guided-stage="diagnose">
+      <section class="pricing-flow-section pricing-flow-section--rhythm-diagnose pricing-flow-layer" id="pricing-flow-diagnose" aria-labelledby="pricing-flow-diagnose-title" data-pricing-cluster="C">
         <p class="pricing-flow-anchor" id="pricing-anchor-diagnostic">Snapshot</p>
         <h2 id="pricing-flow-diagnose-title" class="pricing-flow-section__title">See what’s actually happening</h2>
         <p class="pricing-flow-section__sub">If something feels off, this shows you exactly why. If you already know, skip ahead.</p>
@@ -2225,7 +2171,7 @@ html.early-mode body.pricing-page{
         <h2 class="price-group__title">Access</h2>
       </summary>
       <div class="price-group__anim"><div class="price-group__inner"><div class="price-group__pad">
-      <section class="pricing-flow-section pricing-flow-section--rhythm-operator pricing-guided-panel pricing-guided-snap pricing-flow-layer" id="pricing-flow-operator" aria-labelledby="pricing-flow-operator-title" data-pricing-cluster="C" data-pricing-flow-stage="access" data-guided-panel data-guided-stage="access">
+      <section class="pricing-flow-section pricing-flow-section--rhythm-operator pricing-flow-layer" id="pricing-flow-operator" aria-labelledby="pricing-flow-operator-title" data-pricing-cluster="C">
         <p class="pricing-flow-anchor" id="pricing-anchor-access">Access</p>
         <h2 id="pricing-flow-operator-title" class="pricing-flow-section__title">You don’t do this alone</h2>
         <p class="pricing-flow-section__sub">You’ve seen how it works. Now you decide how involved I am.</p>
@@ -2291,22 +2237,22 @@ html.early-mode body.pricing-page{
       </div></div></div>
       </details>
 
-      <div class="pricing-flow-focusable pricing-post-install-hesitation" id="pricing-post-install-hesitation" data-pricing-flow-stage="access" hidden>
+      <div class="pricing-flow-focusable pricing-post-install-hesitation" id="pricing-post-install-hesitation" hidden>
         <p class="pricing-flow-bridge pricing-flow-bridge--operator">This is usually where people hesitate. Not because it’s unclear. Because it works.</p>
       </div>
 
       <p class="pricing-flow-bridge">If you don’t want to build this yourself, this is the next move.</p>
 
-      <div class="pricing-pre-install-cluster pricing-guided-panel pricing-guided-snap" id="pricing-pre-install-cluster" data-guided-panel data-guided-stage="preapply">
-      <div class="pricing-flow-focusable" id="pricing-pre-install-weeks" data-pricing-flow-stage="apply">
+      <div class="pricing-pre-install-cluster" id="pricing-pre-install-cluster">
+      <div class="pricing-flow-focusable" id="pricing-pre-install-weeks">
         <p class="pricing-flow-bridge">Most people spend weeks trying to figure this out. Nothing changes until it’s applied.</p>
       </div>
 
-      <div class="pricing-flow-focusable" id="pricing-pre-install-bridge" data-pricing-flow-stage="apply">
+      <div class="pricing-flow-focusable" id="pricing-pre-install-bridge">
       <p class="pricing-flow-bridge">If you already know what needs to happen, skip the analysis. Apply it.</p>
       </div>
 
-      <div class="pricing-flow-focusable pricing-install-bridge-hinge" id="pricing-install-hinge-bridge" data-pricing-flow-stage="apply">
+      <div class="pricing-flow-focusable pricing-install-bridge-hinge" id="pricing-install-hinge-bridge">
         <p class="pricing-flow-bridge">If you already know what needs to change, this is where you stop thinking and fix it.</p>
       </div>
       </div>
@@ -2316,7 +2262,7 @@ html.early-mode body.pricing-page{
         <h2 class="price-group__title">Build</h2>
       </summary>
       <div class="price-group__anim"><div class="price-group__inner"><div class="price-group__pad">
-      <section class="pricing-flow-section pricing-flow-section--installation pricing-rhythm--install pricing-guided-panel pricing-guided-snap" id="pricing-flow-installation" aria-labelledby="pricing-flow-install-title" data-pricing-cluster="C" data-pricing-flow-stage="apply" data-guided-panel data-guided-stage="installation">
+      <section class="pricing-flow-section pricing-flow-section--installation pricing-rhythm--install" id="pricing-flow-installation" aria-labelledby="pricing-flow-install-title" data-pricing-cluster="C">
         <div class="pricing-installation-shell">
         <div class="inner-tier inner-tier--installation-hero" id="tier-installation">
           <div class="pricing-install-split">
@@ -2351,11 +2297,11 @@ html.early-mode body.pricing-page{
       </div></div></div>
       </details>
 
-      <section class="pricing-flow-section pricing-flow-section--transition pricing-flow-focusable" id="pricing-pre-operator-bridge" data-pricing-flow-stage="access" aria-labelledby="pricing-transition-label">
+      <section class="pricing-flow-section pricing-flow-section--transition pricing-flow-focusable" id="pricing-pre-operator-bridge" aria-labelledby="pricing-transition-label">
         <p id="pricing-transition-label" class="pricing-transition-line">Once this is working, the only question is how far you want to take it.</p>
       </section>
 
-      <section class="pricing-flow-section pricing-flow-section--transformation pricing-guided-panel pricing-guided-snap" id="pricing-flow-transformation" aria-labelledby="pricing-flow-final-push-title" data-pricing-flow-stage="apply" data-guided-panel data-guided-stage="apply">
+      <section class="pricing-flow-section pricing-flow-section--transformation" id="pricing-flow-transformation" aria-labelledby="pricing-flow-final-push-title">
         <h2 id="pricing-flow-final-push-title" class="pricing-flow-section__title">This is why this works</h2>
         <div class="pricing-transformation-stagger" role="list">
           <div class="pricing-transform-pair" role="listitem" style="--st:0">
@@ -2399,7 +2345,7 @@ html.early-mode body.pricing-page{
         </details>
       </section>
 
-      <section class="pricing-flow-section pricing-flow-section--full-build pricing-flow-section--rhythm-full pricing-guided-panel pricing-guided-snap pricing-flow-layer" id="pricing-flow-scale" aria-labelledby="pricing-flow-full-title" data-pricing-cluster="D" data-pricing-flow-stage="scale" data-guided-panel data-guided-stage="scale">
+      <section class="pricing-flow-section pricing-flow-section--full-build pricing-flow-section--rhythm-full pricing-flow-layer" id="pricing-flow-scale" aria-labelledby="pricing-flow-full-title" data-pricing-cluster="D">
         <p class="pricing-flow-anchor" id="pricing-anchor-build">Build</p>
         <div class="pricing-full-build-shell">
           <h2 id="pricing-flow-full-title" class="pricing-flow-section__title">Full control</h2>
@@ -2604,663 +2550,28 @@ html.early-mode body.pricing-page{
   </footer>
 
 </div>
-<script>
-(function () {
-  var FEK = 'stephuary_pricing_fe_env';
-  var IXK = 'stephuary_pricing_fe_ix';
 
-  var CEI_CLUSTER = {
-    revenue: 'B',
-    attention: 'A',
-    friction: 'C',
-    time: 'D',
-    behavior: 'A',
-    environment: 'D',
-    decision: 'B'
-  };
-  function applyPricingFieldUi(id) {
-    var cl = CEI_CLUSTER[id];
-    document.querySelectorAll('[data-pricing-cluster]').forEach(function (d) {
-      d.classList.toggle('price-group--pricing-field-focus', cl && d.getAttribute('data-pricing-cluster') === cl);
-    });
-  }
-  document.addEventListener('pricing-cei-select', function (e) {
-    var id = e.detail && e.detail.id;
-    if (!id) return;
-    applyPricingFieldUi(id);
-  });
-  function syncPricingFieldFromBody() {
-    try {
-      var id = document.body.getAttribute('data-pricing-cei');
-      if (id) applyPricingFieldUi(id);
-    } catch (err) {}
-  }
-  window.addEventListener('load', function () {
-    syncPricingFieldFromBody();
-  });
-
-  function updatePriceGroupPeerClasses() {
-    var all = document.querySelectorAll('details.price-group');
-    var openEl = document.querySelector('details.price-group[open]');
-    all.forEach(function (x) {
-      x.classList.toggle('price-group--peer-muted', !!openEl && x !== openEl);
-      x.classList.toggle('price-group--guided-active', x === openEl && !!openEl);
-    });
-  }
-
-  var suppressPriceGroupScroll = false;
-
-  function scrollPriceGroupIntoComfortIfNeeded(el) {
-    if (suppressPriceGroupScroll || !el || !el.open) return;
-    var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    window.requestAnimationFrame(function () {
-      window.requestAnimationFrame(function () {
-        var r = el.getBoundingClientRect();
-        var vh = window.innerHeight || document.documentElement.clientHeight;
-        var pad = Math.min(96, Math.round(vh * 0.12));
-        if (r.top >= pad && r.bottom <= vh - pad) return;
-        try {
-          el.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'nearest', inline: 'nearest' });
-        } catch (e) {
-          el.scrollIntoView();
-        }
-      });
-    });
-  }
-
-  function clearRecommendedMarkers() {
-    document.querySelectorAll('.pricing-major-rec').forEach(function (el) {
-      el.remove();
-    });
-    document.querySelectorAll('.pricing-major-support').forEach(function (el) {
-      el.remove();
-    });
-  }
-
-  function markRecommendedSection(sectionId) {
-    clearRecommendedMarkers();
-    var d = document.getElementById(sectionId);
-    if (!d) return;
-    var summary = d.querySelector(':scope > summary');
-    if (summary) {
-      var rec = document.createElement('span');
-      rec.className = 'pricing-major-rec';
-      rec.textContent = 'Recommended';
-      summary.appendChild(rec);
-    }
-    var support = {
-      'pricing-major-entry': 'Start here.',
-      'pricing-major-direction': 'This is the next move.',
-      'pricing-major-snapshot': 'This is where the problem gets named clearly.',
-      'pricing-major-access': 'This is where support becomes direct.',
-      'pricing-major-build': 'This is where it gets built correctly.'
-    };
-    var pad = d.querySelector(':scope > .price-group__anim .price-group__pad');
-    if (pad && support[sectionId]) {
-      var line = document.createElement('p');
-      line.className = 'pricing-major-support';
-      line.textContent = support[sectionId];
-      pad.insertBefore(line, pad.firstChild);
-    }
-  }
-
-  function textHasAny(text, needles) {
-    var t = String(text || '').toLowerCase();
-    for (var i = 0; i < needles.length; i++) {
-      if (t.indexOf(needles[i]) >= 0) return true;
-    }
-    return false;
-  }
-
-  function scorePricingSectionsFromDiagnostic(payload) {
-    var scores = {
-      'pricing-major-entry': 0,
-      'pricing-major-direction': 0,
-      'pricing-major-snapshot': 0,
-      'pricing-major-access': 0,
-      'pricing-major-build': 0
-    };
-    if (!payload || !payload.diagnostic) return scores;
-
-    var diag = payload.diagnostic || {};
-    var arch = String(payload.type_primary || '').toLowerCase();
-    var structured = payload.structured || {};
-    var p2 = structured.phase02 || {};
-    var p3 = structured.phase03 || {};
-    var p4 = structured.phase04 || {};
-    var p5 = structured.phase05 || {};
-    var recPath = String((diag.recommended_room && diag.recommended_room.path) || '').toLowerCase();
-
-    if (recPath.indexOf('/room-01') >= 0) scores['pricing-major-entry'] += 2;
-    if (recPath.indexOf('/room-02') >= 0) scores['pricing-major-direction'] += 2;
-    if (recPath.indexOf('/room-03') >= 0) scores['pricing-major-direction'] += 2;
-    if (recPath.indexOf('/room-04') >= 0) scores['pricing-major-access'] += 2;
-    if (recPath.indexOf('/room-05') >= 0) scores['pricing-major-build'] += 2;
-
-    if (textHasAny(arch, ['delayed builder', 'structural refiner'])) scores['pricing-major-direction'] += 3;
-    if (textHasAny(arch, ['hidden operator', 'reactive stabilizer', 'miscast strategist'])) scores['pricing-major-snapshot'] += 3;
-    if (textHasAny(arch, ['miscast strategist', 'reactive stabilizer'])) scores['pricing-major-access'] += 2;
-
-    if (textHasAny(String(p2.buyer_type || ''), ['broad'])) scores['pricing-major-entry'] += 3;
-    if (textHasAny(String(p2.paid_problem || ''), ['not aligned'])) scores['pricing-major-snapshot'] += 3;
-    if (textHasAny(String(p2.value_source || ''), ['needs translation'])) scores['pricing-major-entry'] += 2;
-    if (textHasAny(String(p2.outcome_visibility || ''), ['subtle'])) scores['pricing-major-entry'] += 1;
-
-    if (textHasAny(String(p3.offer_definition || ''), ['still conceptual'])) scores['pricing-major-entry'] += 4;
-    if (textHasAny(String(p3.outcome || ''), ['fuzzy'])) {
-      scores['pricing-major-direction'] += 2;
-      scores['pricing-major-snapshot'] += 2;
-    }
-    if (textHasAny(String(p3.pricing_position || ''), ['uncomfortable'])) scores['pricing-major-direction'] += 3;
-    if (textHasAny(String(p3.offer_definition || ''), ['invoice'])) {
-      scores['pricing-major-access'] += 2;
-      scores['pricing-major-build'] += 2;
-    }
-
-    if (textHasAny(String(p4.validation_status || ''), ['untested', 'partial'])) scores['pricing-major-snapshot'] += 3;
-    if (textHasAny(String(p4.response_type || ''), ['silence', 'weak'])) scores['pricing-major-snapshot'] += 3;
-    if (textHasAny(String(p4.validation_status || ''), ['validated'])) {
-      scores['pricing-major-access'] += 3;
-      scores['pricing-major-build'] += 3;
-    }
-
-    if (textHasAny(String(p5.control_model || ''), ['dependent'])) scores['pricing-major-access'] += 2;
-    if (textHasAny(String(p5.leverage_type || ''), ['multiplying leverage'])) scores['pricing-major-build'] += 2;
-    if (textHasAny(String(p5.scalability_status || ''), ['scale beyond hourly'])) scores['pricing-major-build'] += 2;
-    if (
-      textHasAny(String(p4.validation_status || ''), ['validated']) &&
-      textHasAny(String(p5.scalability_status || ''), ['scale beyond hourly'])
-    ) {
-      scores['pricing-major-build'] += 3;
-    }
-
-    if (textHasAny(String(diag.next_reason || ''), ['positioning', 'offer'])) scores['pricing-major-direction'] += 2;
-    if (textHasAny(String(diag.next_reason || ''), ['signal', 'loop', 'validation'])) scores['pricing-major-snapshot'] += 2;
-    if (textHasAny(String(diag.next_reason || ''), ['control', 'structure'])) scores['pricing-major-access'] += 1;
-
-    return scores;
-  }
-
-  function chooseRecommendedMajorSection() {
-    var raw = null;
-    try {
-      raw = localStorage.getItem('stephuary_result_v1');
-    } catch (e) {}
-    if (!raw) return null;
-
-    var payload = null;
-    try {
-      payload = JSON.parse(raw);
-    } catch (e2) {
-      return null;
-    }
-    if (!payload || !payload.diagnostic) return null;
-
-    var scores = scorePricingSectionsFromDiagnostic(payload);
-    var order = [
-      'pricing-major-entry',
-      'pricing-major-direction',
-      'pricing-major-snapshot',
-      'pricing-major-access',
-      'pricing-major-build'
-    ];
-    var best = order[0];
-    var top = -999;
-    for (var i = 0; i < order.length; i++) {
-      var id = order[i];
-      var sc = scores[id] || 0;
-      if (sc > top) {
-        top = sc;
-        best = id;
-      }
-    }
-    return best;
-  }
-
-  function initPriceGroupDefaultOpen() {
-    var all = document.querySelectorAll('details.price-group');
-    suppressPriceGroupScroll = true;
-    all.forEach(function (d) {
-      d.open = false;
-    });
-    var recommended = chooseRecommendedMajorSection();
-    var target = recommended
-      ? document.getElementById(recommended)
-      : document.querySelector('details.pricing-major-section#pricing-major-entry');
-    if (target) target.open = true;
-    if (recommended) {
-      markRecommendedSection(recommended);
-    } else {
-      clearRecommendedMarkers();
-    }
-    suppressPriceGroupScroll = false;
-    updatePriceGroupPeerClasses();
-    if (target) scrollPriceGroupIntoComfortIfNeeded(target);
-  }
-
-  var priceGroups = document.querySelectorAll('details.pricing-major-section');
-  priceGroups.forEach(function (g) {
-    g.addEventListener('toggle', function () {
-      if (g.open) {
-        priceGroups.forEach(function (o) {
-          if (o === g) return;
-          o.open = false;
-        });
-        clearRecommendedMarkers();
-        tryFeEngage(2, false);
-        scrollPriceGroupIntoComfortIfNeeded(g);
-      }
-      updatePriceGroupPeerClasses();
-    });
-  });
-
-  
-  initPriceGroupDefaultOpen();
-
-  function bindExclusiveWithin(root, selector) {
-    var r = document.querySelector(root);
-    if (!r) return;
-    r.addEventListener(
-      'toggle',
-      function (e) {
-        var t = e.target;
-        if (!t || t.tagName !== 'DETAILS' || !t.matches(selector)) return;
-        if (!t.open) return;
-        r.querySelectorAll(selector).forEach(function (d) {
-          if (d !== t) d.open = false;
-        });
-      },
-      true
-    );
-  }
-  bindExclusiveWithin('#pricing-flow-decision', 'details.pricing-tier-card-more');
-  bindExclusiveWithin('.operator-access-tiers', 'details.pricing-tier-more--operator');
-
-  document.querySelectorAll('.pricing-offer-card').forEach(function (card) {
-    card.addEventListener(
-      'toggle',
-      function (e) {
-        var t = e.target;
-        if (!t || t.tagName !== 'DETAILS' || !t.classList.contains('pricing-tier-more')) return;
-        if (!t.open) return;
-        card.querySelectorAll('details.pricing-tier-more').forEach(function (d) {
-          if (d !== t) d.open = false;
-        });
-      },
-      true
-    );
-  });
-
-  function getFeState() {
-    var m = document.body.className.match(/fe-env--s(\d)/);
-    return m ? parseInt(m[1], 10) : 1;
-  }
-
-  function setFeState(target) {
-    if (target < 1 || target > 3) return;
-    var cur = getFeState();
-    if (target <= cur) return;
-    document.body.classList.remove('fe-env--s1', 'fe-env--s2', 'fe-env--s3');
-    document.body.classList.add('fe-env--s' + target);
-    try {
-      sessionStorage.setItem(FEK, String(target));
-    } catch (e) {}
-    var det = document.getElementById('tier-custom-build');
-    if (det) det.classList.toggle('fe-env--emphasize', target >= 3);
-  }
-
-  var feScrollDone = false;
-  var lastBump = 0;
-
-  function bumpIxDebounced() {
-    var now = Date.now();
-    if (now - lastBump < 1800) return;
-    lastBump = now;
-    bumpIx();
-  }
-
-  function tryFeEngage(min, skipIx) {
-    setFeState(min);
-    syncFeFromLs();
-    if (!skipIx) bumpIxDebounced();
-  }
-
-  function bumpIx() {
-    try {
-      var n = parseInt(sessionStorage.getItem(IXK) || '0', 10) + 1;
-      sessionStorage.setItem(IXK, String(n));
-      if (n >= 6 && getFeState() >= 2) setFeState(3);
-    } catch (e) {}
-  }
-
-  function syncFeFromLs() {
-    try {
-      if (
-        localStorage.getItem('capture_complete') === 'true' ||
-        localStorage.getItem('stephuary_result_v1') ||
-        localStorage.getItem('diagnosticCompleted') === 'true'
-      ) {
-        setFeState(3);
-        return;
-      }
-      if (localStorage.getItem('diagnosticStarted') === 'true') setFeState(2);
-    } catch (e) {}
-  }
-
-  function scrollDepth() {
-    var el = document.documentElement;
-    var sh = el.scrollHeight - el.clientHeight;
-    if (sh <= 0) return 0;
-    return window.scrollY / sh;
-  }
-
-  var feT = null;
-  function onScrollFe() {
-    if (feT) return;
-    feT = window.requestAnimationFrame(function () {
-      feT = null;
-      syncFeFromLs();
-      if (!feScrollDone && scrollDepth() >= 0.42) {
-        feScrollDone = true;
-        tryFeEngage(2, true);
-      }
-    });
-  }
-
-  document.addEventListener('DOMContentLoaded', function () {
-    var det = document.getElementById('tier-custom-build');
-    if (det && getFeState() >= 3) det.classList.add('fe-env--emphasize');
-
-    var btn = document.getElementById('fe-env-btn-details');
-    if (btn) {
-      btn.addEventListener('click', function (e) {
-        e.preventDefault();
-        tryFeEngage(2, false);
-      });
-    }
-
-    window.addEventListener('scroll', onScrollFe, { passive: true });
-    window.setTimeout(function () {
-      tryFeEngage(2, true);
-    }, 26000);
-
-    document.addEventListener(
-      'click',
-      function (e) {
-        var t = e.target;
-        if (t.closest && t.closest('#fe-env-btn-details')) return;
-        if (t.closest && t.closest('#tier-custom-build') && t.closest('.fe-env-tier2')) {
-          bumpIxDebounced();
-          return;
-        }
-        if (
-          t.closest &&
-          (t.closest('.top-nav') ||
-            t.closest('.pricing-hero'))
-        ) {
-          tryFeEngage(2, false);
-        }
-      },
-      true
-    );
-
-    syncFeFromLs();
-  });
-
-  window.addEventListener('storage', function (e) {
-    if (!e.key || ['capture_complete', 'diagnosticStarted', 'diagnosticCompleted', 'stephuary_result_v1'].indexOf(e.key) === -1) return;
-    syncFeFromLs();
-    try {
-      var n = parseInt(sessionStorage.getItem(IXK) || '0', 10);
-      if (n >= 6 && getFeState() >= 2) setFeState(3);
-    } catch (err) {}
-  });
-
-  window.setInterval(syncFeFromLs, 4000);
-})();
-</script>
-<script>
-(function () {
-  var K_PAUSE = 'stephuary_pricing_pause_hint';
-  var K_EXIT = 'stephuary_pricing_exit_shown';
-  var K_INSTALL = 'stephuary_pricing_install_cta';
-  var K_POST = 'stephuary_pricing_post_hesitation_shown';
-
-  document.addEventListener('DOMContentLoaded', function () {
-    var buildSec = document.getElementById('pricing-flow-decision');
-    var diagSec = document.getElementById('pricing-flow-diagnose');
-    var installSec = document.getElementById('pricing-flow-installation');
-    var installCta = document.getElementById('tier-installation-cta');
-    var pauseHint = document.getElementById('pricing-scroll-pause-hint');
-    var pauseClose = document.getElementById('pricing-scroll-pause-hint-close');
-    var exitEl = document.getElementById('pricing-exit-soft');
-    var exitDismiss = document.getElementById('pricing-exit-soft-dismiss');
-    var postHes = document.getElementById('pricing-post-install-hesitation');
-
-    var reduceMotion =
-      window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-    function ssGet(k) {
-      try {
-        return sessionStorage.getItem(k);
-      } catch (e) {
-        return null;
-      }
-    }
-    function ssSet(k, v) {
-      try {
-        sessionStorage.setItem(k, v);
-      } catch (e) {}
-    }
-
-    function sectionSubstantiallyVisible(el) {
-      if (!el) return false;
-      var r = el.getBoundingClientRect();
-      var vh = window.innerHeight;
-      var vis = Math.min(r.bottom, vh) - Math.max(r.top, 0);
-      return vis > Math.min(vh * 0.2, 180);
-    }
-
-    function markInstallIntent() {
-      ssSet(K_INSTALL, '1');
-      if (postHes && !postHes.hasAttribute('hidden')) {
-        postHes.setAttribute('hidden', '');
-      }
-    }
-    if (installCta) {
-      installCta.addEventListener('click', markInstallIntent);
-    }
-    var pauseCta = document.getElementById('pricing-scroll-pause-hint-cta');
-    if (pauseCta) pauseCta.addEventListener('click', markInstallIntent);
-
-    var stickyCtaLink = document.getElementById('pricing-sticky-cta-link');
-    if (stickyCtaLink) {
-      stickyCtaLink.addEventListener('click', function () {
-        if (stickyCtaLink.getAttribute('href') === '/private-access') markInstallIntent();
-      });
-    }
-
-    var idleTimer = null;
-    var lastScrollTs = Date.now();
-
-    function dismissPauseHint() {
-      if (!pauseHint) return;
-      pauseHint.classList.add('is-dismissed');
-      window.setTimeout(function () {
-        pauseHint.setAttribute('hidden', '');
-        pauseHint.classList.remove('is-dismissed');
-      }, 320);
-      ssSet(K_PAUSE, '1');
-    }
-
-    function maybeShowPauseHint() {
-      if (!pauseHint || ssGet(K_PAUSE) || reduceMotion) return;
-      if (!sectionSubstantiallyVisible(buildSec) && !sectionSubstantiallyVisible(diagSec)) return;
-      pauseHint.removeAttribute('hidden');
-    }
-
-    function resetIdleTimer() {
-      lastScrollTs = Date.now();
-      if (idleTimer) {
-        window.clearTimeout(idleTimer);
-        idleTimer = null;
-      }
-      idleTimer = window.setTimeout(function () {
-        idleTimer = null;
-        if (Date.now() - lastScrollTs < 4300) return;
-        maybeShowPauseHint();
-      }, 4600);
-    }
-
-    window.addEventListener(
-      'scroll',
-      function () {
-        resetIdleTimer();
-      },
-      { passive: true }
-    );
-    resetIdleTimer();
-
-    if (pauseClose) {
-      pauseClose.addEventListener('click', dismissPauseHint);
-    }
-
-    function closeExit() {
-      if (!exitEl) return;
-      exitEl.classList.remove('is-open');
-      document.body.classList.remove('pricing-exit-open');
-      window.setTimeout(function () {
-        exitEl.setAttribute('hidden', '');
-        exitEl.setAttribute('aria-hidden', 'true');
-      }, 280);
-    }
-
-    function openExit() {
-      if (!exitEl || ssGet(K_EXIT)) return;
-      ssSet(K_EXIT, '1');
-      exitEl.removeAttribute('hidden');
-      exitEl.setAttribute('aria-hidden', 'false');
-      exitEl.classList.add('is-open');
-      document.body.classList.add('pricing-exit-open');
-    }
-
-    function tryShowExit() {
-      if (ssGet(K_EXIT)) return;
-      openExit();
-    }
-
-    if (exitEl) {
-      exitEl.addEventListener('click', function (e) {
-        if (e.target === exitEl) closeExit();
-      });
-    }
-    if (exitDismiss) exitDismiss.addEventListener('click', closeExit);
-    var exitGo = document.getElementById('pricing-exit-soft-cta');
-    if (exitGo) exitGo.addEventListener('click', markInstallIntent);
-
-    document.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape' && exitEl && exitEl.classList.contains('is-open')) closeExit();
-    });
-
-    if (!reduceMotion && window.matchMedia('(min-width: 900px)').matches) {
-      document.documentElement.addEventListener('mouseleave', function (e) {
-        if (typeof e.clientY === 'number' && e.clientY > 16) return;
-        tryShowExit();
-      });
-    }
-
-    var lastY = window.scrollY;
-    var lastT = Date.now();
-    var maxScrollSeen = window.scrollY;
-    if (!reduceMotion && window.matchMedia('(max-width: 899px)').matches) {
-      window.addEventListener(
-        'scroll',
-        function () {
-          var now = Date.now();
-          var y = window.scrollY;
-          maxScrollSeen = Math.max(maxScrollSeen, y);
-          var dt = Math.max(1, now - lastT);
-          var dy = y - lastY;
-          var vel = dy / dt;
-          if (maxScrollSeen > 420 && vel < -2.2 && y < 240 && dt < 220) tryShowExit();
-          lastY = y;
-          lastT = now;
-        },
-        { passive: true }
-      );
-    }
-
-    function maybeShowPostHesitation() {
-      if (!postHes || ssGet(K_POST) || ssGet(K_INSTALL)) return;
-      if (!installSec) return;
-      var r = installSec.getBoundingClientRect();
-      if (r.bottom >= -20) return;
-      postHes.removeAttribute('hidden');
-      ssSet(K_POST, '1');
-    }
-
-    var postT = null;
-    window.addEventListener(
-      'scroll',
-      function () {
-        if (postT) return;
-        postT = window.requestAnimationFrame(function () {
-          postT = null;
-          maybeShowPostHesitation();
-        });
-      },
-      { passive: true }
-    );
-    maybeShowPostHesitation();
-  });
-})();
-</script>
-<style>
-body.pricing-page.pricing-exit-open{overflow:hidden;}
-@media (prefers-reduced-motion:reduce){
-  .pricing-scroll-pause-hint{transition:none;}
-  .pricing-exit-soft,.pricing-exit-soft__panel{transition:none;}
-}
-</style>
 <script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.7/dist/hls.min.js" crossorigin="anonymous" defer></script>
 <script src="/stephuary-hls-cine.js" defer></script>
 <script>
-document.addEventListener('DOMContentLoaded', function () {
-  var cfg = window.STEPHUARY_CONFIG || {};
-  var src =
-    cfg.PRICING_STAIRCASE_VIDEO ||
-    'https://customer-vjyp7ff1wau3k7is.cloudflarestream.com/482fd025db674eaf7f1246937e0145b2/manifest/video.m3u8';
-  var poster =
-    cfg.PRICING_STAIRCASE_POSTER ||
-    'https://customer-vjyp7ff1wau3k7is.cloudflarestream.com/482fd025db674eaf7f1246937e0145b2/thumbnails/thumbnail.jpg?height=1080';
-  var v = document.querySelector('.pricing-cine-strip__video');
-  if (!v || !src) return;
-  if (poster) v.setAttribute('poster', poster);
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    v.removeAttribute('autoplay');
-    v.pause();
-    return;
-  }
-  function tryPlay() {
-    var p = v.play();
-    if (p && typeof p.catch === 'function') p.catch(function () {});
-  }
-  if (v.canPlayType('application/vnd.apple.mpegurl')) {
-    v.src = src;
-    tryPlay();
-  } else if (typeof stephuaryAttachHlsCine === 'function') {
-    stephuaryAttachHlsCine(v, src);
-    v.addEventListener('loadeddata', tryPlay, { once: true });
-  } else if (typeof Hls !== 'undefined' && Hls.isSupported()) {
-    var hls = new Hls({ capLevelToPlayerSize: true, maxBufferLength: 24 });
-    hls.loadSource(src);
-    hls.attachMedia(v);
-    v.addEventListener('loadeddata', tryPlay, { once: true });
-  } else {
-    v.src = src;
-    tryPlay();
-  }
-});
+(function () {
+  var groups = document.querySelectorAll('details.pricing-major-section');
+  groups.forEach(function (g) {
+    g.addEventListener('toggle', function () {
+      if (!g.open) return;
+      groups.forEach(function (o) {
+        if (o !== g) o.open = false;
+      });
+    });
+  });
+
+  groups.forEach(function (g) {
+    g.open = false;
+  });
+
+  var entry = document.getElementById('pricing-major-entry');
+  if (entry) entry.open = true;
+})();
 </script>
 </body>
 </html>
