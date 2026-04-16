@@ -1239,62 +1239,58 @@
     });
   }
 
-  function validationTier(b) {
-    var sc = 0;
-    if (b[0] === 0) sc += 2;
-    if (b[1] === 0) sc += 2;
-    if (b[2] === 0) sc += 2;
-    if (b[3] === 0) sc += 2;
-    if (b[4] === 0) sc += 1;
-    if (sc >= 6) return 'validated';
-    if (sc >= 3) return 'partial';
-    return 'untested';
-  }
-
   function buildSummaryOutputs(b) {
-    var tier = validationTier(b);
+    var statusReal = b[0] === 0 && b[1] === 0 && b[2] === 0;
+    var statusWord = statusReal ? 'real' : 'not real';
+    var signalActive = b[1] === 0;
+
+    var blockExtra = '';
+    if (b[0] === 1) blockExtra = 'You are still hiding the work';
+    else if (b[2] === 1) blockExtra = 'You are not actually selling yet';
+    else if (b[3] === 1) blockExtra = 'You stop after silence';
+    else if (b[4] === 1) blockExtra = 'You are delaying real feedback';
 
     document.getElementById('out-1').innerHTML =
-      '<p>Validation: <strong>' + tier + '</strong>.</p>' +
-      '<p>Nothing counts until someone outside you responds or declines clearly.</p>';
+      '<p>This is currently: <strong>' + statusWord + '</strong></p>';
 
     document.getElementById('out-2').innerHTML =
-      '<p>Exposure: ' + (b[0] === 0 ? 'real eyes have seen the offer.' : 'still mostly private.') + '</p>' +
-      '<p>Response: ' + (b[1] === 0 ? 'people engage when you share.' : 'silence or weak signal when you share.') + '</p>';
+      '<p>Signal: <strong>' + (signalActive ? 'active' : 'silent') + '</strong></p>' +
+      '<p>' +
+      (signalActive
+        ? 'People are responding. Continue.'
+        : 'No response. Change the offer, not the effort.') +
+      '</p>';
 
     document.getElementById('out-3').innerHTML =
-      '<p>Your market reads you through <strong>exposure → reply → next step</strong>. Analysis without sends is rehearsal.</p>';
+      '<p>Nothing is validated until someone responds.</p>' +
+      '<p>Silence is not failure.<br />It is direction.</p>';
 
     document.getElementById('out-4').innerHTML =
-      '<p><strong>Before tomorrow:</strong> same message, five sends (DM or email), log yes / no / silence.</p>' +
-      '<p>Change one variable next batch if silence dominates.</p>';
+      '<p>Do this next:</p>' +
+      '<ul class="diag-list">' +
+      '<li>send 5 direct messages</li>' +
+      '<li>ask for a clear yes or no</li>' +
+      '<li>do not explain more than once</li>' +
+      '</ul>';
 
     document.getElementById('out-5').innerHTML =
-      '<p>After silence: ' +
-      (b[3] === 0
-        ? 'you adjust and send again — keep the loop moving.'
-        : 'you stop or wait — tighten the loop or the ask.') +
-      '</p>' +
-      '<p>Speed: ' + (b[4] === 0 ? 'ship the test; polish later.' : 'waiting — schedule the first send.') + '</p>';
+      '<p>If they respond → continue<br />If they don\'t → change one thing</p>' +
+      '<p>Do not restart.</p>';
 
-    var blocks = [];
-    if (b[0] === 1) blocks.push('Hidden from the people who would buy.');
-    if (b[1] === 1) blocks.push('No reply signal — message or audience is wrong.');
-    if (b[2] === 1) blocks.push('No direct ask to a named person.');
-    if (b[3] === 1) blocks.push('Silence stops you instead of changing one variable.');
-    if (b[4] === 1) blocks.push('Slow cycle — fewer learning loops per week.');
     document.getElementById('out-6').innerHTML =
-      blocks.length
-        ? '<p>' + blocks.slice(0, 2).join(' ') + '</p>'
-        : '<p>No single choke dominated — keep the batch discipline.</p>';
+      '<p>You are not blocked by the market.</p>' +
+      '<p>You are blocked by not testing enough.</p>' +
+      (blockExtra ? '<p>' + blockExtra + '</p>' : '');
 
     document.getElementById('out-7').innerHTML =
       '<p>Nothing is real until someone responds.</p>' +
-      '<p>Not your idea, system, or positioning — <strong>only reply or clear no</strong>.</p>';
+      '<p>Not:<br />your idea<br />your system<br />your positioning</p>' +
+      '<p>Only:<br />response</p>';
 
     document.getElementById('out-8').innerHTML =
-      '<p><strong>Phase 05 — Sovereignty:</strong> lock what you control (dependency, ownership, delivery).</p>' +
-      '<p>Bring this tier and your last batch log.</p>';
+      '<p>Expose it again.</p>' +
+      '<p>Do not improve it first.</p>' +
+      '<p>Phase 05 decides what you keep control over.</p>';
 
     var fin = panelFromBits(b);
     document.getElementById('live-exp').textContent = fin.exp;
