@@ -351,6 +351,17 @@
   }
 
   function markResultsCtas() {
+    var els = global.document.querySelectorAll('.home-diag-cta');
+    if (els && els.length) {
+      els.forEach(function (el) {
+        try {
+          var href = el.getAttribute('href') || '';
+          if (href.indexOf('/results') !== -1) el.classList.add('sh-home-results-cta');
+          else el.classList.remove('sh-home-results-cta');
+        } catch (e) {}
+      });
+      return;
+    }
     ['hero-cta-primary', 'diag-cta-primary', 'hero-rotate-cta'].forEach(function (id) {
       var el = global.document.getElementById(id);
       if (!el) return;
@@ -422,6 +433,10 @@
   }
 
   function init() {
+    markResultsCtas();
+    global.setTimeout(markResultsCtas, 400);
+    global.setTimeout(markResultsCtas, 2000);
+
     var cei = global.document.getElementById('home-cei');
     var viz = global.document.getElementById('home-cei-viz');
     var origin = global.document.getElementById('home-origin');
@@ -434,10 +449,6 @@
     try {
       global.gsap.registerPlugin(global.ScrollTrigger);
     } catch (e) {}
-
-    markResultsCtas();
-    global.setTimeout(markResultsCtas, 400);
-    global.setTimeout(markResultsCtas, 2000);
 
     var ceiEngine = null;
 

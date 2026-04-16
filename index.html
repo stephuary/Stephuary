@@ -76,7 +76,6 @@
       --blue-soft: rgba(58, 107, 255, 0.14);
       --blue-glow: rgba(58, 107, 255, 0.35);
       --oxblood: #3B0D0D;
-      --oxblood-mid: rgba(59, 13, 13, 0.65);
       --gold: #C6A15B;
       --gold-dim: rgba(198, 161, 91, 0.45);
       --text: #f4ede0;
@@ -98,11 +97,9 @@
       -webkit-font-smoothing: antialiased;
       overflow-x: hidden;
       min-height: 100vh;
-      padding-bottom: 0;
       margin: 0;
     }
 
-    /* Ambient background */
     .ambient {
       position: fixed;
       inset: 0;
@@ -154,16 +151,8 @@
     .page {
       position: relative;
       z-index: 1;
-      padding-bottom: 0;
-      margin-bottom: 0;
     }
 
-    #main-content {
-      padding-bottom: 0;
-      margin-bottom: 0;
-    }
-
-    /* Nav */
     nav#main-nav {
       position: fixed;
       top: 0;
@@ -198,7 +187,7 @@
     .nav-links {
       display: flex;
       flex-wrap: wrap;
-      gap: 18px;
+      gap: 20px;
       align-items: center;
       justify-content: flex-end;
     }
@@ -227,42 +216,30 @@
     }
     .nav-link:hover::after { transform: scaleX(1); }
     .nav-link:hover { color: var(--text-2); }
-    .nav-link--club {
-      color: var(--gold);
+    .nav-link--primary {
+      color: var(--text-2);
     }
-    .nav-link--club::after {
-      background: var(--gold);
+    .nav-link--primary::after {
+      transform: scaleX(1);
       opacity: 0.45;
     }
-    .nav-link--club:hover {
-      color: var(--gold);
-      filter: brightness(1.12);
-    }
-    .nav-link--club:hover::after {
-      opacity: 0.85;
-    }
 
-    /* Hero */
     #hero {
       position: relative;
       overflow: hidden;
       contain: paint;
-      min-height: min(100vh, 920px);
-      min-height: min(100dvh, 920px);
-      min-height: -webkit-fill-available;
+      min-height: min(100vh, 880px);
+      min-height: min(100dvh, 880px);
       padding: 0;
     }
 
-    /* Hero immersive layer (canvas + overlay + content) */
     .hero-container {
       position: relative;
       overflow: hidden;
-      min-height: min(100vh, 920px);
-      min-height: min(100dvh, 920px);
-      min-height: -webkit-fill-available;
+      min-height: min(100vh, 880px);
+      min-height: min(100dvh, 880px);
       display: flex;
       flex-direction: column;
-      /* Fallback if canvas is late or unavailable .  avoids flat black */
       background:
         radial-gradient(ellipse 120% 85% at 50% 18%, rgba(72, 14, 14, 0.52) 0%, transparent 58%),
         radial-gradient(ellipse 95% 65% at 82% 88%, rgba(28, 48, 118, 0.42) 0%, transparent 52%),
@@ -274,7 +251,6 @@
       inset: 0;
       z-index: 0;
       pointer-events: none;
-      /* Ensure fill when parent height is min-* only */
       min-height: 100%;
       min-height: 100vh;
       min-height: 100dvh;
@@ -291,18 +267,8 @@
     .hero-overlay {
       position: absolute;
       inset: 0;
-      /* Vignette only .  was too opaque and hid the canvas entirely */
       background: radial-gradient(ellipse 85% 75% at 50% 45%, rgba(0, 0, 0, 0.15) 0%, rgba(0, 0, 0, 0.42) 100%);
       z-index: 1;
-      pointer-events: none;
-    }
-
-    .hero-overlay::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      opacity: 0.04;
-      background-image: url('https://grainy-gradients.vercel.app/noise.svg');
       pointer-events: none;
     }
 
@@ -310,147 +276,70 @@
       position: relative;
       z-index: 2;
       flex: 1 1 auto;
-      min-height: min(88vh, 860px);
+      min-height: min(88vh, 820px);
       display: flex;
       flex-direction: column;
-      justify-content: flex-start;
-      padding: 88px 40px 8px;
+      justify-content: center;
+      padding: 96px 40px 48px;
       width: 100%;
     }
 
     .hero-inner {
-      max-width: 820px;
+      max-width: 720px;
       margin: 0 auto;
       width: 100%;
       position: relative;
       z-index: 2;
       will-change: transform;
-      flex: 0 0 auto;
-      padding-top: clamp(8px, 3vh, 40px);
     }
 
-    /* Lower third: live system entry .  anchored, not floating mid-hero */
-    .hero-leak-dock {
-      margin-top: auto;
-      width: 100%;
-      max-width: 820px;
-      margin-left: auto;
-      margin-right: auto;
-      padding: 6px 0 12px;
-      position: relative;
-      z-index: 2;
-    }
-
-    .home-map-section {
-      padding: 18px 40px 28px;
-      max-width: 1080px;
-      margin: 0 auto;
-    }
-
-    .hero-kicker {
-      font-family: 'DM Mono', monospace;
-      font-size: 8px;
-      letter-spacing: 0.24em;
-      text-transform: uppercase;
-      color: var(--gold);
-      margin-bottom: 20px;
-    }
-
-    .hero-h1--wrap {
-      position: relative;
-      min-height: clamp(100px, 16vw, 168px);
-      margin-bottom: 20px;
-    }
-    .hero-h1 {
+    .home-hero__title {
       font-family: 'Cormorant Garamond', serif;
       font-weight: 300;
-      font-size: clamp(38px, 6vw, 68px);
-      line-height: 1.08;
+      font-size: clamp(32px, 5.2vw, 56px);
+      line-height: 1.12;
       letter-spacing: -0.03em;
-      max-width: 26ch;
-    }
-    .hero-line {
-      position: absolute;
-      left: 0;
-      top: 0;
-      width: 100%;
-      max-width: 26ch;
-      opacity: 0;
-      pointer-events: none;
-    }
-    .hero-line.is-visible {
-      opacity: 1;
+      max-width: 22ch;
+      margin-bottom: 20px;
     }
 
-    .hero-identity-line {
-      font-family: 'Lato', sans-serif;
-      font-size: 15px;
-      font-weight: 300;
-      line-height: 1.55;
-      color: rgba(244, 237, 224, 0.82);
-      max-width: 42ch;
-      margin: 0 0 10px;
-      letter-spacing: 0.01em;
-    }
-    .hero-payoff-line {
-      font-family: 'Lato', sans-serif;
-      font-size: 14px;
-      font-weight: 300;
-      line-height: 1.55;
-      color: rgba(181, 170, 156, 0.88);
-      max-width: 40ch;
-      margin: 0 0 22px;
-      letter-spacing: 0.01em;
-    }
-
-    .hero-lead {
-      font-size: 17px;
+    .home-hero__sub {
+      font-size: clamp(16px, 1.65vw, 18px);
       line-height: 1.65;
       color: var(--text-2);
-      max-width: 38ch;
-      margin-bottom: 32px;
+      max-width: 40ch;
+      margin-bottom: 36px;
     }
 
     .hero-actions {
       display: flex;
-      flex-wrap: wrap;
-      gap: 12px 14px;
+      flex-direction: column;
       align-items: flex-start;
-      position: relative;
-      z-index: 4;
+      gap: 14px;
     }
-    .hero-cta-micro {
-      width: 100%;
-      flex-basis: 100%;
-      margin: 2px 0 0;
-      font-size: 13px;
-      line-height: 1.5;
-      color: var(--text-3);
-    }
-    .hero-personal-line {
-      font-size: 14px;
-      line-height: 1.5;
-      color: var(--text-2);
-      max-width: 40ch;
-      margin-bottom: 18px;
-      transition: color 0.55s ease;
-    }
-    .hero-personal-line--linger {
-      color: rgba(244, 237, 224, 0.92);
-    }
-    .hero-tier-hint {
-      width: 100%;
-      flex-basis: 100%;
-      margin: 8px 0 0;
-      font-family: 'DM Mono', monospace;
-      font-size: 9px;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: rgba(198, 161, 91, 0.65);
-    }
+
     .hero-cta--soft-emphasis {
       box-shadow: 0 8px 40px rgba(58, 107, 255, 0.35);
     }
+
+    .home-restart-note {
+      font-size: 13px;
+      color: var(--text-3);
+    }
+    .home-restart-note button {
+      font: inherit;
+      color: var(--text-3);
+      background: none;
+      border: none;
+      padding: 0;
+      cursor: pointer;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+    .home-restart-note button:hover {
+      color: var(--text-2);
+    }
+
     .btn {
       display: inline-flex;
       align-items: center;
@@ -460,10 +349,10 @@
       letter-spacing: 0.16em;
       text-transform: uppercase;
       text-decoration: none;
-      padding: 16px 28px;
+      padding: 16px 32px;
       border-radius: 2px;
       border: 1px solid transparent;
-      transition: transform 0.35s ease, box-shadow 0.35s ease, background 0.35s ease, border-color 0.35s ease, color 0.35s ease;
+      transition: transform 0.35s ease, box-shadow 0.35s ease, background 0.35s ease;
     }
     .btn:active { transform: scale(0.97); }
 
@@ -477,732 +366,240 @@
       transform: translateY(-2px);
     }
 
-    .btn--ghost {
-      background: rgba(8, 8, 8, 0.5);
-      color: var(--text-2);
-      border-color: var(--line);
-    }
-    .btn--ghost:hover {
-      border-color: rgba(58, 107, 255, 0.35);
-      color: var(--text);
-      transform: translateY(-2px);
-    }
-
-    /* Live leak check .  entry (system strip in hero lower third) */
-    .hero-leak-entry {
-      margin-top: 0;
-      padding: 16px 20px 18px;
-      border: 1px solid rgba(244, 237, 224, 0.09);
-      border-radius: 3px;
-      background: linear-gradient(165deg, rgba(10, 9, 8, 0.72) 0%, rgba(4, 4, 5, 0.88) 100%);
-      box-shadow:
-        0 0 0 1px rgba(58, 107, 255, 0.07),
-        0 20px 56px rgba(0, 0, 0, 0.45),
-        inset 0 1px 0 rgba(255, 255, 255, 0.05);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      animation: leakDockGlow 7s ease-in-out infinite;
-    }
-    @keyframes leakDockGlow {
-      0%, 100% { box-shadow: 0 0 0 1px rgba(58, 107, 255, 0.07), 0 20px 56px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.05); }
-      50% { box-shadow: 0 0 0 1px rgba(58, 107, 255, 0.14), 0 24px 64px rgba(0, 0, 0, 0.5), 0 0 40px rgba(58, 107, 255, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.06); }
-    }
-    .leak-trigger {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      font-family: 'DM Mono', monospace;
-      font-size: 9px;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--text-2);
-      background: none;
-      border: none;
-      padding: 0 0 4px;
-      cursor: pointer;
+    .home-section {
+      padding: 56px 40px;
+      border-top: 1px solid var(--line);
       position: relative;
-      transition: color 0.25s ease;
-      width: 100%;
-      justify-content: flex-start;
-    }
-    .leak-trigger::after {
-      content: '';
-      position: absolute;
-      left: 0;
-      bottom: 0;
-      width: 100%;
-      height: 1px;
-      background: linear-gradient(90deg, var(--blue), rgba(58, 107, 255, 0.25));
-      transform: scaleX(0.45);
-      transform-origin: left;
-      transition: transform 0.35s ease, box-shadow 0.35s ease;
-    }
-    .leak-trigger:hover {
-      color: var(--text);
-    }
-    .leak-trigger:hover::after {
-      transform: scaleX(1);
-      box-shadow: 0 0 16px rgba(58, 107, 255, 0.35);
-    }
-    .leak-trigger__dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      background: radial-gradient(circle at 35% 35%, rgba(255, 255, 255, 0.35), var(--blue));
-      box-shadow: 0 0 14px var(--blue-glow), 0 0 28px rgba(58, 107, 255, 0.25);
-      animation: leakPulse 2.2s ease-in-out infinite;
-      flex-shrink: 0;
-    }
-    @keyframes leakPulse {
-      0%, 100% { opacity: 0.65; transform: scale(1); }
-      50% { opacity: 1; transform: scale(1.12); }
-    }
-    .hero-leak-skip {
-      margin: 14px 0 0;
-      font-size: 13px;
-      line-height: 1.45;
-      color: var(--text-3);
-      text-align: left;
-    }
-
-    /* Leak overlay */
-    .leak-overlay {
-      position: fixed;
-      inset: 0;
-      z-index: 10050;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 24px;
-      opacity: 0;
-      visibility: hidden;
-      pointer-events: none;
-      transition: opacity 0.45s ease, visibility 0.45s ease;
-    }
-    .leak-overlay.is-open {
-      opacity: 1;
-      visibility: visible;
-      pointer-events: auto;
-    }
-    body.leak-open {
-      overflow: hidden;
-    }
-
-    .leak-overlay__bg {
-      position: absolute;
-      inset: 0;
-      background: rgba(3, 3, 3, 0.92);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      transition: background 0.85s ease;
-    }
-    .leak-overlay.is-deep .leak-overlay__bg {
-      background:
-        radial-gradient(ellipse 90% 70% at 50% 45%, rgba(59, 13, 13, 0.85) 0%, rgba(3, 3, 3, 0.97) 55%, #020202 100%);
-    }
-
-    .leak-panel {
-      position: relative;
-      width: 100%;
-      max-width: 440px;
-      padding: 36px 32px 32px;
-      border: 1px solid rgba(244, 237, 224, 0.1);
-      border-radius: 3px;
-      background: linear-gradient(165deg, rgba(8, 8, 8, 0.98) 0%, rgba(5, 5, 5, 0.99) 100%);
-      box-shadow: 0 24px 80px rgba(0, 0, 0, 0.65);
       z-index: 1;
     }
-
-    .leak-close {
-      position: absolute;
-      top: 14px;
-      right: 14px;
-      width: 36px;
-      height: 36px;
-      border: none;
-      background: transparent;
-      color: var(--text-3);
-      font-size: 22px;
-      line-height: 1;
-      cursor: pointer;
-      border-radius: 2px;
-      transition: color 0.2s ease, background 0.2s ease;
-    }
-    .leak-close:hover {
-      color: var(--text);
-      background: rgba(244, 237, 224, 0.06);
-    }
-
-    .leak-step {
-      display: none;
-      opacity: 0;
-    }
-    .leak-step.is-active {
-      display: block;
-    }
-
-    .leak-intro-text {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: clamp(26px, 5vw, 36px);
-      font-weight: 300;
-      line-height: 1.2;
-      color: var(--text);
-      text-align: center;
-    }
-
-    .leak-q-num {
-      font-family: 'DM Mono', monospace;
-      font-size: 8px;
-      letter-spacing: 0.22em;
-      text-transform: uppercase;
-      color: var(--gold);
-      margin-bottom: 12px;
-    }
-    .leak-q-text {
-      font-size: 17px;
-      line-height: 1.45;
-      color: var(--text-2);
-      margin-bottom: 22px;
-    }
-
-    .leak-options {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-    .leak-opt {
-      display: block;
-      width: 100%;
-      text-align: left;
-      font-family: 'Lato', sans-serif;
-      font-size: 14px;
-      font-weight: 300;
-      color: var(--text-2);
-      padding: 14px 16px;
-      border-radius: 2px;
-      border: 1px solid rgba(244, 237, 224, 0.1);
-      background: rgba(0, 0, 0, 0.45);
-      cursor: pointer;
-      transition: border-color 0.25s ease, background 0.25s ease, box-shadow 0.25s ease, color 0.2s ease;
-    }
-    .leak-opt:hover {
-      border-color: rgba(58, 107, 255, 0.35);
-      color: var(--text);
-    }
-    .leak-opt.is-selected {
-      border-color: rgba(58, 107, 255, 0.65);
-      background: rgba(58, 107, 255, 0.1);
-      color: var(--text);
-      box-shadow: 0 0 28px rgba(58, 107, 255, 0.12);
-    }
-
-    .leak-calc {
-      text-align: center;
-      padding: 8px 0 20px;
-    }
-    .leak-calc__row {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: clamp(36px, 8vw, 52px);
-      font-weight: 300;
-      color: var(--gold);
-      line-height: 1.15;
-      letter-spacing: -0.02em;
-    }
-    .leak-calc__row small {
-      font-size: 0.42em;
-      color: var(--text-3);
-      font-family: 'DM Mono', monospace;
-      letter-spacing: 0.12em;
-      margin-left: 4px;
-    }
-    .leak-calc__sub {
-      font-family: 'DM Mono', monospace;
-      font-size: 8px;
-      letter-spacing: 0.16em;
-      text-transform: uppercase;
-      color: var(--text-3);
-      margin-top: 8px;
-    }
-
-    .leak-verdict {
-      font-size: 16px;
-      line-height: 1.55;
-      color: var(--text);
-      margin-bottom: 18px;
-    }
-    .leak-action-line {
-      font-size: 14px;
-      line-height: 1.5;
-      color: var(--text-2);
-      padding: 14px 0 22px;
-      border-left: 2px solid var(--gold);
-      padding-left: 16px;
-      margin-bottom: 8px;
-    }
-    .leak-actions {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-    .leak-actions .btn {
-      width: 100%;
-    }
-    .leak-actions .btn--ghost {
-      text-align: center;
-    }
-
-    /* Proof */
-    #proof {
-      padding: 32px 40px 64px;
-    }
-    .proof-inner {
-      max-width: 920px;
+    .home-section__inner {
+      max-width: 640px;
       margin: 0 auto;
     }
 
-    .proof-card {
-      position: relative;
-      border-radius: 4px;
-      padding: 32px 32px 28px;
-      background: linear-gradient(155deg, rgba(59, 13, 13, 0.5) 0%, rgba(5, 5, 5, 0.95) 55%, #050505 100%);
-      border: 1px solid var(--line);
-      overflow: hidden;
-      transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.4s ease, border-color 0.4s ease;
-    }
-    .proof-card:hover {
-      transform: translateY(-6px);
-      border-color: rgba(198, 161, 91, 0.45);
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 50px rgba(58, 107, 255, 0.08);
-    }
-
-    .proof-card__glow {
-      position: absolute;
-      top: -30%;
-      right: -15%;
-      width: 55%;
-      height: 90%;
-      background: radial-gradient(ellipse, rgba(58, 107, 255, 0.12) 0%, transparent 65%);
-      pointer-events: none;
-    }
-
-    .proof-graph {
-      position: absolute;
-      left: 24px;
-      right: 24px;
-      bottom: 88px;
-      height: 72px;
-      opacity: 0.22;
-      pointer-events: none;
-    }
-    .proof-graph svg {
-      width: 100%;
-      height: 100%;
-    }
-    .proof-graph path {
-      fill: none;
-      stroke: var(--gold);
-      stroke-width: 1.2;
-      stroke-linecap: round;
-    }
-
-    .proof-label {
+    .home-section__label {
       font-family: 'DM Mono', monospace;
       font-size: 8px;
       letter-spacing: 0.2em;
       text-transform: uppercase;
-      color: var(--text-3);
+      color: var(--gold);
+      margin-bottom: 14px;
+    }
+
+    .home-section__title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(22px, 2.8vw, 30px);
+      font-weight: 300;
+      letter-spacing: -0.02em;
       margin-bottom: 16px;
     }
 
-    .proof-loss {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: clamp(40px, 7vw, 64px);
-      font-weight: 300;
-      color: var(--gold);
-      line-height: 1;
-      letter-spacing: -0.02em;
-    }
-    .proof-loss small {
-      font-size: 0.38em;
-      color: var(--text-3);
-      letter-spacing: 0.1em;
-      margin-left: 4px;
-      vertical-align: super;
-    }
-
-    .proof-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 20px 32px;
-      margin-top: 24px;
-      padding-top: 24px;
-      border-top: 1px solid rgba(244, 237, 224, 0.06);
-      position: relative;
-      z-index: 1;
-    }
-    @media (max-width: 560px) {
-      .proof-grid { grid-template-columns: 1fr; }
-    }
-
-    .proof-dt {
-      font-family: 'DM Mono', monospace;
-      font-size: 8px;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: var(--text-3);
-      margin-bottom: 6px;
-    }
-    .proof-dd {
+    .home-section__body {
       font-size: 16px;
+      line-height: 1.65;
       color: var(--text-2);
     }
-    .proof-dd strong { color: var(--text); font-weight: 400; }
+    .home-section__body p + p {
+      margin-top: 12px;
+    }
+    .home-section__inner > .home-section__body + .home-section__body {
+      margin-top: 12px;
+    }
 
-    .proof-action {
-      margin-top: 22px;
-      padding: 14px 18px;
-      border-left: 2px solid var(--gold);
-      font-size: 14px;
+    .home-micro {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .home-micro__pair {
+      margin: 0;
+      padding: 16px 0 18px;
+      border-bottom: 1px solid rgba(244, 237, 224, 0.06);
+    }
+    .home-micro__pair:last-child {
+      border-bottom: none;
+    }
+    .home-micro__pair span {
+      display: block;
+      font-size: 16px;
       line-height: 1.55;
       color: var(--text-2);
-      position: relative;
-      z-index: 1;
     }
-    .proof-note {
-      margin-top: 14px;
-      font-size: 11px;
-      color: var(--text-3);
-      position: relative;
-      z-index: 1;
+    .home-micro__pair span:first-child {
+      color: rgba(244, 237, 224, 0.92);
+      margin-bottom: 4px;
     }
 
-    /* System strip */
-    #system {
-      padding: 48px 40px 56px;
-      border-top: 1px solid var(--line);
-      border-bottom: 1px solid var(--line);
-      background: linear-gradient(180deg, rgba(59, 13, 13, 0.2) 0%, transparent 100%);
+    .home-list {
+      list-style: none;
+      margin: 16px 0 0;
+      padding: 0;
     }
-    .system-inner {
-      max-width: 1100px;
-      margin: 0 auto;
+    .home-list li {
+      position: relative;
+      padding-left: 1.1em;
+      margin-bottom: 8px;
+      font-size: 16px;
+      line-height: 1.5;
+      color: var(--text-2);
     }
-    .system-head {
-      font-family: 'DM Mono', monospace;
-      font-size: 8px;
-      letter-spacing: 0.22em;
-      text-transform: uppercase;
-      color: var(--gold);
-      margin-bottom: 28px;
-      text-align: center;
-    }
-    .system-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 24px;
-    }
-    @media (max-width: 800px) {
-      .system-grid { grid-template-columns: 1fr; gap: 32px; }
+    .home-list li::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0.55em;
+      width: 5px;
+      height: 1px;
+      background: var(--gold-dim);
     }
 
-    .sys-block {
-      text-align: center;
-      padding: 24px 16px;
+    .home-cta-row {
+      margin-top: 28px;
+    }
+
+    .home-accordion {
+      margin-top: 8px;
+    }
+    .home-accordion__title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(22px, 2.8vw, 30px);
+      font-weight: 300;
+      letter-spacing: -0.02em;
+      margin-bottom: 20px;
+    }
+
+    .home-acc-item {
       border: 1px solid var(--line);
       border-radius: 3px;
       background: rgba(0, 0, 0, 0.35);
-      transition: transform 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease;
-    }
-    .sys-block:hover {
-      transform: translateY(-4px);
-      border-color: rgba(58, 107, 255, 0.25);
-      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
-    }
-
-    .sys-icon {
-      width: 48px;
-      height: 32px;
-      margin: 0 auto 16px;
-      color: var(--gold);
-    }
-    .sys-icon svg { width: 100%; height: 100%; }
-
-    .sys-tag {
-      font-family: 'DM Mono', monospace;
-      font-size: 8px;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--gold);
       margin-bottom: 10px;
-    }
-    .sys-text {
-      font-size: 15px;
-      line-height: 1.55;
-      color: var(--text-2);
-    }
-
-    /* Phase connector + rail */
-    #phases {
-      padding: 56px 0 64px;
-    }
-    .phase-head-wrap {
-      max-width: 920px;
-      margin: 0 auto 28px;
-      padding: 0 40px;
-    }
-    .phase-title {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: clamp(26px, 3.5vw, 38px);
-      font-weight: 300;
-      letter-spacing: -0.02em;
-      margin-bottom: 8px;
-    }
-    .phase-sub {
-      font-size: 14px;
-      color: var(--text-3);
-      max-width: 46ch;
-    }
-
-    .connector-wrap {
-      max-width: 100%;
-      padding: 0 40px 28px;
       overflow: hidden;
+      transition: border-color 0.3s ease, background 0.3s ease;
     }
-    .connector-svg {
-      width: 100%;
-      max-width: 1100px;
-      margin: 0 auto;
-      display: block;
-      height: 48px;
-    }
-    .connector-svg path {
-      fill: none;
-      stroke: url(#connGrad);
-      stroke-width: 1.5;
-      stroke-linecap: round;
+    .home-acc-item[open] {
+      border-color: rgba(58, 107, 255, 0.35);
+      background: rgba(8, 8, 10, 0.55);
     }
 
-    .phase-rail-preface {
-      margin: 0 auto 12px;
-      padding: 0 40px;
-      font-size: 14px;
-      line-height: 1.5;
-      color: var(--text-3);
-      max-width: 46ch;
-    }
-
-    .phase-rail {
-      overflow-x: auto;
-      overflow-y: hidden;
-      -webkit-overflow-scrolling: touch;
-      scroll-snap-type: x mandatory;
-      scroll-padding: 40px;
-      padding: 8px 40px 24px;
-      display: flex;
-      gap: 16px;
-      scrollbar-width: thin;
-      scrollbar-color: var(--gold-dim) transparent;
-    }
-    .phase-rail::-webkit-scrollbar { height: 4px; }
-    .phase-rail::-webkit-scrollbar-thumb {
-      background: rgba(198, 161, 91, 0.35);
-      border-radius: 2px;
-    }
-
-    .phase-card {
-      flex: 0 0 min(280px, 82vw);
-      scroll-snap-align: center;
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      min-height: 200px;
-      padding: 22px 20px 20px;
-      border-radius: 4px;
-      border: 1px solid var(--line);
-      background: rgba(8, 8, 8, 0.75);
-      text-decoration: none;
-      color: inherit;
-      transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.35s ease, border-color 0.35s ease;
-    }
-    .phase-card:hover {
-      transform: translateY(-8px) scale(1.02);
-      border-color: rgba(58, 107, 255, 0.45);
-      box-shadow: 0 16px 48px rgba(0, 0, 0, 0.45), 0 0 40px rgba(58, 107, 255, 0.1);
-    }
-    .phase-card:active { transform: scale(0.98); }
-    .phase-card:focus-visible {
-      outline: 2px solid var(--blue);
-      outline-offset: 3px;
-    }
-
-    .phase-card__num {
+    .home-acc-item summary {
       font-family: 'DM Mono', monospace;
-      font-size: 8px;
-      letter-spacing: 0.18em;
+      font-size: 9px;
+      letter-spacing: 0.14em;
       text-transform: uppercase;
-      color: var(--gold);
-      margin-bottom: 8px;
-    }
-    .phase-card__name {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 22px;
-      font-weight: 300;
-      margin-bottom: 6px;
-      color: var(--text);
-    }
-    .phase-card__outcome {
-      font-size: 14px;
       color: var(--text-2);
-      line-height: 1.45;
-      margin-top: 4px;
-    }
-
-    .phase-card__more {
-      max-height: 0;
-      opacity: 0;
-      overflow: hidden;
-      margin-top: 0;
-      transition: max-height 0.45s ease, opacity 0.35s ease, margin-top 0.35s ease;
-    }
-    .phase-card:hover .phase-card__more,
-    .phase-card:focus-visible .phase-card__more {
-      max-height: 200px;
-      opacity: 1;
-      margin-top: 16px;
-      padding-top: 16px;
-      border-top: 1px solid rgba(198, 161, 91, 0.2);
-    }
-    .phase-card__more p {
-      font-size: 13px;
-      line-height: 1.5;
-      color: var(--text-2);
-      margin-bottom: 10px;
-    }
-    .phase-card__more ul {
+      padding: 16px 18px;
+      cursor: pointer;
       list-style: none;
-      font-size: 12px;
-      color: var(--text-3);
-      line-height: 1.6;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
     }
-    .phase-card__more li::before {
-      content: '·';
-      margin-right: 8px;
+    .home-acc-item summary::-webkit-details-marker { display: none; }
+    .home-acc-item summary::after {
+      content: '+';
+      font-size: 14px;
       color: var(--gold);
+      opacity: 0.7;
+      transition: transform 0.3s ease;
+    }
+    .home-acc-item[open] summary::after {
+      content: '–';
+      transform: rotate(180deg);
     }
 
-    /* Diagnostic */
-    #diagnostic {
-      padding: 36px 40px 48px;
-      text-align: center;
-      background: linear-gradient(180deg, transparent, rgba(59, 13, 13, 0.28) 45%, rgba(58, 107, 255, 0.06) 100%);
-    }
-    .diag-inner {
-      max-width: 420px;
-      margin: 0 auto;
-      padding: 28px 24px 26px;
-      border: 1px solid rgba(244, 237, 224, 0.08);
-      border-radius: 2px;
-      background: rgba(8, 8, 7, 0.45);
-      box-shadow: 0 24px 48px rgba(0, 0, 0, 0.35);
-    }
-    .diag-inner h2 {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: clamp(20px, 2.6vw, 26px);
-      font-weight: 300;
-      margin-bottom: 10px;
-      letter-spacing: -0.02em;
-    }
-    .diag-inner p {
-      font-size: 14px;
-      color: var(--text-2);
-      line-height: 1.55;
-      margin-bottom: 18px;
-    }
-    .diag-skip-hint {
-      font-size: 13px;
-      color: var(--text-3);
-      line-height: 1.5;
-      margin: 14px 0 0;
-    }
-
-    .home-cei-preface {
-      max-width: 920px;
-      margin: 0 auto;
-      padding: 8px 40px 0;
-      font-size: 14px;
+    .home-acc-item__body {
+      padding: 0 18px 16px;
+      font-size: 15px;
       line-height: 1.55;
       color: var(--text-3);
       max-width: 48ch;
-    }
-
-    /* Origin → footer bridge */
-    .home-end-bridge {
-      position: relative;
-      z-index: 1;
-      margin: 0;
-      padding: 16px 40px 22px;
-      overflow: hidden;
-    }
-    .home-end-bridge__fade {
-      position: absolute;
-      inset: 0;
-      pointer-events: none;
-      background: linear-gradient(
-        180deg,
-        rgba(3, 3, 3, 0) 0%,
-        rgba(3, 3, 3, 0.12) 28%,
-        rgba(3, 3, 3, 0.38) 72%,
-        rgba(2, 2, 2, 0.82) 100%
-      );
-    }
-    .home-foot-note--finale {
-      position: relative;
-      z-index: 1;
-      font-family: 'DM Mono', monospace;
-      font-size: 8px;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      line-height: 1.55;
-      color: rgba(110, 101, 88, 0.42);
-      max-width: 42ch;
-      margin: 0 auto;
-      padding: 0;
-      text-align: center;
+      border-top: 1px solid rgba(244, 237, 224, 0.06);
+      padding-top: 12px;
+      margin: 0 18px 16px;
+      padding-left: 0;
+      padding-right: 0;
     }
 
     @media (prefers-reduced-motion: reduce) {
-      footer.home-footer,
-      .home-foot-note--finale {
-        opacity: 1 !important;
-        transform: none !important;
-      }
+      .ambient__grad { animation: none; }
     }
 
-    /* Footer */
+    .home-consequence {
+      list-style: none;
+      margin: 16px 0 0;
+      padding: 0;
+    }
+    .home-consequence li {
+      padding: 8px 0 8px 1.1em;
+      position: relative;
+      font-size: 16px;
+      line-height: 1.5;
+      color: var(--text-2);
+    }
+    .home-consequence li::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0.65em;
+      width: 5px;
+      height: 1px;
+      background: rgba(198, 161, 91, 0.35);
+    }
+
+    .home-path {
+      font-size: 16px;
+      line-height: 1.65;
+      color: var(--text-2);
+    }
+    .home-path ul {
+      list-style: none;
+      margin: 12px 0;
+      padding: 0;
+    }
+    .home-path li {
+      padding-left: 1.1em;
+      position: relative;
+      margin-bottom: 6px;
+    }
+    .home-path li::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0.55em;
+      width: 5px;
+      height: 1px;
+      background: var(--gold-dim);
+    }
+
+    .home-final {
+      text-align: center;
+    }
+    .home-final .home-section__body {
+      max-width: 36ch;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .home-final .home-cta-row {
+      display: flex;
+      justify-content: center;
+    }
+
     footer.home-footer {
       padding: 36px 40px 44px;
       border-top: 1px solid var(--line);
-      margin-bottom: 0;
-      margin-top: 0;
       background: var(--bg);
       position: relative;
       z-index: 1;
     }
     .foot-inner {
-      max-width: 1000px;
+      max-width: 720px;
       margin: 0 auto;
       display: flex;
       flex-direction: column;
-      gap: 18px;
-      align-items: stretch;
-    }
-    .foot-row {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
-      gap: 24px;
+      gap: 16px;
       align-items: center;
-      width: 100%;
+      text-align: center;
     }
     .foot-mark {
       font-family: 'Cormorant Garamond', serif;
@@ -1216,7 +613,7 @@
       flex-wrap: wrap;
       gap: 20px;
       list-style: none;
-      align-items: flex-start;
+      justify-content: center;
     }
     .foot-links a {
       font-family: 'DM Mono', monospace;
@@ -1225,64 +622,24 @@
       text-transform: uppercase;
       color: var(--text-3);
       text-decoration: none;
-      position: relative;
     }
-    .foot-links a::after {
-      content: '';
-      position: absolute;
-      left: 0;
-      bottom: -2px;
-      width: 100%;
-      height: 1px;
-      background: var(--blue);
-      transform: scaleX(0);
-      transition: transform 0.25s ease;
-    }
-    .foot-links a:hover::after { transform: scaleX(1); }
     .foot-links a:hover { color: var(--text-2); }
-    .foot-links a.foot-link--club {
-      color: var(--gold);
-    }
-    .foot-links a.foot-link--club::after {
-      background: var(--gold);
-      opacity: 0.45;
-    }
-    .foot-links a.foot-link--club:hover {
-      color: var(--gold);
-      filter: brightness(1.12);
-    }
-    .foot-links a.foot-link--club:hover::after {
-      opacity: 0.85;
-    }
-
-    .foot-links__stack {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 6px;
-      max-width: 22ch;
-    }
-    .identity-micro {
-      display: block;
-      font-family: 'Lato', sans-serif;
-      font-size: 10px;
-      font-weight: 300;
-      line-height: 1.45;
-      letter-spacing: 0.02em;
-      color: rgba(160, 152, 137, 0.72);
-      max-width: 32ch;
-    }
     .foot-micro-line {
-      width: 100%;
-      text-align: center;
-      margin: 0;
-      padding-top: 16px;
-      border-top: 1px solid rgba(244, 237, 224, 0.06);
       font-family: 'DM Mono', monospace;
       font-size: 7px;
       letter-spacing: 0.14em;
       text-transform: uppercase;
       color: rgba(110, 101, 88, 0.55);
+    }
+
+    .home-reveal {
+      opacity: 0;
+      transform: translateY(16px);
+    }
+    .home-reveal.is-in {
+      opacity: 1;
+      transform: translateY(0);
+      transition: opacity 0.65s ease, transform 0.65s ease;
     }
 
     @media (max-width: 767px) {
@@ -1293,28 +650,14 @@
         min-height: min(100dvh, 760px);
       }
       .hero-content {
-        padding: 80px 20px 0;
-      }
-      .hero-leak-dock {
-        padding: 12px 0 22px;
-      }
-      .hero-leak-entry {
-        padding: 14px 16px 16px;
+        padding: 88px 22px 40px;
       }
     }
 
     @media (max-width: 640px) {
       nav#main-nav { padding: 14px 20px; }
-      .hero-content { padding-top: 76px; }
-      #proof, #system, .phase-head-wrap, .connector-wrap, .phase-rail, .phase-rail-preface, .home-cei-preface { padding-left: 20px; padding-right: 20px; }
-      #diagnostic { padding: 28px 20px 40px; }
+      .home-section { padding: 44px 20px; }
       footer.home-footer { padding: 28px 20px 36px; }
-      .home-end-bridge {
-        padding-left: 20px;
-        padding-right: 20px;
-        padding-top: 12px;
-        padding-bottom: 18px;
-      }
     }
   </style>
   <link rel="stylesheet" href="/stephuary-early-mode.css" />
@@ -1406,12 +749,9 @@
     <nav id="main-nav">
       <a href="/" class="nav-mark">Stephuary</a>
       <div class="nav-links">
-        <a href="/capture" class="nav-link">Diagnostic</a>
-        <a href="/systems" class="nav-link">System</a>
-        <a href="/pricing" class="nav-link">Pricing</a>
-        <a href="/access" class="nav-link nav-link--club">.5% Club</a>
-        <a href="https://stephuary.substack.com" class="nav-link" target="_blank" rel="noopener">Grown spaghetti</a>
-        <a href="https://onlysometimesclub.com" class="nav-link" target="_blank" rel="noopener noreferrer">Only Sometimes Club</a>
+        <a href="/capture" class="nav-link nav-link--primary">Diagnostic</a>
+        <a href="/systems" class="nav-link">Systems</a>
+        <a href="/archive" class="nav-link">Archive</a>
       </div>
     </nav>
 
@@ -1424,336 +764,149 @@
         <div class="hero-overlay" aria-hidden="true"></div>
         <div class="hero-content">
           <div class="hero-inner" id="hero-parallax">
-            <div class="hero-h1--wrap">
-              <h1 class="hero-h1" id="hero-h1">
-                <span class="hero-line">You’re not stuck. You’re misaligned.</span>
-                <span class="hero-line">Most people are doing the wrong work.</span>
-                <span class="hero-line">Nothing changes until the structure does.</span>
-              </h1>
-            </div>
-            <p class="hero-identity-line" id="hero-identity-line">You think faster than you execute. Most of your time is spent catching up to your own ideas.</p>
-            <p class="hero-payoff-line" id="hero-payoff-line">This system removes that gap.</p>
-            <p class="hero-lead" id="hero-lead">Start with the diagnostic. It routes what happens next.</p>
+            <h1 class="home-hero__title" id="hero-h1">You don’t need another offer.<br />You need to see where yours is breaking.</h1>
+            <p class="home-hero__sub" id="hero-lead">Most people don’t have a product problem.<br />They have a clarity, positioning, or structure problem.<br /><br />This shows you exactly where.</p>
             <p class="hero-personal-line" id="hero-personal-line" hidden></p>
             <div class="hero-actions" id="hero-actions">
-              <a href="/capture" class="btn btn--pri" id="hero-cta-primary" data-sh-flow-primary>Start Diagnostic</a>
-              <a href="#system" class="btn btn--ghost" id="hero-cta-secondary" data-sh-flow-secondary>See how it works</a>
-              <p class="hero-cta-micro" id="hero-cta-micro" hidden>If you already know where you're losing time, skip ahead.</p>
-              <p class="hero-tier-hint" id="hero-tier-hint" hidden></p>
-            </div>
-            <p class="home-early-hint">You're early. Some parts only appear between 3 and 7.</p>
-          </div>
-          <div class="hero-leak-dock">
-            <div class="hero-leak-entry" id="hero-leak-entry">
-              <button type="button" class="leak-trigger" id="leak-open" aria-haspopup="dialog" aria-controls="leak-overlay" data-sh-flow-secondary>
-                <span class="leak-trigger__dot" aria-hidden="true"></span>
-                Find My Leaks (30 seconds)
-              </button>
-              <p class="hero-leak-skip">Skip this if you already know the problem.</p>
+              <a href="/capture" class="btn btn--pri home-diag-cta" id="hero-cta-primary">Start Diagnostic</a>
+              <p class="home-restart-note" id="home-restart-note" hidden>
+                <button type="button" id="home-restart-diag">Start over</button>
+              </p>
             </div>
           </div>
         </div>
       </div>
     </section>
 
-    <p class="home-interactive-disclosure">This site is interactive. Some parts only appear at certain hours, on certain pages, or after certain actions.</p>
-
-    <section class="home-map-section" aria-label="Your place in the system" data-sh-flow-section>
-      <div data-global-system-map="compact"></div>
-    </section>
-
-    <section id="proof" aria-label="Sample output" data-sh-flow-section>
-      <div class="proof-inner">
-        <div class="proof-card" id="proof-card">
-          <div class="proof-card__glow"></div>
-          <div class="proof-graph" aria-hidden="true">
-            <svg viewBox="0 0 400 72" preserveAspectRatio="none">
-              <path id="proof-line-path" d="M0,56 Q80,52 120,44 T200,28 T320,18 L400,12" />
-            </svg>
+    <section class="home-section home-section--micro" aria-label="Proof" data-sh-flow-section>
+      <div class="home-section__inner home-reveal">
+        <div class="home-micro">
+          <div class="home-micro__pair">
+            <span>Most offers don’t fail because they’re bad</span>
+            <span>They fail because they’re unclear</span>
           </div>
-          <p class="proof-label">Example · Step 1 numbers</p>
-          <p class="proof-loss"><span id="proof-money">0</span><small>/yr</small></p>
-          <div class="proof-grid">
-            <div>
-              <p class="proof-dt">Time lost</p>
-              <p class="proof-dd"><strong id="proof-hours">0</strong> h / week (screen)</p>
-            </div>
-            <div>
-              <p class="proof-dt">Pattern</p>
-              <p class="proof-dd">Easy habits + <strong>distraction</strong></p>
-            </div>
+          <div class="home-micro__pair">
+            <span>Most people don’t need more ideas</span>
+            <span>They need direction</span>
           </div>
-          <p class="proof-action">One action: remove one source. Enforce one boundary. This week.</p>
-          <p class="proof-note">You fill this in inside each step.</p>
-        </div>
-      </div>
-    </section>
-
-    <section id="system" aria-label="How it works" data-sh-flow-section>
-      <div class="system-inner">
-        <p class="system-head st-reveal">How it works</p>
-        <div class="system-grid">
-          <div class="sys-block st-reveal">
-            <div class="sys-icon" aria-hidden="true">
-              <svg viewBox="0 0 48 32" fill="none" stroke="currentColor" stroke-width="1.2">
-                <circle cx="16" cy="16" r="10" />
-                <path d="M28 16h14M35 10v12" />
-              </svg>
-            </div>
-            <p class="sys-tag">Identify</p>
-            <p class="sys-text">What is taking time, money, or attention without a clear return.</p>
-          </div>
-          <div class="sys-block st-reveal">
-            <div class="sys-icon" aria-hidden="true">
-              <svg viewBox="0 0 48 32" fill="none" stroke="currentColor" stroke-width="1.2">
-                <path d="M8 24h32M8 24V12M24 24V8M40 24V16" />
-              </svg>
-            </div>
-            <p class="sys-tag">Measure</p>
-            <p class="sys-text">See the cost in hours and dollars.</p>
-          </div>
-          <div class="sys-block st-reveal">
-            <div class="sys-icon" aria-hidden="true">
-              <svg viewBox="0 0 48 32" fill="none" stroke="currentColor" stroke-width="1.2">
-                <path d="M10 22 L20 12 L28 18 L38 8" />
-                <circle cx="38" cy="8" r="3" />
-              </svg>
-            </div>
-            <p class="sys-tag">Correct</p>
-            <p class="sys-text">Fix one source this week before moving forward.</p>
+          <div class="home-micro__pair">
+            <span>Most systems don’t work</span>
+            <span>Because they’re never actually installed</span>
           </div>
         </div>
       </div>
     </section>
 
-    <section id="phases" aria-label="Phases" data-sh-flow-section>
-      <div class="phase-head-wrap st-reveal">
-        <h2 class="phase-title">Five steps</h2>
-        <p class="phase-sub">After the diagnostic, these steps run in order. Open a step when you are ready to work that layer.</p>
-      </div>
-
-      <div class="connector-wrap st-reveal">
-        <svg class="connector-svg" viewBox="0 0 1000 48" preserveAspectRatio="xMidYMid meet">
-          <defs>
-            <linearGradient id="connGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" style="stop-color:#C6A15B;stop-opacity:0.2" />
-              <stop offset="50%" style="stop-color:#3A6BFF;stop-opacity:0.6" />
-              <stop offset="100%" style="stop-color:#C6A15B;stop-opacity:0.2" />
-            </linearGradient>
-          </defs>
-          <path id="connector-path" d="M40,28 L220,28 L220,20 L400,20 L400,28 L580,28 L580,20 L760,20 L760,28 L960,28" />
-        </svg>
-      </div>
-
-      <p class="phase-rail-preface st-reveal">If you already know where this is going, don’t scroll through it. Apply it.</p>
-
-      <div class="phase-rail" id="phase-rail" role="list">
-        <a class="phase-card" href="/capture" role="listitem">
-          <span class="phase-card__num">Phase 1</span>
-          <span class="phase-card__name">Capture</span>
-          <span class="phase-card__outcome">Find and measure one active loss.</span>
-          <div class="phase-card__more">
-            <p>Surface spend and time you are not protecting.</p>
-            <ul>
-              <li>You leave with: one removal and clear boundaries</li>
-            </ul>
-          </div>
-        </a>
-        <a class="phase-card" href="/monetize" role="listitem">
-          <span class="phase-card__num">Phase 2</span>
-          <span class="phase-card__name">Redirection</span>
-          <span class="phase-card__outcome">Move that time or money into something useful.</span>
-          <div class="phase-card__more">
-            <p>Rebuild the week around what you said matters.</p>
-            <ul>
-              <li>You leave with: a weekly structure you can follow</li>
-            </ul>
-          </div>
-        </a>
-        <a class="phase-card" href="/structure" role="listitem">
-          <span class="phase-card__num">Phase 3</span>
-          <span class="phase-card__name">Build</span>
-          <span class="phase-card__outcome">Turn it into something that produces value.</span>
-          <div class="phase-card__more">
-            <p>Offer, buyer, price, first outbound.</p>
-            <ul>
-              <li>You leave with: copy you can send</li>
-            </ul>
-          </div>
-        </a>
-        <a class="phase-card" href="/automation" role="listitem">
-          <span class="phase-card__num">Phase 4</span>
-          <span class="phase-card__name">Automation</span>
-          <span class="phase-card__outcome">Reduce manual effort and repetition.</span>
-          <div class="phase-card__more">
-            <p>Keep delivery working when work gets busy.</p>
-            <ul>
-              <li>You leave with: steps you can repeat without thinking</li>
-            </ul>
-          </div>
-        </a>
-        <a class="phase-card" href="/sovereignty" role="listitem">
-          <span class="phase-card__num">Phase 5</span>
-          <span class="phase-card__name">Sovereignty</span>
-          <span class="phase-card__outcome">Stabilize what you built so it holds.</span>
-          <div class="phase-card__more">
-            <p>Rules for tools on paid work.</p>
-            <ul>
-              <li>You leave with: rules you actually follow</li>
-            </ul>
-          </div>
-        </a>
+    <section class="home-section" id="what-this-does" aria-labelledby="what-h" data-sh-flow-section>
+      <div class="home-section__inner home-reveal">
+        <p class="home-section__label" id="what-h">What this does</p>
+        <p class="home-section__body">This is a diagnostic system.</p>
+        <p class="home-section__body">It identifies:</p>
+        <ul class="home-list">
+          <li>where your offer breaks</li>
+          <li>what’s unclear</li>
+          <li>what’s missing</li>
+          <li>what needs to change first</li>
+        </ul>
+        <p class="home-section__body">Then it routes you to the correct next step.</p>
+        <p class="home-section__body">Not more content.<br />Not more theory.<br />Actual direction.</p>
+        <div class="home-cta-row">
+          <a href="/capture" class="btn btn--pri home-diag-cta">Start Diagnostic</a>
+        </div>
       </div>
     </section>
 
-    <section id="diagnostic" data-sh-flow-section>
-      <div class="diag-inner st-reveal">
-        <h2>Start here</h2>
-        <p>Answer a few questions.<br />See where you’re losing time, money, or attention.<br />Get one clear action to fix it this week.</p>
-        <a href="/capture" class="btn btn--pri" id="diag-cta-primary">Start diagnostic</a>
-        <p class="diag-skip-hint">If you don’t need clarity, skip ahead.</p>
+    <section class="home-section" id="system-accordion" aria-labelledby="sys-acc-title" data-sh-flow-section>
+      <div class="home-section__inner home-reveal">
+        <div class="home-accordion" id="home-phase-accordion">
+          <h2 class="home-accordion__title" id="sys-acc-title">The System</h2>
+
+          <details class="home-acc-item" data-home-acc>
+            <summary>Capture</summary>
+            <div class="home-acc-item__body">Identify what actually has value and demand.</div>
+          </details>
+          <details class="home-acc-item" data-home-acc>
+            <summary>Monetize</summary>
+            <div class="home-acc-item__body">Connect what you sell to what the market already pays for.</div>
+          </details>
+          <details class="home-acc-item" data-home-acc>
+            <summary>Structure</summary>
+            <div class="home-acc-item__body">Shape delivery so work compounds instead of piling up.</div>
+          </details>
+          <details class="home-acc-item" data-home-acc>
+            <summary>Automation</summary>
+            <div class="home-acc-item__body">Remove repetition without losing quality.</div>
+          </details>
+          <details class="home-acc-item" data-home-acc>
+            <summary>Sovereignty</summary>
+            <div class="home-acc-item__body">Set rules so the system holds when pressure hits.</div>
+          </details>
+        </div>
       </div>
     </section>
 
-    <p class="home-cei-preface st-reveal">This is what this looks like when it’s built properly.</p>
-
-    <section class="home-cei home-os-discover" id="home-cei" aria-label="Custom systems" data-sh-flow-section>
-      <div class="home-cei__ambient" aria-hidden="true">
-        <span></span><span></span><span></span><span></span>
-      </div>
-      <div class="home-cei__layout">
-        <p class="home-cei__line home-cei__line--reveal" data-cei-line="1">This is not a template.</p>
-        <p class="home-cei__line home-cei__line--reveal" data-cei-line="2">It is a working system.</p>
-        <div class="home-cei__viz-wrap" id="home-cei-viz">
-          <div class="cei-constellation" aria-hidden="true">
-            <canvas class="cei-system-canvas" width="400" height="400" aria-hidden="true"></canvas>
-            <div class="cei-center">
-              <span class="cei-center__text">Cultural Experience Intelligence</span>
-            </div>
-          </div>
+    <section class="home-section" id="consequence" aria-labelledby="cons-h" data-sh-flow-section>
+      <div class="home-section__inner home-reveal">
+        <p class="home-section__label" id="cons-h">If you don’t fix this</p>
+        <p class="home-section__body">You keep:</p>
+        <ul class="home-consequence">
+          <li>guessing what to build</li>
+          <li>changing direction</li>
+          <li>underpricing</li>
+          <li>overworking</li>
+          <li>rebuilding the same thing</li>
+        </ul>
+        <p class="home-section__body">Most people stay here.</p>
+        <div class="home-cta-row">
+          <a href="/capture" class="btn btn--pri home-diag-cta">Start Diagnostic</a>
         </div>
-        <p class="home-cei__lead">If you want this built for your business:</p>
-        <div class="home-cei__cta-wrap">
-          <a href="/private-access" class="home-os-discover__link home-cei__cta">Request access</a>
-        </div>
-        <p class="home-cei__example">This site’s one example of what that can look like.</p>
       </div>
     </section>
 
-    <section class="home-origin home-origin--finale" id="home-origin" aria-label="Stephuary" data-sh-flow-section>
-      <div class="home-origin__ambient" aria-hidden="true">
-        <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
-      </div>
-      <div class="home-origin__shell">
-        <div class="home-origin__rail" aria-hidden="true">
-          <div class="home-origin__rail-fill"></div>
-        </div>
-        <div class="home-origin__content">
-          <div class="home-origin__inner">
-            <div class="home-origin__group" data-origin-group="1">
-              <p class="home-origin__line home-origin__line--gold">Stephuary comes from my name, and my birthday, February 28.</p>
-            </div>
-            <div class="home-origin__group" data-origin-group="2">
-              <p class="home-origin__line">I stopped treating it like a single day and turned it into a month.</p>
-            </div>
-            <div class="home-origin__group" data-origin-group="3">
-              <p class="home-origin__line">That idea stayed.</p>
-            </div>
-            <div class="home-origin__group home-origin__group--closing" data-origin-group="4">
-              <p class="home-origin__line home-origin__line--resolve">You don’t wait for the right moment.</p>
-              <p class="home-origin__line home-origin__line--resolve">You build something that works for you every day.</p>
-            </div>
-          </div>
+    <section class="home-section" id="path-preview" aria-labelledby="path-h" data-sh-flow-section>
+      <div class="home-section__inner home-reveal">
+        <p class="home-section__label" id="path-h">What happens</p>
+        <div class="home-path">
+          <p>You start with a diagnostic.</p>
+          <p>Then you get:</p>
+          <ul>
+            <li>clarity on what’s actually wrong</li>
+            <li>a defined direction</li>
+            <li>a recommended next step</li>
+          </ul>
+          <p>From there:</p>
+          <ul>
+            <li>you execute</li>
+            <li>or go deeper</li>
+          </ul>
         </div>
       </div>
-      <p class="home-origin__pause" id="home-origin-pause" hidden>You made it to the end.</p>
     </section>
 
-    <div class="home-end-bridge">
-      <div class="home-end-bridge__fade" aria-hidden="true"></div>
-      <p class="home-foot-note home-foot-note--finale">Not everything here appears at once.</p>
-    </div>
+    <section class="home-section home-final" id="final-cta" aria-labelledby="final-h" data-sh-flow-section>
+      <div class="home-section__inner home-reveal">
+        <p class="home-section__label" id="final-h">Next step</p>
+        <p class="home-section__body">You don’t need more information.</p>
+        <p class="home-section__body">You need to see clearly.</p>
+        <div class="home-cta-row">
+          <a href="/capture" class="btn btn--pri home-diag-cta">Start Diagnostic</a>
+        </div>
+      </div>
+    </section>
+
     </main>
 
     <footer class="home-footer">
       <div class="foot-inner">
-        <div class="foot-row">
-          <span class="foot-mark">Stephuary</span>
-          <ul class="foot-links">
-            <li><a href="/systems">System</a></li>
-            <li><a href="/pricing">Pricing</a></li>
-            <li><a href="/access" class="foot-link--club">.5% Club</a></li>
-            <li class="foot-links__stack">
-              <a href="https://stephuary.substack.com" target="_blank" rel="noopener">Grown spaghetti</a>
-              <span class="identity-micro">I turn scattered ideas into structured income.</span>
-            </li>
-            <li class="foot-links__stack">
-              <a href="https://onlysometimesclub.com" target="_blank" rel="noopener noreferrer">Only Sometimes Club</a>
-              <span class="identity-micro">Cultural Experience Intelligence</span>
-            </li>
-          </ul>
-        </div>
+        <span class="foot-mark">Stephuary</span>
+        <ul class="foot-links">
+          <li><a href="/capture">Diagnostic</a></li>
+          <li><a href="/systems">Systems</a></li>
+          <li><a href="/archive">Archive</a></li>
+        </ul>
         <p class="foot-micro-line">Built by Stephanie. Designed to work without you.</p>
       </div>
     </footer>
-  </div>
-
-  <div id="leak-overlay" class="leak-overlay" role="dialog" aria-modal="true" aria-labelledby="leak-dialog-title" aria-hidden="true">
-    <div class="leak-overlay__bg" aria-hidden="true"></div>
-    <div class="leak-panel">
-      <h2 id="leak-dialog-title" class="sr-only">Find my leaks</h2>
-      <button type="button" class="leak-close" id="leak-close" aria-label="Close">×</button>
-
-      <div class="leak-step is-active" id="leak-step-intro" data-leak-step="intro">
-        <p class="leak-intro-text">Give me 5 seconds.</p>
-      </div>
-
-      <div class="leak-step" id="leak-step-q1" data-leak-step="q1">
-        <p class="leak-q-num">Question 1 of 3</p>
-        <p class="leak-q-text">How does your time usually go on the thing that pulls you?</p>
-        <div class="leak-options" role="group" aria-label="Time usage">
-          <button type="button" class="leak-opt" data-leak-a="q1" data-value="0">Pulled into feeds, tabs, and half-starts</button>
-          <button type="button" class="leak-opt" data-leak-a="q1" data-value="1">Split: some deep work, a lot of drift</button>
-          <button type="button" class="leak-opt" data-leak-a="q1" data-value="2">Mostly intentional; I know where it went</button>
-        </div>
-      </div>
-
-      <div class="leak-step" id="leak-step-q2" data-leak-step="q2">
-        <p class="leak-q-num">Question 2 of 3</p>
-        <p class="leak-q-text">What do you get back from that time, in money or progress?</p>
-        <div class="leak-options" role="group" aria-label="Perceived return">
-          <button type="button" class="leak-opt" data-leak-a="q2" data-value="0">Almost nothing I could invoice or ship</button>
-          <button type="button" class="leak-opt" data-leak-a="q2" data-value="1">Mixed .  hard to point to</button>
-          <button type="button" class="leak-opt" data-leak-a="q2" data-value="2">Enough that I would defend the hours</button>
-        </div>
-      </div>
-
-      <div class="leak-step" id="leak-step-q3" data-leak-step="q3">
-        <p class="leak-q-num">Question 3 of 3</p>
-        <p class="leak-q-text">Hours per week on that pull .  honest.</p>
-        <div class="leak-options" role="group" aria-label="Hours spent">
-          <button type="button" class="leak-opt" data-leak-a="q3" data-value="0">Under 5</button>
-          <button type="button" class="leak-opt" data-leak-a="q3" data-value="1">5 to 10</button>
-          <button type="button" class="leak-opt" data-leak-a="q3" data-value="2">10 to 15</button>
-          <button type="button" class="leak-opt" data-leak-a="q3" data-value="3">Over 15</button>
-        </div>
-      </div>
-
-      <div class="leak-step" id="leak-step-outcome" data-leak-step="outcome" aria-live="polite">
-        <div class="leak-calc" id="leak-calc-block">
-          <p class="leak-calc__row"><span id="leak-out-dollar">$0</span><small>/yr</small></p>
-          <p class="leak-calc__sub">estimated yearly cost</p>
-          <p class="leak-calc__row" style="margin-top: 18px;"><span id="leak-out-hours">0</span><small>h / wk</small></p>
-          <p class="leak-calc__sub">time not recovered</p>
-        </div>
-        <p class="leak-verdict" id="leak-verdict"></p>
-        <p class="leak-action-line" id="leak-action-line">Remove one source. Set one boundary. This week.</p>
-        <div class="leak-actions" id="leak-actions-block">
-          <a href="/capture" class="btn btn--ghost" id="leak-goto-phase">Open Step 1</a>
-          <button type="button" class="btn btn--ghost" id="leak-goto-phases">See How It Works</button>
-        </div>
-      </div>
-    </div>
   </div>
 
   <div id="ps-overlay" class="ps-overlay" role="dialog" aria-modal="true" aria-label="One Free Spot" aria-hidden="true">
@@ -1838,7 +991,6 @@
   <script src="/stephuary-early-mode.js" defer></script>
   <script src="/stephuary-personalization.js" defer></script>
   <script src="/stephuary-private-selection.js" defer></script>
-  <script src="/stephuary-global-map.js" defer></script>
   <script src="/stephuary-home-finale.js" defer></script>
   <script>
     (function () {
@@ -1862,7 +1014,6 @@
         false
       );
 
-      /* Hero immersive: layered depth particles, faint arcs, gradient, sweep, parallax */
       (function heroImmersive() {
         var container = document.querySelector('.hero-container');
         var heroEl = document.getElementById('hero');
@@ -2025,49 +1176,6 @@
         }
         draw();
 
-        function scheduleSweep() {
-          window.setTimeout(function () {
-            lightSweep();
-            scheduleSweep();
-          }, 8000 + Math.random() * 4000);
-        }
-
-        function lightSweep() {
-          var sweep = document.createElement('div');
-          sweep.setAttribute('aria-hidden', 'true');
-          sweep.style.position = 'absolute';
-          sweep.style.top = '0';
-          sweep.style.left = '-55%';
-          sweep.style.width = '55%';
-          sweep.style.height = '100%';
-          sweep.style.background =
-            'linear-gradient(90deg, transparent, rgba(255,255,255,0.055), transparent)';
-          sweep.style.transform = 'skewX(-18deg)';
-          sweep.style.zIndex = '1';
-          sweep.style.pointerEvents = 'none';
-          var heroContent = container.querySelector('.hero-content');
-          if (heroContent) {
-            container.insertBefore(sweep, heroContent);
-          } else {
-            container.appendChild(sweep);
-          }
-          sweep.animate(
-            [
-              { transform: 'translateX(0) skewX(-18deg)' },
-              { transform: 'translateX(290%) skewX(-18deg)' }
-            ],
-            {
-              duration: 4200,
-              easing: 'cubic-bezier(0.45, 0, 0.2, 1)'
-            }
-          );
-          window.setTimeout(function () {
-            if (sweep.parentNode) sweep.parentNode.removeChild(sweep);
-          }, 4300);
-        }
-        scheduleSweep();
-        window.setTimeout(lightSweep, 2800);
-
         if (canvasWrap && typeof gsap !== 'undefined') {
           try {
             gsap.to(canvasWrap, {
@@ -2082,7 +1190,6 @@
             });
           } catch (e1) {}
         }
-
       })();
 
       var nav = document.getElementById('main-nav');
@@ -2092,411 +1199,64 @@
       window.addEventListener('scroll', updateNavScroll, { passive: true });
       updateNavScroll();
 
-      /* Live leak detection overlay */
-      var leakOverlay = document.getElementById('leak-overlay');
-      var leakOpenBtn = document.getElementById('leak-open');
-      var leakCloseBtn = document.getElementById('leak-close');
-      var leakIntroTimer = null;
-      var leakLastFocus = null;
-      var leakAnswers = { q1: null, q2: null, q3: null };
-
-      var LEAK_Q1 = [0.72, 0.52, 0.28];
-      var LEAK_Q2 = [78, 58, 42];
-      var LEAK_Q3 = [3, 7.5, 12, 19];
-
-      function leakClamp(n, a, b) {
-        return Math.max(a, Math.min(b, n));
-      }
-
-      function leakCompute() {
-        var h = LEAK_Q3[leakAnswers.q3];
-        var lf = LEAK_Q1[leakAnswers.q1];
-        var rate = LEAK_Q2[leakAnswers.q2];
-        var leakH = h * lf;
-        var annual = leakH * 52 * rate;
-        annual = leakClamp(annual, 1200, 52000);
-        leakH = leakClamp(leakH, 0.5, 22);
-        return {
-          dollars: Math.round(annual / 10) * 10,
-          hours: Math.round(leakH * 10) / 10
-        };
-      }
-
-      function leakVerdict(d, h) {
-        var ds = '$' + d.toLocaleString();
-        var hs = h % 1 === 0 ? String(Math.round(h)) : h.toFixed(1);
-        return (
-          'You lose about ' +
-          ds +
-          ' a year and ' +
-          hs +
-          ' hours a week on that pull. You had not added it up before.'
-        );
-      }
-
-      function leakReset() {
-        leakAnswers = { q1: null, q2: null, q3: null };
-        if (leakIntroTimer) {
-          window.clearTimeout(leakIntroTimer);
-          leakIntroTimer = null;
-        }
-        document.querySelectorAll('.leak-opt').forEach(function (b) {
-          b.classList.remove('is-selected');
-        });
-        document.querySelectorAll('.leak-overlay .leak-step').forEach(function (s) {
-          s.classList.remove('is-active');
-        });
-        var intro = document.getElementById('leak-step-intro');
-        if (intro) {
-          intro.classList.add('is-active');
-          gsap.set(intro, { opacity: 1 });
-          var it = intro.querySelector('.leak-intro-text');
-          if (it) gsap.set(it, { opacity: 1, y: 0 });
-        }
-        if (leakOverlay) leakOverlay.classList.remove('is-deep');
-        var ld = document.getElementById('leak-out-dollar');
-        var lh = document.getElementById('leak-out-hours');
-        var lv = document.getElementById('leak-verdict');
-        if (ld) ld.textContent = '$0';
-        if (lh) lh.textContent = '0';
-        if (lv) lv.textContent = '';
-        gsap.set('#leak-verdict, #leak-action-line, #leak-actions-block', { opacity: 0 });
-        ['leak-step-q1', 'leak-step-q2', 'leak-step-q3', 'leak-step-outcome'].forEach(function (id) {
-          var el = document.getElementById(id);
-          if (el) gsap.set(el, { opacity: 1, y: 0 });
-        });
-      }
-
-      function leakGoTo(stepName) {
-        var next = leakOverlay && leakOverlay.querySelector('[data-leak-step="' + stepName + '"]');
-        var cur = leakOverlay && leakOverlay.querySelector('.leak-step.is-active');
-        if (stepName === 'q1' && leakIntroTimer) {
-          window.clearTimeout(leakIntroTimer);
-          leakIntroTimer = null;
-        }
-        if (cur && next && cur === next) return;
-        if (!next) return;
-
-        var showNextLeakStep = function () {
-          if (cur) {
-            cur.classList.remove('is-active');
-          }
-          next.classList.add('is-active');
-          gsap.fromTo(next, { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.4, ease: 'power2.out' });
-        };
-
-        if (cur) {
-          gsap.to(cur, {
-            opacity: 0,
-            duration: 0.22,
-            ease: 'power2.in',
-            onComplete: function () {
-              showNextLeakStep();
-            }
+      (function accordionExclusive() {
+        var root = document.getElementById('home-phase-accordion');
+        if (!root) return;
+        var items = root.querySelectorAll('details[data-home-acc]');
+        items.forEach(function (d) {
+          d.addEventListener('toggle', function () {
+            if (!d.open) return;
+            items.forEach(function (o) {
+              if (o !== d) o.open = false;
+            });
           });
-        } else {
-          showNextLeakStep();
-        }
-      }
-
-      function leakFinish() {
-        var cur = document.getElementById('leak-step-q3');
-        var res = leakCompute();
-        if (!cur || !leakOverlay) return;
-
-        gsap.to(cur, {
-          opacity: 0,
-          duration: 0.28,
-          ease: 'power2.in',
-          onComplete: function () {
-            cur.classList.remove('is-active');
-            leakOverlay.classList.add('is-deep');
-            window.setTimeout(function () {
-              var out = document.getElementById('leak-step-outcome');
-              if (!out) return;
-              out.classList.add('is-active');
-              document.getElementById('leak-out-dollar').textContent = '$0';
-              document.getElementById('leak-out-hours').textContent = '0';
-              gsap.set('#leak-verdict', { opacity: 0, y: 6 });
-              gsap.set('#leak-action-line', { opacity: 0 });
-              gsap.set('#leak-actions-block', { opacity: 0 });
-              gsap.fromTo(out, { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 0.45, ease: 'power2.out' });
-
-              var nums = { d: 0, h: 0 };
-              gsap.to(nums, {
-                d: res.dollars,
-                h: res.hours,
-                duration: 1.25,
-                ease: 'power2.out',
-                onUpdate: function () {
-                  var elD = document.getElementById('leak-out-dollar');
-                  var elH = document.getElementById('leak-out-hours');
-                  if (elD) elD.textContent = '$' + Math.round(nums.d).toLocaleString();
-                  if (elH) elH.textContent = nums.h.toFixed(1);
-                },
-                onComplete: function () {
-                  var v = document.getElementById('leak-verdict');
-                  if (v) v.textContent = leakVerdict(res.dollars, res.hours);
-                  gsap.to('#leak-verdict', { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' });
-                  gsap.to('#leak-action-line', { opacity: 1, duration: 0.38, delay: 0.06 });
-                  gsap.to('#leak-actions-block', { opacity: 1, duration: 0.38, delay: 0.12 });
-                }
-              });
-            }, 650);
-          }
         });
-      }
-
-      function leakClose() {
-        if (!leakOverlay) return;
-        if (leakIntroTimer) {
-          window.clearTimeout(leakIntroTimer);
-          leakIntroTimer = null;
-        }
-        leakOverlay.classList.remove('is-open', 'is-deep');
-        leakOverlay.setAttribute('aria-hidden', 'true');
-        document.body.classList.remove('leak-open');
-        leakReset();
-        if (leakLastFocus && typeof leakLastFocus.focus === 'function') {
-          leakLastFocus.focus();
-        }
-      }
-
-      function leakOpen() {
-        if (!leakOverlay) return;
-        leakLastFocus = document.activeElement;
-        leakReset();
-        leakOverlay.classList.add('is-open');
-        leakOverlay.setAttribute('aria-hidden', 'false');
-        document.body.classList.add('leak-open');
-        gsap.fromTo(
-          '.leak-panel',
-          { opacity: 0, scale: 0.98, y: 14 },
-          { opacity: 1, scale: 1, y: 0, duration: 0.5, ease: 'power3.out' }
-        );
-        gsap.fromTo(
-          '#leak-step-intro .leak-intro-text',
-          { opacity: 0, y: 8 },
-          { opacity: 1, y: 0, duration: 0.45, ease: 'power2.out', delay: 0.06 }
-        );
-        leakIntroTimer = window.setTimeout(function () {
-          leakGoTo('q1');
-        }, 1700);
-        window.requestAnimationFrame(function () {
-          if (leakCloseBtn) leakCloseBtn.focus();
-        });
-      }
-
-      if (leakOpenBtn) {
-        leakOpenBtn.addEventListener('click', function (e) {
-          e.preventDefault();
-          leakOpen();
-        });
-      }
-      if (leakCloseBtn) {
-        leakCloseBtn.addEventListener('click', function () {
-          leakClose();
-        });
-      }
-
-      var leakIntroEl = document.getElementById('leak-step-intro');
-      if (leakIntroEl) {
-        leakIntroEl.addEventListener('click', function (e) {
-          if (e.target.closest('#leak-close')) return;
-          leakGoTo('q1');
-        });
-      }
-
-      if (leakOverlay) {
-        leakOverlay.addEventListener('click', function (e) {
-          var opt = e.target.closest('.leak-opt');
-          if (!opt) return;
-          e.preventDefault();
-          var q = opt.getAttribute('data-leak-a');
-          var val = parseInt(opt.getAttribute('data-value'), 10);
-          if (q === 'q1' || q === 'q2' || q === 'q3') {
-            var group = opt.closest('.leak-options');
-            if (group) {
-              group.querySelectorAll('.leak-opt').forEach(function (b) {
-                b.classList.remove('is-selected');
-              });
-            }
-            opt.classList.add('is-selected');
-            leakAnswers[q] = val;
-            window.setTimeout(function () {
-              if (q === 'q1') leakGoTo('q2');
-              else if (q === 'q2') leakGoTo('q3');
-              else leakFinish();
-            }, 200);
-          }
-        });
-      }
-
-      var leakGotoPhases = document.getElementById('leak-goto-phases');
-      if (leakGotoPhases) {
-        leakGotoPhases.addEventListener('click', function () {
-          leakClose();
-          window.setTimeout(function () {
-            var sec = document.getElementById('system');
-            if (sec) sec.scrollIntoView({ behavior: 'smooth' });
-          }, 380);
-        });
-      }
-
-      document.addEventListener('keydown', function (e) {
-        if (e.key !== 'Escape' || !leakOverlay || !leakOverlay.classList.contains('is-open')) return;
-        leakClose();
-      });
-
-      var heroLines = document.querySelectorAll('#hero-h1 .hero-line');
-      if (heroLines.length) {
-        gsap.set(heroLines, { opacity: 0, y: 16 });
-        gsap.set(heroLines[0], { opacity: 1, y: 0 });
-      }
-
-      var tlHero = gsap.timeline({ defaults: { ease: 'power3.out' } });
-      tlHero.from('.hero-h1--wrap', { opacity: 0, y: 18, duration: 0.65 }, 0);
-      if (heroLines.length) {
-        tlHero.from(heroLines[0], { opacity: 0, y: 22, duration: 0.75 }, 0.1);
-      }
-      tlHero.from('#hero-identity-line', { opacity: 0, duration: 0.55 }, 0.18);
-      tlHero.from('#hero-payoff-line', { opacity: 0, duration: 0.5 }, 0.24);
-      tlHero.from('#hero-lead', { opacity: 0, y: 16, duration: 0.65 }, 0.3);
-      tlHero.from('#hero-actions', { opacity: 0, y: 12, duration: 0.55 }, 0.38);
-      tlHero.from('.hero-leak-dock', { opacity: 0, y: 16, duration: 0.55 }, 0.44);
-
-      var heroLineIndex = 0;
-      function advanceHeroLine() {
-        if (heroLines.length < 2) return;
-        var prev = heroLineIndex;
-        heroLineIndex = (heroLineIndex + 1) % heroLines.length;
-        gsap.to(heroLines[prev], { opacity: 0, y: -10, duration: 0.42, ease: 'power2.in' });
-        gsap.fromTo(
-          heroLines[heroLineIndex],
-          { opacity: 0, y: 14 },
-          { opacity: 1, y: 0, duration: 0.55, ease: 'power2.out', delay: 0.08 }
-        );
-      }
-      if (heroLines.length > 1) {
-        window.setTimeout(function () {
-          window.setInterval(advanceHeroLine, 4200);
-        }, 3200);
-      }
+      })();
 
       var heroParallax = document.getElementById('hero-parallax');
-      var heroLeakDock = document.querySelector('.hero-leak-dock');
-      function heroParallaxTween(el) {
-        if (!el) return;
-        gsap.to(el, {
-          y: 44,
-          ease: 'none',
-          scrollTrigger: {
-            trigger: '#hero',
-            start: 'top top',
-            end: 'bottom top',
-            scrub: 0.5
-          }
-        });
-      }
-      heroParallaxTween(heroParallax);
-      heroParallaxTween(heroLeakDock);
-
-      var proofPath = document.getElementById('proof-line-path');
-      if (proofPath) {
-        var plen = proofPath.getTotalLength();
-        proofPath.style.strokeDasharray = plen;
-        proofPath.style.strokeDashoffset = plen;
-        gsap.to(proofPath, {
-          strokeDashoffset: 0,
-          duration: 1.6,
-          ease: 'power2.inOut',
-          scrollTrigger: {
-            trigger: '#proof',
-            start: 'top 75%',
-            once: true
-          }
-        });
-      }
-
-      var nums = { money: 0, hours: 0 };
-      ScrollTrigger.create({
-        trigger: '#proof',
-        start: 'top 72%',
-        once: true,
-        onEnter: function () {
-          gsap.to(nums, {
-            money: 18420,
-            hours: 11.2,
-            duration: 2.1,
-            ease: 'power2.out',
-            onUpdate: function () {
-              var m = document.getElementById('proof-money');
-              var h = document.getElementById('proof-hours');
-              if (m) m.textContent = '$' + Math.round(nums.money).toLocaleString();
-              if (h) h.textContent = nums.hours.toFixed(1);
-            }
-          });
-        }
-      });
-
-      gsap.from('#proof-card', {
-        opacity: 0,
-        y: 28,
-        duration: 0.85,
-        ease: 'power3.out',
-        scrollTrigger: {
-          trigger: '#proof',
-          start: 'top 78%',
-          once: true
-        }
-      });
-
-      var connPath = document.getElementById('connector-path');
-      if (connPath) {
+      if (heroParallax && typeof gsap !== 'undefined') {
         try {
-          var clen = connPath.getTotalLength();
-          connPath.style.strokeDasharray = clen;
-          connPath.style.strokeDashoffset = clen;
-          gsap.to(connPath, {
-            strokeDashoffset: 0,
-            duration: 2,
-            ease: 'power2.inOut',
+          gsap.to(heroParallax, {
+            y: 44,
+            ease: 'none',
             scrollTrigger: {
-              trigger: '.connector-wrap',
-              start: 'top 80%',
-              once: true
+              trigger: '#hero',
+              start: 'top top',
+              end: 'bottom top',
+              scrub: 0.5
             }
           });
         } catch (e) {}
       }
 
-      gsap.utils.toArray('.st-reveal').forEach(function (el, i) {
-        gsap.from(el, {
-          opacity: 0,
-          y: 22,
-          duration: 0.65,
-          delay: i * 0.06,
-          ease: 'power3.out',
-          scrollTrigger: {
-            trigger: el,
-            start: 'top 88%',
-            once: true
-          }
-        });
+      gsap.utils.toArray('.home-reveal').forEach(function (el) {
+        try {
+          gsap.fromTo(
+            el,
+            { opacity: 0, y: 16 },
+            {
+              opacity: 1,
+              y: 0,
+              duration: 0.65,
+              ease: 'power3.out',
+              scrollTrigger: {
+                trigger: el,
+                start: 'top 90%',
+                once: true,
+                onEnter: function () {
+                  el.classList.add('is-in');
+                }
+              }
+            }
+          );
+        } catch (e) {}
       });
 
-      gsap.from('.phase-card', {
-        opacity: 0,
-        y: 20,
-        stagger: 0.08,
-        duration: 0.55,
-        ease: 'power3.out',
-        scrollTrigger: {
-          trigger: '#phase-rail',
-          start: 'top 85%',
-          once: true
-        }
-      });
+      var tlHero = gsap.timeline({ defaults: { ease: 'power3.out' } });
+      tlHero.from('.hero-inner', { opacity: 0, y: 18, duration: 0.65 }, 0);
+      tlHero.from('#hero-h1', { opacity: 0, y: 18, duration: 0.65 }, 0.08);
+      tlHero.from('#hero-lead', { opacity: 0, y: 14, duration: 0.55 }, 0.18);
+      tlHero.from('#hero-actions', { opacity: 0, y: 12, duration: 0.5 }, 0.28);
 
       function syncDiagnosticFlags() {
         try {
@@ -2535,40 +1295,33 @@
         }
       }
 
+      function setAllDiagnosticCtas(text, href) {
+        document.querySelectorAll('.home-diag-cta').forEach(function (el) {
+          el.textContent = text;
+          el.href = href;
+          el.classList.remove('sh-home-results-cta');
+        });
+      }
+
+      var restartBtn = document.getElementById('home-restart-diag');
+
       function renderHeroCta() {
         syncDiagnosticFlags();
         var started = localStorage.getItem('diagnosticStarted') === 'true';
         var completed = localStorage.getItem('diagnosticCompleted') === 'true';
-        var primary = document.getElementById('hero-cta-primary');
-        var secondary = document.getElementById('hero-cta-secondary');
-        var diagBtn = document.getElementById('diag-cta-primary');
-        if (!primary || !secondary) return;
+        var restartNote = document.getElementById('home-restart-note');
 
         var resumeHref =
           window.StephuarySession && typeof window.StephuarySession.getResumeDiagnosticHref === 'function'
             ? window.StephuarySession.getResumeDiagnosticHref()
             : '/capture';
 
-        function wireRestart(secEl) {
-          var nu = secEl.cloneNode(true);
-          secEl.parentNode.replaceChild(nu, secEl);
-          nu.addEventListener('click', function (e) {
-            e.preventDefault();
-            clearDiagnosticForRestart();
-            window.location.href = '/capture';
-          });
-        }
-
         if (completed) {
-          primary.textContent = 'View Your Results';
-          primary.href = '/results';
-          secondary.textContent = 'See Next Step';
-          secondary.href = '/pricing';
-          secondary.onclick = null;
-          if (diagBtn) {
-            diagBtn.textContent = 'View Your Results';
-            diagBtn.href = '/results';
-          }
+          setAllDiagnosticCtas('View Your Results', '/results');
+          document.querySelectorAll('.home-diag-cta').forEach(function (el) {
+            el.classList.add('sh-home-results-cta');
+          });
+          if (restartNote) restartNote.hidden = true;
           if (window.StephuaryHomeFinale && typeof window.StephuaryHomeFinale.refreshCtas === 'function') {
             window.StephuaryHomeFinale.refreshCtas();
           }
@@ -2576,37 +1329,27 @@
         }
 
         if (started) {
-          primary.textContent = 'Continue Where You Left Off';
-          primary.href = resumeHref;
-          primary.classList.remove('sh-home-results-cta');
-          secondary.textContent = 'Start Over';
-          secondary.href = '/capture';
-          wireRestart(secondary);
-          if (diagBtn) {
-            diagBtn.textContent = 'Continue Where You Left Off';
-            diagBtn.href = resumeHref;
-            diagBtn.classList.remove('sh-home-results-cta');
-          }
+          setAllDiagnosticCtas('Continue Where You Left Off', resumeHref);
+          if (restartNote) restartNote.hidden = false;
           if (window.StephuaryHomeFinale && typeof window.StephuaryHomeFinale.refreshCtas === 'function') {
             window.StephuaryHomeFinale.refreshCtas();
           }
           return;
         }
 
-        primary.textContent = 'Start Diagnostic';
-        primary.href = '/capture';
-        primary.classList.remove('sh-home-results-cta');
-        secondary.textContent = 'See how it works';
-        secondary.href = '#system';
-        secondary.onclick = null;
-        if (diagBtn) {
-          diagBtn.textContent = 'Start Diagnostic';
-          diagBtn.href = '/capture';
-          diagBtn.classList.remove('sh-home-results-cta');
-        }
+        setAllDiagnosticCtas('Start Diagnostic', '/capture');
+        if (restartNote) restartNote.hidden = true;
         if (window.StephuaryHomeFinale && typeof window.StephuaryHomeFinale.refreshCtas === 'function') {
           window.StephuaryHomeFinale.refreshCtas();
         }
+      }
+
+      if (restartBtn) {
+        restartBtn.addEventListener('click', function (e) {
+          e.preventDefault();
+          clearDiagnosticForRestart();
+          window.location.href = '/capture';
+        });
       }
 
       function bootHeroCta() {
@@ -2623,55 +1366,11 @@
       }
       bootHeroCta();
 
-      (function () {
-        var reduce =
-          window.matchMedia &&
-          window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-        if (reduce || typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') return;
-        var foot = document.querySelector('.page > footer.home-footer');
-        var note = document.querySelector('.home-foot-note--finale');
-        var bridge = document.querySelector('.home-end-bridge');
-        if (note && bridge) {
-          gsap.fromTo(
-            note,
-            { autoAlpha: 0, y: 8 },
-            {
-              autoAlpha: 0.72,
-              y: 0,
-              duration: 1.15,
-              delay: 0.55,
-              ease: 'power2.out',
-              scrollTrigger: {
-                trigger: bridge,
-                start: 'top 91%',
-                once: true
-              }
-            }
-          );
-        }
-        if (foot) {
-          gsap.fromTo(
-            foot,
-            { autoAlpha: 0, y: 8 },
-            {
-              autoAlpha: 1,
-              y: 0,
-              duration: 0.85,
-              ease: 'power2.out',
-              scrollTrigger: {
-                trigger: foot,
-                start: 'top 96%',
-                once: true
-              }
-            }
-          );
-        }
-      })();
-
       window.addEventListener('load', function () {
         ScrollTrigger.refresh();
       });
     })();
   </script>
+
 </body>
 </html>
