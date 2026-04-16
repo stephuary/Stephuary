@@ -987,23 +987,33 @@
     'System Rebuilder': 'The Rebuilder'
   };
 
+  function migrateP01Bits(bits) {
+    if (!bits) return null;
+    if (bits.length === 10) {
+      return [bits[0], bits[1], bits[6], bits[8], bits[5], bits[9]];
+    }
+    return bits;
+  }
+
   function scoreP01Archetype(bits) {
+    var b = migrateP01Bits(bits);
+    if (!b || b.length < 6) return ARCHETYPES[0];
+    var j;
+    for (j = 0; j < 6; j++) {
+      if (b[j] !== 0 && b[j] !== 1) return ARCHETYPES[0];
+    }
     var s = {};
     ARCHETYPES.forEach(function(a) { s[a] = 0; });
     var T = [
       { a: { 'Unspoken Operator': 2, 'Pattern Suppressor': 1 }, b: { 'Precision Refiner': 2, 'System Rebuilder': 1 } },
       { a: { 'System Rebuilder': 3, 'Precision Refiner': 1 }, b: { 'Live Stabilizer': 3 } },
-      { a: { 'Precision Refiner': 3 }, b: { 'System Rebuilder': 3 } },
-      { a: { 'Live Stabilizer': 1 }, b: { 'Unspoken Operator': 2, 'Pattern Suppressor': 1 } },
-      { a: { 'Live Stabilizer': 2 }, b: { 'Precision Refiner': 3 } },
-      { a: { 'System Rebuilder': 3 }, b: { 'Live Stabilizer': 2 } },
       { a: { 'Unspoken Operator': 3, 'Pattern Suppressor': 2 }, b: { 'Live Stabilizer': 2 } },
-      { a: { 'Aware but Idle': 3, 'Pattern Suppressor': 1 }, b: { 'Live Stabilizer': 3 } },
       { a: { 'Wrong Environment Operator': 4 }, b: { 'Live Stabilizer': 2, 'Precision Refiner': 1 } },
+      { a: { 'System Rebuilder': 3 }, b: { 'Live Stabilizer': 2 } },
       { a: { 'Aware but Idle': 3 }, b: { 'System Rebuilder': 2, 'Precision Refiner': 1 } }
     ];
-    for (var i = 0; i < 10; i++) {
-      var k = bits[i] === 0 ? 'a' : 'b';
+    for (var i = 0; i < 6; i++) {
+      var k = b[i] === 0 ? 'a' : 'b';
       if (T[i] && T[i][k]) {
         Object.keys(T[i][k]).forEach(function(name) {
           s[name] += T[i][k][name];
@@ -1020,9 +1030,9 @@
     });
     var tie = ARCHETYPES.filter(function(a) { return s[a] === max; });
     if (tie.length > 1) {
-      if (bits[6] === 0) best = tie.indexOf('Unspoken Operator') >= 0 ? 'Unspoken Operator' : tie[0];
-      else if (bits[8] === 0) best = 'Wrong Environment Operator';
-      else if (bits[9] === 0) best = tie.indexOf('Aware but Idle') >= 0 ? 'Aware but Idle' : tie[0];
+      if (b[2] === 0) best = tie.indexOf('Unspoken Operator') >= 0 ? 'Unspoken Operator' : tie[0];
+      else if (b[3] === 0) best = 'Wrong Environment Operator';
+      else if (b[5] === 0) best = tie.indexOf('Aware but Idle') >= 0 ? 'Aware but Idle' : tie[0];
       else best = tie[0];
     }
     return best;
@@ -1043,22 +1053,23 @@
   }
 
   function deriveP01FromBits(bits) {
-    var notice = bits[0] === 0 ? 'Friction and misalignment before consensus.' : 'Improvement vectors before comfort.';
-    notice = (bits[2] === 0 ? 'Fine grain. ' : 'Cross-pattern. ') + notice;
-    notice += bits[3] === 0 ? ' Stated terms first.' : ' Subtext tracked automatically.';
+    var b = migrateP01Bits(bits);
+    var notice = b[0] === 0 ? 'Friction and misalignment before consensus.' : 'Improvement vectors before comfort.';
+    notice = (b[2] === 0 ? 'You queue important reads. ' : 'You surface important reads. ') + notice;
+    notice += b[3] === 0 ? ' Environment underuses your gear.' : ' Environment pulls on how you think.';
     var correct =
-      (bits[5] === 0 ? 'You correct by preventing recurrence.' : 'You correct by improving how it is handled.') +
+      (b[4] === 0 ? 'You correct by preventing recurrence.' : 'You correct by improving how it is handled.') +
       ' ' +
-      (bits[6] === 0 ? 'You often hold the correction.' : 'You put the correction in the room.');
+      (b[2] === 0 ? 'You often hold the correction.' : 'You put the correction in the room.');
     var operate =
-      (bits[1] === 0 ? 'Cause and structure before motion.' : 'Motion before full proof.') +
+      (b[1] === 0 ? 'Cause and structure before motion.' : 'Motion before full proof.') +
       ' ' +
-      (bits[7] === 0 ? 'You hesitate until certainty.' : 'You move before certainty and adjust.');
+      (b[5] === 0 ? 'Knowing without acting stalls you.' : 'Open search without closure stalls you.');
     return {
       notice: notice.trim(),
       correct: correct.trim(),
       operate: operate.trim(),
-      archetype: scoreP01Archetype(bits)
+      archetype: scoreP01Archetype(b)
     };
   }
 
@@ -1231,7 +1242,7 @@
       var raw = localStorage.getItem(P01_KEY);
       if (raw) {
         var d = JSON.parse(raw);
-        if (d.bits && d.bits.indexOf(null) < 0 && d.bits.length >= 10) {
+        if (d.bits && d.bits.indexOf(null) < 0 && (d.bits.length === 6 || d.bits.length === 10)) {
           var n = scoreP01Archetype(d.bits);
           return ARCH_SHORT[n] || n;
         }

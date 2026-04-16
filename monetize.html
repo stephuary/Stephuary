@@ -960,22 +960,31 @@
     } catch (e) { return null; }
   }
 
+  function migrateP01Bits(bits) {
+    if (!bits) return null;
+    if (bits.length === 10) {
+      return [bits[0], bits[1], bits[6], bits[8], bits[5], bits[9]];
+    }
+    return bits;
+  }
+
   function deriveProfileFromP01Bits(bits) {
-    var notice = bits[0] === 0 ? 'Friction and misalignment before consensus.' : 'Improvement vectors before comfort.';
-    notice = (bits[2] === 0 ? 'Fine grain. ' : 'Cross-pattern. ') + notice;
-    notice += bits[3] === 0 ? ' Stated terms first.' : ' Subtext tracked automatically.';
+    var b = migrateP01Bits(bits);
+    var notice = b[0] === 0 ? 'Friction and misalignment before consensus.' : 'Improvement vectors before comfort.';
+    notice = (b[2] === 0 ? 'You queue important reads. ' : 'You surface important reads. ') + notice;
+    notice += b[3] === 0 ? ' Environment underuses your gear.' : ' Environment pulls on how you think.';
     var correct =
-      (bits[5] === 0 ? 'You correct by preventing recurrence.' : 'You correct by improving how it is handled.') +
+      (b[4] === 0 ? 'You correct by preventing recurrence.' : 'You correct by improving how it is handled.') +
       ' ' +
-      (bits[6] === 0 ? 'You often hold the correction.' : 'You put the correction in the room.');
+      (b[2] === 0 ? 'You often hold the correction.' : 'You put the correction in the room.');
     var sensitivity =
-      bits[8] === 0
+      b[3] === 0
         ? 'Your strongest gear is not what the context pulls for.'
         : 'How you think is structurally used.';
     var operate =
-      (bits[1] === 0 ? 'Cause and structure before motion.' : 'Motion before full proof.') +
+      (b[1] === 0 ? 'Cause and structure before motion.' : 'Motion before full proof.') +
       ' ' +
-      (bits[7] === 0 ? 'You hesitate until certainty.' : 'You move before certainty and adjust.');
+      (b[5] === 0 ? 'Knowing without acting stalls you.' : 'Open search without closure stalls you.');
     return { notice: notice.trim(), correct: correct.trim(), sensitivity: sensitivity.trim(), operate: operate.trim() };
   }
 

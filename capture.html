@@ -878,10 +878,10 @@
           <div class="progress-bar-wrap progress-bar-wrap--sticky-mobile">
             <div class="progress-meta">
               <span class="progress-label progress-label--muted">Progress</span>
-              <span class="progress-count" id="progressCount">Step 1 of 10</span>
+              <span class="progress-count" id="progressCount">Step 1 of 6</span>
             </div>
             <div class="progress-track">
-              <div class="progress-fill" id="progressFill" style="width:10%"></div>
+              <div class="progress-fill" id="progressFill" style="width:16.67%"></div>
             </div>
           </div>
           <button type="button" class="live-read-drawer-toggle" id="liveReadDrawerToggle" aria-expanded="false" aria-controls="livePanel">View live read</button>
@@ -1033,8 +1033,8 @@
 (function(){
   const STORAGE_KEY = 'stephuary_capture_p01_v2';
   const RESULT_KEY = 'stephuary_result_v1';
-  const TOTAL_Q = 10;
-  const RAIL_LABELS = ['Detection','Response','Signal','Perception','Standards','Failure','Expression','Execution','Environment','Avoidance','Results'];
+  const TOTAL_Q = 6;
+  const RAIL_LABELS = ['Signal','Action','Expression','Environment','Failure','Block','Results'];
 
   const ARCHETYPES = [
     'Pattern Suppressor',
@@ -1060,46 +1060,22 @@
       b: { text: 'You adjust something immediately', bit: 1 }
     },
     {
-      instruction: 'Information you process first:',
-      micro: 'Pick one.',
-      a: { text: 'You catch specific details others miss', bit: 0 },
-      b: { text: 'You connect patterns others do not see', bit: 1 }
-    },
-    {
-      instruction: 'Listening default:',
-      micro: 'Pick one.',
-      a: { text: 'You take what is said at face value', bit: 0 },
-      b: { text: 'You track what is meant underneath', bit: 1 }
-    },
-    {
-      instruction: 'When something is “good enough” for others:',
-      micro: 'Pick one.',
-      a: { text: 'You register that it works', bit: 0 },
-      b: { text: 'You immediately see what is missing', bit: 1 }
-    },
-    {
-      instruction: 'When something fails, you blame:',
-      micro: 'Pick one.',
-      a: { text: 'It should have been prevented', bit: 0 },
-      b: { text: 'It should have been handled better', bit: 1 }
-    },
-    {
       instruction: 'When you notice something important:',
       micro: 'Pick one.',
       a: { text: 'You hold it because it would disrupt something', bit: 0 },
       b: { text: 'You say it even if it changes the dynamic', bit: 1 }
     },
     {
-      instruction: 'Execution default:',
-      micro: 'Pick one.',
-      a: { text: 'You hesitate until you feel certain', bit: 0 },
-      b: { text: 'You move before certainty and adjust', bit: 1 }
-    },
-    {
       instruction: 'Across your usual environments:',
       micro: 'Pick one.',
       a: { text: 'Your environment does not require what you are best at', bit: 0 },
       b: { text: 'Your environment depends on how you think', bit: 1 }
+    },
+    {
+      instruction: 'When something fails, you blame:',
+      micro: 'Pick one.',
+      a: { text: 'It should have been prevented', bit: 0 },
+      b: { text: 'It should have been handled better', bit: 1 }
     },
     {
       instruction: 'The more accurate stall label:',
@@ -1125,13 +1101,9 @@
     var T = [
       { a: { 'Unspoken Operator': 2, 'Pattern Suppressor': 1 }, b: { 'Precision Refiner': 2, 'System Rebuilder': 1 } },
       { a: { 'System Rebuilder': 3, 'Precision Refiner': 1 }, b: { 'Live Stabilizer': 3 } },
-      { a: { 'Precision Refiner': 3 }, b: { 'System Rebuilder': 3 } },
-      { a: { 'Live Stabilizer': 1 }, b: { 'Unspoken Operator': 2, 'Pattern Suppressor': 1 } },
-      { a: { 'Live Stabilizer': 2 }, b: { 'Precision Refiner': 3 } },
-      { a: { 'System Rebuilder': 3 }, b: { 'Live Stabilizer': 2 } },
       { a: { 'Unspoken Operator': 3, 'Pattern Suppressor': 2 }, b: { 'Live Stabilizer': 2 } },
-      { a: { 'Aware but Idle': 3, 'Pattern Suppressor': 1 }, b: { 'Live Stabilizer': 3 } },
       { a: { 'Wrong Environment Operator': 4 }, b: { 'Live Stabilizer': 2, 'Precision Refiner': 1 } },
+      { a: { 'System Rebuilder': 3 }, b: { 'Live Stabilizer': 2 } },
       { a: { 'Aware but Idle': 3 }, b: { 'System Rebuilder': 2, 'Precision Refiner': 1 } }
     ];
 
@@ -1148,9 +1120,9 @@
     });
     var tie = ARCHETYPES.filter(function(a) { return s[a] === max; });
     if (tie.length > 1) {
-      if (bits[6] === 0) best = tie.indexOf('Unspoken Operator') >= 0 ? 'Unspoken Operator' : tie[0];
-      else if (bits[8] === 0) best = 'Wrong Environment Operator';
-      else if (bits[9] === 0) best = tie.indexOf('Aware but Idle') >= 0 ? 'Aware but Idle' : tie[0];
+      if (bits[2] === 0) best = tie.indexOf('Unspoken Operator') >= 0 ? 'Unspoken Operator' : tie[0];
+      else if (bits[3] === 0) best = 'Wrong Environment Operator';
+      else if (bits[5] === 0) best = tie.indexOf('Aware but Idle') >= 0 ? 'Aware but Idle' : tie[0];
       else best = tie[0];
     }
     return best;
@@ -1165,21 +1137,21 @@
         return [
           'Mismatch and cost before others name them.',
           bits[1] === 0 ? 'You dissect before you intervene.' : 'You change conditions before you explain them.',
-          bits[7] === 0 ? 'Timing waits on an internal green light.' : 'You ship and correct in motion.'
+          bits[1] === 0 ? 'Timing waits on an internal green light.' : 'You ship and correct in motion.'
         ];
       },
       expression: function(bits) {
-        return bits[6] === 0
+        return bits[2] === 0
           ? '<ul class="result-list"><li>Containment is your default: important reads stay partial so the surface stays smooth.</li><li>That is control of information, not lack of courage.</li></ul>'
           : '<ul class="result-list"><li>You force the read into the room when it matters.</li><li>Cost is visible, but so is the truth.</li></ul>';
       },
       environment: function(bits) {
-        return bits[8] === 0
+        return bits[3] === 0
           ? '<ul class="result-list"><li>Contexts rarely ask for your sharpest read.</li><li>You are useful, but not for the thing you do best.</li></ul>'
           : '<ul class="result-list"><li>What you are good at is load-bearing where you operate.</li></ul>';
       },
       avoidance: function(bits) {
-        return bits[9] === 0
+        return bits[5] === 0
           ? '<ul class="result-list"><li>You already know the move.</li><li>Naming it makes it real and binds you, so you delay.</li></ul>'
           : '<ul class="result-list"><li>You are still mapping.</li><li>The stall is uncertainty dressed as research.</li></ul>';
       },
@@ -1199,19 +1171,19 @@
         return [
           'Subtext, pace, and unstated stakes before content.',
           bits[1] === 0 ? 'You stabilize by explaining the frame.' : 'You stabilize by changing one lever.',
-          bits[7] === 0 ? 'You wait for permission that never comes.' : 'You move and tolerate mess.'
+          bits[1] === 0 ? 'You wait for permission that never comes.' : 'You move and tolerate mess.'
         ];
       },
       expression: function(bits) {
         return '<ul class="result-list"><li>You favor continuity over rupture.</li><li>You trade some precision in the room for predictability.</li></ul>';
       },
       environment: function(bits) {
-        return bits[8] === 0
+        return bits[3] === 0
           ? '<ul class="result-list"><li>People use your judgment without giving you authority.</li><li>You sit upstream of credit.</li></ul>'
           : '<ul class="result-list"><li>Your thinking is explicitly relied on.</li><li>Risk is volume, not invisibility.</li></ul>';
       },
       avoidance: function(bits) {
-        return bits[9] === 0
+        return bits[5] === 0
           ? '<ul class="result-list"><li>You avoid the moment that makes the read public and accountable.</li></ul>'
           : '<ul class="result-list"><li>Committing closes other paths you still see.</li></ul>';
       },
@@ -1229,13 +1201,13 @@
       },
       doLines: function(bits) {
         return [
-          bits[2] === 0 ? 'You prove value through granularity.' : 'You prove value through synthesis.',
+          bits[0] === 0 ? 'You prove value through granularity.' : 'You prove value through synthesis.',
           bits[1] === 0 ? 'You explain the mismatch in analysis.' : 'You patch what is in front of you.',
-          bits[7] === 0 ? 'You slow until the context feels legitimate.' : 'You ship anyway and absorb friction.'
+          bits[2] === 0 ? 'You keep the fit critique internal until it feels safe to surface.' : 'You name the mismatch even when it costs rapport.'
         ];
       },
       expression: function(bits) {
-        return bits[6] === 0
+        return bits[2] === 0
           ? '<ul class="result-list"><li>You swallow the fit critique because it sounds like complaining.</li></ul>'
           : '<ul class="result-list"><li>You say the fit problem out loud.</li><li>Accurate reads still read as disruptive.</li></ul>';
       },
@@ -1243,7 +1215,7 @@
         return '<ul class="result-list"><li>Rewards point away from what you are strongest at.</li><li>Miscast, not confused.</li></ul>';
       },
       avoidance: function(bits) {
-        return bits[9] === 0
+        return bits[5] === 0
           ? '<ul class="result-list"><li>Leaving feels uncertain; staying is the known failure mode.</li></ul>'
           : '<ul class="result-list"><li>Every lane here is the wrong room, so you avoid choosing.</li></ul>';
       },
@@ -1263,21 +1235,21 @@
         return [
           'What is broken in front of you before what is broken in theory.',
           bits[1] === 1 ? 'Intervention before full proof.' : 'A clean causal map before you touch anything.',
-          bits[7] === 1 ? 'Early motion, then correction.' : 'Measured motion after an internal threshold.'
+          bits[1] === 1 ? 'Early motion, then correction.' : 'Measured motion after an internal threshold.'
         ];
       },
       expression: function(bits) {
-        return bits[6] === 1
+        return bits[2] === 1
           ? '<ul class="result-list"><li>You verbalize tension when silence lets cost grow.</li><li>You accept a shifted dynamic as part of the fix.</li></ul>'
           : '<ul class="result-list"><li>You sometimes eat disruption quietly to keep throughput high.</li><li>Speed becomes silence.</li></ul>';
       },
       environment: function(bits) {
-        return bits[8] === 1
+        return bits[3] === 1
           ? '<ul class="result-list"><li>The environment pulls on how you think.</li><li>Scale or burn — not wasted.</li></ul>'
           : '<ul class="result-list"><li>The room does not ask for your best gear.</li><li>You compensate with effort.</li></ul>';
       },
       avoidance: function(bits) {
-        return bits[9] === 1
+        return bits[5] === 1
           ? '<ul class="result-list"><li>Closing one option feels like error.</li><li>Search replaces commitment.</li></ul>'
           : '<ul class="result-list"><li>You know the move and still buffer.</li><li>The stall is rarely ignorance.</li></ul>';
       },
@@ -1295,18 +1267,18 @@
       },
       doLines: function(bits) {
         return [
-          bits[3] === 1 ? 'You track intent underneath speech.' : 'You work from stated terms.',
-          bits[7] === 0 ? 'You wait for certainty that matches your internal bar.' : 'You move and revise, but inconsistently.',
-          bits[1] === 0 ? 'You model the problem in detail before you touch it.' : 'You touch it, then think harder than the room asked for.'
+          bits[2] === 1 ? 'You track intent underneath speech.' : 'You work from stated terms.',
+          bits[1] === 0 ? 'You wait for certainty that matches your internal bar.' : 'You move and revise, but inconsistently.',
+          bits[5] === 0 ? 'You already know the read — going public is what you stall on.' : 'You keep searching because any lane feels like it closes too much.'
         ];
       },
       expression: function(bits) {
-        return bits[6] === 0
+        return bits[2] === 0
           ? '<ul class="result-list"><li>You protect equilibrium.</li><li>Naming the read feels like aggression, so it stays private.</li></ul>'
           : '<ul class="result-list"><li>When you speak, it lands hard — it was queued too long.</li></ul>';
       },
       environment: function(bits) {
-        return bits[8] === 0
+        return bits[3] === 0
           ? '<ul class="result-list"><li>The room does not require your best contribution.</li><li>Awareness stays private instead of becoming advantage.</li></ul>'
           : '<ul class="result-list"><li>The room uses your thinking.</li><li>Pace and certainty still mis-match.</li></ul>';
       },
@@ -1327,23 +1299,23 @@
       },
       doLines: function(bits) {
         return [
-          bits[2] === 0 ? 'Specific faults and gaps others skim.' : 'Structural gaps across cases.',
-          bits[5] === 0 ? 'You fault prevention first.' : 'You fault response quality first.',
-          bits[7] === 0 ? 'You hold until the work matches the internal bar.' : 'You release early, then tighten in passes.'
+          bits[0] === 0 ? 'Specific faults and gaps others skim.' : 'Structural gaps across cases.',
+          bits[4] === 0 ? 'You fault prevention first.' : 'You fault response quality first.',
+          bits[1] === 0 ? 'You hold until the work matches the internal bar.' : 'You release early, then tighten in passes.'
         ];
       },
       expression: function(bits) {
-        return bits[6] === 0
+        return bits[2] === 0
           ? '<ul class="result-list"><li>You hold refinements until speaking feels cheaper than error.</li></ul>'
           : '<ul class="result-list"><li>You surface gaps directly.</li><li>That can read as “never satisfied.”</li></ul>';
       },
       environment: function(bits) {
-        return bits[8] === 1
+        return bits[3] === 1
           ? '<ul class="result-list"><li>Thinking quality is load-bearing.</li><li>You are part of the mechanism, not decoration.</li></ul>'
           : '<ul class="result-list"><li>The room rewards “fine.”</li><li>You see the missing five percent — isolating.</li></ul>';
       },
       avoidance: function(bits) {
-        return bits[9] === 1
+        return bits[5] === 1
           ? '<ul class="result-list"><li>You search for a cleaner frame instead of committing to an imperfect one.</li></ul>'
           : '<ul class="result-list"><li>You know what to ship and still negotiate with your own standard.</li></ul>';
       },
@@ -1363,21 +1335,21 @@
         return [
           'Chains and prerequisites before vibes.',
           bits[1] === 0 ? 'Name the problem before you act.' : 'Quick patch, then a rebuild plan underneath.',
-          bits[3] === 1 ? 'You read intent as data.' : 'You take inputs literally and fix the object level.'
+          bits[2] === 1 ? 'You read intent as data.' : 'You take inputs literally and fix the object level.'
         ];
       },
       expression: function(bits) {
-        return bits[6] === 0
+        return bits[2] === 0
           ? '<ul class="result-list"><li>You hold the systemic read so individuals do not feel accused.</li><li>That protects feelings, not outcomes.</li></ul>'
           : '<ul class="result-list"><li>You say the structural issue even when it implicates people.</li><li>Often correct, rarely soft.</li></ul>';
       },
       environment: function(bits) {
-        return bits[8] === 0
+        return bits[3] === 0
           ? '<ul class="result-list"><li>The environment wants motion, not architecture.</li><li>Your strength reads as friction.</li></ul>'
           : '<ul class="result-list"><li>The environment needs how you think.</li><li>Build and repair are valued.</li></ul>';
       },
       avoidance: function(bits) {
-        return bits[9] === 1
+        return bits[5] === 1
           ? '<ul class="result-list"><li>Modeling feels safer than bets.</li></ul>'
           : '<ul class="result-list"><li>You know the fix and avoid the political price of installing it.</li></ul>';
       },
@@ -1425,53 +1397,39 @@
         : 'Cost from moving before the map is tight.';
     }
     if (ac >= 3 && bits[2] !== null && bits[2] !== undefined) {
-      main += bits[2] === 0 ? ' Fine-grain signal first.' : ' Cross-case pattern first.';
-      loss += bits[2] === 0 ? ' Detail load without closure.' : ' Synthesis load without closure.';
+      main += bits[2] === 0 ? ' Important reads stay queued.' : ' Important reads enter the room.';
+      loss += bits[2] === 0 ? ' Signal stays partial in the room.' : ' Dynamic shifts when you name it.';
     }
     if (ac >= 4 && bits[3] !== null && bits[3] !== undefined) {
-      pattern = bits[3] === 0 ? 'You work from what is said on the surface.' : 'You track intent under the line.';
+      pattern = bits[3] === 0
+        ? 'Your environment underuses your best gear.'
+        : 'Your environment pulls on how you think.';
     }
     if (ac >= 5 && bits[4] !== null && bits[4] !== undefined) {
-      pattern += bits[4] === 0 ? ' You accept “works” as enough to move.' : ' “Works” still reads incomplete to you.';
+      pattern += bits[4] === 0 ? ' Failure reads as prevention miss first.' : ' Failure reads as handling quality first.';
     }
     if (ac >= 6 && bits[5] !== null && bits[5] !== undefined) {
-      pattern += bits[5] === 0 ? ' Failure is a design miss first.' : ' Failure is handling quality first.';
-    }
-    if (ac >= 7 && bits[6] !== null && bits[6] !== undefined) {
-      pattern += bits[6] === 0 ? ' Important reads stay internal.' : ' Important reads get pushed into the room.';
+      main = bits[5] === 0
+        ? 'You already have usable signal — motion is the gap.'
+        : 'Direction is still open — closure is the gap.';
+      loss = bits[3] === 0
+        ? 'You already have usable skill — not using it fully in this context.'
+        : 'Skill structurally used — volume and load are the risk.';
+      next = bits[5] === 0
+        ? 'Next: one public move that matches the read.'
+        : 'Next: pick one lane and close the others.';
     }
 
     if (ac >= 1 && ac < 3) {
       next = 'Next answers lock in the loss shape.';
     }
-    if (ac >= 3 && ac < 6) {
-      next = 'Pattern firms as standards and failure reads come in.';
+    if (ac >= 3 && ac < 5) {
+      next = 'Environment and failure answers tighten the pattern.';
     }
-    if (ac >= 6 && ac < 8) {
-      next = 'Expression and timing answers tighten what breaks.';
+    if (ac >= 5 && ac < 6) {
+      next = 'Last answer locks avoidance versus search.';
     }
-
-    if (ac >= 8 && bits[7] !== null && bits[7] !== undefined) {
-      loss = bits[7] === 0
-        ? 'Time is being lost through hesitation.'
-        : 'Cost from moving before certainty and repairing in motion.';
-      next = bits[7] === 0 ? 'Tighten the move before you add more analysis.' : 'Name what you ship before you widen scope.';
-    }
-    if (ac >= 9 && bits[8] !== null && bits[8] !== undefined) {
-      loss = bits[8] === 0
-        ? 'You already have usable skill — not using it fully in this context.'
-        : 'Skill structurally used — volume and load are the risk.';
-      next = bits[8] === 0 ? 'Fit is the lever — not more generic effort.' : 'Scale only what the context already uses.';
-    }
-    if (ac >= 10 && bits[9] !== null && bits[9] !== undefined) {
-      main = bits[9] === 0
-        ? 'You already have usable signal — motion is the gap.'
-        : 'Direction is still open — closure is the gap.';
-      next = bits[9] === 0
-        ? 'Next: one public move that matches the read.'
-        : 'Next: pick one lane and close the others.';
-    }
-    if (ac >= 10) {
+    if (ac >= 6) {
       next = 'Result locks — continue to the summary next.';
     }
 
@@ -1591,7 +1549,7 @@
     var phase = state.currentStep;
     items.forEach(function(el, i) {
       el.classList.remove('active', 'done');
-      if (i === 10) {
+      if (i === RAIL_LABELS.length - 1) {
         if (phase === 11) el.classList.add('active');
       } else if (i + 1 < phase) el.classList.add('done');
       else if (i + 1 === phase) el.classList.add('active');
@@ -1911,11 +1869,25 @@
     if (!skipLanding) resetLiveWaiting();
   }
 
+  function migrateBitsV2TenToSix(oldBits) {
+    if (!oldBits || oldBits.length !== 10) return null;
+    return [oldBits[0], oldBits[1], oldBits[6], oldBits[8], oldBits[5], oldBits[9]];
+  }
+
   function resumeFromStorage() {
     var d = loadStorage();
     if (!d || !d.bits) return false;
-    state.bits = d.bits;
+    state.bits = d.bits.slice();
+    var migratedFromV2Ten = false;
+    if (state.bits.length === 10) {
+      var migrated = migrateBitsV2TenToSix(state.bits);
+      if (migrated) {
+        state.bits = migrated;
+        migratedFromV2Ten = true;
+      }
+    }
     while (state.bits.length < TOTAL_Q) state.bits.push(null);
+    if (state.bits.length > TOTAL_Q) state.bits = state.bits.slice(0, TOTAL_Q);
     state.currentStep = d.currentStep || 1;
     var firstEmpty = state.bits.indexOf(null);
     if (firstEmpty === -1) {
@@ -1933,6 +1905,7 @@
       return true;
     }
     state.currentStep = firstEmpty + 1;
+    if (migratedFromV2Ten) saveStorage();
     startFlow(true);
     updateLivePanel(state.currentStep - 1, state.bits);
     return true;

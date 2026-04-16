@@ -1022,11 +1022,20 @@
     return null;
   }
 
+  function migrateP01Bits(bits) {
+    if (!bits) return null;
+    if (bits.length === 10) {
+      return [bits[0], bits[1], bits[6], bits[8], bits[5], bits[9]];
+    }
+    return bits;
+  }
+
   function deriveP01FromBits(bits) {
+    var b = migrateP01Bits(bits);
     var operate =
-      (bits[1] === 0 ? 'Cause and structure before motion.' : 'Motion before full proof.') +
+      (b[1] === 0 ? 'Cause and structure before motion.' : 'Motion before full proof.') +
       ' ' +
-      (bits[7] === 0 ? 'You hesitate until certainty.' : 'You move before certainty and adjust.');
+      (b[5] === 0 ? 'Knowing without acting stalls you.' : 'Open search without closure stalls you.');
     return { operate: operate.trim() };
   }
 

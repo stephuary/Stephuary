@@ -170,25 +170,26 @@
   }
 
   /**
-   * Maps capture diagnostic bit vector (10 binary choices) to canonical answer tags.
-   * Indices match capture.html QUESTIONS order.
+   * Maps capture diagnostic bit vector (6 binary choices) to canonical answer tags.
+   * Indices match capture.html QUESTIONS: signal, action, expression, environment, failure, true block.
    */
   function mapBitsToAnswers(bits) {
-    if (!bits || bits.length < 10) return null;
+    if (!bits || bits.length < 6) return null;
     var b = bits;
     var i;
-    for (i = 0; i < 10; i++) {
+    for (i = 0; i < 6; i++) {
       if (b[i] !== 0 && b[i] !== 1) return null;
     }
 
     var g = { make_money: 0, get_clear: 0, build_offer: 0, get_clients: 0, build_system: 0, fix_execution: 0 };
     if (b[0] === 1) g.build_offer += 2;
-    if (b[2] === 1) g.build_system += 3;
+    if (b[0] === 1) g.build_system += 2;
+    if (b[2] === 1) g.build_system += 1;
     if (b[4] === 1) g.build_offer += 2;
-    if (b[9] === 1) g.get_clear += 4;
-    if (b[9] === 0) g.fix_execution += 2;
-    if (b[7] === 0) g.fix_execution += 3;
-    if (b[6] === 1) g.get_clients += 2;
+    if (b[5] === 1) g.get_clear += 4;
+    if (b[5] === 0) g.fix_execution += 2;
+    if (b[1] === 0) g.fix_execution += 3;
+    if (b[2] === 1) g.get_clients += 2;
     if (b[1] === 1) g.make_money += 2;
 
     var bn = {
@@ -201,35 +202,35 @@
       execution_breakdown: 0,
       needs_full_review: 0
     };
-    if (b[9] === 1) {
+    if (b[5] === 1) {
       bn.too_many_ideas += 3;
       bn.scattered_focus += 2;
     }
-    if (b[9] === 0) {
+    if (b[5] === 0) {
       bn.execution_breakdown += 2;
       bn.no_offer += 2;
     }
-    if (b[2] === 1) bn.scattered_focus += 2;
-    if (b[8] === 0) bn.weak_positioning += 4;
-    if (b[5] === 0) bn.wrong_order += 2;
-    if (b[7] === 0) bn.execution_breakdown += 3;
-    if (b[4] === 1 && b[7] === 1) bn.no_money_path += 2;
+    if (b[0] === 1) bn.scattered_focus += 2;
+    if (b[3] === 0) bn.weak_positioning += 4;
+    if (b[4] === 0) bn.wrong_order += 2;
+    if (b[1] === 0) bn.execution_breakdown += 3;
+    if (b[4] === 1 && b[1] === 1) bn.no_money_path += 2;
 
     var directionClarity = 'medium';
-    if (b[9] === 1) directionClarity = 'low';
-    if (b[9] === 1 && b[2] === 1) directionClarity = 'low';
+    if (b[5] === 1) directionClarity = 'low';
+    if (b[5] === 1 && b[0] === 1) directionClarity = 'low';
 
     var revenueReadiness = 'low';
     if (b[4] === 0 && b[5] === 0) revenueReadiness = 'none';
-    if (b[5] === 1 && b[7] === 1) revenueReadiness = 'medium';
+    if (b[4] === 1 && b[1] === 1) revenueReadiness = 'medium';
 
     var audienceState = 'unclear';
-    if (b[3] === 1) audienceState = 'some';
-    if (b[8] === 1) audienceState = 'defined';
+    if (b[0] === 1) audienceState = 'some';
+    if (b[3] === 1) audienceState = 'defined';
 
     var executionIssue = 'none';
-    if (b[7] === 0) executionIssue = 'starting';
-    else if (b[7] === 1) executionIssue = 'shipping';
+    if (b[1] === 0) executionIssue = 'starting';
+    else if (b[1] === 1) executionIssue = 'shipping';
 
     return {
       goal: pickMaxVote(g) || 'get_clear',
@@ -328,13 +329,17 @@
 
       var cap = lsGet(CAPTURE_KEY);
       if ((!state.answers || !state.answers.source) && cap && cap.bits) {
+        var capBits = cap.bits;
+        if (Array.isArray(capBits) && capBits.length === 10) {
+          capBits = [capBits[0], capBits[1], capBits[6], capBits[8], capBits[5], capBits[9]];
+        }
         var filled = 0;
         var bi;
-        for (bi = 0; bi < cap.bits.length; bi++) {
-          if (cap.bits[bi] === 0 || cap.bits[bi] === 1) filled++;
+        for (bi = 0; bi < capBits.length; bi++) {
+          if (capBits[bi] === 0 || capBits[bi] === 1) filled++;
         }
-        if (filled >= 10) {
-          var derived = mapBitsToAnswers(cap.bits);
+        if (filled >= 6) {
+          var derived = mapBitsToAnswers(capBits);
           if (derived) state.answers = Object.assign(defaultState().answers, derived);
         } else if (filled > 0 && !state.answers.goal) {
           state.answers.goal = 'in_progress_capture';
@@ -492,7 +497,7 @@
 
   /**
    * Infer tags from capture bits (binary choices) when structured answers are absent.
-   * Indices match capture.html QUESTIONS (10 questions).
+   * Indices match capture.html QUESTIONS (6 questions).
    */
   function inferTagsFromBits(bits) {
     var out = {
@@ -503,15 +508,15 @@
       bottleneck: '',
       goal: ''
     };
-    if (!bits || bits.length < 10) return out;
+    if (!bits || bits.length < 6) return out;
 
-    if (bits[9] === 1) out.directionClarity = 'low';
-    else if (bits[9] === 0) out.directionClarity = 'medium';
+    if (bits[5] === 1) out.directionClarity = 'low';
+    else if (bits[5] === 0) out.directionClarity = 'medium';
 
-    if (bits[7] === 0) out.executionIssue = 'starting';
-    else if (bits[7] === 1) out.executionIssue = 'shipping';
+    if (bits[1] === 0) out.executionIssue = 'starting';
+    else if (bits[1] === 1) out.executionIssue = 'shipping';
 
-    if (bits[7] === 0 && bits[9] === 0) out.bottleneck = 'wrong_order';
+    if (bits[1] === 0 && bits[5] === 0) out.bottleneck = 'wrong_order';
 
     if (bits[2] === 1 && bits[3] === 1) out.directionClarity = out.directionClarity || 'medium';
 
@@ -592,6 +597,9 @@
     var a = state.answers || {};
     var cap = lsGet(CAPTURE_KEY);
     var bits = cap && cap.bits ? cap.bits : null;
+    if (bits && bits.length === 10) {
+      bits = [bits[0], bits[1], bits[6], bits[8], bits[5], bits[9]];
+    }
     var res = lsGet(RESULT_KEY);
     var archetype = res && res.type_primary ? String(res.type_primary) : '';
 

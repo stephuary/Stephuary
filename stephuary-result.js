@@ -15,9 +15,24 @@
     'System Rebuilder'
   ];
 
-  var TOTAL_Q = 10;
+  var PHASE_Q = 10;
+  var CAPTURE_Q = 6;
+
+  function migrateCaptureBitsTenToSix(bits) {
+    if (!bits || bits.length !== 10) return bits;
+    return [bits[0], bits[1], bits[6], bits[8], bits[5], bits[9]];
+  }
 
   function scoreArchetype(bits) {
+    var b = migrateCaptureBitsTenToSix(bits);
+    if (!b || b.length < CAPTURE_Q) {
+      var empty = {};
+      ARCHETYPES.forEach(function (a) {
+        empty[a] = 0;
+      });
+      return { archetype: ARCHETYPES[0], scores: empty, maxScore: 0 };
+    }
+    bits = b;
     var s = {};
     ARCHETYPES.forEach(function (a) {
       s[a] = 0;
@@ -35,17 +50,13 @@
     var T = [
       { a: { 'Unspoken Operator': 2, 'Pattern Suppressor': 1 }, b: { 'Precision Refiner': 2, 'System Rebuilder': 1 } },
       { a: { 'System Rebuilder': 3, 'Precision Refiner': 1 }, b: { 'Live Stabilizer': 3 } },
-      { a: { 'Precision Refiner': 3 }, b: { 'System Rebuilder': 3 } },
-      { a: { 'Live Stabilizer': 1 }, b: { 'Unspoken Operator': 2, 'Pattern Suppressor': 1 } },
-      { a: { 'Live Stabilizer': 2 }, b: { 'Precision Refiner': 3 } },
-      { a: { 'System Rebuilder': 3 }, b: { 'Live Stabilizer': 2 } },
       { a: { 'Unspoken Operator': 3, 'Pattern Suppressor': 2 }, b: { 'Live Stabilizer': 2 } },
-      { a: { 'Aware but Idle': 3, 'Pattern Suppressor': 1 }, b: { 'Live Stabilizer': 3 } },
       { a: { 'Wrong Environment Operator': 4 }, b: { 'Live Stabilizer': 2, 'Precision Refiner': 1 } },
+      { a: { 'System Rebuilder': 3 }, b: { 'Live Stabilizer': 2 } },
       { a: { 'Aware but Idle': 3 }, b: { 'System Rebuilder': 2, 'Precision Refiner': 1 } }
     ];
 
-    for (var i = 0; i < TOTAL_Q; i++) {
+    for (var i = 0; i < CAPTURE_Q; i++) {
       var tbl = {};
       tbl[i] = T[i];
       w(i, bits[i], tbl);
@@ -63,9 +74,9 @@
       return s[a] === max;
     });
     if (tie.length > 1) {
-      if (bits[6] === 0) best = tie.indexOf('Unspoken Operator') >= 0 ? 'Unspoken Operator' : tie[0];
-      else if (bits[8] === 0) best = 'Wrong Environment Operator';
-      else if (bits[9] === 0) best = tie.indexOf('Aware but Idle') >= 0 ? 'Aware but Idle' : tie[0];
+      if (bits[2] === 0) best = tie.indexOf('Unspoken Operator') >= 0 ? 'Unspoken Operator' : tie[0];
+      else if (bits[3] === 0) best = 'Wrong Environment Operator';
+      else if (bits[5] === 0) best = tie.indexOf('Aware but Idle') >= 0 ? 'Aware but Idle' : tie[0];
       else best = tie[0];
     }
     return { archetype: best, scores: s, maxScore: max };
@@ -78,9 +89,9 @@
   }
 
   function resolveResultVersion(archetype, bits, scores, maxScore) {
-    if (!bits || bits.length < TOTAL_Q) return 'mixed_general';
+    if (!bits || bits.length < CAPTURE_Q) return 'mixed_general';
     var incomplete = false;
-    for (var i = 0; i < TOTAL_Q; i++) {
+    for (var i = 0; i < CAPTURE_Q; i++) {
       if (bits[i] === null || bits[i] === undefined) incomplete = true;
     }
     if (incomplete) return 'mixed_general';
@@ -106,18 +117,18 @@
   }
 
   function blockFromBits(bits) {
-    if (!bits || bits[9] === undefined || bits[9] === null) return '';
-    return bits[9] === 0 ? 'Knowing without motion' : 'Open search without closure';
+    if (!bits || bits[5] === undefined || bits[5] === null) return '';
+    return bits[5] === 0 ? 'Knowing without motion' : 'Open search without closure';
   }
 
   function environmentFromBits(bits) {
-    if (!bits || bits[8] === undefined || bits[8] === null) return '';
-    return bits[8] === 0 ? 'Your strongest gear is not what the context pulls for' : 'How you think is structurally used';
+    if (!bits || bits[3] === undefined || bits[3] === null) return '';
+    return bits[3] === 0 ? 'Your strongest gear is not what the context pulls for' : 'How you think is structurally used';
   }
 
   function secondaryFromBits(bits) {
-    if (!bits || bits[7] === undefined || bits[7] === null) return '';
-    return bits[7] === 0 ? 'Hesitate until certain' : 'Move before certainty, then adjust';
+    if (!bits || bits[1] === undefined || bits[1] === null) return '';
+    return bits[1] === 0 ? 'Hesitate until certain' : 'Move before certainty, then adjust';
   }
 
   function buildSignals(bits) {
@@ -131,38 +142,32 @@
       impact: '',
       approach: ''
     };
-    if (!bits || bits.length < TOTAL_Q) return out;
+    if (!bits || bits.length < CAPTURE_Q) return out;
 
     out.detection =
       bits[0] === 0
         ? 'Friction and misalignment before consensus'
         : 'Improvement vectors before comfort';
-    if (bits[2] !== undefined && bits[2] !== null) {
-      out.detection += bits[2] === 0 ? ' · fine grain' : ' · cross-pattern';
-    }
 
     out.response =
       bits[1] === 0 ? 'Cause and structure before motion' : 'Motion before full proof';
 
-    out.processing = bits[2] === 0 ? 'Specific details first' : 'Patterns across cases first';
+    out.processing = bits[0] === 0 ? 'Granular signal first' : 'Structural upgrade read first';
 
-    out.awareness = bits[3] === 0 ? 'Stated terms first' : 'Subtext tracked automatically';
+    out.awareness = bits[2] === 0 ? 'Hold important reads to limit disruption' : 'Name important reads even when costly';
 
-    out.standards = bits[4] === 0 ? '"Works" as baseline' : '"Works" still looks incomplete';
+    out.standards = bits[3] === 0 ? 'Context underuses your strongest gear' : 'Context structurally uses how you think';
 
-    out.timing = bits[7] === 0 ? 'Wait for certainty' : 'Ship and adjust in motion';
+    out.timing = bits[1] === 0 ? 'Wait for certainty' : 'Ship and adjust in motion';
 
     out.impact =
-      bits[5] === 0 ? 'Failure reads as a design miss' : 'Failure reads as handling quality';
-    if (bits[8] !== undefined && bits[8] !== null) {
-      out.impact += bits[8] === 0 ? ' · context misaligned' : ' · context uses your thinking';
+      bits[4] === 0 ? 'Failure reads as a design miss' : 'Failure reads as handling quality';
+    if (bits[3] !== undefined && bits[3] !== null) {
+      out.impact += bits[3] === 0 ? ' · context misaligned' : ' · context uses your thinking';
     }
 
     out.approach =
-      bits[6] === 0 ? 'Hold the read to protect the room' : 'Push the read into the room';
-    if (bits[9] !== undefined && bits[9] !== null) {
-      out.approach += bits[9] === 0 ? ' · knowing without acting' : ' · still searching';
-    }
+      bits[5] === 0 ? 'Knowing without acting' : 'Open search without closure';
 
     return out;
   }
@@ -284,8 +289,8 @@
   }
 
   function phaseBitsComplete(bits) {
-    if (!bits || bits.length < TOTAL_Q) return false;
-    for (var i = 0; i < TOTAL_Q; i++) {
+    if (!bits || bits.length < PHASE_Q) return false;
+    for (var i = 0; i < PHASE_Q; i++) {
       if (bits[i] === null || bits[i] === undefined) return false;
     }
     return true;
@@ -729,17 +734,18 @@
 
     if (!bits || !bits.length) return fallback;
 
-    var scored = scoreArchetype(bits);
+    var capBits = migrateCaptureBitsTenToSix(bits);
+    var scored = scoreArchetype(capBits);
     var archetype = scored.archetype;
-    var version = resolveResultVersion(archetype, bits, scored.scores, scored.maxScore);
+    var version = resolveResultVersion(archetype, capBits, scored.scores, scored.maxScore);
     var primary = primaryPlaybookForVersion(version);
 
     var out = {
       type_primary: archetype,
-      type_secondary: secondaryFromBits(bits),
-      block: blockFromBits(bits),
-      environment: environmentFromBits(bits),
-      signals: buildSignals(bits),
+      type_secondary: secondaryFromBits(capBits),
+      block: blockFromBits(capBits),
+      environment: environmentFromBits(capBits),
+      signals: buildSignals(capBits),
       playbooks: [primary],
       result_version: version,
       diagnostic: buildDiagnostic(version, primary)

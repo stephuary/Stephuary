@@ -9,6 +9,15 @@
   var P04 = 'stephuary_validation_p04_v1';
   var P05 = 'stephuary_sovereignty_p05_v1';
   var T = 10;
+  var T01 = 6;
+
+  function migrateP01Bits(bits) {
+    if (!bits) return null;
+    if (bits.length === 10) {
+      return [bits[0], bits[1], bits[6], bits[8], bits[5], bits[9]];
+    }
+    return bits;
+  }
 
   function loadBits(key) {
     try {
@@ -30,23 +39,33 @@
     return true;
   }
 
+  function completeP01(bits) {
+    var b = migrateP01Bits(bits);
+    if (!b || b.length < T01) return false;
+    for (var i = 0; i < T01; i++) {
+      if (b[i] === null || b[i] === undefined) return false;
+    }
+    return true;
+  }
+
   function phase01(bits) {
-    if (!complete(bits)) return null;
+    var b = migrateP01Bits(bits);
+    if (!completeP01(b)) return null;
     return {
       time_leak:
-        bits[7] === 0
+        b[1] === 0
           ? 'Time lost in hesitation before you move'
           : 'Time lost fixing motion that outran the map',
       money_leak:
-        bits[8] === 0
+        b[3] === 0
           ? 'Return left on the table when context misuses your strongest gear'
           : 'Revenue risk when volume exceeds reward structure',
       friction_source:
-        bits[0] === 0
+        b[0] === 0
           ? 'Friction shows before the room agrees it exists'
           : 'You see upgrades before others feel the pain',
       priority_cut:
-        bits[9] === 0
+        b[5] === 0
           ? 'Cut: knowing without closing the loop'
           : 'Cut: open search without a ship date'
     };
@@ -132,7 +151,7 @@
       phase04: phase04(b4),
       phase05: phase05(b5),
       bitsPresent: {
-        p01: complete(b1),
+        p01: completeP01(b1),
         p02: complete(b2),
         p03: complete(b3),
         p04: complete(b4),
