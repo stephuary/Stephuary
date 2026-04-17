@@ -1976,31 +1976,21 @@
     el.id = 'sh-flow-end';
     el.className = 'sh-flow-end';
     el.setAttribute('role', 'region');
-    el.setAttribute('aria-label', 'Next steps');
-    var priLabel = 'Continue diagnostic →';
-    var secHref = '/results';
-    var secLabel = 'View full readout';
+    el.setAttribute('aria-label', 'Continue');
+    var priLabel = 'Continue';
     if (next === '/results') {
-      priLabel = 'View diagnostic readout →';
+      priLabel = 'View readout';
     }
     var rowInner =
       '<a class="sh-flow-end__pri" href="' +
       next +
       '">' +
       priLabel +
-      '</a>';
-    if (next !== '/results') {
-      rowInner +=
-        '<a class="sh-flow-end__sec" href="' +
-        secHref +
-        '">' +
-        secLabel +
-        '</a>';
-    }
-    rowInner += '<a class="sh-flow-end__ter" href="/">Exit and save progress</a>';
+      '</a>' +
+      '<a class="sh-flow-end__exit" href="/systems">Exit</a>';
     el.innerHTML =
-      '<p class="sh-flow-end__saved">Your progress is saved automatically on this device.</p>' +
-      '<div class="sh-flow-end__row">' +
+      '<p class="sh-flow-end__saved">Progress saved on this device.</p>' +
+      '<div class="sh-flow-end__row sh-flow-end__row--single">' +
       rowInner +
       '</div>';
     document.body.appendChild(el);
