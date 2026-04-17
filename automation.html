@@ -861,36 +861,36 @@
         </div>
 
         <div class="diag-section">
-          <p class="diag-h">2. Signal</p>
+          <p class="diag-h">2. Diagnosis</p>
           <div class="diag-body" id="out-2"></div>
         </div>
 
         <div class="diag-section">
-          <p class="diag-h">3. Main truth</p>
+          <p class="diag-h">3. Action</p>
           <div class="diag-body" id="out-3"></div>
         </div>
 
-        <div class="diag-section">
+        <div class="diag-section" id="out-wrap-4" hidden>
           <p class="diag-h">4. Test</p>
           <div class="diag-body" id="out-4"></div>
         </div>
 
-        <div class="diag-section">
+        <div class="diag-section" id="out-wrap-5" hidden>
           <p class="diag-h">5. Loop</p>
           <div class="diag-body" id="out-5"></div>
         </div>
 
-        <div class="diag-section">
+        <div class="diag-section" id="out-wrap-6" hidden>
           <p class="diag-h">6. Block</p>
           <div class="diag-body" id="out-6"></div>
         </div>
 
-        <div class="diag-section">
+        <div class="diag-section" id="out-wrap-7" hidden>
           <p class="diag-h">7. Hard truth</p>
           <div class="hard-truth-block diag-body" id="out-7"></div>
         </div>
 
-        <div class="diag-section">
+        <div class="diag-section" id="out-wrap-8" hidden>
           <p class="diag-h">8. Next move</p>
           <div class="diag-body" id="out-8"></div>
         </div>
@@ -967,11 +967,11 @@
   var RAIL_LABELS = ['Exposure','Response','Direct ask','Loop','Speed','Results'];
 
   var QUESTIONS = [
-    { instruction: 'Exposure status:', a: 'Seen by real people', b: 'Only seen by you' },
-    { instruction: 'When you share what you do:', a: 'People respond or engage', b: 'There is little or no response' },
-    { instruction: 'Have you directly offered this to a specific person (not just a feed)?', a: 'Yes', b: 'No' },
-    { instruction: 'When people don\'t respond:', a: 'You adjust and try again', b: 'You hesitate or stop' },
-    { instruction: 'Validation speed:', a: 'Test quickly', b: 'Wait until it feels ready' }
+    { instruction: 'Exposure', a: 'Real people have seen this', b: 'Only I have seen this' },
+    { instruction: 'Response', a: 'People respond when I share it', b: 'There is little or no response' },
+    { instruction: 'Direct ask', a: 'I have directly offered this to someone', b: 'I have not directly offered this' },
+    { instruction: 'Loop', a: 'I adjust and try again after silence', b: 'I hesitate or stop' },
+    { instruction: 'Speed', a: 'I test quickly', b: 'I wait until it feels ready' }
   ];
 
   var ADAPTIVE = [
@@ -1081,6 +1081,39 @@
     if (bits.length > TOTAL_Q) return bits.slice(0, TOTAL_Q);
     return bits;
   }
+
+  /** bits: [exposure, response, ask, loop, speed] — 0 strong, 1 weak */
+  function getValidationState(bits) {
+    if (bits[0] === 1) return 'not_exposed';
+    if (bits[2] === 1) return 'not_offered';
+    if (bits[1] === 1) return 'no_response';
+    if (bits[3] === 1) return 'loop_break';
+    if (bits[4] === 1) return 'too_slow';
+    return 'validated';
+  }
+
+  var STATUS_LINE = {
+    validated: 'This is real.',
+    _other: 'This is not real yet.'
+  };
+
+  var DIAGNOSIS_LINE = {
+    not_exposed: 'No one has actually seen this yet.',
+    not_offered: 'You have not directly asked anyone to buy.',
+    no_response: 'The market is not responding.',
+    loop_break: 'You stop after silence instead of adjusting.',
+    too_slow: 'You delay exposure waiting for it to feel ready.',
+    validated: 'People are seeing and responding to this.'
+  };
+
+  var ACTION_LINE = {
+    not_exposed: 'Show this to 5 real people today.',
+    not_offered: 'Make one direct offer today.',
+    no_response: 'Change one variable and send again.',
+    loop_break: 'Adjust and resend. Do not stop.',
+    too_slow: 'Test before improving anything.',
+    validated: 'Continue. Increase volume.'
+  };
 
   function buildP3OfferAndEntry() {
     var p3 = loadP3Bits();
@@ -1240,57 +1273,22 @@
   }
 
   function buildSummaryOutputs(b) {
-    var statusReal = b[0] === 0 && b[1] === 0 && b[2] === 0;
-    var statusWord = statusReal ? 'real' : 'not real';
-    var signalActive = b[1] === 0;
-
-    var blockExtra = '';
-    if (b[0] === 1) blockExtra = 'You are still hiding the work';
-    else if (b[2] === 1) blockExtra = 'You are not actually selling yet';
-    else if (b[3] === 1) blockExtra = 'You stop after silence';
-    else if (b[4] === 1) blockExtra = 'You are delaying real feedback';
+    var v = getValidationState(b);
 
     document.getElementById('out-1').innerHTML =
-      '<p>This is currently: <strong>' + statusWord + '</strong></p>';
+      '<p>' + (v === 'validated' ? STATUS_LINE.validated : STATUS_LINE._other) + '</p>';
 
     document.getElementById('out-2').innerHTML =
-      '<p>Signal: <strong>' + (signalActive ? 'active' : 'silent') + '</strong></p>' +
-      '<p>' +
-      (signalActive
-        ? 'People are responding. Continue.'
-        : 'No response. Change the offer, not the effort.') +
-      '</p>';
+      '<p>' + DIAGNOSIS_LINE[v] + '</p>';
 
     document.getElementById('out-3').innerHTML =
-      '<p>Nothing is validated until someone responds.</p>' +
-      '<p>Silence is not failure.<br />It is direction.</p>';
+      '<p>' + ACTION_LINE[v] + '</p>';
 
-    document.getElementById('out-4').innerHTML =
-      '<p>Do this next:</p>' +
-      '<ul class="diag-list">' +
-      '<li>send 5 direct messages</li>' +
-      '<li>ask for a clear yes or no</li>' +
-      '<li>do not explain more than once</li>' +
-      '</ul>';
-
-    document.getElementById('out-5').innerHTML =
-      '<p>If they respond → continue<br />If they don\'t → change one thing</p>' +
-      '<p>Do not restart.</p>';
-
-    document.getElementById('out-6').innerHTML =
-      '<p>You are not blocked by the market.</p>' +
-      '<p>You are blocked by not testing enough.</p>' +
-      (blockExtra ? '<p>' + blockExtra + '</p>' : '');
-
-    document.getElementById('out-7').innerHTML =
-      '<p>Nothing is real until someone responds.</p>' +
-      '<p>Not:<br />your idea<br />your system<br />your positioning</p>' +
-      '<p>Only:<br />response</p>';
-
-    document.getElementById('out-8').innerHTML =
-      '<p>Expose it again.</p>' +
-      '<p>Do not improve it first.</p>' +
-      '<p>Phase 05 decides what you keep control over.</p>';
+    document.getElementById('out-4').innerHTML = '';
+    document.getElementById('out-5').innerHTML = '';
+    document.getElementById('out-6').innerHTML = '';
+    document.getElementById('out-7').innerHTML = '';
+    document.getElementById('out-8').innerHTML = '';
 
     var fin = panelFromBits(b);
     document.getElementById('live-exp').textContent = fin.exp;
@@ -1441,8 +1439,12 @@
   }
 
   function exportText() {
+    var b = state.bits.map(function(x) { return x; });
+    var v = getValidationState(b);
     var lines = [
       'Stephuary · Phase 04 · Automation',
+      '',
+      'Validation state: ' + v,
       '',
       'Bridge (Phase 3)',
       document.getElementById('bridgeRows').innerText.trim(),
@@ -1450,26 +1452,11 @@
       '1. Status',
       document.getElementById('out-1').innerText.trim(),
       '',
-      '2. Signal',
+      '2. Diagnosis',
       document.getElementById('out-2').innerText.trim(),
       '',
-      '3. Main truth',
-      document.getElementById('out-3').innerText.trim(),
-      '',
-      '4. Test',
-      document.getElementById('out-4').innerText.trim(),
-      '',
-      '5. Loop',
-      document.getElementById('out-5').innerText.trim(),
-      '',
-      '6. Block',
-      document.getElementById('out-6').innerText.trim(),
-      '',
-      '7. Hard truth',
-      document.getElementById('out-7').innerText.trim(),
-      '',
-      '8. Next move',
-      document.getElementById('out-8').innerText.trim()
+      '3. Action',
+      document.getElementById('out-3').innerText.trim()
     ];
     return lines.join('\n');
   }
