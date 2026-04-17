@@ -27,6 +27,18 @@
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
     :root {
       --bg: #0c0a09;
       --bg-deep: #070605;
@@ -622,6 +634,66 @@
       margin-bottom: 0;
     }
 
+    .result-diagnosis {
+      font-family: var(--serif);
+      font-size: clamp(17px, 2.4vw, 21px);
+      font-weight: 300;
+      line-height: 1.45;
+      color: var(--cream);
+      margin: 0 0 18px;
+      white-space: pre-line;
+    }
+
+    .result-context-bridge {
+      font-size: 14px;
+      line-height: 1.65;
+      color: var(--text-mid);
+      margin: 0 0 18px;
+    }
+
+    .result-primary-action {
+      font-size: 15px;
+      line-height: 1.6;
+      color: var(--text);
+      margin: 0 0 8px;
+    }
+
+    .result-h--supporting {
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--gold-dim);
+      margin-bottom: 8px;
+    }
+
+    .step-context-field {
+      width: 100%;
+      min-height: 120px;
+      margin: 12px 0 20px;
+      padding: 14px 16px;
+      font-family: var(--sans);
+      font-size: 15px;
+      line-height: 1.5;
+      color: var(--text);
+      background: rgba(8, 8, 7, 0.55);
+      border: 1px solid var(--border-dim);
+      border-radius: var(--radius);
+      resize: vertical;
+    }
+
+    .step-context-field:focus {
+      outline: none;
+      border-color: rgba(154, 130, 96, 0.45);
+    }
+
+    .step-context-hint {
+      font-size: 12px;
+      color: var(--text-dim);
+      margin-bottom: 8px;
+      line-height: 1.5;
+    }
+
     .result-router-actions {
       display: flex;
       flex-wrap: wrap;
@@ -910,10 +982,10 @@
           <div class="progress-bar-wrap progress-bar-wrap--sticky-mobile">
             <div class="progress-meta">
               <span class="progress-label progress-label--muted">Progress</span>
-              <span class="progress-count" id="progressCount">Step 1 of 6</span>
+              <span class="progress-count" id="progressCount">Step 1 of 7</span>
             </div>
             <div class="progress-track">
-              <div class="progress-fill" id="progressFill" style="width:16.67%"></div>
+              <div class="progress-fill" id="progressFill" style="width:14.29%"></div>
             </div>
           </div>
           <button type="button" class="live-read-drawer-toggle" id="liveReadDrawerToggle" aria-expanded="false" aria-controls="livePanel">View live read</button>
@@ -938,11 +1010,21 @@
 
       <div id="summary">
         <p class="summary-phase-tag">Diagnostic · Phase 01 of 5 .  Capture</p>
-        <h2 class="summary-hit" id="summaryHitLine">We found the main issue.</h2>
+        <h2 class="summary-hit" id="summaryHitLine">Decision, then direction.</h2>
         <p class="summary-confidence">This is based on your actual responses, not a preset category.</p>
 
+        <div class="result-section result-decision" id="result-decision-block">
+          <p class="result-h">Diagnosis</p>
+          <p class="result-diagnosis" id="out-diagnosis"></p>
+          <p class="result-h">Your context</p>
+          <p class="result-context-bridge" id="out-context-bridge"></p>
+          <p class="result-h">Primary move</p>
+          <p class="result-primary-action" id="out-primary-action"></p>
+        </div>
+
         <div class="result-section">
-          <p class="result-h">1. You are</p>
+          <p class="result-h result-h--supporting">Supporting insight</p>
+          <p class="result-h">1. Pattern name</p>
           <p class="result-archetype" id="out-archetype"></p>
         </div>
 
@@ -1062,10 +1144,11 @@
 <script src="/stephuary-result.js"></script>
 <script>
 (function(){
-  const STORAGE_KEY = 'stephuary_capture_p01_v2';
+  const STORAGE_KEY = 'stephuary_capture_p01_v3';
   const RESULT_KEY = 'stephuary_result_v1';
   const TOTAL_Q = 6;
-  const RAIL_LABELS = ['Signal','Action','Expression','Environment','Failure','Block','Results'];
+  const TOTAL_STEPS = 7;
+  const RAIL_LABELS = ['Context','Signal','Action','Expression','Environment','Failure','Block','Results'];
 
   const ARCHETYPES = [
     'Hidden Operator',
@@ -1078,10 +1161,10 @@
 
   const QUESTIONS = [
     {
-      instruction: 'First signal in a new context:',
+      instruction: 'When entering a new situation, what happens first?',
       micro: 'Pick one.',
-      a: { text: 'You register what feels off, even if no one reacts', bit: 0 },
-      b: { text: 'You immediately see how it could be improved', bit: 1 }
+      a: { text: 'I immediately see what’s off', bit: 0 },
+      b: { text: 'I immediately see how to improve it', bit: 1 }
     },
     {
       instruction: 'When something is clearly broken, you:',
@@ -1114,6 +1197,54 @@
       b: { text: 'You are still searching for direction', bit: 1 }
     }
   ];
+
+  var NOT_PROBLEM_WORD = {
+    execution: 'motivation',
+    clarity: 'information',
+    structure: 'ideas',
+    environment: 'discipline',
+    direction: 'strategy'
+  };
+
+  var PRIMARY_ACTION_LINE = {
+    execution: 'You need to move from knowing to shipping.',
+    clarity: 'You need to commit to a direction.',
+    structure: 'You need to install a system.',
+    environment: 'You are in the wrong context.',
+    direction: 'You need to choose a path.'
+  };
+
+  function scoreBreakdownFromResult(bits, context) {
+    if (window.StephuaryResult && typeof window.StephuaryResult.scoreBreakdown === 'function') {
+      return window.StephuaryResult.scoreBreakdown(bits, context);
+    }
+    return 'direction';
+  }
+
+  function getRouteFromResult(breakdown) {
+    if (window.StephuaryResult && typeof window.StephuaryResult.getRoute === 'function') {
+      return window.StephuaryResult.getRoute(breakdown);
+    }
+    return {
+      primary: { href: '/focused-review', label: 'Get Direction' },
+      secondary: { href: '/snapshot', label: 'Snapshot' }
+    };
+  }
+
+  function diagnosisLines(breakdown) {
+    var notW = NOT_PROBLEM_WORD[breakdown] || 'focus';
+    var bLabel = breakdown.charAt(0).toUpperCase() + breakdown.slice(1);
+    return {
+      full:
+        'You don’t have a ' +
+        notW +
+        ' problem.\nYou have a ' +
+        bLabel.toLowerCase() +
+        ' problem.',
+      notProblem: notW,
+      breakdownLabel: bLabel
+    };
+  }
 
   function scoreArchetype(bits) {
     const s = {};
@@ -1419,103 +1550,31 @@
     }
   };
 
-  var ROUTE_OFFERS = {
-    snapshot: { href: '/snapshot', label: 'Start Snapshot' },
-    focusedReview: { href: '/focused-review', label: 'Get Direction' },
-    playbooks: { href: '/playbooks', label: 'Open System' },
-    privateAccess: { href: '/access', label: 'Request Access' }
-  };
-
-  var ARCHETYPE_ROUTES = {
-    'Hidden Operator': {
-      lines: [
-        'Your read runs ahead of what others can see.',
-        'Snapshot documents it. Focused Review locks one decision.'
-      ],
-      primary: 'snapshot',
-      secondary: 'focusedReview'
-    },
-    'Delayed Builder': {
-      lines: [
-        'Knowing without shipping is the leak.',
-        'Get Direction on one move, or Open System in a room and close one thread.'
-      ],
-      primary: 'focusedReview',
-      secondary: 'playbooks'
-    },
-    'Miscast Strategist': {
-      lines: [
-        'Strength in the wrong frame burns leverage.',
-        'Request Access for fit, or Start Snapshot on the misalignment.'
-      ],
-      primary: 'privateAccess',
-      secondary: 'snapshot'
-    },
-    'Reactive Stabilizer': {
-      lines: [
-        'Rescue trains the room to need rescue.',
-        'Start Snapshot on the pattern, or Request Access when leverage is private.'
-      ],
-      primary: 'snapshot',
-      secondary: 'privateAccess'
-    },
-    'Structural Refiner': {
-      lines: [
-        'You see the gap; the system still needs a home.',
-        'Open System in a room, or Get Direction on one structural cut.'
-      ],
-      primary: 'playbooks',
-      secondary: 'focusedReview'
-    },
-    'Unconverted Thinker': {
-      lines: [
-        'Signal without conversion is noise.',
-        'Open System, or Start Snapshot until you have one receipt.'
-      ],
-      primary: 'playbooks',
-      secondary: 'snapshot'
-    }
-  };
-
-  function applyArchetypeRouting(arch) {
+  function applyBreakdownRouting(breakdown) {
     var wrap = document.getElementById('result-router-wrap');
-    var cfg = ARCHETYPE_ROUTES[arch];
-    if (!wrap) return;
-    if (!cfg) {
-      wrap.setAttribute('hidden', '');
-      return;
-    }
-    wrap.removeAttribute('hidden');
     var dir = document.getElementById('out-router-directive');
+    if (!wrap || !dir) return;
+    var route = getRouteFromResult(breakdown);
+    wrap.removeAttribute('hidden');
     dir.innerHTML = '';
-    cfg.lines.forEach(function(line) {
-      var p = document.createElement('p');
-      p.className = 'result-router-line';
-      p.textContent = line;
-      dir.appendChild(p);
-    });
-    var pri = ROUTE_OFFERS[cfg.primary];
-    var sec = ROUTE_OFFERS[cfg.secondary];
+    var p = document.createElement('p');
+    p.className = 'result-router-line';
+    p.textContent = 'One route. One next step.';
+    dir.appendChild(p);
     var a1 = document.getElementById('out-router-primary');
     var a2 = document.getElementById('out-router-secondary');
-    if (a1 && pri) {
-      a1.href = pri.href;
-      a1.textContent = pri.label;
+    if (a1 && route.primary) {
+      a1.href = route.primary.href;
+      a1.textContent = route.primary.label;
     }
-    if (a2 && sec) {
-      a2.href = sec.href;
-      a2.textContent = sec.label;
+    if (a2 && route.secondary) {
+      a2.href = route.secondary.href;
+      a2.textContent = route.secondary.label;
     }
   }
 
-  function getArchetypeRoutingExport(arch) {
-    var cfg = ARCHETYPE_ROUTES[arch];
-    if (!cfg) return null;
-    return {
-      lines: cfg.lines,
-      primary: ROUTE_OFFERS[cfg.primary],
-      secondary: ROUTE_OFFERS[cfg.secondary]
-    };
+  function getRoutingExport(breakdown) {
+    return getRouteFromResult(breakdown);
   }
 
   function answeredCount(bits) {
@@ -1591,16 +1650,26 @@
     return { main: main, loss: loss, pattern: pattern, next: next };
   }
 
-  function updateLivePanel(stepIndex, bits) {
-    var n = stepIndex + 1;
-    function el(id, t) { document.getElementById(id).textContent = t; }
-
+  function updateLivePanel() {
+    function el(id, t) {
+      document.getElementById(id).textContent = t;
+    }
+    var bits = state.bits;
+    var n = state.currentStep;
+    if (n === 1) {
+      el('live-notice', state.context ? 'Context locked.' : 'Name what you are building or selling first.');
+      el('live-do', '—');
+      el('live-hold', '—');
+      el('live-env', state.context ? 'Next: six forced choices map the leak pattern.' : '—');
+      el('live-status', 'Step 1 of ' + TOTAL_STEPS + ' · In progress');
+      return;
+    }
     var L = liveStrings(bits);
     el('live-notice', L.main);
     el('live-do', L.loss);
     el('live-hold', L.pattern);
     el('live-env', L.next);
-    el('live-status', 'Step ' + n + ' of ' + TOTAL_Q + ' · In progress');
+    el('live-status', 'Step ' + n + ' of ' + TOTAL_STEPS + ' · In progress');
   }
 
   function resetLiveWaiting() {
@@ -1612,9 +1681,10 @@
   }
 
   var state = {
+    context: '',
     bits: Array(TOTAL_Q).fill(null),
     currentStep: 1,
-    answers: []
+    answers: {}
   };
 
   var lastTransitionPick = -1;
@@ -1658,7 +1728,7 @@
         vel.style.display = 'none';
         return;
       }
-      if (currentStepNum === 3 && state.bits[0] !== null && state.bits[1] !== null) {
+      if (currentStepNum === 4 && state.bits[0] !== null && state.bits[1] !== null) {
         vel.textContent = earlyValidation(state.bits[0], state.bits[1]);
         vel.style.display = 'block';
       } else {
@@ -1671,6 +1741,7 @@
   function saveStorage() {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify({
+        context: state.context,
         bits: state.bits,
         currentStep: state.currentStep,
         ts: Date.now()
@@ -1711,16 +1782,57 @@
     });
   }
 
+  function buildContextStep() {
+    var root = document.getElementById('steps-root');
+    var div = document.createElement('div');
+    div.className = 'step active';
+    div.id = 'step-1';
+    div.innerHTML =
+      '<div class="step-header">' +
+        '<div class="step-instruction"></div>' +
+        '<p class="step-context-hint">One or two sentences. This grounds everything after it.</p>' +
+        '<label class="sr-only" for="capture-context-field">What you are building or selling</label>' +
+        '<textarea id="capture-context-field" class="step-context-field" required maxlength="560" rows="5" placeholder="Example: a cohort for X, a service for Y, a product that does Z"></textarea>' +
+        '<div class="step-micro"></div>' +
+      '</div>' +
+      '<div class="nav-row">' +
+        '<button type="button" class="btn btn-start" id="capture-context-continue">Continue</button>' +
+      '</div>';
+
+    div.querySelector('.step-instruction').textContent = 'What are you currently trying to build or sell?';
+    div.querySelector('.step-micro').textContent = 'Required.';
+
+    var ta = div.querySelector('#capture-context-field');
+    var cont = div.querySelector('#capture-context-continue');
+    cont.addEventListener('click', function() {
+      var v = (ta.value || '').trim();
+      if (v.length < 3) {
+        ta.focus();
+        return;
+      }
+      state.context = v;
+      saveStorage();
+      updateLivePanel();
+      runTransitionThen(function() {
+        goTo(2);
+      });
+    });
+
+    root.appendChild(div);
+  }
+
   function buildSteps() {
     var root = document.getElementById('steps-root');
     root.innerHTML = '';
+    buildContextStep();
+
     QUESTIONS.forEach(function(q, idx) {
-      var stepNum = idx + 1;
+      var stepNum = idx + 2;
       var div = document.createElement('div');
-      div.className = 'step' + (stepNum === 1 ? ' active' : '');
+      div.className = 'step';
       div.id = 'step-' + stepNum;
       var checkpointBlock =
-        stepNum === 5
+        stepNum === 6
           ? '<p class="step-checkpoint">This is enough to identify the direction. The rest sharpens it.</p>'
           : '';
       div.innerHTML =
@@ -1736,7 +1848,7 @@
         '</div>' +
         '<div class="step-validation" aria-live="polite"></div>' +
         '<div class="nav-row">' +
-          (stepNum > 1 ? '<button type="button" class="btn btn-ghost" data-back="' + stepNum + '">Back</button>' : '') +
+          '<button type="button" class="btn btn-ghost" data-back="' + stepNum + '">Back</button>' +
         '</div>';
 
       div.querySelector('.step-instruction').textContent = q.instruction;
@@ -1750,13 +1862,17 @@
         opt.addEventListener('click', function() {
           if (opt.classList.contains('dim')) return;
           var bit = parseInt(opt.getAttribute('data-bit'), 10);
-          opts.forEach(function(o) { o.classList.remove('selected'); });
+          opts.forEach(function(o) {
+            o.classList.remove('selected');
+          });
           opt.classList.add('selected');
           state.bits[idx] = bit;
           saveStorage();
-          updateLivePanel(idx, state.bits);
+          updateLivePanel();
 
-          opts.forEach(function(o) { o.classList.add('dim'); });
+          opts.forEach(function(o) {
+            o.classList.add('dim');
+          });
 
           if (idx === TOTAL_Q - 1) {
             document.getElementById('building-overlay').style.display = 'flex';
@@ -1797,23 +1913,29 @@
   function goTo(n) {
     state.currentStep = n;
     saveStorage();
-    for (var i = 1; i <= TOTAL_Q; i++) {
+    for (var i = 1; i <= TOTAL_STEPS; i++) {
       var s = document.getElementById('step-' + i);
       if (s) s.classList.toggle('active', i === n);
     }
-    document.getElementById('progressCount').textContent = 'Step ' + n + ' of ' + TOTAL_Q;
-    document.getElementById('progressFill').style.width = (n / TOTAL_Q * 100) + '%';
+    document.getElementById('progressCount').textContent = 'Step ' + n + ' of ' + TOTAL_STEPS;
+    document.getElementById('progressFill').style.width = (n / TOTAL_STEPS * 100) + '%';
+
+    if (n === 1) {
+      var ta = document.getElementById('capture-context-field');
+      if (ta) ta.value = state.context || '';
+    }
 
     var cur = document.getElementById('step-' + n);
-    if (cur) {
+    if (cur && n >= 2) {
+      var bi = n - 2;
       cur.querySelectorAll('.option-item').forEach(function(o) {
         o.classList.remove('dim', 'selected');
         var bit = parseInt(o.getAttribute('data-bit'), 10);
-        if (state.bits[n - 1] === bit) o.classList.add('selected');
+        if (state.bits[bi] === bit) o.classList.add('selected');
       });
     }
 
-    updateLivePanel(n - 1, state.bits);
+    updateLivePanel();
     updateStepValidation(n);
     updateRail();
     function doScrollToStep() {
@@ -1844,6 +1966,14 @@
     document.getElementById('live-status').textContent = 'Complete.';
 
     var bits = state.bits.map(function(b) { return b == null ? 0 : b; });
+    var breakdown = scoreBreakdownFromResult(bits, state.context);
+    var diag = diagnosisLines(breakdown);
+    document.getElementById('out-diagnosis').textContent = diag.full;
+    document.getElementById('out-context-bridge').textContent =
+      'Based on what you\'re building: ' + String(state.context || '').trim();
+    document.getElementById('out-primary-action').textContent =
+      PRIMARY_ACTION_LINE[breakdown] || PRIMARY_ACTION_LINE.direction;
+
     var arch = scoreArchetype(bits);
     var block = COPY_BLOCKS[arch];
 
@@ -1871,7 +2001,7 @@
 
     document.getElementById('out-next').innerHTML = block.next(bits);
 
-    applyArchetypeRouting(arch);
+    applyBreakdownRouting(breakdown);
 
     try {
       localStorage.setItem('diagnosticStarted', 'true');
@@ -1914,12 +2044,23 @@
         .trim();
     }
     var bits = state.bits.map(function(b) { return b == null ? 0 : b; });
+    var breakdown = scoreBreakdownFromResult(bits, state.context);
+    var diag = diagnosisLines(breakdown);
     var arch = scoreArchetype(bits);
     var block = COPY_BLOCKS[arch];
     var lines = [
       'Stephuary · Phase 01 .  Capture',
       '',
-      '1. You are',
+      'Context',
+      String(state.context || '').trim(),
+      '',
+      'Diagnosis',
+      diag.full,
+      '',
+      'Primary move',
+      PRIMARY_ACTION_LINE[breakdown] || PRIMARY_ACTION_LINE.direction,
+      '',
+      'Supporting insight · Pattern name',
       arch,
       '',
       '2. Core read',
@@ -1937,12 +2078,11 @@
       '6. What happens next',
       flattenHtml(block.next(bits))
     ];
-    var route = getArchetypeRoutingExport(arch);
+    var route = getRoutingExport(breakdown);
     if (route && route.primary && route.secondary) {
       lines.push(
         '',
-        '7. Your next move',
-        route.lines.join('\n'),
+        '7. Routed next step',
         route.primary.label + ': ' + route.primary.href,
         route.secondary.label + ': ' + route.secondary.href
       );
@@ -1992,9 +2132,10 @@
         window.StephuaryDiagnosticFlow.clearCompletionFromPhase(1);
       }
     } catch (e) {}
+    state.context = '';
     state.bits = Array(TOTAL_Q).fill(null);
     state.currentStep = 1;
-    state.answers = [];
+    state.answers = {};
     lastTransitionPick = -1;
     document.getElementById('building-overlay').style.display = 'none';
     document.getElementById('capture-flash').style.display = 'none';
@@ -2030,7 +2171,7 @@
       buildRail();
       buildSteps();
     }
-    goTo(state.currentStep > 0 && state.currentStep <= TOTAL_Q ? state.currentStep : 1);
+    goTo(state.currentStep > 0 && state.currentStep <= TOTAL_STEPS ? state.currentStep : 1);
     if (!skipLanding) resetLiveWaiting();
   }
 
@@ -2043,6 +2184,7 @@
     var d = loadStorage();
     if (!d || !d.bits) return false;
     state.bits = d.bits.slice();
+    state.context = typeof d.context === 'string' ? d.context : '';
     var migratedFromV2Ten = false;
     if (state.bits.length === 10) {
       var migrated = migrateBitsV2TenToSix(state.bits);
@@ -2053,7 +2195,22 @@
     }
     while (state.bits.length < TOTAL_Q) state.bits.push(null);
     if (state.bits.length > TOTAL_Q) state.bits = state.bits.slice(0, TOTAL_Q);
-    state.currentStep = d.currentStep || 1;
+
+    if (!String(state.context).trim()) {
+      state.currentStep = 1;
+      if (migratedFromV2Ten) saveStorage();
+      var ph0 = document.getElementById('phase-header');
+      if (ph0) ph0.style.display = 'none';
+      document.getElementById('flow-wrap').style.display = 'block';
+      if (!document.getElementById('step-1')) {
+        buildRail();
+        buildSteps();
+      }
+      goTo(1);
+      updateLivePanel();
+      return true;
+    }
+
     var firstEmpty = state.bits.indexOf(null);
     if (firstEmpty === -1) {
       var ph2 = document.getElementById('phase-header');
@@ -2069,10 +2226,10 @@
       }, 700);
       return true;
     }
-    state.currentStep = firstEmpty + 1;
+    state.currentStep = firstEmpty + 2;
     if (migratedFromV2Ten) saveStorage();
     startFlow(true);
-    updateLivePanel(state.currentStep - 1, state.bits);
+    updateLivePanel();
     return true;
   }
 
@@ -2087,6 +2244,7 @@
         window.StephuaryDiagnosticFlow.clearCompletionFromPhase(1);
       }
     } catch (e) {}
+    state.context = '';
     state.bits = Array(TOTAL_Q).fill(null);
     state.currentStep = 1;
     saveStorage();
@@ -2110,7 +2268,9 @@
 
   (function() {
     var st = loadStorage();
-    if (st && st.bits && st.bits.some(function(b) { return b !== null && b !== undefined; })) {
+    var hasBits = st && st.bits && st.bits.some(function(b) { return b !== null && b !== undefined; });
+    var hasCtx = st && String(st.context || '').trim();
+    if (hasBits || hasCtx) {
       document.getElementById('btnSkip').textContent = 'Continue';
     }
   })();

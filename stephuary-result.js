@@ -169,6 +169,64 @@
     return out;
   }
 
+  /**
+   * Decision-based breakdown for routing (Phase 01).
+   * Uses the same 6 capture bits as scoreArchetype.
+   */
+  function scoreBreakdown(bits, context) {
+    var b = migrateCaptureBitsTenToSix(bits);
+    if (!b || b.length < CAPTURE_Q) return 'direction';
+    var ctx = String(context || '').toLowerCase();
+    var biasCS = /offer|pricing|client|clients/.test(ctx);
+
+    var type;
+    if (b[5] === 0) type = 'execution';
+    else if (b[5] === 1 && b[1] === 0) type = 'clarity';
+    else if (b[3] === 0) type = 'environment';
+    else if (b[4] === 0 && b[1] === 0) type = 'structure';
+    else type = 'direction';
+
+    if (biasCS) {
+      if (type === 'direction') type = 'clarity';
+      else if (type === 'environment') type = 'structure';
+    }
+    return type;
+  }
+
+  /**
+   * Primary / secondary CTAs from breakdown type (no grids; one clear action).
+   */
+  function getRoute(breakdown) {
+    switch (breakdown) {
+      case 'execution':
+        return {
+          primary: { href: '/playbooks', label: 'Open a Room' },
+          secondary: { href: '/focused-review', label: 'Get Direction' }
+        };
+      case 'clarity':
+        return {
+          primary: { href: '/focused-review', label: 'Start Focused Review' },
+          secondary: { href: '/snapshot', label: 'Snapshot' }
+        };
+      case 'structure':
+        return {
+          primary: { href: '/snapshot', label: 'Start Snapshot' },
+          secondary: { href: '/playbooks', label: 'Open Rooms' }
+        };
+      case 'environment':
+        return {
+          primary: { href: '/private-access', label: 'Private Access' },
+          secondary: { href: '/playbooks', label: 'Open Rooms' }
+        };
+      case 'direction':
+      default:
+        return {
+          primary: { href: '/focused-review', label: 'Get Direction' },
+          secondary: { href: '/snapshot', label: 'Snapshot' }
+        };
+    }
+  }
+
   /** One recommended section per diagnostic (anti-overlap). Order = priority; only [0] is assigned. */
   var VERSION_PLAYBOOKS = {
     spotter_delay_nopressure: ['Execution', 'Reset'],
@@ -832,6 +890,8 @@
     STORAGE_KEY: STORAGE_KEY,
     buildFromPhase01: buildFromPhase01,
     scoreArchetype: scoreArchetype,
+    scoreBreakdown: scoreBreakdown,
+    getRoute: getRoute,
     primaryPlaybookForVersion: primaryPlaybookForVersion,
     buildDiagnostic: buildDiagnostic,
     mergeCrossPhase: mergeCrossPhase,
