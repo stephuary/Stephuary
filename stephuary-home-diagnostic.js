@@ -1,81 +1,11 @@
 /**
- * Home diagnostic: State 2 (5 steps) + State 3 (routing result).
- * No navigation to /capture — overlay on index only.
+ * DiagnosticFlow: five phase panels (existing copy from phase pages) + result.
+ * Same-page overlay on index — no route change for the orientation flow.
  */
 (function (global) {
-  var STORAGE_KEY = 'stephuary_home_diag_v1';
-
-  /** Room index 0–4 → execution environments (vercel.json routes). */
-  var ROOM_HREFS = [
-    '/room-01-extraction',
-    '/room-02-direction',
-    '/room-03-transaction',
-    '/room-04-infrastructure',
-    '/room-05-cognition'
-  ];
-
-  /**
-   * Each option: weighted pull toward Room path (rw) vs Service path (sw),
-   * and roomPick (0–4) for which Room gets a vote when this option is chosen.
-   */
-  var STEPS = [
-    {
-      id: 'capture',
-      title: 'Capture',
-      prompt: 'Where is the friction showing up first?',
-      options: [
-        { label: 'I lose time and attention before I see revenue clearly.', rw: 2, sw: 0, roomPick: 2 },
-        { label: 'I see the leak, but I keep avoiding the fix.', rw: 1, sw: 2, roomPick: 1 },
-        { label: 'I am clear on the problem; I need a path to run.', rw: 3, sw: 0, roomPick: 3 }
-      ]
-    },
-    {
-      id: 'monetize',
-      title: 'Monetize',
-      prompt: 'Where does money feel stuck?',
-      options: [
-        { label: 'Offer, price, or packaging is unclear.', rw: 1, sw: 2, roomPick: 1 },
-        { label: 'Volume or pipeline — I need more at-bats.', rw: 3, sw: 0, roomPick: 3 },
-        { label: 'I have not shipped something I can sell with confidence.', rw: 0, sw: 3, roomPick: 0 }
-      ]
-    },
-    {
-      id: 'structure',
-      title: 'Structure',
-      prompt: 'What breaks first when you add effort?',
-      options: [
-        { label: 'Delivery and operations.', rw: 3, sw: 0, roomPick: 3 },
-        { label: 'Positioning and narrative.', rw: 1, sw: 2, roomPick: 1 },
-        { label: 'Time, boundaries, and focus.', rw: 2, sw: 1, roomPick: 2 }
-      ]
-    },
-    {
-      id: 'automation',
-      title: 'Automation',
-      prompt: 'How much of your work is still manual?',
-      options: [
-        { label: 'Most of it should already be systematized.', rw: 3, sw: 0, roomPick: 3 },
-        { label: 'A few bottlenecks; the rest is fine.', rw: 2, sw: 1, roomPick: 2 },
-        { label: 'I have not built repeatable steps yet.', rw: 0, sw: 3, roomPick: 0 }
-      ]
-    },
-    {
-      id: 'sovereignty',
-      title: 'Sovereignty',
-      prompt: 'What do you need next?',
-      options: [
-        { label: 'A focused room to execute.', rw: 4, sw: 0, roomPick: 4 },
-        { label: 'Hands-on help to redesign the layer.', rw: 0, sw: 4, roomPick: 2 },
-        { label: 'I need the diagnosis first — route me.', rw: 1, sw: 1, roomPick: 1 }
-      ]
-    }
-  ];
-
-  var SUMMARIES = [
-    'You do not have a demand problem. You have a structure and positioning problem.',
-    'The gap is not ideas. It is installation and sequence.',
-    'You are early on clarity and late on execution — the next move is directional, not theoretical.'
-  ];
+  var STORAGE_KEY = 'stephuary_home_diag_flow_v2';
+  var LEGACY_KEY = 'stephuary_home_diag_v1';
+  var PHASE_COUNT = 5;
 
   function loadState() {
     try {
@@ -93,50 +23,24 @@
     } catch (e) {}
   }
 
-  function argmax5(votes) {
-    var best = 0;
-    var i;
-    for (i = 1; i < 5; i++) {
-      if (votes[i] > votes[best]) best = i;
-    }
-    return best;
-  }
-
-  function computeResult(selections) {
-    var rw = 0;
-    var sw = 0;
-    var votes = [0, 0, 0, 0, 0];
-    var i;
-    for (i = 0; i < selections.length; i++) {
-      var step = STEPS[i];
-      var idx = selections[i];
-      if (idx == null || !step.options[idx]) continue;
-      var o = step.options[idx];
-      rw += o.rw || 0;
-      sw += o.sw || 0;
-      var rp = o.roomPick;
-      if (rp >= 0 && rp < 5) votes[rp] += 1;
-    }
-    var primaryIsRoom = rw >= sw;
-    var summaryIdx = Math.min(2, Math.floor((rw + sw) / 8));
-    var roomIdx = argmax5(votes);
-    var roomHref = ROOM_HREFS[roomIdx] || '/playbooks';
+  /** Result after orientation: full interactive diagnostic starts at Capture. */
+  function buildResult() {
     return {
-      summary: SUMMARIES[summaryIdx] || SUMMARIES[0],
-      primaryIsRoom: primaryIsRoom,
-      primaryLabel: primaryIsRoom
-        ? 'Your next step is execution inside one Room — one environment, one outcome.'
-        : 'Your next step is deeper intervention — a service layer, not another PDF.',
-      primaryHref: primaryIsRoom ? roomHref : '/private-access',
+      summary:
+        'You need to run the interactive diagnostic to lock what breaks first. Capture anchors the full five-phase sequence on this device.',
+      primaryLabel: 'Your next step is Phase 01 — Capture — where the questions write your live read.',
+      primaryHref: '/capture',
       primaryCta: 'Start here',
-      secondaryHref: primaryIsRoom ? '/private-access' : roomHref,
-      secondaryText: primaryIsRoom
-        ? 'If you need deeper support → Services'
-        : 'If you need execution first → Room'
+      secondaryHref: '/private-access',
+      secondaryText: 'If you need deeper support → Services'
     };
   }
 
   function init() {
+    try {
+      global.localStorage.removeItem(LEGACY_KEY);
+    } catch (e0) {}
+
     var overlay = global.document.getElementById('sh-diag-overlay');
     if (!overlay) return;
 
@@ -151,8 +55,8 @@
 
     var state = {
       mode: 'steps',
-      stepIndex: 0,
-      selections: new Array(STEPS.length)
+      currentStep: 1,
+      result: null
     };
 
     var TRANS_MS = 260;
@@ -167,18 +71,17 @@
       if (saved && saved.completed && saved.result) {
         state.mode = 'result';
         state.result = saved.result;
-        state.selections = saved.selections && saved.selections.length ? saved.selections : new Array(STEPS.length);
+        state.currentStep = PHASE_COUNT;
         return;
       }
-      if (saved && Array.isArray(saved.selections) && saved.selections.some(function (x) { return x != null; })) {
+      if (saved && saved.mode === 'steps' && typeof saved.currentStep === 'number') {
         state.mode = 'steps';
-        state.stepIndex = Math.min(STEPS.length - 1, saved.stepIndex || 0);
-        state.selections = saved.selections;
+        state.currentStep = Math.min(PHASE_COUNT, Math.max(1, saved.currentStep));
+        state.result = null;
         return;
       }
       state.mode = 'steps';
-      state.stepIndex = 0;
-      state.selections = new Array(STEPS.length);
+      state.currentStep = 1;
       state.result = null;
     }
 
@@ -187,7 +90,7 @@
       var saved = loadState();
       if (saved && saved.completed && saved.result) {
         openBtn.textContent = 'View your route';
-      } else if (saved && Array.isArray(saved.selections) && saved.selections.some(function (x) { return x != null; }) && !saved.completed) {
+      } else if (saved && saved.mode === 'steps' && saved.currentStep > 1 && !saved.completed) {
         openBtn.textContent = 'Continue diagnostic';
       } else {
         openBtn.textContent = 'Start Diagnostic';
@@ -206,7 +109,7 @@
     }
 
     function startNewDiagnostic() {
-      state = { mode: 'steps', stepIndex: 0, selections: new Array(STEPS.length), result: null };
+      state = { mode: 'steps', currentStep: 1, result: null };
       try {
         global.localStorage.removeItem(STORAGE_KEY);
       } catch (e1) {}
@@ -224,70 +127,48 @@
       if (openBtn) openBtn.focus();
     }
 
-    function renderStep() {
+    function renderPhaseStep() {
       if (!stepMount) return;
-      var step = STEPS[state.stepIndex];
+      var tpl = global.document.getElementById('sh-diag-phase-' + state.currentStep);
       var wrap = global.document.createElement('div');
       wrap.className = 'sh-diag-step-wrap';
-      var promptId = 'sh-diag-prompt-' + state.stepIndex;
-      wrap.innerHTML =
-        '<p class="sh-diag-phase-label">' +
-        step.title +
-        '</p>' +
-        '<p class="sh-diag-prompt" id="' +
-        promptId +
-        '">' +
-        step.prompt +
-        '</p>' +
-        '<div class="sh-diag-options" role="radiogroup" aria-labelledby="' +
-        promptId +
-        '"></div>';
-      var optsGroup = wrap.querySelector('.sh-diag-options');
-      step.options.forEach(function (opt, j) {
-        var optBtn = global.document.createElement('button');
-        optBtn.type = 'button';
-        optBtn.className = 'sh-diag-option';
-        optBtn.setAttribute('role', 'radio');
-        optBtn.setAttribute('aria-checked', state.selections[state.stepIndex] === j ? 'true' : 'false');
-        optBtn.textContent = opt.label;
-        if (state.selections[state.stepIndex] === j) optBtn.classList.add('is-selected');
-        optBtn.addEventListener('click', function () {
-          state.selections[state.stepIndex] = j;
-          optsGroup.querySelectorAll('.sh-diag-option').forEach(function (b, k) {
-            b.classList.toggle('is-selected', k === j);
-            b.setAttribute('aria-checked', k === j ? 'true' : 'false');
-          });
-          updateNext();
-        });
-        optsGroup.appendChild(optBtn);
-      });
+      if (state.currentStep === 1) wrap.classList.add('sh-diag-step-wrap--capture');
+
+      if (tpl && tpl.content) {
+        wrap.appendChild(global.document.importNode(tpl.content, true));
+      } else {
+        wrap.innerHTML =
+          '<p class="sh-diag-phase-fallback">Phase ' +
+          state.currentStep +
+          ' content is missing.</p>';
+      }
+
       stepMount.innerHTML = '';
       stepMount.appendChild(wrap);
       if (progressEl) {
         progressEl.style.display = '';
-        progressEl.textContent = 'Step ' + (state.stepIndex + 1) + ' of 5';
+        progressEl.textContent = 'Step ' + state.currentStep + ' of 5';
       }
       if (navEl) navEl.style.display = '';
-      if (backBtn) backBtn.disabled = state.stepIndex === 0;
+      if (backBtn) backBtn.disabled = state.currentStep <= 1;
       updateNext();
     }
 
     function updateNext() {
       if (!nextBtn) return;
-      var sel = state.selections[state.stepIndex];
-      nextBtn.disabled = sel == null;
-      nextBtn.textContent = state.stepIndex >= STEPS.length - 1 ? 'See result' : 'Next';
+      nextBtn.disabled = false;
+      nextBtn.textContent = state.currentStep >= PHASE_COUNT ? 'See result' : 'Next';
     }
 
     function renderResult() {
       if (!stepMount) return;
-      var r = state.result || computeResult(state.selections);
+      var r = state.result || buildResult();
       state.result = r;
       saveState({
+        mode: 'result',
         completed: true,
-        selections: state.selections,
+        currentStep: PHASE_COUNT,
         result: r,
-        stepIndex: STEPS.length,
         at: Date.now()
       });
 
@@ -311,7 +192,7 @@
         '">' +
         r.secondaryText +
         '</a></p>' +
-        '<p class="sh-diag-result__new"><button type="button" class="sh-diag-new" id="sh-diag-new">New diagnostic</button></p>' +
+        '<p class="sh-diag-result__new"><button type="button" class="sh-diag-new" id="sh-diag-new">Run orientation again</button></p>' +
         '</div>';
       stepMount.innerHTML = html;
       var newBtn = global.document.getElementById('sh-diag-new');
@@ -330,15 +211,22 @@
         renderResult();
         return;
       }
-      renderStep();
+      renderPhaseStep();
       global.document.documentElement.setAttribute('data-sh-home-state', 'diagnostic');
     }
 
+    function persistStep() {
+      saveState({
+        mode: 'steps',
+        completed: false,
+        currentStep: state.currentStep
+      });
+    }
+
     function goNext() {
-      if (state.selections[state.stepIndex] == null) return;
-      if (state.stepIndex >= STEPS.length - 1) {
+      if (state.currentStep >= PHASE_COUNT) {
         state.mode = 'result';
-        state.result = computeResult(state.selections);
+        state.result = buildResult();
         render();
         syncEntryCta();
         return;
@@ -346,13 +234,9 @@
       var el = stepMount && stepMount.querySelector('.sh-diag-step-wrap');
       if (el) el.classList.add('is-exit');
       global.setTimeout(function () {
-        state.stepIndex += 1;
-        saveState({
-          completed: false,
-          selections: state.selections,
-          stepIndex: state.stepIndex
-        });
-        renderStep();
+        state.currentStep += 1;
+        persistStep();
+        renderPhaseStep();
         var nw = stepMount && stepMount.querySelector('.sh-diag-step-wrap');
         if (nw) {
           nw.classList.add('is-enter');
@@ -366,17 +250,13 @@
     }
 
     function goBack() {
-      if (state.stepIndex === 0) return;
+      if (state.currentStep <= 1) return;
       var el = stepMount && stepMount.querySelector('.sh-diag-step-wrap');
       if (el) el.classList.add('is-exit');
       global.setTimeout(function () {
-        state.stepIndex -= 1;
-        saveState({
-          completed: false,
-          selections: state.selections,
-          stepIndex: state.stepIndex
-        });
-        renderStep();
+        state.currentStep -= 1;
+        persistStep();
+        renderPhaseStep();
         var nw = stepMount && stepMount.querySelector('.sh-diag-step-wrap');
         if (nw) {
           nw.classList.add('is-enter');
@@ -398,7 +278,7 @@
 
     if (closeBtn) {
       closeBtn.addEventListener('click', function () {
-        if (state.mode === 'steps' && state.selections.some(function (x) { return x != null; })) {
+        if (state.mode === 'steps' && state.currentStep > 1) {
           if (!global.confirm('Leave diagnostic? Progress is saved.')) return;
         }
         closeOverlay();
@@ -429,6 +309,15 @@
         return state;
       },
       syncEntryCta: syncEntryCta
+    };
+
+    global.StephuaryDiagnosticFlow = {
+      getCurrentStep: function () {
+        return state.currentStep;
+      },
+      getMode: function () {
+        return state.mode;
+      }
     };
   }
 
