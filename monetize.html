@@ -517,6 +517,10 @@
       animation: stepIn 400ms ease forwards;
     }
 
+    #sys-output-mount-revenue:empty {
+      display: none;
+    }
+
     .summary-phase-tag {
       font-size: 10px;
       letter-spacing: 0.28em;
@@ -538,6 +542,68 @@
       color: var(--text-dim);
       margin-bottom: 36px;
       line-height: 1.7;
+    }
+
+    .m2-decision-block {
+      border: 1px solid var(--gold-line);
+      background: var(--surface);
+      border-radius: var(--radius);
+      padding: 24px 22px 22px;
+      margin-bottom: 32px;
+    }
+
+    .m2-decision-block .diag-h {
+      margin-bottom: 8px;
+    }
+
+    .m2-decision-block .diag-h:not(:first-child) {
+      margin-top: 20px;
+    }
+
+    .m2-diagnosis {
+      font-family: var(--serif);
+      font-size: clamp(18px, 2.8vw, 22px);
+      line-height: 1.45;
+      color: var(--cream);
+      margin: 0 0 4px;
+    }
+
+    .m2-meaning,
+    .m2-action {
+      font-size: 14px;
+      color: var(--text-mid);
+      line-height: 1.75;
+      margin: 0;
+    }
+
+    .m2-route-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 22px;
+      align-items: center;
+    }
+
+    .m2-supporting-heading {
+      margin-top: 4px;
+      margin-bottom: 18px;
+    }
+
+    .m2-supporting-narrative .diag-section:first-child .diag-h {
+      margin-top: 0;
+    }
+
+    #m2-phase-continue-wrap .btn-solid {
+      background: transparent;
+      border-color: var(--border-dim);
+      color: var(--text-dim);
+      font-size: 10px;
+    }
+
+    #m2-phase-continue-wrap .btn-solid:hover {
+      border-color: var(--gold);
+      color: var(--cream);
+      background: transparent;
     }
 
     .diag-section {
@@ -813,10 +879,25 @@
         <div id="sys-output-mount-revenue" class="sys-output-mount"></div>
 
         <p class="summary-phase-tag">Diagnostic · Phase 02 of 5 .  Monetize</p>
-        <h2 class="summary-title">Monetize complete</h2>
-        <p class="summary-sub">Instinct translated into market terms .  where it pays and where it breaks.</p>
+        <h2 class="summary-title">One diagnosis. One next move.</h2>
+        <p class="summary-sub">Fix this first—then the supporting read below sharpens the edges.</p>
 
-        <div class="sys-output-legacy-hidden" aria-hidden="true">
+        <div class="m2-decision-block" id="m2-decision-block">
+          <p class="diag-h">Diagnosis</p>
+          <p class="m2-diagnosis" id="out-m2-diagnosis"></p>
+          <p class="diag-h">What this means</p>
+          <p class="m2-meaning" id="out-m2-meaning"></p>
+          <p class="diag-h">Primary move</p>
+          <p class="m2-action" id="out-m2-action"></p>
+          <div class="m2-route-actions">
+            <a href="/playbooks" class="btn btn-solid magnetic" id="out-m2-primary-cta">Open a Room</a>
+            <a href="/focused-review" class="btn btn-ghost magnetic" id="out-m2-secondary-cta">Get Direction</a>
+          </div>
+        </div>
+
+        <p class="diag-h m2-supporting-heading">Supporting insight</p>
+
+        <div class="m2-supporting-narrative">
         <div class="diag-section">
           <p class="diag-h">1. Core pattern (from Phase 01)</p>
           <div class="diag-body" id="out-s1"></div>
@@ -855,8 +936,8 @@
 
         <p class="capture-flow-saved">Your progress is saved automatically on this device.</p>
         <p class="sys-lead-note" style="margin:0 0 14px;max-width:52ch">Carry-forward: value clarity, paid-fit, buyer, demand pull, and one-line positioning. Phase 03 turns this into price, package, and first step.</p>
-        <div class="action-primary">
-          <a href="/structure" class="btn btn-solid" data-sh-flow-primary>Continue</a>
+        <div class="action-primary" id="m2-phase-continue-wrap">
+          <a href="/structure" class="btn btn-solid" id="m2-legacy-continue" data-sh-flow-primary>Continue to Structure</a>
         </div>
         <p class="phase-result-links">
           <a href="/systems">Save and exit</a>
@@ -920,23 +1001,188 @@
 <script>
 (function(){
   var STORAGE_KEY = 'stephuary_monetize_p02_v1';
-  var P01_KEY = 'stephuary_capture_p01_v2';
+  var P01_KEYS = ['stephuary_capture_p01_v3', 'stephuary_capture_p01_v2'];
   var PROFILE_KEY = 'stephuary_p01_profile';
   var TOTAL_Q = 5;
   var RAIL_LABELS = ['Value clarity','Paid problem','Demand','Buyer','Outcome','Results'];
 
   var QUESTIONS = [
-    { instruction: 'Value clarity .  what you offer:', a: 'Strangers get what you do in one pass', b: 'It still takes translation before it lands' },
-    { instruction: 'Paid problem fit:', a: 'Problems people already pay to solve', b: 'Problems people rarely pay to fix at this framing' },
-    { instruction: 'Demand type:', a: 'Pulled .  inbound interest and asks', b: 'Pushed .  you initiate and convert' },
-    { instruction: 'Buyer clarity:', a: 'Defined .  easy to name who pays', b: 'Undefined .  too broad or fuzzy to target' },
-    { instruction: 'Outcome visibility:', a: 'Clear and visible', b: 'Subtle or hard to measure' }
+    {
+      instruction: 'Value clarity',
+      a: 'A new person understands what I do immediately',
+      b: 'I have to explain it before it lands'
+    },
+    {
+      instruction: 'Paid problem',
+      a: 'People already pay to solve this',
+      b: 'People struggle with it but don’t pay for it'
+    },
+    {
+      instruction: 'Demand',
+      a: 'People come to me',
+      b: 'I have to initiate everything'
+    },
+    {
+      instruction: 'Buyer clarity',
+      a: 'I can name exactly who pays',
+      b: 'It’s still broad or unclear'
+    },
+    {
+      instruction: 'Outcome visibility',
+      a: 'Results are obvious and visible',
+      b: 'Results are subtle or hard to prove'
+    }
   ];
 
   var state = {
     bits: Array(TOTAL_Q).fill(null),
-    currentStep: 1
+    currentStep: 1,
+    signals: { clarity: null, paid: null, demand: null, buyer: null, outcome: null }
   };
+
+  function bitsToSignals(bits) {
+    return {
+      clarity: bits[0],
+      paid: bits[1],
+      demand: bits[2],
+      buyer: bits[3],
+      outcome: bits[4]
+    };
+  }
+
+  function getDominantBreakdown(signals) {
+    if (signals.paid === 1) return 'paid_problem_failure';
+    if (signals.buyer === 1) return 'buyer_definition_failure';
+    if (signals.clarity === 1) return 'value_translation_failure';
+    if (signals.demand === 1) return 'demand_generation_failure';
+    if (signals.outcome === 1) return 'proof_visibility_failure';
+    return 'packaging_failure';
+  }
+
+  var DOMINANT_FAILURE_PHRASE = {
+    paid_problem_failure: 'paid problem failure',
+    buyer_definition_failure: 'buyer definition failure',
+    value_translation_failure: 'value translation failure',
+    demand_generation_failure: 'demand generation failure',
+    proof_visibility_failure: 'proof visibility failure',
+    packaging_failure: 'packaging failure'
+  };
+
+  var MEANING_COPY = {
+    paid_problem_failure:
+      'You are solving something real, but not something buyers currently fund.',
+    buyer_definition_failure:
+      'You are speaking to too many people. No one recognizes themselves clearly.',
+    value_translation_failure:
+      'Your offer does not compress into language a stranger can repeat back.',
+    demand_generation_failure:
+      'Interest does not arrive on its own yet—you carry the entire pull.',
+    proof_visibility_failure:
+      'The win state is hard to point at, so trust and price stay soft.',
+    packaging_failure:
+      'The pieces are close, but not locked into one buyer, one outcome, and one price.'
+  };
+
+  var ACTION_COPY = {
+    paid_problem_failure: 'You need to reposition toward a problem that already carries budget.',
+    buyer_definition_failure: 'You need to name one paying buyer before you widen the story.',
+    value_translation_failure: 'You need to translate what you do into one clear, repeatable sentence.',
+    demand_generation_failure: 'You need to test pull instead of forcing conversion.',
+    proof_visibility_failure: 'You need to make the after-state obvious before you ask for money.',
+    packaging_failure: 'You need one line for buyer, outcome, entry, and price—then ship that shape.'
+  };
+
+  function getM2Route(dominant) {
+    switch (dominant) {
+      case 'paid_problem_failure':
+      case 'demand_generation_failure':
+        return {
+          primary: { href: '/playbooks', label: 'Open a Room' },
+          secondary: { href: '/focused-review', label: 'Get Direction' }
+        };
+      case 'buyer_definition_failure':
+      case 'packaging_failure':
+        return {
+          primary: { href: '/focused-review', label: 'Start Focused Review' },
+          secondary: { href: '/snapshot', label: 'Snapshot' }
+        };
+      case 'value_translation_failure':
+      case 'proof_visibility_failure':
+        return {
+          primary: { href: '/snapshot', label: 'Start Snapshot' },
+          secondary: { href: '/playbooks', label: 'Open Rooms' }
+        };
+      default:
+        return {
+          primary: { href: '/focused-review', label: 'Get Direction' },
+          secondary: { href: '/playbooks', label: 'Open Rooms' }
+        };
+    }
+  }
+
+  function buildDecisionOutput(b) {
+    var sig = bitsToSignals(b);
+    state.signals = {
+      clarity: sig.clarity,
+      paid: sig.paid,
+      demand: sig.demand,
+      buyer: sig.buyer,
+      outcome: sig.outcome
+    };
+    var dominant = getDominantBreakdown(state.signals);
+    var phrase = DOMINANT_FAILURE_PHRASE[dominant] || 'packaging failure';
+
+    var diagEl = document.getElementById('out-m2-diagnosis');
+    var meanEl = document.getElementById('out-m2-meaning');
+    var actEl = document.getElementById('out-m2-action');
+    var pA = document.getElementById('out-m2-primary-cta');
+    var pB = document.getElementById('out-m2-secondary-cta');
+
+    if (diagEl) {
+      diagEl.innerHTML =
+        'You don’t have a demand problem.<br />You have a <strong>' + phrase + '</strong>.';
+    }
+    if (meanEl) meanEl.textContent = MEANING_COPY[dominant] || '';
+    if (actEl) actEl.textContent = ACTION_COPY[dominant] || '';
+
+    var route = getM2Route(dominant);
+    if (pA && route.primary) {
+      pA.href = route.primary.href;
+      pA.textContent = route.primary.label;
+    }
+    if (pB && route.secondary) {
+      pB.href = route.secondary.href;
+      pB.textContent = route.secondary.label;
+    }
+  }
+
+  function decisionExportLines(b) {
+    var sig = bitsToSignals(b);
+    var dominant = getDominantBreakdown(sig);
+    var phrase = DOMINANT_FAILURE_PHRASE[dominant] || 'packaging failure';
+    var route = getM2Route(dominant);
+    var lines = [
+      '— Decision-first —',
+      '',
+      'Diagnosis',
+      'You don’t have a demand problem.',
+      'You have a ' + phrase + '.',
+      '',
+      'What this means',
+      MEANING_COPY[dominant] || '',
+      '',
+      'Primary move',
+      ACTION_COPY[dominant] || '',
+      '',
+      'Routing',
+      'Primary: ' + route.primary.label + ' — ' + route.primary.href,
+      'Optional: ' + route.secondary.label + ' — ' + route.secondary.href,
+      '',
+      '— Supporting insight —',
+      ''
+    ];
+    return lines;
+  }
 
   function normalizeMonetizeBits(bits) {
     if (!bits) return null;
@@ -956,11 +1202,14 @@
       if (j) return JSON.parse(j);
     } catch (e) {}
     try {
-      var raw = localStorage.getItem(P01_KEY);
-      if (!raw) return null;
-      var d = JSON.parse(raw);
-      if (!d.bits || d.bits.indexOf(null) >= 0) return null;
-      return deriveProfileFromP01Bits(d.bits);
+      var ki;
+      for (ki = 0; ki < P01_KEYS.length; ki++) {
+        var raw = localStorage.getItem(P01_KEYS[ki]);
+        if (!raw) continue;
+        var d = JSON.parse(raw);
+        if (!d.bits || d.bits.indexOf(null) >= 0) continue;
+        return deriveProfileFromP01Bits(d.bits);
+      }
     } catch (e) { return null; }
   }
 
@@ -969,6 +1218,7 @@
     if (bits.length === 10) {
       return [bits[0], bits[1], bits[6], bits[8], bits[5], bits[9]];
     }
+    if (bits.length === 6) return bits.slice();
     return bits;
   }
 
@@ -1324,25 +1574,12 @@
     document.getElementById('summary').style.display = 'flex';
 
     var b = state.bits.map(function(x) { return x; });
+    buildDecisionOutput(b);
     buildOutputs(b, loadP01Profile());
     updateLivePanel();
     updateRail();
-    var sum = document.getElementById('summary');
-    if (sum) {
-      sum.classList.add('sys-output-summary-wrap', 'sys-output-hide-legacy-cta');
-    }
     var m = document.getElementById('sys-output-mount-revenue');
-    if (m && window.StephuarySystemOutput) {
-      var ctaR =
-        '<div class="sys-output__cta">' +
-        '<div class="sys-output__cta-row">' +
-        '<a href="/structure" class="sys-output__btn sys-output__btn--pri magnetic">Continue</a>' +
-        '</div>' +
-        '<p class="phase-result-links" style="margin-top:14px;text-align:center">' +
-        '<a href="/systems">Save and exit</a>' +
-        '</p></div>';
-      window.StephuarySystemOutput.mountRevenue(m, ctaR);
-    }
+    if (m) m.innerHTML = '';
     if (window.StephuaryDiagnosticMobile && typeof window.StephuaryDiagnosticMobile.scrollToSummary === 'function') {
       window.requestAnimationFrame(function () {
         window.StephuaryDiagnosticMobile.scrollToSummary({ behavior: 'auto' });
@@ -1357,7 +1594,7 @@
     var f = finalPanelLabels(b);
     var profile = loadP01Profile();
     var el6 = document.getElementById('out-s6');
-    var lines = [
+    var lines = decisionExportLines(b).concat([
       'Stephuary · Phase 02 · Monetize',
       '',
       'Phase 01 motion (if completed)',
@@ -1391,7 +1628,7 @@
       'Demand: ' + f.demand,
       'Problem: ' + f.problem,
       'Buyer: ' + f.buyer
-    ];
+    ]);
     return lines.join('\n');
   }
 
@@ -1436,6 +1673,7 @@
       }
     } catch (e) {}
     state.bits = Array(TOTAL_Q).fill(null);
+    state.signals = { clarity: null, paid: null, demand: null, buyer: null, outcome: null };
     state.currentStep = 1;
     var sumEl = document.getElementById('summary');
     if (sumEl) {
