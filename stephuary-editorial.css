@@ -1,156 +1,330 @@
 /**
- * Stephuary editorial system — Playfair Display + Inter (Canela/Söhne not bundled).
- * Load after stephuary-design-tokens.css. Paired with stephuary-interactive.css imports.
- *
- * Utilities: .sh-container, .sh-prose, .sh-prose-narrow, .sh-h1–.sh-h4, .sh-btn-editorial
+ * Editorial layer — diagnostic phases (01–05)
+ * Calm spacing, typography-first, open layout. Loads after page + chrome CSS.
+ * Scoped with html.phase-page-min
  */
 
-html {
-  font-family: var(--font-sans);
-  font-size: 100%;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+html.phase-page-min {
+  --ed-measure: min(40rem, 92vw);
+  --ed-space-lg: clamp(2rem, 6vw, 4rem);
+  --ed-space-md: clamp(1.25rem, 4vw, 2.25rem);
+  --ed-space-sm: clamp(0.75rem, 2vw, 1.25rem);
+  --ed-line: rgba(232, 224, 212, 0.07);
+  --ed-faint: rgba(232, 224, 212, 0.42);
 }
 
-body {
-  font-family: var(--font-sans);
-  font-size: var(--text-body);
-  font-weight: var(--font-weight-body);
-  line-height: var(--lh-body);
-  letter-spacing: var(--letter-body);
-}
-
-/* ——— Layout width ——— */
-.sh-container {
-  width: 100%;
-  max-width: var(--layout-max);
-  margin-left: auto;
-  margin-right: auto;
-  padding-left: var(--container-pad-x);
-  padding-right: var(--container-pad-x);
-}
-
-.sh-prose {
-  max-width: var(--prose-width);
+/* —— Single focal column —— */
+html.phase-page-min #flow-wrap .main-col,
+html.phase-page-min #summary {
+  max-width: var(--ed-measure);
   margin-left: auto;
   margin-right: auto;
 }
 
-.sh-prose-narrow {
-  max-width: var(--prose-narrow);
-  margin-left: auto;
-  margin-right: auto;
+html.phase-page-min #summary .diag-body,
+html.phase-page-min #summary .diag-section,
+html.phase-page-min #summary .m2-diagnosis,
+html.phase-page-min #summary .m2-meaning,
+html.phase-page-min #summary .m2-action,
+html.phase-page-min #summary .p3-diagnosis,
+html.phase-page-min #summary .p3-meaning,
+html.phase-page-min #summary .p3-action {
+  max-width: 100%;
 }
 
-/* ——— Semantic headings (sans available for overrides per component) ——— */
-.sh-h1,
-h1.sh-h1 {
-  font-family: var(--font-serif);
-  font-weight: var(--font-weight-serif);
-  font-size: var(--text-h1);
-  line-height: var(--lh-h1);
-  letter-spacing: var(--letter-h);
+html.phase-page-min #summary p,
+html.phase-page-min #summary .diag-body p {
+  max-width: 38rem;
 }
 
-.sh-h2,
-h2.sh-h2 {
-  font-family: var(--font-serif);
-  font-weight: var(--font-weight-serif);
-  font-size: var(--text-h2);
-  line-height: var(--lh-h2);
-  letter-spacing: var(--letter-h);
+/* —— Bridge / instinct: open, no card box —— */
+html.phase-page-min .instinct-block {
+  border: none !important;
+  border-top: 1px solid var(--ed-line) !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  padding: var(--ed-space-lg) 0 !important;
+  margin-bottom: var(--ed-space-lg) !important;
 }
 
-.sh-h3,
-h3.sh-h3 {
-  font-family: var(--font-serif);
-  font-weight: var(--font-weight-serif);
-  font-size: var(--text-h3);
-  line-height: var(--lh-h3);
-  letter-spacing: var(--letter-h);
+html.phase-page-min .instinct-kicker {
+  opacity: 0.55;
+  margin-bottom: var(--ed-space-sm) !important;
 }
 
-.sh-h4,
-h4.sh-h4 {
-  font-family: var(--font-sans);
-  font-weight: var(--font-weight-medium);
-  font-size: var(--text-h4);
-  line-height: var(--lh-h4);
-  letter-spacing: var(--letter-body);
+html.phase-page-min .instinct-h2 {
+  font-size: clamp(1.5rem, 3.8vw, 2rem) !important;
+  line-height: 1.22 !important;
+  margin-bottom: var(--ed-space-sm) !important;
 }
 
-.sh-body-lg {
-  font-size: var(--text-body-lg);
-  line-height: var(--lh-body);
+html.phase-page-min .instinct-sub {
+  font-size: 15px !important;
+  opacity: 0.88;
+  margin-bottom: var(--ed-space-md) !important;
 }
 
-.sh-body {
-  font-size: var(--text-body);
-  line-height: var(--lh-body);
+html.phase-page-min .instinct-reality {
+  border-top-color: var(--ed-line) !important;
+  padding-top: var(--ed-space-md) !important;
 }
 
-.sh-small {
-  font-size: var(--text-small);
-  line-height: var(--lh-small);
+/* —— Questions: headline + quiet meta —— */
+html.phase-page-min .step-header {
+  margin-bottom: var(--ed-space-lg) !important;
 }
 
-.sh-micro {
-  font-family: var(--font-mono);
-  font-size: var(--text-micro);
-  line-height: 1.4;
-  letter-spacing: var(--letter-label-wide);
+html.phase-page-min .step-instruction {
+  font-size: clamp(1.65rem, 4vw, 2.35rem) !important;
+  line-height: 1.16 !important;
+  font-weight: 300 !important;
+  letter-spacing: -0.02em !important;
+  max-width: var(--ed-measure);
+}
+
+html.phase-page-min .step-micro {
+  font-size: 11px !important;
+  letter-spacing: 0.1em !important;
   text-transform: uppercase;
+  color: var(--ed-faint) !important;
+  margin-top: 0.75rem !important;
 }
 
-/* ——— Premium button (outline / quiet) ——— */
-.sh-btn-editorial {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-family: var(--font-sans);
-  font-size: var(--text-label);
-  font-weight: var(--font-weight-medium);
-  letter-spacing: var(--letter-ui);
-  text-transform: uppercase;
-  text-decoration: none;
-  padding: var(--btn-pad-y) var(--btn-pad-x);
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--line-subtle, rgba(244, 237, 224, 0.2));
-  background: transparent;
-  color: var(--text-primary, #f4ede0);
-  cursor: pointer;
-  transition: opacity 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+html.phase-page-min .step-adaptive {
+  font-size: 10px !important;
+  letter-spacing: 0.06em !important;
+  opacity: 0.5 !important;
+  margin-bottom: 1rem !important;
 }
 
-.sh-btn-editorial:hover {
-  opacity: 0.92;
-  border-color: rgba(244, 237, 224, 0.35);
-  background: rgba(244, 237, 224, 0.04);
+/* —— Answer rows: light touch —— */
+html.phase-page-min .option-list {
+  gap: 10px !important;
 }
 
-.sh-btn-editorial:focus-visible {
-  outline: var(--focus-ring);
-  outline-offset: var(--focus-offset);
+html.phase-page-min .option-item {
+  border: 1px solid var(--ed-line) !important;
+  background: rgba(255, 255, 255, 0.015) !important;
+  border-radius: 2px !important;
+  padding: 1.1rem 1.2rem !important;
+  font-size: 15px !important;
+  line-height: 1.45 !important;
+  box-shadow: none !important;
 }
 
-/* ——— Nav text (sans, readable) ——— */
-.sh-nav-link {
-  font-family: var(--font-sans);
-  font-size: var(--text-nav);
-  font-weight: var(--font-weight-medium);
-  letter-spacing: var(--letter-ui);
-  text-transform: uppercase;
-  text-decoration: none;
-  color: var(--text-tertiary, rgba(122, 114, 104, 0.95));
-  transition: color 0.2s ease, opacity 0.2s ease;
+html.phase-page-min .option-item:hover {
+  border-color: rgba(154, 130, 96, 0.22) !important;
+  background: rgba(154, 130, 96, 0.04) !important;
 }
 
-.sh-nav-link:hover {
-  color: var(--text-secondary);
+html.phase-page-min .option-item.selected {
+  border-color: rgba(154, 130, 96, 0.45) !important;
+  background: rgba(154, 130, 96, 0.06) !important;
 }
 
-@media (max-width: 640px) {
-  html {
-    font-size: 100%;
+/* —— Progress: separator only —— */
+html.phase-page-min .capture-layout--chrome #flow.flow--chrome .diag-progress-stack {
+  border-top-color: var(--ed-line) !important;
+  margin-top: var(--ed-space-md) !important;
+  padding-top: var(--ed-space-md) !important;
+}
+
+html.phase-page-min .diag-progress-topline {
+  margin-bottom: var(--ed-space-sm) !important;
+}
+
+html.phase-page-min .diag-progress-area {
+  opacity: 0.5;
+}
+
+/* —— Collapsible maps: minimal chrome —— */
+html.phase-page-min .diag-details {
+  border: none !important;
+  border-top: 1px solid var(--ed-line) !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  margin-top: var(--ed-space-md) !important;
+}
+
+html.phase-page-min .diag-details__summary {
+  padding: 12px 0 !important;
+  color: var(--ed-faint) !important;
+}
+
+html.phase-page-min .diag-details__summary::before {
+  opacity: 0.45;
+  font-weight: 400;
+}
+
+html.phase-page-min .diag-details__body {
+  padding: 0 0 var(--ed-space-sm) !important;
+}
+
+html.phase-page-min .rail.rail--embedded .rail-item {
+  border: none !important;
+  border-bottom: 1px solid var(--ed-line) !important;
+  border-radius: 0 !important;
+  padding: 10px 0 !important;
+  background: transparent !important;
+}
+
+/* —— Live read: secondary, quieter —— */
+html.phase-page-min .live-panel--chrome .live-panel__shell {
+  border: none !important;
+  border-top: 1px solid var(--ed-line) !important;
+  background: rgba(12, 10, 9, 0.35) !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+}
+
+html.phase-page-min .live-panel__shell > summary {
+  opacity: 0.85;
+}
+
+html.phase-page-min .live-field {
+  border-bottom-color: var(--ed-line) !important;
+  padding: 12px 16px !important;
+}
+
+html.phase-page-min .live-label {
+  opacity: 0.55;
+  font-size: 8px !important;
+}
+
+/* Non-chrome live panel (older markup on some pages) */
+html.phase-page-min .live-panel:not(.live-panel--chrome) {
+  border: none !important;
+  border-top: 1px solid var(--ed-line) !important;
+  box-shadow: none !important;
+  background: rgba(12, 10, 9, 0.25) !important;
+}
+
+html.phase-page-min .live-panel-head {
+  border-bottom-color: var(--ed-line) !important;
+}
+
+/* —— Decision blocks (M2 / P3 / similar) —— */
+html.phase-page-min .m2-decision-block,
+html.phase-page-min .p3-decision-block {
+  border: none !important;
+  border-top: 1px solid var(--ed-line) !important;
+  background: transparent !important;
+  padding: var(--ed-space-lg) 0 !important;
+  border-radius: 0 !important;
+}
+
+html.phase-page-min .diag-h {
+  font-size: 9px !important;
+  letter-spacing: 0.2em !important;
+  opacity: 0.5 !important;
+  margin-bottom: 0.5rem !important;
+}
+
+html.phase-page-min .summary-title {
+  font-size: clamp(1.6rem, 4vw, 2.1rem) !important;
+  line-height: 1.15 !important;
+  margin-bottom: 0.5rem !important;
+}
+
+html.phase-page-min .summary-sub {
+  font-size: 14px !important;
+  line-height: 1.65 !important;
+  opacity: 0.75;
+  margin-bottom: var(--ed-space-lg) !important;
+}
+
+html.phase-page-min .diag-section {
+  margin-bottom: var(--ed-space-md) !important;
+}
+
+/* —— Buttons: one calm primary —— */
+html.phase-page-min .btn-solid,
+html.phase-page-min .btn-terminal {
+  box-shadow: none !important;
+  filter: none !important;
+  border-radius: 2px !important;
+  letter-spacing: 0.18em !important;
+}
+
+html.phase-page-min .btn-ghost {
+  opacity: 0.72;
+  border-color: var(--ed-line) !important;
+  box-shadow: none !important;
+}
+
+html.phase-page-min .magnetic {
+  /* keep interaction script; soften visual expectation */
+  transition: opacity 0.2s ease, border-color 0.2s ease !important;
+}
+
+/* —— Rail (legacy column): lighter —— */
+html.phase-page-min .rail-item {
+  border-left-width: 1px !important;
+  border-left-color: var(--ed-line) !important;
+  padding: 12px 0 12px 14px !important;
+}
+
+html.phase-page-min .rail-item.active {
+  border-left-color: rgba(154, 130, 96, 0.5) !important;
+}
+
+/* —— Nav row back —— */
+html.phase-page-min .nav-row {
+  margin-top: var(--ed-space-lg) !important;
+}
+
+/* —— Capture result: editorial measure —— */
+html.phase-page-min .result-decision,
+html.phase-page-min .result-section {
+  max-width: var(--ed-measure);
+}
+
+html.phase-page-min .result-breakdown-details {
+  border: none !important;
+  border-top: 1px solid var(--ed-line) !important;
+  background: transparent !important;
+  margin-top: var(--ed-space-md) !important;
+}
+
+html.phase-page-min .result-breakdown-details > summary {
+  padding: 14px 0 !important;
+}
+
+/* —— Grid: more air —— */
+html.phase-page-min .capture-layout--chrome {
+  gap: 28px 36px !important;
+}
+
+@media (max-width: 960px) {
+  html.phase-page-min .capture-layout--chrome {
+    gap: var(--ed-space-lg) !important;
   }
+}
+
+/* —— Structure supporting details —— */
+html.phase-page-min .p3-supporting-details {
+  border: none !important;
+  border-top: 1px solid var(--ed-line) !important;
+  background: transparent !important;
+}
+
+html.phase-page-min .p3-supporting-details > summary {
+  padding: 14px 0 !important;
+}
+
+/* —— Fixed flow bar (interactive.js): calmer primary —— */
+html.phase-page-min .sh-flow-end__pri {
+  background: rgba(154, 130, 96, 0.92) !important;
+  background-image: none !important;
+  color: #0c0a09 !important;
+  border: 1px solid transparent !important;
+}
+
+html.phase-page-min .sh-flow-end {
+  border-top-color: var(--ed-line) !important;
+  background: rgba(8, 7, 6, 0.88) !important;
+}
+
+html.phase-page-min .sh-flow-end__saved {
+  opacity: 0.65;
 }
