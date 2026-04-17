@@ -852,31 +852,31 @@
         <p class="summary-sub">Final checkpoint.</p>
 
         <div class="diag-section">
-          <p class="diag-h">1. Control status</p>
+          <p class="diag-h">1. Status</p>
           <div class="diag-body" id="out-1"></div>
         </div>
 
         <div class="diag-section">
-          <p class="diag-h">2. Dependency</p>
+          <p class="diag-h">2. Diagnosis</p>
           <div class="diag-body" id="out-2"></div>
         </div>
 
         <div class="diag-section">
-          <p class="diag-h">3. Leverage</p>
+          <p class="diag-h">3. Action</p>
           <div class="diag-body" id="out-3"></div>
         </div>
 
-        <div class="diag-section">
+        <div class="diag-section" id="out-wrap-4" hidden>
           <p class="diag-h">4. Main gap</p>
           <div class="diag-body" id="out-4"></div>
         </div>
 
-        <div class="diag-section">
+        <div class="diag-section" id="out-wrap-5" hidden>
           <p class="diag-h">5. Hard truth</p>
           <div class="hard-truth-block diag-body" id="out-5"></div>
         </div>
 
-        <div class="diag-section">
+        <div class="diag-section" id="out-wrap-6" hidden>
           <p class="diag-h">6. Final move</p>
           <div class="diag-body" id="out-6"></div>
         </div>
@@ -954,29 +954,29 @@
 
   var QUESTIONS = [
     {
-      instruction: 'Right now, your income depends on:',
-      a: 'more than one source or path',
-      b: 'one main source or path'
+      instruction: 'Dependency',
+      a: 'My income comes from more than one source',
+      b: 'My income depends on one main source'
     },
     {
-      instruction: 'Who controls the levers that affect your income?',
-      a: 'you do',
-      b: 'platforms, clients, or outside systems do'
+      instruction: 'Control',
+      a: 'I control the key levers affecting my income',
+      b: 'Clients, platforms, or outside systems control them'
     },
     {
-      instruction: 'Can this work repeat without rebuilding from scratch each time?',
-      a: 'yes',
-      b: 'no'
+      instruction: 'Repeatability',
+      a: 'This can repeat without rebuilding from scratch',
+      b: 'This has to be rebuilt each time'
     },
     {
-      instruction: 'What are you actually building?',
-      a: 'something I own',
-      b: 'something inside someone else\'s system'
+      instruction: 'Ownership',
+      a: 'I am building something I own',
+      b: "I am building inside someone else's system"
     },
     {
-      instruction: 'Your next move is closer to:',
-      a: 'leverage and independence',
-      b: 'stability and maintenance'
+      instruction: 'Direction',
+      a: 'My next move increases leverage',
+      b: 'My next move mostly maintains what already exists'
     }
   ];
 
@@ -1130,6 +1130,39 @@
     if (bits.length > TOTAL_Q) return bits.slice(0, TOTAL_Q);
     return bits;
   }
+
+  /** bits: [dependency, control, repeatability, ownership, direction] — 0 strong, 1 weak */
+  function getSovereigntyState(bits) {
+    if (bits[0] === 1) return 'dependent_income';
+    if (bits[1] === 1) return 'outside_control';
+    if (bits[3] === 1) return 'no_ownership';
+    if (bits[2] === 1) return 'not_repeatable';
+    if (bits[4] === 1) return 'maintenance_path';
+    return 'sovereign';
+  }
+
+  var STATUS_LINE = {
+    sovereign: 'This is controlled.',
+    _other: 'This is still fragile.'
+  };
+
+  var DIAGNOSIS_LINE = {
+    dependent_income: 'Your income depends on one source.',
+    outside_control: 'You do not control the levers affecting your income.',
+    no_ownership: "You are building inside someone else's system.",
+    not_repeatable: 'This only works when you rebuild it manually.',
+    maintenance_path: 'Your next move protects the present but does not increase leverage.',
+    sovereign: 'You are building something more owned, repeatable, and controlled.'
+  };
+
+  var ACTION_LINE = {
+    dependent_income: 'Create one additional owned path.',
+    outside_control: 'Move one critical lever back under your control.',
+    no_ownership: 'Build one asset or path you own directly.',
+    not_repeatable: 'Turn this into a repeatable system before expanding it.',
+    maintenance_path: 'Choose the move that increases leverage, not just stability.',
+    sovereign: 'Protect this structure and scale it carefully.'
+  };
 
   function buildP3OfferAndEntry() {
     var p3 = loadP3Bits();
@@ -1302,52 +1335,21 @@
     });
   }
 
-  function dominantGapLabel(b) {
-    if (b[0] === 1) return 'dependency';
-    if (b[3] === 1) return 'lack of ownership';
-    if (b[2] === 1) return 'lack of repeatability';
-    if (b[4] === 1) return 'lack of leverage';
-    return 'lack of leverage';
-  }
-
   function buildSummaryOutputs(b) {
-    var controlled = b[0] === 0 && b[3] === 0 && b[2] === 0;
-    var statusWord = controlled ? 'controlled' : 'dependent';
+    var s = getSovereigntyState(b);
 
     document.getElementById('out-1').innerHTML =
-      '<p>You are currently: <strong>' + statusWord + '</strong></p>';
+      '<p>' + (s === 'sovereign' ? STATUS_LINE.sovereign : STATUS_LINE._other) + '</p>';
 
-    var depBullets = [];
-    if (b[0] === 1) depBullets.push('income tied to one source');
-    if (b[1] === 1) depBullets.push('reliance on external systems');
-    if (b[2] === 1) depBullets.push('reliance on your time');
-    document.getElementById('out-2').innerHTML = depBullets.length
-      ? '<ul class="diag-list">' + depBullets.map(function(x) { return '<li>' + x + '</li>'; }).join('') + '</ul>'
-      : '<p>—</p>';
+    document.getElementById('out-2').innerHTML =
+      '<p>' + DIAGNOSIS_LINE[s] + '</p>';
 
-    var levPresent = b[4] === 0;
     document.getElementById('out-3').innerHTML =
-      '<p>Leverage: <strong>' + (levPresent ? 'present' : 'limited') + '</strong></p>' +
-      '<p>' +
-      (levPresent ? 'This can scale beyond your time' : 'This depends on your direct effort') +
-      '</p>';
+      '<p>' + ACTION_LINE[s] + '</p>';
 
-    document.getElementById('out-4').innerHTML =
-      '<p>The gap is not skill.</p>' +
-      '<p>It is:<br /><strong>' + dominantGapLabel(b) + '</strong></p>';
-
-    document.getElementById('out-5').innerHTML =
-      '<p>If your income depends on:<br />one source<br />one system<br />or your time</p>' +
-      '<p>it is fragile.</p>';
-
-    document.getElementById('out-6').innerHTML =
-      '<p>From here:</p>' +
-      '<ul class="diag-list">' +
-      '<li>remove one dependency</li>' +
-      '<li>build one owned path</li>' +
-      '<li>create one leveraged output</li>' +
-      '</ul>' +
-      '<p>Do not expand until this is true.</p>';
+    document.getElementById('out-4').innerHTML = '';
+    document.getElementById('out-5').innerHTML = '';
+    document.getElementById('out-6').innerHTML = '';
 
     var fin = panelFromBits(b);
     document.getElementById('live-dep').textContent = fin.dep;
@@ -1487,29 +1489,24 @@
       var n = document.getElementById(id);
       return n ? n.innerText.trim() : '';
     }
+    var b = state.bits.map(function(x) { return x; });
+    var sv = getSovereigntyState(b);
     return [
       'Stephuary · Phase 05 · Sovereignty',
+      '',
+      'Control state: ' + sv,
       '',
       'Bridge (Phase 4 → 5)',
       bridgePlainText(),
       '',
-      '1. Control status',
+      '1. Status',
       gt('out-1'),
       '',
-      '2. Dependency',
+      '2. Diagnosis',
       gt('out-2'),
       '',
-      '3. Leverage',
+      '3. Action',
       gt('out-3'),
-      '',
-      '4. Main gap',
-      gt('out-4'),
-      '',
-      '5. Hard truth',
-      gt('out-5'),
-      '',
-      '6. Final move',
-      gt('out-6'),
       '',
       'Final bridge',
       gt('sovereignty-final-state')
