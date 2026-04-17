@@ -554,6 +554,98 @@
       line-height: 1.7;
     }
 
+    .p3-decision-block {
+      border: 1px solid var(--gold-line);
+      background: var(--surface);
+      border-radius: var(--radius);
+      padding: 24px 22px 22px;
+      margin-bottom: 28px;
+    }
+
+    .p3-decision-block .diag-h {
+      margin-bottom: 8px;
+    }
+
+    .p3-decision-block .diag-h:not(:first-child) {
+      margin-top: 20px;
+    }
+
+    .p3-diagnosis {
+      font-family: var(--serif);
+      font-size: clamp(18px, 2.8vw, 22px);
+      line-height: 1.45;
+      color: var(--cream);
+      margin: 0 0 4px;
+    }
+
+    .p3-meaning,
+    .p3-action {
+      font-size: 14px;
+      color: var(--text-mid);
+      line-height: 1.75;
+      margin: 0;
+    }
+
+    .p3-route-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 22px;
+      align-items: center;
+    }
+
+    .p3-supporting-heading {
+      margin-top: 4px;
+      margin-bottom: 14px;
+    }
+
+    .p3-supporting-details {
+      margin-bottom: 28px;
+      border: 1px solid var(--border-dim);
+      border-radius: var(--radius);
+      background: rgba(26, 22, 18, 0.35);
+    }
+
+    .p3-supporting-details > summary {
+      cursor: pointer;
+      padding: 14px 18px;
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--gold-dim);
+      list-style: none;
+    }
+
+    .p3-supporting-details > summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .p3-supporting-details[open] > summary {
+      border-bottom: 1px solid var(--border-dim);
+    }
+
+    .p3-supporting-inner {
+      padding: 8px 18px 4px;
+    }
+
+    .p3-supporting-inner .diag-section:first-child {
+      margin-top: 8px;
+    }
+
+    #p3-phase-continue-wrap .btn-solid {
+      background: transparent;
+      border-color: var(--border-dim);
+      color: var(--text-dim);
+      font-size: 10px;
+    }
+
+    #p3-phase-continue-wrap .btn-solid:hover {
+      border-color: var(--gold);
+      color: var(--cream);
+      background: transparent;
+    }
+
     .diag-section { margin-bottom: 26px; }
 
     .diag-h {
@@ -831,9 +923,27 @@
 
       <div id="summary">
         <p class="summary-phase-tag">Diagnostic · Phase 03 of 5 .  Structure</p>
-        <h2 class="summary-title">Structure complete</h2>
-        <p class="summary-sub">One sellable thing. Then you expose it.</p>
+        <h2 class="summary-title">One diagnosis. One next move.</h2>
+        <p class="summary-sub">Fix this first—the full read below is supporting detail.</p>
 
+        <div class="p3-decision-block" id="p3-decision-block">
+          <p class="diag-h">Diagnosis</p>
+          <p class="p3-diagnosis" id="out-p3-diagnosis"></p>
+          <p class="diag-h">What this means</p>
+          <p class="p3-meaning" id="out-p3-meaning"></p>
+          <p class="diag-h">Primary move</p>
+          <p class="p3-action" id="out-p3-action"></p>
+          <div class="p3-route-actions">
+            <a href="/playbooks" class="btn btn-solid magnetic" id="out-p3-primary-cta">Open a Room</a>
+            <a href="/snapshot" class="btn btn-ghost magnetic" id="out-p3-secondary-cta">Snapshot</a>
+          </div>
+        </div>
+
+        <p class="diag-h p3-supporting-heading">Supporting insight</p>
+
+        <details class="p3-supporting-details" id="p3-supporting-details">
+          <summary>Full supporting read (sections 1–9)</summary>
+          <div class="p3-supporting-inner">
         <div class="diag-section">
           <p class="diag-h">1. Current state</p>
           <div class="diag-body" id="out-1"></div>
@@ -878,11 +988,13 @@
           <p class="diag-h">9. Next move</p>
           <div class="diag-body" id="out-9"></div>
         </div>
+          </div>
+        </details>
 
         <p class="capture-flow-saved">Your progress is saved automatically on this device.</p>
         <p class="sys-lead-note" style="margin:0 0 14px;max-width:52ch">Carry-forward: chargeable shape, outcome line, entry, price posture, and ship rule. Phase 04 uses this to force exposure and measure response.</p>
-        <div class="action-primary">
-          <a href="/automation" class="btn btn-solid" data-sh-flow-primary>Continue</a>
+        <div class="action-primary" id="p3-phase-continue-wrap">
+          <a href="/automation" class="btn btn-solid" id="p3-legacy-continue" data-sh-flow-primary>Continue to Automation</a>
         </div>
         <p class="phase-result-links">
           <a href="/systems">Save and exit</a>
@@ -938,23 +1050,44 @@
 <script>
 (function(){
   var STORAGE_KEY = 'stephuary_structure_p03_v1';
-  var P01_KEY = 'stephuary_capture_p01_v2';
+  var P01_KEYS = ['stephuary_capture_p01_v3', 'stephuary_capture_p01_v2'];
   var PROFILE_KEY = 'stephuary_p01_profile';
   var P02_KEY = 'stephuary_monetize_p02_v1';
   var TOTAL_Q = 5;
-  var RAIL_LABELS = ['Offer reality','Outcome','Entry','Delivery','Price','Results'];
+  var RAIL_LABELS = ['Offer reality','Outcome clarity','Entry point','Delivery shape','Price confidence','Results'];
 
   var QUESTIONS = [
-    { instruction: 'Offer reality .  could someone pay you for something this week?', a: 'Yes .  even rough, it is invoice-shaped', b: 'No .  it is still conceptual' },
-    { instruction: 'Outcome clarity .  before → after:', a: 'Clear in one sentence', b: 'Still broad or fuzzy' },
-    { instruction: 'Entry point .  if a buyer said “start today”:', a: 'There is a clear first step', b: 'No obvious way to begin' },
-    { instruction: 'Delivery shape .  what you sell by default:', a: 'Hands-on .  solve the problem directly', b: 'Advisory .  guide, advise, steer' },
-    { instruction: 'Price confidence .  if someone asked your price right now:', a: 'You would say it clearly', b: 'You would hesitate or deflect' }
+    {
+      instruction: 'Offer reality',
+      a: 'Someone could pay for this this week',
+      b: 'This is not yet something someone would pay for'
+    },
+    {
+      instruction: 'Outcome clarity',
+      a: 'The before → after is clear in one sentence',
+      b: 'The outcome is still vague or broad'
+    },
+    {
+      instruction: 'Entry point',
+      a: 'There is a clear first step a buyer can start with',
+      b: 'There is no obvious starting point'
+    },
+    {
+      instruction: 'Delivery shape',
+      a: 'I directly solve the problem',
+      b: 'I mainly guide or advise'
+    },
+    {
+      instruction: 'Price confidence',
+      a: 'I would say the price clearly',
+      b: 'I would hesitate or avoid saying it'
+    }
   ];
 
   var state = {
     bits: Array(TOTAL_Q).fill(null),
-    currentStep: 1
+    currentStep: 1,
+    structureFailure: null
   };
 
   function normalizeP03Bits(bits) {
@@ -969,16 +1102,147 @@
     return bits;
   }
 
-  function normalizeP03Bits(bits) {
-    if (!bits) return null;
-    if (window.StephuaryDiagnosticState && typeof window.StephuaryDiagnosticState.migrateP03Bits === 'function') {
-      return window.StephuaryDiagnosticState.migrateP03Bits(bits);
+  /** bits: [offer, outcome, entry, delivery, price] — 0 strong, 1 weak */
+  function getStructureFailure(bits) {
+    if (bits[0] === 1) return 'offer_not_real';
+    if (bits[1] === 1) return 'outcome_unclear';
+    if (bits[2] === 1) return 'no_entry_point';
+    if (bits[4] === 1) return 'price_uncertain';
+    if (bits[3] === 1) return 'delivery_misaligned';
+    return 'structured';
+  }
+
+  var MEANING_COPY = {
+    offer_not_real: 'This is not yet something a buyer would pay for.',
+    outcome_unclear: 'The result is not clear enough to justify buying.',
+    no_entry_point: 'There is no clear way for someone to start.',
+    price_uncertain: 'You don’t trust the price because the offer isn’t tight.',
+    delivery_misaligned: 'You are not delivering in the strongest way.',
+    structured: 'The shell is defined enough to name, price, and start.'
+  };
+
+  var ACTION_COPY = {
+    offer_not_real: 'Reduce this to something someone would pay for this week.',
+    outcome_unclear: 'Define one visible before → after outcome.',
+    no_entry_point: 'Create a single clear starting step.',
+    price_uncertain: 'Tighten the offer until the price is obvious.',
+    delivery_misaligned: 'Choose the strongest delivery method and commit.',
+    structured: 'Ship one narrow version and measure response in Phase 04.'
+  };
+
+  var DIAGNOSIS_HTML = {
+    offer_not_real:
+      'You don’t have a structure problem.<br />You have a <strong>not-yet-real offer</strong> problem.',
+    outcome_unclear:
+      'You don’t have a structure problem.<br />You have <strong>an unclear outcome</strong> problem.',
+    no_entry_point:
+      'You don’t have a structure problem.<br />You have a <strong>missing entry point</strong> problem.',
+    price_uncertain:
+      'You don’t have a structure problem.<br />You have a <strong>price uncertainty</strong> problem.',
+    delivery_misaligned:
+      'You don’t have a structure problem.<br />You have a <strong>delivery misalignment</strong> problem.'
+  };
+
+  var DIAGNOSIS_EXPORT_LINE = {
+    offer_not_real: 'You have a not-yet-real offer problem.',
+    outcome_unclear: 'You have an unclear outcome problem.',
+    no_entry_point: 'You have a missing entry point problem.',
+    price_uncertain: 'You have a price uncertainty problem.',
+    delivery_misaligned: 'You have a delivery misalignment problem.'
+  };
+
+  function getP03Route(failure) {
+    switch (failure) {
+      case 'offer_not_real':
+      case 'no_entry_point':
+        return {
+          primary: { href: '/playbooks', label: 'Open a Room' },
+          secondary: { href: '/snapshot', label: 'Start Snapshot' }
+        };
+      case 'outcome_unclear':
+      case 'price_uncertain':
+        return {
+          primary: { href: '/snapshot', label: 'Start Snapshot' },
+          secondary: { href: '/playbooks', label: 'Open Rooms' }
+        };
+      case 'delivery_misaligned':
+        return {
+          primary: { href: '/focused-review', label: 'Start Focused Review' },
+          secondary: { href: '/snapshot', label: 'Snapshot' }
+        };
+      case 'structured':
+      default:
+        return {
+          primary: { href: '/automation', label: 'Continue to Automation' },
+          secondary: { href: '/playbooks', label: 'Open a Room' }
+        };
     }
-    if (bits.length === 10) {
-      return [bits[0], bits[1], bits[3], bits[5], bits[7]];
+  }
+
+  function buildDecisionOutput(b) {
+    var failure = getStructureFailure(b);
+    state.structureFailure = failure;
+
+    var diagEl = document.getElementById('out-p3-diagnosis');
+    var meanEl = document.getElementById('out-p3-meaning');
+    var actEl = document.getElementById('out-p3-action');
+    var pA = document.getElementById('out-p3-primary-cta');
+    var pB = document.getElementById('out-p3-secondary-cta');
+
+    if (failure === 'structured') {
+      if (diagEl) {
+        diagEl.innerHTML =
+          'You don’t have a structure problem.<br />Your offer is tight enough to test.';
+      }
+    } else if (diagEl) {
+      diagEl.innerHTML = DIAGNOSIS_HTML[failure] || '';
     }
-    if (bits.length > TOTAL_Q) return bits.slice(0, TOTAL_Q);
-    return bits;
+
+    if (meanEl) meanEl.textContent = MEANING_COPY[failure] || '';
+    if (actEl) actEl.textContent = ACTION_COPY[failure] || '';
+
+    var route = getP03Route(failure);
+    if (pA && route.primary) {
+      pA.href = route.primary.href;
+      pA.textContent = route.primary.label;
+    }
+    if (pB && route.secondary) {
+      pB.href = route.secondary.href;
+      pB.textContent = route.secondary.label;
+    }
+
+    var contWrap = document.getElementById('p3-phase-continue-wrap');
+    if (contWrap) {
+      contWrap.style.display = failure === 'structured' ? 'none' : '';
+    }
+  }
+
+  function decisionExportLines(b) {
+    var failure = getStructureFailure(b);
+    var route = getP03Route(failure);
+    var lines = [
+      '— Decision-first —',
+      '',
+      'Diagnosis',
+      'You don’t have a structure problem.',
+      failure === 'structured'
+        ? 'Your offer is tight enough to test.'
+        : DIAGNOSIS_EXPORT_LINE[failure] || '',
+      '',
+      'What this means',
+      MEANING_COPY[failure] || '',
+      '',
+      'Primary move',
+      ACTION_COPY[failure] || '',
+      '',
+      'Routing',
+      'Primary: ' + route.primary.label + ' — ' + route.primary.href,
+      'Optional: ' + route.secondary.label + ' — ' + route.secondary.href,
+      '',
+      '— Supporting insight (sections 1–9) —',
+      ''
+    ];
+    return lines;
   }
 
   var ARCHETYPES = [
@@ -1004,6 +1268,7 @@
     if (bits.length === 10) {
       return [bits[0], bits[1], bits[6], bits[8], bits[5], bits[9]];
     }
+    if (bits.length === 6) return bits.slice();
     return bits;
   }
 
@@ -1056,12 +1321,16 @@
       if (j) return JSON.parse(j);
     } catch (e) {}
     try {
-      var raw = localStorage.getItem(P01_KEY);
-      if (!raw) return null;
-      var d = JSON.parse(raw);
-      if (!d.bits || d.bits.indexOf(null) >= 0) return null;
-      return deriveP01FromBits(d.bits);
+      var ki;
+      for (ki = 0; ki < P01_KEYS.length; ki++) {
+        var raw = localStorage.getItem(P01_KEYS[ki]);
+        if (!raw) continue;
+        var d = JSON.parse(raw);
+        if (!d.bits || d.bits.indexOf(null) >= 0) continue;
+        return deriveP01FromBits(d.bits);
+      }
     } catch (e) { return null; }
+    return null;
   }
 
   function deriveP01FromBits(bits) {
@@ -1256,8 +1525,10 @@
     if (p && p.archetype && ARCH_SHORT[p.archetype]) return ARCH_SHORT[p.archetype];
     if (p && p.archetype) return p.archetype;
     try {
-      var raw = localStorage.getItem(P01_KEY);
-      if (raw) {
+      var ki;
+      for (ki = 0; ki < P01_KEYS.length; ki++) {
+        var raw = localStorage.getItem(P01_KEYS[ki]);
+        if (!raw) continue;
         var d = JSON.parse(raw);
         if (d.bits && d.bits.indexOf(null) < 0 && (d.bits.length === 6 || d.bits.length === 10)) {
           var n = scoreP01Archetype(d.bits);
@@ -1476,6 +1747,7 @@
     document.getElementById('flow').style.display = 'none';
     document.getElementById('summary').style.display = 'flex';
     var b = state.bits.map(function(x) { return x; });
+    buildDecisionOutput(b);
     buildSummaryOutputs(b);
     updateRail();
     if (window.StephuaryDiagnosticMobile && typeof window.StephuaryDiagnosticMobile.scrollToSummary === 'function') {
@@ -1488,7 +1760,8 @@
   }
 
   function exportText() {
-    var lines = [
+    var b = state.bits.map(function(x) { return x; });
+    var lines = decisionExportLines(b).concat([
       'Stephuary · Phase 03 · Structure',
       '',
       'VALUE → STRUCTURE (inputs)',
@@ -1520,7 +1793,7 @@
       '',
       '9. Next move',
       document.getElementById('out-9').innerText.trim()
-    ];
+    ]);
     return lines.join('\n');
   }
 
@@ -1567,7 +1840,10 @@
       }
     } catch (e) {}
     state.bits = Array(TOTAL_Q).fill(null);
+    state.structureFailure = null;
     state.currentStep = 1;
+    var p3cont = document.getElementById('p3-phase-continue-wrap');
+    if (p3cont) p3cont.style.display = '';
     document.getElementById('summary').style.display = 'none';
     document.getElementById('flow').style.display = 'block';
     document.querySelectorAll('.step').forEach(function(s, i) {
