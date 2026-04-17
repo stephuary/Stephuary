@@ -857,23 +857,23 @@
         </div>
 
         <div class="diag-section">
-          <p class="diag-h">2. Diagnosis</p>
+          <p class="diag-h">2. Why</p>
           <div class="diag-body" id="out-2"></div>
         </div>
 
         <div class="diag-section">
-          <p class="diag-h">3. Action</p>
+          <p class="diag-h">3. Core failure</p>
           <div class="diag-body" id="out-3"></div>
         </div>
 
-        <div class="diag-section" id="out-wrap-4" hidden>
-          <p class="diag-h">4. Main gap</p>
+        <div class="diag-section" id="out-wrap-4">
+          <p class="diag-h">4. Required move</p>
           <div class="diag-body" id="out-4"></div>
         </div>
 
-        <div class="diag-section" id="out-wrap-5" hidden>
-          <p class="diag-h">5. Hard truth</p>
-          <div class="hard-truth-block diag-body" id="out-5"></div>
+        <div class="diag-section" id="out-wrap-5">
+          <p class="diag-h">5. Route</p>
+          <div class="diag-body" id="out-5"></div>
         </div>
 
         <div class="diag-section" id="out-wrap-6" hidden>
@@ -883,7 +883,7 @@
 
         <div class="diag-section">
           <div class="system-done sovereignty-final-block" id="out-sys">
-            <p class="diag-body sovereignty-final-lead" id="sovereignty-final-state">You’ve proven something works.<br /><br />Now decide if you own it.</p>
+            <p class="diag-body sovereignty-final-lead" id="sovereignty-final-state">Export saves this read. The route above is your next step.</p>
             <p class="capture-flow-saved">Your progress is saved automatically on this device.</p>
             <div class="action-primary" style="margin-bottom:0">
               <button type="button" class="btn btn-solid" data-sh-flow-primary id="sovereignty-view-results">Enter Your Room</button>
@@ -1143,16 +1143,7 @@
 
   var STATUS_LINE = {
     sovereign: 'This is controlled.',
-    _other: 'This is still fragile.'
-  };
-
-  var DIAGNOSIS_LINE = {
-    dependent_income: 'Your income depends on one source.',
-    outside_control: 'You do not control the levers affecting your income.',
-    no_ownership: "You are building inside someone else's system.",
-    not_repeatable: 'This only works when you rebuild it manually.',
-    maintenance_path: 'Your next move protects the present but does not increase leverage.',
-    sovereign: 'You are building something more owned, repeatable, and controlled.'
+    _other: 'You do not control this yet.'
   };
 
   var ACTION_LINE = {
@@ -1163,6 +1154,125 @@
     maintenance_path: 'Choose the move that increases leverage, not just stability.',
     sovereign: 'Protect this structure and scale it carefully.'
   };
+
+  function getStructureDominantP03(bits) {
+    if (!bits || bits.length < 5) return 'structured';
+    if (bits[0] === 1) return 'offer_not_real';
+    if (bits[1] === 1) return 'outcome_unclear';
+    if (bits[2] === 1) return 'no_entry_point';
+    if (bits[4] === 1) return 'price_uncertain';
+    if (bits[3] === 1) return 'delivery_misaligned';
+    return 'structured';
+  }
+
+  function structureBecauseBullet(key) {
+    var m = {
+      offer_not_real: 'your offer is not something someone would pay for this week',
+      outcome_unclear: 'the before → after is still vague',
+      no_entry_point: 'there is no clear first step',
+      price_uncertain: 'price is not stated clearly',
+      delivery_misaligned: 'you default to advising instead of directly solving',
+      structured: 'offer, outcome, entry, and price are tight enough to test'
+    };
+    return m[key] || m.structured;
+  }
+
+  function getValidationDominantP04(bits) {
+    if (!bits || bits.length < 5) return 'validated';
+    if (bits[0] === 1) return 'not_exposed';
+    if (bits[2] === 1) return 'not_offered';
+    if (bits[1] === 1) return 'no_response';
+    if (bits[3] === 1) return 'loop_break';
+    if (bits[4] === 1) return 'too_slow';
+    return 'validated';
+  }
+
+  function validationBecauseBullet(key) {
+    var m = {
+      not_exposed: 'only you have seen the work',
+      not_offered: 'you have not directly asked anyone to buy',
+      no_response: 'the market is not responding',
+      loop_break: 'you stop after silence instead of adjusting',
+      too_slow: 'you wait for readiness instead of testing fast',
+      validated: 'real people have seen it and responded'
+    };
+    return m[key] || 'Phase 04 is not on this device.';
+  }
+
+  function dependencyCloserPhrase(s) {
+    switch (s) {
+      case 'dependent_income':
+        return 'a single income stream';
+      case 'outside_control':
+        return 'levers held outside you';
+      case 'no_ownership':
+        return "someone else's system";
+      case 'not_repeatable':
+        return 'manual rebuild each time';
+      case 'maintenance_path':
+        return 'maintaining the present instead of increasing leverage';
+      default:
+        return '';
+    }
+  }
+
+  function coreFailureLabel(s) {
+    if (s === 'dependent_income' || s === 'outside_control') return 'dependency';
+    if (s === 'no_ownership') return 'no ownership';
+    if (s === 'not_repeatable') return 'no repeatability';
+    if (s === 'maintenance_path') return 'no leverage';
+    return 'none';
+  }
+
+  function routeFromCore(core) {
+    switch (core) {
+      case 'dependency':
+        return { href: '/playbooks', label: 'Room' };
+      case 'no ownership':
+        return { href: '/snapshot', label: 'Snapshot' };
+      case 'no repeatability':
+        return { href: '/playbooks', label: 'Room' };
+      case 'no leverage':
+        return { href: '/focused-review', label: 'Focused Review' };
+      case 'none':
+      default:
+        return { href: '/playbooks', label: 'Room' };
+    }
+  }
+
+  function buildWhyHtml(s) {
+    var p3 = loadP3Bits();
+    var p4 = loadP4Bits();
+    var sb = p3Complete(p3)
+      ? structureBecauseBullet(getStructureDominantP03(normalizeP3Bits(p3)))
+      : 'Phase 03 is not on this device.';
+    var vb = p4Complete(p4)
+      ? validationBecauseBullet(getValidationDominantP04(normalizeP4Bits(p4)))
+      : 'Phase 04 is not on this device.';
+    var closer;
+    if (s === 'sovereign') {
+      closer = 'Phase 05 reads as <strong>controlled</strong>.';
+    } else {
+      closer =
+        'this currently depends on <strong>' +
+        escapeHtml(dependencyCloserPhrase(s)) +
+        '</strong>.';
+    }
+    return (
+      '<p>Because:</p>' +
+      '<ul class="diag-list">' +
+      '<li>' +
+      sb +
+      '</li>' +
+      '<li>' +
+      vb +
+      '</li>' +
+      '</ul>' +
+      '<p>' +
+      closer +
+      '</p>'
+    );
+  }
 
   function buildP3OfferAndEntry() {
     var p3 = loadP3Bits();
@@ -1233,37 +1343,22 @@
   function renderBridge() {
     var host = document.getElementById('bridgeRows');
     if (!host) return;
-    var o = buildP3OfferAndEntry();
     var p3 = loadP3Bits();
     var p4 = loadP4Bits();
-    var tier = p4ValidationTier(p4);
-    var st5 = window.StephuaryDiagnosticState && window.StephuaryDiagnosticState.collectAll();
-    var tierLine = tier
-      ? 'Validation tier: ' + tier + '.'
-      : 'Complete Phase 04 on this device to bind validation status here.';
-    if (st5 && st5.phase04) {
-      tierLine =
-        st5.phase04.validation_status +
-        ' · ' +
-        st5.phase04.feedback_loop +
-        ' · ' +
-        st5.phase04.exposure_method;
-    }
+    var s3 = p3Complete(p3)
+      ? structureBecauseBullet(getStructureDominantP03(normalizeP3Bits(p3)))
+      : 'Phase 03 not on this device.';
+    var s4 = p4Complete(p4)
+      ? validationBecauseBullet(getValidationDominantP04(normalizeP4Bits(p4)))
+      : 'Phase 04 not on this device.';
     host.innerHTML =
       '<dl class="instinct-dl">' +
-      '<dt>From Phase 03 — offer line</dt><dd>' +
-      escapeHtml(o.offer) +
+      '<dt>Phase 03 (structure)</dt><dd>' +
+      escapeHtml(s3) +
       '</dd>' +
-      '<dt>From Phase 03 — entry / first buyer step</dt><dd>' +
-      escapeHtml(o.entry) +
-      '</dd>' +
-      '<dt>From Phase 03 — delivery model</dt><dd>' +
-      escapeHtml(p3ModelLabel(p3)) +
-      '</dd>' +
-      '<dt>From Phase 04 — market signal</dt><dd>' +
-      escapeHtml(tierLine) +
-      '</dd></dl>' +
-      '<p class="instinct-row" style="margin-top:10px">Phase 05 uses these inputs to lock dependency, ownership, portability, and leverage.</p>';
+      '<dt>Phase 04 (validation)</dt><dd>' +
+      escapeHtml(s4) +
+      '</dd></dl>';
   }
 
   function escapeHtml(s) {
@@ -1337,18 +1432,29 @@
 
   function buildSummaryOutputs(b) {
     var s = getSovereigntyState(b);
+    var core = coreFailureLabel(s);
+    var route = routeFromCore(core);
 
     document.getElementById('out-1').innerHTML =
       '<p>' + (s === 'sovereign' ? STATUS_LINE.sovereign : STATUS_LINE._other) + '</p>';
 
-    document.getElementById('out-2').innerHTML =
-      '<p>' + DIAGNOSIS_LINE[s] + '</p>';
+    document.getElementById('out-2').innerHTML = buildWhyHtml(s);
 
     document.getElementById('out-3').innerHTML =
+      core === 'none'
+        ? '<p><strong>none</strong> (within dependency, ownership, repeatability, leverage)</p>'
+        : '<p><strong>' + core + '</strong></p>';
+
+    document.getElementById('out-4').innerHTML =
       '<p>' + ACTION_LINE[s] + '</p>';
 
-    document.getElementById('out-4').innerHTML = '';
-    document.getElementById('out-5').innerHTML = '';
+    document.getElementById('out-5').innerHTML =
+      '<p>Start here:<br />→ <a href="' +
+      route.href +
+      '" class="phase-result-links magnetic">' +
+      escapeHtml(route.label) +
+      '</a></p>';
+
     document.getElementById('out-6').innerHTML = '';
 
     var fin = panelFromBits(b);
@@ -1495,20 +1601,27 @@
       'Stephuary · Phase 05 · Sovereignty',
       '',
       'Control state: ' + sv,
+      'Core failure: ' + coreFailureLabel(sv),
       '',
-      'Bridge (Phase 4 → 5)',
+      'Bridge (Phase 03 · Phase 04)',
       bridgePlainText(),
       '',
       '1. Status',
       gt('out-1'),
       '',
-      '2. Diagnosis',
+      '2. Why',
       gt('out-2'),
       '',
-      '3. Action',
+      '3. Core failure',
       gt('out-3'),
       '',
-      'Final bridge',
+      '4. Required move',
+      gt('out-4'),
+      '',
+      '5. Route',
+      gt('out-5'),
+      '',
+      'Final note',
       gt('sovereignty-final-state')
     ].join('\n');
   }
