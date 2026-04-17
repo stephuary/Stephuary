@@ -1,0 +1,210 @@
+/**
+ * Diagnostic motion — subtle, paced. Load after editorial.css.
+ * Respect prefers-reduced-motion.
+ */
+
+@keyframes diag-step-exit {
+  to {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+
+@keyframes diag-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+html.phase-page-min #flow .step--exiting {
+  animation: diag-step-exit 0.22s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  pointer-events: none;
+}
+
+html.phase-page-min #flow .step.active.step--entering .step-header > .step-adaptive,
+html.phase-page-min #flow .step.active.step--entering .step-header > .step-micro,
+html.phase-page-min #flow .step.active.step--entering .step-header > .step-instruction,
+html.phase-page-min #flow .step.active.step--entering .step-header > .step-directive,
+html.phase-page-min #flow .step.active.step--entering .step-header > .step-context-hint,
+html.phase-page-min #flow .step.active.step--entering .option-list .option-item,
+html.phase-page-min #flow .step.active.step--entering .step-context-field,
+html.phase-page-min #flow .step.active.step--entering .step-checkpoint {
+  animation: diag-reveal 0.42s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  opacity: 0;
+}
+
+/* Stagger: label → question → inputs → options */
+html.phase-page-min #flow .step.active.step--entering .step-header > .step-adaptive {
+  animation-delay: 0ms;
+}
+html.phase-page-min #flow .step.active.step--entering .step-header:has(.step-adaptive) > .step-micro {
+  animation-delay: 140ms;
+}
+html.phase-page-min #flow .step.active.step--entering .step-header:has(.step-adaptive) > .step-instruction {
+  animation-delay: 95ms;
+}
+html.phase-page-min #flow .step.active.step--entering .step-header:has(.step-adaptive) ~ .option-list .option-item:nth-child(1) {
+  animation-delay: 220ms;
+}
+html.phase-page-min #flow .step.active.step--entering .step-header:has(.step-adaptive) ~ .option-list .option-item:nth-child(2) {
+  animation-delay: 280ms;
+}
+html.phase-page-min #flow .step.active.step--entering .step-header > .step-micro {
+  animation-delay: 0ms;
+}
+html.phase-page-min #flow .step.active.step--entering .step-header > .step-instruction {
+  animation-delay: 95ms;
+}
+html.phase-page-min #flow .step.active.step--entering .step-header > .step-directive {
+  animation-delay: 95ms;
+}
+html.phase-page-min #flow .step.active.step--entering .step-header > .step-context-hint {
+  animation-delay: 95ms;
+}
+html.phase-page-min #flow .step.active.step--entering .step-header > .step-context-field {
+  animation-delay: 140ms;
+}
+html.phase-page-min #flow .step.active.step--entering .step-checkpoint {
+  animation-delay: 95ms;
+}
+html.phase-page-min #flow .step.active.step--entering .option-list .option-item:nth-child(1) {
+  animation-delay: 180ms;
+}
+html.phase-page-min #flow .step.active.step--entering .option-list .option-item:nth-child(2) {
+  animation-delay: 240ms;
+}
+
+/* Selection feedback */
+html.phase-page-min #flow .option-item {
+  transition:
+    transform 0.18s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.18s ease,
+    border-color 0.18s ease,
+    background 0.18s ease;
+}
+
+html.phase-page-min #flow .option-item:active {
+  transform: scale(0.995);
+}
+
+html.phase-page-min #flow .option-item.selected {
+  transform: scale(1.02);
+}
+
+@media (hover: hover) {
+  html.phase-page-min #flow .option-item:not(.dim):hover {
+    transform: scale(1.01);
+  }
+}
+
+/* Progress: smooth width */
+html.phase-page-min .progress-fill {
+  transition: width 0.65s cubic-bezier(0.22, 1, 0.36, 1) !important;
+}
+
+/* Summary: soft vignette + stagger */
+html.phase-page-min.diag-summary-open #summary {
+  position: relative;
+  z-index: 1;
+}
+
+html.phase-page-min.diag-summary-open #summary::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: -12vh;
+  transform: translateX(-50%);
+  width: min(120vw, 900px);
+  height: 45vh;
+  background: radial-gradient(ellipse at 50% 0%, rgba(0, 0, 0, 0.22) 0%, transparent 68%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+html.phase-page-min.diag-summary-open #summary > * {
+  position: relative;
+  z-index: 1;
+}
+
+html.phase-page-min #summary.summary--motion-stagger {
+  animation: diag-reveal 0.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+html.phase-page-min #summary.summary--motion-stagger > * {
+  opacity: 0;
+  animation: diag-reveal 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+html.phase-page-min #summary.summary--motion-stagger > *:nth-child(1) {
+  animation-delay: 0ms;
+}
+html.phase-page-min #summary.summary--motion-stagger > *:nth-child(2) {
+  animation-delay: 90ms;
+}
+html.phase-page-min #summary.summary--motion-stagger > *:nth-child(3) {
+  animation-delay: 180ms;
+}
+html.phase-page-min #summary.summary--motion-stagger > *:nth-child(4) {
+  animation-delay: 260ms;
+}
+html.phase-page-min #summary.summary--motion-stagger > *:nth-child(5) {
+  animation-delay: 340ms;
+}
+html.phase-page-min #summary.summary--motion-stagger > *:nth-child(6) {
+  animation-delay: 420ms;
+}
+html.phase-page-min #summary.summary--motion-stagger > *:nth-child(7) {
+  animation-delay: 500ms;
+}
+html.phase-page-min #summary.summary--motion-stagger > *:nth-child(8) {
+  animation-delay: 580ms;
+}
+html.phase-page-min #summary.summary--motion-stagger > *:nth-child(9) {
+  animation-delay: 660ms;
+}
+html.phase-page-min #summary.summary--motion-stagger > *:nth-child(10) {
+  animation-delay: 740ms;
+}
+html.phase-page-min #summary.summary--motion-stagger > *:nth-child(11) {
+  animation-delay: 820ms;
+}
+html.phase-page-min #summary.summary--motion-stagger > *:nth-child(12) {
+  animation-delay: 900ms;
+}
+
+/* Context step: Continue appears only when input is valid */
+html.phase-page-min #capture-context-continue {
+  transition: opacity 0.42s cubic-bezier(0.22, 1, 0.36, 1);
+}
+html.phase-page-min #capture-context-continue[disabled] {
+  opacity: 0;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.phase-page-min #capture-context-continue {
+    transition: none;
+  }
+  html.phase-page-min #capture-context-continue[disabled] {
+    opacity: 0.38;
+  }
+
+  html.phase-page-min #flow .step--exiting,
+  html.phase-page-min #flow .step.active.step--entering .step-header > *,
+  html.phase-page-min #flow .step.active.step--entering .option-list .option-item,
+  html.phase-page-min #summary.summary--motion-stagger,
+  html.phase-page-min #summary.summary--motion-stagger > * {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  html.phase-page-min #flow .option-item.selected {
+    transform: none;
+  }
+}

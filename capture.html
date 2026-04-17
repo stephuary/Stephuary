@@ -911,6 +911,7 @@
   <link rel="stylesheet" href="/stephuary-diagnostic-mobile.css" />
   <link rel="stylesheet" href="/stephuary-diagnostic-chrome.css" />
   <link rel="stylesheet" href="/stephuary-editorial.css" />
+  <link rel="stylesheet" href="/stephuary-diagnostic-motion.css" />
   <!-- After shared CSS: Capture-only body/hero CTA layout (safe-area + unclip) -->
   <style>
     html.phase-page-min body.page-capture {
@@ -1148,6 +1149,7 @@
 
 <script src="/stephuary-diagnostic-flow.js"></script>
 <script src="/stephuary-result.js"></script>
+<script src="/stephuary-diagnostic-motion.js"></script>
 <script>
 (function(){
   const STORAGE_KEY = 'stephuary_capture_p01_v3';
@@ -1708,13 +1710,22 @@
 
   function runTransitionThen(cb) {
     var flash = document.getElementById('capture-flash');
-    flash.textContent = pickTransitionPhrase();
-    flash.style.display = 'block';
-    setTimeout(function() {
-      flash.style.display = 'none';
-      flash.textContent = '';
-      cb();
-    }, 560);
+    var active = document.querySelector('#flow .step.active');
+    if (flash) {
+      flash.textContent = pickTransitionPhrase();
+      flash.style.display = 'block';
+      window.setTimeout(function() {
+        if (flash) {
+          flash.style.display = 'none';
+          flash.textContent = '';
+        }
+      }, 200);
+    }
+    if (window.StephuaryDiagnosticMotion && typeof window.StephuaryDiagnosticMotion.afterAnswer === 'function' && active) {
+      window.StephuaryDiagnosticMotion.afterAnswer(active, cb);
+    } else {
+      window.setTimeout(cb, 560);
+    }
   }
 
   function earlyValidation(b0, b1) {
@@ -1801,8 +1812,8 @@
         '<textarea id="capture-context-field" class="step-context-field" required maxlength="560" rows="5" placeholder="Example: a cohort for X, a service for Y, a product that does Z"></textarea>' +
         '<div class="step-micro"></div>' +
       '</div>' +
-      '<div class="nav-row">' +
-        '<button type="button" class="btn btn-start" id="capture-context-continue">Continue</button>' +
+        '<div class="nav-row">' +
+        '<button type="button" class="btn btn-start" id="capture-context-continue" disabled>Continue</button>' +
       '</div>';
 
     div.querySelector('.step-instruction').textContent = 'What are you currently trying to build or sell?';
@@ -1810,6 +1821,12 @@
 
     var ta = div.querySelector('#capture-context-field');
     var cont = div.querySelector('#capture-context-continue');
+    function syncContextContinue() {
+      var ok = (ta.value || '').trim().length >= 3;
+      cont.disabled = !ok;
+    }
+    ta.addEventListener('input', syncContextContinue);
+    syncContextContinue();
     cont.addEventListener('click', function() {
       var v = (ta.value || '').trim();
       if (v.length < 3) {
@@ -1882,9 +1899,18 @@
 
           if (idx === TOTAL_Q - 1) {
             document.getElementById('building-overlay').style.display = 'flex';
-            setTimeout(function() {
-              showSummary();
-            }, 700);
+            function finishLast() {
+              window.setTimeout(function() {
+                showSummary();
+              }, 380);
+            }
+            if (window.StephuaryDiagnosticMotion && typeof window.StephuaryDiagnosticMotion.afterAnswer === 'function') {
+              window.StephuaryDiagnosticMotion.afterAnswer(div, finishLast);
+            } else {
+              window.setTimeout(function() {
+                showSummary();
+              }, 700);
+            }
             return;
           }
 
@@ -1928,7 +1954,11 @@
 
     if (n === 1) {
       var ta = document.getElementById('capture-context-field');
+      var cbtn = document.getElementById('capture-context-continue');
       if (ta) ta.value = state.context || '';
+      if (cbtn) {
+        cbtn.disabled = ((ta && ta.value) || '').trim().length < 3;
+      }
     }
 
     var cur = document.getElementById('step-' + n);
@@ -2034,6 +2064,11 @@
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
     syncCaptureShFlowEnd();
+    window.requestAnimationFrame(function() {
+      if (window.StephuaryDiagnosticMotion && typeof window.StephuaryDiagnosticMotion.revealSummary === 'function') {
+        window.StephuaryDiagnosticMotion.revealSummary();
+      }
+    });
     setTimeout(function () {
       if (window.StephuaryMagneticFlow && typeof window.StephuaryMagneticFlow.refresh === 'function') {
         window.StephuaryMagneticFlow.refresh();
@@ -2143,6 +2178,9 @@
     state.currentStep = 1;
     state.answers = {};
     lastTransitionPick = -1;
+    document.documentElement.classList.remove('diag-summary-open');
+    var sumElReset = document.getElementById('summary');
+    if (sumElReset) sumElReset.classList.remove('summary--motion-stagger');
     document.getElementById('building-overlay').style.display = 'none';
     document.getElementById('capture-flash').style.display = 'none';
     document.getElementById('capture-flash').textContent = '';

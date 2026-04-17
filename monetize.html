@@ -786,6 +786,7 @@
   <link rel="stylesheet" href="/stephuary-diagnostic-mobile.css" />
   <link rel="stylesheet" href="/stephuary-diagnostic-chrome.css" />
   <link rel="stylesheet" href="/stephuary-editorial.css" />
+  <link rel="stylesheet" href="/stephuary-diagnostic-motion.css" />
   <script src="/stephuary-diagnostic-mobile.js"></script>
   <script src="/stephuary-diagnostic-focus.js"></script>
 </head>
@@ -1000,6 +1001,7 @@
 <script src="/stephuary-diagnostic-flow.js"></script>
 <script src="/stephuary-diagnostic-state.js"></script>
 <script src="/stephuary-system-output.js"></script>
+<script src="/stephuary-diagnostic-motion.js"></script>
 <script>
 (function(){
   var STORAGE_KEY = 'stephuary_monetize_p02_v1';
@@ -1369,10 +1371,15 @@
           saveStorage();
           updateLivePanel();
           opts.forEach(function(o) { o.classList.add('dim'); });
-          setTimeout(function() {
+          function advance() {
             if (idx === TOTAL_Q - 1) showSummary();
             else goTo(stepNum + 1);
-          }, 480);
+          }
+          if (window.StephuaryDiagnosticMotion && typeof window.StephuaryDiagnosticMotion.afterAnswer === 'function') {
+            window.StephuaryDiagnosticMotion.afterAnswer(div, advance);
+          } else {
+            window.setTimeout(advance, 480);
+          }
         });
       });
 
@@ -1589,6 +1596,11 @@
     } else {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
+    window.requestAnimationFrame(function() {
+      if (window.StephuaryDiagnosticMotion && typeof window.StephuaryDiagnosticMotion.revealSummary === 'function') {
+        window.StephuaryDiagnosticMotion.revealSummary();
+      }
+    });
   }
 
   function exportText() {
@@ -1677,9 +1689,10 @@
     state.bits = Array(TOTAL_Q).fill(null);
     state.signals = { clarity: null, paid: null, demand: null, buyer: null, outcome: null };
     state.currentStep = 1;
+    document.documentElement.classList.remove('diag-summary-open');
     var sumEl = document.getElementById('summary');
     if (sumEl) {
-      sumEl.classList.remove('sys-output-summary-wrap', 'sys-output-hide-legacy-cta');
+      sumEl.classList.remove('sys-output-summary-wrap', 'sys-output-hide-legacy-cta', 'summary--motion-stagger');
     }
     var mnt = document.getElementById('sys-output-mount-revenue');
     if (mnt) mnt.innerHTML = '';

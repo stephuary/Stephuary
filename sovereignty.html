@@ -754,6 +754,7 @@
   <link rel="stylesheet" href="/stephuary-diagnostic-mobile.css" />
   <link rel="stylesheet" href="/stephuary-diagnostic-chrome.css" />
   <link rel="stylesheet" href="/stephuary-editorial.css" />
+  <link rel="stylesheet" href="/stephuary-diagnostic-motion.css" />
   <script src="/stephuary-diagnostic-mobile.js"></script>
   <script src="/stephuary-diagnostic-focus.js"></script>
 </head>
@@ -761,6 +762,7 @@
 <div id="page-transition" aria-hidden="true"></div>
 <script src="/stephuary-config.js"></script>
 <script src="/stephuary-diagnostic-flow.js"></script>
+<script src="/stephuary-diagnostic-motion.js"></script>
 <script src="/stephuary-interactive.js" defer></script>
 <script src="/stephuary-early-mode.js" defer></script>
 <script src="/stephuary-personalization.js" defer></script>
@@ -1503,10 +1505,15 @@
           saveStorage();
           updateLivePanel();
           opts.forEach(function(o) { o.classList.add('dim'); });
-          setTimeout(function() {
+          function advance() {
             if (idx === TOTAL_Q - 1) showSummary();
             else goTo(stepNum + 1);
-          }, 480);
+          }
+          if (window.StephuaryDiagnosticMotion && typeof window.StephuaryDiagnosticMotion.afterAnswer === 'function') {
+            window.StephuaryDiagnosticMotion.afterAnswer(div, advance);
+          } else {
+            window.setTimeout(advance, 480);
+          }
         });
       });
 
@@ -1567,6 +1574,11 @@
     } else {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
+    window.requestAnimationFrame(function() {
+      if (window.StephuaryDiagnosticMotion && typeof window.StephuaryDiagnosticMotion.revealSummary === 'function') {
+        window.StephuaryDiagnosticMotion.revealSummary();
+      }
+    });
   }
 
   function goToResultsFromSovereignty() {
@@ -1670,6 +1682,9 @@
     } catch (e) {}
     state.bits = Array(TOTAL_Q).fill(null);
     state.currentStep = 1;
+    document.documentElement.classList.remove('diag-summary-open');
+    var sumReset = document.getElementById('summary');
+    if (sumReset) sumReset.classList.remove('summary--motion-stagger');
     document.getElementById('summary').style.display = 'none';
     document.getElementById('flow').style.display = 'block';
     document.querySelectorAll('.step').forEach(function(s, i) {
