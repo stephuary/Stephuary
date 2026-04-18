@@ -9,7 +9,7 @@ type Props = {
 export function HomeScreen({ animKey, onStart }: Props) {
   return (
     <ScreenShell animKey={animKey} className="home-screen">
-      <div className="home-inner">
+      <div className="home-inner home-inner--entrance">
         <h1 className="home-headline">{homeCopy.headline}</h1>
         <p className="home-sub">{homeCopy.sub}</p>
         <div className="cta-row home-primary-cta">

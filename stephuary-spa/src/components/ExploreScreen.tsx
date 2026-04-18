@@ -1,5 +1,6 @@
 import { exploreCopy } from "../data/siteCopy";
 import { EcosystemCards } from "./EcosystemCards";
+import { ScrollReveal } from "./ScrollReveal";
 import { ScreenShell } from "./ScreenShell";
 
 type Props = {
@@ -21,7 +22,9 @@ export function ExploreScreen({
         <button type="button" className="explore-home-link" onClick={onHome}>
           Home
         </button>
-        <h2 className="explore-title">{exploreCopy.title}</h2>
+        <ScrollReveal className="explore-title-reveal">
+          <h2 className="explore-title">{exploreCopy.title}</h2>
+        </ScrollReveal>
         <EcosystemCards onRequestAccess={onRequestAccess} onReadSubstack={onReadSubstack} />
       </div>
     </ScreenShell>

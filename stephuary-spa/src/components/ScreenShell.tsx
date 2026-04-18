@@ -10,7 +10,7 @@ export function ScreenShell({ children, className = "", animKey }: Props) {
   return (
     <div
       key={animKey}
-      className={`screen-enter screen-shell ${className}`.trim()}
+      className={`screen-transition screen-shell ${className}`.trim()}
       role="region"
     >
       {children}

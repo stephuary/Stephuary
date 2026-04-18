@@ -1,3 +1,4 @@
+import { useScrollRevealOnce } from "../hooks/useScrollRevealOnce";
 import type { SectionOutput } from "../lib/outputGenerator";
 
 type Props = {
@@ -5,10 +6,16 @@ type Props = {
 };
 
 export function ResultSection({ section }: Props) {
+  const { ref, inView } = useScrollRevealOnce<HTMLElement>();
+  const reveal = inView ? "scroll-reveal--in" : "";
+
   if (section.id === "niche") {
     const line = section.lines[0] ?? "";
     return (
-      <article className="result-section result-section--niche">
+      <article
+        ref={ref}
+        className={`result-section result-section--niche scroll-reveal ${reveal}`.trim()}
+      >
         <h3 className="result-section-title">{section.title}</h3>
         <p className="niche-sentence">{line}</p>
       </article>
@@ -17,7 +24,10 @@ export function ResultSection({ section }: Props) {
 
   if (section.id === "first") {
     return (
-      <article className="result-section result-section--first">
+      <article
+        ref={ref}
+        className={`result-section result-section--first scroll-reveal ${reveal}`.trim()}
+      >
         <h3 className="result-section-title">{section.title}</h3>
         <ol className="steps-list">
           {section.lines.map((line, i) => (
@@ -29,7 +39,10 @@ export function ResultSection({ section }: Props) {
   }
 
   return (
-    <article className="result-section">
+    <article
+      ref={ref}
+      className={`result-section scroll-reveal ${reveal}`.trim()}
+    >
       <h3 className="result-section-title">{section.title}</h3>
       <ul className="result-section-list">
         {section.lines.map((line, i) => (

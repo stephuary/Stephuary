@@ -28,7 +28,7 @@ export function QuestionScreen({
 
   return (
     <ScreenShell animKey={animKey} className="question-screen question-slide">
-      <div className="question-inner">
+      <div className="question-inner question-inner--stagger">
         <div className="phase-row">
           <span className="phase-pill">
             {phaseIndex + 1}/{phaseCount} · {phaseLabel}
