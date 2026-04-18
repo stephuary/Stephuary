@@ -24,11 +24,16 @@ export function OfferScreen({ animKey, onComplete }: Props) {
 
         <ScrollReveal className="offer-primary-reveal">
           <div className="offer-primary-wrap">
-            <div className="offer-card offer-card--primary">
+            <div className="offer-card offer-card--primary offer-card--primary-dominant">
               <span className="offer-card-price">{offerCopy.primary.price}</span>
               <span className="offer-card-title">{offerCopy.primary.title}</span>
               <p className="offer-card-line">{offerCopy.primary.line}</p>
-              <p className="offer-card-subline">{offerCopy.primary.subline}</p>
+              <p className="offer-card-urgency">{offerCopy.primary.urgency}</p>
+              <ul className="offer-card-bullets offer-card-bullets--primary">
+                {offerCopy.primary.bullets.map((b) => (
+                  <li key={b}>{b}</li>
+                ))}
+              </ul>
               <button
                 type="button"
                 className="btn btn-primary btn-block offer-primary-btn"

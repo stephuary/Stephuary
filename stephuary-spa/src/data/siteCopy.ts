@@ -28,11 +28,16 @@ export const offerCopy = {
   primary: {
     id: "path" as const,
     price: "$34",
-    title: "Apply One Path",
+    title: "Turn This Into Something You Can Charge For This Week",
     line:
-      "Take one of these and turn it into something you can charge for this week.",
-    subline: "Most people start here.",
-    cta: "Start here",
+      "This takes what you just saw and turns it into something you can sell immediately.",
+    urgency: "Most people wait. That's why nothing changes.",
+    bullets: [
+      "You pick one path from your results",
+      "It gets turned into a clear offer",
+      "You leave with something you can actually charge for",
+    ],
+    cta: "Turn this into an offer",
   },
   secondary: [
     {
