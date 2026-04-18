@@ -166,7 +166,8 @@ export default function App() {
         <div className="aura-layer aura-layer--glow-c" />
         <div className="aura-layer aura-layer--glow-d" />
         <div className="aura-depth" />
-        <div className="aura-noise" />
+        <div className="aura-grain" />
+        <div className="aura-vignette" />
       </div>
       <AppNav visible={showNav} onAction={handleNav} />
 
