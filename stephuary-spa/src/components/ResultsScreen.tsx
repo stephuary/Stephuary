@@ -1,4 +1,10 @@
-import { resultsDecisionMomentCopy, resultsReadoutCopy } from "../data/siteCopy";
+import { useEffect, useRef, useState } from "react";
+import {
+  resultsDecisionMomentCopy,
+  resultsReadoutCopy,
+  resultsShareCopy,
+} from "../data/siteCopy";
+import { copyTextToClipboard } from "../lib/copyToClipboard";
 import { useScrollRevealOnce } from "../hooks/useScrollRevealOnce";
 import { ScreenShell } from "./ScreenShell";
 
@@ -12,6 +18,27 @@ export function ResultsScreen({ primaryCta, animKey }: Props) {
   const ctaReveal = useScrollRevealOnce<HTMLDivElement>();
   const d = resultsDecisionMomentCopy;
   const r = resultsReadoutCopy;
+  const share = resultsShareCopy;
+
+  const [copyFeedback, setCopyFeedback] = useState<"idle" | "copied">("idle");
+  const copyResetRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (copyResetRef.current !== null) window.clearTimeout(copyResetRef.current);
+    };
+  }, []);
+
+  async function handleCopyLink() {
+    const ok = await copyTextToClipboard(window.location.href);
+    if (!ok) return;
+    setCopyFeedback("copied");
+    if (copyResetRef.current !== null) window.clearTimeout(copyResetRef.current);
+    copyResetRef.current = window.setTimeout(() => {
+      copyResetRef.current = null;
+      setCopyFeedback("idle");
+    }, 4500);
+  }
 
   return (
     <ScreenShell animKey={animKey} className="results-screen">
@@ -26,6 +53,9 @@ export function ResultsScreen({ primaryCta, animKey }: Props) {
             {r.authority.line2}
           </p>
         </div>
+        <p className="results-recognition-line" role="note">
+          {r.recognitionLine}
+        </p>
       </header>
       <div className="results-body results-body--static">
         {r.sections.map((section) => (
@@ -40,6 +70,33 @@ export function ResultsScreen({ primaryCta, animKey }: Props) {
             </div>
           </article>
         ))}
+      </div>
+      <div className="results-post-readout">
+        <p className="results-social-proof-line" role="note">
+          {r.socialProofLine}
+        </p>
+        <p className="results-send-easier-line" role="note">
+          {r.sendEasierLine}
+        </p>
+        <div className="results-share">
+          <p className="results-share-prompt">{share.prompt}</p>
+          <div className="results-share-row">
+            <button type="button" className="results-share-link" onClick={() => void handleCopyLink()}>
+              <span className="results-share-link-arrow" aria-hidden>
+                →
+              </span>
+              {share.cta}
+            </button>
+          </div>
+          <div className="results-share-feedback" aria-live="polite">
+            {copyFeedback === "copied" ? (
+              <>
+                <p className="results-share-copied">{share.copied}</p>
+                <p className="results-share-send-nudge">{share.sendNudge}</p>
+              </>
+            ) : null}
+          </div>
+        </div>
       </div>
       <div
         ref={decisionReveal.ref}

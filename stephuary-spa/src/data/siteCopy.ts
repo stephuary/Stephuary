@@ -16,9 +16,10 @@ export const homeCopy = {
 } as const;
 
 export const resultsShareCopy = {
-  prompt: "Know someone dealing with this?",
+  prompt: "Know someone stuck in this exact spot?",
   cta: "Copy link",
-  copied: "Copied",
+  copied: "Link copied",
+  sendNudge: "Send it before you overthink it",
 } as const;
 
 export const resultsEmailCopy = {
@@ -113,6 +114,7 @@ export const realizationMomentCopy = {
     "That's why nothing compounds.",
   ],
   cta: "Continue",
+  shareNudgeLines: ["If someone else comes to mind,", "send this to them."],
 } as const;
 
 export const diagnosticCopy = {
@@ -128,6 +130,9 @@ export const diagnosticCopy = {
 /** Static results readout — four sections, no scoring UI. */
 export const resultsReadoutCopy = {
   ownershipLine: "This is based on what you actually chose.",
+  recognitionLine: "You've seen someone else do this too.",
+  socialProofLine: "Most people don't see this until it's pointed out.",
+  sendEasierLine: "This is easier to send than explain.",
   pageTitle: "Your Alignment Diagnostic results",
   authority: {
     line1: "I've seen this play out the same way repeatedly.",

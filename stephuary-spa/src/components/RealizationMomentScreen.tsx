@@ -8,7 +8,7 @@ type Props = {
 };
 
 export function RealizationMomentScreen({ animKey, onContinue, onExitRequest }: Props) {
-  const { lines, cta } = realizationMomentCopy;
+  const { lines, cta, shareNudgeLines } = realizationMomentCopy;
 
   return (
     <ScreenShell animKey={animKey} className="realization-screen">
@@ -32,6 +32,13 @@ export function RealizationMomentScreen({ animKey, onContinue, onExitRequest }: 
             <button type="button" className="btn btn-primary btn-block" onClick={onContinue}>
               {cta}
             </button>
+          </div>
+          <div className="realization-share-nudge" role="note">
+            {shareNudgeLines.map((line) => (
+              <p key={line} className="realization-share-nudge-line">
+                {line}
+              </p>
+            ))}
           </div>
         </div>
       </div>
