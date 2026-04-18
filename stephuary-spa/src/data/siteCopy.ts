@@ -27,18 +27,39 @@ export const postActionMomentCopy = {
 } as const;
 
 export const accessRequestCopy = {
-  fixingLabel: "What specifically are you trying to fix right now?",
-  thanksLine1: "Your request was received.",
-  thanksLine2: "You'll hear back with next steps based on what you submitted.",
+  title: "Apply to work with me",
+  lead: "If this matches what you're dealing with, don't overthink it.",
+  answerYesPrompt: "Answer yes to these 3:",
+  bullets: [
+    "You see exactly what's not working",
+    "You're ready to act on it now",
+    "You want this fixed properly, not adjusted again",
+  ],
+  microLine1: "I review every application personally.",
+  microLine2: "If it's a fit, you'll hear from me.",
+  thanksLine1: "Application received.",
+  thanksLine2: "I review every submission personally. If it's a fit, you'll hear from me.",
+  labels: {
+    name: "Name",
+    email: "Email",
+    q1: "What are you trying to turn into revenue right now?",
+    q2: "What's been getting in the way?",
+    q3: "If this worked, what would change immediately?",
+    invest: "Are you ready to invest in fixing this now?",
+  },
+  investYes: "Yes",
+  investNo: "No",
+  cta: "Submit application",
 } as const;
 
 /** Internal — embedded for operator reference; not shown in the UI. */
 export const accessRequestInternalFlow = [
-  "What are you trying to fix?",
-  "What have you tried?",
-  "What's not working?",
-  "Confirm real issue",
-  "Then offer",
+  "Collect: name, email",
+  "Q1: revenue focus",
+  "Q2: blockers",
+  "Q3: immediate change if it worked",
+  "Optional: ready to invest (yes/no)",
+  "Review → reply if fit",
 ] as const;
 
 export const exploreCopy = {
@@ -85,7 +106,7 @@ export const offerBeforeOptionsCopy = {
 export const operatorOSGateCopy = {
   header: "This can be run as a system.",
   sub: "Not just for you. Across your work.",
-  cta: "Request access",
+  cta: "Apply",
 } as const;
 
 export const offerFrictionCopy =
@@ -143,19 +164,19 @@ export const offerPostFixUpsell = {
 } as const;
 
 export const offerHighTicketShadow =
-  "For deeper builds or full system installs, request access." as const;
+  "For deeper builds or full system installs, apply to work together." as const;
 
 export const highTicketGateCopy = {
   header: "This isn't a simple fix.",
   sub: "You're dealing with something more complex than one path.",
   customLabel: "Custom build",
   oscLabel: "Only Sometimes Club",
-  cta: "Request access",
+  cta: "Apply",
 } as const;
 
 export const offerPostPricingAccess = {
-  line: "If this doesn't fit what you need, request access.",
-  cta: "Request access",
+  line: "If this doesn't fit what you need, apply to work together.",
+  cta: "Apply",
 } as const;
 
 export const offerScrollNudge = {

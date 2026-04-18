@@ -261,7 +261,7 @@ export function OfferScreen({
                   signalCta();
                   onRequestCustomBuild();
                 }}
-                aria-label="Request access for custom build"
+                aria-label="Apply for custom build"
               >
                 {highTicketGateCopy.cta}
               </button>
@@ -275,7 +275,7 @@ export function OfferScreen({
                   signalCta();
                   onRequestOsc();
                 }}
-                aria-label="Request access for Only Sometimes Club"
+                aria-label="Apply for Only Sometimes Club"
               >
                 {highTicketGateCopy.cta}
               </button>
