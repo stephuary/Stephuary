@@ -1265,19 +1265,19 @@
     var nav = document.createElement('div');
     nav.className = 'sys-phase-rail-nav';
 
-    var prevHref = idx === 0 ? '/systems' : PHASE_PATHS[idx - 1];
+    var prevHref = idx === 0 ? '/' : PHASE_PATHS[idx - 1];
     var prev = document.createElement('a');
     prev.href = prevHref;
     prev.className = 'sys-phase-rail-nav__link sys-phase-rail-nav__link--prev magnetic';
-    prev.textContent = idx === 0 ? '← System' : '← ' + PHASE_SHORT[idx - 1];
-    prev.setAttribute('title', idx === 0 ? 'System map' : 'Previous phase');
+    prev.textContent = idx === 0 ? '← Home' : '← ' + PHASE_SHORT[idx - 1];
+    prev.setAttribute('title', idx === 0 ? 'Home' : 'Previous phase');
 
     var hub = document.createElement('a');
-    hub.href = '/systems';
+    hub.href = '/playbooks';
     hub.className = 'sys-phase-rail-nav__hub magnetic';
     hub.textContent = '◇';
-    hub.setAttribute('title', 'Five phases map');
-    hub.setAttribute('aria-label', 'Open system map');
+    hub.setAttribute('title', 'Playbooks');
+    hub.setAttribute('aria-label', 'Open playbooks');
 
     var nextHref = idx === PHASE_PATHS.length - 1 ? '/results' : PHASE_PATHS[idx + 1];
     var next = document.createElement('a');
@@ -1461,13 +1461,13 @@
       } catch (e) {}
     }
     var PATH_PHASES = [
-      { path: '/', n: 0, name: 'Home', where: 'Home', cat: 'Overview', act: 'Start the diagnostic when you want numbers on leaks.' },
-      { path: '/capture', n: 1, name: 'Capture', where: "You're in Capture", cat: 'Leak visibility', act: 'Finish the full diagnostic once.' },
+      { path: '/', n: 0, name: 'Home', where: 'Home', cat: 'Overview', act: 'Pick one next move and schedule it.' },
+      { path: '/capture', n: 1, name: 'Capture', where: "You're in Capture", cat: 'Leak visibility', act: 'Finish this pass once before you add new inputs.' },
       { path: '/monetize', n: 2, name: 'Monetize', where: "You're in Monetize", cat: 'Offer clarity', act: 'Name one buyer and one price next.' },
       { path: '/structure', n: 3, name: 'Structure', where: "You're in Structure", cat: 'Delivery & packaging', act: 'Turn your concept into one page you can send.' },
       { path: '/automation', n: 4, name: 'Automation', where: "You're in Automation", cat: 'Execution load', act: 'Automate one repeat step this week.' },
       { path: '/sovereignty', n: 5, name: 'Sovereignty', where: "You're in Sovereignty", cat: 'Ownership', act: 'Choose one system you own end to end.' },
-      { path: '/systems', n: 0, name: 'System', where: 'System map', cat: 'Flow overview', act: 'Open the step that matches your next decision.' },
+      { path: '/systems', n: 0, name: 'System', where: 'System map', cat: 'Flow overview', act: 'Use the map to choose your next step.' },
       { path: '/pricing', n: 0, name: 'Pricing', where: 'Pricing', cat: 'Entry choice', act: 'Pick one tier that matches how much help you want.' },
       { path: '/results', n: 0, name: 'Results', where: 'Results', cat: 'Readout', act: 'Do one thing from this page today.' },
       { path: '/execution', n: 0, name: 'Execution', where: 'Execution layer', cat: 'Next moves', act: 'Choose one action and schedule it.' },
@@ -1990,7 +1990,7 @@
       '">' +
       priLabel +
       '</a>' +
-      '<a class="sh-flow-end__exit" href="/systems">Exit</a>';
+      '<a class="sh-flow-end__exit" href="/">Exit</a>';
     el.innerHTML =
       '<p class="sh-flow-end__saved">Progress saved on this device.</p>' +
       '<div class="sh-flow-end__row sh-flow-end__row--single">' +

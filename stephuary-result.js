@@ -243,7 +243,7 @@
     Execution: { room: 3, title: 'What to protect', path: '/room-protect' },
     'Income Architecture': { room: 2, title: 'What you can sell', path: '/room-sell' },
     Ownership: { room: 3, title: 'What to protect', path: '/room-protect' },
-    'AI Control': { room: 1, title: 'System map · AI Rules', path: '/systems' }
+    'AI Control': { room: 1, title: 'Playbooks · AI Rules', path: '/playbooks' }
   };
 
   var DIAGNOSTIC_BY_VERSION = {
@@ -613,7 +613,7 @@
         key: 'fallback',
         display_name: 'System Room',
         playbook: 'AI Control',
-        path: '/systems',
+        path: '/playbooks',
         reason: nextReason(pb)
       };
     }
