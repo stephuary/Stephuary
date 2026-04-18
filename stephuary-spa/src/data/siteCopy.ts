@@ -196,6 +196,19 @@ export const offerBeforeOptionsCopy = {
   line2: "The only question is whether you fix it.",
 } as const;
 
+/** Calm pressure — before tier cards (not salesy). */
+export const offerPressureBeforeCopy = {
+  lines: [
+    "You already know what's not working.",
+    "The only question is whether you fix it.",
+  ],
+} as const;
+
+/** Calm certainty — after tier cards. */
+export const offerPressureAfterCopy = {
+  lines: ["Nothing here is new.", "You've already seen it.", "This just makes it usable."],
+} as const;
+
 export const operatorOSGateCopy = {
   header: "This can be run as a system.",
   sub: "Not just for you. Across your work.",

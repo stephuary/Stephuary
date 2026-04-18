@@ -6,6 +6,8 @@ import {
   offerPostFixUpsell,
   offerPostPathUpsell,
   offerPostPricingAccess,
+  offerPressureAfterCopy,
+  offerPressureBeforeCopy,
   offerScrollNudge,
   offerScopeInlineCopy,
   offerScopePrimaryLabel,
@@ -316,6 +318,19 @@ export function OfferScreen({
           </div>
         ) : (
           <>
+            <ScrollReveal className="offer-pressure-reveal">
+              <div className="offer-pressure offer-pressure--before" role="note">
+                {offerPressureBeforeCopy.lines.map((line, i) => (
+                  <p
+                    key={`before-${i}`}
+                    className={`offer-pressure-line ${i === 0 ? "offer-pressure-line--lead" : "offer-pressure-line--quiet"}`.trim()}
+                  >
+                    {line}
+                  </p>
+                ))}
+              </div>
+            </ScrollReveal>
+
             <div className="offer-tier-stack">
               {offerTiers.map((tier) => {
                 const recommended = tierRecommended(tier.id);
@@ -405,6 +420,19 @@ export function OfferScreen({
                 );
               })}
             </div>
+
+            <ScrollReveal className="offer-pressure-reveal offer-pressure-reveal--after">
+              <div className="offer-pressure offer-pressure--after" role="note">
+                {offerPressureAfterCopy.lines.map((line, i) => (
+                  <p
+                    key={`after-${i}`}
+                    className={`offer-pressure-line ${i === 0 ? "offer-pressure-line--lead" : "offer-pressure-line--quiet"}`.trim()}
+                  >
+                    {line}
+                  </p>
+                ))}
+              </div>
+            </ScrollReveal>
 
             <div ref={scrollSentinelRef} className="offer-scroll-sentinel" aria-hidden />
           </>
