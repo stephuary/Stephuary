@@ -446,12 +446,7 @@
     .step-header { margin-bottom: 32px; }
 
     .step-adaptive {
-      font-size: 11px;
-      color: var(--gold-dim);
-      letter-spacing: 0.06em;
-      margin-bottom: 14px;
-      line-height: 1.5;
-      max-width: 520px;
+      display: none !important;
     }
 
     .step-instruction {
@@ -839,11 +834,8 @@
   <header id="phase-header" class="sys-compact" style="margin-top:0">
     <div class="sys-compact__bg"><canvas aria-hidden="true"></canvas></div>
     <div class="sys-compact__inner">
-      <p class="sys-label">Diagnostic · Phase 03 of 5 .  Structure</p>
-      <p class="sys-lead-note">Finish Phase 02 first. This phase only organizes: buyer, outcome, entry, price, delivery shape.</p>
-      <h1 class="sys-title">Structure</h1>
-      <p class="sys-lead">You define price, buyer, and the first message someone can read and buy from.</p>
-      <div id="phase-visual" class="sys-visual" data-visual="layers">
+      <p class="sys-label">Phase 3 · Structure</p>
+      <div id="phase-visual" class="sys-visual" data-visual="layers" hidden aria-hidden="true">
         <div class="sys-layers">
           <div class="sys-layer"></div>
           <div class="sys-layer"></div>
@@ -851,7 +843,7 @@
         </div>
       </div>
       <div class="sys-actions">
-        <a href="/monetize" class="sys-btn sys-btn--pri magnetic" id="structure-locked-resume">Continue Diagnostic</a>
+        <a href="/monetize" class="sys-btn sys-btn--pri magnetic" id="structure-locked-resume">Continue</a>
         <a href="/systems" class="sys-btn sys-btn--ghost magnetic">Save and exit</a>
       </div>
     </div>
@@ -875,31 +867,17 @@
     </details>
   </div>
 
-  <div class="sh-global-map-wrap" style="padding:6px 0 10px">
+  <div class="sh-global-map-wrap" style="padding:6px 0 10px" hidden aria-hidden="true">
     <div data-global-system-map="minimal"></div>
   </div>
 
   <div class="capture-layout capture-layout--chrome">
     <div class="main-col">
-      <section class="instinct-block" id="bridgeBlock">
-        <p class="instinct-kicker">Value → Structure</p>
-        <h2 class="instinct-h2">You now know where your value exists.</h2>
-        <p class="instinct-sub">This is where most people stop. They see it, but don't structure it.</p>
-        <div id="bridgeRows"></div>
-        <div class="instinct-reality">
-          <p>If this is not structured:</p>
-          <p><strong>it does not convert</strong></p>
-          <p><strong>it does not get paid</strong></p>
-          <p><strong>it does not scale</strong></p>
-        </div>
-      </section>
-
       <div id="flow" class="flow--chrome">
         <div id="steps-root"></div>
         <div class="diag-progress-stack">
           <div class="diag-progress-topline">
-            <span class="diag-progress-area">Diagnostic</span>
-            <span class="diag-progress-phase">Phase 3 of 5 · Structure</span>
+            <span class="diag-progress-phase">3 · Structure</span>
           </div>
           <div class="progress-bar-wrap">
             <div class="progress-meta">
@@ -910,6 +888,7 @@
               <div class="progress-fill" id="progressFill" style="width:20%"></div>
             </div>
           </div>
+          <div hidden aria-hidden="true">
           <details class="diag-details diag-details--steps">
             <summary class="diag-details__summary">Step map</summary>
             <div class="diag-details__body">
@@ -922,13 +901,17 @@
               <div id="diag-phase-rail-host" class="diag-phase-rail-host"></div>
             </div>
           </details>
+          </div>
         </div>
       </div>
 
+      <section class="instinct-block" id="bridgeBlock" hidden aria-hidden="true">
+        <div id="bridgeRows"></div>
+      </section>
+
       <div id="summary">
-        <p class="summary-phase-tag">Diagnostic · Phase 03 of 5 .  Structure</p>
-        <h2 class="summary-title">One diagnosis. One next move.</h2>
-        <p class="summary-sub">Fix this first—the full read below is supporting detail.</p>
+        <p class="summary-phase-tag">Phase 3 · Structure</p>
+        <h2 class="summary-title sr-only">Done</h2>
 
         <div class="p3-decision-block" id="p3-decision-block">
           <p class="diag-h">Diagnosis</p>
@@ -943,6 +926,7 @@
           </div>
         </div>
 
+        <div hidden aria-hidden="true">
         <p class="diag-h p3-supporting-heading">Supporting insight</p>
 
         <details class="p3-supporting-details" id="p3-supporting-details">
@@ -994,11 +978,11 @@
         </div>
           </div>
         </details>
+        </div>
 
-        <p class="capture-flow-saved">Your progress is saved automatically on this device.</p>
-        <p class="sys-lead-note" style="margin:0 0 14px;max-width:52ch">Carry-forward: chargeable shape, outcome line, entry, price posture, and ship rule. Phase 04 uses this to force exposure and measure response.</p>
+        <p class="capture-flow-saved">Progress is saved on this device.</p>
         <div class="action-primary" id="p3-phase-continue-wrap">
-          <a href="/automation" class="btn btn-solid" id="p3-legacy-continue" data-sh-flow-primary>Continue to Automation</a>
+          <a href="/automation" class="btn btn-solid" id="p3-legacy-continue" data-sh-flow-primary>Continue</a>
         </div>
         <p class="phase-result-links">
           <a href="/systems">Save and exit</a>
@@ -1024,7 +1008,7 @@
       </div>
     </div>
 
-    <aside class="live-panel live-panel--chrome" id="livePanel" aria-live="polite">
+    <aside class="live-panel live-panel--chrome" id="livePanel" aria-live="polite" hidden aria-hidden="true">
       <details class="live-panel__shell" id="livePanelShell">
         <summary class="live-panel__summary">
           <span class="live-panel__summary-title">Live read</span>
@@ -1437,27 +1421,6 @@
     return d.innerHTML;
   }
 
-  function adaptiveLine(stepIdx) {
-    var p1 = loadP01Profile();
-    var p2 = loadP2Bits();
-    var pool = [
-      'Name one buyer noun before you widen scope.',
-      'Pick one entry shape — not ten.',
-      'Write before/after in one sentence.',
-      'Price clarity is part of the offer, not a later step.',
-      'Money follows a visible starting point.',
-      'Proof beats guesswork in the room.',
-      'Simple offer beats complete deck.',
-      'Ship one slice; refine after contact.',
-      'If you cannot start today, cut scope until you can.',
-      'Structure is what turns Phase 02 into a invoice line.'
-    ];
-    var i = stepIdx % pool.length;
-    if (p2 && p2Complete(p2) && p2[2] === 1) pool[i] = 'If explanation repeats, narrow the buyer or outcome — not the pitch length.';
-    if (p1 && p1.notice && p1.notice.indexOf('hesitate') !== -1) pool[(stepIdx + 3) % pool.length] = 'If you hesitate until certainty, pick the smallest chargeable slice.';
-    return pool[(stepIdx + (p2 && p2[4] === 1 ? 2 : 0)) % pool.length];
-  }
-
   function panelFromBits(b) {
     function has(i) { return b[i] !== null && b[i] !== undefined; }
 
@@ -1667,9 +1630,7 @@
       div.id = 'step-' + stepNum;
       div.innerHTML =
         '<div class="step-header">' +
-          '<div class="step-adaptive"></div>' +
           '<div class="step-instruction"></div>' +
-          '<div class="step-micro">Choose one.</div>' +
         '</div>' +
         '<div class="option-list">' +
           '<div class="option-item" data-bit="0" tabindex="0" role="button"></div>' +
@@ -1679,7 +1640,6 @@
           (stepNum > 1 ? '<button type="button" class="btn btn-ghost" data-back="' + stepNum + '">Back</button>' : '') +
         '</div>';
 
-      div.querySelector('.step-adaptive').textContent = adaptiveLine(idx);
       div.querySelector('.step-instruction').textContent = q.instruction;
       var opts = div.querySelectorAll('.option-item');
       opts[0].textContent = q.a;
@@ -1733,8 +1693,6 @@
         var bit = parseInt(o.getAttribute('data-bit'), 10);
         if (state.bits[n - 1] === bit) o.classList.add('selected');
       });
-      var ad = cur.querySelector('.step-adaptive');
-      if (ad) ad.textContent = adaptiveLine(n - 1);
     }
     updateLivePanel();
     updateRail();
