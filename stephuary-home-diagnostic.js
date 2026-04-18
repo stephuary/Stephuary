@@ -27,10 +27,12 @@
   function buildResult() {
     return {
       summary:
-        'You need to run the interactive diagnostic to lock what breaks first. Capture anchors the full five-phase sequence on this device.',
-      primaryLabel: 'Your next step is Phase 01 — Capture — where the questions write your live read.',
+        'This five-step pass orients you — it does not replace the diagnostic. Phase 01 — Capture — is where the full instrument runs.',
+      bridge:
+        'Capture is not a repeat of what you just did. Those questions go deeper, save your answers on this device, and produce the live read that routes you through the sequence.',
+      primaryLabel: 'Your next step is Phase 01 — Capture — where the real diagnostic writes your stored read.',
       primaryHref: '/capture',
-      primaryCta: 'Start here',
+      primaryCta: 'Go to Capture (Phase 01)',
       secondaryHref: '/private-access',
       secondaryText: 'If you need deeper support → Services'
     };
@@ -172,12 +174,17 @@
         at: Date.now()
       });
 
+      var bridgeHtml =
+        r.bridge && String(r.bridge).length
+          ? '<p class="sh-diag-result__bridge">' + r.bridge + '</p>'
+          : '';
       var html =
         '<div class="sh-diag-result">' +
         '<p class="sh-diag-result__primary-label">Diagnosis summary</p>' +
         '<p class="sh-diag-result__summary">' +
         r.summary +
         '</p>' +
+        bridgeHtml +
         '<p class="sh-diag-result__primary-label">Recommended next step</p>' +
         '<p class="sh-diag-result__primary">' +
         r.primaryLabel +

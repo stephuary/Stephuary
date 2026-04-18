@@ -280,6 +280,16 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;opac
   }
 
   function initRecommendedRoom() {
+    var rawDiag = null;
+    try {
+      rawDiag = localStorage.getItem('stephuary_result_v1');
+    } catch (e0) {}
+    if (!rawDiag) {
+      document.querySelectorAll('.pb-recommended').forEach(function (el) {
+        el.setAttribute('hidden', '');
+      });
+      return;
+    }
     var path = resolveRecommendedPath();
     var wrap = document.querySelector('.pb-room-wrap[data-pb-path="' + path + '"]');
     if (!wrap) {
@@ -287,10 +297,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;opac
     }
     if (!wrap) return;
 
-    var raw = null;
-    try {
-      raw = localStorage.getItem('stephuary_result_v1');
-    } catch (eR) {}
+    var raw = rawDiag;
     if (raw && window.StephuaryGuidedRoomEntry && window.StephuaryDiagnosticState) {
       try {
         var pdata = JSON.parse(raw);

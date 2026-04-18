@@ -804,7 +804,7 @@
       <p class="sys-label">Phase 2 · Monetize</p>
       <div id="phase-visual" class="sys-visual" data-visual="orbit" hidden aria-hidden="true"></div>
       <div class="sys-actions">
-        <a href="/capture" class="sys-btn sys-btn--pri magnetic" id="monetize-locked-resume">Continue</a>
+        <a href="/capture" class="sys-btn sys-btn--pri magnetic" id="monetize-locked-resume">Go to Capture</a>
         <a href="/systems" class="sys-btn sys-btn--ghost magnetic">Save and exit</a>
       </div>
     </div>
@@ -1712,7 +1712,23 @@
   (function initUnlock() {
     var lr = document.getElementById('monetize-locked-resume');
     if (lr && window.StephuaryDiagnosticFlow && typeof window.StephuaryDiagnosticFlow.getResumeHref === 'function') {
-      lr.href = window.StephuaryDiagnosticFlow.getResumeHref();
+      var href = window.StephuaryDiagnosticFlow.getResumeHref();
+      lr.href = href;
+      if (href.indexOf('/capture') !== -1) {
+        lr.textContent = 'Go to Capture';
+      } else if (href.indexOf('/monetize') !== -1) {
+        lr.textContent = 'Enter Monetize';
+      } else if (href.indexOf('/structure') !== -1) {
+        lr.textContent = 'Continue to Structure';
+      } else if (href.indexOf('/automation') !== -1) {
+        lr.textContent = 'Continue to Automation';
+      } else if (href.indexOf('/sovereignty') !== -1) {
+        lr.textContent = 'Continue to Sovereignty';
+      } else if (href.indexOf('/results') !== -1 || href.indexOf('/playbooks') !== -1) {
+        lr.textContent = 'Continue';
+      } else {
+        lr.textContent = 'Continue';
+      }
     }
     var unlocked = false;
     try {

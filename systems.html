@@ -459,14 +459,15 @@
       margin: 10px 0 0;
       max-width: 36ch;
     }
-    .systems-quiet-proof {
+    .systems-cine-caption {
       font-family: var(--font-serif, 'Playfair Display', Georgia, serif);
       font-style: italic;
       font-size: 15px;
       line-height: 1.6;
       color: rgba(196, 163, 90, 0.55);
       text-align: center;
-      margin: 0 auto 22px;
+      margin: 14px auto 0;
+      padding: 0 20px;
       max-width: 44ch;
     }
     .systems-cei-bridge {
@@ -1061,6 +1062,9 @@
           ></video>
           <div class="systems-cine-window__veil" aria-hidden="true"></div>
         </div>
+        <p class="systems-cine-caption">
+          The system ran the $225,700 read on a property in Baltimore last year.
+        </p>
       </div>
     </div>
 
@@ -1068,7 +1072,6 @@
       <div data-global-system-map="full"></div>
     </div>
 
-    <p class="systems-quiet-proof">The system ran the $225,700 read on a property in Baltimore last year.</p>
     <p class="systems-cei-bridge">The hospitality version of this system is Cultural Experience Intelligence (CEI). Built for properties and experience businesses. <a href="https://onlysometimesclub.com" target="_blank" rel="noopener noreferrer">Only Sometimes Club</a></p>
 
     <div class="systems-flow-wrap systems-flow-stack">
@@ -1144,37 +1147,62 @@
     <p class="footer-micro-line">I turn scattered ideas into structured income.</p>
   </footer>
 
-  <script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.7/dist/hls.min.js" crossorigin="anonymous" defer></script>
-  <script src="/stephuary-hls-cine.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.7/dist/hls.min.js" crossorigin="anonymous"></script>
+  <script src="/stephuary-hls-cine.js"></script>
   <script src="/stephuary-os.js" defer></script>
   <script src="/stephuary-diagnostic-flow.js" defer></script>
   <script src="/stephuary-progress.js" defer></script>
   <script>
-    document.addEventListener('DOMContentLoaded', function () {
+    (function () {
       var src =
         'https://customer-vjyp7ff1wau3k7is.cloudflarestream.com/1f4bd2ff44b75a12d97d0629b29340b4/manifest/video.m3u8';
-      var v = document.querySelector('.systems-cine-window__video');
-      if (!v) return;
-      function tryPlay() {
+      function tryPlay(v) {
         var p = v.play();
         if (p && typeof p.catch === 'function') p.catch(function () {});
       }
-      if (v.canPlayType('application/vnd.apple.mpegurl')) {
+      function initCine() {
+        var v = document.querySelector('.systems-cine-window__video');
+        if (!v || v.getAttribute('data-cine-init') === '1') return;
+        function mark() {
+          v.setAttribute('data-cine-init', '1');
+        }
+        function onReady() {
+          tryPlay(v);
+        }
+        if (v.canPlayType('application/vnd.apple.mpegurl')) {
+          mark();
+          v.src = src;
+          v.addEventListener('loadeddata', onReady, { once: true });
+          tryPlay(v);
+          return;
+        }
+        var ok = false;
+        if (typeof stephuaryAttachHlsCine === 'function') {
+          ok = !!stephuaryAttachHlsCine(v, src);
+        }
+        if (!ok && typeof Hls !== 'undefined' && Hls.isSupported()) {
+          var hls = new Hls({ capLevelToPlayerSize: true, maxBufferLength: 24 });
+          hls.loadSource(src);
+          hls.attachMedia(v);
+          ok = true;
+        }
+        if (ok) {
+          mark();
+          v.addEventListener('loadeddata', onReady, { once: true });
+          return;
+        }
+        mark();
         v.src = src;
-        tryPlay();
-      } else if (typeof stephuaryAttachHlsCine === 'function') {
-        stephuaryAttachHlsCine(v, src);
-        v.addEventListener('loadeddata', tryPlay, { once: true });
-      } else if (typeof Hls !== 'undefined' && Hls.isSupported()) {
-        var hls = new Hls({ capLevelToPlayerSize: true, maxBufferLength: 24 });
-        hls.loadSource(src);
-        hls.attachMedia(v);
-        v.addEventListener('loadeddata', tryPlay, { once: true });
-      } else {
-        v.src = src;
-        tryPlay();
+        v.addEventListener('loadeddata', onReady, { once: true });
+        tryPlay(v);
       }
-    });
+      document.addEventListener('DOMContentLoaded', initCine);
+      window.addEventListener('load', function () {
+        var v = document.querySelector('.systems-cine-window__video');
+        if (!v || v.getAttribute('data-cine-init') === '1') return;
+        if (v.readyState === 0 && !v.src && !v.currentSrc) initCine();
+      });
+    })();
   </script>
   <script>
     (function () {
