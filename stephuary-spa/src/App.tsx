@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { usePostActionMoment } from "./context/PostActionMomentContext";
 import { SUBSTACK_PLACEHOLDER_HREF } from "./data/ecosystem";
 import { QUESTIONS, phaseMeta } from "./data/questions";
@@ -59,6 +59,8 @@ export default function App() {
   const [step, setStep] = useState<FlowStep>({ id: "home" });
   const [answers, setAnswers] = useState<AnswersMap>({});
   const [exitModalOpen, setExitModalOpen] = useState(false);
+  const [auraRoutePulse, setAuraRoutePulse] = useState(false);
+  const skipAuraRoutePulse = useRef(true);
 
   const evaluationCtx = useMemo(() => buildEvaluationContext(answers), [answers]);
 
@@ -85,6 +87,16 @@ export default function App() {
   useEffect(() => {
     if (step.id !== "quiz") setExitModalOpen(false);
   }, [step.id]);
+
+  useEffect(() => {
+    if (skipAuraRoutePulse.current) {
+      skipAuraRoutePulse.current = false;
+      return;
+    }
+    setAuraRoutePulse(true);
+    const id = window.setTimeout(() => setAuraRoutePulse(false), 1400);
+    return () => window.clearTimeout(id);
+  }, [step]);
 
   const showNav = !NAV_HIDDEN.has(step.id);
 
@@ -159,7 +171,9 @@ export default function App() {
   }
 
   return (
-    <div className={`app ${showNav ? "app--with-nav" : ""}`.trim()}>
+    <div
+      className={`app ${showNav ? "app--with-nav" : ""} ${auraRoutePulse ? "app--aura-route" : ""}`.trim()}
+    >
       <div className="aura-field" aria-hidden="true">
         <div className="aura-layer aura-layer--core" />
         <div className="aura-layer aura-layer--halo" />

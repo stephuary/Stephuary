@@ -20,7 +20,11 @@ export function ProgressBar({ current, total, phaseCurrent, phaseTotal }: Props)
         </span>
       </div>
       <div className="progress-track" aria-hidden>
-        <div className="progress-fill progress-transition" style={{ width: `${pct}%` }} />
+        <div
+          key={current}
+          className="progress-fill progress-transition"
+          style={{ width: `${pct}%` }}
+        />
       </div>
       <p className="progress-hint">{diagnosticCopy.progressHint}</p>
     </div>

@@ -33,11 +33,16 @@
   --shadow-glow-soft: 0 0 60px rgba(198, 161, 91, 0.06);
 
   --ease-premium: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-ui: ease;
+  --t-fast: 180ms;
+  --t-medium: 350ms;
+  --t-slow: 520ms;
   --t-hover: 180ms;
   --t-active: 120ms;
   --t-step: 280ms;
   --t-modal: 240ms;
-  --t-reveal: 480ms;
+  --t-reveal: 520ms;
+  --stagger: 80ms;
 
   font-family: var(--font-sans);
   line-height: 1.5;
@@ -123,6 +128,27 @@ body {
   pointer-events: none;
   overflow: hidden;
   background-color: #0b0f0c;
+  box-shadow: none;
+  transition: box-shadow 0.45s var(--ease-ui);
+  transform-origin: center center;
+}
+
+.app:has(.btn-primary:hover) .aura-field {
+  box-shadow: inset 0 0 120px rgba(255, 200, 120, 0.14);
+}
+
+.app--aura-route .aura-field {
+  animation: auraFieldRoute 1.35s var(--ease-ui) both;
+}
+
+@keyframes auraFieldRoute {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.03);
+  }
 }
 
 .aura-layer {
@@ -275,16 +301,46 @@ body {
   background: rgba(255, 255, 255, 0.06);
   border-radius: var(--radius);
   overflow: hidden;
+  position: relative;
 }
 
 .progress-fill {
   height: 100%;
   background: linear-gradient(90deg, var(--bronze), var(--gold));
   box-shadow: 0 0 12px rgba(198, 161, 91, 0.25);
+  position: relative;
+  overflow: hidden;
+}
+
+.progress-fill::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    105deg,
+    transparent 0%,
+    rgba(255, 220, 160, 0.45) 48%,
+    rgba(255, 245, 210, 0.35) 50%,
+    rgba(255, 220, 160, 0.45) 52%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  animation: progressShimmer 0.65s var(--ease-ui) both;
+  pointer-events: none;
+  opacity: 0.85;
+}
+
+@keyframes progressShimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
 }
 
 .progress-transition {
-  transition: width 0.32s ease;
+  transition: width 0.3s var(--ease-ui);
 }
 
 .progress-hint {
@@ -378,8 +434,8 @@ body {
   align-items: center;
   justify-content: center;
   padding: 1.25rem;
-  background: rgba(2, 2, 1, 0.72);
-  backdrop-filter: blur(10px) saturate(1.1);
+  background: rgba(2, 2, 1, 0.68);
+  backdrop-filter: blur(6px) saturate(1.05);
   animation: modal-overlay-in var(--t-modal) var(--ease-premium) both;
 }
 
@@ -406,11 +462,11 @@ body {
 @keyframes modal-panel-in {
   from {
     opacity: 0;
-    transform: translateY(8px);
+    transform: translateY(6px) scale(0.97);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
   }
 }
 
@@ -632,7 +688,7 @@ body {
 @keyframes text-rise {
   from {
     opacity: 0;
-    transform: translateY(6px);
+    transform: translateY(10px);
     filter: blur(2.5px);
   }
   to {
@@ -645,7 +701,7 @@ body {
 @keyframes text-rise-support {
   from {
     opacity: 0;
-    transform: translateY(6px);
+    transform: translateY(10px);
     filter: blur(2.5px);
   }
   to {
@@ -658,7 +714,7 @@ body {
 @keyframes text-rise-authority {
   from {
     opacity: 0;
-    transform: translateY(6px);
+    transform: translateY(10px);
     filter: blur(2.5px);
   }
   to {
@@ -1173,11 +1229,13 @@ body {
   border-color: rgba(255, 255, 255, 0.22);
   box-shadow: none;
   transform: none;
+  filter: none;
 }
 
 .operator-os-cta .btn-primary:active {
   transform: none;
   opacity: 0.92;
+  filter: none;
 }
 
 .access-screen .access-title {
@@ -1287,57 +1345,57 @@ body {
 
 .question-inner--stagger .diagnostic-header {
   opacity: 0;
-  animation: text-rise 0.48s cubic-bezier(0.22, 1, 0.36, 1) 0.06s forwards;
+  animation: text-rise 0.52s cubic-bezier(0.22, 1, 0.36, 1) 0.06s forwards;
 }
 
 .question-inner--stagger .question-title {
   opacity: 0;
-  animation: text-rise 0.5s cubic-bezier(0.22, 1, 0.36, 1) 0.12s forwards;
+  animation: text-rise 0.52s cubic-bezier(0.22, 1, 0.36, 1) 0.14s forwards;
 }
 
 .question-inner--stagger .options .option-btn:nth-child(1) {
   opacity: 0;
-  animation: text-rise 0.42s cubic-bezier(0.22, 1, 0.36, 1) 0.18s forwards;
+  animation: text-rise 0.52s cubic-bezier(0.22, 1, 0.36, 1) 0.22s forwards;
 }
 
 .question-inner--stagger .options .option-btn:nth-child(2) {
   opacity: 0;
-  animation: text-rise 0.42s cubic-bezier(0.22, 1, 0.36, 1) 0.24s forwards;
+  animation: text-rise 0.52s cubic-bezier(0.22, 1, 0.36, 1) 0.3s forwards;
 }
 
 .question-inner--stagger .options .option-btn:nth-child(3) {
   opacity: 0;
-  animation: text-rise 0.42s cubic-bezier(0.22, 1, 0.36, 1) 0.3s forwards;
+  animation: text-rise 0.52s cubic-bezier(0.22, 1, 0.36, 1) 0.38s forwards;
 }
 
 .question-inner--stagger .options .option-btn:nth-child(4) {
   opacity: 0;
-  animation: text-rise 0.42s cubic-bezier(0.22, 1, 0.36, 1) 0.36s forwards;
+  animation: text-rise 0.52s cubic-bezier(0.22, 1, 0.36, 1) 0.46s forwards;
 }
 
 .question-inner--stagger .options .option-btn:nth-child(5) {
   opacity: 0;
-  animation: text-rise 0.42s cubic-bezier(0.22, 1, 0.36, 1) 0.42s forwards;
+  animation: text-rise 0.52s cubic-bezier(0.22, 1, 0.36, 1) 0.54s forwards;
 }
 
 .question-inner--stagger .options .option-btn:nth-child(6) {
   opacity: 0;
-  animation: text-rise 0.42s cubic-bezier(0.22, 1, 0.36, 1) 0.48s forwards;
+  animation: text-rise 0.52s cubic-bezier(0.22, 1, 0.36, 1) 0.62s forwards;
 }
 
 .question-inner--stagger .options .option-btn:nth-child(7) {
   opacity: 0;
-  animation: text-rise 0.42s cubic-bezier(0.22, 1, 0.36, 1) 0.54s forwards;
+  animation: text-rise 0.52s cubic-bezier(0.22, 1, 0.36, 1) 0.7s forwards;
 }
 
 .question-inner--stagger .options .option-btn:nth-child(8) {
   opacity: 0;
-  animation: text-rise 0.42s cubic-bezier(0.22, 1, 0.36, 1) 0.6s forwards;
+  animation: text-rise 0.52s cubic-bezier(0.22, 1, 0.36, 1) 0.78s forwards;
 }
 
 .question-inner--stagger .cta-row {
   opacity: 0;
-  animation: text-rise 0.45s cubic-bezier(0.22, 1, 0.36, 1) 0.64s forwards;
+  animation: text-rise 0.52s cubic-bezier(0.22, 1, 0.36, 1) 0.86s forwards;
 }
 
 .phase-row {
@@ -1440,21 +1498,21 @@ body {
     0 6px 28px rgba(0, 0, 0, 0.35),
     0 0 0 1px rgba(255, 255, 255, 0.03) inset;
   transition:
-    border-color var(--t-hover) var(--ease-premium),
-    background var(--t-hover) var(--ease-premium),
-    color var(--t-hover) var(--ease-premium),
-    box-shadow var(--t-hover) var(--ease-premium),
-    transform var(--t-hover) var(--ease-premium);
+    border-color var(--t-fast) var(--ease-premium),
+    background var(--t-fast) var(--ease-premium),
+    color var(--t-fast) var(--ease-premium),
+    box-shadow var(--t-fast) var(--ease-premium),
+    transform var(--t-fast) var(--ease-premium);
 }
 
 .option-btn:hover {
-  border-color: rgba(198, 161, 91, 0.42);
-  background: color-mix(in srgb, var(--panel) 88%, rgba(0, 0, 0, 0.35));
+  border-color: rgba(198, 161, 91, 0.48);
+  background: color-mix(in srgb, var(--panel) 82%, rgba(198, 161, 91, 0.08));
   box-shadow:
     0 10px 36px rgba(0, 0, 0, 0.42),
-    0 0 0 1px rgba(198, 161, 91, 0.14) inset,
-    0 0 28px rgba(198, 161, 91, 0.07);
-  transform: translateY(-1px);
+    0 0 0 1px rgba(198, 161, 91, 0.16) inset,
+    0 0 32px rgba(198, 161, 91, 0.1);
+  transform: translateY(-2px);
 }
 
 .option-btn:active {
@@ -1475,11 +1533,39 @@ body {
   border-color: rgba(198, 161, 91, 0.58);
   background: color-mix(in srgb, var(--panel-elevated) 82%, rgba(198, 161, 91, 0.14));
   color: var(--fg);
+  transform: scale(1.01);
   box-shadow:
     var(--shadow-glow-soft),
     0 8px 32px rgba(0, 0, 0, 0.4),
     0 0 0 1px rgba(198, 161, 91, 0.14) inset,
     0 0 36px rgba(198, 161, 91, 0.06);
+  animation: optionSelectSettle 0.45s var(--ease-ui) both;
+}
+
+@keyframes optionSelectSettle {
+  0% {
+    transform: scale(1);
+    box-shadow:
+      0 6px 28px rgba(0, 0, 0, 0.35),
+      0 0 0 1px rgba(255, 255, 255, 0.03) inset,
+      0 0 44px rgba(198, 161, 91, 0.22);
+  }
+  40% {
+    transform: scale(1.012);
+    box-shadow:
+      var(--shadow-glow-soft),
+      0 10px 40px rgba(0, 0, 0, 0.45),
+      0 0 0 1px rgba(198, 161, 91, 0.22) inset,
+      0 0 52px rgba(198, 161, 91, 0.14);
+  }
+  100% {
+    transform: scale(1.01);
+    box-shadow:
+      var(--shadow-glow-soft),
+      0 8px 32px rgba(0, 0, 0, 0.4),
+      0 0 0 1px rgba(198, 161, 91, 0.14) inset,
+      0 0 36px rgba(198, 161, 91, 0.06);
+  }
 }
 
 .option-label {
@@ -1499,12 +1585,13 @@ body {
   padding: 0.9rem 1.2rem;
   min-height: 48px;
   transition:
-    background var(--t-hover) var(--ease-premium),
-    border-color var(--t-hover) var(--ease-premium),
-    color var(--t-hover) var(--ease-premium),
-    box-shadow var(--t-hover) var(--ease-premium),
-    transform var(--t-hover) var(--ease-premium),
-    opacity var(--t-hover) ease;
+    background var(--t-fast) var(--ease-ui),
+    border-color var(--t-fast) var(--ease-ui),
+    color var(--t-fast) var(--ease-ui),
+    box-shadow var(--t-fast) var(--ease-ui),
+    transform var(--t-fast) var(--ease-ui),
+    filter var(--t-fast) var(--ease-ui),
+    opacity var(--t-fast) var(--ease-ui);
 }
 
 .btn:focus-visible {
@@ -1531,30 +1618,51 @@ body {
 }
 
 .btn-primary {
-  border: 1px solid rgba(198, 161, 91, 0.45);
+  border: 1px solid rgba(198, 161, 91, 0.48);
   background: linear-gradient(180deg, #c4a06a 0%, #9a7a4e 100%);
   color: #0a0806;
   box-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.12) inset,
+    0 1px 0 rgba(255, 255, 255, 0.14) inset,
+    0 0 28px rgba(255, 195, 120, 0.09) inset,
     0 8px 24px rgba(0, 0, 0, 0.35);
 }
 
 .btn-primary:hover:not(:disabled) {
-  background: linear-gradient(180deg, var(--accent-hover) 0%, #a88958 100%);
-  border-color: rgba(198, 161, 91, 0.65);
+  background: linear-gradient(180deg, #d2b17c 0%, #a88958 100%);
+  filter: brightness(1.06);
+  border-color: rgba(198, 161, 91, 0.72);
   box-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.15) inset,
-    0 12px 36px rgba(0, 0, 0, 0.45),
-    0 0 32px rgba(198, 161, 91, 0.12);
-  transform: translateY(-1px);
+    0 1px 0 rgba(255, 255, 255, 0.16) inset,
+    0 0 36px rgba(255, 205, 130, 0.11) inset,
+    0 8px 30px rgba(255, 180, 80, 0.25),
+    0 14px 38px rgba(0, 0, 0, 0.42);
+  transform: translateY(-2px);
 }
 
 .btn-primary:active:not(:disabled) {
-  transition-duration: var(--t-active);
-  transform: translateY(0) scale(0.995);
+  transition-duration: 140ms;
+  transform: scale(0.98);
+  filter: brightness(1.02);
   box-shadow:
     0 1px 0 rgba(255, 255, 255, 0.1) inset,
-    0 6px 20px rgba(0, 0, 0, 0.38);
+    0 6px 18px rgba(0, 0, 0, 0.4);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .home-primary-cta .btn-primary:not(:hover):not(:active):not(:disabled) {
+    animation: ctaIdlePulse 4.5s ease-in-out infinite;
+    animation-delay: 4s;
+  }
+}
+
+@keyframes ctaIdlePulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.95;
+  }
 }
 
 .btn-primary:disabled {
@@ -1642,6 +1750,7 @@ a.btn-block {
 .result-section {
   border-top: 1px solid var(--line-warm);
   padding-top: 2rem;
+  border-radius: var(--radius);
 }
 
 .result-section:first-child {
@@ -1654,9 +1763,24 @@ a.btn-block {
   transform: translateY(10px);
   filter: blur(2.5px);
   transition:
-    opacity var(--t-reveal) var(--ease-premium),
-    transform var(--t-reveal) var(--ease-premium),
-    filter calc(var(--t-reveal) - 40ms) ease;
+    opacity var(--t-slow) var(--ease-premium),
+    transform var(--t-slow) var(--ease-premium),
+    filter calc(var(--t-slow) - 40ms) ease;
+}
+
+.result-section.scroll-reveal {
+  transition:
+    opacity var(--t-slow) var(--ease-premium),
+    transform var(--t-slow) var(--ease-premium),
+    filter calc(var(--t-slow) - 40ms) ease,
+    box-shadow var(--t-medium) var(--ease-premium);
+}
+
+.result-section.scroll-reveal--in:hover {
+  transform: translateY(-3px);
+  box-shadow:
+    0 20px 56px rgba(0, 0, 0, 0.4),
+    0 0 0 1px rgba(198, 161, 91, 0.14);
 }
 
 .scroll-reveal--in {
@@ -2206,6 +2330,20 @@ a.btn-block {
     var(--shadow-panel),
     0 0 0 1px rgba(198, 161, 91, 0.08) inset,
     0 0 48px rgba(198, 161, 91, 0.04);
+  transition:
+    transform var(--t-medium) var(--ease-premium),
+    box-shadow var(--t-medium) var(--ease-premium),
+    border-color var(--t-medium) var(--ease-premium);
+}
+
+.offer-card--primary:not(.offer-card--primary-dominant):hover {
+  transform: translateY(-3px);
+  border-color: rgba(198, 161, 91, 0.58);
+  box-shadow:
+    var(--shadow-panel),
+    0 0 0 1px rgba(198, 161, 91, 0.14) inset,
+    0 0 56px rgba(198, 161, 91, 0.1),
+    0 16px 44px rgba(0, 0, 0, 0.45);
 }
 
 .offer-card--primary-dominant {
@@ -2725,7 +2863,7 @@ a.btn-block {
 
 .btn-secondary:active {
   transition-duration: var(--t-active);
-  transform: translateY(0) scale(0.995);
+  transform: translateY(0) scale(0.98);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -2739,6 +2877,28 @@ a.btn-block {
   .aura-grain {
     animation: none !important;
     opacity: 0.045;
+  }
+
+  .app--aura-route .aura-field {
+    animation: none !important;
+    transform: none !important;
+  }
+
+  .home-primary-cta .btn-primary {
+    animation: none !important;
+  }
+
+  .progress-fill::after {
+    display: none !important;
+  }
+
+  .option-btn--active {
+    animation: none !important;
+  }
+
+  .result-section.scroll-reveal--in:hover {
+    transform: none !important;
+    box-shadow: none !important;
   }
 
   .diagnostic-exit-modal-overlay,
