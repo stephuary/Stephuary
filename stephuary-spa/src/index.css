@@ -3,9 +3,9 @@
   --font-display: "Cormorant Garamond", "Palatino Linotype", Palatino, Georgia, serif;
   --font-sans: "Inter", system-ui, -apple-system, sans-serif;
 
-  /* Edge black; content sits on layered auras for center warmth */
-  --bg-deep: #020201;
-  --bg-base: #12100d;
+  /* Deep charcoal base (no pure black) */
+  --bg-deep: #0d0c0a;
+  --bg-base: #141210;
   --panel: rgba(18, 16, 14, 0.72);
   --panel-elevated: rgba(28, 26, 22, 0.88);
   --panel-glass: rgba(12, 11, 9, 0.55);
@@ -50,12 +50,11 @@
 body {
   margin: 0;
   min-height: 100dvh;
-  /* Cinematic center bloom: warm bronze mid-tone → near-black edges (matches live Stephuary) */
   background:
-    radial-gradient(ellipse 88% 78% at 50% 42%, #2a231c 0%, #1a1612 28%, #0f0d0a 52%, #060504 78%, var(--bg-deep) 100%),
-    radial-gradient(ellipse 55% 45% at 80% 15%, rgba(90, 78, 55, 0.2) 0%, transparent 55%),
-    radial-gradient(ellipse 50% 40% at 12% 88%, rgba(25, 22, 18, 0.85) 0%, transparent 50%),
-    #000000;
+    radial-gradient(ellipse 92% 80% at 50% 40%, #2e261e 0%, #1e1a15 32%, #12100e 58%, #0a0908 100%),
+    radial-gradient(ellipse 48% 42% at 8% 92%, rgba(55, 62, 58, 0.22) 0%, transparent 55%),
+    radial-gradient(ellipse 42% 38% at 94% 12%, rgba(58, 42, 38, 0.18) 0%, transparent 52%),
+    linear-gradient(165deg, #161412 0%, #0e0d0b 45%, #121110 100%);
   color: var(--fg);
   -webkit-font-smoothing: antialiased;
 }
@@ -74,7 +73,7 @@ body {
   flex-direction: column;
 }
 
-/* Layered atmospheric field (motion + depth; see prefers-reduced-motion) */
+/* Layered aura field: glows + ring lines are separate stacks (see prefers-reduced-motion) */
 .aura-field {
   position: fixed;
   inset: 0;
@@ -83,239 +82,241 @@ body {
   overflow: hidden;
 }
 
+/* Foundation: charcoal, olive, bronze — no pure black */
 .aura-base {
   position: absolute;
   inset: 0;
   z-index: 0;
   background:
-    radial-gradient(ellipse 72% 62% at 50% 40%, rgba(198, 161, 91, 0.14) 0%, rgba(120, 98, 68, 0.06) 42%, transparent 58%),
-    radial-gradient(ellipse 100% 85% at 50% 44%, rgba(43, 38, 30, 0.55) 0%, transparent 62%),
-    radial-gradient(ellipse 70% 55% at 18% 72%, rgba(62, 56, 44, 0.12) 0%, transparent 55%),
-    radial-gradient(ellipse 65% 50% at 85% 28%, rgba(75, 68, 52, 0.1) 0%, transparent 52%),
-    radial-gradient(ellipse 95% 70% at 50% 100%, rgba(18, 15, 12, 0.65) 0%, transparent 55%);
+    radial-gradient(ellipse 100% 90% at 50% 45%, #1a1714 0%, #12100e 48%, #0c0b09 100%),
+    radial-gradient(ellipse 50% 45% at 10% 88%, rgba(52, 58, 56, 0.2) 0%, transparent 58%),
+    radial-gradient(ellipse 48% 42% at 90% 14%, rgba(72, 48, 42, 0.16) 0%, transparent 55%),
+    linear-gradient(145deg, rgba(26, 22, 18, 0.9) 0%, rgba(14, 12, 10, 0.98) 100%);
 }
 
-.aura-blob {
-  position: absolute;
-  z-index: 1;
-  border-radius: 50%;
-  filter: blur(80px);
-  opacity: 0.55;
-  will-change: transform, opacity;
-  animation: aura-drift-a 42s ease-in-out infinite;
-}
-
-.aura-blob--a {
-  width: min(130vw, 780px);
-  height: min(115vw, 680px);
-  /* Centered horizontally without transform (drift keyframes own transform) */
-  left: calc(50% - min(65vw, 390px));
-  top: 5%;
-  background: radial-gradient(
-    circle,
-    rgba(198, 161, 91, 0.26) 0%,
-    rgba(100, 82, 58, 0.14) 38%,
-    rgba(45, 38, 30, 0.06) 62%,
-    transparent 72%
-  );
-  animation: aura-drift-a 48s ease-in-out infinite, aura-breathe 10s ease-in-out infinite;
-}
-
-.aura-blob--b {
-  width: min(95vw, 540px);
-  height: min(88vw, 500px);
-  right: -18%;
-  top: 28%;
-  background: radial-gradient(
-    circle,
-    rgba(110, 98, 72, 0.2) 0%,
-    rgba(58, 52, 40, 0.12) 48%,
-    transparent 70%
-  );
-  animation: aura-drift-b 56s ease-in-out infinite, aura-breathe 12s ease-in-out infinite 2s;
-  opacity: 0.52;
-}
-
-.aura-blob--c {
-  width: min(90vw, 480px);
-  height: min(80vw, 420px);
-  left: -15%;
-  bottom: -5%;
-  background: radial-gradient(
-    circle,
-    rgba(75, 52, 48, 0.22) 0%,
-    rgba(40, 35, 32, 0.12) 55%,
-    transparent 70%
-  );
-  animation: aura-drift-c 50s ease-in-out infinite, aura-breathe 11s ease-in-out infinite 1s;
-  opacity: 0.4;
-}
-
-.aura-blob--d {
-  width: min(85vw, 440px);
-  height: min(75vw, 400px);
-  right: 5%;
-  bottom: 8%;
-  background: radial-gradient(
-    circle,
-    rgba(80, 78, 74, 0.14) 0%,
-    rgba(55, 52, 46, 0.08) 48%,
-    transparent 72%
-  );
-  animation: aura-drift-b 62s ease-in-out infinite reverse, aura-breathe 13s ease-in-out infinite 3s;
-  opacity: 0.32;
-}
-
-.aura-ellipse {
+/* Inner: warm gold bloom (content focal region) */
+.aura-glow {
   position: absolute;
   left: 50%;
   top: 40%;
-  z-index: 1;
-  width: min(175vw, 960px);
-  height: min(85vh, 560px);
-  transform: translate(-50%, -50%) rotate(-10deg);
   border-radius: 50%;
   pointer-events: none;
-  background: radial-gradient(
-    ellipse 52% 44% at 50% 48%,
-    rgba(198, 161, 91, 0.14) 0%,
-    rgba(90, 76, 54, 0.08) 45%,
-    transparent 70%
-  );
-  filter: blur(52px);
-  opacity: 0.62;
   will-change: transform, opacity;
-  animation: aura-ellipse-drift 64s ease-in-out infinite, aura-breathe 14s ease-in-out infinite 1.5s;
+  transform: translate(-50%, -50%);
 }
 
-.aura-ring {
+.aura-glow--inner {
+  z-index: 1;
+  width: min(82vw, 500px);
+  height: min(76vw, 470px);
+  background: radial-gradient(
+    circle at 50% 48%,
+    rgba(210, 175, 115, 0.22) 0%,
+    rgba(165, 135, 88, 0.12) 38%,
+    rgba(88, 72, 52, 0.05) 62%,
+    transparent 74%
+  );
+  filter: blur(52px);
+  opacity: 0.68;
+  animation: aura-glow-inner-motion 34s ease-in-out infinite;
+}
+
+/* Mid: olive + bronze halo */
+.aura-glow--mid {
+  z-index: 1;
+  width: min(125vw, 720px);
+  height: min(118vw, 680px);
+  background: radial-gradient(
+    circle at 48% 46%,
+    rgba(118, 108, 72, 0.18) 0%,
+    rgba(72, 62, 48, 0.12) 45%,
+    rgba(42, 38, 32, 0.06) 68%,
+    transparent 82%
+  );
+  filter: blur(72px);
+  opacity: 0.48;
+  animation: aura-glow-mid-motion 38s ease-in-out infinite;
+}
+
+/* Outer: wide desaturated field + faint cool shadow */
+.aura-glow--outer {
+  z-index: 1;
+  width: min(175vw, 1020px);
+  height: min(165vw, 980px);
+  background:
+    radial-gradient(
+      circle at 50% 50%,
+      rgba(58, 54, 48, 0.14) 0%,
+      rgba(38, 36, 34, 0.08) 52%,
+      transparent 72%
+    ),
+    radial-gradient(
+      circle at 62% 38%,
+      rgba(40, 48, 52, 0.1) 0%,
+      transparent 55%
+    );
+  filter: blur(92px);
+  opacity: 0.38;
+  animation: aura-glow-outer-motion 42s ease-in-out infinite;
+}
+
+/* Ring stack: etched light only (no fill glow mixed in) */
+.aura-rings {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.aura-ring-line {
   position: absolute;
   left: 50%;
-  top: 42%;
-  z-index: 1;
+  top: 40%;
   transform: translate(-50%, -50%);
   border-radius: 50%;
   pointer-events: none;
+  background: transparent;
+  border-style: solid;
+  filter: blur(1px);
+  will-change: transform, opacity;
 }
 
-.aura-ring--main {
-  width: min(140vw, 820px);
-  height: min(140vw, 820px);
-  border: 1px solid rgba(198, 161, 91, 0.1);
+.aura-ring-line--a {
+  width: min(92vw, 540px);
+  height: min(92vw, 540px);
+  border-width: 1px;
+  border-color: rgba(198, 161, 91, 0.09);
   box-shadow:
-    0 0 0 1px rgba(198, 161, 91, 0.06) inset,
-    0 0 140px rgba(198, 161, 91, 0.09);
-  animation: aura-ring-pulse 18s ease-in-out infinite;
-  opacity: 0.88;
+    0 0 0 1px rgba(198, 161, 91, 0.05),
+    inset 0 0 36px rgba(198, 161, 91, 0.03);
+  opacity: 0.75;
+  animation: aura-ring-line-motion-a 32s ease-in-out infinite;
 }
 
-.aura-ring--soft {
-  width: min(120vw, 720px);
-  height: min(120vw, 720px);
-  border: 1px solid rgba(255, 255, 255, 0.03);
-  opacity: 0.5;
-  animation: aura-ring-pulse 22s ease-in-out infinite reverse;
+.aura-ring-line--b {
+  width: min(122vw, 720px);
+  height: min(122vw, 720px);
+  border-width: 1px;
+  border-color: rgba(175, 155, 118, 0.065);
+  box-shadow: 0 0 0 1px rgba(210, 190, 150, 0.04);
+  opacity: 0.55;
+  animation: aura-ring-line-motion-b 36s ease-in-out infinite;
+}
+
+.aura-ring-line--c {
+  width: min(152vw, 900px);
+  height: min(152vw, 900px);
+  border-width: 1px;
+  border-color: rgba(130, 118, 98, 0.055);
+  box-shadow:
+    0 0 0 1px rgba(90, 82, 72, 0.06),
+    inset 0 0 0 1px rgba(45, 42, 38, 0.12);
+  opacity: 0.45;
+  animation: aura-ring-line-motion-c 40s ease-in-out infinite;
 }
 
 .aura-vignette {
   position: absolute;
   inset: 0;
-  z-index: 2;
-  /* Darken edges only; keep center warm so the bloom reads like the reference */
+  z-index: 3;
   background:
-    radial-gradient(ellipse 80% 72% at 50% 42%, transparent 36%, rgba(0, 0, 0, 0.42) 100%),
-    radial-gradient(ellipse 125% 95% at 50% 50%, transparent 58%, rgba(0, 0, 0, 0.62) 100%);
-  opacity: 0.92;
+    radial-gradient(ellipse 82% 74% at 50% 42%, transparent 34%, rgba(6, 5, 4, 0.5) 100%),
+    radial-gradient(ellipse 128% 98% at 50% 50%, transparent 56%, rgba(4, 3, 2, 0.68) 100%);
+  opacity: 0.9;
   pointer-events: none;
 }
 
 .aura-noise {
   position: absolute;
   inset: 0;
-  z-index: 3;
-  opacity: 0.048;
+  z-index: 4;
+  opacity: 0.045;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   mix-blend-mode: overlay;
   pointer-events: none;
-  animation: aura-noise-breathe 18s ease-in-out infinite;
+  animation: aura-noise-breathe 26s ease-in-out infinite;
   will-change: opacity;
 }
 
-@keyframes aura-drift-a {
+@keyframes aura-glow-inner-motion {
   0%,
   100% {
-    transform: translate(0, 0) scale(1);
-  }
-  33% {
-    transform: translate(3%, 2%) scale(1.03);
-  }
-  66% {
-    transform: translate(-2%, 3%) scale(0.98);
-  }
-}
-
-@keyframes aura-drift-b {
-  0%,
-  100% {
-    transform: translate(0, 0) scale(1);
+    transform: translate(-50%, -50%) translate(0, 0) scale(1);
+    opacity: 0.62;
   }
   50% {
-    transform: translate(-4%, -3%) scale(1.04);
+    transform: translate(-50%, -50%) translate(1.2%, -1%) scale(1.04);
+    opacity: 0.72;
   }
 }
 
-@keyframes aura-drift-c {
+@keyframes aura-glow-mid-motion {
   0%,
   100% {
-    transform: translate(0, 0) scale(1);
-  }
-  40% {
-    transform: translate(2%, -2%) scale(1.02);
-  }
-  80% {
-    transform: translate(-3%, 1%) scale(0.99);
-  }
-}
-
-@keyframes aura-breathe {
-  0%,
-  100% {
+    transform: translate(-50%, -50%) translate(0, 0) scale(1);
     opacity: 0.42;
   }
   50% {
-    opacity: 0.58;
+    transform: translate(-50%, -50%) translate(-1.5%, 1.2%) scale(1.05);
+    opacity: 0.52;
   }
 }
 
-@keyframes aura-ring-pulse {
+@keyframes aura-glow-outer-motion {
   0%,
   100% {
-    opacity: 0.65;
     transform: translate(-50%, -50%) scale(1);
+    opacity: 0.34;
   }
   50% {
-    opacity: 0.85;
-    transform: translate(-50%, -50%) scale(1.02);
+    transform: translate(-50%, -50%) translate(1%, 0.8%) scale(1.03);
+    opacity: 0.42;
   }
 }
 
-@keyframes aura-ellipse-drift {
+@keyframes aura-ring-line-motion-a {
   0%,
   100% {
-    transform: translate(-50%, -50%) rotate(-10deg) translate(0, 0) scale(1);
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.72;
   }
   50% {
-    transform: translate(-50%, -50%) rotate(-8deg) translate(2%, -1.5%) scale(1.03);
+    transform: translate(-50%, -50%) scale(1.008);
+    opacity: 0.82;
+  }
+}
+
+@keyframes aura-ring-line-motion-b {
+  0%,
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.52;
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.012);
+    opacity: 0.62;
+  }
+}
+
+@keyframes aura-ring-line-motion-c {
+  0%,
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.42;
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.015);
+    opacity: 0.52;
   }
 }
 
 @keyframes aura-noise-breathe {
   0%,
   100% {
-    opacity: 0.028;
+    opacity: 0.038;
   }
   50% {
-    opacity: 0.042;
+    opacity: 0.055;
   }
 }
 
@@ -1441,29 +1442,44 @@ a.btn-block {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .aura-blob,
-  .aura-ring,
-  .aura-ellipse {
+  .aura-glow,
+  .aura-ring-line {
     animation: none !important;
   }
 
-  .aura-blob {
-    opacity: 0.36;
+  .aura-glow--inner {
+    opacity: 0.58;
+    transform: translate(-50%, -50%);
   }
 
-  .aura-ellipse {
+  .aura-glow--mid {
+    opacity: 0.4;
+    transform: translate(-50%, -50%);
+  }
+
+  .aura-glow--outer {
+    opacity: 0.32;
+    transform: translate(-50%, -50%);
+  }
+
+  .aura-ring-line--a {
+    opacity: 0.62;
+    transform: translate(-50%, -50%);
+  }
+
+  .aura-ring-line--b {
+    opacity: 0.48;
+    transform: translate(-50%, -50%);
+  }
+
+  .aura-ring-line--c {
     opacity: 0.38;
-    transform: translate(-50%, -50%) rotate(-10deg);
-  }
-
-  .aura-ring--main,
-  .aura-ring--soft {
-    opacity: 0.55;
+    transform: translate(-50%, -50%);
   }
 
   .aura-noise {
     animation: none !important;
-    opacity: 0.035;
+    opacity: 0.04;
   }
 
   .app-nav {
