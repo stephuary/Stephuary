@@ -1,0 +1,1698 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <script>
+    try {
+      var h = new Date().getHours();
+      var em = h >= 3 && h < 7;
+      var gh = h >= 4 && h < 7;
+      document.documentElement.classList.toggle('early-mode', em);
+      document.documentElement.classList.toggle('god-hour', gh);
+      document.documentElement.setAttribute('data-early-mode', em ? 'true' : 'false');
+      document.documentElement.setAttribute('data-god-hour', gh ? 'true' : 'false');
+    } catch (e) {
+      document.documentElement.setAttribute('data-early-mode', 'false');
+      document.documentElement.setAttribute('data-god-hour', 'false');
+    }
+  </script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Your result · Stephuary</title>
+  <link rel="stylesheet" href="/stephuary-interactive.css" />
+  <link rel="stylesheet" href="/stephuary-founder-reveal.css" />
+  <link rel="stylesheet" href="/stephuary-free-mode.css" />
+  <meta name="description" content="Structured read of how you operate. Next steps, no noise." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/stephuary-early-mode.css" />
+  <link rel="stylesheet" href="/stephuary-god-hour.css" />
+  <link rel="stylesheet" href="/stephuary-design-tokens.css" />
+  <link rel="stylesheet" href="/stephuary-shell.css" />
+  <script src="/stephuary-interactive.js" defer></script>
+  <script src="/stephuary-early-mode.js" defer></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #080807;
+      --blue: #2b4fd4;
+      --blue-hi: #3a5ee0;
+      --gold: #c4a35a;
+      --gold-dim: #8a7040;
+      --white: #f4ede0;
+      --muted: rgba(244, 237, 224, 0.72);
+      --faint: rgba(244, 237, 224, 0.14);
+      --line-soft: rgba(244, 237, 224, 0.08);
+      --line-blue: rgba(43, 79, 212, 0.2);
+      --line: rgba(43, 79, 212, 0.2);
+      --surface: rgba(13, 13, 11, 0.65);
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--white);
+      font-family: 'Lato', sans-serif;
+      font-weight: 300;
+      font-size: 16px;
+      line-height: 1.72;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.025;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+      background-size: 200px 200px;
+    }
+    @keyframes rise {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .wrap { max-width: 680px; margin: 0 auto; padding: 0 48px; position: relative; z-index: 1; }
+    .wrap-wide { max-width: 820px; margin: 0 auto; padding: 0 48px; }
+    .rule { height: 1px; background: var(--line-blue); margin: 0 48px; max-width: calc(820px + 96px); margin-left: auto; margin-right: auto; }
+
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px 20px;
+      padding: 28px 48px 0;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    .top-bar-nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      align-items: center;
+    }
+    .top-bar-nav a {
+      font-size: 9px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: rgba(244, 237, 224, 0.45);
+      text-decoration: none;
+    }
+    .top-bar-nav a:hover { color: var(--muted); }
+    .top-bar-nav__restart {
+      font: inherit;
+      font-size: 9px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: rgba(244, 237, 224, 0.45);
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+    }
+    .top-bar-nav__restart:hover {
+      color: var(--muted);
+    }
+    .results-flow-links--quiet {
+      opacity: 0.72;
+      font-size: 12px;
+    }
+    .logo {
+      font-size: 10px;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--gold);
+      text-decoration: none;
+      font-family: 'Lato', sans-serif;
+    }
+    .logo:hover { color: var(--white); }
+
+    #state-missing {
+      display: none;
+      min-height: 85vh;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 48px 28px 80px;
+      max-width: 480px;
+      margin: 0 auto;
+    }
+    #state-missing.visible { display: flex; }
+    .missing-kicker {
+      font-size: 10px;
+      letter-spacing: 0.32em;
+      text-transform: uppercase;
+      color: var(--blue);
+      margin-bottom: 24px;
+    }
+    .missing-h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-size: clamp(28px, 5vw, 40px);
+      line-height: 1.15;
+      margin-bottom: 16px;
+    }
+    .missing-p {
+      font-size: 15px;
+      color: var(--muted);
+      line-height: 1.75;
+      margin-bottom: 32px;
+    }
+
+    #state-result {
+      display: none;
+      padding-bottom: 72px;
+    }
+    #state-result.visible { display: block; animation: rise 0.55s ease forwards; }
+
+    .hero-result {
+      padding: 36px 0 48px;
+      background: var(--bg);
+    }
+    .hero-kicker {
+      font-size: 10px;
+      letter-spacing: 0.34em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 20px;
+      font-family: 'Lato', sans-serif;
+    }
+    .hero-h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-size: clamp(34px, 5.2vw, 56px);
+      line-height: 1.08;
+      letter-spacing: -0.02em;
+      margin-bottom: 14px;
+      max-width: 620px;
+    }
+    .hero-h1--support {
+      font-size: clamp(18px, 2.2vw, 22px);
+      line-height: 1.45;
+      color: var(--muted);
+      max-width: 520px;
+    }
+    .hero-sub {
+      font-size: 15px;
+      color: var(--muted);
+      margin-bottom: 28px;
+      max-width: 420px;
+      line-height: 1.65;
+    }
+    .opening-read {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-size: clamp(20px, 2.6vw, 26px);
+      line-height: 1.4;
+      color: var(--white);
+      max-width: 560px;
+      padding-top: 8px;
+      border-top: 1px solid var(--line-blue);
+    }
+
+    .type-pill {
+      display: inline-flex;
+      flex-wrap: wrap;
+      gap: 8px 12px;
+      margin-top: 24px;
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--faint);
+      font-family: 'Lato', sans-serif;
+    }
+    .type-pill span { color: var(--muted); }
+
+    .result-readout {
+      margin-top: 20px;
+      padding-top: 18px;
+      border-top: 1px solid var(--line-soft);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px 20px;
+      max-width: 560px;
+      font-size: 12px;
+      color: var(--faint);
+      line-height: 1.45;
+    }
+    @media (max-width: 520px) {
+      .result-readout { grid-template-columns: 1fr; }
+    }
+    .result-readout dt {
+      font-size: 9px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--faint);
+      margin-bottom: 2px;
+    }
+    .result-readout dd { color: var(--muted); margin: 0 0 6px 0; }
+
+    .result-outcome {
+      margin-top: 24px;
+      padding: 22px 20px;
+      border: 1px solid var(--line-blue);
+      background: rgba(13, 13, 11, 0.45);
+      max-width: 560px;
+    }
+    .result-outcome__label {
+      font-size: 9px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--blue-hi);
+      margin-bottom: 16px;
+      font-family: 'Lato', sans-serif;
+    }
+    .result-outcome__grid {
+      display: grid;
+      grid-template-columns: minmax(auto, 140px) 1fr;
+      gap: 8px 18px;
+      margin: 0;
+      align-items: baseline;
+    }
+    .result-outcome__grid dt {
+      font-size: 9px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--faint);
+      margin: 0;
+    }
+    .result-outcome__grid dd {
+      margin: 0 0 12px;
+      font-size: 15px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+    .result-outcome__static {
+      margin: 16px 0 0;
+      padding-top: 14px;
+      border-top: 1px solid var(--line-soft);
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+    @media (max-width: 520px) {
+      .result-outcome__grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .diag-wrap {
+      margin-top: 28px;
+      padding-top: 22px;
+      border-top: 1px solid var(--line-soft);
+      max-width: 560px;
+    }
+    .diag-grid {
+      display: grid;
+      grid-template-columns: minmax(auto, 140px) 1fr;
+      gap: 6px 20px;
+      margin: 0;
+      align-items: baseline;
+    }
+    .diag-grid dt {
+      font-size: 9px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--blue);
+      margin: 0;
+      font-family: 'Lato', sans-serif;
+    }
+    .diag-grid dd {
+      margin: 0 0 14px;
+      font-size: 15px;
+      color: var(--muted);
+      line-height: 1.65;
+    }
+    @media (max-width: 520px) {
+      .diag-grid {
+        grid-template-columns: 1fr;
+      }
+      .diag-grid dd { margin-bottom: 16px; }
+    }
+    .diag-next {
+      margin-top: 22px;
+      padding-top: 18px;
+      border-top: 1px solid var(--line-soft);
+    }
+    .diag-next-label {
+      font-size: 9px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--gold-dim);
+      margin-bottom: 8px;
+      font-family: 'Lato', sans-serif;
+    }
+    .diag-next-title {
+      font-size: 17px;
+      color: var(--white);
+      margin-bottom: 10px;
+      font-weight: 400;
+    }
+    .diag-next-reason {
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.65;
+      margin: 0;
+    }
+
+    .hero-hit {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-size: clamp(22px, 3.2vw, 30px);
+      line-height: 1.2;
+      color: var(--white);
+      margin-bottom: 14px;
+      max-width: 560px;
+    }
+
+    .diag-confidence {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.65;
+      margin-top: 18px;
+      max-width: 520px;
+    }
+
+    .action-momentum {
+      font-size: 14px;
+      color: var(--white);
+      letter-spacing: 0.04em;
+      margin-bottom: 14px;
+      font-weight: 400;
+    }
+
+    section.block { padding: 44px 0; }
+    section.block.alt { background: #0b1520; }
+
+    .sec-label {
+      font-size: 10px;
+      letter-spacing: 0.32em;
+      text-transform: uppercase;
+      color: var(--blue);
+      margin-bottom: 14px;
+      font-family: 'Lato', sans-serif;
+    }
+    .sec-h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-size: clamp(22px, 3vw, 30px);
+      line-height: 1.2;
+      margin-bottom: 18px;
+      color: var(--white);
+    }
+    .body-text {
+      font-size: 15px;
+      color: var(--muted);
+      line-height: 1.78;
+      margin-bottom: 14px;
+      max-width: 560px;
+    }
+    .body-text:last-child { margin-bottom: 0; }
+    .bullet-list {
+      list-style: none;
+      margin-top: 12px;
+      max-width: 520px;
+    }
+    .bullet-list li {
+      font-size: 15px;
+      color: var(--muted);
+      line-height: 1.68;
+      padding-left: 16px;
+      position: relative;
+      margin-bottom: 8px;
+    }
+    .bullet-list li::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0.62em;
+      width: 4px;
+      height: 4px;
+      background: var(--blue);
+      border-radius: 50%;
+      opacity: 0.7;
+    }
+
+    .action-section { padding: 40px 0 48px; }
+    .action-card {
+      border: 1px solid var(--line);
+      border-top: 2px solid var(--blue);
+      background: var(--surface);
+      padding: 28px 24px;
+      max-width: 560px;
+    }
+    .action-card h3 {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-size: clamp(20px, 2.4vw, 26px);
+      margin-bottom: 20px;
+    }
+    .action-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .action-step {
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--line-soft);
+      font-size: 15px;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+    .action-step:last-child { border-bottom: none; padding-bottom: 0; }
+    .action-n {
+      flex-shrink: 0;
+      width: 26px;
+      height: 26px;
+      border: 1px solid rgba(43, 79, 212, 0.45);
+      color: var(--blue);
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Lato', sans-serif;
+      margin-top: 2px;
+    }
+    .action-step--cta {
+      border-bottom: none;
+      padding: 0;
+    }
+    .action-step--cta a {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 14px 22px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: linear-gradient(165deg, var(--blue-hi) 0%, var(--blue) 100%);
+      color: #fff;
+      font-size: 10px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      text-decoration: none;
+      font-family: 'Lato', sans-serif;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .action-step--cta a:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 24px rgba(43, 79, 212, 0.35);
+    }
+
+    .play-wrap { padding: 44px 0 52px; }
+    .play-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+      max-width: 560px;
+    }
+    @media (min-width: 560px) {
+      .play-grid { grid-template-columns: 1fr 1fr; }
+    }
+    .play-card {
+      border: 1px solid var(--line);
+      padding: 22px 20px;
+      background: rgba(11, 15, 11, 0.5);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      min-height: 100%;
+    }
+    .play-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 20px;
+      font-weight: 300;
+      color: var(--white);
+    }
+    .play-desc {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.65;
+      flex: 1;
+    }
+    .play-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 4px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Lato', sans-serif;
+      font-weight: 700;
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      text-decoration: none;
+      padding: 12px 18px;
+      border: none;
+      cursor: pointer;
+      transition: filter 0.25s, transform 0.2s;
+    }
+    .btn-primary {
+      background: var(--blue);
+      color: #0b0f0b;
+    }
+    .btn-primary:hover { filter: brightness(1.14); transform: scale(1.02); box-shadow: 0 0 24px rgba(43, 79, 212, 0.4); }
+    .btn-ghost {
+      background: transparent;
+      color: var(--muted);
+      border: 1px solid rgba(43, 79, 212, 0.35);
+      font-weight: 400;
+    }
+    .btn-ghost:hover { border-color: rgba(43, 79, 212, 0.65); color: var(--white); }
+
+    .help-box {
+      max-width: 560px;
+      padding: 28px 24px;
+      border: 1px solid var(--line);
+    }
+    .help-body {
+      font-size: 15px;
+      color: var(--muted);
+      line-height: 1.75;
+      margin-bottom: 18px;
+    }
+    .help-options {
+      list-style: none;
+      margin: 16px 0 22px;
+    }
+    .help-options li {
+      font-size: 14px;
+      color: var(--muted);
+      padding: 6px 0;
+      padding-left: 14px;
+      position: relative;
+    }
+    .help-options li::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0.65em;
+      width: 3px;
+      height: 3px;
+      background: var(--gold);
+      border-radius: 50%;
+      opacity: 0.6;
+    }
+
+    .foot-close {
+      text-align: center;
+      padding: 48px 28px 40px;
+      border-top: 1px solid var(--line);
+      max-width: 560px;
+      margin: 0 auto;
+    }
+    .foot-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 12px;
+      justify-content: center;
+      align-items: center;
+      font-size: 11px;
+    }
+    .foot-actions__sep { color: var(--faint); opacity: 0.5; }
+    .foot-line {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(20px, 2.8vw, 26px);
+      font-weight: 300;
+      margin-bottom: 18px;
+      color: var(--white);
+    }
+    .foot-link {
+      font-size: 11px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--faint);
+      text-decoration: none;
+      border-bottom: 1px solid rgba(200, 169, 81, 0.35);
+      padding-bottom: 2px;
+      transition: color 0.25s;
+    }
+    .foot-link:hover {
+      color: rgba(244, 237, 224, 0.55);
+      border-bottom-color: rgba(244, 237, 224, 0.12);
+    }
+
+    @media (max-width: 720px) {
+      .wrap, .wrap-wide, .top-bar { padding-left: 22px; padding-right: 22px; }
+      .rule { margin-left: 22px; margin-right: 22px; }
+    }
+    @media (max-width: 520px) {
+      body { font-size: 17px; }
+      .body-text, .bullet-list li { font-size: 16px; }
+      .play-grid { grid-template-columns: 1fr; }
+    }
+
+    /* CEI strip + revised results layout */
+    .cei-node-strip {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px 8px;
+      align-items: center;
+      margin: 18px 0 14px;
+      max-width: 640px;
+      position: relative;
+      padding: 12px 14px;
+      border: 1px solid var(--line-blue);
+      background: rgba(10, 12, 18, 0.45);
+    }
+    .cei-node-strip__pulse {
+      position: absolute;
+      inset: -1px;
+      border-radius: 2px;
+      pointer-events: none;
+      background: linear-gradient(120deg, transparent 40%, rgba(43, 79, 212, 0.12) 50%, transparent 60%);
+      background-size: 200% 100%;
+      animation: ceiPulse 7s ease-in-out infinite;
+      opacity: 0.85;
+    }
+    @keyframes ceiPulse {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .cei-node-strip__pulse { animation: none; opacity: 0.35; }
+    }
+    .cei-node {
+      font-family: 'Lato', sans-serif;
+      font-size: 8px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--faint);
+      padding: 5px 8px;
+      border: 1px solid var(--line-soft);
+      border-radius: 2px;
+      background: rgba(8, 8, 7, 0.6);
+      transition: border-color 0.25s, box-shadow 0.3s, color 0.2s;
+    }
+    .cei-node--hot {
+      color: var(--white);
+      border-color: rgba(43, 79, 212, 0.55);
+      box-shadow: 0 0 18px rgba(43, 79, 212, 0.22);
+    }
+    .results-dom-line {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-size: clamp(22px, 3.2vw, 32px);
+      line-height: 1.28;
+      color: var(--white);
+      max-width: 620px;
+      margin-bottom: 12px;
+    }
+    .results-hero-cta-row {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 14px;
+      margin-top: 20px;
+    }
+    .results-flow-links {
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      color: rgba(244, 237, 224, 0.38);
+      line-height: 1.6;
+      max-width: 520px;
+    }
+    .results-flow-links a {
+      color: rgba(244, 237, 224, 0.5);
+      text-decoration: none;
+      border-bottom: 1px solid rgba(244, 237, 224, 0.12);
+      padding-bottom: 1px;
+      transition: color 0.2s ease, border-color 0.2s ease;
+    }
+    .results-flow-links a:hover {
+      color: rgba(244, 237, 224, 0.82);
+      border-bottom-color: rgba(244, 237, 224, 0.28);
+    }
+    .results-diag-esc {
+      margin-top: 2px;
+    }
+    .results-diag-esc .sh-primary-flow__link {
+      font-size: 8px;
+    }
+    .results-conversion-soft {
+      font-size: 12px;
+      line-height: 1.55;
+      color: rgba(244, 237, 224, 0.38);
+      max-width: 480px;
+      margin: 8px 0 20px;
+      font-weight: 300;
+    }
+    .results-conversion-soft a {
+      color: rgba(244, 237, 224, 0.52);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      transition: color 0.2s ease;
+    }
+    .results-conversion-soft a:hover {
+      color: rgba(244, 237, 224, 0.82);
+    }
+    .results-cta-pri {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 14px 22px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: linear-gradient(165deg, var(--blue-hi) 0%, var(--blue) 100%);
+      color: #fff;
+      font-size: 10px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      text-decoration: none;
+      font-family: 'Lato', sans-serif;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .results-cta-pri:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 24px rgba(43, 79, 212, 0.35);
+    }
+    .results-cta-subnote {
+      font-size: 11px;
+      color: var(--faint);
+      letter-spacing: 0.06em;
+      width: 100%;
+      margin-top: 4px;
+    }
+    .results-sec {
+      padding: 36px 0;
+    }
+    .results-sec.alt {
+      background: linear-gradient(180deg, #0a1018 0%, #080807 100%);
+    }
+    .results-sec__card {
+      border: 1px solid var(--line-blue);
+      background: rgba(13, 13, 11, 0.55);
+      padding: 22px 20px 24px;
+      max-width: 620px;
+    }
+    .results-sec__lead {
+      font-size: 15px;
+      color: var(--muted);
+      line-height: 1.65;
+      margin-bottom: 14px;
+    }
+    .results-tier-card {
+      border: 1px solid rgba(43, 79, 212, 0.35);
+      padding: 20px 18px;
+      background: rgba(10, 14, 22, 0.5);
+      max-width: 560px;
+    }
+    .results-tier-card__name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(22px, 2.8vw, 28px);
+      font-weight: 300;
+      color: var(--white);
+      margin-bottom: 8px;
+    }
+    .results-tier-card__why {
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.55;
+      margin-bottom: 16px;
+    }
+    .results-micro {
+      font-size: 12px;
+      color: var(--faint);
+      line-height: 1.5;
+      margin-top: 12px;
+    }
+    .results-next-product {
+      font-size: 13px;
+      color: var(--blue-hi);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-top: 6px;
+      font-family: 'Lato', sans-serif;
+    }
+    .results-tier-kicker {
+      font-size: 9px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--blue-hi);
+      margin-bottom: 8px;
+      font-family: 'Lato', sans-serif;
+    }
+  </style>
+</head>
+<body data-sh-env="systems">
+
+  <header class="top-bar">
+    <a href="/" class="logo">Stephuary</a>
+    <nav id="main-nav" class="top-bar-nav sh-main-nav" aria-label="Primary">
+      <a href="/pricing">Pricing</a>
+      <a href="/access">.5% Club</a>
+      <a href="https://stephuary.substack.com" target="_blank" rel="noopener">Grown spaghetti</a>
+      <a href="https://onlysometimesclub.com" target="_blank" rel="noopener noreferrer">Only Sometimes Club</a>
+      <button type="button" class="top-bar-nav__restart" id="results-nav-restart">Restart</button>
+    </nav>
+  </header>
+
+  <div id="state-missing">
+    <p class="missing-kicker">Result</p>
+    <h1 class="missing-h1">No diagnostic result on file.</h1>
+    <p class="missing-p">Finish the diagnostic first. Your read saves when the flow completes.</p>
+    <a href="/playbooks" class="btn btn-primary" id="results-missing-cta">Open playbooks</a>
+  </div>
+
+  <main id="state-result">
+    <section class="hero-result" data-sh-flow-section>
+      <div class="wrap">
+        <p class="hero-kicker">Your pattern</p>
+        <p class="results-dom-line" id="results-dom-line"></p>
+        <p class="results-conversion-soft" hidden>
+          Want this mapped to your actual business?
+          <a href="/snapshot">View Snapshot</a>
+        </p>
+        <h1 class="hero-h1 hero-h1--support" id="openingRead"></h1>
+        <p class="hero-sub" id="results-hero-sub"></p>
+        <div class="type-pill" id="typePill" aria-label="Detected types"></div>
+        <div id="results-cei-strip" class="cei-node-strip" aria-label="Pressure map"></div>
+        <p class="sys-lead-note" style="margin:0 auto 16px;max-width:52ch;text-align:left">The readout names the pattern. When the diagnostic is complete, one Room holds the next pressure point .  enter it and work the loop there.</p>
+        <div class="results-hero-cta-row">
+          <a class="results-cta-pri magnetic" id="results-primary-cta" href="#" data-sh-flow-primary>Enter Your Room</a>
+          <p class="results-flow-links results-flow-links--quiet" id="results-flow-links" hidden>
+            <a href="/pricing">View pricing</a>
+          </p>
+          <span class="results-cta-subnote" id="results-primary-sub" hidden></span>
+          <p class="results-diag-esc" id="results-diag-esc">
+            <a href="/playbooks" class="sh-primary-flow__link">Open playbooks</a>
+          </p>
+        </div>
+        <section class="sh-results-routes sh-results-routes--quiet" id="sh-results-routes" aria-label="Other directions" hidden>
+          <p class="sh-results-routes__label">If you need a different next step</p>
+          <div class="sh-results-routes__grid">
+            <a class="sh-results-route" href="/snapshot">
+              <p class="sh-results-route__kicker">Compressed pass</p>
+              <p class="sh-results-route__title">Book a snapshot</p>
+              <p class="sh-results-route__body">When you need decisions named on a clear deadline. not another open-ended thread.</p>
+            </a>
+          </div>
+        </section>
+        <dl class="result-readout" id="resultReadoutBlock" hidden></dl>
+      </div>
+    </section>
+
+    <section class="results-sec alt" id="results-recommended-room" data-sh-flow-section hidden>
+      <div class="wrap-wide">
+        <p class="sec-label">Recommended Room</p>
+        <div class="results-sec__card">
+          <p class="results-sec__lead" id="rec-room-name"></p>
+          <p class="body-text" id="rec-room-reason" style="margin-top:8px"></p>
+          <div style="margin-top:14px">
+            <a class="btn btn-ghost magnetic" id="rec-room-cta" href="/room-losing" data-sh-flow-secondary>Enter Room</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="rule"></div>
+
+    <section class="results-sec alt" data-sh-flow-section>
+      <div class="wrap-wide">
+        <p class="sec-label">A · Diagnosis</p>
+        <div class="results-sec__card">
+          <p class="results-sec__lead" id="picked-main"></p>
+          <ul class="bullet-list" id="picked-bullets"></ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="results-sec" data-sh-flow-section>
+      <div class="wrap-wide">
+        <p class="sec-label">B · What it costs · What you have</p>
+        <div class="result-outcome" id="resultOutcome">
+          <p class="result-outcome__label">Pressure and cost</p>
+          <dl class="result-outcome__grid">
+            <dt>Primary issue</dt>
+            <dd id="outMainIssue"></dd>
+            <dt>Time</dt>
+            <dd id="outTimeLoss"></dd>
+            <dt>Money</dt>
+            <dd id="outMoneyLoss"></dd>
+            <dt>If nothing changes (30–90 days)</dt>
+            <dd id="outStagnant"></dd>
+          </dl>
+          <p class="result-outcome__static" id="out-stagnant-framing">If nothing changes, this continues over the next 30–90 days.</p>
+        </div>
+        <div class="diag-wrap" id="diagnosticBlock" hidden style="margin-top:20px;">
+          <dl class="diag-grid">
+            <dt>What you have</dt>
+            <dd id="diagHave"></dd>
+          </dl>
+          <p class="diag-confidence" id="diagConfidence"></p>
+        </div>
+      </div>
+    </section>
+
+    <section class="results-sec alt" data-sh-flow-section>
+      <div class="wrap-wide">
+        <p class="sec-label">C · Next move</p>
+        <div class="results-sec__card sh-flow-output-anchor">
+          <p class="body-text" id="secC-next-move" style="margin-bottom:10px;"></p>
+          <div class="action-steps" id="actionSteps" style="margin-top:8px;"></div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="foot-close">
+      <p class="foot-line">Clear next move beats more thinking.</p>
+      <p class="foot-actions" hidden>
+        <a href="/pricing" class="foot-link">View pricing</a>
+      </p>
+    </footer>
+  </main>
+
+  <script src="/stephuary-diagnostic-flow.js"></script>
+  <script src="/stephuary-diagnostic-state.js"></script>
+  <script src="/stephuary-result.js"></script>
+  <script src="/stephuary-personalization.js"></script>
+  <script src="/stephuary-cei-bridge.js"></script>
+  <script src="/stephuary-founder-reveal.js"></script>
+  <script>
+(function () {
+  var STORAGE_KEY = 'stephuary_result_v1';
+  var LEGACY_KEYS = ['stephuary_diagnostic_result'];
+
+  var PLAYBOOK_META = {
+    'Execution': {
+      desc: 'This week only: schedule, priorities, one plan. No offer build, pricing, or AI stack.',
+      slug: 'execution'
+    },
+    'Reset': {
+      desc: 'Measure leaks and cut them. No offers, monetization angles, outreach scripts, or AI workflows.',
+      slug: 'reset'
+    },
+    'Income Architecture': {
+      desc: 'Offer, buyer, price band, first message. No time tracking, lifestyle framing, or AI education.',
+      slug: 'income-architecture'
+    },
+    'AI Control': {
+      desc: 'AI use, prompts, distribution. No leak worksheets, weekly calendar design, or first-offer drafting.',
+      slug: 'ai-control'
+    },
+    'Ownership': {
+      desc: 'Finish, send, deliver, client handling. No new offer from scratch, no leak math, no AI system build.',
+      slug: 'ownership'
+    }
+  };
+
+  var RESULT_VERSIONS = {
+    spotter_delay_nopressure: {
+      opening: 'You see issues early and sit with them too long.',
+      whatThisShows: [
+        { p: 'You notice what’s off fast.' },
+        { p: 'You catch weak points, missed details, and problems before they fully surface.' },
+        { p: 'Then you pause.' },
+        { p: 'You wait for:' },
+        { ul: ['a better moment', 'more clarity', 'a reason to move'] },
+        { p: 'Nothing around you forces a decision, so things stay open longer than they should.' }
+      ],
+      whereShowsUp: [
+        'decisions drag out',
+        'small fixes stay undone',
+        'obvious moves sit in your head instead of getting done',
+        'you keep revisiting the same thing'
+      ],
+      doThisNow: [
+        'Close one decision you’ve already thought about more than once',
+        'Fix one thing you noticed this week',
+        'Put a deadline on one open loop today'
+      ],
+      playbooks: ['Execution', 'Reset']
+    },
+    connector_overthinking_scattered: {
+      opening: 'You connect everything and leave too much open.',
+      whatThisShows: [
+        { p: 'You see links, patterns, and bigger meaning fast.' },
+        { p: 'That helps you understand things quickly.' },
+        { p: 'It also makes it easy to keep expanding instead of finishing.' },
+        { p: 'Your day doesn’t hold one line long enough for you to close things cleanly.' }
+      ],
+      whereShowsUp: [
+        'too many tabs open mentally and literally',
+        'ideas branch into more ideas',
+        'finishing feels slower than starting',
+        'clarity doesn’t turn into completion'
+      ],
+      doThisNow: [
+        'Pick one idea and stay with it until it is done',
+        'Cut off all new inputs for the rest of today',
+        'Finish one thing before touching anything else'
+      ],
+      playbooks: ['Execution', 'Reset']
+    },
+    interpreter_avoidance_wrongpeople: {
+      opening: 'You read people well and hold back too much around them.',
+      whatThisShows: [
+        { p: 'You pick up tone, hesitation, and what people actually mean before they say it plainly.' },
+        { p: 'That makes you careful.' },
+        { p: 'It also makes you adjust too much.' },
+        { p: 'You already know what you want to say or do.' },
+        { p: 'You slow yourself down because of who is around you and how they may respond.' }
+      ],
+      whereShowsUp: [
+        'you edit yourself before speaking',
+        'you wait to avoid changing the dynamic',
+        'decisions get shaped around other people’s comfort',
+        'your clarity gets buried under accommodation'
+      ],
+      doThisNow: [
+        'Make one decision today without asking for input',
+        'Say one thing directly that you’ve been softening',
+        'Remove one person’s opinion from a choice you already know how to make'
+      ],
+      playbooks: ['Execution', 'Income Architecture']
+    },
+    operator_distraction_misaligned: {
+      opening: 'You know how things should work and your attention keeps getting pulled off track.',
+      whatThisShows: [
+        { p: 'You care about things working well.' },
+        { p: 'You notice breakdowns fast and usually know what would improve them.' },
+        { p: 'Your problem is not seeing it.' },
+        { p: 'Your problem is staying with one thing long enough to finish it cleanly.' },
+        { p: 'The space around you is not helping.' }
+      ],
+      whereShowsUp: [
+        'jumping between fixes',
+        'reacting all day',
+        'starting improvements without closing them',
+        'getting pulled by whatever is loudest'
+      ],
+      doThisNow: [
+        'Choose one system to finish improving',
+        'Cut one unnecessary input for the next 24 hours',
+        'Stop touching five things at once'
+      ],
+      playbooks: ['Reset', 'Execution']
+    },
+    reworker_delay_misaligned: {
+      opening: 'You can see a better version of almost everything and keep waiting to build it.',
+      whatThisShows: [
+        { p: 'You don’t think in small edits.' },
+        { p: 'You see the bigger shift fast.' },
+        { p: 'That gives you strong instinct around what needs to change.' },
+        { p: 'It also makes it easy to hold off until you can do it the way you actually want.' },
+        { p: 'Your environment is not built for how you think, so good ideas stay at the level of thought.' }
+      ],
+      whereShowsUp: [
+        'rebuilding the idea in your head instead of starting',
+        'waiting for the right setup',
+        'rejecting workable options because they aren’t the full version',
+        'staying dissatisfied without a next step'
+      ],
+      doThisNow: [
+        'Start the smaller version today',
+        'Change one part of your environment that keeps slowing you down',
+        'Put one rough version in motion before improving it'
+      ],
+      playbooks: ['Execution', 'Ownership']
+    },
+    builder_delay_lowstandard: {
+      opening: 'You work well when things are clear, and too much around you is lowering the standard.',
+      whatThisShows: [
+        { p: 'You improve what exists.' },
+        { p: 'You work best when there is something solid to build on.' },
+        { p: 'The problem is what you keep letting into your day.' },
+        { p: 'Low-quality input makes decisions slower and weakens your sense of what matters.' }
+      ],
+      whereShowsUp: [
+        'more time spent reacting than building',
+        'lowered focus',
+        'slower decisions',
+        'work that feels below your actual level'
+      ],
+      doThisNow: [
+        'cut half your input for one day',
+        'clean up one part of your routine',
+        'work on one thing before consuming anything new'
+      ],
+      playbooks: ['Reset', 'AI Control']
+    },
+    mixed_general: {
+      opening: 'You can see what needs attention, but your next move is still too loose.',
+      whatThisShows: [
+        { p: 'Your answers point to awareness, but not enough consistency in how you act on it yet.' },
+        { p: 'You’re noticing things.' },
+        { p: 'You’re also leaving too many decisions open.' }
+      ],
+      whereShowsUp: [
+        'unfinished ideas',
+        'repeated starts',
+        'slow decisions',
+        'too many options still in play'
+      ],
+      doThisNow: [
+        'choose one direction for the next 7 days',
+        'stop adding new inputs',
+        'finish one thing before opening another'
+      ],
+      playbooks: ['Execution', 'Reset']
+    }
+  };
+
+  function esc(s) {
+    if (s == null) return '';
+    var d = document.createElement('div');
+    d.textContent = s;
+    return d.innerHTML;
+  }
+
+  function renderBlocks(container, blocks) {
+    container.innerHTML = '';
+    blocks.forEach(function (b) {
+      if (b.p) {
+        var p = document.createElement('p');
+        p.className = 'body-text';
+        p.textContent = b.p;
+        container.appendChild(p);
+      }
+      if (b.ul) {
+        var ul = document.createElement('ul');
+        ul.className = 'bullet-list';
+        b.ul.forEach(function (item) {
+          var li = document.createElement('li');
+          li.textContent = item;
+          ul.appendChild(li);
+        });
+        container.appendChild(ul);
+      }
+    });
+  }
+
+  function renderBulletList(container, items) {
+    container.innerHTML = '';
+    var ul = document.createElement('ul');
+    ul.className = 'bullet-list';
+    items.forEach(function (t) {
+      var li = document.createElement('li');
+      li.textContent = t;
+      ul.appendChild(li);
+    });
+    container.appendChild(ul);
+  }
+
+  function renderPrimaryCta(diag) {
+    var steps = document.getElementById('actionSteps');
+    if (!steps) return;
+    steps.innerHTML = '';
+  }
+
+  function renderPickedUp(version, diag) {
+    var main = document.getElementById('picked-main');
+    var ul = document.getElementById('picked-bullets');
+    if (main) {
+      main.textContent =
+        diag && diag.primary_issue
+          ? diag.primary_issue
+          : diag && diag.main_problem
+            ? diag.main_problem
+            : version.opening;
+    }
+    if (!ul) return;
+    ul.innerHTML = '';
+    if (diag && diag.diagnosis_issues && diag.diagnosis_issues.length) {
+      diag.diagnosis_issues.forEach(function (t) {
+        var li = document.createElement('li');
+        li.textContent = t;
+        ul.appendChild(li);
+      });
+      return;
+    }
+    if (diag && diag.priority_moves && diag.priority_moves.length) {
+      diag.priority_moves.slice(0, 3).forEach(function (t) {
+        var li = document.createElement('li');
+        li.textContent = t;
+        ul.appendChild(li);
+      });
+      return;
+    }
+    var items = [];
+    var w = version.whereShowsUp || [];
+    var i;
+    for (i = 0; i < w.length && items.length < 2; i++) items.push(w[i]);
+    var wt = version.whatThisShows;
+    if (wt && wt[0] && wt[0].p && items.length < 3) {
+      var ex = wt[0].p;
+      if (items.indexOf(ex) < 0) items.push(ex);
+    }
+    items.slice(0, 2).forEach(function (t) {
+      var li = document.createElement('li');
+      li.textContent = t;
+      ul.appendChild(li);
+    });
+  }
+
+  function readUserOutputs() {
+    try {
+      if (window.StephuaryPersonalize && typeof window.StephuaryPersonalize.getState === 'function') {
+        var st = window.StephuaryPersonalize.getState();
+        return st && st.outputs ? st.outputs : null;
+      }
+    } catch (e) {}
+    return null;
+  }
+
+  /** Maps legacy result “playbook” names to Room routes. */
+  var PLAYBOOK_TO_ROOM = {
+    'Reset': '/room-losing',
+    'Execution': '/room-protect',
+    'Income Architecture': '/room-sell',
+    'Ownership': '/room-protect',
+    'AI Control': '/playbooks'
+  };
+
+  function playbookHref(name, mode) {
+    return PLAYBOOK_TO_ROOM[name] || '/playbooks';
+  }
+
+  function playbookDownloadPrice(name) {
+    return name === 'Ownership' ? '28' : '1';
+  }
+
+  function renderPlaybooks(names) {
+    var grid = document.getElementById('playGrid');
+    if (!grid) return;
+    grid.innerHTML = '';
+    names.forEach(function (name) {
+      var meta = PLAYBOOK_META[name];
+      if (!meta) return;
+      var card = document.createElement('article');
+      card.className = 'play-card';
+      card.innerHTML =
+        '<div class="play-name">' + esc(name) + '</div>' +
+        '<p class="play-desc">' + esc(meta.desc) + '</p>' +
+        '<div class="play-actions">' +
+        '<a class="btn btn-ghost" data-sh-flow-secondary href="' + esc(playbookHref(name, 'open')) + '">Open</a>' +
+        '<a class="btn btn-ghost" data-sh-flow-secondary href="' + esc(playbookHref(name, 'download')) + '">Download ($' + playbookDownloadPrice(name) + ')</a>' +
+        '</div>';
+      grid.appendChild(card);
+    });
+  }
+
+  function loadResult() {
+    var raw = null;
+    var fromLegacy = false;
+    try {
+      raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) {
+        for (var i = 0; i < LEGACY_KEYS.length; i++) {
+          raw = localStorage.getItem(LEGACY_KEYS[i]);
+          if (raw) {
+            fromLegacy = true;
+            break;
+          }
+        }
+      }
+    } catch (e) {}
+    if (!raw) return { data: null, fromLegacy: false };
+    try {
+      return { data: JSON.parse(raw), fromLegacy: fromLegacy };
+    } catch (e) {
+      return { data: null, fromLegacy: false };
+    }
+  }
+
+  function normalizeData(data) {
+    if (!data || typeof data !== 'object' || Array.isArray(data)) return null;
+    var v = data.result_version;
+    if (!v || !RESULT_VERSIONS[v]) {
+      data.result_version = 'mixed_general';
+    }
+    if (!data.signals || typeof data.signals !== 'object') {
+      data.signals = {
+        detection: '',
+        response: '',
+        processing: '',
+        awareness: '',
+        standards: '',
+        timing: '',
+        impact: '',
+        approach: ''
+      };
+    }
+    if (data.type_primary === undefined) data.type_primary = '';
+    if (data.type_secondary === undefined) data.type_secondary = '';
+    if (data.block === undefined) data.block = '';
+    if (data.environment === undefined) data.environment = '';
+    if (!data.playbooks || !data.playbooks.length) {
+      var leg = RESULT_VERSIONS[data.result_version] && RESULT_VERSIONS[data.result_version].playbooks;
+      data.playbooks = leg && leg.length ? [leg[0]] : ['Execution'];
+    } else {
+      data.playbooks = [data.playbooks[0]];
+    }
+    if (!data.diagnostic && typeof window.StephuaryResult !== 'undefined') {
+      try {
+        var ver = data.result_version || 'mixed_general';
+        var prim = data.playbooks[0] || window.StephuaryResult.primaryPlaybookForVersion(ver);
+        data.diagnostic = window.StephuaryResult.buildDiagnostic(ver, prim);
+      } catch (e) {}
+    }
+    if (data.diagnostic && typeof window.StephuaryResult !== 'undefined' && typeof window.StephuaryResult.mergeCrossPhase === 'function') {
+      try {
+        window.StephuaryResult.mergeCrossPhase(data);
+      } catch (eX) {}
+    }
+    return data;
+  }
+
+  function resolveVersion(data) {
+    var v = data && data.result_version;
+    if (v && RESULT_VERSIONS[v]) return RESULT_VERSIONS[v];
+    return RESULT_VERSIONS.mixed_general;
+  }
+
+  function showMissing() {
+    document.getElementById('state-missing').classList.add('visible');
+    document.getElementById('state-result').classList.remove('visible');
+  }
+
+  function showResult(data, version) {
+    document.getElementById('state-missing').classList.remove('visible');
+    document.getElementById('state-result').classList.add('visible');
+
+    var diag = data.diagnostic;
+    var st = data.structured;
+    var op =
+      diag && diag.primary_issue
+        ? diag.primary_issue
+        : diag && diag.main_problem
+          ? diag.main_problem
+          : version.opening;
+    if (op && op.length > 140) op = op.slice(0, 137) + '…';
+    document.getElementById('openingRead').textContent = op || '';
+
+    var subEl = document.getElementById('results-hero-sub');
+    if (subEl) {
+      var hl = '';
+      if (diag && String(diag.synthesis_summary || '').trim()) {
+        hl = String(diag.synthesis_summary).trim();
+      } else if (version.whatThisShows && version.whatThisShows[1] && version.whatThisShows[1].p) {
+        hl = version.whatThisShows[1].p;
+      } else if (version.whatThisShows && version.whatThisShows[0] && version.whatThisShows[0].p) {
+        hl = version.whatThisShows[0].p;
+      }
+      if (hl && hl.length > 120) hl = hl.slice(0, 117) + '…';
+      subEl.textContent = hl;
+    }
+
+    var pill = document.getElementById('typePill');
+    var parts = [];
+    if (data.type_primary) parts.push('<span>' + esc(data.type_primary) + '</span>');
+    if (data.type_secondary) parts.push('<span>' + esc(data.type_secondary) + '</span>');
+    if (data.block) parts.push('<span>' + esc(data.block) + '</span>');
+    if (data.environment) parts.push('<span>' + esc(data.environment) + '</span>');
+    pill.innerHTML = parts.length ? parts.join(' · ') : '';
+
+    var diagEl = document.getElementById('diagnosticBlock');
+    var confEl = document.getElementById('diagConfidence');
+    if (diag) {
+      diagEl.hidden = false;
+      document.getElementById('diagHave').textContent = diag.what_you_have || '';
+      if (confEl) {
+        confEl.textContent = 'Strengths and proof are drawn from phases 02–05.';
+      }
+    } else {
+      diagEl.hidden = true;
+      if (confEl) confEl.textContent = '';
+    }
+
+    var secC = document.getElementById('secC-next-move');
+    if (secC) {
+      secC.textContent =
+        diag && diag.fix_first
+          ? String(diag.fix_first)
+          : 'Pick one concrete move you can finish this week.';
+    }
+
+    var readoutEl = document.getElementById('resultReadoutBlock');
+    readoutEl.innerHTML = '';
+    readoutEl.hidden = true;
+
+    function appendReadoutList(title, items) {
+      if (!items || !items.length) return;
+      readoutEl.hidden = false;
+      var dt = document.createElement('dt');
+      dt.textContent = title;
+      var dd = document.createElement('dd');
+      var ul = document.createElement('ul');
+      ul.className = 'diag-list';
+      items.forEach(function (t) {
+        var li = document.createElement('li');
+        li.textContent = t;
+        ul.appendChild(li);
+      });
+      dd.appendChild(ul);
+      readoutEl.appendChild(dt);
+      readoutEl.appendChild(dd);
+    }
+
+    if (diag) {
+      var quietReadout = !!diag.cta_single;
+      if (diag.phase_chain_lines && diag.phase_chain_lines.length) {
+        appendReadoutList('Phases 02–05 (locked in)', diag.phase_chain_lines);
+      } else {
+        appendReadoutList('Phases 02–05', ['Not finished on this device yet .  resume the diagnostic for the full chain.']);
+      }
+      (function () {
+        var issueItems;
+        if (diag.diagnosis_issues && diag.diagnosis_issues.length) {
+          issueItems = diag.diagnosis_issues;
+        } else if (diag.phase_issues && diag.phase_issues.length) {
+          issueItems = diag.phase_issues;
+        } else if (diag.phase_chain_lines && diag.phase_chain_lines.length >= 4) {
+          issueItems = ['No single cross-phase issue dominated on this pass.'];
+        } else {
+          issueItems = ['Finish phases 02–05 on this device to populate cross-phase issues.'];
+        }
+        appendReadoutList('Key issues across phases', issueItems);
+      })();
+      if (!quietReadout) {
+        appendReadoutList(
+          'Prioritized next moves',
+          diag.priority_moves && diag.priority_moves.length ? diag.priority_moves : [diag.fix_first || 'Pick one move you can finish this week.']
+        );
+      }
+      if (!quietReadout && String(diag.results_handoff || '').trim()) {
+        readoutEl.hidden = false;
+        var dtH = document.createElement('dt');
+        dtH.textContent = 'How this connects to Rooms';
+        var ddH = document.createElement('dd');
+        ddH.textContent = String(diag.results_handoff).trim();
+        readoutEl.appendChild(dtH);
+        readoutEl.appendChild(ddH);
+      }
+      if (!quietReadout && String(diag.rooms_entry_hint || '').trim()) {
+        readoutEl.hidden = false;
+        var dtR = document.createElement('dt');
+        dtR.textContent = 'Where to start';
+        var ddR = document.createElement('dd');
+        ddR.textContent = String(diag.rooms_entry_hint).trim();
+        readoutEl.appendChild(dtR);
+        readoutEl.appendChild(ddR);
+      }
+    } else if (data.signals && typeof data.signals === 'object') {
+      var keys = Object.keys(data.signals).filter(function (k) {
+        return String(data.signals[k] || '').trim();
+      });
+      if (keys.length) {
+        readoutEl.hidden = false;
+        keys.forEach(function (k) {
+          var dt = document.createElement('dt');
+          dt.textContent = k.replace(/_/g, ' ');
+          var dd = document.createElement('dd');
+          dd.textContent = String(data.signals[k]);
+          readoutEl.appendChild(dt);
+          readoutEl.appendChild(dd);
+        });
+      }
+    }
+
+    var ctaPri = document.getElementById('results-primary-cta');
+    var ctaSub = document.getElementById('results-primary-sub');
+    var routesSec = document.getElementById('sh-results-routes');
+    var diagEsc = document.getElementById('results-diag-esc');
+    if (ctaPri && diag) {
+      if (diag.results_cta && diag.results_cta.href && diag.results_cta.label) {
+        ctaPri.setAttribute('href', diag.results_cta.href);
+        ctaPri.textContent = diag.results_cta.label;
+      } else if (diag.next_room && diag.next_room.path) {
+        ctaPri.setAttribute('href', diag.next_room.path);
+        ctaPri.textContent = diag.next_room.title ? 'Open ' + diag.next_room.title : 'Open recommended Room';
+      }
+    }
+    if (ctaSub) {
+      if (diag && String(diag.next_reason || '').trim() && !(diag.results_cta && diag.cta_single)) {
+        ctaSub.hidden = false;
+        ctaSub.textContent = String(diag.next_reason).trim();
+      } else {
+        ctaSub.hidden = true;
+        ctaSub.textContent = '';
+      }
+    }
+    if (routesSec) {
+      routesSec.hidden = !!(diag && diag.cta_single);
+    }
+    if (diagEsc) {
+      diagEsc.hidden = !!(diag && diag.cta_single);
+    }
+
+    var recSec = document.getElementById('results-recommended-room');
+    if (recSec) {
+      var bpRec = st && st.bitsPresent;
+      var showRoomRec = !!(bpRec && bpRec.p05 && diag && diag.recommended_room);
+      recSec.hidden = !showRoomRec;
+      if (showRoomRec) {
+        var rr = diag.recommended_room;
+        var rnEl = document.getElementById('rec-room-name');
+        var rrReason = document.getElementById('rec-room-reason');
+        var rcCta = document.getElementById('rec-room-cta');
+        if (rnEl) rnEl.textContent = rr.display_name || '';
+        if (rrReason) rrReason.textContent = rr.reason || '';
+        if (rcCta && rr.path) rcCta.setAttribute('href', rr.path);
+      }
+    }
+
+    function readLiveEstimates() {
+      try {
+        var raw = localStorage.getItem('stephuary_live_output_v1');
+        if (!raw) return null;
+        var o = JSON.parse(raw);
+        if (typeof o.smoothMoney !== 'number' || typeof o.smoothHours !== 'number') return null;
+        return o;
+      } catch (e) {
+        return null;
+      }
+    }
+
+    function fmtMoney(n) {
+      return '$' + Math.round(n).toLocaleString(undefined, { maximumFractionDigits: 0 });
+    }
+    function fmtH(h) {
+      return h.toFixed(1) + ' h / week';
+    }
+
+    var outcomeEl = document.getElementById('resultOutcome');
+    if (outcomeEl) {
+      outcomeEl.hidden = false;
+      var lo = readLiveEstimates();
+      var uo = readUserOutputs();
+      var mainIssueText =
+        diag && diag.primary_issue
+          ? diag.primary_issue
+          : diag && diag.main_problem
+            ? diag.main_problem
+            : version.opening;
+      document.getElementById('outMainIssue').textContent = mainIssueText || '';
+      var timeTxt = lo ? fmtH(lo.smoothHours) + ' (estimate)' : '. ';
+      var moneyTxt = lo ? fmtMoney(lo.smoothMoney) + '/yr (estimate)' : '. ';
+      if (st && st.phase01) {
+        timeTxt = st.phase01.time_leak;
+        moneyTxt = st.phase01.money_leak;
+      }
+      if (uo && uo.timeLoss && String(uo.timeLoss).trim()) timeTxt = String(uo.timeLoss).trim();
+      if (uo && uo.moneyLoss && String(uo.moneyLoss).trim()) moneyTxt = String(uo.moneyLoss).trim();
+      document.getElementById('outTimeLoss').textContent = timeTxt;
+      document.getElementById('outMoneyLoss').textContent = moneyTxt;
+      var stagn = '';
+      if (uo && (uo.mainIssue || uo.nextMove)) {
+        var tail = [];
+        if (uo.mainIssue) tail.push(String(uo.mainIssue).trim());
+        if (diag && diag.what_it_costs) tail.push(String(diag.what_it_costs).trim());
+        stagn = tail.filter(Boolean).join(' ');
+      } else if (st && st.phase04 && st.phase01) {
+        stagn =
+          'If nothing changes: ' +
+          st.phase04.validation_status +
+          ' signal · ' +
+          st.phase04.response_type +
+          ' · ' +
+          st.phase01.priority_cut;
+      } else if (diag && diag.what_it_costs) {
+        stagn = String(diag.what_it_costs).trim();
+      } else {
+        stagn = 'Same delay, same unfinished work cycle, same revenue leak.';
+      }
+      if (stagn.length > 280) stagn = stagn.slice(0, 277) + '…';
+      document.getElementById('outStagnant').textContent = stagn;
+    }
+
+    renderPickedUp(version, diag);
+    renderPrimaryCta(diag);
+
+    var names = data.playbooks && data.playbooks.length ? data.playbooks.slice(0, 1) : [(version.playbooks && version.playbooks[0]) || 'Execution'];
+    renderPlaybooks(names);
+
+    try {
+      if (window.StephuaryCeiBridge && typeof window.StephuaryCeiBridge.applyResults === 'function') {
+        window.StephuaryCeiBridge.applyResults(document);
+      }
+    } catch (e2) {}
+
+    try {
+      if (window.StephuaryFounderReveal && typeof window.StephuaryFounderReveal.scheduleDiagnostic === 'function') {
+        window.StephuaryFounderReveal.scheduleDiagnostic();
+      }
+    } catch (fr) {}
+  }
+
+  var loaded = loadResult();
+  var data = normalizeData(loaded.data);
+  if (!data) {
+    showMissing();
+    return;
+  }
+  if (loaded.fromLegacy) {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    } catch (e) {}
+  }
+
+  var version = resolveVersion(data);
+  showResult(data, version);
+
+  function scheduleMagneticRefresh() {
+    var tries = 0;
+    function tick() {
+      if (window.StephuaryMagneticFlow && typeof window.StephuaryMagneticFlow.refresh === 'function') {
+        window.StephuaryMagneticFlow.refresh();
+        return;
+      }
+      if (++tries < 30) setTimeout(tick, 50);
+    }
+    tick();
+  }
+  scheduleMagneticRefresh();
+})();
+  </script>
+  <script src="/stephuary-progress.js"></script>
+  <script>
+    (function () {
+      var m = document.getElementById('results-missing-cta');
+      if (m && window.StephuaryDiagnosticFlow && typeof window.StephuaryDiagnosticFlow.getResumeHref === 'function') {
+        try {
+          m.href = window.StephuaryDiagnosticFlow.getResumeHref();
+        } catch (eM) {}
+      }
+    })();
+  </script>
+  <script>
+    (function () {
+      var el = document.getElementById('results-nav-restart');
+      if (el) {
+        el.addEventListener('click', function (e) {
+          e.preventDefault();
+          if (window.StephuaryProgress) window.StephuaryProgress.confirmRestart();
+        });
+      }
+    })();
+  </script>
+  <script src="/stephuary-config.js"></script>
+</body>
+</html>

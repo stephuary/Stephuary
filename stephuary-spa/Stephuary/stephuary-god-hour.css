@@ -1,0 +1,308 @@
+/**
+ * God Hour (4:00–7:00 local): pre-day execution environment.
+ * Requires html.god-hour (typically alongside html.early-mode 3–7).
+ * Load after stephuary-early-mode.css and stephuary-time-atmosphere.css.
+ *
+ * Homepage env audit: index.html <!DOCTYPE> comment lists sources of truth.
+ * Removed (duplicate hero slabs vs .ambient__god-env): .hero-container::before/::after, .hero-inner::before — see comments in-file.
+ */
+
+/* ——— Tokens: warm neutrals, ivory text ——— */
+html.god-hour {
+  --text: #ebe4d4;
+  --text-2: rgba(205, 196, 180, 0.9);
+  --text-3: rgba(132, 124, 112, 0.92);
+  --line: rgba(235, 228, 212, 0.09);
+  --blue: #b8925c;
+  --blue-soft: rgba(184, 146, 92, 0.14);
+  --blue-glow: rgba(200, 160, 100, 0.28);
+  --blue-hi: #c9a56e;
+  --sys-blue: #b8925c;
+  --sys-blue-hi: #c9a56e;
+}
+
+html.god-hour body {
+  background: #0a0908;
+  color: var(--text);
+}
+
+/* ——— Ambient: dedicated stack (no grain / particles / legacy grad) ——— */
+.ambient__god-env {
+  display: none;
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+html.god-hour .ambient__god-env {
+  display: block;
+}
+
+html.god-hour .ambient__grad {
+  opacity: 0 !important;
+  animation: none !important;
+  visibility: hidden;
+}
+
+html.god-hour .ambient__noise {
+  opacity: 0 !important;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+html.god-hour .ambient__particles,
+html.god-hour .ambient__particles span {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  animation: none !important;
+}
+
+/* Base: controlled vertical depth, near-black floor, muted warm mid */
+html.god-hour .ambient__god-base {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 140% 90% at 50% 112%, rgba(18, 12, 10, 0.85) 0%, transparent 55%),
+    linear-gradient(
+      185deg,
+      #0a0a08 0%,
+      #0c0a09 18%,
+      rgba(28, 18, 22, 0.97) 42%,
+      rgba(24, 16, 14, 0.94) 58%,
+      rgba(20, 14, 18, 0.92) 76%,
+      #0e0c0f 100%
+    );
+}
+
+/* Directional emergence: low-center, asymmetric, blurred, low opacity */
+html.god-hour .ambient__god-directional {
+  position: absolute;
+  left: 50%;
+  bottom: -14%;
+  width: 155%;
+  height: 88%;
+  transform: translateX(-46%);
+  background: radial-gradient(
+    ellipse 52% 38% at 48% 100%,
+    rgba(232, 190, 130, 0.32) 0%,
+    rgba(188, 130, 72, 0.14) 38%,
+    rgba(120, 72, 48, 0.05) 62%,
+    transparent 78%
+  );
+  filter: blur(64px);
+  opacity: 0.24;
+  pointer-events: none;
+}
+
+/* Atmospheric diffusion (haze / density) — not clouds */
+html.god-hour .ambient__god-diffuse {
+  position: absolute;
+  inset: -10%;
+  background:
+    radial-gradient(ellipse 85% 48% at 38% 32%, rgba(255, 236, 210, 0.07) 0%, transparent 52%),
+    radial-gradient(ellipse 65% 72% at 82% 58%, rgba(110, 82, 92, 0.065) 0%, transparent 58%),
+    radial-gradient(ellipse 120% 70% at 55% 88%, rgba(40, 28, 24, 0.12) 0%, transparent 50%);
+  filter: blur(78px);
+  mix-blend-mode: screen;
+  opacity: 0.48;
+  pointer-events: none;
+}
+
+html.god-hour .ambient__god-motion {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  will-change: transform, opacity;
+  animation: shGodHourEnvDrift 22s ease-in-out infinite alternate;
+}
+
+@keyframes shGodHourEnvDrift {
+  0%,
+  100% {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: translateY(-0.55%) scale(1.006);
+    opacity: 0.93;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.god-hour .ambient__god-motion {
+    animation: none !important;
+  }
+}
+
+/* ——— Hero: transparent shell so ambient reads; sharp foreground ——— */
+html.god-hour body[data-time] .hero-container,
+html.god-hour .hero-container {
+  background: transparent !important;
+  transition: background 0.01ms;
+}
+
+/* God-hour hero: no ::before/::after slabs here — duplicate of .ambient__god-env + #home-environment (removed: second hero-sized background stack). */
+
+html.god-hour .hero-canvas-wrap,
+html.god-hour #home-env-canvas-wrap,
+html.god-hour .home-env__canvas-wrap {
+  display: none !important;
+}
+
+html.god-hour .hero-overlay {
+  background:
+    radial-gradient(ellipse 76% 64% at 50% 46%, rgba(18, 14, 12, 0.04) 0%, rgba(8, 7, 7, 0.42) 66%, rgba(3, 3, 3, 0.62) 100%),
+    radial-gradient(ellipse 132% 108% at 50% 44%, rgba(0, 0, 0, 0) 46%, rgba(0, 0, 0, 0.54) 100%);
+}
+
+html.god-hour .hero-overlay::after {
+  display: none;
+  content: none;
+}
+
+/* Removed .hero-inner::before — duplicate warm radial slab vs global god-hour ambient (see .ambient__god-*). */
+
+html.god-hour .hero-h1 {
+  color: #ebe4d4;
+  text-shadow: 0 1px 28px rgba(0, 0, 0, 0.35);
+}
+
+html.god-hour .hero-identity-line {
+  color: rgba(235, 228, 212, 0.9);
+}
+
+html.god-hour .hero-payoff-line {
+  color: rgba(188, 178, 162, 0.9);
+}
+
+html.god-hour .hero-lead {
+  color: rgba(205, 196, 180, 0.92);
+}
+
+html.god-hour .hero-personal-line--linger {
+  color: rgba(235, 228, 212, 0.94);
+}
+
+html.god-hour .hero-kicker {
+  color: #c9a56e;
+}
+
+html.god-hour .nav-mark {
+  color: #ebe4d4;
+}
+
+html.god-hour nav#main-nav,
+html.god-hour nav.sh-main-nav {
+  background: rgba(8, 7, 6, 0.74);
+  border-bottom-color: transparent;
+}
+
+html.god-hour nav#main-nav.is-scrolled,
+html.god-hour nav.sh-main-nav.is-scrolled {
+  background: rgba(10, 9, 8, 0.9);
+  border-bottom-color: var(--line);
+}
+
+/* ——— Cosmic intro: strip particles & dotted decorative layers ——— */
+html.god-hour #cosmic-metropolis .cosmic-metropolis__particles,
+html.god-hour #cosmic-metropolis .cosmic-metropolis__particles span {
+  display: none !important;
+  opacity: 0 !important;
+  animation: none !important;
+}
+
+html.god-hour #cosmic-metropolis .cosmic-metropolis__nodes,
+html.god-hour #cosmic-metropolis .cosmic-metropolis__node-dot {
+  opacity: 0 !important;
+  visibility: hidden !important;
+}
+
+html.god-hour #cosmic-metropolis .cosmic-metropolis__orbits,
+html.god-hour #cosmic-metropolis .cosmic-metropolis__orbit {
+  opacity: 0 !important;
+  visibility: hidden !important;
+}
+
+html.god-hour #cosmic-metropolis .cosmic-metropolis__signals {
+  opacity: 0 !important;
+}
+
+html.god-hour #cosmic-metropolis .cosmic-metropolis__halo {
+  opacity: 0.12 !important;
+}
+
+html.god-hour #cosmic-metropolis .cosmic-metropolis__ripple {
+  opacity: 0.08 !important;
+}
+
+html.god-hour body[data-time] .cosmic-metropolis__particles {
+  opacity: 0 !important;
+}
+
+/* ——— Cosmic intro: not sunrise — restrained shell (overrides early-mode metropolis) ——— */
+html.god-hour.early-mode #cosmic-metropolis {
+  background: linear-gradient(
+    185deg,
+    #080706 0%,
+    #0c0a09 22%,
+    #100d0e 48%,
+    #141014 70%,
+    #0e0c0d 100%
+  );
+}
+
+html.god-hour.early-mode #cosmic-metropolis .cosmic-metropolis__camera::before {
+  display: none !important;
+  content: none !important;
+  opacity: 0 !important;
+  animation: none !important;
+}
+
+html.god-hour.early-mode .cosmic-metropolis__dim {
+  background:
+    radial-gradient(ellipse 105% 72% at 48% 100%, rgba(88, 52, 36, 0.2) 0%, transparent 58%),
+    radial-gradient(ellipse 70% 50% at 72% 38%, rgba(42, 32, 38, 0.12) 0%, transparent 50%),
+    linear-gradient(180deg, rgba(5, 4, 4, 0.72) 0%, rgba(12, 10, 9, 0.38) 55%, rgba(18, 14, 12, 0.22) 100%);
+}
+
+html.god-hour.early-mode .cosmic-metropolis__grid {
+  opacity: 0.06 !important;
+}
+
+html.god-hour.early-mode .cosmic-metropolis__core {
+  background: radial-gradient(circle at 38% 32%, rgba(220, 205, 180, 0.2), rgba(92, 62, 44, 0.22));
+  box-shadow:
+    0 0 22px rgba(160, 110, 72, 0.16),
+    0 0 52px rgba(32, 22, 18, 0.14);
+}
+
+html.god-hour.early-mode .cosmic-metropolis__calibration {
+  background: radial-gradient(circle at 50% 44%, rgba(190, 168, 138, 0.055), transparent 50%);
+}
+
+html.god-hour.early-mode .cosmic-metropolis__line {
+  background: linear-gradient(122deg, #ebe4d4 0%, #cfc2a8 38%, #a58862 72%, #6e5840 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  filter: blur(10px) drop-shadow(0 1px 0 rgba(0, 0, 0, 0.45));
+  letter-spacing: 0.02em;
+}
+
+html.god-hour.early-mode.cosmic-intro--phase-ripple .cosmic-metropolis__ripple {
+  border-color: rgba(120, 100, 82, 0.14);
+}
+
+/* ——— Early-hint copy split (3–4 vs 4–7) ——— */
+.home-early-hint__god {
+  display: none;
+}
+
+html.god-hour .home-early-hint__std {
+  display: none;
+}
+
+html.god-hour .home-early-hint__god {
+  display: inline;
+}

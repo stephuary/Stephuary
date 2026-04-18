@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Archive · Stephuary</title>
+  <link rel="stylesheet" href="/stephuary-interactive.css" />
+  <meta name="description" content="Access to Phases 02&ndash;05 and the execution layer. One purchase. $27." />
+  <meta property="og:title" content="The Archive · Stephuary" />
+  <meta property="og:description" content="One purchase. Access to Phases 02&ndash;05 and the execution layer. $27 one-time." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://www.stephuary.com/archive" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="The Archive · Stephuary" />
+  <meta name="twitter:description" content="One purchase. Access to Phases 02&ndash;05 and the execution layer. $27 one-time." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #faf9f7;
+      --ink:       #0e0e0c;
+      --ink-mid:   #4a4a45;
+      --ink-dim:   #9a9890;
+      --ink-faint: #c8c5be;
+      --rule:      #e0ddd7;
+      --rule-mid:  #cccac4;
+      --serif:     var(--font-serif, 'Playfair Display', Georgia, serif);
+      --sans:      var(--font-sans, 'Inter', system-ui, sans-serif);
+      --max-w:     min(var(--prose-width, 720px), 100%);
+      --max-w-sm:  540px;
+      --layout-cap: min(var(--layout-max, 1200px), 100%);
+    }
+
+    html {
+      background: var(--bg);
+      color: var(--ink);
+      font-family: var(--sans);
+      font-weight: 400;
+      font-size: 16px;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body { min-height: 100vh; }
+
+    .container    { max-width: var(--layout-cap); margin: 0 auto; padding: 0 var(--sp-4, 32px); }
+    .container-sm { max-width: var(--max-w-sm); margin: 0 auto; padding: 0 var(--sp-4, 32px); }
+
+    .label {
+      font-size: 10px;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--ink-dim);
+      margin-bottom: 28px;
+      display: block;
+    }
+
+    .display {
+      font-family: var(--serif);
+      font-weight: 500;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+    }
+
+    .display-xl { font-size: clamp(44px, 8vw, 76px); }
+    .display-lg { font-size: clamp(28px, 4.5vw, 44px); }
+
+    .body-text {
+      font-size: 1rem;
+      line-height: 1.65;
+      color: var(--ink-mid);
+      font-weight: 400;
+      max-width: var(--max-w);
+    }
+
+    .micro {
+      font-size: 11px;
+      letter-spacing: 0.06em;
+      color: var(--ink-dim);
+    }
+
+    /* ── Buttons ─────────────────────────────────────── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--sans);
+      font-weight: 300;
+      font-size: 12px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      text-decoration: none;
+      padding: 15px 36px;
+      cursor: pointer;
+      transition: background 180ms ease, color 180ms ease, border-color 180ms ease;
+      min-height: 50px;
+      white-space: nowrap;
+      border: none;
+    }
+
+    .btn-primary  { background: var(--ink); color: var(--bg); border: 1px solid var(--ink); }
+    .btn-primary:hover { background: #2a2a25; border-color: #2a2a25; }
+    .btn-secondary { background: transparent; color: var(--ink); border: 1px solid var(--rule); }
+    .btn-secondary:hover { border-color: var(--ink-mid); }
+
+    /* ── Nav ─────────────────────────────────────────── */
+    nav {
+      border-bottom: 1px solid var(--rule);
+      padding: 22px 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .nav-brand {
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--ink);
+      text-decoration: none;
+    }
+
+    .nav-price-cta {
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--ink-mid);
+      text-decoration: none;
+      transition: color 180ms;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .nav-price-cta:hover { color: var(--ink); }
+
+    .nav-price-badge {
+      font-family: var(--serif);
+      font-size: 15px;
+      font-weight: 400;
+      color: var(--ink);
+      letter-spacing: 0;
+    }
+
+    /* ── Hero ────────────────────────────────────────── */
+    #hero {
+      padding: 96px 0 100px;
+      border-bottom: 1px solid var(--rule);
+    }
+
+    .hero-inner {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 48px;
+    }
+
+    .hero-right {
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+      max-width: 400px;
+    }
+
+    .breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 32px;
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink-dim);
+    }
+
+    .breadcrumb a { color: var(--ink-dim); text-decoration: none; transition: color 180ms; }
+    .breadcrumb a:hover { color: var(--ink); }
+    .breadcrumb-sep { color: var(--ink-faint); }
+
+    /* ── Interruption ────────────────────────────────── */
+    #interruption {
+      padding: 120px 0;
+      border-bottom: 1px solid var(--rule);
+    }
+
+    .interruption-text {
+      font-family: var(--serif);
+      font-size: clamp(22px, 4vw, 32px);
+      font-weight: 300;
+      line-height: 1.6;
+      color: var(--ink);
+    }
+
+    .interruption-text em { font-style: italic; color: var(--ink-mid); }
+
+    /* ── Archive Sections ────────────────────────────── */
+    .archive-section {
+      padding: 72px 0;
+      border-bottom: 1px solid var(--rule);
+    }
+
+    .section-header {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 48px;
+      align-items: end;
+      margin-bottom: 40px;
+      padding-bottom: 28px;
+      border-bottom: 1px solid var(--rule);
+    }
+
+    .section-label-row {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .section-num {
+      font-family: var(--serif);
+      font-size: 13px;
+      color: var(--ink-faint);
+    }
+
+    .section-tag {
+      font-size: 10px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--ink-dim);
+    }
+
+    .section-note {
+      font-size: 13px;
+      color: var(--ink-mid);
+      line-height: 1.75;
+      font-weight: 300;
+      padding-top: 4px;
+    }
+
+    /* ── Item List ───────────────────────────────────── */
+    .archive-list { display: flex; flex-direction: column; }
+
+    .archive-item {
+      display: grid;
+      grid-template-columns: 28px 1fr;
+      gap: 20px;
+      align-items: start;
+      padding: 24px 0;
+      border-bottom: 1px solid var(--rule);
+    }
+
+    .archive-item:last-child { border-bottom: none; }
+
+    .archive-item-num {
+      font-family: var(--serif);
+      font-size: 12px;
+      color: var(--ink-faint);
+      padding-top: 4px;
+    }
+
+    .archive-item-title {
+      font-family: var(--serif);
+      font-size: 21px;
+      font-weight: 400;
+      color: var(--ink);
+      line-height: 1.2;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .lite-tag {
+      font-family: var(--sans);
+      font-size: 10px;
+      font-weight: 300;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+    }
+
+    .archive-item-desc {
+      font-size: 14px;
+      color: var(--ink-mid);
+      font-weight: 300;
+      line-height: 1.65;
+    }
+
+    /* ── What Comes Next ─────────────────────────────── */
+    #next {
+      padding: 96px 0;
+      border-bottom: 1px solid var(--rule);
+    }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 64px;
+      align-items: start;
+    }
+
+    .next-list { display: flex; flex-direction: column; margin-top: 8px; }
+
+    .next-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      padding: 15px 0;
+      border-bottom: 1px solid var(--rule);
+      font-size: 15px;
+      font-family: var(--serif);
+      font-style: italic;
+      font-weight: 300;
+      color: var(--ink-mid);
+      line-height: 1.5;
+    }
+
+    .next-item:first-child { border-top: 1px solid var(--rule); }
+    .next-dash { font-style: normal; color: var(--ink-faint); flex-shrink: 0; }
+
+    /* ── Price ───────────────────────────────────────── */
+    #price {
+      padding: 96px 0;
+      border-bottom: 1px solid var(--rule);
+    }
+
+    .price-card {
+      border: 1px solid var(--rule-mid);
+      padding: 48px;
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+    }
+
+    .price-card-top { display: flex; flex-direction: column; gap: 8px; }
+
+    .price-product {
+      font-size: 10px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--ink-dim);
+    }
+
+    .price-amount {
+      font-family: var(--serif);
+      font-size: 72px;
+      font-weight: 300;
+      line-height: 1;
+      color: var(--ink);
+    }
+
+    .price-detail { font-size: 13px; color: var(--ink-dim); letter-spacing: 0.04em; }
+    .price-actions { display: flex; flex-direction: column; gap: 14px; align-items: flex-start; }
+
+    .price-left-note {
+      font-size: 14px;
+      color: var(--ink-mid);
+      line-height: 1.85;
+      font-weight: 300;
+      margin-top: 24px;
+    }
+
+    /* ── Close ───────────────────────────────────────── */
+    #close {
+      padding: 120px 0;
+      border-bottom: 1px solid var(--rule);
+    }
+
+    .close-text {
+      font-family: var(--serif);
+      font-size: clamp(24px, 4vw, 36px);
+      font-weight: 300;
+      line-height: 1.55;
+      color: var(--ink);
+      max-width: 500px;
+    }
+
+    .close-text em { font-style: italic; color: var(--ink-mid); }
+
+    /* ── Footer CTA ──────────────────────────────────── */
+    #footer-cta {
+      padding: 80px 0;
+      border-bottom: 1px solid var(--rule);
+    }
+
+    .footer-cta-inner { display: flex; flex-direction: column; gap: 20px; }
+
+    .footer-cta-line {
+      font-family: var(--serif);
+      font-size: 16px;
+      color: var(--ink-mid);
+      font-weight: 300;
+    }
+
+    /* ── Footer ──────────────────────────────────────── */
+    footer {
+      padding: 36px 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .footer-brand { font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--ink-dim); }
+    .footer-links { display: flex; gap: 24px; }
+    .footer-link  { font-size: 11px; color: var(--ink-dim); text-decoration: none; letter-spacing: 0.08em; transition: color 180ms; }
+    .footer-link:hover { color: var(--ink); }
+
+    /* ── Reveal ──────────────────────────────────────── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(16px);
+      transition: opacity 560ms ease, transform 560ms ease;
+    }
+
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    /* ── Responsive ──────────────────────────────────── */
+    @media (max-width: 680px) {
+      nav { padding: 18px 20px; }
+      .container, .container-sm { padding: 0 20px; }
+      #hero { padding: 64px 0 72px; }
+      #interruption { padding: 80px 0; }
+      .archive-section, #next, #price, #close { padding: 64px 0; }
+      #footer-cta { padding: 56px 0; }
+      .hero-right { max-width: none; }
+      .section-header { grid-template-columns: 1fr; gap: 16px; }
+      .two-col { grid-template-columns: 1fr; gap: 40px; }
+      .price-card { padding: 28px 20px; }
+      .price-amount { font-size: 56px; }
+      footer { flex-direction: column; gap: 16px; text-align: center; padding: 28px 20px; }
+      .footer-links { justify-content: center; flex-wrap: wrap; }
+    }
+
+    @media (min-width: 680px) {
+      .hero-inner { grid-template-columns: 1fr 1fr; gap: 80px; align-items: end; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── Nav ───────────────────────────────────────────── -->
+<nav>
+  <a href="/index" class="nav-brand">Stephuary</a>
+  <a href="#checkout" class="nav-price-cta">
+    Archive <span class="nav-price-badge">$27</span>
+  </a>
+</nav>
+
+<!-- ── Hero ──────────────────────────────────────────── -->
+<section id="hero">
+  <div class="container">
+    <div class="hero-inner">
+
+      <div class="reveal">
+        <div class="breadcrumb">
+          <a href="/index">Stephuary</a>
+          <span class="breadcrumb-sep">·</span>
+          <span>Archive</span>
+        </div>
+        <span class="label">ARCHIVE .  $27</span>
+        <h1 class="display display-xl">
+          Open the <em>System</em>
+        </h1>
+      </div>
+
+      <div class="hero-right reveal" style="transition-delay:120ms;">
+        <p class="body-text">
+          One purchase. Access to Phases 02&ndash;05 and the execution layer.
+        </p>
+        <p class="body-text" style="margin-top:12px;font-size:15px;letter-spacing:0.12em;color:var(--ink);opacity:0.85;">$27 .  one time</p>
+        <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-top:16px;">
+          <a href="#checkout" class="btn btn-primary">Open Access</a>
+          <a href="#get-paid" class="btn btn-secondary">See what's inside</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── Interruption ───────────────────────────────────── -->
+<section id="interruption">
+  <div class="container-sm">
+    <p class="interruption-text reveal">
+      A fragmented system<br>
+      costs more time than<br>
+      <em>no system at all.</em>
+    </p>
+  </div>
+</section>
+
+<!-- ══ SECTION 01 — GET PAID ══════════════════════════ -->
+<section class="archive-section" id="get-paid">
+  <div class="container">
+    <div class="section-header reveal">
+      <div>
+        <div class="section-label-row">
+          <span class="section-num">01</span>
+          <span class="section-tag">Get Paid</span>
+        </div>
+        <h2 class="display display-lg">Turn the work<br>into income.</h2>
+      </div>
+      <div>
+        <p class="section-note">Pitch clearly, price without hesitation, and shape what you know into something someone can buy.</p>
+      </div>
+    </div>
+    <div class="archive-list">
+      <div class="archive-item reveal">
+        <span class="archive-item-num">01</span>
+        <div>
+          <div class="archive-item-title">Cold Pitch Starter</div>
+          <div class="archive-item-desc">Simple outreach that sounds like a person, not a funnel.</div>
+        </div>
+      </div>
+      <div class="archive-item reveal">
+        <span class="archive-item-num">02</span>
+        <div>
+          <div class="archive-item-title">Make It Buyable <span class="lite-tag">Lite</span></div>
+          <div class="archive-item-desc">Turn what you know into a clear, purchasable offer.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ SECTION 02 — BUILD OUTPUT ══════════════════════ -->
+<section class="archive-section" id="build">
+  <div class="container">
+    <div class="section-header reveal">
+      <div>
+        <div class="section-label-row">
+          <span class="section-num">02</span>
+          <span class="section-tag">Build Output</span>
+        </div>
+        <h2 class="display display-lg">From idea<br>to something real.</h2>
+      </div>
+      <div>
+        <p class="section-note">A repeatable structure and a 30-day path for turning what you have into something finished.</p>
+      </div>
+    </div>
+    <div class="archive-list">
+      <div class="archive-item reveal">
+        <span class="archive-item-num">03</span>
+        <div>
+          <div class="archive-item-title">Master Outline</div>
+          <div class="archive-item-desc">A repeatable structure for turning ideas into something usable.</div>
+        </div>
+      </div>
+      <div class="archive-item reveal">
+        <span class="archive-item-num">04</span>
+        <div>
+          <div class="archive-item-title">The First 30 Days</div>
+          <div class="archive-item-desc">A simple path from idea to visible output.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ SECTION 03 — FIND DIRECTION ════════════════════ -->
+<section class="archive-section" id="direction">
+  <div class="container">
+    <div class="section-header reveal">
+      <div>
+        <div class="section-label-row">
+          <span class="section-num">03</span>
+          <span class="section-tag">Find Direction</span>
+        </div>
+        <h2 class="display display-lg">Know what<br>you're making.</h2>
+      </div>
+      <div>
+        <p class="section-note">Define your angle and generate enough material to stop restarting every time you sit down.</p>
+      </div>
+    </div>
+    <div class="archive-list">
+      <div class="archive-item reveal">
+        <span class="archive-item-num">05</span>
+        <div>
+          <div class="archive-item-title">Find Your Angle <span class="lite-tag">Lite</span></div>
+          <div class="archive-item-desc">Define what you focus on and what you ignore.</div>
+        </div>
+      </div>
+      <div class="archive-item reveal">
+        <span class="archive-item-num">06</span>
+        <div>
+          <div class="archive-item-title">The First 50 Topics <span class="lite-tag">Lite</span></div>
+          <div class="archive-item-desc">Generate enough ideas to stop deciding what to write every time.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ SECTION 04 — PUBLISH + DISTRIBUTE ══════════════ -->
+<section class="archive-section" id="publish">
+  <div class="container">
+    <div class="section-header reveal">
+      <div>
+        <div class="section-label-row">
+          <span class="section-num">04</span>
+          <span class="section-tag">Publish + Distribute</span>
+        </div>
+        <h2 class="display display-lg">Write it.<br>Get it out.</h2>
+      </div>
+      <div>
+        <p class="section-note">Structure writing so it holds attention, then release it without the friction that stalls most people.</p>
+      </div>
+    </div>
+    <div class="archive-list">
+      <div class="archive-item reveal">
+        <span class="archive-item-num">07</span>
+        <div>
+          <div class="archive-item-title">Write Something People Finish</div>
+          <div class="archive-item-desc">Structure writing so people actually complete it.</div>
+        </div>
+      </div>
+      <div class="archive-item reveal">
+        <span class="archive-item-num">08</span>
+        <div>
+          <div class="archive-item-title">Publish Flow</div>
+          <div class="archive-item-desc">A simple system for releasing work without friction.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ SECTION 05 — OPERATE ═══════════════════════════ -->
+<section class="archive-section" id="operate">
+  <div class="container">
+    <div class="section-header reveal">
+      <div>
+        <div class="section-label-row">
+          <span class="section-num">05</span>
+          <span class="section-tag">Operate</span>
+        </div>
+        <h2 class="display display-lg">Keep it<br>going.</h2>
+      </div>
+      <div>
+        <p class="section-note">The minimal tool set and the reset protocol for when momentum stalls.</p>
+      </div>
+    </div>
+    <div class="archive-list">
+      <div class="archive-item reveal">
+        <span class="archive-item-num">09</span>
+        <div>
+          <div class="archive-item-title">Operating Stack</div>
+          <div class="archive-item-desc">The minimal set of tools used to write, build, publish, and get paid.</div>
+        </div>
+      </div>
+      <div class="archive-item reveal">
+        <span class="archive-item-num">10</span>
+        <div>
+          <div class="archive-item-title">Focus Reset</div>
+          <div class="archive-item-desc">A simple reset when you lose direction or momentum.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── What Comes Next ────────────────────────────────── -->
+<section id="next">
+  <div class="container">
+    <div class="two-col">
+
+      <div class="reveal">
+        <span class="label">After the Archive</span>
+        <h2 class="display display-lg">The map.<br><em>Then the execution.</em></h2>
+      </div>
+
+      <div class="reveal" style="transition-delay:100ms;">
+        <p class="body-text" style="margin-bottom:24px;">The Archive covers the full system. When you're ready to go deeper on any section, the next layer is already built.</p>
+        <div class="next-list">
+          <div class="next-item"><span class="next-dash">. </span><span>Phase 01 Capture .  free starting point</span></div>
+          <div class="next-item"><span class="next-dash">. </span><span>Operational systems &mdash; $29 &mdash; $250</span></div>
+          <div class="next-item"><span class="next-dash">. </span><span>Advanced .  by request, builds under pressure</span></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── Price ──────────────────────────────────────────── -->
+<section id="price">
+  <div class="container">
+    <div class="two-col" style="align-items:start;">
+
+      <div class="reveal">
+        <span class="label">ARCHIVE .  $27</span>
+        <h2 class="display display-lg">Open the System</h2>
+        <p class="price-left-note">One purchase. Access to Phases 02&ndash;05 and the execution layer.</p>
+      </div>
+
+      <div class="reveal" style="transition-delay:100ms;">
+        <div class="price-card" id="checkout">
+          <div class="price-card-top">
+            <p class="price-product">The Archive</p>
+            <div class="price-amount">$27</div>
+          </div>
+          <p class="price-detail">$27 .  one time</p>
+          <div class="price-actions">
+            <a href="#checkout" class="btn btn-primary">Open Access</a>
+            <p class="micro">One-time. Nothing expires.</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── Close ──────────────────────────────────────────── -->
+<section id="close">
+  <div class="container-sm">
+    <p class="close-text reveal">
+      You don't need to figure out the sequence.<br><br>
+      <em>It's already in order.</em>
+    </p>
+  </div>
+</section>
+
+<!-- ── Footer CTA ─────────────────────────────────────── -->
+<section id="footer-cta">
+  <div class="container">
+    <div class="footer-cta-inner reveal">
+      <p class="footer-cta-line">One purchase. Access to Phases 02&ndash;05 and the execution layer.</p>
+      <a href="#checkout" class="btn btn-primary" style="font-size:13px;padding:18px 48px;">Open Access</a>
+    </div>
+  </div>
+</section>
+
+<!-- ── Footer ─────────────────────────────────────────── -->
+<footer>
+  <span class="footer-brand">Stephuary</span>
+  <div class="footer-links">
+    <a href="/index" class="footer-link">Home</a>
+  </div>
+</footer>
+
+<script>
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); }
+    });
+  }, { threshold: 0.07 });
+
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      const id = a.getAttribute('href').slice(1);
+      const target = document.getElementById(id);
+      if (target) {
+        e.preventDefault();
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+  });
+</script>
+
+  <script src="/stephuary-interactive.js" defer></script>
+</body>
+</html>

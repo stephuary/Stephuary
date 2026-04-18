@@ -1,0 +1,1752 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stephuary .  Phase 02: Monetize</title>
+  <link rel="stylesheet" href="/stephuary-interactive.css" />
+<meta name="description" content="Identify one problem, one buyer, one offer, one message. A guided strategic engine.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Lato:wght@300;400&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+
+/* ============================================================
+   TOKENS
+   ============================================================ */
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg-dark:    #080807;
+  --bg-1:       #0e0e0c;
+  --bg-2:       #131311;
+  --bg-3:       #1a1a17;
+  --gold:       #c4a35a;
+  --gold-mid:   rgba(196,163,90,0.45);
+  --gold-faint: rgba(196,163,90,0.12);
+  --gold-glow:  rgba(196,163,90,0.06);
+  --gold-dim:   #8a7040;
+  --white:      #f4f0e8;
+  --terra:      #b85c38;
+  --text-2:     rgba(244,240,232,0.6);
+  --text-3:     rgba(244,240,232,0.32);
+  --text-4:     rgba(244,240,232,0.15);
+  --line:       rgba(196,163,90,0.09);
+  --line-hi:    rgba(196,163,90,0.2);
+  --green:      #1a2e1a;
+}
+
+html { -webkit-font-smoothing: antialiased; }
+
+body {
+  background: var(--bg-dark);
+  color: var(--white);
+  font-family: 'Lato', sans-serif;
+  font-weight: 300;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+a { color: var(--gold); text-decoration: none; cursor: pointer; }
+button { font-family: 'Lato', sans-serif; cursor: pointer; }
+textarea, input, select { font-family: 'Lato', sans-serif; }
+
+/* ============================================================
+   GRAIN + VIGNETTE
+   ============================================================ */
+
+#grain {
+  position: fixed; inset: 0; pointer-events: none; z-index: 9000;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+  opacity: 0.024;
+}
+
+/* ============================================================
+   HEADER
+   ============================================================ */
+
+#site-header {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 500;
+  padding: 26px 52px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+
+.logo {
+  font-family: 'Lato', sans-serif; font-weight: 400; font-size: 9px;
+  letter-spacing: 0.46em; color: var(--gold); text-transform: uppercase;
+  opacity: 0; animation: fadeIn 1s ease forwards 0.4s;
+}
+
+.header-phase {
+  font-family: 'DM Mono', monospace; font-size: 9px;
+  letter-spacing: 0.2em; color: rgba(196,163,90,0.32); text-transform: uppercase;
+  opacity: 0; animation: fadeIn 1s ease forwards 0.8s;
+}
+
+/* ============================================================
+   ENTRY OVERLAY
+   ============================================================ */
+
+#entry-overlay {
+  position: fixed; inset: 0; z-index: 5000;
+  background: var(--bg-dark);
+  display: flex; align-items: center; justify-content: center;
+  padding: 48px;
+}
+
+#entry-overlay::before {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  opacity: 0.7;
+}
+#entry-overlay::after {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(ellipse at center, transparent 20%, rgba(8,8,7,0.9) 100%);
+}
+
+.entry-inner {
+  position: relative; z-index: 1; text-align: center; max-width: 480px;
+  animation: fadeUp 0.9s cubic-bezier(0.16,1,0.3,1) forwards;
+}
+
+.entry-wordmark {
+  display: block; margin-bottom: 8px;
+  font-family: 'Lato', sans-serif; font-weight: 400; font-size: 9px;
+  letter-spacing: 0.5em; color: var(--gold); text-transform: uppercase;
+}
+.entry-phase-tag {
+  display: block; margin-bottom: 44px;
+  font-family: 'DM Mono', monospace; font-size: 9px;
+  letter-spacing: 0.22em; color: rgba(196,163,90,0.28); text-transform: uppercase;
+}
+
+.entry-headline {
+  font-family: 'Cormorant Garamond', serif; font-weight: 300;
+  font-size: clamp(24px,3.2vw,40px); color: rgba(244,240,232,0.92);
+  line-height: 1.22; letter-spacing: -0.01em; margin-bottom: 20px;
+}
+.entry-headline em { font-style: italic; color: var(--gold); }
+
+.entry-sub {
+  display: block; margin-bottom: 6px;
+  font-family: 'Lato', sans-serif; font-weight: 300; font-size: 9px;
+  letter-spacing: 0.22em; color: rgba(244,240,232,0.28); text-transform: uppercase;
+}
+
+.entry-outputs {
+  display: inline-block; text-align: left; margin: 0 auto 44px;
+}
+.entry-outputs span {
+  display: block; font-family: 'DM Mono', monospace; font-size: 9px;
+  letter-spacing: 0.1em; color: rgba(244,240,232,0.2); line-height: 2.3;
+}
+.entry-outputs span::before { content: '→ '; color: rgba(196,163,90,0.28); }
+
+.entry-start-btn {
+  display: block; width: 100%; max-width: 270px; margin: 0 auto 18px;
+  font-family: 'Lato', sans-serif; font-weight: 400; font-size: 9px;
+  letter-spacing: 0.38em; text-transform: uppercase;
+  color: var(--bg-dark); background: var(--gold); border: none;
+  padding: 19px 0; cursor: auto;
+  transition: background 0.22s ease;
+}
+.entry-start-btn:hover { background: var(--white); }
+
+.entry-skip {
+  display: block; font-family: 'Lato', sans-serif; font-weight: 300; font-size: 9px;
+  letter-spacing: 0.26em; color: rgba(196,163,90,0.2); text-transform: uppercase;
+  background: none; border: none; cursor: auto; transition: color 0.22s;
+}
+.entry-skip:hover { color: var(--gold-mid); }
+
+/* ============================================================
+   APP SHELL
+   ============================================================ */
+
+#app-shell {
+  display: none;
+  padding-top: 80px;
+  min-height: 100vh;
+}
+#app-shell.visible {
+  display: grid;
+  grid-template-columns: 216px 1fr 274px;
+  grid-template-areas: "rail main output";
+}
+
+/* ============================================================
+   LEFT RAIL
+   ============================================================ */
+
+#left-rail {
+  grid-area: rail;
+  position: sticky; top: 80px; height: calc(100vh - 80px);
+  overflow-y: auto; padding: 36px 0;
+  border-right: 1px solid var(--line);
+}
+
+.rail-label {
+  font-family: 'DM Mono', monospace; font-size: 8px;
+  letter-spacing: 0.26em; color: rgba(196,163,90,0.2); text-transform: uppercase;
+  padding: 0 28px; margin-bottom: 18px;
+}
+
+.step-nav { list-style: none; }
+
+.step-nav-item {
+  display: flex; align-items: center; gap: 14px;
+  padding: 11px 28px; cursor: auto; position: relative;
+  transition: background 0.18s;
+}
+.step-nav-item:hover { background: var(--gold-glow); }
+.step-nav-item.active { background: rgba(196,163,90,0.05); }
+.step-nav-item.active::before {
+  content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 2px;
+  background: var(--gold);
+}
+.step-nav-item.done .snav-num { background: var(--gold); color: var(--bg-dark); border-color: var(--gold); }
+
+.snav-num {
+  width: 22px; height: 22px; border-radius: 50%;
+  border: 1px solid rgba(196,163,90,0.16);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'DM Mono', monospace; font-size: 9px;
+  color: rgba(196,163,90,0.28); flex-shrink: 0; transition: all 0.22s;
+}
+.step-nav-item.active .snav-num { border-color: var(--gold); color: var(--gold); }
+
+.snav-name {
+  font-size: 12px; font-weight: 300; letter-spacing: 0.06em;
+  color: var(--text-3); transition: color 0.22s;
+}
+.step-nav-item.active .snav-name { color: var(--white); }
+.step-nav-item.done .snav-name { color: var(--text-2); }
+
+.rail-divider { height: 1px; background: var(--line); margin: 22px 28px; }
+
+.rail-btn {
+  display: block; width: calc(100% - 56px); margin: 0 28px 8px;
+  font-family: 'DM Mono', monospace; font-size: 8px;
+  letter-spacing: 0.16em; color: rgba(196,163,90,0.26); text-transform: uppercase;
+  background: transparent; border: 1px solid rgba(196,163,90,0.09);
+  padding: 9px 14px; text-align: left; cursor: auto;
+  transition: all 0.18s;
+}
+.rail-btn:hover { border-color: rgba(196,163,90,0.22); color: rgba(196,163,90,0.55); }
+.rail-btn.danger:hover { border-color: var(--terra); color: var(--terra); }
+
+/* ============================================================
+   MAIN PANEL
+   ============================================================ */
+
+#main-panel {
+  grid-area: main;
+  padding: 52px 60px;
+  overflow-y: auto;
+  min-height: calc(100vh - 80px);
+}
+
+/* ============================================================
+   DONE STACK
+   ============================================================ */
+
+#done-stack { margin-bottom: 38px; }
+
+.done-card {
+  border: 1px solid var(--line); padding: 14px 20px;
+  margin-bottom: 6px; display: flex; align-items: center; justify-content: space-between;
+  background: var(--gold-glow); cursor: auto; transition: border-color 0.18s;
+}
+.done-card:hover { border-color: var(--line-hi); }
+
+.done-card-l { display: flex; align-items: center; gap: 14px; }
+
+.done-check {
+  width: 20px; height: 20px; border-radius: 50%; background: var(--gold);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 9px; color: var(--bg-dark); flex-shrink: 0;
+}
+
+.done-lbl {
+  font-family: 'DM Mono', monospace; font-size: 8px;
+  letter-spacing: 0.2em; color: var(--gold-dim); text-transform: uppercase;
+}
+.done-summ { font-size: 12px; color: var(--text-2); margin-top: 3px; }
+
+.done-edit {
+  font-family: 'DM Mono', monospace; font-size: 8px;
+  letter-spacing: 0.14em; color: rgba(196,163,90,0.2); text-transform: uppercase;
+}
+
+/* ============================================================
+   STEP CARDS
+   ============================================================ */
+
+.step-card { display: none; animation: fadeUp 0.28s cubic-bezier(0.16,1,0.3,1) forwards; }
+.step-card.active { display: block; }
+
+.step-tag {
+  font-family: 'DM Mono', monospace; font-size: 8px;
+  letter-spacing: 0.26em; color: var(--gold); text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+.step-title {
+  font-family: 'Cormorant Garamond', serif; font-weight: 300;
+  font-size: clamp(28px,3.2vw,46px); color: var(--white);
+  line-height: 1.08; letter-spacing: -0.015em; margin-bottom: 14px;
+}
+
+.step-instr {
+  font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 300;
+  font-size: clamp(14px,1.4vw,16px); color: var(--text-2);
+  line-height: 1.72; margin-bottom: 38px; max-width: 480px;
+}
+
+/* ============================================================
+   FIELDS
+   ============================================================ */
+
+.fw { margin-bottom: 22px; }
+
+.fl {
+  display: block; margin-bottom: 8px;
+  font-family: 'DM Mono', monospace; font-size: 8px;
+  letter-spacing: 0.2em; color: rgba(196,163,90,0.36); text-transform: uppercase;
+}
+
+.fi, .fta, .fsel {
+  width: 100%; background: rgba(196,163,90,0.04);
+  border: 1px solid rgba(196,163,90,0.11);
+  color: var(--white); padding: 13px 16px;
+  font-size: 13px; font-weight: 300; font-family: 'Lato', sans-serif;
+  line-height: 1.5; outline: none; border-radius: 1px;
+  transition: border-color 0.18s;
+}
+.fi:focus, .fta:focus, .fsel:focus { border-color: rgba(196,163,90,0.38); }
+.fta { resize: vertical; min-height: 90px; }
+.fta.tall { min-height: 130px; }
+.fta.xtall { min-height: 190px; }
+.fsel { appearance: none; cursor: auto; }
+
+.fwarn {
+  font-family: 'DM Mono', monospace; font-size: 9px;
+  color: var(--terra); margin-top: 6px; display: none; letter-spacing: 0.06em;
+}
+.fwarn.on { display: block; }
+
+/* Radio group */
+.rg { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
+
+.ro {
+  padding: 10px 20px; border: 1px solid rgba(196,163,90,0.13);
+  background: transparent; color: var(--text-2);
+  font-family: 'Lato', sans-serif; font-size: 12px; font-weight: 300;
+  letter-spacing: 0.06em; border-radius: 1px; cursor: auto; transition: all 0.18s;
+}
+.ro:hover { border-color: var(--gold-mid); }
+.ro.sel { border-color: var(--gold); color: var(--gold); background: rgba(196,163,90,0.07); }
+
+/* ============================================================
+   SENTENCE PREVIEW
+   ============================================================ */
+
+.sp {
+  background: rgba(196,163,90,0.04); border: 1px solid var(--line);
+  padding: 18px 22px; margin-bottom: 32px;
+}
+.sp-lbl {
+  font-family: 'DM Mono', monospace; font-size: 8px;
+  letter-spacing: 0.2em; color: rgba(196,163,90,0.28); text-transform: uppercase;
+  margin-bottom: 10px;
+}
+.sp-live {
+  font-family: 'Cormorant Garamond', serif; font-style: italic;
+  font-size: 18px; color: var(--text-2); line-height: 1.6;
+}
+.sp-live .fill { color: var(--gold); }
+.sp-live .ph { color: rgba(196,163,90,0.22); }
+
+/* ============================================================
+   ASSEMBLED BLOCK
+   ============================================================ */
+
+.ab {
+  background: rgba(196,163,90,0.04); border: 1px solid var(--line-hi);
+  padding: 22px 24px; margin-top: 22px;
+}
+.ab-lbl {
+  font-family: 'DM Mono', monospace; font-size: 8px;
+  letter-spacing: 0.22em; color: var(--gold-dim); text-transform: uppercase;
+  margin-bottom: 16px;
+}
+.ab-row { margin-bottom: 14px; }
+.ab-row:last-child { margin-bottom: 0; }
+.ab-key {
+  font-family: 'DM Mono', monospace; font-size: 8px;
+  letter-spacing: 0.14em; color: rgba(196,163,90,0.26); text-transform: uppercase;
+  margin-bottom: 4px;
+}
+.ab-val { font-size: 13px; color: var(--text-2); line-height: 1.6; }
+.ab-val.em {
+  font-family: 'Cormorant Garamond', serif; font-style: italic;
+  font-size: 17px; color: var(--white);
+}
+
+/* ============================================================
+   PROMPT BLOCK
+   ============================================================ */
+
+.pb {
+  border: 1px solid var(--line); border-top: 2px solid var(--gold-dim);
+  background: rgba(196,163,90,0.025); margin: 22px 0;
+}
+.pb-head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 18px; border-bottom: 1px solid var(--line);
+}
+.pb-tag {
+  font-family: 'DM Mono', monospace; font-size: 8px;
+  letter-spacing: 0.22em; color: var(--gold-dim); text-transform: uppercase;
+}
+.pb-hint {
+  font-family: 'DM Mono', monospace; font-size: 8px;
+  letter-spacing: 0.08em; color: rgba(196,163,90,0.2);
+}
+.pb-text {
+  padding: 18px; font-family: 'DM Mono', monospace; font-size: 11px;
+  color: var(--text-2); line-height: 1.8; white-space: pre-wrap; word-break: break-word;
+}
+.pb-foot { padding: 10px 18px; border-top: 1px solid var(--line); }
+
+/* ============================================================
+   STEP SEPARATOR
+   ============================================================ */
+
+.sep { height: 1px; background: var(--line); margin: 28px 0; }
+
+.pl {
+  display: block; margin-bottom: 6px;
+  font-family: 'DM Mono', monospace; font-size: 8px;
+  letter-spacing: 0.2em; color: rgba(196,163,90,0.3); text-transform: uppercase;
+}
+.pn { font-size: 12px; color: rgba(196,163,90,0.26); margin-bottom: 10px; line-height: 1.6; }
+
+/* ============================================================
+   TARGET CARDS
+   ============================================================ */
+
+.tg { display: flex; flex-direction: column; gap: 6px; margin-top: 14px; }
+
+.tc {
+  border: 1px solid var(--line); padding: 14px 18px;
+  background: rgba(196,163,90,0.025);
+  display: flex; align-items: flex-start; justify-content: space-between; gap: 14px;
+  transition: border-color 0.18s;
+}
+.tc.chosen { border-color: var(--gold); background: rgba(196,163,90,0.06); }
+.tc-body { flex: 1; }
+.tc-name { font-size: 13px; color: var(--white); font-weight: 400; margin-bottom: 4px; }
+.tc-desc { font-size: 12px; color: var(--text-2); line-height: 1.55; }
+.tc-opp { font-family: 'DM Mono', monospace; font-size: 9px; color: var(--gold-dim); margin-top: 5px; }
+.tc-act {
+  padding: 5px 11px; border: 1px solid var(--line);
+  background: transparent; color: rgba(196,163,90,0.32);
+  font-family: 'DM Mono', monospace; font-size: 8px;
+  letter-spacing: 0.16em; text-transform: uppercase;
+  flex-shrink: 0; cursor: auto; transition: all 0.18s; border-radius: 1px;
+}
+.tc-act:hover { border-color: var(--gold); color: var(--gold); }
+.tc.chosen .tc-act { border-color: var(--gold); color: var(--gold); }
+
+/* Manual entry */
+.me { border: 1px dashed rgba(196,163,90,0.11); padding: 18px; margin-top: 18px; }
+.me-lbl {
+  font-family: 'DM Mono', monospace; font-size: 8px;
+  letter-spacing: 0.2em; color: rgba(196,163,90,0.2); text-transform: uppercase;
+  margin-bottom: 14px;
+}
+.me-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+
+/* ============================================================
+   OFFER GRID
+   ============================================================ */
+
+.og { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 18px; }
+.oc { background: rgba(196,163,90,0.04); border: 1px solid var(--line); padding: 14px 16px; }
+.oc.s2 { grid-column: span 2; }
+.oc-lbl {
+  font-family: 'DM Mono', monospace; font-size: 8px;
+  letter-spacing: 0.16em; color: rgba(196,163,90,0.24); text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.oc-input {
+  width: 100%; background: transparent; border: none;
+  border-bottom: 1px solid rgba(196,163,90,0.1);
+  color: var(--white); font-size: 13px; font-family: 'Lato', sans-serif;
+  font-weight: 300; outline: none; resize: vertical; min-height: 30px;
+  padding-bottom: 4px; transition: border-color 0.18s;
+}
+.oc-input:focus { border-color: var(--gold-dim); }
+
+/* ============================================================
+   OUTREACH CARDS
+   ============================================================ */
+
+.oc-cards { display: flex; flex-direction: column; gap: 12px; margin-top: 18px; }
+.oc-card { border: 1px solid var(--line); background: rgba(196,163,90,0.02); }
+.oc-card-head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 18px; border-bottom: 1px solid var(--line);
+}
+.oc-card-ver {
+  font-family: 'DM Mono', monospace; font-size: 8px;
+  letter-spacing: 0.22em; color: var(--gold-dim); text-transform: uppercase;
+}
+.oc-card-body { padding: 16px 18px; }
+
+/* ============================================================
+   EXECUTE
+   ============================================================ */
+
+.exec-list { list-style: none; margin: 22px 0; }
+.exec-item {
+  display: flex; align-items: center; gap: 14px;
+  padding: 12px 0; border-bottom: 1px solid var(--line);
+  font-size: 13px; color: var(--text-2);
+}
+.exec-item:last-child { border-bottom: none; }
+.exec-chk {
+  width: 18px; height: 18px; border: 1px solid rgba(196,163,90,0.18);
+  flex-shrink: 0; cursor: auto; accent-color: var(--gold); border-radius: 1px;
+}
+
+.export-block {
+  background: rgba(196,163,90,0.04); border: 1px solid var(--line);
+  padding: 22px 24px; margin-top: 28px;
+}
+.export-lbl {
+  font-family: 'DM Mono', monospace; font-size: 8px;
+  letter-spacing: 0.22em; color: rgba(196,163,90,0.28); text-transform: uppercase;
+  margin-bottom: 18px;
+}
+.export-row { margin-bottom: 14px; }
+.export-key {
+  font-family: 'DM Mono', monospace; font-size: 8px;
+  letter-spacing: 0.14em; color: rgba(196,163,90,0.24); text-transform: uppercase;
+  margin-bottom: 4px;
+}
+.export-val { font-size: 12px; color: var(--text-2); line-height: 1.6; white-space: pre-wrap; }
+
+.phase-gate {
+  background: rgba(196,163,90,0.05); border: 1px solid rgba(196,163,90,0.14);
+  padding: 20px 24px; margin-top: 22px;
+}
+.phase-gate-lbl {
+  font-family: 'DM Mono', monospace; font-size: 8px;
+  letter-spacing: 0.22em; color: var(--gold); text-transform: uppercase; margin-bottom: 8px;
+}
+.phase-gate p { font-size: 12px; color: var(--text-2); margin-bottom: 16px; line-height: 1.6; }
+
+/* Recommendation */
+.rec-box { background: rgba(196,163,90,0.05); border: 1px solid rgba(196,163,90,0.13); padding: 18px 20px; margin-top: 18px; }
+.rec-box p {
+  font-family: 'Cormorant Garamond', serif; font-style: italic;
+  font-size: 15px; color: var(--text-2); line-height: 1.7;
+}
+.rec-box p strong { color: var(--gold); font-weight: 400; font-style: normal; }
+
+/* ============================================================
+   BUTTONS
+   ============================================================ */
+
+.btn-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 30px; }
+
+.btn-p {
+  padding: 14px 30px; background: var(--gold); color: var(--bg-dark);
+  border: none; font-family: 'Lato', sans-serif; font-weight: 400;
+  font-size: 9px; letter-spacing: 0.3em; text-transform: uppercase;
+  cursor: auto; transition: opacity 0.18s; border-radius: 1px;
+}
+.btn-p:hover { opacity: 0.84; }
+.btn-p:disabled { opacity: 0.22; cursor: not-allowed; }
+
+.btn-g {
+  padding: 13px 22px; background: transparent;
+  color: rgba(196,163,90,0.35); border: 1px solid rgba(196,163,90,0.13);
+  font-family: 'Lato', sans-serif; font-weight: 300; font-size: 9px;
+  letter-spacing: 0.22em; text-transform: uppercase; cursor: auto;
+  transition: all 0.18s; border-radius: 1px;
+}
+.btn-g:hover { border-color: rgba(196,163,90,0.28); color: rgba(196,163,90,0.6); }
+
+.btn-c {
+  padding: 6px 14px; background: transparent;
+  color: rgba(196,163,90,0.32); border: 1px solid rgba(196,163,90,0.12);
+  font-family: 'DM Mono', monospace; font-size: 8px;
+  letter-spacing: 0.16em; text-transform: uppercase; cursor: auto;
+  transition: all 0.18s; border-radius: 1px;
+}
+.btn-c:hover { border-color: var(--gold-dim); color: var(--gold); }
+.btn-c.copied { color: #6a9e6a; border-color: #6a9e6a; }
+
+.btn-add {
+  padding: 8px 14px; background: transparent;
+  color: rgba(196,163,90,0.28); border: 1px dashed rgba(196,163,90,0.13);
+  font-family: 'DM Mono', monospace; font-size: 8px;
+  letter-spacing: 0.16em; text-transform: uppercase; cursor: auto;
+  transition: all 0.18s; margin-top: 10px; border-radius: 1px;
+}
+.btn-add:hover { border-color: var(--gold-mid); color: var(--gold); }
+
+.btn-d {
+  padding: 13px 22px; background: transparent;
+  color: rgba(184,92,56,0.38); border: 1px solid rgba(184,92,56,0.14);
+  font-family: 'Lato', sans-serif; font-weight: 300; font-size: 9px;
+  letter-spacing: 0.22em; text-transform: uppercase; cursor: auto;
+  transition: all 0.18s; border-radius: 1px;
+}
+.btn-d:hover { border-color: var(--terra); color: var(--terra); }
+
+/* ============================================================
+   RIGHT OUTPUT PANEL
+   ============================================================ */
+
+#out-panel {
+  grid-area: output;
+  position: sticky; top: 80px; height: calc(100vh - 80px);
+  overflow-y: auto; padding: 36px 28px;
+  border-left: 1px solid var(--line);
+}
+
+.out-panel-lbl {
+  font-family: 'DM Mono', monospace; font-size: 8px;
+  letter-spacing: 0.26em; color: rgba(196,163,90,0.2); text-transform: uppercase;
+  margin-bottom: 28px;
+}
+
+.out-sec { margin-bottom: 22px; padding-bottom: 22px; border-bottom: 1px solid var(--line); }
+.out-sec:last-child { border-bottom: none; margin-bottom: 0; }
+
+.out-key {
+  font-family: 'DM Mono', monospace; font-size: 8px;
+  letter-spacing: 0.2em; color: var(--gold-dim); text-transform: uppercase; margin-bottom: 7px;
+}
+.out-val { font-size: 12px; color: var(--text-2); line-height: 1.6; white-space: pre-wrap; }
+.out-val.empty { color: rgba(196,163,90,0.18); font-style: italic; }
+
+/* ============================================================
+   TOAST
+   ============================================================ */
+
+#toast {
+  position: fixed; bottom: 32px; right: 32px;
+  background: rgba(14,14,12,0.94); border: 1px solid var(--line-hi);
+  padding: 11px 18px; font-family: 'DM Mono', monospace; font-size: 10px;
+  color: var(--text-2); letter-spacing: 0.08em; z-index: 8000;
+  opacity: 0; transform: translateY(6px);
+  transition: all 0.22s ease; pointer-events: none;
+}
+#toast.show { opacity: 1; transform: translateY(0); }
+
+/* ============================================================
+   KEYFRAMES
+   ============================================================ */
+
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ============================================================
+   MOBILE
+   ============================================================ */
+
+@media (max-width: 960px) {
+  button { cursor: pointer; }
+  #app-shell.visible { grid-template-columns: 1fr; grid-template-areas: "rail" "main" "output"; }
+  #left-rail { position: static; height: auto; border-right: none; border-bottom: 1px solid var(--line); padding: 16px 0; }
+  .step-nav { display: flex; overflow-x: auto; padding: 0 10px; }
+  .step-nav-item { min-width: 76px; flex-direction: column; text-align: center; gap: 6px; padding: 10px 12px; }
+  .step-nav-item.active::before { width: 100%; height: 2px; bottom: auto; top: auto; }
+  #main-panel { padding: 32px 24px; }
+  #out-panel { position: static; height: auto; border-left: none; border-top: 1px solid var(--line); }
+  #site-header { padding: 18px 24px; }
+  .me-row, .og { grid-template-columns: 1fr; }
+  .oc.s2 { grid-column: span 1; }
+  #entry-overlay { padding: 32px 24px; }
+  .step-title { font-size: 28px; }
+}
+
+@media (max-width: 560px) {
+  .entry-headline { font-size: 22px; }
+  .step-title { font-size: 24px; }
+}
+
+</style>
+</head>
+<body>
+
+<div id="grain"></div>
+<div id="toast"></div>
+
+<!-- ============================================================
+     ENTRY OVERLAY
+     ============================================================ -->
+
+<div id="entry-overlay" role="dialog" aria-modal="true" aria-label="Phase 02 — Monetize">
+  <div class="entry-inner">
+    <span class="entry-wordmark">Stephuary</span>
+    <span class="entry-phase-tag">Phase 02 · Monetize</span>
+    <h1 class="entry-headline">
+      You are not finding your niche.<br>
+      You are identifying where your skills<br>
+      <em>solve a problem people already pay to fix.</em>
+    </h1>
+    <span class="entry-sub">You will leave with:</span>
+    <div class="entry-outputs">
+      <span>one problem</span>
+      <span>one client type</span>
+      <span>one target list</span>
+      <span>one diagnosed issue</span>
+      <span>one service angle</span>
+      <span>one outreach message</span>
+    </div>
+    <button class="entry-start-btn" id="entry-start">Begin Phase 02</button>
+    <button class="entry-skip" id="entry-skip">Already in progress .  skip</button>
+  </div>
+</div>
+
+<!-- ============================================================
+     HEADER
+     ============================================================ -->
+
+<header id="site-header">
+  <a href="/index" class="logo">Stephuary</a>
+  <span class="header-phase">Phase 02 · Monetize</span>
+</header>
+
+<!-- ============================================================
+     APP SHELL
+     ============================================================ -->
+
+<div id="app-shell">
+
+  <!-- LEFT RAIL -->
+  <nav id="left-rail" aria-label="Phase steps">
+    <div class="rail-label">Steps</div>
+    <ol class="step-nav">
+      <li class="step-nav-item" data-step="1" tabindex="0"><span class="snav-num">1</span><span class="snav-name">Define</span></li>
+      <li class="step-nav-item" data-step="2" tabindex="0"><span class="snav-num">2</span><span class="snav-name">Extract</span></li>
+      <li class="step-nav-item" data-step="3" tabindex="0"><span class="snav-num">3</span><span class="snav-name">Direction</span></li>
+      <li class="step-nav-item" data-step="4" tabindex="0"><span class="snav-num">4</span><span class="snav-name">Targets</span></li>
+      <li class="step-nav-item" data-step="5" tabindex="0"><span class="snav-num">5</span><span class="snav-name">Diagnose</span></li>
+      <li class="step-nav-item" data-step="6" tabindex="0"><span class="snav-num">6</span><span class="snav-name">Offer</span></li>
+      <li class="step-nav-item" data-step="7" tabindex="0"><span class="snav-num">7</span><span class="snav-name">Outreach</span></li>
+      <li class="step-nav-item" data-step="8" tabindex="0"><span class="snav-num">8</span><span class="snav-name">Execute</span></li>
+    </ol>
+    <div class="rail-divider"></div>
+    <button class="rail-btn" id="rail-export">Export text</button>
+    <button class="rail-btn danger" id="rail-reset">Reset phase</button>
+  </nav>
+
+  <!-- MAIN PANEL -->
+  <main id="main-panel">
+
+    <div id="done-stack"></div>
+
+    <!-- STEP 1 -->
+    <section class="step-card" id="step-1" aria-label="Step 1: Define">
+      <div class="step-tag">Step 01</div>
+      <h2 class="step-title">Define the problem</h2>
+      <p class="step-instr">Fill this in. No variation. Be specific enough that the wrong person knows immediately it is not for them.</p>
+
+      <div class="sp">
+        <div class="sp-lbl">Live Preview</div>
+        <div class="sp-live">
+          <span>I help </span><span id="prev-client" class="ph">[client type]</span>
+          <span> who are dealing with </span><span id="prev-problem" class="ph">[specific problem]</span>
+          <span> to achieve </span><span id="prev-result" class="ph">[result]</span><span>.</span>
+        </div>
+      </div>
+
+      <div class="fw">
+        <label class="fl" for="f-client">I help [type of client]</label>
+        <input type="text" class="fi" id="f-client" placeholder="e.g. independent hotel operators in the Southeast" autocomplete="off">
+      </div>
+      <div class="fw">
+        <label class="fl" for="f-problem">Who are dealing with [specific problem]</label>
+        <input type="text" class="fi" id="f-problem" placeholder="e.g. declining repeat bookings and no clear service differentiation" autocomplete="off">
+      </div>
+      <div class="fw">
+        <label class="fl" for="f-result">To achieve [result]</label>
+        <input type="text" class="fi" id="f-result" placeholder="e.g. a recognizable guest experience that commands premium pricing" autocomplete="off">
+        <div class="fwarn" id="warn-vague">Too broad. Make this more specific.</div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn-p" id="s1-go">Continue to Extract →</button>
+      </div>
+    </section>
+
+    <!-- STEP 2 -->
+    <section class="step-card" id="step-2" aria-label="Step 2: Extract">
+      <div class="step-tag">Step 02</div>
+      <h2 class="step-title">Extract what is actually valuable</h2>
+      <p class="step-instr">Do not list hobbies. Real signals only .  things that happened in actual environments with actual stakes.</p>
+
+      <div class="fw"><label class="fl" for="f-e1">What have you done repeatedly in real environments?</label>
+        <textarea class="fta" id="f-e1" placeholder="e.g. Diagnosed and restructured service flows for 12+ hospitality properties across three countries"></textarea></div>
+      <div class="fw"><label class="fl" for="f-e2">What problems have people trusted you to solve?</label>
+        <textarea class="fta" id="f-e2" placeholder="e.g. Owners brought me in when their teams couldn't explain why the property felt 'off' to guests"></textarea></div>
+      <div class="fw"><label class="fl" for="f-e3">What do you notice faster than others?</label>
+        <textarea class="fta" id="f-e3" placeholder="e.g. Gaps between what a property claims and what the guest actually experiences"></textarea></div>
+      <div class="fw"><label class="fl" for="f-e4">What kind of work feels easy to you but hard to others?</label>
+        <textarea class="fta" id="f-e4" placeholder="e.g. Translating intangible brand feeling into operational procedures"></textarea></div>
+      <div class="fw"><label class="fl" for="f-e5">What industries, environments, or types of people do you understand unusually well?</label>
+        <textarea class="fta" id="f-e5" placeholder="e.g. Luxury hospitality, independent operators, culturally specific clientele"></textarea></div>
+      <div class="fw"><label class="fl" for="f-e6">What patterns do you see that others miss?</label>
+        <textarea class="fta" id="f-e6" placeholder="e.g. Properties think their problem is marketing. The actual problem is almost always product clarity"></textarea></div>
+
+      <div class="ab">
+        <div class="ab-lbl">Working Summary</div>
+        <div class="ab-row"><div class="ab-key">Likely Edge</div><div class="ab-val em" id="edge-1">. </div></div>
+        <div class="ab-row"><div class="ab-key">Likely Premium Angle</div><div class="ab-val" id="edge-2">. </div></div>
+        <div class="ab-row"><div class="ab-key">What This Could Be Valuable For</div><div class="ab-val" id="edge-3">. </div></div>
+      </div>
+
+      <div class="btn-row"><button class="btn-p" id="s2-go">Continue to Direction →</button></div>
+    </section>
+
+    <!-- STEP 3 -->
+    <section class="step-card" id="step-3" aria-label="Step 3: Direction">
+      <div class="step-tag">Step 03</div>
+      <h2 class="step-title">Choose market path</h2>
+      <p class="step-instr">This determines where your first buyer comes from and how you build proof. Not permanent. The best starting position given what you have now.</p>
+
+      <div class="fw">
+        <label class="fl">Market Path</label>
+        <div class="rg">
+          <button class="ro" data-path="Local">Local</button>
+          <button class="ro" data-path="Digital">Digital</button>
+          <button class="ro" data-path="Hybrid">Hybrid</button>
+        </div>
+      </div>
+
+      <div id="loc-wrap" style="display:none">
+        <div class="fw"><label class="fl" for="f-location">City / Region</label>
+          <input type="text" class="fi" id="f-location" placeholder="e.g. Baltimore, MD" autocomplete="off"></div>
+      </div>
+
+      <div class="fw"><label class="fl" for="f-industry">Industry / Category</label>
+        <input type="text" class="fi" id="f-industry" placeholder="e.g. boutique hospitality, food and beverage, wellness" autocomplete="off"></div>
+      <div class="fw"><label class="fl" for="f-cpref">Preferred Client Type</label>
+        <input type="text" class="fi" id="f-cpref" placeholder="e.g. independent operators, founders, creative studios" autocomplete="off"></div>
+
+      <div class="rec-box"><div id="rec-text"></div></div>
+
+      <div class="btn-row"><button class="btn-p" id="s3-go">Continue to Targets →</button></div>
+    </section>
+
+    <!-- STEP 4 -->
+    <section class="step-card" id="step-4" aria-label="Step 4: Targets">
+      <div class="step-tag">Step 04</div>
+      <h2 class="step-title">Generate target clients</h2>
+      <p class="step-instr">Use the prompt below in Perplexity or ChatGPT. Paste the results. Save 3 to 5 businesses you want to pursue.</p>
+
+      <div class="pb">
+        <div class="pb-head"><span class="pb-tag">Research Prompt</span><span class="pb-hint">Perplexity or ChatGPT</span></div>
+        <pre class="pb-text" id="pt-prompt"></pre>
+        <div class="pb-foot"><button class="btn-c" id="copy-pt">Copy Prompt</button></div>
+      </div>
+
+      <div class="sep"></div>
+
+      <div class="fw">
+        <label class="pl" for="f-pt-paste">Paste Results Here</label>
+        <p class="pn">Paste the AI output as-is. The system will attempt to parse it. If it fails, use manual entry below.</p>
+        <textarea class="fta xtall" id="f-pt-paste" placeholder="Paste your AI research output here…"></textarea>
+      </div>
+
+      <div id="parsed-area"></div>
+
+      <div class="sep"></div>
+
+      <div class="me">
+        <div class="me-lbl">Manual Entry</div>
+        <div class="me-row">
+          <div class="fw" style="margin:0"><label class="fl" for="f-mn">Business Name</label><input type="text" class="fi" id="f-mn" placeholder="Name" autocomplete="off"></div>
+          <div class="fw" style="margin:0"><label class="fl" for="f-md">One-line Description</label><input type="text" class="fi" id="f-md" placeholder="What they do" autocomplete="off"></div>
+        </div>
+        <button class="btn-add" id="btn-add">+ Add Target</button>
+      </div>
+
+      <div class="sep"></div>
+
+      <div class="ab">
+        <div class="ab-lbl">Saved Targets</div>
+        <div id="saved-area"><p class="pn">No targets saved yet.</p></div>
+      </div>
+
+      <div class="btn-row"><button class="btn-p" id="s4-go">Continue to Diagnose →</button></div>
+    </section>
+
+    <!-- STEP 5 -->
+    <section class="step-card" id="step-5" aria-label="Step 5: Diagnose">
+      <div class="step-tag">Step 05</div>
+      <h2 class="step-title">Diagnose one target</h2>
+      <p class="step-instr">Select one business from your list. Use the prompt. Paste the result. Extract the core problem.</p>
+
+      <div class="fw">
+        <label class="fl" for="f-sel-target">Select Target</label>
+        <select class="fsel" id="f-sel-target"><option value="">.  select a target . </option></select>
+      </div>
+
+      <div class="pb">
+        <div class="pb-head"><span class="pb-tag">Diagnosis Prompt</span><span class="pb-hint">ChatGPT or Perplexity</span></div>
+        <pre class="pb-text" id="diag-prompt"></pre>
+        <div class="pb-foot"><button class="btn-c" id="copy-dp">Copy Prompt</button></div>
+      </div>
+
+      <div class="sep"></div>
+
+      <div class="fw">
+        <label class="pl" for="f-diag-paste">Paste Diagnosis Results</label>
+        <p class="pn">The system will extract the core problem. Edit manually below.</p>
+        <textarea class="fta xtall" id="f-diag-paste" placeholder="Paste the AI diagnosis here…"></textarea>
+      </div>
+
+      <div id="diag-card"></div>
+
+      <div class="fw" style="margin-top:20px">
+        <label class="fl" for="f-diag-prob">Core Diagnosed Problem</label>
+        <textarea class="fta" id="f-diag-prob" placeholder="Summarize the specific business problem you can solve…"></textarea>
+      </div>
+
+      <div class="btn-row"><button class="btn-p" id="s5-go">Continue to Offer →</button></div>
+    </section>
+
+    <!-- STEP 6 -->
+    <section class="step-card" id="step-6" aria-label="Step 6: Offer">
+      <div class="step-tag">Step 06</div>
+      <h2 class="step-title">Convert diagnosis into a service</h2>
+      <p class="step-instr">Use the prompt. Paste the result. Edit the fields directly .  they are yours to own.</p>
+
+      <div class="pb">
+        <div class="pb-head"><span class="pb-tag">Offer Prompt</span><span class="pb-hint">ChatGPT</span></div>
+        <pre class="pb-text" id="offer-prompt"></pre>
+        <div class="pb-foot"><button class="btn-c" id="copy-op">Copy Prompt</button></div>
+      </div>
+
+      <div class="sep"></div>
+
+      <div class="fw">
+        <label class="pl" for="f-offer-paste">Paste Offer Results</label>
+        <p class="pn">Fields will auto-extract after paste. Edit them directly below.</p>
+        <textarea class="fta tall" id="f-offer-paste" placeholder="Paste the AI-generated offer here…"></textarea>
+      </div>
+
+      <div class="sep"></div>
+
+      <div class="ab">
+        <div class="ab-lbl">Service Offer</div>
+        <div class="og">
+          <div class="oc s2"><div class="oc-lbl">Service Name</div><textarea class="oc-input" id="f-oname" placeholder="e.g. Experience Clarity Sprint" rows="1"></textarea></div>
+          <div class="oc s2"><div class="oc-lbl">What Is Included</div><textarea class="oc-input" id="f-oincl" placeholder="2-day audit, written findings, 90-min debrief…" rows="3"></textarea></div>
+          <div class="oc"><div class="oc-lbl">Result</div><textarea class="oc-input" id="f-oresult" placeholder="A clear diagnosis and prioritized fix list" rows="2"></textarea></div>
+          <div class="oc"><div class="oc-lbl">Timeline</div><textarea class="oc-input" id="f-otline" placeholder="e.g. 2 weeks" rows="2"></textarea></div>
+          <div class="oc"><div class="oc-lbl">Ideal Client</div><textarea class="oc-input" id="f-oclient" placeholder="e.g. Independent hotel above $1M annual revenue" rows="2"></textarea></div>
+          <div class="oc"><div class="oc-lbl">Suggested Price Range</div><textarea class="oc-input" id="f-oprice" placeholder="e.g. $2,500–$4,500" rows="2"></textarea></div>
+          <div class="oc s2"><div class="oc-lbl">Why This Is Valuable</div><textarea class="oc-input" id="f-owhy" placeholder="One sentence. No features. The real value." rows="2"></textarea></div>
+        </div>
+      </div>
+
+      <div class="btn-row"><button class="btn-p" id="s6-go">Continue to Outreach →</button></div>
+    </section>
+
+    <!-- STEP 7 -->
+    <section class="step-card" id="step-7" aria-label="Step 7: Outreach">
+      <div class="step-tag">Step 07</div>
+      <h2 class="step-title">Build outreach</h2>
+      <p class="step-instr">Three versions. One for each kind of first contact. Every sentence earns its place. No generic compliments.</p>
+
+      <div class="pb">
+        <div class="pb-head"><span class="pb-tag">Outreach Prompt</span><span class="pb-hint">ChatGPT</span></div>
+        <pre class="pb-text" id="out-prompt"></pre>
+        <div class="pb-foot"><button class="btn-c" id="copy-outp">Copy Prompt</button></div>
+      </div>
+
+      <div class="sep"></div>
+
+      <div class="fw">
+        <label class="pl" for="f-out-paste">Paste Outreach Results</label>
+        <p class="pn">The system will split the three versions. Edit each one below.</p>
+        <textarea class="fta tall" id="f-out-paste" placeholder="Paste the three outreach messages here…"></textarea>
+      </div>
+
+      <div class="sep"></div>
+
+      <div class="oc-cards">
+        <div class="oc-card">
+          <div class="oc-card-head"><span class="oc-card-ver">01 · Direct</span><button class="btn-c" id="copy-direct">Copy</button></div>
+          <div class="oc-card-body"><label class="fl" for="f-out-direct">Edit this version</label>
+            <textarea class="fta tall" id="f-out-direct" placeholder="State the problem you noticed. State what you can do. Ask one question."></textarea></div>
+        </div>
+        <div class="oc-card">
+          <div class="oc-card-head"><span class="oc-card-ver">02 · Premium</span><button class="btn-c" id="copy-premium">Copy</button></div>
+          <div class="oc-card-body"><label class="fl" for="f-out-premium">Edit this version</label>
+            <textarea class="fta tall" id="f-out-premium" placeholder="Assume they know their value. Speak to their ambition."></textarea></div>
+        </div>
+        <div class="oc-card">
+          <div class="oc-card-head"><span class="oc-card-ver">03 · Warm</span><button class="btn-c" id="copy-warm">Copy</button></div>
+          <div class="oc-card-body"><label class="fl" for="f-out-warm">Edit this version</label>
+            <textarea class="fta tall" id="f-out-warm" placeholder="Reference a specific thing you noticed. Offer context before an ask."></textarea></div>
+        </div>
+      </div>
+
+      <div class="btn-row"><button class="btn-p" id="s7-go">Continue to Execute →</button></div>
+    </section>
+
+    <!-- STEP 8 -->
+    <section class="step-card" id="step-8" aria-label="Step 8: Execute">
+      <div class="step-tag">Step 08</div>
+      <h2 class="step-title">Execute</h2>
+      <p class="step-instr">This week. Not next month. Not when the website is perfect.</p>
+
+      <ul class="exec-list">
+        <li class="exec-item"><input type="checkbox" class="exec-chk"> Send 3 messages</li>
+        <li class="exec-item"><input type="checkbox" class="exec-chk"> Track responses</li>
+        <li class="exec-item"><input type="checkbox" class="exec-chk"> Refine once based on what you learn</li>
+        <li class="exec-item"><input type="checkbox" class="exec-chk"> Book 1 conversation</li>
+        <li class="exec-item" style="border-color:rgba(196,163,90,0.2)">
+          <input type="checkbox" class="exec-chk" id="f-chk-out">
+          <span style="color:var(--white)">I have copied at least one outreach message.</span>
+        </li>
+      </ul>
+
+      <div class="export-block">
+        <div class="export-lbl">Complete Output</div>
+        <div class="export-row"><div class="export-key">Problem Statement</div><div class="export-val" id="exp-problem">. </div></div>
+        <div class="sep" style="margin:12px 0"></div>
+        <div class="export-row"><div class="export-key">Target Client</div><div class="export-val" id="exp-target">. </div></div>
+        <div class="sep" style="margin:12px 0"></div>
+        <div class="export-row"><div class="export-key">Diagnosed Issue</div><div class="export-val" id="exp-diag">. </div></div>
+        <div class="sep" style="margin:12px 0"></div>
+        <div class="export-row"><div class="export-key">Service Offer</div><div class="export-val" id="exp-offer">. </div></div>
+        <div class="sep" style="margin:12px 0"></div>
+        <div class="export-row"><div class="export-key">Outreach .  Direct</div><div class="export-val" id="exp-out">. </div></div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn-p" id="btn-copy-all">Copy All</button>
+        <button class="btn-g" id="btn-export">Export as Text</button>
+        <button class="btn-d" id="btn-reset">Reset Phase</button>
+      </div>
+
+      <div class="phase-gate">
+        <div class="phase-gate-lbl">Next</div>
+        <p>Phase 03 .  Proof. Build one case study from the conversation you book here.</p>
+        <button class="btn-p" id="p3-btn" disabled>Continue to Phase 03 →</button>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- RIGHT OUTPUT PANEL -->
+  <aside id="out-panel" aria-label="Live output">
+    <div class="out-panel-lbl">Live Notes</div>
+    <div class="out-sec"><div class="out-key">Problem Statement</div><div class="out-val empty" id="o-problem">. </div></div>
+    <div class="out-sec"><div class="out-key">Edge Summary</div><div class="out-val empty" id="o-edge">. </div></div>
+    <div class="out-sec"><div class="out-key">Market Path</div><div class="out-val empty" id="o-path">. </div></div>
+    <div class="out-sec"><div class="out-key">Chosen Targets</div><div class="out-val empty" id="o-targets">. </div></div>
+    <div class="out-sec"><div class="out-key">Target + Diagnosis</div><div class="out-val empty" id="o-diag">. </div></div>
+    <div class="out-sec"><div class="out-key">Offer Draft</div><div class="out-val empty" id="o-offer">. </div></div>
+    <div class="out-sec"><div class="out-key">Outreach Drafts</div><div class="out-val empty" id="o-out">. </div></div>
+  </aside>
+
+</div><!-- /app-shell -->
+
+<script>
+(function () {
+'use strict';
+
+/* ============================================================
+   STATE + PERSISTENCE
+   ============================================================ */
+
+var KEY = 'sth_p02_v2';
+var DEF = {
+  step:1, done:[],
+  client:'',problem:'',result:'',
+  e1:'',e2:'',e3:'',e4:'',e5:'',e6:'',
+  path:'',location:'',industry:'',cpref:'',
+  ptPaste:'',savedTargets:[],
+  selTarget:'',diagPaste:'',diagProb:'',
+  offerPaste:'',oname:'',oincl:'',oresult:'',otline:'',oclient:'',oprice:'',owhy:'',
+  outPaste:'',outDirect:'',outPremium:'',outWarm:'',
+  copiedOut:false
+};
+
+var S = (function(){
+  try {
+    var r = localStorage.getItem(KEY);
+    if (!r) return JSON.parse(JSON.stringify(DEF));
+    var s = JSON.parse(r);
+    return Object.assign({},DEF,s,{savedTargets:s.savedTargets||[],done:s.done||[]});
+  } catch(e){ return JSON.parse(JSON.stringify(DEF)); }
+})();
+
+function save(){ try{ localStorage.setItem(KEY,JSON.stringify(S)); }catch(e){} }
+
+function hardReset(){
+  if(!confirm('Reset all Phase 02 progress? This cannot be undone.')) return;
+  localStorage.removeItem(KEY);
+  S=JSON.parse(JSON.stringify(DEF));
+  document.getElementById('done-stack').innerHTML='';
+  restoreAll();
+  showStep(1,false);
+  updatePanel();
+  toast('Phase 02 reset.');
+}
+
+/* ============================================================
+   OVERLAY
+   ============================================================ */
+
+var overlay = document.getElementById('entry-overlay');
+
+function dismissOverlay(){
+  overlay.style.transition='opacity 0.5s ease';
+  overlay.style.opacity='0';
+  overlay.style.pointerEvents='none';
+  setTimeout(function(){ overlay.style.display='none'; },500);
+  document.getElementById('app-shell').classList.add('visible');
+}
+
+document.getElementById('entry-start').addEventListener('click',dismissOverlay);
+document.getElementById('entry-skip').addEventListener('click',dismissOverlay);
+
+/* ============================================================
+   NAVIGATION
+   ============================================================ */
+
+var LABELS=['Define','Extract','Direction','Targets','Diagnose','Offer','Outreach','Execute'];
+
+function showStep(n,animate){
+  S.step=n; save();
+  document.querySelectorAll('.step-card').forEach(function(c){ c.classList.remove('active'); });
+  var card=document.getElementById('step-'+n);
+  if(card){ card.classList.add('active'); if(animate!==false) setTimeout(function(){ card.scrollIntoView({behavior:'smooth',block:'start'}); },60); }
+  renderRail();
+  renderDoneStack();
+}
+
+function completeStep(n){
+  if(S.done.indexOf(n)<0) S.done.push(n);
+  save();
+  showStep(n+1,true);
+  updatePanel();
+}
+
+function renderRail(){
+  document.querySelectorAll('.step-nav-item').forEach(function(el){
+    var n=parseInt(el.dataset.step);
+    el.classList.toggle('active',n===S.step);
+    el.classList.toggle('done',S.done.indexOf(n)>-1);
+  });
+}
+
+function renderDoneStack(){
+  var stack=document.getElementById('done-stack');
+  var sorted=S.done.slice().sort(function(a,b){ return a-b; });
+  if(!sorted.length){ stack.innerHTML=''; return; }
+  stack.innerHTML=sorted.map(function(n){
+    var lbl=LABELS[n-1]||'Step '+n;
+    var s=stepSum(n);
+    return '<div class="done-card" onclick="gotoStep('+n+')">'
+      +'<div class="done-card-l"><div class="done-check">✓</div>'
+      +'<div><div class="done-lbl">'+lbl+'</div><div class="done-summ">'+esc(s)+'</div></div></div>'
+      +'<div class="done-edit">Edit</div></div>';
+  }).join('');
+}
+
+window.gotoStep=function(n){ showStep(n,true); };
+
+function stepSum(n){
+  switch(n){
+    case 1: return S.client?'I help '+S.client:'';
+    case 2: return S.e1?S.e1.substring(0,60):'Edge extracted';
+    case 3: return S.path||(S.location||'');
+    case 4: return S.savedTargets.length+' target(s) saved';
+    case 5: return S.selTarget?S.selTarget.split('|')[0]:'';
+    case 6: return S.oname||'Offer defined';
+    case 7: return 'Outreach drafted';
+    default: return '';
+  }
+}
+
+document.querySelectorAll('.step-nav-item').forEach(function(el){
+  el.addEventListener('click',function(){ showStep(parseInt(el.dataset.step),true); });
+  el.addEventListener('keydown',function(e){ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); showStep(parseInt(el.dataset.step),true); } });
+});
+
+/* ============================================================
+   FIELD HELPERS
+   ============================================================ */
+
+function bindInp(id,key,cb){
+  var el=document.getElementById(id); if(!el) return;
+  el.value=S[key]||'';
+  el.addEventListener('input',function(){ S[key]=el.value; save(); if(cb) cb(); updatePanel(); });
+}
+
+function setText(id,v){ var el=document.getElementById(id); if(el) el.textContent=v||''; }
+function setVal(id,v){ var el=document.getElementById(id); if(el) el.textContent=v||'. '; }
+
+function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+/* ============================================================
+   RESTORE ALL FIELDS
+   ============================================================ */
+
+function restoreAll(){
+  /* Step 1 */
+  ['client','problem','result'].forEach(function(k){ var el=document.getElementById('f-'+k); if(el) el.value=S[k]||''; });
+  updatePreview();
+
+  /* Step 2 */
+  for(var i=1;i<=6;i++){ var el=document.getElementById('f-e'+i); if(el) el.value=S['e'+i]||''; }
+  updateEdge();
+
+  /* Step 3 */
+  document.querySelectorAll('.ro').forEach(function(b){ b.classList.toggle('sel',b.dataset.path===S.path); });
+  toggleLoc(S.path);
+  ['location','industry','cpref'].forEach(function(k){ var el=document.getElementById('f-'+k); if(el) el.value=S[k]||''; });
+  updateRec();
+
+  /* Step 4 */
+  var ptEl=document.getElementById('f-pt-paste'); if(ptEl) ptEl.value=S.ptPaste||'';
+  renderSavedTargets();
+
+  /* Step 5 */
+  populateTargetSel();
+  var dsEl=document.getElementById('f-diag-paste'); if(dsEl) dsEl.value=S.diagPaste||'';
+  var dpEl=document.getElementById('f-diag-prob'); if(dpEl) dpEl.value=S.diagProb||'';
+  buildDiagPrompt();
+
+  /* Step 6 */
+  var opEl=document.getElementById('f-offer-paste'); if(opEl) opEl.value=S.offerPaste||'';
+  [['f-oname','oname'],['f-oincl','oincl'],['f-oresult','oresult'],
+   ['f-otline','otline'],['f-oclient','oclient'],['f-oprice','oprice'],['f-owhy','owhy']].forEach(function(p){
+    var el=document.getElementById(p[0]); if(el) el.value=S[p[1]]||'';
+  });
+  buildOfferPrompt();
+
+  /* Step 7 */
+  var outPEl=document.getElementById('f-out-paste'); if(outPEl) outPEl.value=S.outPaste||'';
+  [['f-out-direct','outDirect'],['f-out-premium','outPremium'],['f-out-warm','outWarm']].forEach(function(p){
+    var el=document.getElementById(p[0]); if(el) el.value=S[p[1]]||'';
+  });
+  buildOutPrompt();
+
+  /* Step 8 */
+  var chk=document.getElementById('f-chk-out'); if(chk){ chk.checked=!!S.copiedOut; }
+  var p3=document.getElementById('p3-btn'); if(p3) p3.disabled=!S.copiedOut;
+
+  buildTargetPrompt();
+}
+
+/* ============================================================
+   STEP 1
+   ============================================================ */
+
+var VAGUE=['everyone','everything','businesses','companies','success','growth','people','anyone'];
+
+function initStep1(){
+  ['client','problem','result'].forEach(function(k){
+    var el=document.getElementById('f-'+k); if(!el) return;
+    el.addEventListener('input',function(){ S[k]=el.value; save(); updatePreview(); updatePanel(); });
+  });
+  document.getElementById('s1-go').addEventListener('click',function(){
+    if(!S.client.trim()||!S.problem.trim()||!S.result.trim()){ toast('All three fields are required.'); return; }
+    completeStep(1);
+  });
+}
+
+function updatePreview(){
+  var setSpan=function(id,val,ph){
+    var el=document.getElementById(id); if(!el) return;
+    el.textContent=val||ph;
+    el.className=val?'fill':'ph';
+  };
+  setSpan('prev-client',S.client,'[client type]');
+  setSpan('prev-problem',S.problem,'[specific problem]');
+  setSpan('prev-result',S.result,'[result]');
+  var combo=(S.client+' '+S.problem+' '+S.result).toLowerCase();
+  var w=document.getElementById('warn-vague');
+  if(w) w.classList.toggle('on',VAGUE.some(function(v){ return combo.indexOf(v)>-1; }));
+}
+
+/* ============================================================
+   STEP 2
+   ============================================================ */
+
+function initStep2(){
+  for(var i=1;i<=6;i++){ (function(i){ var el=document.getElementById('f-e'+i); if(!el) return;
+    el.addEventListener('input',function(){ S['e'+i]=el.value; save(); updateEdge(); updatePanel(); });
+  })(i); }
+  document.getElementById('s2-go').addEventListener('click',function(){
+    var filled=[S.e1,S.e2,S.e3,S.e4,S.e5,S.e6].filter(Boolean).length;
+    if(filled<3){ toast('Answer at least 3 of the 6 questions.'); return; }
+    updateEdge(); completeStep(2);
+  });
+}
+
+function updateEdge(){
+  setText('edge-1',S.e1||S.e2||'—');
+  var a='';
+  if(S.e3&&S.e4) a=S.e3+', applied where others slow down: '+S.e4;
+  else if(S.e4) a=S.e4; else if(S.e3) a=S.e3;
+  setText('edge-2',a||'—');
+  var v='';
+  if(S.e5&&S.e6) v='Sector depth: '+S.e5+'. Pattern recognition: '+S.e6;
+  else if(S.e5) v='Sector depth: '+S.e5;
+  else if(S.e2) v='Trusted for: '+S.e2;
+  setText('edge-3',v||'—');
+}
+
+/* ============================================================
+   STEP 3
+   ============================================================ */
+
+function initStep3(){
+  document.querySelectorAll('.ro').forEach(function(btn){
+    btn.addEventListener('click',function(){
+      document.querySelectorAll('.ro').forEach(function(b){ b.classList.remove('sel'); });
+      btn.classList.add('sel'); S.path=btn.dataset.path; save();
+      toggleLoc(S.path); updateRec(); buildTargetPrompt(); updatePanel();
+    });
+  });
+  ['location','industry','cpref'].forEach(function(k){
+    var el=document.getElementById('f-'+k); if(!el) return;
+    el.addEventListener('input',function(){ S[k]=el.value; save(); updateRec(); buildTargetPrompt(); updatePanel(); });
+  });
+  document.getElementById('s3-go').addEventListener('click',function(){
+    if(!S.path){ toast('Select a market path.'); return; }
+    completeStep(3);
+  });
+}
+
+function toggleLoc(p){
+  var w=document.getElementById('loc-wrap');
+  if(w) w.style.display=(p==='Local'||p==='Hybrid')?'block':'none';
+}
+
+function updateRec(){
+  var box=document.getElementById('rec-text');
+  if(!box||!S.path){ if(box) box.innerHTML=''; return; }
+  var msgs={
+    Local:'<strong>Start local for fast proof.</strong> Move quickly, earn referrals, build case studies within weeks.'+(S.location?' In '+S.location+', look for visible businesses with under-leveraged positioning.':''),
+    Digital:'<strong>Use digital for broader niche targeting.</strong> Your expertise can reach buyers across markets without geographic limits. Define a tight vertical and lead with a specific outcome.',
+    Hybrid:'<strong>Hybrid is the strongest position here.</strong> Prove locally, sell digitally. Start with one local client to generate a case study, then use that to pitch remote.'
+  };
+  box.innerHTML='<p>'+(msgs[S.path]||'')+'</p>';
+}
+
+/* ============================================================
+   STEP 4
+   ============================================================ */
+
+function initStep4(){
+  buildTargetPrompt();
+  bindCopy('copy-pt','pt-prompt');
+
+  var ptEl=document.getElementById('f-pt-paste');
+  if(ptEl) ptEl.addEventListener('input',function(){ S.ptPaste=ptEl.value; save(); parseTargets(ptEl.value); });
+
+  document.getElementById('btn-add').addEventListener('click',addManual);
+  document.getElementById('s4-go').addEventListener('click',function(){
+    if(!S.savedTargets.length){ toast('Save at least one target.'); return; }
+    buildDiagPrompt(); completeStep(4);
+  });
+}
+
+function buildTargetPrompt(){
+  var loc=(S.path!=='Digital'&&S.location)?S.location:'Remote / National';
+  var p='Give me 50 real businesses that match this profile:\n\nClient type: '+(S.client||'[your client type]')+
+    '\nLocation: '+loc+'\nIndustry/category: '+(S.industry||'[your industry]')+
+    '\n\nRequirements:\n- currently operating\n- active online presence\n- likely to have budget\n- likely to have visible positioning, offer, experience, or conversion gaps\n\nReturn:\n- business name\n- website or Instagram\n- location\n- one-sentence description\n- one likely opportunity area';
+  setText('pt-prompt',p);
+}
+
+function parseTargets(raw){
+  var lines=raw.split('\n').filter(function(l){ return l.trim(); });
+  var parsed=[],cur=null;
+  lines.forEach(function(line){
+    if(/^\d+\.\s/.test(line)||/^business name:/i.test(line)){
+      if(cur) parsed.push(cur);
+      cur={name:line.replace(/^\d+\.\s/,'').replace(/^business name:\s*/i,'').trim(),desc:'',opp:''};
+    } else if(cur){
+      if(/description|what they do/i.test(line)) cur.desc=line.replace(/.*:\s*/,'').trim();
+      else if(/opportunity|gap/i.test(line)) cur.opp=line.replace(/.*:\s*/,'').trim();
+      else if(!cur.desc&&line.trim()) cur.desc=line.trim();
+    }
+  });
+  if(cur) parsed.push(cur);
+  var area=document.getElementById('parsed-area'); if(!area) return;
+  if(parsed.length>0){
+    area.innerHTML='<div class="tg">'+parsed.slice(0,20).map(function(t,i){
+      return '<div class="tc" id="pt-'+i+'">'
+        +'<div class="tc-body"><div class="tc-name">'+esc(t.name)+'</div>'
+        +(t.desc?'<div class="tc-desc">'+esc(t.desc)+'</div>':'')
+        +(t.opp?'<div class="tc-opp">↗ '+esc(t.opp)+'</div>':'')
+        +'</div><button class="tc-act" onclick="saveTarget('+i+')">Save</button></div>';
+    }).join('')+'</div>';
+  } else if(raw.trim().length>50){
+    area.innerHTML='<p class="pn">Could not auto-parse. Use manual entry below.</p>';
+  }
+}
+
+window.saveTarget=function(i){
+  var el=document.getElementById('pt-'+i); if(!el) return;
+  var name=el.querySelector('.tc-name').textContent;
+  var desc=(el.querySelector('.tc-desc')||{}).textContent||'';
+  var opp=(el.querySelector('.tc-opp')||{}).textContent||'';
+  var val=name+'|'+desc+'|'+opp;
+  if(S.savedTargets.indexOf(val)<0){ S.savedTargets.push(val); save(); renderSavedTargets(); el.classList.add('chosen'); toast('Target saved.'); updatePanel(); }
+};
+
+function addManual(){
+  var nEl=document.getElementById('f-mn'),dEl=document.getElementById('f-md');
+  var n=(nEl.value||'').trim(); if(!n){ toast('Enter a business name.'); return; }
+  S.savedTargets.push(n+'|'+(dEl.value||'').trim()+'|'); save();
+  renderSavedTargets(); nEl.value=''; dEl.value=''; toast('Target added.'); updatePanel();
+}
+
+function renderSavedTargets(){
+  var area=document.getElementById('saved-area'); if(!area) return;
+  if(!S.savedTargets.length){ area.innerHTML='<p class="pn">No targets saved yet.</p>'; return; }
+  area.innerHTML='<div class="tg">'+S.savedTargets.map(function(t,i){
+    var p=t.split('|');
+    return '<div class="tc chosen"><div class="tc-body">'
+      +'<div class="tc-name">'+esc(p[0])+'</div>'
+      +(p[1]?'<div class="tc-desc">'+esc(p[1])+'</div>':'')
+      +(p[2]?'<div class="tc-opp">↗ '+esc(p[2])+'</div>':'')
+      +'</div><button class="tc-act" onclick="removeTarget('+i+')">Remove</button></div>';
+  }).join('')+'</div>';
+  populateTargetSel();
+}
+
+window.removeTarget=function(i){ S.savedTargets.splice(i,1); save(); renderSavedTargets(); updatePanel(); };
+
+function populateTargetSel(){
+  var sel=document.getElementById('f-sel-target'); if(!sel) return;
+  sel.innerHTML='<option value="">— select a target —</option>';
+  S.savedTargets.forEach(function(t){
+    var opt=document.createElement('option');
+    opt.value=t; opt.textContent=t.split('|')[0];
+    if(t===S.selTarget) opt.selected=true;
+    sel.appendChild(opt);
+  });
+}
+
+/* ============================================================
+   STEP 5
+   ============================================================ */
+
+function initStep5(){
+  populateTargetSel();
+  buildDiagPrompt();
+  bindCopy('copy-dp','diag-prompt');
+
+  var sel=document.getElementById('f-sel-target');
+  if(sel) sel.addEventListener('change',function(){ S.selTarget=sel.value; save(); buildDiagPrompt(); updatePanel(); });
+
+  var dpEl=document.getElementById('f-diag-paste');
+  if(dpEl) dpEl.addEventListener('input',function(){ S.diagPaste=dpEl.value; save(); parseDiag(dpEl.value); });
+
+  var probEl=document.getElementById('f-diag-prob');
+  if(probEl) probEl.addEventListener('input',function(){ S.diagProb=probEl.value; save(); buildOfferPrompt(); updatePanel(); });
+
+  document.getElementById('s5-go').addEventListener('click',function(){
+    if(!S.selTarget){ toast('Select a target to diagnose.'); return; }
+    buildOfferPrompt(); completeStep(5);
+  });
+}
+
+function buildDiagPrompt(){
+  var tn=S.selTarget?S.selTarget.split('|')[0]:'[target business]';
+  var td=S.selTarget?(S.selTarget.split('|')[1]||''):'';
+  var p='Analyze this business and identify the most valuable problem I could help solve.\n\nBusiness: '+tn
+    +(td?'\nDescription: '+td:'')
+    +'\n\nReturn:\n1. what they sell\n2. likely target customer\n3. strongest visible strengths\n4. biggest visible problem\n5. where they may be losing money, conversions, clarity, or pricing power\n6. one specific service I could offer\n7. one result they would care about';
+  setText('diag-prompt',p);
+}
+
+function parseDiag(raw){
+  var lines=raw.split('\n').filter(function(l){ return l.trim(); });
+  var prob='';
+  lines.forEach(function(line){
+    if(/^4\.|biggest.*problem/i.test(line)) prob=line.replace(/^4\.\s*/,'').replace(/biggest.*problem[:\s]*/i,'').trim();
+  });
+  if(prob){ var el=document.getElementById('f-diag-prob'); if(el&&!el.value){ el.value=prob; S.diagProb=prob; save(); } }
+  var card=document.getElementById('diag-card');
+  if(card&&raw.trim().length>30){
+    card.innerHTML='<div class="ab" style="margin-top:14px"><div class="ab-lbl">Raw Analysis</div>'
+      +'<div class="ab-val" style="white-space:pre-wrap;font-size:11px">'+esc(raw)+'</div></div>';
+  }
+  buildOfferPrompt(); updatePanel();
+}
+
+/* ============================================================
+   STEP 6
+   ============================================================ */
+
+function initStep6(){
+  buildOfferPrompt();
+  bindCopy('copy-op','offer-prompt');
+
+  var opEl=document.getElementById('f-offer-paste');
+  if(opEl) opEl.addEventListener('input',function(){ S.offerPaste=opEl.value; save(); parseOffer(opEl.value); });
+
+  [['f-oname','oname'],['f-oincl','oincl'],['f-oresult','oresult'],
+   ['f-otline','otline'],['f-oclient','oclient'],['f-oprice','oprice'],['f-owhy','owhy']].forEach(function(pair){
+    var el=document.getElementById(pair[0]); if(!el) return;
+    el.addEventListener('input',function(){ S[pair[1]]=el.value; save(); buildOutPrompt(); updatePanel(); });
+  });
+
+  document.getElementById('s6-go').addEventListener('click',function(){
+    if(!S.oname.trim()){ toast('Complete the service offer before continuing.'); return; }
+    buildOutPrompt(); completeStep(6);
+  });
+}
+
+function buildOfferPrompt(){
+  var p='Based on this diagnosed problem:\n\n'+(S.diagProb||'[diagnosed problem]')
+    +'\n\nCreate one simple premium service offer.\n\nReturn:\n- service name\n- what is included\n- result\n- timeline\n- ideal client\n- suggested price range\n- one-sentence explanation of why this is valuable';
+  setText('offer-prompt',p);
+}
+
+function parseOffer(raw){
+  var lines=raw.split('\n').filter(function(l){ return l.trim(); });
+  var ex=function(re){ var l=lines.find(function(l){ return re.test(l); }); return l?l.replace(re,'').replace(/^[:\s-]+/,'').trim():''; };
+  var map=[
+    {re:/service name|^name/i,id:'f-oname',k:'oname'},
+    {re:/included|includes/i,id:'f-oincl',k:'oincl'},
+    {re:/^result/i,id:'f-oresult',k:'oresult'},
+    {re:/timeline/i,id:'f-otline',k:'otline'},
+    {re:/ideal client/i,id:'f-oclient',k:'oclient'},
+    {re:/price|pricing/i,id:'f-oprice',k:'oprice'},
+    {re:/why|valuable/i,id:'f-owhy',k:'owhy'}
+  ];
+  map.forEach(function(m){
+    var v=ex(m.re); if(!v) return;
+    var el=document.getElementById(m.id);
+    if(el&&!el.value){ el.value=v; S[m.k]=v; }
+  });
+  save(); buildOutPrompt(); updatePanel();
+}
+
+/* ============================================================
+   STEP 7
+   ============================================================ */
+
+function initStep7(){
+  buildOutPrompt();
+  bindCopy('copy-outp','out-prompt');
+
+  var outPEl=document.getElementById('f-out-paste');
+  if(outPEl) outPEl.addEventListener('input',function(){ S.outPaste=outPEl.value; save(); parseOut(outPEl.value); });
+
+  [['f-out-direct','outDirect'],['f-out-premium','outPremium'],['f-out-warm','outWarm']].forEach(function(pair){
+    var el=document.getElementById(pair[0]); if(!el) return;
+    el.addEventListener('input',function(){ S[pair[1]]=el.value; save(); updatePanel(); });
+  });
+
+  ['direct','premium','warm'].forEach(function(v){
+    var btn=document.getElementById('copy-'+v);
+    var src=document.getElementById('f-out-'+v);
+    if(btn&&src) btn.addEventListener('click',function(){ copyText(src.value,btn); });
+  });
+
+  document.getElementById('s7-go').addEventListener('click',function(){
+    if(!S.outDirect.trim()&&!S.outPaste.trim()){ toast('Paste or enter at least one outreach message.'); return; }
+    completeStep(7);
+  });
+}
+
+function buildOutPrompt(){
+  var tn=S.selTarget?S.selTarget.split('|')[0]:'[business name]';
+  var p='Write 3 tailored outreach messages for this business.\n\nBusiness: '+tn
+    +'\n\nProblem observed: '+(S.diagProb||'[diagnosed problem]')
+    +'\n\nService: '+(S.oname||'[service name]')
+    +'\n\nResult: '+(S.oresult||'[expected result]')
+    +'\n\nVersions needed:\n1. direct\n2. premium\n3. warm\n\nEach should be short, specific, and based on the actual business problem. No generic compliments.';
+  setText('out-prompt',p);
+}
+
+function parseOut(raw){
+  var secs=raw.split(/\n(?=\d\.|version \d|direct:|premium:|warm:)/i);
+  var fill=function(id,key,text){
+    var el=document.getElementById(id);
+    if(el&&!el.value&&text&&text.trim()){ el.value=text.trim(); S[key]=text.trim(); }
+  };
+  if(secs.length>=3){
+    fill('f-out-direct','outDirect',secs[0].replace(/^1\.\s*(direct[:\s]*)?/i,''));
+    fill('f-out-premium','outPremium',secs[1].replace(/^2\.\s*(premium[:\s]*)?/i,''));
+    fill('f-out-warm','outWarm',secs[2].replace(/^3\.\s*(warm[:\s]*)?/i,''));
+  } else if(raw.trim()){
+    fill('f-out-direct','outDirect',raw);
+  }
+  save(); updatePanel();
+}
+
+/* ============================================================
+   STEP 8
+   ============================================================ */
+
+function initStep8(){
+  var chk=document.getElementById('f-chk-out');
+  if(chk){
+    chk.addEventListener('change',function(){ S.copiedOut=chk.checked; save();
+      var p3=document.getElementById('p3-btn'); if(p3) p3.disabled=!chk.checked;
+    });
+  }
+  document.getElementById('btn-copy-all').addEventListener('click',function(){ copyText(buildExport(),document.getElementById('btn-copy-all')); });
+  document.getElementById('btn-export').addEventListener('click',exportText);
+  document.getElementById('btn-reset').addEventListener('click',hardReset);
+}
+
+/* ============================================================
+   OUTPUT PANEL
+   ============================================================ */
+
+function setOut(id,val){
+  var el=document.getElementById(id); if(!el) return;
+  if(val){ el.textContent=val; el.classList.remove('empty'); }
+  else { el.textContent='. '; el.classList.add('empty'); }
+}
+
+function updatePanel(){
+  setOut('o-problem',(S.client&&S.problem&&S.result)?'I help '+S.client+' who are dealing with '+S.problem+' to achieve '+S.result+'.':null);
+  setOut('o-edge',[S.e1,S.e3].filter(Boolean).join('\n')||null);
+  setOut('o-path',[S.path,S.location,S.industry].filter(Boolean).join(' · ')||null);
+  setOut('o-targets',S.savedTargets.map(function(t){ return t.split('|')[0]; }).join('\n')||null);
+  var tn=S.selTarget?S.selTarget.split('|')[0]:'';
+  setOut('o-diag',tn?(tn+(S.diagProb?'\n↗ '+S.diagProb:'')):null);
+  setOut('o-offer',S.oname?(S.oname+(S.oprice?' · '+S.oprice:'')+(S.oresult?'\n'+S.oresult:'')):null);
+  var op=[S.outDirect?'Direct: '+S.outDirect.substring(0,70)+'…':'',S.outPremium?'Premium: '+S.outPremium.substring(0,60)+'…':''].filter(Boolean).join('\n\n');
+  setOut('o-out',op||null);
+  syncExport();
+}
+
+function syncExport(){
+  setVal('exp-problem',(S.client&&S.problem&&S.result)?'I help '+S.client+' who are dealing with '+S.problem+' to achieve '+S.result+'.':'. ');
+  setVal('exp-target',S.selTarget?S.selTarget.split('|')[0]:'. ');
+  setVal('exp-diag',S.diagProb||'. ');
+  setVal('exp-offer',S.oname?[S.oname,S.oprice&&('Price: '+S.oprice),S.oresult].filter(Boolean).join('\n'):'. ');
+  setVal('exp-out',S.outDirect?S.outDirect.substring(0,200)+(S.outDirect.length>200?'…':''):'. ');
+}
+
+/* ============================================================
+   EXPORT
+   ============================================================ */
+
+function buildExport(){
+  return [
+    'STEPHUARY .  PHASE 02: POSITION','================================','',
+    'PROBLEM STATEMENT',(S.client&&S.problem&&S.result)?'I help '+S.client+' who are dealing with '+S.problem+' to achieve '+S.result+'.':'(incomplete)','',
+    'EDGE SUMMARY',[S.e1,S.e2,S.e3,S.e4].filter(Boolean).join('\n')||'(incomplete)','',
+    'MARKET PATH',[S.path,S.location,S.industry].filter(Boolean).join(' · ')||'(incomplete)','',
+    'CHOSEN TARGETS',S.savedTargets.map(function(t){ return t.split('|')[0]; }).join('\n')||'(none)','',
+    'CHOSEN TARGET',S.selTarget?S.selTarget.split('|')[0]:'(none)','',
+    'DIAGNOSED PROBLEM',S.diagProb||'(incomplete)','',
+    'SERVICE OFFER',
+    'Name: '+(S.oname||'. '),'Included: '+(S.oincl||'. '),'Result: '+(S.oresult||'. '),
+    'Timeline: '+(S.otline||'. '),'Ideal Client: '+(S.oclient||'. '),'Price: '+(S.oprice||'. '),'Why: '+(S.owhy||'. '),'',
+    'OUTREACH .  DIRECT',S.outDirect||'(incomplete)','',
+    'OUTREACH .  PREMIUM',S.outPremium||'(incomplete)','',
+    'OUTREACH .  WARM',S.outWarm||'(incomplete)'
+  ].join('\n');
+}
+
+function exportText(){
+  var blob=new Blob([buildExport()],{type:'text/plain'});
+  var url=URL.createObjectURL(blob);
+  var a=document.createElement('a');
+  a.href=url;a.download='stephuary-phase02-monetize.txt';a.click();
+  URL.revokeObjectURL(url);
+  toast('Exported.');
+}
+
+/* ============================================================
+   COPY
+   ============================================================ */
+
+function bindCopy(btnId,srcId){
+  var btn=document.getElementById(btnId);
+  var src=document.getElementById(srcId);
+  if(!btn||!src) return;
+  btn.addEventListener('click',function(){ copyText(src.textContent||src.value,btn); });
+}
+
+function copyText(text,btn){
+  navigator.clipboard.writeText(text).then(function(){
+    if(btn){ btn.textContent='Copied'; btn.classList.add('copied');
+      setTimeout(function(){ btn.textContent='Copy'; btn.classList.remove('copied'); },2200); }
+    toast('Copied to clipboard.');
+  }).catch(function(){
+    var t=document.createElement('textarea');
+    t.value=text;document.body.appendChild(t);t.select();document.execCommand('copy');document.body.removeChild(t);
+    toast('Copied.');
+  });
+}
+
+/* ============================================================
+   TOAST
+   ============================================================ */
+
+function toast(msg){
+  var t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  clearTimeout(t._t); t._t=setTimeout(function(){ t.classList.remove('show'); },2800);
+}
+
+/* ============================================================
+   RAIL BUTTONS
+   ============================================================ */
+
+document.getElementById('rail-export').addEventListener('click',exportText);
+document.getElementById('rail-reset').addEventListener('click',hardReset);
+
+/* ============================================================
+   INIT
+   ============================================================ */
+
+window.addEventListener('load',function(){
+  restoreAll();
+  renderRail();
+  renderDoneStack();
+  showStep(S.step,false);
+
+  initStep1();
+  initStep2();
+  initStep3();
+  initStep4();
+  initStep5();
+  initStep6();
+  initStep7();
+  initStep8();
+
+  updatePanel();
+  setInterval(syncExport,2000);
+
+  if(S.done.length>0||S.client||S.e1) dismissOverlay();
+});
+
+})();
+</script>
+  <script src="/stephuary-interactive.js" defer></script>
+</body>
+</html>

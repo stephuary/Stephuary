@@ -1,0 +1,2313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Operator Intelligence .  Live Diagnostic Preview</title>
+  <link rel="stylesheet" href="/stephuary-interactive.css" />
+<meta name="description" content="A live diagnostic preview of a private diagnostic system that identifies structural inefficiencies, missed leverage, and immediate correction paths.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Lato:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0a0a08;
+  --bg-1:#0f100d;
+  --bg-2:#131510;
+  --bg-3:#181a14;
+  --text:#f5f0e8;
+  --text-2:rgba(245,240,232,0.74);
+  --text-3:rgba(245,240,232,0.44);
+  --text-4:rgba(245,240,232,0.24);
+  --gold:#c4a35a;
+  --gold-soft:rgba(196,163,90,0.28);
+  --gold-dim:rgba(196,163,90,0.045);
+  --border:rgba(196,163,90,0.16);
+  --border-soft:rgba(245,240,232,0.07);
+  --border-softer:rgba(245,240,232,0.045);
+  --error:#c97f7f;
+  --shadow:0 18px 70px rgba(0,0,0,0.34);
+  --ease:cubic-bezier(.16,1,.3,1);
+}
+html{scroll-behavior:smooth}
+body{
+  font-family:'Lato',sans-serif;
+  font-weight:300;
+  background:var(--bg);
+  color:var(--text);
+  font-size:16px;
+  line-height:1.78;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+  overflow-x:hidden;
+}
+a{text-decoration:none;color:inherit}
+button,input,textarea,select{font:inherit}
+::selection{background:rgba(196,163,90,0.18);color:var(--text)}
+
+body::before{
+  content:'';
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  z-index:9998;
+  opacity:.22;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.88' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.032'/%3E%3C/svg%3E");
+}
+body::after{
+  content:'';
+  position:fixed;
+  inset:0;
+  z-index:-1;
+  pointer-events:none;
+  background:
+    radial-gradient(ellipse at 82% 18%, rgba(196,163,90,0.035) 0%, transparent 54%),
+    radial-gradient(ellipse at 12% 86%, rgba(196,163,90,0.02) 0%, transparent 42%);
+}
+
+::-webkit-scrollbar{width:10px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{
+  background:rgba(196,163,90,0.12);
+  border-radius:999px;
+  border:2px solid var(--bg);
+}
+::-webkit-scrollbar-thumb:hover{background:rgba(196,163,90,0.22)}
+
+#opening-veil{
+  position:fixed;
+  inset:0;
+  z-index:1000;
+  background:
+    radial-gradient(ellipse at center, rgba(196,163,90,0.03) 0%, transparent 48%),
+    linear-gradient(180deg, rgba(10,10,8,0.98), rgba(10,10,8,1));
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  transition:opacity .9s var(--ease), visibility .9s var(--ease);
+}
+#opening-veil.hidden{
+  opacity:0;
+  visibility:hidden;
+}
+.veil-inner{max-width:680px;padding:32px}
+.veil-mark{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(70px,10vw,120px);
+  line-height:1;
+  letter-spacing:-.05em;
+  color:var(--gold-dim);
+  margin-bottom:16px;
+  opacity:0;
+  transform:translateY(10px);
+  animation:veilFade 1s var(--ease) forwards .1s;
+}
+.veil-eyebrow{
+  font-size:10px;
+  letter-spacing:.22em;
+  text-transform:uppercase;
+  color:var(--gold);
+  margin-bottom:14px;
+  opacity:0;
+  transform:translateY(10px);
+  animation:veilFade 1s var(--ease) forwards .28s;
+}
+.veil-title{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(34px,4.4vw,56px);
+  line-height:1.02;
+  letter-spacing:-.03em;
+  font-weight:300;
+  color:var(--text);
+  margin-bottom:14px;
+  opacity:0;
+  transform:translateY(10px);
+  animation:veilFade 1s var(--ease) forwards .42s;
+}
+.veil-copy{
+  font-size:15px;
+  line-height:1.78;
+  color:var(--text-3);
+  opacity:0;
+  transform:translateY(10px);
+  animation:veilFade 1s var(--ease) forwards .56s;
+}
+@keyframes veilFade{to{opacity:1;transform:translateY(0)}}
+
+nav{
+  position:fixed;
+  top:0;left:0;right:0;
+  z-index:100;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:22px 52px;
+  background:rgba(10,10,8,0.92);
+  backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--border-softer);
+}
+.nav-mark{
+  font-family:'Cormorant Garamond',serif;
+  font-size:20px;
+  font-weight:300;
+  color:var(--gold);
+  letter-spacing:-.025em;
+}
+.nav-back{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  font-size:10px;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--text-3);
+  transition:color .25s var(--ease);
+}
+.nav-back::before{content:'←'}
+.nav-back:hover{color:var(--gold)}
+
+#hero{
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  justify-content:flex-end;
+  padding:152px 52px 116px;
+  border-bottom:1px solid var(--border-softer);
+  position:relative;
+}
+.hero-mark{
+  position:absolute;
+  top:50%;
+  left:52px;
+  transform:translateY(-50%);
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(118px,18vw,230px);
+  line-height:1;
+  font-weight:300;
+  color:var(--gold-dim);
+  letter-spacing:-.055em;
+  user-select:none;
+  pointer-events:none;
+  opacity:0;
+  animation:markReveal 1.8s var(--ease) forwards;
+}
+@keyframes markReveal{
+  from{opacity:0;transform:translateY(-48%) scale(.95)}
+  to{opacity:1;transform:translateY(-50%) scale(1)}
+}
+.hero-content{position:relative;z-index:1;max-width:1160px}
+.hero-eyebrow{
+  font-size:9px;
+  letter-spacing:.32em;
+  text-transform:uppercase;
+  color:var(--gold);
+  font-weight:500;
+  margin-bottom:34px;
+  opacity:0;
+  animation:fadeUp .85s var(--ease) forwards .2s;
+}
+.hero-headline{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(46px,6.1vw,92px);
+  line-height:.94;
+  letter-spacing:-.04em;
+  font-weight:300;
+  color:var(--text);
+  max-width:980px;
+  margin-bottom:24px;
+  opacity:0;
+  animation:fadeUp .88s var(--ease) forwards .36s;
+}
+.hero-sub{
+  max-width:560px;
+  margin-bottom:44px;
+  font-size:18px;
+  color:var(--text-2);
+  line-height:1.56;
+  font-family:'Cormorant Garamond',serif;
+  font-style:italic;
+  font-weight:300;
+  opacity:0;
+  animation:fadeUp .85s var(--ease) forwards .5s;
+}
+.hero-ctas{
+  display:flex;
+  gap:18px;
+  align-items:center;
+  flex-wrap:wrap;
+  opacity:0;
+  animation:fadeUp .8s var(--ease) forwards .64s;
+}
+.btn-gold-outline,.btn-gold-solid,.btn-dark-outline{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  min-height:52px;
+  padding:16px 38px;
+  border:1px solid transparent;
+  font-size:10px;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  font-weight:500;
+  transition:
+    background .28s var(--ease),
+    color .28s var(--ease),
+    border-color .28s var(--ease),
+    transform .28s var(--ease),
+    box-shadow .28s var(--ease);
+  cursor:pointer;
+}
+.btn-gold-outline{
+  color:var(--gold);
+  border-color:var(--border);
+  background:transparent;
+}
+.btn-gold-outline:hover{
+  background:var(--gold);
+  color:var(--bg);
+  border-color:var(--gold);
+  transform:translateY(-1px);
+  box-shadow:0 10px 26px rgba(196,163,90,0.14);
+}
+.btn-gold-solid{
+  color:var(--bg);
+  background:var(--gold);
+  border-color:var(--gold);
+}
+.btn-gold-solid:hover{
+  background:var(--text);
+  border-color:var(--text);
+  color:var(--bg);
+  transform:translateY(-1px);
+  box-shadow:0 12px 28px rgba(245,240,232,0.08);
+}
+.btn-dark-outline{
+  color:var(--text-2);
+  border-color:var(--border-soft);
+  background:transparent;
+}
+.btn-dark-outline:hover{
+  color:var(--text);
+  border-color:var(--border);
+  transform:translateY(-1px);
+}
+.hero-secondary{
+  font-size:10px;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  color:var(--text-3);
+  border-bottom:1px solid rgba(245,240,232,0.18);
+  padding-bottom:2px;
+  transition:color .25s var(--ease), border-color .25s var(--ease);
+}
+.hero-secondary:hover{
+  color:var(--text-2);
+  border-color:rgba(245,240,232,0.28);
+}
+
+.hero-meta{
+  margin-top:68px;
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:1px;
+  background:var(--border-softer);
+  max-width:980px;
+  opacity:0;
+  animation:fadeUp .88s var(--ease) forwards .8s;
+}
+.hero-meta-item{
+  background:var(--bg-1);
+  padding:24px 24px 22px;
+}
+.hero-meta-label{
+  font-size:9px;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  color:var(--gold);
+  margin-bottom:10px;
+}
+.hero-meta-copy{
+  font-size:13px;
+  color:var(--text-3);
+  line-height:1.58;
+}
+@keyframes fadeUp{
+  from{opacity:0;transform:translateY(16px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+.section-pad{
+  padding:112px 52px;
+  border-bottom:1px solid var(--border-softer);
+}
+.two-col{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:92px;
+  align-items:start;
+}
+.section-eyebrow{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin-bottom:30px;
+  font-size:9px;
+  letter-spacing:.3em;
+  text-transform:uppercase;
+  color:var(--gold);
+  font-weight:500;
+}
+.section-eyebrow::before{
+  content:'';
+  width:20px;height:1px;
+  background:var(--gold);
+  opacity:.46;
+}
+.section-headline{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(34px,3.35vw,48px);
+  line-height:1.02;
+  letter-spacing:-.03em;
+  font-weight:300;
+  color:var(--text);
+}
+.what-body{
+  max-width:540px;
+  font-size:15px;
+  color:var(--text-2);
+  line-height:1.8;
+  margin-bottom:22px;
+}
+.plain-list{
+  list-style:none;
+  display:grid;
+  gap:12px;
+  margin-bottom:32px;
+  max-width:540px;
+}
+.plain-list li{
+  position:relative;
+  padding-left:18px;
+  font-size:14px;
+  color:var(--text-3);
+  line-height:1.6;
+}
+.plain-list li::before{
+  content:'';
+  position:absolute;
+  left:0;top:9px;
+  width:5px;height:1px;
+  background:var(--gold);
+  opacity:.5;
+}
+.italic-close{
+  max-width:520px;
+  padding-top:20px;
+  border-top:1px solid var(--border-softer);
+  font-family:'Cormorant Garamond',serif;
+  font-style:italic;
+  font-size:18px;
+  color:var(--text-2);
+  line-height:1.52;
+}
+
+.entry-panel{
+  max-width:760px;
+  padding:28px 30px;
+  background:linear-gradient(180deg,var(--bg-1),rgba(15,16,13,0.96));
+  border:1px solid var(--border-soft);
+  box-shadow:var(--shadow);
+}
+.entry-kicker{
+  font-size:10px;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  color:var(--gold);
+  margin-bottom:14px;
+}
+.entry-copy{
+  max-width:560px;
+  font-size:15px;
+  color:var(--text-2);
+  line-height:1.72;
+  margin-bottom:22px;
+}
+.entry-copy strong{font-weight:400;color:var(--text)}
+
+.live-shell{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 410px;
+  gap:38px;
+  align-items:start;
+}
+.form-wrap{max-width:100%;position:relative}
+.form-intro{
+  max-width:540px;
+  font-size:15px;
+  color:var(--text-2);
+  line-height:1.72;
+  margin-bottom:34px;
+}
+.form-stage{display:grid;gap:18px}
+.step-card{
+  padding:22px 22px 20px;
+  border:1px solid var(--border-soft);
+  background:linear-gradient(180deg,var(--bg-1),rgba(15,16,13,0.96));
+  transition:
+    border-color .35s var(--ease),
+    background .35s var(--ease),
+    transform .35s var(--ease),
+    opacity .35s var(--ease),
+    padding .35s var(--ease);
+  opacity:.58;
+}
+.step-card.active{
+  opacity:1;
+  border-color:var(--border);
+  background:linear-gradient(180deg,var(--bg-2),rgba(19,21,16,0.98));
+  transform:translateY(-1px);
+}
+.step-card.complete{
+  opacity:.82;
+  padding-top:18px;
+  padding-bottom:18px;
+}
+.step-top{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:18px;
+  margin-bottom:12px;
+}
+.step-label{
+  font-size:10px;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  color:var(--gold);
+  font-weight:500;
+}
+.step-index{
+  font-size:10px;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--text-4);
+}
+.step-question{
+  font-family:'Cormorant Garamond',serif;
+  font-size:28px;
+  line-height:1.06;
+  letter-spacing:-.02em;
+  font-weight:300;
+  color:var(--text);
+  margin-bottom:10px;
+}
+.step-help{
+  max-width:480px;
+  font-size:13px;
+  color:var(--text-3);
+  line-height:1.56;
+  margin-bottom:16px;
+}
+.field-input,.field-textarea,.field-select{
+  width:100%;
+  background:rgba(10,10,8,0.22);
+  color:var(--text);
+  border:1px solid var(--border-softer);
+  padding:16px 18px;
+  font-size:15px;
+  font-weight:300;
+  line-height:1.7;
+  outline:none;
+  caret-color:var(--gold);
+  transition:
+    border-color .28s var(--ease),
+    background .28s var(--ease),
+    box-shadow .28s var(--ease),
+    transform .28s var(--ease);
+}
+.field-input::placeholder,.field-textarea::placeholder{color:rgba(245,240,232,0.28)}
+.field-input:focus,.field-textarea:focus,.field-select:focus{
+  border-color:var(--border);
+  background:var(--bg-2);
+  box-shadow:0 0 0 1px rgba(196,163,90,0.1), 0 0 22px rgba(196,163,90,0.045);
+  transform:translateY(-1px);
+}
+.field-textarea{min-height:128px;resize:vertical}
+.field-select{
+  appearance:none;
+  background-image:
+    linear-gradient(45deg,transparent 50%,var(--gold) 50%),
+    linear-gradient(135deg,var(--gold) 50%,transparent 50%);
+  background-position:calc(100% - 20px) calc(1.25em + 2px),calc(100% - 15px) calc(1.25em + 2px);
+  background-size:5px 5px,5px 5px;
+  background-repeat:no-repeat;
+}
+.reveal-step{
+  max-height:0;
+  overflow:hidden;
+  transition:max-height .7s var(--ease), opacity .55s var(--ease), margin-top .55s var(--ease);
+  opacity:0;
+  margin-top:0;
+}
+.reveal-step.visible{
+  max-height:340px;
+  opacity:1;
+  margin-top:16px;
+}
+.form-footer{
+  margin-top:22px;
+  display:flex;
+  flex-wrap:wrap;
+  gap:18px;
+  align-items:center;
+}
+.form-note{
+  max-width:300px;
+  font-size:13px;
+  color:var(--text-3);
+  line-height:1.58;
+}
+.system-ready{
+  margin-top:14px;
+  display:inline-flex;
+  align-items:center;
+  gap:12px;
+  padding:12px 14px;
+  border:1px solid var(--border-softer);
+  background:var(--bg-1);
+}
+.system-ready-dot{
+  width:7px;height:7px;border-radius:50%;
+  background:var(--gold);
+  box-shadow:0 0 0 rgba(196,163,90,0.46);
+  animation:pulse 1.8s infinite;
+}
+.system-ready-copy{
+  font-size:12px;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--text-3);
+}
+@keyframes pulse{
+  0%{box-shadow:0 0 0 0 rgba(196,163,90,0.42)}
+  70%{box-shadow:0 0 0 12px rgba(196,163,90,0)}
+  100%{box-shadow:0 0 0 0 rgba(196,163,90,0)}
+}
+
+.side-panel{
+  position:sticky;
+  top:110px;
+  background:linear-gradient(180deg,var(--bg-1),rgba(15,16,13,0.95));
+  border:1px solid rgba(245,240,232,0.05);
+  padding:28px 26px;
+  box-shadow:var(--shadow);
+}
+.side-panel-title{
+  font-size:10px;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  color:var(--gold);
+  margin-bottom:16px;
+}
+.side-panel-body{
+  font-size:14px;
+  color:var(--text-3);
+  line-height:1.64;
+  margin-bottom:18px;
+}
+.signal-box{
+  padding:18px;
+  border:1px solid rgba(245,240,232,0.04);
+  background:rgba(10,10,8,0.22);
+  margin-bottom:18px;
+  position:relative;
+  overflow:hidden;
+}
+.signal-box::after{
+  content:'';
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  background:linear-gradient(90deg,transparent,rgba(196,163,90,0.018),transparent);
+  transform:translateX(-100%);
+  animation:signalSweep 4.4s linear infinite;
+}
+@keyframes signalSweep{to{transform:translateX(100%)}}
+.signal-box-label{
+  font-size:10px;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  color:var(--gold);
+  margin-bottom:12px;
+}
+.signal-item{
+  padding:10px 0;
+  border-top:1px solid rgba(245,240,232,0.04);
+}
+.signal-item:first-of-type{border-top:none;padding-top:0}
+.signal-name{
+  font-size:10px;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--text-4);
+  margin-bottom:6px;
+}
+.signal-value{
+  font-size:14px;
+  color:var(--text-2);
+  line-height:1.54;
+}
+.signal-strength{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin-bottom:18px;
+}
+.signal-strength-label{
+  font-size:10px;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  color:var(--text-4);
+}
+.signal-strength-bars{
+  display:flex;
+  gap:6px;
+  flex:1;
+  max-width:180px;
+}
+.signal-bar{
+  height:8px;
+  flex:1;
+  border-radius:999px;
+  background:rgba(245,240,232,0.07);
+  transition:background .28s var(--ease), box-shadow .28s var(--ease);
+}
+.signal-bar.active{
+  background:var(--gold);
+  box-shadow:0 0 10px rgba(196,163,90,0.12);
+}
+.signal-strength-value{
+  font-size:12px;
+  color:var(--text-3);
+  min-width:92px;
+  text-align:right;
+}
+.side-list{
+  list-style:none;
+  display:grid;
+  gap:14px;
+}
+.side-list li{
+  position:relative;
+  padding-left:18px;
+  font-size:13px;
+  color:var(--text-2);
+  line-height:1.56;
+}
+.side-list li::before{
+  content:'';
+  position:absolute;
+  left:0;top:8px;
+  width:5px;height:1px;
+  background:var(--gold);
+  opacity:.55;
+}
+.side-panel-foot{
+  margin-top:22px;
+  padding-top:18px;
+  border-top:1px solid var(--border-softer);
+  font-family:'Cormorant Garamond',serif;
+  font-style:italic;
+  font-size:16px;
+  color:var(--text-3);
+  line-height:1.52;
+}
+
+.engine-wrap{margin-top:42px}
+.state-panel,.result-shell,.error-panel{
+  display:none;
+  border:1px solid var(--border-soft);
+  background:linear-gradient(180deg,var(--bg-1),rgba(15,16,13,0.96));
+  box-shadow:var(--shadow);
+}
+.state-panel.visible,.result-shell.visible,.error-panel.visible{display:block}
+.state-panel{padding:30px 30px 28px}
+.state-top{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:18px;
+  margin-bottom:24px;
+}
+.state-top h3{
+  font-family:'Cormorant Garamond',serif;
+  font-size:34px;
+  line-height:1.02;
+  letter-spacing:-.02em;
+  font-weight:300;
+  color:var(--text);
+  margin-bottom:8px;
+}
+.state-top p{
+  max-width:460px;
+  font-size:14px;
+  color:var(--text-3);
+  line-height:1.62;
+}
+.status-lines{display:grid;gap:12px}
+.status-line{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:14px 16px;
+  background:var(--bg-2);
+  border:1px solid var(--border-softer);
+  transition:border-color .35s var(--ease), transform .35s var(--ease), background .35s var(--ease);
+}
+.status-label{
+  font-size:12px;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  color:var(--text-2);
+  transition:color .35s var(--ease);
+}
+.status-dot{
+  width:7px;height:7px;border-radius:50%;
+  background:var(--gold-soft);
+  opacity:.34;
+  transition:opacity .35s var(--ease), transform .35s var(--ease), background .35s var(--ease);
+}
+.status-line.active{
+  border-color:var(--border);
+  transform:translateY(-1px);
+}
+.status-line.active .status-dot{
+  opacity:1;
+  transform:scale(1.24);
+  background:var(--gold);
+}
+.status-line.active .status-label{color:var(--gold)}
+
+.error-panel{
+  padding:24px;
+  border-color:rgba(201,127,127,0.24);
+}
+.error-title{
+  font-size:10px;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  color:var(--error);
+  margin-bottom:10px;
+}
+.error-body{
+  font-size:14px;
+  color:var(--text-2);
+  line-height:1.62;
+}
+
+.result-shell{padding:32px 32px 0}
+.result-top{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-end;
+  gap:20px;
+  margin-bottom:26px;
+  padding-bottom:22px;
+  border-bottom:1px solid var(--border-softer);
+}
+.result-kicker{
+  font-size:9px;
+  letter-spacing:.2em;
+  text-transform:uppercase;
+  color:var(--gold);
+  margin-bottom:10px;
+}
+.result-title{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(34px,4vw,52px);
+  line-height:1;
+  letter-spacing:-.028em;
+  font-weight:300;
+  color:var(--text);
+}
+.result-sub{
+  max-width:320px;
+  font-size:13px;
+  color:var(--text-3);
+  line-height:1.58;
+}
+.result-friction{
+  margin-bottom:18px;
+  padding:16px 18px;
+  border:1px solid var(--border-softer);
+  background:rgba(10,10,8,0.18);
+}
+.result-friction-copy{
+  font-size:13px;
+  color:var(--text-3);
+  line-height:1.58;
+}
+.system-note{
+  padding:30px 26px;
+  border:1px solid var(--border);
+  background:linear-gradient(180deg,rgba(196,163,90,0.09),rgba(196,163,90,0.025));
+  margin-bottom:18px;
+}
+.system-note-label{
+  font-size:10px;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  color:var(--gold);
+  margin-bottom:10px;
+}
+.system-note-copy{
+  font-family:'Cormorant Garamond',serif;
+  font-size:30px;
+  line-height:1.08;
+  letter-spacing:-.02em;
+  font-weight:300;
+  color:var(--text);
+}
+.meaning-panel{
+  display:none;
+  margin-bottom:18px;
+  padding:20px 22px;
+  border:1px solid var(--border-softer);
+  background:var(--bg-1);
+}
+.meaning-panel.visible{display:block}
+.meaning-label{
+  font-size:10px;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  color:var(--gold);
+  margin-bottom:10px;
+}
+.meaning-copy{
+  font-size:16px;
+  color:var(--text-2);
+  line-height:1.64;
+}
+
+.intervention-grid{
+  display:grid;
+  gap:18px;
+  margin-bottom:20px;
+}
+.intervention-card{
+  opacity:0;
+  transform:translateY(8px);
+  transition:
+    opacity .55s var(--ease),
+    transform .55s var(--ease),
+    border-color .25s var(--ease),
+    background .25s var(--ease);
+  padding:24px;
+  border:1px solid var(--border-softer);
+  background:var(--bg-1);
+}
+.intervention-card.visible{
+  opacity:1;
+  transform:translateY(0);
+}
+.intervention-card:hover{
+  border-color:var(--border);
+  background:var(--bg-2);
+}
+.intervention-top{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:14px;
+  margin-bottom:14px;
+}
+.intervention-name{
+  font-size:10px;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  color:var(--gold);
+}
+.intervention-index{
+  font-size:10px;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--text-4);
+}
+.intervention-diagnosis{
+  font-size:17px;
+  color:var(--text);
+  line-height:1.6;
+  margin-bottom:16px;
+}
+.intervention-split{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:1px;
+  background:var(--border-softer);
+}
+.intervention-block{
+  padding:14px 16px;
+  background:rgba(10,10,8,0.16);
+}
+.intervention-block-label{
+  font-size:9px;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  color:var(--text-4);
+  margin-bottom:8px;
+}
+.intervention-block-copy{
+  font-size:14px;
+  color:var(--text-2);
+  line-height:1.68;
+}
+
+.next-move{
+  display:none;
+  margin-bottom:18px;
+  padding:24px;
+  border:1px solid var(--border-soft);
+  background:var(--bg-2);
+}
+.next-move.visible{display:block}
+.next-move-label{
+  font-size:10px;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  color:var(--gold);
+  margin-bottom:10px;
+}
+.next-move-copy{
+  font-size:18px;
+  color:var(--text);
+  line-height:1.62;
+}
+.result-meta{
+  display:none;
+  grid-template-columns:1fr 1fr;
+  gap:1px;
+  background:var(--border-softer);
+  margin-bottom:18px;
+}
+.result-meta.visible{display:grid}
+.result-meta-item{
+  background:var(--bg-1);
+  padding:16px 18px;
+}
+.result-meta-label{
+  font-size:10px;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--text-4);
+  margin-bottom:8px;
+}
+.result-meta-value{
+  font-size:14px;
+  color:var(--text-2);
+  line-height:1.56;
+}
+
+.alt-view-wrap{
+  display:none;
+  margin-bottom:18px;
+}
+.alt-view-wrap.visible{display:block}
+.view-toggle{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  min-height:44px;
+  padding:12px 18px;
+  border:1px solid var(--border-soft);
+  background:transparent;
+  color:var(--text-2);
+  font-size:10px;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  transition:all .28s var(--ease);
+  cursor:pointer;
+}
+.view-toggle:hover{
+  border-color:var(--border);
+  color:var(--text);
+}
+.alt-view-panel{
+  display:none;
+  margin-top:14px;
+  padding:22px;
+  border:1px solid var(--border-softer);
+  background:rgba(10,10,8,0.18);
+}
+.alt-view-panel.visible{display:block}
+.alt-grid{display:grid;gap:14px}
+.alt-row{
+  padding:14px 0;
+  border-top:1px solid var(--border-softer);
+}
+.alt-row:first-child{border-top:none;padding-top:0}
+.alt-label{
+  font-size:10px;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  color:var(--gold);
+  margin-bottom:8px;
+}
+.alt-copy{
+  font-size:14px;
+  color:var(--text-2);
+  line-height:1.68;
+}
+
+.preview-complete{
+  display:none;
+  margin-bottom:18px;
+  padding:18px 20px;
+  border:1px solid var(--border-softer);
+  background:rgba(10,10,8,0.18);
+}
+.preview-complete.visible{display:block}
+.preview-complete-title{
+  font-size:10px;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  color:var(--gold);
+  margin-bottom:8px;
+}
+.preview-complete-copy{
+  font-size:14px;
+  color:var(--text-3);
+  line-height:1.6;
+}
+.preview-locked .form-stage,
+.preview-locked .form-footer,
+.preview-locked .system-ready{
+  opacity:.34;
+  pointer-events:none;
+  filter:grayscale(.08);
+  transition:opacity .35s var(--ease), filter .35s var(--ease);
+}
+.preview-lock-overlay{
+  display:none;
+  position:absolute;
+  inset:0;
+  z-index:2;
+  background:linear-gradient(180deg,rgba(10,10,8,0.08),rgba(10,10,8,0.34));
+  pointer-events:none;
+}
+.preview-locked .preview-lock-overlay{display:block}
+
+.gate-proof{
+  margin-bottom:20px;
+  padding:14px 0 0;
+  border-top:1px solid var(--border-softer);
+  font-size:12px;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  color:var(--text-3);
+}
+.gate-block{
+  margin:0 -32px;
+  padding:40px 32px 36px;
+  background:linear-gradient(180deg,var(--bg-3),rgba(24,26,20,0.95));
+  border-top:1px solid var(--border-softer);
+}
+.gate-head{
+  display:grid;
+  grid-template-columns:1.2fr .8fr;
+  gap:34px;
+  align-items:end;
+  margin-bottom:24px;
+}
+.gate-headline{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(30px,3.3vw,42px);
+  line-height:1.02;
+  letter-spacing:-.028em;
+  font-weight:300;
+  color:var(--text);
+}
+.gate-copy{
+  font-size:14px;
+  color:var(--text-3);
+  line-height:1.64;
+}
+.lock-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:1px;
+  background:var(--border-softer);
+  margin-bottom:24px;
+}
+.lock-item{
+  background:var(--bg-1);
+  padding:20px;
+}
+.lock-label{
+  font-size:10px;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--text);
+  margin-bottom:8px;
+}
+.lock-body{
+  font-size:13px;
+  color:var(--text-3);
+  line-height:1.56;
+}
+.gate-actions{
+  display:flex;
+  gap:16px;
+  align-items:center;
+  flex-wrap:wrap;
+}
+.gate-note{
+  font-size:12px;
+  color:var(--text-3);
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+
+.inside-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:1px;
+  background:var(--border-softer);
+  margin-top:58px;
+}
+.inside-item{
+  background:var(--bg-1);
+  padding:34px 28px;
+}
+.inside-num{
+  font-family:'Cormorant Garamond',serif;
+  font-size:38px;
+  font-weight:300;
+  color:var(--gold-soft);
+  line-height:1;
+  margin-bottom:16px;
+  letter-spacing:-.02em;
+}
+.inside-title{
+  font-size:12px;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  color:var(--text);
+  font-weight:400;
+  margin-bottom:8px;
+}
+.inside-body{
+  font-size:13px;
+  color:var(--text-3);
+  line-height:1.62;
+}
+.inside-closing{
+  margin-top:38px;
+  max-width:680px;
+  font-family:'Cormorant Garamond',serif;
+  font-style:italic;
+  font-size:16px;
+  color:var(--text-3);
+  line-height:1.58;
+}
+
+.benchmark-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:1px;
+  background:var(--border-softer);
+  margin-top:50px;
+}
+.benchmark-item{
+  background:var(--bg-1);
+  padding:24px;
+}
+.benchmark-k{
+  font-family:'Cormorant Garamond',serif;
+  font-size:30px;
+  color:var(--gold-soft);
+  margin-bottom:8px;
+}
+.benchmark-t{
+  font-size:10px;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--text);
+  margin-bottom:10px;
+}
+.benchmark-b{
+  font-size:13px;
+  color:var(--text-3);
+  line-height:1.58;
+}
+
+.who-list{
+  list-style:none;
+  max-width:860px;
+  display:grid;
+  gap:0;
+  margin-top:48px;
+}
+.who-item{
+  padding:22px 0;
+  border-bottom:1px solid var(--border-softer);
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(20px,2.2vw,28px);
+  font-weight:300;
+  color:var(--text-2);
+  line-height:1.3;
+  display:flex;
+  align-items:baseline;
+  gap:16px;
+}
+.who-item:first-child{border-top:1px solid var(--border-softer)}
+.who-num{
+  font-size:10px;
+  letter-spacing:.12em;
+  color:var(--gold-soft);
+  font-family:'Lato',sans-serif;
+  flex-shrink:0;
+  padding-top:4px;
+}
+
+#final{
+  padding:126px 52px;
+  text-align:center;
+  position:relative;
+}
+#final::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  background:radial-gradient(ellipse at center,rgba(196,163,90,0.032) 0%,transparent 65%);
+}
+.final-headline{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(38px,5vw,68px);
+  line-height:1.01;
+  font-weight:300;
+  letter-spacing:-.03em;
+  color:var(--text);
+  max-width:860px;
+  margin:0 auto 22px;
+}
+.final-sub{
+  max-width:500px;
+  margin:0 auto 40px;
+  font-size:15px;
+  color:var(--text-3);
+  line-height:1.64;
+}
+
+footer{
+  padding:42px 52px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:20px;
+  background:var(--bg-3);
+  border-top:1px solid var(--border-softer);
+}
+.footer-mark{
+  font-family:'Cormorant Garamond',serif;
+  font-size:18px;
+  font-weight:300;
+  color:var(--gold);
+}
+.footer-links{
+  display:flex;
+  gap:24px;
+  flex-wrap:wrap;
+}
+.footer-link{
+  font-size:10px;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  color:var(--text-3);
+  transition:color .25s var(--ease);
+}
+.footer-link:hover{color:var(--gold)}
+.footer-link.footer-link--club{color:var(--gold)}
+.footer-link.footer-link--club:hover{color:var(--gold);filter:brightness(1.12)}
+
+.mobile-sticky{
+  display:none;
+  position:fixed;
+  bottom:0;left:0;right:0;
+  z-index:200;
+  padding:14px 20px;
+  background:rgba(10,10,8,0.97);
+  border-top:1px solid var(--border);
+  backdrop-filter:blur(12px);
+}
+.mobile-sticky a{
+  display:block;
+  text-align:center;
+  background:var(--gold);
+  color:var(--bg);
+  font-size:10px;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  font-weight:500;
+  padding:15px;
+}
+
+.reveal{
+  opacity:0;
+  transform:translateY(18px);
+  transition:opacity .88s var(--ease), transform .88s var(--ease);
+}
+.reveal.visible{
+  opacity:1;
+  transform:translateY(0);
+}
+.reveal-d1{transition-delay:.08s}
+.reveal-d2{transition-delay:.16s}
+.reveal-d3{transition-delay:.24s}
+
+@media(max-width:1100px){
+  .live-shell{grid-template-columns:1fr}
+  .side-panel{position:relative;top:auto}
+  .gate-head{grid-template-columns:1fr}
+  .lock-grid{grid-template-columns:1fr}
+  .benchmark-grid{grid-template-columns:1fr 1fr}
+}
+@media(max-width:900px){
+  nav{padding:18px 20px}
+  #hero{padding:120px 20px 84px;min-height:auto}
+  .hero-mark{font-size:clamp(84px,28vw,140px);left:20px}
+  .hero-meta{grid-template-columns:1fr}
+  .section-pad{padding:80px 20px}
+  .two-col{grid-template-columns:1fr;gap:40px}
+  .inside-grid{grid-template-columns:1fr}
+  .benchmark-grid{grid-template-columns:1fr}
+  .result-shell{padding:24px 24px 0}
+  .gate-block{margin:0 -24px;padding:30px 24px}
+  .result-meta{grid-template-columns:1fr}
+  .intervention-split{grid-template-columns:1fr}
+  #final{padding:88px 20px}
+  footer{padding:32px 20px;flex-direction:column;align-items:flex-start}
+  .mobile-sticky{display:block}
+  body{padding-bottom:64px}
+  .veil-inner{padding:20px}
+  .result-title{font-size:42px}
+  .system-note-copy{font-size:32px}
+  .next-move-copy{font-size:19px}
+}
+</style>
+</head>
+<body>
+
+<div id="opening-veil" aria-hidden="true">
+  <div class="veil-inner">
+    <div class="veil-mark">OI</div>
+    <div class="veil-eyebrow">Operator Intelligence</div>
+    <div class="veil-title">Live Diagnostic Preview</div>
+    <div class="veil-copy">System ready.</div>
+  </div>
+</div>
+
+<nav>
+  <div class="nav-mark">Operator Intelligence</div>
+  <a href="/index" class="nav-back">Back</a>
+</nav>
+
+<section id="hero">
+  <div class="hero-mark" aria-hidden="true">OI</div>
+  <div class="hero-content">
+    <div class="hero-eyebrow">Live diagnostic preview</div>
+    <h1 class="hero-headline">A system that identifies where you’re operating incorrectly and tells you what to change next.</h1>
+    <p class="hero-sub">A live preview of a private diagnostic system. Enter a real problem. Receive a structured correction.</p>
+    <div class="hero-ctas">
+      <a href="#entry" class="btn-gold-outline">Enter Diagnostic</a>
+      <a href="#inside" class="hero-secondary">Inside the full system</a>
+    </div>
+
+    <div class="hero-meta">
+      <div class="hero-meta-item">
+        <div class="hero-meta-label">What this is</div>
+        <div class="hero-meta-copy">A live diagnostic preview.</div>
+      </div>
+      <div class="hero-meta-item">
+        <div class="hero-meta-label">What it returns</div>
+        <div class="hero-meta-copy">One issue. Three interventions. One next move.</div>
+      </div>
+      <div class="hero-meta-item">
+        <div class="hero-meta-label">What it is not</div>
+        <div class="hero-meta-copy">Not a dashboard. Not general advice.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section-pad" id="entry">
+  <div class="section-eyebrow reveal">Before you proceed</div>
+  <div class="entry-panel reveal reveal-d1">
+    <div class="entry-kicker">System entry</div>
+    <p class="entry-copy">This system performs best with <strong>real problems</strong>. Weak input produces weak output. Continue only if the issue is current.</p>
+    <div class="hero-ctas" style="opacity:1;animation:none">
+      <a href="#live-diagnostic" class="btn-gold-solid">Proceed to Diagnostic</a>
+      <a href="#how" class="btn-dark-outline">How it works</a>
+    </div>
+  </div>
+</section>
+
+<section class="section-pad">
+  <div class="two-col">
+    <div>
+      <div class="section-eyebrow reveal">What to expect</div>
+      <h2 class="section-headline reveal reveal-d1">This preview is designed to feel controlled, not casual.</h2>
+    </div>
+    <div>
+      <p class="what-body reveal">The point is not to simulate an entire platform. The point is to make one interaction precise enough that the system feels real immediately.</p>
+      <ul class="plain-list reveal reveal-d1">
+        <li>Weak input should not produce a strong answer</li>
+        <li>The system isolates structural issues</li>
+        <li>The public preview is intentionally narrow</li>
+      </ul>
+      <div class="italic-close reveal reveal-d2">A good result should feel less like inspiration and more like correction.</div>
+    </div>
+  </div>
+</section>
+
+<section class="section-pad" id="live-diagnostic">
+  <div class="section-eyebrow reveal">Diagnostic interface</div>
+  <div class="live-shell" id="live-shell">
+    <div class="form-wrap" id="form-wrap">
+      <div class="preview-lock-overlay"></div>
+
+      <h2 class="section-headline reveal reveal-d1">Run a live diagnostic preview.</h2>
+      <p class="form-intro reveal reveal-d2">Enter a real problem. Stronger input produces sharper correction.</p>
+
+      <form id="operator-form" novalidate>
+        <div class="form-stage reveal reveal-d2">
+
+          <div class="step-card active" data-step="1">
+            <div class="step-top">
+              <div class="step-label">Step 01</div>
+              <div class="step-index">Current objective</div>
+            </div>
+            <div class="step-question">What are you trying to do?</div>
+            <div class="step-help">Name the actual objective, not the task.</div>
+            <input class="field-input" type="text" id="goal" name="goal" placeholder="Example: Clarify a high-ticket offer, tighten a workflow, improve execution." required>
+          </div>
+
+          <div class="step-card" data-step="2">
+            <div class="step-top">
+              <div class="step-label">Step 02</div>
+              <div class="step-index">Primary friction</div>
+            </div>
+            <div class="step-question">What is breaking or slowing this down?</div>
+            <div class="step-help">Describe what is repeating, stalling, or staying unclear.</div>
+            <div class="reveal-step" id="reveal-2">
+              <textarea class="field-textarea" id="friction" name="friction" placeholder="What is taking too long, staying unclear, or forcing repeated work?" required></textarea>
+            </div>
+          </div>
+
+          <div class="step-card" data-step="3">
+            <div class="step-top">
+              <div class="step-label">Step 03</div>
+              <div class="step-index">Previous attempts</div>
+            </div>
+            <div class="step-question">What have you already tried?</div>
+            <div class="step-help">This distinguishes a new issue from a repeated pattern.</div>
+            <div class="reveal-step" id="reveal-3">
+              <textarea class="field-textarea" id="tried" name="tried" placeholder="What have you rewritten, delegated, automated, tested, or changed already?" required></textarea>
+            </div>
+          </div>
+
+          <div class="step-card" data-step="4">
+            <div class="step-top">
+              <div class="step-label">Step 04</div>
+              <div class="step-index">Immediate priority</div>
+            </div>
+            <div class="step-question">What kind of outcome matters most right now?</div>
+            <div class="step-help">Choose the pressure point that matters most now.</div>
+            <div class="reveal-step" id="reveal-4">
+              <select class="field-select" id="priority" name="priority" required>
+                <option value="" selected disabled>Select one</option>
+                <option value="Clearer positioning">Clearer positioning</option>
+                <option value="Faster execution">Faster execution</option>
+                <option value="Better AI adoption">Better AI adoption</option>
+                <option value="Workflow simplification">Workflow simplification</option>
+                <option value="Offer clarity">Offer clarity</option>
+                <option value="Operational structure">Operational structure</option>
+              </select>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="form-footer reveal reveal-d3">
+          <button type="submit" class="btn-gold-solid" id="submit-btn">Run Diagnostic</button>
+          <p class="form-note">Public preview is intentionally narrow.</p>
+        </div>
+
+        <div class="system-ready reveal reveal-d3">
+          <span class="system-ready-dot" aria-hidden="true"></span>
+          <span class="system-ready-copy">System ready</span>
+        </div>
+      </form>
+
+      <div class="engine-wrap">
+        <div class="state-panel" id="state-panel" aria-live="polite">
+          <div class="state-top">
+            <div>
+              <h3>Running diagnostic...</h3>
+              <p>Separating symptom from cause. Identifying structural failures. Mapping correction points.</p>
+            </div>
+          </div>
+          <div class="status-lines">
+            <div class="status-line active"><span class="status-label">Parsing input quality</span><span class="status-dot"></span></div>
+            <div class="status-line"><span class="status-label">Separating symptom from cause</span><span class="status-dot"></span></div>
+            <div class="status-line"><span class="status-label">Mapping intervention points</span><span class="status-dot"></span></div>
+            <div class="status-line"><span class="status-label">Preparing correction layer</span><span class="status-dot"></span></div>
+          </div>
+        </div>
+
+        <div class="error-panel" id="error-panel" aria-live="polite">
+          <div class="error-title">Diagnostic unavailable</div>
+          <div class="error-body">Input signal too vague to generate a useful intervention. Tighten the signal and try again.</div>
+        </div>
+
+        <div class="result-shell" id="result-shell" aria-live="polite">
+          <div class="result-top">
+            <div>
+              <div class="result-kicker">Diagnostic returned</div>
+              <h3 class="result-title">Intervention Preview</h3>
+            </div>
+            <p class="result-sub">A limited public layer. The private system goes deeper.</p>
+          </div>
+
+          <div class="result-friction">
+            <div class="result-friction-copy" id="result-friction-copy"></div>
+          </div>
+
+          <div class="system-note">
+            <div class="system-note-label">System Note</div>
+            <div class="system-note-copy" id="system-note-copy"></div>
+          </div>
+
+          <div class="meaning-panel" id="meaning-panel">
+            <div class="meaning-label">Interpretation</div>
+            <div class="meaning-copy" id="meaning-copy"></div>
+          </div>
+
+          <div class="intervention-grid" id="intervention-grid"></div>
+
+          <div class="next-move" id="next-move">
+            <div class="next-move-label">Immediate Next Move</div>
+            <div class="next-move-copy" id="next-move-copy"></div>
+          </div>
+
+          <div class="result-meta" id="result-meta">
+            <div class="result-meta-item">
+              <div class="result-meta-label">Confidence</div>
+              <div class="result-meta-value" id="confidence-copy"></div>
+            </div>
+            <div class="result-meta-item">
+              <div class="result-meta-label">Risk if unchanged</div>
+              <div class="result-meta-value" id="risk-copy"></div>
+            </div>
+          </div>
+
+          <div class="alt-view-wrap" id="alt-view-wrap">
+            <button class="view-toggle" type="button" id="view-toggle">View as System Breakdown</button>
+            <div class="alt-view-panel" id="alt-view-panel">
+              <div class="alt-grid">
+                <div class="alt-row">
+                  <div class="alt-label">Issue</div>
+                  <div class="alt-copy" id="alt-issue"></div>
+                </div>
+                <div class="alt-row">
+                  <div class="alt-label">Root Cause</div>
+                  <div class="alt-copy" id="alt-root"></div>
+                </div>
+                <div class="alt-row">
+                  <div class="alt-label">Leverage Point</div>
+                  <div class="alt-copy" id="alt-leverage"></div>
+                </div>
+                <div class="alt-row">
+                  <div class="alt-label">Correction Path</div>
+                  <div class="alt-copy" id="alt-correction"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="preview-complete" id="preview-complete">
+            <div class="preview-complete-title">Preview complete</div>
+            <div class="preview-complete-copy">You have reached the limit of this preview. Full access is private.</div>
+          </div>
+
+          <div class="gate-block" id="inside">
+            <div class="gate-proof">Built from operational pattern recognition and intervention-based diagnostic logic.</div>
+
+            <div class="gate-head">
+              <h4 class="gate-headline">This preview isolates one issue. The full diagnostic identifies the 3–5 highest-cost breakdowns across your operation.</h4>
+              <p class="gate-copy">The full diagnostic identifies where structure, positioning, execution, and leverage break down together, then maps the correction path.</p>
+            </div>
+
+            <div class="lock-grid">
+              <div class="lock-item">
+                <div class="lock-label">Pattern detection</div>
+                <div class="lock-body">Repeated inefficiencies tracked over time.</div>
+              </div>
+              <div class="lock-item">
+                <div class="lock-label">Memory layer</div>
+                <div class="lock-body">The system holds context instead of restarting.</div>
+              </div>
+              <div class="lock-item">
+                <div class="lock-label">Intervention history</div>
+                <div class="lock-body">Corrections stack instead of resetting.</div>
+              </div>
+              <div class="lock-item">
+                <div class="lock-label">Operator calibration</div>
+                <div class="lock-body">Precision improves around how you work.</div>
+              </div>
+              <div class="lock-item">
+                <div class="lock-label">Structural diagnostics</div>
+                <div class="lock-body">Deeper evaluation across offers, workflows, and systems.</div>
+              </div>
+              <div class="lock-item">
+                <div class="lock-label">Private deployment</div>
+                <div class="lock-body">Built for operators responsible for outcomes.</div>
+              </div>
+            </div>
+
+            <div class="gate-actions">
+              <a href="/snapshot" class="btn-gold-solid">Book Snapshot .  $950</a>
+              <a href="/access" class="btn-dark-outline">Request Private Access</a>
+              <div class="gate-note">A larger system sits behind this layer.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <aside class="side-panel reveal reveal-d3">
+      <div class="side-panel-title">Signal detected</div>
+      <p class="side-panel-body">The system should begin reading clearly before it responds.</p>
+
+      <div class="signal-strength">
+        <div class="signal-strength-label">Input quality</div>
+        <div class="signal-strength-bars">
+          <div class="signal-bar" id="bar-1"></div>
+          <div class="signal-bar" id="bar-2"></div>
+          <div class="signal-bar" id="bar-3"></div>
+        </div>
+        <div class="signal-strength-value" id="signal-strength-value">Weak signal</div>
+      </div>
+
+      <div class="signal-box">
+        <div class="signal-box-label">Live mirror</div>
+
+        <div class="signal-item">
+          <div class="signal-name">Goal</div>
+          <div class="signal-value" id="mirror-goal">Awaiting active signal.</div>
+        </div>
+
+        <div class="signal-item">
+          <div class="signal-name">Friction</div>
+          <div class="signal-value" id="mirror-friction">No active signal yet.</div>
+        </div>
+
+        <div class="signal-item">
+          <div class="signal-name">Pattern</div>
+          <div class="signal-value" id="mirror-pattern">The system will infer a likely pattern as the input sharpens.</div>
+        </div>
+
+        <div class="signal-item">
+          <div class="signal-name">Priority</div>
+          <div class="signal-value" id="mirror-priority">No priority selected.</div>
+        </div>
+      </div>
+
+      <ul class="side-list">
+        <li>Specific input improves output</li>
+        <li>Not every signal deserves a strong answer</li>
+        <li>This layer demonstrates the correction logic only</li>
+      </ul>
+
+      <div class="side-panel-foot">A good preview should feel selective, slightly severe, and immediately useful.</div>
+    </aside>
+  </div>
+</section>
+
+<section class="section-pad" id="how">
+  <div class="section-eyebrow reveal">How it works</div>
+  <h2 class="section-headline reveal reveal-d1">The structure is simple. The judgment is the product.</h2>
+
+  <div class="inside-grid">
+    <div class="inside-item reveal">
+      <div class="inside-num">01</div>
+      <div class="inside-title">Capture</div>
+      <div class="inside-body">A real operational problem enters through constrained inputs designed to reduce vagueness.</div>
+    </div>
+    <div class="inside-item reveal reveal-d1">
+      <div class="inside-num">02</div>
+      <div class="inside-title">Diagnosis</div>
+      <div class="inside-body">The system separates symptom from cause and looks for structural failure rather than surface frustration.</div>
+    </div>
+    <div class="inside-item reveal reveal-d2">
+      <div class="inside-num">03</div>
+      <div class="inside-title">Intervention</div>
+      <div class="inside-body">The output tells you what is incorrectly structured, where leverage is being missed, and what to correct next.</div>
+    </div>
+  </div>
+
+  <p class="inside-closing reveal">The value is not in generating text quickly. The value is in isolating the right issue with enough accuracy that the next move becomes obvious.</p>
+</section>
+
+<section class="section-pad">
+  <div class="section-eyebrow reveal">Inside the full system</div>
+  <h2 class="section-headline reveal reveal-d1">This layer demonstrates how the system identifies and corrects operational inefficiencies at scale.</h2>
+
+  <div class="benchmark-grid">
+    <div class="benchmark-item reveal">
+      <div class="benchmark-k">A</div>
+      <div class="benchmark-t">Intervention layer</div>
+      <div class="benchmark-b">What you are seeing here. Narrow scope. Immediate correction. High visibility.</div>
+    </div>
+    <div class="benchmark-item reveal reveal-d1">
+      <div class="benchmark-k">B</div>
+      <div class="benchmark-t">Memory layer</div>
+      <div class="benchmark-b">Patterns tracked over time so repeated inefficiencies become easier to detect.</div>
+    </div>
+    <div class="benchmark-item reveal reveal-d2">
+      <div class="benchmark-k">C</div>
+      <div class="benchmark-t">Calibration layer</div>
+      <div class="benchmark-b">Precision improves as the system learns how the operator thinks, works, and stalls.</div>
+    </div>
+    <div class="benchmark-item reveal reveal-d3">
+      <div class="benchmark-k">D</div>
+      <div class="benchmark-t">Deployment layer</div>
+      <div class="benchmark-b">Where insight becomes structure, correction, and measurable operational change.</div>
+    </div>
+  </div>
+</section>
+
+<section class="section-pad">
+  <div class="section-eyebrow reveal">Who this fits</div>
+  <h2 class="section-headline reveal reveal-d1">Built for people already responsible for outcomes.</h2>
+  <ul class="who-list">
+    <li class="who-item reveal"><span class="who-num">01</span>Founders and operators trying to remove friction from execution</li>
+    <li class="who-item reveal reveal-d1"><span class="who-num">02</span>Business owners who know something is off and need precision</li>
+    <li class="who-item reveal reveal-d2"><span class="who-num">03</span>Teams that need a correction layer, not more stimulation</li>
+    <li class="who-item reveal reveal-d3"><span class="who-num">04</span>Selective buyers and partners evaluating system potential</li>
+  </ul>
+</section>
+
+<section id="final">
+  <h2 class="final-headline reveal">A narrow preview should still feel like something real is happening.</h2>
+  <p class="final-sub reveal reveal-d1">Run the diagnostic. Then decide whether you want the private layer.</p>
+  <a href="#live-diagnostic" class="btn-gold-solid reveal reveal-d2">Run the Diagnostic</a>
+</section>
+
+<footer>
+  <div class="footer-mark">Operator Intelligence</div>
+  <nav class="footer-links">
+    <a href="/" class="footer-link">Home</a>
+    <a href="/pricing" class="footer-link">Pricing</a>
+    <a href="/access" class="footer-link footer-link--club">.5% Club</a>
+    <a href="https://stephuary.substack.com" class="footer-link" target="_blank" rel="noopener">Substack</a>
+    <a href="https://onlysometimesclub.com" class="footer-link" target="_blank" rel="noopener noreferrer">Only Sometimes Club</a>
+  </nav>
+</footer>
+
+<div class="mobile-sticky">
+  <a href="#live-diagnostic">Run the Diagnostic</a>
+</div>
+
+<script>
+const observer = new IntersectionObserver(function(entries){
+  entries.forEach(function(entry){
+    if(entry.isIntersecting) entry.target.classList.add('visible');
+  });
+},{threshold:0.14});
+document.querySelectorAll('.reveal').forEach(function(el){ observer.observe(el); });
+
+window.addEventListener('load', function(){
+  setTimeout(function(){
+    document.getElementById('opening-veil').classList.add('hidden');
+  }, 1600);
+});
+
+const goalInput = document.getElementById('goal');
+const frictionInput = document.getElementById('friction');
+const triedInput = document.getElementById('tried');
+const priorityInput = document.getElementById('priority');
+
+const reveal2 = document.getElementById('reveal-2');
+const reveal3 = document.getElementById('reveal-3');
+const reveal4 = document.getElementById('reveal-4');
+const stepCards = document.querySelectorAll('.step-card');
+
+function updateSteps(){
+  const goalFilled = goalInput.value.trim().length > 4;
+  const frictionFilled = frictionInput.value.trim().length > 12;
+  const triedFilled = triedInput.value.trim().length > 12;
+
+  if(goalFilled){
+    reveal2.classList.add('visible');
+    stepCards[0].classList.add('complete');
+    stepCards[1].classList.add('active');
+  } else {
+    reveal2.classList.remove('visible');
+    reveal3.classList.remove('visible');
+    reveal4.classList.remove('visible');
+    stepCards[0].classList.remove('complete');
+    stepCards[1].classList.remove('active','complete');
+    stepCards[2].classList.remove('active','complete');
+    stepCards[3].classList.remove('active');
+  }
+
+  if(frictionFilled && goalFilled){
+    reveal3.classList.add('visible');
+    stepCards[1].classList.add('complete');
+    stepCards[2].classList.add('active');
+  } else {
+    reveal3.classList.remove('visible');
+    reveal4.classList.remove('visible');
+    stepCards[1].classList.remove('complete');
+    stepCards[2].classList.remove('active','complete');
+    stepCards[3].classList.remove('active');
+  }
+
+  if(triedFilled && frictionFilled && goalFilled){
+    reveal4.classList.add('visible');
+    stepCards[2].classList.add('complete');
+    stepCards[3].classList.add('active');
+  } else {
+    reveal4.classList.remove('visible');
+    stepCards[2].classList.remove('complete');
+    stepCards[3].classList.remove('active');
+  }
+}
+
+goalInput.addEventListener('input', updateSteps);
+frictionInput.addEventListener('input', updateSteps);
+triedInput.addEventListener('input', updateSteps);
+
+const mirrorGoal = document.getElementById('mirror-goal');
+const mirrorFriction = document.getElementById('mirror-friction');
+const mirrorPattern = document.getElementById('mirror-pattern');
+const mirrorPriority = document.getElementById('mirror-priority');
+const signalValue = document.getElementById('signal-strength-value');
+const bars = [document.getElementById('bar-1'), document.getElementById('bar-2'), document.getElementById('bar-3')];
+
+function summarizeText(text, fallback){
+  const clean = text.trim();
+  if(!clean) return fallback;
+  if(clean.length <= 72) return clean;
+  return clean.slice(0,72).replace(/\s+\S*$/, '') + '…';
+}
+function inferPattern(goal, friction, tried, priority){
+  const combined = (goal + ' ' + friction + ' ' + tried + ' ' + priority).toLowerCase();
+  if(combined.includes('rewrite') || combined.includes('rewriting') || combined.includes('copy')) return 'Surface-level iteration';
+  if(combined.includes('offer') || combined.includes('position') || combined.includes('positioning')) return 'Structural clarity issue';
+  if(combined.includes('workflow') || combined.includes('process') || combined.includes('system')) return 'Improvised execution pattern';
+  if(combined.includes('ai') || combined.includes('automation')) return 'Leverage being added too late';
+  if(combined.includes('time') || combined.includes('slow') || combined.includes('too long')) return 'Misallocation of effort';
+  return 'Pattern still forming';
+}
+function getSignalScore(){
+  let score = 0;
+  if(goalInput.value.trim().length > 10) score++;
+  if(frictionInput.value.trim().length > 24) score++;
+  if(triedInput.value.trim().length > 18) score++;
+  if(priorityInput.value) score++;
+  return Math.min(score, 3);
+}
+function updateSignalMeter(){
+  const score = getSignalScore();
+  bars.forEach((bar,index)=>{ bar.classList.toggle('active', index < score); });
+  if(score <= 1) signalValue.textContent = 'Weak signal';
+  if(score === 2) signalValue.textContent = 'Usable signal';
+  if(score >= 3) signalValue.textContent = 'High signal';
+}
+function updateMirror(){
+  const goal = goalInput.value;
+  const friction = frictionInput.value;
+  const tried = triedInput.value;
+  const priority = priorityInput.value;
+
+  mirrorGoal.textContent = summarizeText(goal, 'Awaiting active signal.');
+  mirrorFriction.textContent = summarizeText(friction, 'No active signal yet.');
+  mirrorPriority.textContent = priority || 'No priority selected.';
+  mirrorPattern.textContent = inferPattern(goal, friction, tried, priority);
+  updateSignalMeter();
+}
+goalInput.addEventListener('input', updateMirror);
+frictionInput.addEventListener('input', updateMirror);
+triedInput.addEventListener('input', updateMirror);
+priorityInput.addEventListener('change', updateMirror);
+
+const form = document.getElementById('operator-form');
+const submitBtn = document.getElementById('submit-btn');
+const statePanel = document.getElementById('state-panel');
+const resultShell = document.getElementById('result-shell');
+const errorPanel = document.getElementById('error-panel');
+
+const systemNoteCopy = document.getElementById('system-note-copy');
+const meaningPanel = document.getElementById('meaning-panel');
+const meaningCopy = document.getElementById('meaning-copy');
+const interventionGrid = document.getElementById('intervention-grid');
+const nextMoveBlock = document.getElementById('next-move');
+const nextMoveCopy = document.getElementById('next-move-copy');
+const resultMeta = document.getElementById('result-meta');
+const confidenceCopy = document.getElementById('confidence-copy');
+const riskCopy = document.getElementById('risk-copy');
+const resultFrictionCopy = document.getElementById('result-friction-copy');
+
+const altViewWrap = document.getElementById('alt-view-wrap');
+const viewToggle = document.getElementById('view-toggle');
+const altViewPanel = document.getElementById('alt-view-panel');
+const altIssue = document.getElementById('alt-issue');
+const altRoot = document.getElementById('alt-root');
+const altLeverage = document.getElementById('alt-leverage');
+const altCorrection = document.getElementById('alt-correction');
+
+const previewComplete = document.getElementById('preview-complete');
+const liveShell = document.getElementById('live-shell');
+let currentAltVisible = false;
+let previewUsed = false;
+
+viewToggle.addEventListener('click', function(){
+  currentAltVisible = !currentAltVisible;
+  altViewPanel.classList.toggle('visible', currentAltVisible);
+  viewToggle.textContent = currentAltVisible ? 'Hide System Breakdown' : 'View as System Breakdown';
+});
+
+const previewResponses = [
+  {
+    trigger:['offer','position','positioning','copy','rewrite'],
+    system_note:"This is incorrectly structured. You are trying to improve visible language before deciding what the offer actually is.",
+    meaning:"You are not stuck. You are operating inside an unclear offer hierarchy, which is why the work keeps repeating.",
+    interventions:[
+      {
+        title:"Eliminate",
+        diagnosis:"You are revising downstream copy before the underlying decision framework is stable. That turns refinement into repetition.",
+        consequence:"Continued rewriting without stronger conversion.",
+        action:"Stop editing outward-facing language until the offer, buyer, outcome, and proof are reduced to one clean statement."
+      },
+      {
+        title:"Systemize",
+        diagnosis:"The positioning process is being rebuilt each time instead of run through a fixed structure.",
+        consequence:"Each revision starts too close to zero.",
+        action:"Use one decision framework only: problem, buyer, outcome, proof, scope. Do not write copy before those five lines exist."
+      },
+      {
+        title:"Leverage",
+        diagnosis:"AI is being used too late, after the confusion has already spread through the work.",
+        consequence:"Speed improves slightly while clarity stays weak.",
+        action:"Use AI to pressure-test clarity after the structure is defined, not to rescue unclear work at the end."
+      }
+    ],
+    next_move:"Write the offer in one sentence and the buyer in one sentence. Do not touch the page again until both are clear.",
+    confidence:"High",
+    risk:"Continued drag and weaker conversion.",
+    alt:{
+      issue:"Repeated rewriting without stronger conversion.",
+      root:"The offer is structurally unclear, so the copy keeps carrying work it cannot solve.",
+      leverage:"Clarify the offer architecture before changing another visible asset.",
+      correction:"Reduce the system to one clean promise, then rebuild the page from that line outward."
+    }
+  },
+  {
+    trigger:['workflow','process','system','execute','execution'],
+    system_note:"This is a sequencing failure. Strategy, production, and review are collapsing into the same block of work.",
+    meaning:"The issue is not capacity first. The issue is that the order of operations is inefficient, so everything feels heavier than it is.",
+    interventions:[
+      {
+        title:"Eliminate",
+        diagnosis:"You are mixing decision-making and production in the same session, which weakens both.",
+        consequence:"Judgment degrades while execution slows.",
+        action:"Separate planning from execution immediately. One block decides. One block builds. One block reviews."
+      },
+      {
+        title:"Systemize",
+        diagnosis:"Recurring work still depends too much on improvisation.",
+        consequence:"The same decisions keep being remade manually.",
+        action:"Create a standard input sheet for repeated tasks: objective, constraint, proof, output type, deadline."
+      },
+      {
+        title:"Leverage",
+        diagnosis:"Manual effort is still occupying work that should be compressed.",
+        consequence:"High-value time is spent on setup and cleanup.",
+        action:"Use AI for first-pass structuring and cleanup only after the constraints are set."
+      }
+    ],
+    next_move:"Choose one repeated task this week and convert it into a fixed process before doing it manually again.",
+    confidence:"High",
+    risk:"Continued drag and decision fatigue.",
+    alt:{
+      issue:"Work feels heavier than it should.",
+      root:"The sequence is wrong, so high-value judgment is leaking into low-value execution.",
+      leverage:"Separate deciding from doing so each mode can perform properly.",
+      correction:"Install one fixed structure for repeated work and stop remaking the same decisions."
+    }
+  },
+  {
+    trigger:['ai','automation','automate'],
+    system_note:"AI is being added as a convenience layer instead of a leverage layer. That is why it feels helpful but not transformative.",
+    meaning:"The issue is not whether AI is available. The issue is that it has not been inserted at the correct point in the workflow.",
+    interventions:[
+      {
+        title:"Eliminate",
+        diagnosis:"You are still doing manual drafting and sorting in places where judgment is not the bottleneck.",
+        consequence:"AI remains cosmetic instead of structural.",
+        action:"Remove AI from vanity use and place it only where repeated, low-leverage effort is consuming time."
+      },
+      {
+        title:"Systemize",
+        diagnosis:"There is no fixed rule for when AI should be used and when human judgment should stay in control.",
+        consequence:"Usage is inconsistent and results feel uneven.",
+        action:"Build a simple rule: AI for first-pass structure and cleanup. Human for strategy, taste, and final decisions."
+      },
+      {
+        title:"Leverage",
+        diagnosis:"The current use pattern improves speed a little but does not change how work is organized.",
+        consequence:"Efficiency improves without real operating change.",
+        action:"Move AI earlier in the process so it reduces setup time, not just polishing time."
+      }
+    ],
+    next_move:"Pick one repeated manual task and decide whether AI should structure it, sort it, or remove it entirely.",
+    confidence:"Medium to high",
+    risk:"AI stays cosmetic while the workflow stays inefficient.",
+    alt:{
+      issue:"AI is present but not changing outcomes enough.",
+      root:"It is being applied in the wrong part of the workflow.",
+      leverage:"Use AI where repetition is high and judgment is low.",
+      correction:"Reassign AI to structure and compression rather than last-minute assistance."
+    }
+  },
+  {
+    trigger:['time','slow','too long','delay','stuck'],
+    system_note:"This is a misallocation of effort. Too much attention is being given to work that does not materially change the result.",
+    meaning:"You do not need more force first. You need a stronger hierarchy for where time should and should not go.",
+    interventions:[
+      {
+        title:"Eliminate",
+        diagnosis:"Low-impact tasks are receiving the same quality of attention as high-impact decisions.",
+        consequence:"Busyness expands while meaningful movement stays flat.",
+        action:"Cut or delay anything this week that does not affect clarity, delivery quality, or conversion."
+      },
+      {
+        title:"Systemize",
+        diagnosis:"There is no strong filter separating critical work from attractive but secondary work.",
+        consequence:"Everything feels urgent, so nothing gets proper weight.",
+        action:"Classify every task into three tiers only: critical, useful, later."
+      },
+      {
+        title:"Leverage",
+        diagnosis:"Compression opportunities are being missed because everything is still being treated as hand-built.",
+        consequence:"Manual effort keeps expanding to fill the system.",
+        action:"Use templates, first-pass automation, and tighter decision criteria before adding more effort."
+      }
+    ],
+    next_move:"Reduce your current working list by half. Keep only what changes clarity, delivery, or revenue this week.",
+    confidence:"High",
+    risk:"Continued busyness with weak movement.",
+    alt:{
+      issue:"Work is consuming time without proportional movement.",
+      root:"The hierarchy is weak, so low-value tasks keep entering the same field of attention.",
+      leverage:"Create harder filters before adding more effort.",
+      correction:"Reduce task volume and protect the small set of actions that actually move the system."
+    }
+  },
+  {
+    trigger:[],
+    system_note:"The visible issue is only part of the problem. The deeper issue is that the work is being treated symptom by symptom instead of structurally.",
+    meaning:"You are likely trying to improve outputs one at a time when the operating logic underneath them needs correction first.",
+    interventions:[
+      {
+        title:"Eliminate",
+        diagnosis:"You are still responding to visible friction as if each symptom is separate.",
+        consequence:"Symptoms disappear briefly and then return in new forms.",
+        action:"Stop fixing downstream manifestations one by one until the root structure is named clearly."
+      },
+      {
+        title:"Systemize",
+        diagnosis:"The work needs a stronger governing framework so repeated decisions stop being made from scratch.",
+        consequence:"The system remains dependent on improvisation.",
+        action:"Define the core logic first: what matters, what does not, and what the system is actually trying to produce."
+      },
+      {
+        title:"Leverage",
+        diagnosis:"Better tools will not solve a weak structure on their own.",
+        consequence:"You add capability without enough clarity to direct it.",
+        action:"Use AI and automation only after the operating framework is clarified."
+      }
+    ],
+    next_move:"Name the real objective, the main constraint, and the single outcome that matters most. Keep those visible while you work.",
+    confidence:"Medium",
+    risk:"Repeated effort with uneven return.",
+    alt:{
+      issue:"Visible problems keep recurring in new forms.",
+      root:"The operating logic is under-defined, so symptoms keep returning.",
+      leverage:"Clarify the structure before adding new output.",
+      correction:"Reduce the work to one governing framework and rebuild from there."
+    }
+  }
+];
+
+function chooseResponse(payload){
+  const combined = `${payload.goal} ${payload.friction} ${payload.tried} ${payload.priority}`.toLowerCase();
+  for(const item of previewResponses){
+    if(item.trigger.some(term => combined.includes(term))) return item;
+  }
+  return previewResponses[previewResponses.length - 1];
+}
+
+function isInputStrong(payload){
+  const goalStrong = payload.goal.trim().length > 10;
+  const frictionStrong = payload.friction.trim().length > 24;
+  const triedStrong = payload.tried.trim().length > 18;
+  const priorityStrong = !!payload.priority;
+  return goalStrong && frictionStrong && triedStrong && priorityStrong;
+}
+
+function cycleStatuses(){
+  const lines = Array.from(document.querySelectorAll('.status-line'));
+  lines.forEach(line => line.classList.remove('active'));
+  let step = 0;
+  lines[0].classList.add('active');
+  const interval = setInterval(function(){
+    lines.forEach(line => line.classList.remove('active'));
+    step += 1;
+    if(step < lines.length){
+      lines[step].classList.add('active');
+    } else {
+      clearInterval(interval);
+    }
+  }, 820);
+  return interval;
+}
+
+function resetResultVisuals(){
+  interventionGrid.innerHTML = '';
+  meaningPanel.classList.remove('visible');
+  nextMoveBlock.classList.remove('visible');
+  resultMeta.classList.remove('visible');
+  altViewWrap.classList.remove('visible');
+  altViewPanel.classList.remove('visible');
+  currentAltVisible = false;
+  viewToggle.textContent = 'View as System Breakdown';
+  previewComplete.classList.remove('visible');
+}
+
+function renderResult(payload, data){
+  resultFrictionCopy.textContent = `Input detected: ${summarizeText(payload.goal, '')} — ${inferPattern(payload.goal, payload.friction, payload.tried, payload.priority)}.`;
+  systemNoteCopy.textContent = data.system_note;
+  meaningCopy.textContent = data.meaning;
+  confidenceCopy.textContent = data.confidence;
+  riskCopy.textContent = data.risk;
+  nextMoveCopy.textContent = data.next_move;
+
+  altIssue.textContent = data.alt.issue;
+  altRoot.textContent = data.alt.root;
+  altLeverage.textContent = data.alt.leverage;
+  altCorrection.textContent = data.alt.correction;
+
+  meaningPanel.classList.add('visible');
+
+  data.interventions.forEach(function(item, index){
+    const card = document.createElement('div');
+    card.className = 'intervention-card';
+    card.innerHTML = `
+      <div class="intervention-top">
+        <div class="intervention-name">Intervention ${String(index + 1).padStart(2,'0')} .  ${item.title}</div>
+        <div class="intervention-index">Correction Layer</div>
+      </div>
+      <div class="intervention-diagnosis">${item.diagnosis}</div>
+      <div class="intervention-split">
+        <div class="intervention-block">
+          <div class="intervention-block-label">If unchanged</div>
+          <div class="intervention-block-copy">${item.consequence}</div>
+        </div>
+        <div class="intervention-block">
+          <div class="intervention-block-label">What changes</div>
+          <div class="intervention-block-copy">${item.action}</div>
+        </div>
+      </div>
+    `;
+    interventionGrid.appendChild(card);
+  });
+
+  const cards = Array.from(document.querySelectorAll('.intervention-card'));
+
+  setTimeout(()=>{ cards[0] && cards[0].classList.add('visible'); }, 520);
+  setTimeout(()=>{ cards[1] && cards[1].classList.add('visible'); }, 980);
+  setTimeout(()=>{ cards[2] && cards[2].classList.add('visible'); }, 1400);
+  setTimeout(()=>{ nextMoveBlock.classList.add('visible'); }, 1760);
+  setTimeout(()=>{ resultMeta.classList.add('visible'); }, 2040);
+  setTimeout(()=>{ altViewWrap.classList.add('visible'); }, 2260);
+  setTimeout(()=>{ previewComplete.classList.add('visible'); }, 2480);
+}
+
+function fakeDiagnosticRun(payload){
+  return new Promise(function(resolve,reject){
+    setTimeout(function(){
+      if(!isInputStrong(payload)){
+        reject(new Error('weak-input'));
+        return;
+      }
+      resolve(chooseResponse(payload));
+    }, 2900);
+  });
+}
+
+form.addEventListener('submit', async function(e){
+  e.preventDefault();
+  if(previewUsed) return;
+
+  const payload = {
+    goal: goalInput.value.trim(),
+    friction: frictionInput.value.trim(),
+    tried: triedInput.value.trim(),
+    priority: priorityInput.value
+  };
+
+  if(!form.checkValidity()){
+    form.reportValidity();
+    return;
+  }
+
+  submitBtn.disabled = true;
+  submitBtn.style.opacity = '.55';
+  errorPanel.classList.remove('visible');
+  resultShell.classList.remove('visible');
+  resetResultVisuals();
+  statePanel.classList.add('visible');
+  statePanel.scrollIntoView({behavior:'smooth', block:'start'});
+
+  const statusInterval = cycleStatuses();
+
+  try{
+    const data = await fakeDiagnosticRun(payload);
+    clearInterval(statusInterval);
+    statePanel.classList.remove('visible');
+    resultShell.classList.add('visible');
+    resultShell.scrollIntoView({behavior:'smooth', block:'start'});
+    renderResult(payload, data);
+
+    previewUsed = true;
+    liveShell.classList.add('preview-locked');
+  } catch(err){
+    clearInterval(statusInterval);
+    statePanel.classList.remove('visible');
+    errorPanel.classList.add('visible');
+    errorPanel.scrollIntoView({behavior:'smooth', block:'start'});
+  } finally {
+    submitBtn.disabled = previewUsed;
+    submitBtn.style.opacity = previewUsed ? '.38' : '1';
+  }
+});
+</script>
+  <script src="/stephuary-interactive.js" defer></script>
+</body>
+</html>

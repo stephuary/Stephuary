@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>.5% Club - Inside</title>
+  <link rel="stylesheet" href="/stephuary-interactive.css" />
+<meta name="description" content="Member home for .5% Club. Place requests. Matches are filtered.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Lato:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#080807;--bg-1:#0d0d0b;--bg-2:#121210;--bg-3:#181614;
+  --text:#f4ede0;--text-2:rgba(244,237,224,0.72);--text-3:rgba(244,237,224,0.42);
+  --gold:#c4a35a;--gold-soft:rgba(196,163,90,0.35);--gold-faint:rgba(196,163,90,0.08);--gold-dim:#8a7040;
+  --border:rgba(244,237,224,0.08);--border-soft:rgba(244,237,224,0.07);
+  --success:#9bb288;
+}
+html{scroll-behavior:smooth}
+body{font-family:'Lato',sans-serif;font-weight:300;background:var(--bg);color:var(--text);font-size:16px;line-height:1.72;-webkit-font-smoothing:antialiased;overflow-x:hidden;}
+a{text-decoration:none;color:inherit}
+body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;opacity:0.025;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");background-size:200px 200px;}
+
+nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;justify-content:space-between;align-items:center;padding:22px 52px;background:rgba(8,8,7,0.94);backdrop-filter:blur(12px);border-bottom:1px solid var(--border-soft);}
+.nav-mark{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:300;color:var(--gold);letter-spacing:-.02em;}
+.nav-links{display:flex;gap:22px;align-items:center;flex-wrap:wrap}
+.nav-link{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-3);transition:color .2s;}
+.nav-link:hover{color:var(--gold)}
+
+#hero{min-height:88vh;display:flex;flex-direction:column;justify-content:flex-end;padding:140px 52px 72px;border-bottom:1px solid var(--border-soft);position:relative;}
+#hero::before{content:'';position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at 80% 20%,rgba(196,163,90,0.03) 0%,transparent 55%);}
+.hero-mark{position:absolute;top:50%;left:52px;transform:translateY(-50%);font-family:'Cormorant Garamond',serif;font-size:clamp(120px,20vw,240px);line-height:1;font-weight:300;color:var(--gold-dim);letter-spacing:-.04em;pointer-events:none;user-select:none;opacity:0;animation:markReveal 1.8s cubic-bezier(.16,1,.3,1) forwards;}
+@keyframes markReveal{from{opacity:0;transform:translateY(-48%) scale(.94)}to{opacity:1;transform:translateY(-50%) scale(1)}}
+.hero-content{position:relative;z-index:1}
+.hero-headline{font-family:'Cormorant Garamond',serif;font-size:clamp(48px,6.8vw,96px);line-height:.98;letter-spacing:-.025em;font-weight:300;color:var(--text);max-width:760px;margin-bottom:24px;opacity:0;animation:fadeUp .8s cubic-bezier(.16,1,.3,1) forwards .35s;}
+.hero-sub{font-size:18px;color:var(--text-2);line-height:1.6;max-width:520px;font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:300;opacity:0;animation:fadeUp .7s cubic-bezier(.16,1,.3,1) forwards .5s;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+
+.section-pad{padding:88px 52px;border-bottom:1px solid var(--border-soft);}
+.section-eyebrow{font-size:9px;letter-spacing:.28em;text-transform:uppercase;color:var(--gold);font-weight:500;margin-bottom:24px;display:flex;align-items:center;gap:10px;}
+.section-eyebrow::before{content:'';width:20px;height:1px;background:var(--gold);opacity:.5}
+.section-headline{font-family:'Cormorant Garamond',serif;font-size:clamp(30px,3.3vw,44px);line-height:1.08;font-weight:300;color:var(--text);letter-spacing:-.015em;}
+
+.mode-options{display:grid;gap:12px;margin-top:32px;max-width:520px}
+.mode-option{display:flex;align-items:flex-start;gap:12px;padding:18px 20px;border:1px solid var(--border-soft);background:var(--bg-1);font-size:15px;color:var(--text-2);line-height:1.45;cursor:pointer;transition:border-color .2s,background .2s;}
+.mode-option:hover{border-color:var(--border);background:var(--bg-2)}
+.mode-option input{accent-color:var(--gold);margin-top:3px}
+
+.form-block{max-width:560px;margin-top:32px}
+.form-grid{display:grid;gap:18px}
+.field-group{display:grid;gap:8px}
+.field-label{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);font-weight:500;}
+.field-input{width:100%;background:var(--bg-1);color:var(--text);border:1px solid var(--border-soft);padding:14px 16px;font-family:'Lato',sans-serif;font-size:15px;font-weight:300;outline:none;transition:border-color .2s,background .2s;}
+.field-input:focus{border-color:var(--border);background:var(--bg-2)}
+.btn-submit{display:inline-block;font-size:10px;letter-spacing:.18em;text-transform:uppercase;font-weight:500;color:var(--bg);background:var(--gold);border:1px solid var(--gold);padding:16px 40px;transition:background .25s,color .25s,border-color .25s;cursor:pointer;margin-top:8px;}
+.btn-submit:hover{background:var(--text);border-color:var(--text);color:var(--bg)}
+.submit-response{display:none;margin-top:24px;padding:20px 22px;border:1px solid var(--border);background:var(--bg-1);font-size:15px;line-height:1.65;color:var(--text-2)}
+.submit-response.visible{display:block}
+#place-form-shell.hidden{display:none}
+
+.match-lines{display:grid;gap:1px;background:var(--border-soft);margin-top:36px;max-width:720px}
+.match-line{background:var(--bg-1);padding:18px 22px;font-size:15px;color:var(--text-2);line-height:1.5}
+
+.how-block{margin-top:28px;max-width:520px;font-size:15px;color:var(--text-2);line-height:1.85}
+.how-block p{margin-bottom:14px}
+.how-block p:last-child{margin-bottom:0}
+
+.rules-list{list-style:none;margin-top:28px;max-width:480px;display:grid;gap:12px}
+.rules-list li{font-size:15px;color:var(--text-2);padding-left:16px;position:relative;line-height:1.5}
+.rules-list li::before{content:'';position:absolute;left:0;top:10px;width:5px;height:1px;background:var(--gold);opacity:.5}
+
+.exit-block{text-align:center;max-width:560px;margin:0 auto}
+.exit-head{font-family:'Cormorant Garamond',serif;font-size:clamp(28px,3.5vw,40px);line-height:1.15;font-weight:300;color:var(--text);margin-bottom:16px}
+.exit-sub{font-size:15px;color:var(--text-2);line-height:1.65;margin-bottom:28px}
+.exit-link{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);border-bottom:1px solid var(--border);padding-bottom:2px;transition:color .2s}
+.exit-link:hover{color:var(--text);border-color:var(--text-3)}
+
+footer{padding:40px 52px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:20px;background:var(--bg-3);border-top:1px solid var(--border-soft);}
+.footer-mark{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:300;color:var(--gold);}
+.footer-links{display:flex;gap:24px;flex-wrap:wrap}
+.footer-link{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-3);transition:color .2s;}
+.footer-link:hover{color:var(--gold)}
+
+.mobile-sticky{display:none;position:fixed;bottom:0;left:0;right:0;z-index:200;padding:14px 20px;background:rgba(10,10,8,0.97);border-top:1px solid var(--border);backdrop-filter:blur(12px);}
+.mobile-sticky a{display:block;text-align:center;background:var(--gold);color:var(--bg);font-size:10px;letter-spacing:.16em;text-transform:uppercase;font-weight:500;padding:15px;}
+
+.reveal{opacity:0;transform:translateY(18px);transition:opacity .7s cubic-bezier(.16,1,.3,1),transform .7s cubic-bezier(.16,1,.3,1)}
+.reveal.visible{opacity:1;transform:translateY(0)}
+.reveal-d1{transition-delay:.1s}.reveal-d2{transition-delay:.2s}.reveal-d3{transition-delay:.3s}
+
+@media(max-width:980px){
+  nav{padding:18px 20px}
+  .nav-links{display:none}
+  #hero{padding:110px 20px 72px;min-height:auto}
+  .hero-mark{font-size:clamp(82px,28vw,140px);left:20px}
+  .section-pad{padding:64px 20px}
+  footer{padding:32px 20px;flex-direction:column;align-items:flex-start}
+  .mobile-sticky{display:block}
+  body{padding-bottom:64px}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-mark">.5%</div>
+  <div class="nav-links">
+    <a href="#mode" class="nav-link">Mode</a>
+    <a href="#place" class="nav-link">Place</a>
+    <a href="#matches" class="nav-link">Matches</a>
+    <a href="#how" class="nav-link">How it works</a>
+    <a href="#rules" class="nav-link">Rules</a>
+  </div>
+</nav>
+
+<section id="hero">
+  <div class="hero-mark" aria-hidden="true">.5%</div>
+  <div class="hero-content">
+    <h1 class="hero-headline">You're in.</h1>
+    <p class="hero-sub">Use it when you have something real to place.</p>
+  </div>
+</section>
+
+<section class="section-pad reveal" id="mode">
+  <h2 class="section-headline">What are you placing right now?</h2>
+  <div class="mode-options" role="radiogroup" aria-label="Current mode">
+    <label class="mode-option"><input type="radio" name="member_mode" value="need"> I need something now</label>
+    <label class="mode-option"><input type="radio" name="member_mode" value="placing"> I'm placing something now</label>
+    <label class="mode-option"><input type="radio" name="member_mode" value="selective"> I'm open but selective</label>
+  </div>
+</section>
+
+<section class="section-pad reveal" id="place">
+  <h2 class="section-headline">Place it.</h2>
+  <div class="submit-response" id="place-success" role="status" aria-live="polite">Request received.<br><br>If there is a match, you'll be contacted.</div>
+  <div id="place-form-shell" class="form-block">
+    <form class="form-grid" id="place-form" novalidate>
+      <div class="field-group">
+        <label class="field-label" for="placing-what">What are you placing?</label>
+        <input class="field-input" type="text" id="placing-what" name="placing_what" required autocomplete="off">
+      </div>
+      <div class="field-group">
+        <label class="field-label" for="placing-need">What do you need?</label>
+        <input class="field-input" type="text" id="placing-need" name="placing_need" required autocomplete="off">
+      </div>
+      <div class="field-group">
+        <label class="field-label" for="placing-loc">Location</label>
+        <input class="field-input" type="text" id="placing-loc" name="location" required autocomplete="off">
+      </div>
+      <div class="field-group">
+        <label class="field-label" for="placing-time">Timeline</label>
+        <input class="field-input" type="text" id="placing-time" name="timeline" required autocomplete="off">
+      </div>
+      <button type="submit" class="btn-submit">Submit</button>
+    </form>
+  </div>
+</section>
+
+<section class="section-pad reveal" id="matches">
+  <h2 class="section-headline">Active matches</h2>
+  <div class="match-lines">
+    <div class="match-line">Operator - Hospitality - New York</div>
+    <div class="match-line">Investor - Boutique Real Estate - Miami</div>
+    <div class="match-line">Creative Director - Brand Build - Remote</div>
+    <div class="match-line">Developer - Mixed Use - DC</div>
+    <div class="match-line">Chef - Private Dining - LA</div>
+  </div>
+</section>
+
+<section class="section-pad reveal" id="how">
+  <h2 class="section-headline">How it works</h2>
+  <div class="how-block">
+    <p>You place something.</p>
+    <p>Matches are filtered.</p>
+    <p>Introductions are controlled.</p>
+    <p>No browsing.<br>No messaging.<br>No noise.</p>
+  </div>
+</section>
+
+<section class="section-pad reveal" id="rules">
+  <h2 class="section-headline">Rules</h2>
+  <ul class="rules-list">
+    <li>No public profiles</li>
+    <li>No cold outreach</li>
+    <li>No spam</li>
+    <li>No volume plays</li>
+  </ul>
+</section>
+
+<section class="section-pad reveal" id="exit">
+  <div class="exit-block">
+    <p class="exit-head">Use it when you need it.</p>
+    <p class="exit-sub">Leave it alone when you don't.</p>
+    <a href="/" class="exit-link">Home &rarr;</a>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-mark">.5%</div>
+  <nav class="footer-links">
+    <a href="/club" class="footer-link">Club</a>
+    <a href="/access" class="footer-link">Request Access</a>
+    <a href="/index" class="footer-link">Stephuary</a>
+    <a href="https://grownspaghetti.substack.com" class="footer-link" target="_blank" rel="noopener">Substack</a>
+  </nav>
+</footer>
+
+<div class="mobile-sticky">
+  <a href="#place">Place</a>
+</div>
+
+<script>
+var observer = new IntersectionObserver(function(entries){
+  entries.forEach(function(e){ if(e.isIntersecting) e.target.classList.add('visible'); });
+},{threshold:0.1});
+document.querySelectorAll('.reveal').forEach(function(el){ observer.observe(el); });
+
+var placeForm = document.getElementById('place-form');
+var placeShell = document.getElementById('place-form-shell');
+var placeSuccess = document.getElementById('place-success');
+if (placeForm) {
+  placeForm.addEventListener('submit', function(e) {
+    e.preventDefault();
+    if (!placeForm.checkValidity()) {
+      placeForm.reportValidity();
+      return;
+    }
+    placeShell.classList.add('hidden');
+    placeSuccess.classList.add('visible');
+    placeSuccess.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  });
+}
+</script>
+  <script src="/stephuary-interactive.js" defer></script>
+</body>
+</html>

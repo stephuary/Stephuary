@@ -1,0 +1,321 @@
+/**
+ * One Free Spot — modal overlay (submission 3–7 AM local only).
+ */
+
+/* Overlay */
+.ps-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10060;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: max(16px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right))
+    max(16px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.45s ease, visibility 0.45s ease;
+}
+
+.ps-overlay.is-open {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+body.ps-open {
+  overflow: hidden;
+}
+
+.ps-overlay__bg {
+  position: absolute;
+  inset: 0;
+  background: rgba(2, 2, 2, 0.88);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+html.early-mode .ps-overlay__bg {
+  background: linear-gradient(165deg, rgba(8, 5, 4, 0.92) 0%, rgba(4, 3, 3, 0.94) 100%);
+}
+
+.ps-overlay__particles {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.35;
+  overflow: hidden;
+}
+
+.ps-overlay__particles span {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  border-radius: 50%;
+  background: rgba(244, 237, 224, 0.12);
+  animation: psParticle 14s ease-in-out infinite;
+}
+
+.ps-overlay__particles span:nth-child(1) {
+  left: 18%;
+  top: 22%;
+}
+.ps-overlay__particles span:nth-child(2) {
+  left: 78%;
+  top: 38%;
+  animation-delay: -4s;
+}
+.ps-overlay__particles span:nth-child(3) {
+  left: 44%;
+  top: 68%;
+  animation-delay: -8s;
+}
+.ps-overlay__particles span:nth-child(4) {
+  left: 62%;
+  top: 18%;
+  animation-delay: -2s;
+}
+
+@keyframes psParticle {
+  0%,
+  100% {
+    opacity: 0.35;
+    transform: translate(0, 0);
+  }
+  50% {
+    opacity: 0.75;
+    transform: translate(4px, -5px);
+  }
+}
+
+.ps-panel {
+  position: relative;
+  width: 100%;
+  max-width: 460px;
+  max-height: min(90vh, 860px);
+  overflow-x: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 34px 30px 30px;
+  margin: 0 auto;
+  border: 1px solid rgba(198, 161, 91, 0.12);
+  border-radius: 3px;
+  background: linear-gradient(
+    168deg,
+    rgba(14, 10, 9, 0.97) 0%,
+    rgba(5, 4, 4, 0.98) 48%,
+    rgba(6, 5, 8, 0.96) 100%
+  );
+  box-shadow:
+    0 0 0 1px rgba(59, 13, 13, 0.15),
+    0 28px 90px rgba(0, 0, 0, 0.55),
+    0 0 48px rgba(198, 161, 91, 0.06);
+  z-index: 1;
+  transform: scale(0.98) translateY(8px);
+  opacity: 0;
+  transition:
+    transform 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.45s ease;
+}
+
+.ps-overlay.is-open--ready .ps-panel {
+  transform: scale(1) translateY(0);
+  opacity: 1;
+}
+
+html.early-mode .ps-panel {
+  border-color: rgba(201, 120, 74, 0.18);
+  box-shadow:
+    0 0 0 1px rgba(201, 120, 74, 0.1),
+    0 28px 90px rgba(0, 0, 0, 0.5),
+    0 0 40px rgba(212, 148, 88, 0.08);
+}
+
+.ps-panel__accent {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: linear-gradient(
+    180deg,
+    rgba(198, 161, 91, 0.45) 0%,
+    rgba(198, 161, 91, 0.08) 55%,
+    rgba(43, 79, 212, 0.12) 100%
+  );
+  opacity: 0.65;
+  pointer-events: none;
+  border-radius: 3px 0 0 3px;
+}
+
+.ps-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 36px;
+  height: 36px;
+  border: none;
+  background: transparent;
+  color: var(--text-3);
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+  border-radius: 2px;
+  transition: color 0.2s ease, background 0.2s ease;
+  z-index: 2;
+}
+
+.ps-close:hover {
+  color: var(--text);
+  background: rgba(244, 237, 224, 0.06);
+}
+
+.ps-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(22px, 3.8vw, 30px);
+  font-weight: 300;
+  line-height: 1.15;
+  color: var(--text);
+  margin: 0 0 6px;
+  padding-right: 36px;
+}
+
+.ps-timing {
+  font-family: 'DM Mono', monospace;
+  font-size: 8px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(160, 148, 128, 0.55);
+  margin: 0 0 18px;
+}
+
+.ps-intro {
+  margin-bottom: 22px;
+}
+
+.ps-intro p {
+  font-size: 13px;
+  font-weight: 300;
+  line-height: 1.55;
+  color: rgba(188, 178, 162, 0.88);
+  margin: 0 0 10px;
+}
+
+.ps-intro p:last-child {
+  margin-bottom: 0;
+}
+
+.ps-intro-lead {
+  font-size: 15px;
+  font-weight: 400;
+  letter-spacing: 0.03em;
+  color: rgba(228, 218, 200, 0.95);
+}
+
+.ps-locked-msg {
+  font-family: 'DM Mono', monospace;
+  font-size: 8px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(150, 140, 125, 0.65);
+  margin: 0;
+  padding-top: 8px;
+}
+
+.ps-view {
+  transition: opacity 0.35s ease;
+}
+
+.ps-label {
+  display: block;
+  font-family: 'DM Mono', monospace;
+  font-size: 8px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(160, 150, 135, 0.78);
+  margin-bottom: 8px;
+}
+
+.ps-view-form .ps-label:not(:first-of-type),
+#ps-form .ps-label:not(:first-of-type) {
+  margin-top: 14px;
+}
+
+.ps-input {
+  width: 100%;
+  min-height: 68px;
+  padding: 11px 13px;
+  font-family: 'Lato', sans-serif;
+  font-size: 14px;
+  font-weight: 300;
+  line-height: 1.45;
+  color: var(--text);
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(244, 237, 224, 0.08);
+  border-radius: 2px;
+  resize: vertical;
+}
+
+.ps-input:focus {
+  outline: none;
+  border-color: rgba(198, 161, 91, 0.28);
+  box-shadow: 0 0 0 1px rgba(198, 161, 91, 0.08);
+}
+
+html.early-mode .ps-input:focus {
+  border-color: rgba(201, 120, 74, 0.35);
+}
+
+.ps-helper {
+  font-size: 11px;
+  font-weight: 300;
+  line-height: 1.45;
+  color: rgba(122, 114, 104, 0.72);
+  margin: 18px 0 16px;
+}
+
+.ps-submit {
+  width: 100%;
+  margin-top: 4px;
+}
+
+.ps-done {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(26px, 4.5vw, 34px);
+  font-weight: 300;
+  line-height: 1.2;
+  color: var(--text);
+  margin: 0 0 12px;
+}
+
+.ps-done-sub {
+  font-size: 15px;
+  font-weight: 300;
+  line-height: 1.5;
+  color: rgba(181, 170, 156, 0.88);
+  margin: 0;
+}
+
+.ps-done-sub + .ps-done-sub {
+  margin-top: 10px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ps-overlay__particles span {
+    animation: none !important;
+  }
+  .ps-panel {
+    transform: none !important;
+    opacity: 1 !important;
+    transition: none !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .ps-panel {
+    padding: 30px 20px 24px;
+    max-height: min(92dvh, 900px);
+  }
+}

@@ -1,0 +1,270 @@
+/**
+ * Shared shell: primary flow strip, focus rings, pricing CTA hierarchy.
+ * Load after stephuary-design-tokens.css. Does not replace page layout.
+ */
+
+/* ——— Primary user flow strip ——— */
+.sh-primary-flow {
+  position: relative;
+  z-index: 2;
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: var(--space-3) var(--space-5);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--line-subtle, rgba(244, 237, 224, 0.08));
+  background: rgba(5, 5, 5, 0.35);
+}
+
+body[data-sh-env='home'] .sh-primary-flow {
+  background: rgba(6, 5, 4, 0.52);
+  border-bottom-color: var(--line-subtle, rgba(244, 237, 224, 0.09));
+}
+
+body[data-sh-env='systems'] .sh-primary-flow {
+  background: rgba(4, 4, 4, 0.22);
+  border-bottom-color: var(--line-subtle, rgba(244, 237, 224, 0.055));
+}
+
+.sh-primary-flow__steps {
+  font-family: 'DM Mono', ui-monospace, monospace;
+  font-size: var(--font-label-md);
+  letter-spacing: var(--letter-label);
+  text-transform: uppercase;
+  color: var(--text-secondary, rgba(203, 195, 180, 0.85));
+  margin: 0;
+  max-width: 52ch;
+  line-height: 1.5;
+}
+
+/* Low-emphasis continuation link (not a competing primary button). */
+.sh-primary-flow__link,
+.sh-primary-flow__cta {
+  display: inline;
+  font-family: 'DM Mono', ui-monospace, monospace;
+  font-size: var(--font-label-md);
+  letter-spacing: var(--letter-label);
+  text-transform: uppercase;
+  text-decoration: none;
+  font-weight: 400;
+  color: var(--text-tertiary, rgba(122, 114, 104, 0.9));
+  border-bottom: 1px solid rgba(244, 237, 224, 0.12);
+  padding-bottom: 1px;
+  flex-shrink: 0;
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+.sh-primary-flow__link:hover,
+.sh-primary-flow__cta:hover {
+  color: var(--text-secondary, rgba(203, 195, 180, 0.88));
+  border-bottom-color: rgba(196, 163, 90, 0.35);
+}
+
+.sh-primary-flow__link:focus-visible,
+.sh-primary-flow__cta:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: var(--focus-offset);
+}
+
+html.early-mode .sh-primary-flow__link,
+html.early-mode .sh-primary-flow__cta {
+  color: rgba(180, 160, 140, 0.88);
+  border-bottom-color: rgba(201, 120, 74, 0.35);
+}
+
+@media (max-width: 640px) {
+  .sh-primary-flow {
+    padding-left: var(--space-4);
+    padding-right: var(--space-4);
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+/* ——— Results: guided next routes ——— */
+.sh-results-routes {
+  max-width: 920px;
+  margin: 0 auto var(--space-6);
+  padding: 0 var(--space-5);
+  position: relative;
+  z-index: 1;
+}
+
+.sh-results-routes__label {
+  font-family: 'DM Mono', ui-monospace, monospace;
+  font-size: var(--font-label-md);
+  letter-spacing: var(--letter-label-wide);
+  text-transform: uppercase;
+  color: var(--text-tertiary, rgba(122, 114, 104, 0.9));
+  margin: 0 0 var(--space-3);
+}
+
+.sh-results-routes__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--space-3);
+}
+
+.sh-results-route {
+  display: block;
+  padding: var(--space-4);
+  border: 1px solid var(--line-soft, rgba(244, 237, 224, 0.1));
+  border-radius: var(--radius-md);
+  text-decoration: none;
+  color: inherit;
+  background: var(--surface, rgba(13, 13, 11, 0.45));
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.sh-results-route:hover {
+  border-color: rgba(58, 107, 255, 0.35);
+}
+
+.sh-results-route:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: var(--focus-offset);
+}
+
+.sh-results-route__kicker {
+  font-family: 'DM Mono', ui-monospace, monospace;
+  font-size: var(--font-label);
+  letter-spacing: var(--letter-label-wide);
+  text-transform: uppercase;
+  color: var(--accent-primary, #3a6bff);
+  margin: 0 0 var(--space-2);
+}
+
+.sh-results-route__title {
+  font-family: var(--font-serif, 'Playfair Display', Georgia, serif);
+  font-weight: 500;
+  font-size: 1.25rem;
+  margin: 0 0 var(--space-2);
+  color: var(--white, var(--text-primary));
+}
+
+.sh-results-route__body {
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--muted, rgba(244, 237, 224, 0.72));
+  margin: 0;
+}
+
+.sh-results-routes--quiet .sh-results-route {
+  background: transparent;
+  padding: var(--space-3) var(--space-4);
+  border-color: rgba(244, 237, 224, 0.06);
+}
+
+.sh-results-routes--quiet .sh-results-route:hover {
+  border-color: rgba(58, 107, 255, 0.22);
+  background: rgba(13, 13, 11, 0.25);
+}
+
+.sh-results-routes--quiet .sh-results-route__kicker {
+  color: var(--text-tertiary, rgba(122, 114, 104, 0.9));
+}
+
+.sh-results-routes--quiet .sh-results-route__title {
+  font-size: 1.1rem;
+}
+
+/* ——— Pricing: recommended vs secondary CTAs ——— */
+.inner-tier--recommended .tier-cta--pri {
+  box-shadow: 0 0 0 1px rgba(196, 163, 90, 0.35), 0 8px 32px rgba(0, 0, 0, 0.35);
+}
+
+.pricing-layout .inner-tier:not(.inner-tier--recommended) .tier-cta--pri {
+  font-weight: 600;
+  opacity: 0.92;
+  filter: saturate(0.88);
+  box-shadow: none;
+}
+
+.pricing-layout .inner-tier:not(.inner-tier--recommended) .tier-cta--pri:hover {
+  filter: saturate(1) brightness(1.05);
+}
+
+.sh-pricing-rec {
+  max-width: 720px;
+  margin: 0 auto var(--space-6);
+  padding: var(--space-5);
+  border: 1px solid rgba(196, 163, 90, 0.28);
+  border-radius: var(--radius-md);
+  background: rgba(18, 16, 14, 0.65);
+}
+
+.sh-pricing-rec__label {
+  font-family: 'DM Mono', ui-monospace, monospace;
+  font-size: var(--font-label-md);
+  letter-spacing: var(--letter-label-wide);
+  text-transform: uppercase;
+  color: var(--accent-gold, #c4a35a);
+  margin: 0 0 var(--space-2);
+}
+
+.sh-pricing-rec__title {
+  font-family: var(--font-serif, 'Playfair Display', Georgia, serif);
+  font-weight: 300;
+  font-size: clamp(22px, 3vw, 28px);
+  margin: 0 0 var(--space-2);
+  color: var(--text-primary, #f4ede0);
+}
+
+.sh-pricing-rec__sub {
+  font-size: 15px;
+  line-height: 1.6;
+  color: rgba(244, 237, 224, 0.78);
+  margin: 0 0 var(--space-4);
+  max-width: 52ch;
+}
+
+.sh-pricing-rec__cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 46px;
+  padding: 12px 28px;
+  font-family: 'DM Mono', ui-monospace, monospace;
+  font-size: var(--font-label-lg);
+  letter-spacing: var(--letter-label-wide);
+  text-transform: uppercase;
+  text-decoration: none;
+  font-weight: 700;
+  color: #0b0f0b;
+  background: var(--accent-primary, #3a6bff);
+  border-radius: var(--radius-sm);
+  transition: filter 0.2s ease;
+}
+
+.sh-pricing-rec__cta:hover {
+  filter: brightness(1.1);
+}
+
+.sh-pricing-rec__cta:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: var(--focus-offset);
+}
+
+/* ——— Global focus (non-invasive) ——— */
+a:focus-visible,
+button:focus-visible,
+.btn:focus-visible,
+.tier-cta:focus-visible,
+.sys-btn:focus-visible,
+.nav-link:focus-visible,
+.sh-primary-flow__link:focus-visible,
+.sh-primary-flow__cta:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: var(--focus-offset);
+}
+
+html.early-mode a:focus-visible,
+html.early-mode button:focus-visible,
+html.early-mode .btn:focus-visible,
+html.early-mode .tier-cta:focus-visible,
+html.early-mode .sys-btn:focus-visible {
+  outline: var(--focus-ring-gold);
+}

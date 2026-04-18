@@ -1,0 +1,2260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Room 5 .  Using AI without lowering quality · Stephuary</title>
+  <link rel="stylesheet" href="/stephuary-interactive.css" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #090a0b;
+      --surface: rgba(18, 20, 24, 0.75);
+      --line: rgba(232, 236, 240, 0.06);
+      --line-strong: rgba(180, 190, 200, 0.18);
+      --accent: #8b9aab;
+      --accent-dim: #5c6570;
+      --cream: #e6e9ed;
+      --text: #cfd4db;
+      --muted: #8f96a0;
+      --dim: #5a616a;
+      --label: #3d4248;
+      --radius: 2px;
+      --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      --font-serif: ui-serif, Georgia, "Times New Roman", serif;
+      --font-mono: ui-monospace, "SF Mono", Menlo, Monaco, Consolas, monospace;
+    }
+
+    html, body { height: 100%; }
+    body {
+      font-family: var(--font-sans);
+      font-weight: 400;
+      background: var(--bg);
+      background-image:
+        linear-gradient(180deg, rgba(22, 26, 32, 0.5) 0%, transparent 42%);
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+      overflow: hidden;
+      font-size: 15px;
+      line-height: 1.55;
+      letter-spacing: 0.01em;
+    }
+
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+      opacity: 0.018;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    #room-app { position: relative; z-index: 1; height: 100%; min-height: 100dvh; }
+
+    .room-top {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 200;
+      padding: 20px 22px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      background: linear-gradient(to bottom, rgba(9, 10, 11, 0.96) 0%, rgba(9, 10, 11, 0.45) 72%, transparent 100%);
+      pointer-events: none;
+    }
+    .room-top a {
+      pointer-events: auto;
+      font-family: var(--font-mono);
+      font-size: 8px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--dim);
+      text-decoration: none;
+    }
+    .room-top a:hover { color: var(--muted); }
+    .room-top-left { pointer-events: auto; }
+    .room-top-nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 14px;
+      align-items: center;
+      justify-content: flex-end;
+      pointer-events: auto;
+    }
+    .room-top-nav .nav-club {
+      color: #c4a35a;
+    }
+    .room-flow-saved {
+      margin: 0 0 12px;
+      font-family: var(--font-mono);
+      font-size: 9px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--label);
+      opacity: 0.9;
+      text-align: center;
+      max-width: 320px;
+    }
+    .room-forward-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      width: 100%;
+      max-width: 320px;
+      margin: 16px 0;
+    }
+    .room-forward-actions .btn-continue { text-align: center; }
+    .room-secondary-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
+    .room-progress {
+      font-family: var(--font-mono);
+      font-size: 8px;
+      letter-spacing: 0.12em;
+      color: var(--label);
+    }
+
+    .panel {
+      display: none;
+      min-height: 100dvh;
+      max-height: 100dvh;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      padding: 88px 24px 112px;
+      flex-direction: column;
+      align-items: stretch;
+      max-width: 500px;
+      margin: 0 auto;
+      border-left: 1px solid var(--line);
+      border-right: 1px solid var(--line);
+      animation: panelIn 0.32s ease-out;
+    }
+    .panel.active { display: flex; }
+    @keyframes panelIn { from { opacity: 0; } to { opacity: 1; } }
+
+    .panel--entry {
+      justify-content: center;
+      text-align: center;
+      border-left: none;
+      border-right: none;
+      max-width: 420px;
+    }
+    .panel-micro {
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 40px;
+      max-width: 280px;
+      margin-left: auto;
+      margin-right: auto;
+      line-height: 1.65;
+    }
+
+    .rule {
+      height: 1px;
+      background: var(--line-strong);
+      margin: 0 0 28px;
+      opacity: 0.7;
+    }
+
+    .panel-title {
+      font-family: var(--font-serif);
+      font-weight: 400;
+      font-size: clamp(22px, 5vw, 30px);
+      line-height: 1.14;
+      letter-spacing: -0.02em;
+      margin-bottom: 14px;
+      color: var(--cream);
+    }
+
+    .panel-instruction {
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.62;
+      margin-bottom: 22px;
+    }
+
+    .panel-kicker {
+      font-family: var(--font-mono);
+      font-size: 8px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent-dim);
+      margin-bottom: 20px;
+    }
+
+    .policy-block {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 18px 16px;
+      margin-bottom: 16px;
+    }
+    .policy-block h4 {
+      font-family: var(--font-mono);
+      font-size: 7px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 14px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .output-block {
+      border: 1px solid var(--line-strong);
+      padding: 18px 16px;
+      margin: 22px 0 26px;
+      background: rgba(12, 14, 18, 0.5);
+    }
+    .output-label {
+      font-family: var(--font-mono);
+      font-size: 7px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--label);
+      margin-bottom: 10px;
+    }
+    .output-body {
+      font-size: 14px;
+      color: var(--text);
+      line-height: 1.6;
+    }
+    .output-body.sm { font-size: 13px; color: var(--muted); }
+
+    .pick-list label.opt {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 13px 12px;
+      margin-bottom: 5px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      cursor: pointer;
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.45;
+      transition: border-color 0.15s ease, background 0.15s ease;
+    }
+    .pick-list label.opt:hover { border-color: rgba(139, 154, 171, 0.25); }
+    .pick-list label.opt:has(input:checked) {
+      border-color: rgba(139, 154, 171, 0.4);
+      background: rgba(139, 154, 171, 0.06);
+      color: var(--cream);
+    }
+    .pick-list input[type="radio"],
+    .pick-list input[type="checkbox"] {
+      margin-top: 3px;
+      accent-color: #6b7580;
+      width: 15px;
+      height: 15px;
+      flex-shrink: 0;
+    }
+
+    .policy-block label.opt-toggle {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      cursor: pointer;
+      position: relative;
+    }
+    .policy-block label.opt-toggle input {
+      position: absolute;
+      opacity: 0;
+      width: 1px;
+      height: 1px;
+    }
+    .toggle-text { flex: 1; font-size: 13px; color: var(--muted); }
+    .toggle-track {
+      width: 36px;
+      height: 20px;
+      border-radius: 10px;
+      background: rgba(35, 40, 48, 0.95);
+      border: 1px solid var(--line);
+      position: relative;
+      flex-shrink: 0;
+      transition: background 0.2s ease;
+    }
+    .toggle-track::after {
+      content: '';
+      position: absolute;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: var(--dim);
+      top: 2px;
+      left: 2px;
+      transition: transform 0.2s ease, background 0.2s ease;
+    }
+    .policy-block label.opt-toggle:has(input:checked) .toggle-track {
+      background: rgba(55, 75, 55, 0.45);
+    }
+    .policy-block label.opt-toggle:has(input:checked) .toggle-track::after {
+      transform: translateX(16px);
+      background: var(--cream);
+    }
+    .policy-block label.opt-toggle:has(input:checked) .toggle-text { color: var(--cream); }
+
+    .viz-lock-rules {
+      margin: 0 0 18px;
+      padding: 14px;
+      border: 1px solid var(--line-strong);
+      background: rgba(8, 10, 13, 0.55);
+    }
+    .viz-lock-rules .viz-label {
+      font-family: var(--font-mono);
+      font-size: 8px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 12px;
+    }
+    .lock-rule-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--line);
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .lock-rule-row:last-child { border-bottom: none; }
+    .lock-rule-row .toggle-track.on::after { transform: translateX(16px); background: var(--cream); }
+    .lock-rule-row .toggle-track.on { background: rgba(55, 75, 55, 0.45); }
+    .lock-rule-row .toggle-track.off::after { transform: none; }
+
+    .field label {
+      display: block;
+      font-family: var(--font-mono);
+      font-size: 7px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--dim);
+      margin-bottom: 8px;
+    }
+    .field input[type="number"],
+    .field input[type="text"] {
+      width: 100%;
+      padding: 14px 14px;
+      background: rgba(6, 8, 10, 0.65);
+      border: 1px solid var(--line);
+      color: var(--cream);
+      font-family: var(--font-sans);
+      font-size: 18px;
+      font-weight: 400;
+      border-radius: var(--radius);
+    }
+    .field input:focus {
+      outline: none;
+      border-color: rgba(139, 154, 171, 0.35);
+    }
+
+    .btn-continue {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      margin-top: 12px;
+      padding: 16px 20px;
+      min-height: 50px;
+      font-family: var(--font-mono);
+      font-size: 8px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--cream);
+      background: rgba(70, 78, 88, 0.4);
+      border: 1px solid rgba(120, 130, 145, 0.35);
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: opacity 0.2s ease, border-color 0.2s ease;
+    }
+    .btn-continue:hover:not(:disabled) {
+      border-color: rgba(139, 154, 171, 0.45);
+    }
+    .btn-continue:disabled {
+      opacity: 0.32;
+      cursor: not-allowed;
+    }
+
+    .sys-response {
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid var(--line);
+      font-size: 13px;
+      line-height: 1.55;
+      color: var(--muted);
+    }
+    .sys-response .sys-line { margin: 0 0 8px; }
+    .sys-response strong { color: var(--cream); font-weight: 400; }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--muted);
+      border: 1px solid var(--line);
+      margin-top: 12px;
+    }
+    .btn-secondary:hover:not(:disabled) {
+      color: var(--text);
+      border-color: rgba(139, 154, 171, 0.25);
+    }
+
+    .principle-cap {
+      font-family: var(--font-mono);
+      font-size: 8px;
+      letter-spacing: 0.08em;
+      color: var(--dim);
+      margin-bottom: 12px;
+    }
+
+    .summary-card {
+      border: 1px solid var(--line-strong);
+      padding: 26px 20px 22px;
+      margin-bottom: 20px;
+      background: rgba(10, 12, 15, 0.65);
+    }
+    .summary-card h3 {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 18px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--line);
+    }
+    .summary-section {
+      margin-bottom: 16px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--line);
+    }
+    .summary-section:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+    .summary-section-title {
+      font-family: var(--font-mono);
+      font-size: 7px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--dim);
+      margin-bottom: 6px;
+    }
+    .summary-section p, .summary-section ul {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+    .summary-section ul { padding-left: 1.1em; margin: 4px 0 0; }
+
+    .final-line {
+      text-align: center;
+      font-family: var(--font-serif);
+      font-size: 16px;
+      font-weight: 400;
+      font-style: italic;
+      color: var(--muted);
+      line-height: 1.55;
+      margin-top: 24px;
+      padding-top: 22px;
+      border-top: 1px solid var(--line-strong);
+    }
+
+    .truth-line {
+      font-size: 14px;
+      color: var(--text);
+      margin: 0 0 16px;
+      line-height: 1.55;
+      border-left: 2px solid var(--line-strong);
+      padding-left: 12px;
+    }
+    .translate-line { font-size: 13px; color: var(--muted); margin-top: 12px; line-height: 1.5; }
+    .consequence-line { font-size: 12px; color: var(--dim); margin-top: 8px; font-style: italic; line-height: 1.5; }
+    .diag-tie {
+      margin: 20px 0;
+      padding: 16px;
+      background: rgba(18, 16, 14, 0.55);
+      border: 1px solid var(--line);
+      border-radius: 6px;
+    }
+    .diag-tie h4 {
+      font-family: var(--font-mono);
+      font-size: 8px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin: 0 0 8px;
+    }
+    .diag-tie p { margin: 0; font-size: 14px; line-height: 1.55; color: var(--text); }
+    .example-p {
+      font-size: 12px;
+      color: var(--muted);
+      margin: 10px 0 16px;
+      line-height: 1.5;
+      font-style: italic;
+    }
+    .use-pack { margin-top: 8px; }
+    .use-block {
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--line);
+    }
+    .use-block:last-of-type { border-bottom: 0; margin-bottom: 0; padding-bottom: 0; }
+    .use-label {
+      font-family: var(--font-mono);
+      font-size: 8px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin: 0 0 8px;
+    }
+    .use-block ul { margin: 8px 0 0 18px; font-size: 14px; color: var(--text); line-height: 1.5; }
+    .copy-block {
+      display: block;
+      margin: 0;
+      padding: 14px;
+      font-size: 13px;
+      line-height: 1.5;
+      white-space: pre-wrap;
+      background: rgba(10, 9, 8, 0.65);
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      color: var(--text);
+      font-family: inherit;
+    }
+    .asset-checklist { font-size: 14px; line-height: 1.7; color: var(--text); margin: 0; }
+    .next-pack { margin-top: 8px; }
+    .next-h3 {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin: 20px 0 8px;
+    }
+    .next-h3:first-child { margin-top: 0; }
+    .next-pack p { margin: 0; font-size: 15px; line-height: 1.55; color: var(--text); }
+    .final-line-action {
+      text-align: center;
+      font-size: 14px;
+      color: var(--muted);
+      margin: 28px 0 8px;
+      font-style: italic;
+    }
+    .final-interpret { font-size: 15px; color: var(--text); margin: 12px 0 0; line-height: 1.55; }
+
+    .escalation-inner {
+      padding-top: 20px;
+      margin-top: 8px;
+      border-top: 1px solid var(--line);
+    }
+    .escalation-copy {
+      font-size: 15px;
+      color: var(--muted);
+      line-height: 1.55;
+      margin: 0 0 22px;
+    }
+    .escalation-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .escalation-actions .btn-continue { width: 100%; text-align: center; }
+    .escalation-actions a.btn-continue { text-decoration: none; display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box; }
+
+    .bonus-wrap {
+      margin-top: 36px;
+      padding-top: 28px;
+      border-top: 1px solid var(--line-strong);
+    }
+    .bonus-main-title { margin-bottom: 10px; }
+    .bonus-intro {
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.65;
+      margin-bottom: 22px;
+    }
+    .bonus-intro p { margin: 0 0 12px; }
+    .bonus-intro p:last-child { margin-bottom: 0; }
+    .bonus-step {
+      margin-bottom: 32px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--line);
+    }
+    .bonus-step:last-of-type { border-bottom: none; }
+    .bonus-step-meta {
+      font-family: var(--font-mono);
+      font-size: 7px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin: 0 0 10px;
+    }
+    .bonus-step-h {
+      font-family: var(--font-serif);
+      font-size: 17px;
+      font-weight: 400;
+      color: var(--cream);
+      margin: 0 0 12px;
+      line-height: 1.25;
+    }
+    .bonus-path-label {
+      font-family: var(--font-mono);
+      font-size: 8px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--dim);
+      margin: 14px 0 8px;
+    }
+    .bonus-path-label:first-child { margin-top: 0; }
+    .bonus-tight-list {
+      margin: 8px 0 0;
+      padding-left: 1.15em;
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+    .bonus-tight-list li { margin-bottom: 6px; }
+    .bonus-lanes {
+      margin: 12px 0 0;
+      padding-left: 1.2em;
+      font-size: 14px;
+      color: var(--text);
+      line-height: 1.65;
+    }
+    .bonus-lanes li { margin-bottom: 8px; }
+    .bonus-speak-list {
+      margin: 10px 0 0;
+      padding-left: 1.15em;
+      font-size: 14px;
+      color: var(--text);
+      line-height: 1.6;
+    }
+    .bonus-speak-list li { margin-bottom: 8px; }
+    .bonus-phase {
+      margin-top: 14px;
+      padding: 12px 14px;
+      border: 1px solid var(--line);
+      background: rgba(8, 10, 13, 0.45);
+    }
+    .bonus-phase h5 {
+      font-family: var(--font-mono);
+      font-size: 8px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin: 0 0 8px;
+    }
+    .bonus-phase ul {
+      margin: 0;
+      padding-left: 1.1em;
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+    .bonus-phase li { margin-bottom: 6px; }
+    .bonus-closer {
+      font-family: var(--font-serif);
+      font-size: 15px;
+      color: var(--text);
+      line-height: 1.55;
+      margin-top: 20px;
+      padding-top: 18px;
+      border-top: 1px solid var(--line);
+      font-style: italic;
+    }
+    .bonus-block {
+      margin-bottom: 28px;
+      padding-bottom: 22px;
+      border-bottom: 1px solid var(--line);
+    }
+    .bonus-block:last-of-type { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+    .bonus-sec-head {
+      font-family: var(--font-serif);
+      font-size: 16px;
+      font-weight: 400;
+      color: var(--cream);
+      margin: 0 0 14px;
+      line-height: 1.3;
+    }
+    .bonus-kicker-block {
+      font-family: var(--font-mono);
+      font-size: 7px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--accent-dim);
+      margin: 0 0 8px;
+    }
+    .bonus-engine-ol {
+      margin: 12px 0 0;
+      padding-left: 1.25em;
+      font-size: 14px;
+      color: var(--text);
+      line-height: 1.65;
+    }
+    .bonus-engine-ol li { margin-bottom: 10px; }
+    .bonus-tool-list {
+      margin: 10px 0 0;
+      padding: 0;
+      list-style: none;
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+    .bonus-tool-list li {
+      padding: 10px 0;
+      border-bottom: 1px solid var(--line);
+    }
+    .bonus-tool-list li:last-child { border-bottom: none; }
+    .bonus-tool-list strong {
+      color: var(--cream);
+      font-weight: 500;
+    }
+    .bonus-split {
+      display: grid;
+      gap: 14px;
+      margin: 14px 0 0;
+    }
+    @media (min-width: 520px) {
+      .bonus-split--2 { grid-template-columns: 1fr 1fr; }
+    }
+    .bonus-split-card {
+      padding: 14px;
+      border: 1px solid var(--line);
+      background: rgba(8, 10, 13, 0.4);
+    }
+    .bonus-split-card h5 {
+      font-family: var(--font-mono);
+      font-size: 7px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin: 0 0 10px;
+    }
+    .bonus-split-card ul {
+      margin: 0;
+      padding-left: 1.1em;
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+    .bonus-split-card li { margin-bottom: 6px; }
+    .bonus-story {
+      margin-top: 12px;
+      padding: 14px 16px;
+      border: 1px solid rgba(139, 154, 171, 0.25);
+      background: rgba(12, 14, 18, 0.65);
+      font-size: 14px;
+      color: var(--text);
+      line-height: 1.55;
+    }
+    .bonus-week {
+      margin-top: 12px;
+    }
+    .bonus-week h5 {
+      font-family: var(--font-mono);
+      font-size: 8px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin: 0 0 8px;
+    }
+    .bonus-week ul {
+      margin: 0;
+      padding-left: 1.1em;
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+    .bonus-final-grid {
+      margin: 14px 0 0;
+      padding: 16px;
+      border: 1px solid var(--line-strong);
+      background: rgba(6, 8, 10, 0.55);
+    }
+    .bonus-final-grid ul {
+      margin: 0;
+      padding-left: 1.15em;
+      font-size: 14px;
+      color: var(--text);
+      line-height: 1.65;
+    }
+    .bonus-final-grid li { margin-bottom: 8px; }
+
+    .room-scope {
+      margin-top: 22px;
+      padding: 14px 16px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(0, 0, 0, 0.2);
+      text-align: left;
+    }
+    .room-scope-title {
+      font-family: var(--font-mono);
+      font-size: 8px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--label);
+      margin-bottom: 8px;
+    }
+    .room-scope-body {
+      font-size: 13px;
+      line-height: 1.55;
+      color: var(--muted);
+      margin-bottom: 10px;
+    }
+    .room-scope-out {
+      font-size: 12px;
+      line-height: 1.5;
+      color: var(--dim);
+    }
+
+    @media (min-width: 600px) {
+      .panel { max-width: 520px; padding-left: 32px; padding-right: 32px; }
+    }
+  </style>
+</head>
+<body>
+  <div id="room-app">
+    <header class="room-top">
+      <div class="room-top-left"><a href="/">Stephuary</a></div>
+      <nav class="room-top-nav" aria-label="Primary">
+        <a href="/pricing">Pricing</a>
+        <a href="/access" class="nav-club">.5% Club</a>
+        <a href="https://stephuary.substack.com" target="_blank" rel="noopener">Substack</a>
+        <a href="https://onlysometimesclub.com" target="_blank" rel="noopener noreferrer">Only Sometimes Club</a>
+      </nav>
+      <span class="room-progress" id="progress-text">Room 5</span>
+    </header>
+
+    <section class="panel panel--entry active" data-step="0" id="panel-0">
+      <p class="panel-kicker">Room 5 .  Using AI without lowering quality</p>
+      <h1 class="panel-title">This is why you are not getting paid, closing, or executing cleanly . <br />and exactly what to do about it.</h1>
+      <p class="panel-micro">Not AI education. Not productivity advice.<br />Rules for money, client work, and what you ship. Move through it once.</p>
+      <div class="room-scope">
+        <p class="room-scope-title">This section only</p>
+        <p class="room-scope-body">AI tools, prompts, content and distribution systems. No leak worksheets, weekly schedule design, or drafting a first offer from zero.</p>
+        <p class="room-scope-out">Assumes core offer and delivery path are defined elsewhere. This room adds leverage .  it does not replace Rooms 1–4.</p>
+      </div>
+      <div class="pb-dyn-wrap" hidden>
+        <p class="pb-dyn-open"></p>
+        <p class="pb-dyn-pressure"></p>
+        <p class="pb-dyn-frame"></p>
+        <p class="pb-dyn-next"></p>
+      </div>
+      <button type="button" class="btn-continue" id="btn-begin">Begin</button>
+    </section>
+
+    <section class="panel" data-step="1" id="panel-1">
+      <div id="bounded-ai-use" class="room-deep-target" aria-hidden="true"></div>
+      <div class="rule" aria-hidden="true"></div>
+      <h2 class="panel-title">How are you actually using it?</h2>
+      <p class="truth-line">If you cannot name what you use AI for in plain tasks, you do not have a policy .  you have a habit .  and habits leak into client-facing work.</p>
+      <p class="panel-instruction">Pick what is already true.</p>
+      <p class="example-p">Example:<br />You send a message.<br />Client asks a follow-up.<br />You cannot explain it.<br />You lose control.</p>
+      <div class="pick-list" id="current-use-list"></div>
+      <div class="output-block" id="out-use" style="display:none;">
+        <p class="output-label">Pattern</p>
+        <p class="output-body" id="out-use-text">. </p>
+        <p class="translate-line">Translate: This shows whether you think before producing work, or outsource your thinking.</p>
+        <p class="consequence-line">Consequence: If this continues, you send work you cannot defend in a real conversation.</p>
+      </div>
+      <div class="output-block" id="ai-mode-block" style="display:none;">
+        <p class="output-label">Misuse check → assigned mode</p>
+        <p class="output-body" id="ai-mode-text">. </p>
+      </div>
+      <div class="diag-tie">
+        <h4>How this ties in</h4>
+        <p>Rooms 01–04 handled money, direction, deals, and continuity. Here you lock who owns judgment before anything reaches a client or an invoice.</p>
+      </div>
+      <div id="sys-response-r5-1" class="sys-response" style="display:none;"></div>
+      <button type="button" class="btn-continue" id="btn-1" disabled>Continue</button>
+    </section>
+
+    <section class="panel" data-step="2" id="panel-2">
+      <div class="rule" aria-hidden="true"></div>
+      <h2 class="panel-title">What is it doing for you?</h2>
+      <p class="truth-line">If AI replaces your thinking, you cannot think live .  and live is where deals and delivery happen.</p>
+      <p class="panel-instruction">Choose the line that fits best.</p>
+      <div class="pick-list" id="sub-list"></div>
+      <div class="output-block" id="out-sub" style="display:none;">
+        <p class="output-label">Augmentation vs substitution</p>
+        <p class="output-body" id="out-sub-text">. </p>
+        <p class="translate-line">Translate: This determines whether AI supports your execution or replaces your thinking.</p>
+        <p class="consequence-line">Consequence: If this continues, you stall anytime you have to think live.</p>
+        <p class="translate-line">This is why offers don’t convert .  you don’t fully own what you’re saying.</p>
+      </div>
+      <div id="sys-response-r5-2" class="sys-response" style="display:none;"></div>
+      <button type="button" class="btn-continue" id="btn-2" disabled>Continue</button>
+    </section>
+
+    <section class="panel" data-step="3" id="panel-3">
+      <div class="rule" aria-hidden="true"></div>
+      <h2 class="panel-title">What is it costing you?</h2>
+      <p class="truth-line">Untrusted output is rework. Rework is time you do not get back .  and often time you do not bill.</p>
+      <p class="panel-instruction">Pick the costs you are already noticing.</p>
+      <div class="pick-list" id="cost-list"></div>
+      <div class="output-block" id="out-cost" style="display:none;">
+        <p class="output-label">Cost</p>
+        <p class="output-body" id="out-cost-text">This is time spent fixing outputs you do not trust.</p>
+        <p class="consequence-line">Consequence: You produce more, but ship less.</p>
+        <p class="example-p">Example:<br />You generate multiple versions.<br />You trust none.<br />You rewrite all of them.</p>
+      </div>
+      <div id="sys-response-r5-3" class="sys-response" style="display:none;"></div>
+      <button type="button" class="btn-continue" id="btn-3" disabled>Continue</button>
+    </section>
+
+    <section class="panel" data-step="4" id="panel-4">
+      <div id="quality-control" class="room-deep-target" aria-hidden="true"></div>
+      <div class="rule" aria-hidden="true"></div>
+      <h2 class="panel-title">Can you verify what it gives you?</h2>
+      <p class="truth-line">If you cannot check it, you cannot ship it .  and shipping is what gets paid.</p>
+      <p class="panel-instruction">Be honest.</p>
+      <p class="example-p">Example: You ask AI for strategy in a field you’ve never worked in. You accept it. You cannot verify it. That is risk.</p>
+      <div class="pick-list" id="verify-list"></div>
+      <div class="output-block" id="out-verify" style="display:none;">
+        <p class="output-label">Verification</p>
+        <p class="output-body" id="out-verify-text">. </p>
+        <p class="translate-line">Translate: This defines where you are allowed to use AI in paid work.</p>
+        <p class="consequence-line">Consequence: If you cannot verify it, you should not send it to a client.</p>
+        <p class="translate-line">This is where client risk enters your work.</p>
+      </div>
+      <div id="sys-response-r5-4" class="sys-response" style="display:none;"></div>
+      <div class="diag-tie">
+        <h4>How this ties in</h4>
+        <p>Verification is the gate: it decides what you are allowed to paste into email, code, or anything a client pays for.</p>
+      </div>
+      <button type="button" class="btn-continue" id="btn-4" disabled>Continue</button>
+    </section>
+
+    <section class="panel" data-step="5" id="panel-5">
+      <div class="rule" aria-hidden="true"></div>
+      <h2 class="panel-title">What should never go in?</h2>
+      <p class="truth-line">Every paste is a leak risk. Name what is off-limits so you do not improvise under pressure.</p>
+      <p class="panel-instruction">Mark what requires protection.</p>
+      <div class="pick-list" id="data-list"></div>
+      <div class="output-block" id="out-data" style="display:none;">
+        <p class="output-label">Protection</p>
+        <p class="output-body" id="out-data-text">. </p>
+        <p class="consequence-line">If this is unclear, you will share something you should not under pressure.</p>
+        <p class="translate-line">This is how people lose leverage.</p>
+      </div>
+      <div id="sys-response-r5-5" class="sys-response" style="display:none;"></div>
+      <button type="button" class="btn-continue" id="btn-5" disabled>Continue</button>
+    </section>
+
+    <section class="panel" data-step="6" id="panel-6">
+      <div class="rule" aria-hidden="true"></div>
+      <h2 class="panel-title">How many tools are you managing?</h2>
+      <p class="truth-line">Every extra surface is context-switching. Context-switching is execution time you never invoice.</p>
+      <p class="panel-instruction">Count the ones you use regularly.</p>
+      <div class="policy-block">
+        <div class="field">
+          <label for="tool-count">AI tools used weekly</label>
+          <input type="number" id="tool-count" min="0" max="99" inputmode="numeric" placeholder="0" />
+        </div>
+      </div>
+      <div class="output-block" id="out-tools" style="display:none;">
+        <p class="output-label">Load</p>
+        <p class="output-body" id="out-tools-text">. </p>
+        <p class="consequence-line" id="out-tools-follow" style="display:none;">Consequence: Your time is spent switching, not executing.</p>
+      </div>
+      <div id="sys-response-r5-6" class="sys-response" style="display:none;"></div>
+      <p class="consequence-line" id="pressure-live-05" style="display:none;margin-top:12px;"></p>
+      <p class="consequence-line" id="unchanged-05" style="display:none;">This is what continues if unchanged: unpriced rework and stalled sends.</p>
+      <p class="consequence-line" id="freq-05" style="display:none;">If repeated 5–10 times without cutting tools or enforcing verify: lost money, missed revenue, stalled progress.</p>
+      <button type="button" class="btn-continue" id="btn-6" disabled>Continue</button>
+    </section>
+
+    <section class="panel" data-step="7" id="panel-7">
+      <div class="rule" aria-hidden="true"></div>
+      <h2 class="panel-title">Set your rules</h2>
+      <p class="truth-line">Rules you will not say out loud are rules you will break under deadline.</p>
+      <p class="panel-instruction">Decide what AI is for and what it is not for.</p>
+      <div class="policy-block">
+        <h4>Approved uses</h4>
+        <div class="pick-list" id="approved-list" style="margin:0;"></div>
+      </div>
+      <div class="policy-block">
+        <h4>Restricted uses</h4>
+        <div class="pick-list" id="restricted-list" style="margin:0;"></div>
+      </div>
+      <div class="output-block" id="out-rules" style="display:none;">
+        <p class="output-label">Rules</p>
+        <p class="output-body">These are not preferences. These are limits.</p>
+        <p class="consequence-line">If you break these under pressure, this system does not exist.</p>
+      </div>
+      <div id="sys-response-r5-7" class="sys-response" style="display:none;"></div>
+      <button type="button" class="btn-continue" id="btn-7" disabled>Continue</button>
+    </section>
+
+    <section class="panel" data-step="8" id="panel-8">
+      <div id="leverage-stack" class="room-deep-target" aria-hidden="true"></div>
+      <div class="rule" aria-hidden="true"></div>
+      <h2 class="panel-title">Write your operating layer</h2>
+      <p class="truth-line">Principles you do not act on do not protect your revenue .  they decorate your notes.</p>
+      <p class="panel-instruction">Choose the principles you want to operate from.</p>
+      <p class="principle-cap" id="principle-cap">Select up to 5.</p>
+      <div class="pick-list" id="principles-list"></div>
+      <div class="output-block" id="out-layer" style="display:none;">
+        <p class="output-label">Operating layer</p>
+        <p class="output-body sm" id="out-layer-text">. </p>
+        <p class="translate-line">These only matter if they show up in your next action.</p>
+      </div>
+      <div id="sys-response-r5-8" class="sys-response" style="display:none;"></div>
+      <div class="pick-list" style="margin-top:12px;">
+        <label class="opt"><input type="checkbox" id="cb-principles-bind" /> These principles bind my next client-facing send .  not my notes.</label>
+      </div>
+      <button type="button" class="btn-continue" id="btn-8" disabled>Continue</button>
+    </section>
+
+    <section class="panel" data-step="9" id="panel-9-use">
+      <div id="prompt-system" class="room-deep-target" aria-hidden="true"></div>
+      <div class="rule" aria-hidden="true"></div>
+      <h2 class="panel-title">Use this</h2>
+      <p class="panel-instruction">Take these with you.</p>
+      <div class="use-pack">
+        <div class="use-block">
+          <p class="use-label">Framework</p>
+          <p><strong>The AI Control Layer .  what you are allowed to use AI for in paid work.</strong></p>
+        </div>
+        <div class="use-block">
+          <p class="use-label">Tool stack</p>
+          <ul>
+            <li>one primary AI tool only</li>
+            <li>Notes app (thinking first)</li>
+            <li>no switching tools mid-task</li>
+          </ul>
+        </div>
+        <div class="use-block">
+          <p class="use-label">Prompt (copy)</p>
+          <pre class="copy-block">I will paste content.
+
+Your job:
+
+1. Remove anything I cannot verify
+2. Keep only what I can explain myself
+3. Return something I can send to a client today
+
+Do not add new ideas.</pre>
+        </div>
+      </div>
+      <button type="button" class="btn-continue" id="btn-use-pack-05">Continue</button>
+    </section>
+
+    <section class="panel" data-step="10" id="panel-10-next">
+      <div class="rule" aria-hidden="true"></div>
+      <h2 class="panel-title">What happens next</h2>
+      <div class="next-pack">
+        <h3 class="next-h3">1. Do this today</h3>
+        <p>Rewrite one real message or output using your rules and send it.</p>
+        <h3 class="next-h3">2. Change this week</h3>
+        <p>Remove one AI use that replaces your thinking.</p>
+        <h3 class="next-h3">3. Operate like this</h3>
+        <p>If I cannot explain it without AI, I do not send it.</p>
+      </div>
+      <p class="final-line-action">This only works if you do it.</p>
+      <button type="button" class="btn-continue" id="btn-what-next-05">Continue</button>
+    </section>
+
+    <section class="panel" data-step="11" id="panel-11-escalation">
+      <div class="rule" aria-hidden="true"></div>
+      <div class="escalation-inner">
+        <h2 class="panel-title">Rules only work if you use them</h2>
+        <p class="escalation-copy">Write your rules into templates and checklists.<br />Use them on real work this week.</p>
+        <div class="escalation-actions">
+          <button type="button" class="btn-continue" id="btn-esc-05">I’ll enforce this</button>
+          <a href="/access" class="btn-continue btn-secondary">Build this into my system (Advisory)</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel" data-step="12" id="panel-12">
+      <div class="rule" aria-hidden="true"></div>
+      <h2 class="panel-title">Your Cognition System</h2>
+      <p class="panel-instruction">Your record below. Read the two interpretation lines first .  they say what to fix for money, clients, and execution.</p>
+      <div class="summary-card">
+        <h3>Your Cognition System</h3>
+        <div class="viz-lock-rules" id="viz-lock-rules" aria-label="Locked rules">
+          <p class="viz-label">Locked · rule panel</p>
+          <div id="viz-lock-rules-inner"></div>
+        </div>
+        <div id="summary-interpret"></div>
+        <div id="summary-body"></div>
+      </div>
+      <p class="room-flow-saved">Your progress is saved automatically on this device.</p>
+      <div class="room-forward-actions room-forward-actions--single">
+        <button type="button" class="btn-continue" id="btn-to-signal">Continue to next step</button>
+        <p class="room-forward-exit"><a href="/systems">Exit</a></p>
+      </div>
+      <div class="room-secondary-actions" style="margin-top:12px;">
+        <button type="button" class="btn-continue btn-secondary" id="btn-copy">Copy policy</button>
+        <button type="button" class="btn-continue btn-secondary" id="btn-restart">Restart</button>
+      </div>
+      <p class="final-line">If you cannot defend it, do not send it.</p>
+    </section>
+
+    <section class="panel" data-step="13" id="panel-13-signal">
+      <div class="rule" aria-hidden="true"></div>
+      <p class="panel-kicker">Publishing line</p>
+      <h2 class="panel-title">Turn proof into paid work</h2>
+      <p class="truth-line">Publish on a schedule. Same topic for 30 days. Proof in public leads to inquiries.</p>
+
+      <div class="policy-block">
+        <h4>Topic .  pick one lane</h4>
+        <p class="output-body sm">Lane A .  a build you shipped (name it). Lane B .  a question you get weekly. Lane C .  a mistake you keep seeing clients make. Pick one lane for 30 days.</p>
+        <p class="truth-line" style="margin-top:10px;">One sentence: “I help [person] fix [problem] so they get [result].”</p>
+      </div>
+
+      <div class="policy-block">
+        <h4>Voice memo .  2–5 min, one take</h4>
+        <p class="output-body sm">Say out loud:</p>
+        <p class="truth-line" style="margin-top:8px;">“Here’s what breaks for [person]. Here’s why it keeps happening. Here’s what I’d do this week. Here’s where people get stuck.”</p>
+        <p class="consequence-line" style="margin-top:10px;">Don’t edit before you type.</p>
+      </div>
+
+      <div class="policy-block">
+        <h4>Article prompt .  paste transcript</h4>
+        <pre class="copy-block" style="margin-top:8px;">Turn this transcript into one article (600–900 words). Use only my stories and claims. No new ideas.
+
+Structure:
+1) What breaks
+2) Why it keeps happening
+3) What to do this week
+4) One checklist
+
+Pull 5 titles using these formulas (fill brackets):
+• Why [X] keeps failing for [person]
+• The real reason [problem] won’t go away
+• Stop [habit] if you want [result]
+• What I’d check first if [bad outcome] happened
+• [Number] signs you’re about to waste [time/money] on [thing]
+
+Pull 2 subtitles:
+• Subtitle pattern A: What nobody says about [topic]
+• Subtitle pattern B: A short plan for [person] who [constraint]
+
+End with one CTA line (use verbatim):
+“If this is you, reply with [one word] and I’ll send [specific next step].”</pre>
+      </div>
+
+      <div class="policy-block">
+        <h4>Short posts .  same day as article</h4>
+        <p class="output-body sm">Pull 3 posts from the article. Each under 280 characters. Each ends with: “Full breakdown: [link].”</p>
+      </div>
+
+      <div class="policy-block">
+        <h4>Post angles .  rotate</h4>
+        <p class="output-body sm">Mistake · Breakdown · Reality check · Fix · Proof (one angle per post).</p>
+      </div>
+
+      <div class="policy-block">
+        <h4>Cadence</h4>
+        <p class="output-body sm">Minimum: 3 posts + 1 long piece per week. Same lane for 30 days.</p>
+      </div>
+
+      <div class="policy-block">
+        <h4>When someone engages .  DM</h4>
+        <pre class="copy-block" style="margin-top:8px;">Thanks for the [comment/reaction]. I help [person] with [problem] .  if you want, I can send the short version of what I’d do in your situation. Want me to?</pre>
+      </div>
+
+      <div class="policy-block">
+        <h4>30-day target</h4>
+        <p class="output-body sm">12–20 pieces out · replies you can turn into calls · at least one scoped offer sent.</p>
+      </div>
+
+      <p class="final-line">Ship on a schedule. Missed weeks cost more than weak drafts.</p>
+
+      <div class="bonus-wrap" id="bonus-use-machine">
+              <div class="rule" aria-hidden="true"></div>
+              <h2 class="panel-title bonus-main-title">Bonus .  Authority Operating System</h2>
+
+              <div class="bonus-block">
+                <p class="bonus-kicker-block">Core structure</p>
+                <p class="truth-line" style="margin-top:0;">Signal → Authority → Income</p>
+                <p class="output-body sm" style="margin-top:14px;">Signal: capture what you know. Authority: publish and prove it. Income: convert attention into paid work, products, and systems.</p>
+              </div>
+
+              <div class="bonus-step">
+                <p class="bonus-step-meta">1 .  Tool system</p>
+                <h3 class="bonus-step-h">One tool per step</h3>
+                <ul class="bonus-tool-list">
+                  <li><strong>ChatGPT</strong> .  structure outlines, first drafts, fast iteration</li>
+                  <li><strong>Claude</strong> .  edit, tighten tone, longer reasoning</li>
+                  <li><strong>Perplexity</strong> .  answers with citations</li>
+                  <li><strong>Gemini</strong> .  research with Google sources</li>
+                  <li><strong>NotebookLM</strong> .  summarize and connect your own files</li>
+                  <li><strong>Gamma</strong> .  slide-style decks from text</li>
+                  <li><strong>Canva</strong> .  graphics for posts and thumbnails</li>
+                  <li><strong>Agents / automation</strong> .  only after the workflow is repeatable</li>
+                </ul>
+                <p class="output-body sm" style="margin-top:12px;">Finish the step in one tool. Switch tools only when the next step needs a different capability.</p>
+              </div>
+
+              <div class="bonus-step">
+                <p class="bonus-step-meta">2 .  Daily vs batch</p>
+                <h3 class="bonus-step-h">Two ways to ship</h3>
+                <div class="policy-block" style="margin-top:8px;"><h4>Daily</h4><p class="output-body sm">One idea → one piece of writing.</p></div>
+                <div class="policy-block"><h4>Batch (recommended)</h4><p class="output-body sm">One 60–90 minute block: record 5–10 short voice memos, then process each into a draft.</p></div>
+              </div>
+
+              <div class="bonus-step">
+                <p class="bonus-step-meta">3 .  Thinking engine</p>
+                <h3 class="bonus-step-h">Topics that force a point of view</h3>
+                <p class="bonus-path-label">Prompts</p>
+                <ul class="bonus-tight-list">
+                  <li>What is overhyped that I disagree with</li>
+                  <li>What works, but is rarely discussed</li>
+                  <li>What people repeat but misunderstand</li>
+                  <li>What I changed my mind about</li>
+                  <li>What I would fix first in my field</li>
+                  <li>What wastes time with no measurable return</li>
+                </ul>
+                <p class="bonus-path-label">Contrarian angles</p>
+                <ul class="bonus-tight-list">
+                  <li>Combine two unrelated ideas</li>
+                  <li>Apply your field to a current event</li>
+                  <li>Challenge a dominant belief with evidence</li>
+                  <li>Simplify something complex in one page</li>
+                </ul>
+                <p class="output-body sm" style="margin-top:12px;">Generate 20 topics. Pick one.</p>
+              </div>
+
+              <div class="bonus-step">
+                <p class="bonus-step-meta">4 .  Voice memo capture</p>
+                <h3 class="bonus-step-h">Record before you write</h3>
+                <p class="output-body sm">3–7 minutes. Use this structure:</p>
+                <pre class="copy-block" style="margin-top:8px;">Belief: [X]
+Reality: [Y]
+Evidence I have: [Z]
+Action I recommend: [A]</pre>
+                <p class="consequence-line" style="margin-top:12px;">Do not edit while recording.</p>
+              </div>
+
+              <div class="bonus-step">
+                <p class="bonus-step-meta">5 .  Transcription and structure</p>
+                <h3 class="bonus-step-h">Two prompts</h3>
+                <p class="output-body sm">Transcription</p>
+                <pre class="copy-block" style="margin-top:8px;">Transcribe this exactly. Do not rewrite.</pre>
+                <p class="output-body sm" style="margin-top:14px;">Structure into an article</p>
+                <pre class="copy-block" style="margin-top:8px;">You are a senior editor.
+
+Task: turn this transcript into a publish-ready article.
+
+Rules:
+- keep the author’s ideas; do not add new claims
+- remove repetition
+- no generic filler
+- clear point of view
+
+Sections: hook, tension, breakdown, correction, implication</pre>
+              </div>
+
+              <div class="bonus-step">
+                <p class="bonus-step-meta">6 .  Article structure</p>
+                <h3 class="bonus-step-h">Standard order</h3>
+                <ol class="bonus-lanes">
+                  <li>Hook</li>
+                  <li>Tension</li>
+                  <li>Breakdown</li>
+                  <li>Correction</li>
+                  <li>Implication</li>
+                </ol>
+                <p class="output-body sm" style="margin-top:12px;">Each section must add a new claim or a new piece of evidence.</p>
+              </div>
+
+              <div class="bonus-step">
+                <p class="bonus-step-meta">7 .  Research and fact-check</p>
+                <h3 class="bonus-step-h">When you cite facts</h3>
+                <p class="output-body sm">If you use numbers, trends, or external claims: use Perplexity or Gemini, confirm with at least two independent sources, and delete anything you cannot verify.</p>
+              </div>
+
+              <div class="bonus-step">
+                <p class="bonus-step-meta">8 .  Anti-slop</p>
+                <h3 class="bonus-step-h">What “slop” is</h3>
+                <p class="output-body sm">Slop is generic text that could apply to any industry: empty intensifiers, fake balance, padded lists, and no decision.</p>
+                <p class="bonus-path-label">Banned phrases (examples)</p>
+                <ul class="bonus-tight-list">
+                  <li>“in today’s world”</li>
+                  <li>“it is important to note”</li>
+                  <li>“various factors”</li>
+                  <li>“this highlights”</li>
+                  <li>“overall” / “in conclusion”</li>
+                </ul>
+                <p class="output-body sm" style="margin-top:14px;">Editing prompt</p>
+                <pre class="copy-block" style="margin-top:8px;">You are a senior editor.
+
+Remove AI slop: vague phrasing, filler, hedging, and sentences that could apply to any topic.
+
+Keep the author’s voice. If a sentence is generic, rewrite it with one concrete detail or cut it.</pre>
+              </div>
+
+              <div class="bonus-step">
+                <p class="bonus-step-meta">9 .  Human review</p>
+                <h3 class="bonus-step-h">Before you publish</h3>
+                <ul class="bonus-tight-list" style="color:var(--text);">
+                  <li>Read the whole piece without tools.</li>
+                  <li>Delete or rewrite every sentence you would not defend in public.</li>
+                  <li>Check that each claim has a source or is clearly labeled as opinion.</li>
+                </ul>
+              </div>
+
+              <div class="bonus-step">
+                <p class="bonus-step-meta">10 .  Publish and distribution</p>
+                <h3 class="bonus-step-h">Order of operations</h3>
+                <p class="output-body sm">Publish long-form first (Substack and/or YouTube). Then cut: 3–5 short written posts, 2–3 short clips. Short clips point back to the long piece.</p>
+              </div>
+
+              <div class="bonus-step">
+                <p class="bonus-step-meta">11 .  Analytics</p>
+                <h3 class="bonus-step-h">What to track</h3>
+                <p class="bonus-path-label">Use</p>
+                <ul class="bonus-tight-list">
+                  <li>Replies</li>
+                  <li>DMs</li>
+                  <li>Saves</li>
+                  <li>Comments</li>
+                  <li>Qualified inquiries</li>
+                </ul>
+                <p class="bonus-path-label">Ignore</p>
+                <ul class="bonus-tight-list"><li>Likes as a primary signal</li></ul>
+              </div>
+
+              <div class="bonus-step">
+                <p class="bonus-step-meta">12 .  Positioning</p>
+                <h3 class="bonus-step-h">How your niche shows up</h3>
+                <p class="output-body sm">Track which topics get repeated questions and saves. Double down on those themes. Reduce topics that get silence.</p>
+              </div>
+
+              <div class="bonus-step">
+                <p class="bonus-step-meta">13 .  Conversion</p>
+                <h3 class="bonus-step-h">DM line</h3>
+                <pre class="copy-block" style="margin-top:8px;">I’ve been working on this directly. If you want help applying it, I can help.</pre>
+                <p class="output-body sm" style="margin-top:14px;"><strong>Backend monetization</strong></p>
+                <ul class="bonus-tight-list">
+                  <li>Templates and checklists</li>
+                  <li>Digital products</li>
+                  <li>Courses or cohorts</li>
+                  <li>Licensed systems and repeatable service packages</li>
+                </ul>
+              </div>
+
+              <div class="bonus-step">
+                <p class="bonus-step-meta">14 .  File system</p>
+                <h3 class="bonus-step-h">Folders</h3>
+                <p class="output-body sm">Ideas → Transcripts → Drafts → Published → High Performers</p>
+                <p class="translate-line" style="margin-top:12px;">Reuse High Performers before inventing new topics.</p>
+              </div>
+
+              <div class="bonus-step">
+                <p class="bonus-step-meta">15 .  System memory</p>
+                <h3 class="bonus-step-h">What to store</h3>
+                <ul class="bonus-tight-list">
+                  <li>Topics that performed</li>
+                  <li>Prompts that worked</li>
+                  <li>Finished pieces you can repurpose</li>
+                </ul>
+              </div>
+
+              <div class="bonus-step">
+                <p class="bonus-step-meta">16 .  AI guardrails (reuse)</p>
+                <h3 class="bonus-step-h">Base instruction</h3>
+                <p class="output-body sm">Save this and paste it at the start of every working session:</p>
+                <pre class="copy-block" style="margin-top:8px;">You are an assistant for a working operator.
+
+Rules:
+- no generic language
+- preserve the author’s ideas; do not invent facts
+- remove filler
+- prefer short sentences
+- flag uncertainty instead of bluffing
+
+If output reads like a template, rewrite it.</pre>
+              </div>
+
+              <div class="bonus-step">
+                <p class="bonus-step-meta">17 .  Distribution and monetization map</p>
+                <h3 class="bonus-step-h">Where work lives</h3>
+                <div class="bonus-phase" style="margin-top:12px;">
+                  <h5>Layer 1 .  Authority</h5>
+                  <p class="output-body sm">Substack · YouTube</p>
+                </div>
+                <div class="bonus-phase">
+                  <h5>Layer 2 .  Distribution</h5>
+                  <p class="output-body sm">LinkedIn · X · Instagram · TikTok · Reddit · Pinterest</p>
+                </div>
+                <div class="bonus-phase">
+                  <h5>Layer 3 .  Conversion</h5>
+                  <p class="output-body sm"><strong>Communities:</strong> Discord · Facebook Groups · Slack</p>
+                  <p class="output-body sm" style="margin-top:8px;"><strong>Marketplaces:</strong> Gumroad · Payhip · Sellfy · Etsy</p>
+                  <p class="output-body sm" style="margin-top:8px;"><strong>Services:</strong> Upwork · Fiverr · direct outreach</p>
+                  <p class="output-body sm" style="margin-top:8px;"><strong>Local:</strong> Facebook Marketplace · local network</p>
+                </div>
+                <div class="bonus-phase">
+                  <h5>Layer 4 .  Funnels (optional)</h5>
+                  <p class="output-body sm">Paid ads, CRM, email sequences .  only after you have repeating demand and a clear offer.</p>
+                </div>
+              </div>
+
+              <div class="bonus-step">
+                <p class="bonus-step-meta">18 .  Start here</p>
+                <h3 class="bonus-step-h">Pick one</h3>
+                <ul class="bonus-tight-list">
+                  <li>Need money now → services</li>
+                  <li>Have ideas but nothing structured → authority</li>
+                  <li>Want scalable income → products</li>
+                </ul>
+              </div>
+
+              <div class="bonus-step">
+                <p class="bonus-step-meta">19 .  Avoid early</p>
+                <h3 class="bonus-step-h">Do not do this first</h3>
+                <ul class="bonus-tight-list">
+                  <li>Posting everywhere at once</li>
+                  <li>Building funnels before you have a repeatable message</li>
+                  <li>Shipping products without proof anyone will pay</li>
+                  <li>Switching platforms every week</li>
+                </ul>
+              </div>
+
+              <div class="bonus-block">
+                <p class="bonus-closer" style="border-top:none;margin-top:8px;padding-top:0;">If it reads clearly but says nothing new, it has no value.</p>
+              </div>
+      </div>
+
+      <p class="room-flow-saved">Your progress is saved automatically on this device.</p>
+      <div class="room-forward-actions room-forward-actions--single">
+        <a href="/systems" class="btn-continue">Continue to next step</a>
+        <p class="room-forward-exit"><a href="/">Home</a></p>
+      </div>
+      <div class="room-secondary-actions">
+        <button type="button" class="btn-continue btn-secondary" id="btn-restart-signal">Restart</button>
+      </div>
+    </section>
+  </div>
+
+  <script src="/stephuary-os.js"></script>
+  <script src="/stephuary-progress.js"></script>
+  <script src="/stephuary-guided-room-entry.js"></script>
+  <script>
+(function () {
+  var CURRENT_USE_OPTS = [
+    { id: 'idea', label: 'idea generation' },
+    { id: 'drafts', label: 'writing first drafts' },
+    { id: 'summarize', label: 'summarizing information' },
+    { id: 'research', label: 'research support' },
+    { id: 'brainstorm', label: 'brainstorming' },
+    { id: 'analysis', label: 'analysis' },
+    { id: 'coding', label: 'coding / technical help' },
+    { id: 'decision', label: 'decision-making' },
+    { id: 'blank', label: 'replacing blank-page discomfort' },
+    { id: 'before_think', label: 'I use it before I think' },
+    { id: 'after_think', label: 'I use it after I think' }
+  ];
+
+  var SUB_OPTS = [
+    { id: 'extends', label: 'It extends work I already know how to do', tier: 'aug' },
+    { id: 'faster_after', label: 'It helps me move faster after I think', tier: 'aug' },
+    { id: 'before_try', label: 'I use it before trying myself', tier: 'drift' },
+    { id: 'unknown', label: 'I rely on it when I do not know the domain', tier: 'drift' },
+    { id: 'unverified', label: 'I often cannot verify what it gives me', tier: 'out' }
+  ];
+
+  var COST_OPTS = [
+    { id: 'tabs', label: 'more tabs open than clarity gained' },
+    { id: 'fatigue', label: 'mental fatigue' },
+    { id: 'output', label: 'more output, less confidence' },
+    { id: 'retention', label: 'weak retention' },
+    { id: 'dependence', label: 'dependence on the tool' },
+    { id: 'deep', label: 'less deep thinking' },
+    { id: 'sharing', label: 'sharing too much information' },
+    { id: 'many_tools', label: 'too many tools to manage' }
+  ];
+
+  var VERIFY_OPTS = [
+    { id: 'mostly', label: 'yes, in most cases', out: 'selective' },
+    { id: 'some', label: 'only in some domains', out: 'uneven' },
+    { id: 'rarely', label: 'rarely', out: 'uneval' },
+    { id: 'no', label: 'no', out: 'uneval' }
+  ];
+
+  var DATA_OPTS = [
+    { id: 'client', label: 'client details' },
+    { id: 'strategy', label: 'business strategy' },
+    { id: 'frameworks', label: 'proprietary frameworks' },
+    { id: 'financial', label: 'financial details' },
+    { id: 'medical', label: 'medical information' },
+    { id: 'relationships', label: 'personal relationships' },
+    { id: 'identity', label: 'identity documents' },
+    { id: 'nothing', label: 'nothing sensitive goes in', exclusive: true }
+  ];
+
+  var APPROVED_OPTS = [
+    { id: 'draft_after', label: 'drafting after I think' },
+    { id: 'summarize_pub', label: 'summarizing public information' },
+    { id: 'compare', label: 'comparing options I can verify' },
+    { id: 'structure', label: 'structuring material I already understand' },
+    { id: 'repetitive', label: 'speeding up repetitive tasks' }
+  ];
+
+  var RESTRICTED_OPTS = [
+    { id: 'replace_thought', label: 'replacing original thought' },
+    { id: 'medlegal', label: 'medical or legal judgment outside my expertise' },
+    { id: 'confidential', label: 'feeding confidential materials' },
+    { id: 'authority', label: 'generating authority I do not actually have' },
+    { id: 'discomfort', label: 'using it when the issue is discomfort, not need' }
+  ];
+
+  var PRINCIPLE_OPTS = [
+    { id: 'p1', text: 'AI augments my expertise. It does not replace it.' },
+    { id: 'p2', text: 'Precision before volume.' },
+    { id: 'p3', text: 'My data has value.' },
+    { id: 'p4', text: 'I verify before I trust.' },
+    { id: 'p5', text: 'If I cannot judge the output, I do not use it.' },
+    { id: 'p6', text: 'Less, but better.' },
+    { id: 'p7', text: 'I build with tools. I do not depend on them.' }
+  ];
+
+  var state = {
+    currentUse: [],
+    substitutionRisk: '',
+    verificationLevel: '',
+    dataExposure: [],
+    toolCount: 0,
+    fatigueSignals: [],
+    approvedUses: [],
+    restrictedUses: [],
+    principles: [],
+    operatingLayer: '',
+    aiUsageMode: ''
+  };
+
+  var currentStep = 0;
+  var totalSteps = 14;
+
+  function escapeHtml(s) {
+    if (s == null) return '';
+    return String(s)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  function fillSysResponse(containerId, sys) {
+    var el = document.getElementById(containerId);
+    if (!el || !sys) return;
+    var losing = sys.losing != null ? sys.losing : 'Billable time or client trust at the rate shown.';
+    var driving =
+      sys.driving != null ? sys.driving : [sys.why, sys.continues].filter(Boolean).join(' · ');
+    var doThis = sys.doThis != null ? sys.doThis : sys.fix;
+    el.style.display = 'block';
+    el.innerHTML =
+      '<p class="sys-line"><strong>This means:</strong> ' +
+      escapeHtml(sys.means) +
+      '</p>' +
+      '<p class="sys-line"><strong>You\'re likely losing:</strong> ' +
+      escapeHtml(losing) +
+      '</p>' +
+      '<p class="sys-line"><strong>What\'s actually driving it:</strong> ' +
+      escapeHtml(driving) +
+      '</p>' +
+      '<p class="sys-line"><strong>Do this:</strong> ' +
+      escapeHtml(doThis) +
+      '</p>';
+  }
+
+  function setProgress() {
+    var el = document.getElementById('progress-text');
+    if (el) el.textContent = 'Room 5 · ' + (currentStep + 1) + ' / ' + totalSteps;
+  }
+
+  function showStep(n) {
+    currentStep = n;
+    document.querySelectorAll('.panel').forEach(function (p) {
+      p.classList.toggle('active', parseInt(p.getAttribute('data-step'), 10) === n);
+    });
+    setProgress();
+    if (n === 13 && window.StephuaryProgress) window.StephuaryProgress.markRoomComplete('05');
+    if (n === 8) {
+      var cp = document.getElementById('cb-principles-bind');
+      if (cp) cp.checked = false;
+      updatePrincipleGate();
+    }
+    if (n === 12) renderSummary();
+    if (window.StephuaryOS) {
+      window.StephuaryOS.record('05', { step: currentStep, totalSteps: totalSteps });
+    }
+  }
+
+  function next() {
+    if (currentStep < totalSteps - 1) showStep(currentStep + 1);
+  }
+
+  function summarizeCurrentUse() {
+    var sel = state.currentUse;
+    var before = sel.indexOf('I use it before I think') !== -1 || sel.indexOf('replacing blank-page discomfort') !== -1;
+    var after = sel.indexOf('I use it after I think') !== -1;
+    var taskTypes = ['idea generation', 'writing first drafts', 'summarizing information', 'research support', 'brainstorming', 'analysis', 'coding / technical help'];
+    var task = sel.filter(function (l) { return taskTypes.indexOf(l) !== -1; }).length;
+    var parts = [];
+    parts.push('Your use pattern is currently: ');
+    if (after && !before) {
+      parts.push('Augmentation: you reach for the tool after thinking — safer when money or a client is watching.');
+    } else if (before && !after) {
+      parts.push('Substitution: you reach for the tool before your own attempt — you will not be able to explain it live.');
+    } else if (before && after) {
+      parts.push('Mixed: before and after both show up; the sequence is inconsistent — so execution is inconsistent.');
+    } else {
+      parts.push(task >= 4 ? 'Many task types: watch where judgment drops out before you send or bill.' : 'Fewer task types: watch whether judgment stays with you on paid work.');
+    }
+    return parts.join('');
+  }
+
+  function substitutionReadout(tier) {
+    if (tier === 'aug') return 'Mostly augmenting .  execution supports what you already own.';
+    if (tier === 'drift') return 'Drifting into substitution .  offers and delivery get harder to defend.';
+    return 'Outsourcing judgment .  you cannot stand behind the work in a live room.';
+  }
+
+  function verificationReadout(key) {
+    var o = VERIFY_OPTS.filter(function (v) { return v.id === key; })[0];
+    if (!o) return '. ';
+    if (o.out === 'selective') return 'You can verify most of what you would send to a client.';
+    if (o.out === 'uneven') return 'Verification is uneven .  some work you can stand behind, some you cannot.';
+    return 'You cannot evaluate what you are pasting .  do not send it as paid or client work.';
+  }
+
+  function computeMisuseSignals() {
+    var score = 0;
+    state.currentUse.forEach(function (l) {
+      if (l.indexOf('before I think') !== -1) score += 3;
+      if (l.indexOf('blank-page') !== -1) score += 2;
+      if (l.indexOf('decision-making') !== -1) score += 1;
+    });
+    var tc = parseInt(document.getElementById('tool-count') && document.getElementById('tool-count').value, 10);
+    if (!isNaN(tc) && tc > 5) score += 2;
+    if (!isNaN(tc) && tc > 8) score += 2;
+    return score;
+  }
+
+  function assignAiUsageMode() {
+    var misuse = computeMisuseSignals();
+    var subDrift =
+      state.substitutionRisk &&
+      (state.substitutionRisk.indexOf('before trying') !== -1 ||
+        state.substitutionRisk.indexOf('do not know the domain') !== -1);
+    var mode =
+      misuse >= 6 || subDrift
+        ? 'Recovery mode: notes first, one tool, no AI before your own sentence exists.'
+        : misuse >= 3
+          ? 'Strict mode: verify every claim; no strategy you cannot explain live.'
+          : 'Standard mode: augment after you think; verify before anything client-facing.';
+    state.aiUsageMode = mode;
+    var el = document.getElementById('ai-mode-text');
+    var block = document.getElementById('ai-mode-block');
+    var ou = document.getElementById('out-use');
+    if (el) el.textContent = mode;
+    if (block) block.style.display = ou && ou.style.display === 'block' ? 'block' : 'none';
+  }
+
+  function buildOperatingLayer() {
+    var texts = state.principles.filter(Boolean);
+    if (!texts.length) {
+      state.operatingLayer = '';
+      return '';
+    }
+    state.operatingLayer = texts.join('. ') + '.';
+    return state.operatingLayer;
+  }
+
+  function initCurrentUse() {
+    var wrap = document.getElementById('current-use-list');
+    CURRENT_USE_OPTS.forEach(function (o) {
+      var lab = document.createElement('label');
+      lab.className = 'opt';
+      var inp = document.createElement('input');
+      inp.type = 'checkbox';
+      inp.value = o.id;
+      var span = document.createElement('span');
+      span.textContent = o.label;
+      lab.appendChild(inp);
+      lab.appendChild(document.createTextNode(' '));
+      lab.appendChild(span);
+      wrap.appendChild(lab);
+      inp.addEventListener('change', function () {
+        state.currentUse = [];
+        wrap.querySelectorAll('input:checked').forEach(function (c) {
+          var opt = CURRENT_USE_OPTS.filter(function (x) { return x.id === c.value; })[0];
+          if (opt) state.currentUse.push(opt.label);
+        });
+        if (state.currentUse.length === 0) {
+          document.getElementById('out-use').style.display = 'none';
+          document.getElementById('btn-1').disabled = true;
+          var amb = document.getElementById('ai-mode-block');
+          if (amb) amb.style.display = 'none';
+          return;
+        }
+        document.getElementById('out-use-text').textContent = summarizeCurrentUse();
+        document.getElementById('out-use').style.display = 'block';
+        document.getElementById('btn-1').disabled = false;
+        assignAiUsageMode();
+        fillSysResponse('sys-response-r5-1', {
+          means: document.getElementById('out-use-text').textContent,
+          why: 'Judgment location decides whether you can explain work in a live room.',
+          continues: 'Work you cannot defend does not convert .  it stalls.',
+          fix: 'Write one sentence yourself before you open any AI on the next paid task.'
+        });
+      });
+    });
+  }
+
+  function initSub() {
+    var wrap = document.getElementById('sub-list');
+    SUB_OPTS.forEach(function (o) {
+      var lab = document.createElement('label');
+      lab.className = 'opt';
+      var inp = document.createElement('input');
+      inp.type = 'radio';
+      inp.name = 'sub';
+      inp.value = o.id;
+      var span = document.createElement('span');
+      span.textContent = o.label;
+      lab.appendChild(inp);
+      lab.appendChild(document.createTextNode(' '));
+      lab.appendChild(span);
+      wrap.appendChild(lab);
+      inp.addEventListener('change', function () {
+        state.substitutionRisk = o.label;
+        document.getElementById('out-sub-text').textContent = substitutionReadout(o.tier);
+        document.getElementById('out-sub').style.display = 'block';
+        document.getElementById('btn-2').disabled = false;
+        assignAiUsageMode();
+        fillSysResponse('sys-response-r5-2', {
+          means: substitutionReadout(o.tier),
+          why: 'Substitution removes live defense .  that is where deals and delivery sit.',
+          continues: 'You lock up when the screen goes away.',
+          fix: 'Draft cold in notes first .  AI only after your sentence exists.'
+        });
+      });
+    });
+  }
+
+  function initCost() {
+    var wrap = document.getElementById('cost-list');
+    COST_OPTS.forEach(function (o) {
+      var lab = document.createElement('label');
+      lab.className = 'opt';
+      var inp = document.createElement('input');
+      inp.type = 'checkbox';
+      inp.value = o.id;
+      var span = document.createElement('span');
+      span.textContent = o.label;
+      lab.appendChild(inp);
+      lab.appendChild(document.createTextNode(' '));
+      lab.appendChild(span);
+      wrap.appendChild(lab);
+      inp.addEventListener('change', function () {
+        state.fatigueSignals = [];
+        wrap.querySelectorAll('input:checked').forEach(function (c) {
+          var opt = COST_OPTS.filter(function (x) { return x.id === c.value; })[0];
+          if (opt) state.fatigueSignals.push(opt.label);
+        });
+        if (state.fatigueSignals.length === 0) {
+          document.getElementById('out-cost').style.display = 'none';
+          document.getElementById('btn-3').disabled = true;
+          return;
+        }
+        document.getElementById('out-cost').style.display = 'block';
+        document.getElementById('btn-3').disabled = false;
+        fillSysResponse('sys-response-r5-3', {
+          means: 'You are already paying: ' + state.fatigueSignals.join(' · ') + '.',
+          why: 'Rework is unbilled time .  volume hides the leak.',
+          continues: 'You ship less while hours climb.',
+          fix: 'Cut one generation loop: one prompt, one verify pass, then ship or kill.'
+        });
+      });
+    });
+  }
+
+  function initVerify() {
+    var wrap = document.getElementById('verify-list');
+    VERIFY_OPTS.forEach(function (o) {
+      var lab = document.createElement('label');
+      lab.className = 'opt';
+      var inp = document.createElement('input');
+      inp.type = 'radio';
+      inp.name = 'verify';
+      inp.value = o.id;
+      var span = document.createElement('span');
+      span.textContent = o.label;
+      lab.appendChild(inp);
+      lab.appendChild(document.createTextNode(' '));
+      lab.appendChild(span);
+      wrap.appendChild(lab);
+      inp.addEventListener('change', function () {
+        state.verificationLevel = o.label;
+        document.getElementById('out-verify-text').textContent = verificationReadout(o.id);
+        document.getElementById('out-verify').style.display = 'block';
+        document.getElementById('btn-4').disabled = false;
+        fillSysResponse('sys-response-r5-4', {
+          means: verificationReadout(o.id),
+          why: 'Paid work requires a verification bar .  not vibes.',
+          continues: 'Client-facing text becomes risk you cannot price.',
+          fix: 'Ban paste-to-client on anything below your stated verification bar.'
+        });
+      });
+    });
+  }
+
+  function initData() {
+    var wrap = document.getElementById('data-list');
+    DATA_OPTS.forEach(function (o) {
+      var lab = document.createElement('label');
+      lab.className = 'opt';
+      var inp = document.createElement('input');
+      inp.type = 'checkbox';
+      inp.value = o.id;
+      var span = document.createElement('span');
+      span.textContent = o.label;
+      lab.appendChild(inp);
+      lab.appendChild(document.createTextNode(' '));
+      lab.appendChild(span);
+      wrap.appendChild(lab);
+      inp.addEventListener('change', function () {
+        if (o.exclusive && inp.checked) {
+          wrap.querySelectorAll('input').forEach(function (c) {
+            if (c !== inp) c.checked = false;
+          });
+        } else if (inp.checked) {
+          var noneInp = wrap.querySelector('input[value="nothing"]');
+          if (noneInp) noneInp.checked = false;
+        }
+        state.dataExposure = [];
+        wrap.querySelectorAll('input:checked').forEach(function (c) {
+          var opt = DATA_OPTS.filter(function (x) { return x.id === c.value; })[0];
+          if (opt) state.dataExposure.push(opt.label);
+        });
+        if (state.dataExposure.length === 0) {
+          document.getElementById('out-data').style.display = 'none';
+          document.getElementById('btn-5').disabled = true;
+          return;
+        }
+        document.getElementById('out-data-text').textContent = 'Your protected categories are: ' + state.dataExposure.join(', ') + '.';
+        document.getElementById('out-data').style.display = 'block';
+        document.getElementById('btn-5').disabled = false;
+        fillSysResponse('sys-response-r5-5', {
+          means: 'Named off-limits: ' + state.dataExposure.join(' · ') + '.',
+          why: 'Unnamed categories become pasted credentials under pressure.',
+          continues: 'One leak costs the account .  not one task.',
+          fix: 'Keep client identifiers and strategy drafts out of the tool chain entirely.'
+        });
+      });
+    });
+  }
+
+  function updatePressure05() {
+    var el = document.getElementById('pressure-live-05');
+    var u = document.getElementById('unchanged-05');
+    var fr = document.getElementById('freq-05');
+    var ot = document.getElementById('out-tools');
+    if (!el || !ot || ot.style.display === 'none') {
+      if (el) el.style.display = 'none';
+      if (u) u.style.display = 'none';
+      if (fr) fr.style.display = 'none';
+      return;
+    }
+    var n = state.toolCount;
+    el.style.display = 'block';
+    el.textContent =
+      n > 5
+        ? 'You are currently losing approximately ' +
+          n +
+          ' tool surfaces per week .  each extra surface is execution time you do not invoice.'
+        : 'At this tool count, switching cost is still containable .  if you do not add another surface.';
+    if (u) u.style.display = 'block';
+    if (fr) fr.style.display = 'block';
+  }
+
+  function updatePrincipleGate() {
+    var cb = document.getElementById('cb-principles-bind');
+    var ok = state.principles.length > 0 && cb && cb.checked;
+    document.getElementById('btn-8').disabled = !ok;
+  }
+
+  function computeTools() {
+    var raw = document.getElementById('tool-count').value;
+    var n = parseInt(raw, 10);
+    if (raw === '' || isNaN(n) || n < 0) {
+      document.getElementById('out-tools').style.display = 'none';
+      document.getElementById('btn-6').disabled = true;
+      updatePressure05();
+      return;
+    }
+    state.toolCount = n;
+    var msg = n <= 3 ? 'You control your tools.' : 'You are managing tools instead of producing work.';
+    document.getElementById('out-tools-text').textContent = msg;
+    var follow = document.getElementById('out-tools-follow');
+    if (follow) follow.style.display = n > 3 ? 'block' : 'none';
+    document.getElementById('out-tools').style.display = 'block';
+    document.getElementById('btn-6').disabled = false;
+    assignAiUsageMode();
+    fillSysResponse('sys-response-r5-6', {
+      means:
+        n <= 3
+          ? 'Tool count stays inside a range you can actually control.'
+          : 'Tool count is high — context switching is eating execution time.',
+      why: 'Surfaces multiply decision points — decision points are not billable.',
+      continues: 'You manage stacks instead of shipping.',
+      fix: 'Pick one primary tool — archive the rest for 14 days.'
+    });
+    updatePressure05();
+  }
+
+  function initRules() {
+    function bindGroup(wrapId, opts) {
+      var wrap = document.getElementById(wrapId);
+      opts.forEach(function (o) {
+        var lab = document.createElement('label');
+        lab.className = 'opt opt-toggle';
+        var inp = document.createElement('input');
+        inp.type = 'checkbox';
+        inp.value = o.id;
+        var span = document.createElement('span');
+        span.className = 'toggle-text';
+        span.textContent = o.label;
+        var track = document.createElement('span');
+        track.className = 'toggle-track';
+        track.setAttribute('aria-hidden', 'true');
+        lab.appendChild(inp);
+        lab.appendChild(span);
+        lab.appendChild(track);
+        wrap.appendChild(lab);
+        inp.addEventListener('change', function () {
+          state.approvedUses = [];
+          document.getElementById('approved-list').querySelectorAll('input:checked').forEach(function (c) {
+            var opt = APPROVED_OPTS.filter(function (x) { return x.id === c.value; })[0];
+            if (opt) state.approvedUses.push(opt.label);
+          });
+          state.restrictedUses = [];
+          document.getElementById('restricted-list').querySelectorAll('input:checked').forEach(function (c) {
+            var opt = RESTRICTED_OPTS.filter(function (x) { return x.id === c.value; })[0];
+            if (opt) state.restrictedUses.push(opt.label);
+          });
+          var ok = state.approvedUses.length > 0 && state.restrictedUses.length > 0;
+          document.getElementById('out-rules').style.display = ok ? 'block' : 'none';
+          document.getElementById('btn-7').disabled = !ok;
+          if (ok) {
+            fillSysResponse('sys-response-r5-7', {
+              means:
+                'Allowed uses and restricted uses are both named .  the policy is real.',
+              why: 'Rules with only one side are preferences .  preferences break under deadline.',
+              continues: 'You improvise under pressure and eat unpriced risk.',
+              fix: 'Say allowed and forbidden out loud before the next client-facing send.'
+            });
+          }
+        });
+      });
+    }
+    bindGroup('approved-list', APPROVED_OPTS);
+    bindGroup('restricted-list', RESTRICTED_OPTS);
+  }
+
+  function updatePrincipleCap() {
+    var n = state.principles.length;
+    document.getElementById('principle-cap').textContent = 'Selected ' + n + ' of 5 maximum.';
+  }
+
+  function initPrinciples() {
+    var wrap = document.getElementById('principles-list');
+    PRINCIPLE_OPTS.forEach(function (o) {
+      var lab = document.createElement('label');
+      lab.className = 'opt';
+      var inp = document.createElement('input');
+      inp.type = 'checkbox';
+      inp.value = o.id;
+      var span = document.createElement('span');
+      span.textContent = o.text;
+      lab.appendChild(inp);
+      lab.appendChild(document.createTextNode(' '));
+      lab.appendChild(span);
+      wrap.appendChild(lab);
+      inp.addEventListener('change', function () {
+        var checked = wrap.querySelectorAll('input:checked');
+        if (inp.checked && checked.length > 5) {
+          inp.checked = false;
+          return;
+        }
+        state.principles = [];
+        wrap.querySelectorAll('input:checked').forEach(function (c) {
+          var opt = PRINCIPLE_OPTS.filter(function (x) { return x.id === c.value; })[0];
+          if (opt) state.principles.push(opt.text);
+        });
+        updatePrincipleCap();
+        if (state.principles.length === 0) {
+          document.getElementById('out-layer').style.display = 'none';
+          updatePrincipleGate();
+          return;
+        }
+        document.getElementById('out-layer-text').textContent = buildOperatingLayer();
+        document.getElementById('out-layer').style.display = 'block';
+        updatePrincipleGate();
+        fillSysResponse('sys-response-r5-8', {
+          means: 'Your operating layer is locked to: ' + state.principles.join(' · ') + '.',
+          why: 'Principles you do not act on do not protect revenue .  they decorate notes.',
+          continues: 'The next deadline erases the policy.',
+          fix: 'Apply principle one on the next outbound before you open any model.'
+        });
+      });
+    });
+    updatePrincipleCap();
+  }
+
+  function buildInterpretation() {
+    var lines = [];
+    lines.push('You are either using AI to support your work or replace your thinking. Only one gets paid.');
+    var vOpt = VERIFY_OPTS.filter(function (v) { return v.label === state.verificationLevel; })[0];
+    if (vOpt && (vOpt.id === 'rarely' || vOpt.id === 'no')) {
+      lines.push('Low verification → reduce AI.');
+    } else if (state.toolCount > 3) {
+      lines.push('High tool use → reduce tools.');
+    } else {
+      lines.push('Otherwise → enforce your rules under pressure, not on paper.');
+    }
+    return lines.slice(0, 2);
+  }
+
+  function renderSummary() {
+    assignAiUsageMode();
+    buildOperatingLayer();
+    var lr = document.getElementById('viz-lock-rules-inner');
+    if (lr) {
+      lr.innerHTML = '';
+      function addRow(label) {
+        var row = document.createElement('div');
+        row.className = 'lock-rule-row';
+        var s = document.createElement('span');
+        s.textContent = label;
+        var t = document.createElement('span');
+        t.className = 'toggle-track on';
+        t.setAttribute('aria-hidden', 'true');
+        row.appendChild(s);
+        row.appendChild(t);
+        lr.appendChild(row);
+      }
+      function addSub(h) {
+        var p = document.createElement('p');
+        p.className = 'summary-section-title';
+        p.style.marginTop = '12px';
+        p.textContent = h;
+        lr.appendChild(p);
+      }
+      if (state.approvedUses && state.approvedUses.length) {
+        addSub('Approved');
+        state.approvedUses.forEach(addRow);
+      }
+      if (state.restrictedUses && state.restrictedUses.length) {
+        addSub('Restricted');
+        state.restrictedUses.forEach(addRow);
+      }
+    }
+
+    var interpEl = document.getElementById('summary-interpret');
+    if (interpEl) {
+      interpEl.innerHTML = '';
+      buildInterpretation().forEach(function (line) {
+        var p = document.createElement('p');
+        p.className = 'final-interpret';
+        p.textContent = line;
+        interpEl.appendChild(p);
+      });
+    }
+    var body = document.getElementById('summary-body');
+    body.innerHTML = '';
+
+    function addSec(title, html) {
+      var d = document.createElement('div');
+      d.className = 'summary-section';
+      var h = document.createElement('p');
+      h.className = 'summary-section-title';
+      h.textContent = title;
+      d.appendChild(h);
+      var inner = document.createElement('div');
+      inner.innerHTML = html;
+      d.appendChild(inner);
+      body.appendChild(d);
+    }
+
+    addSec('Current use pattern', '<p>' + escapeHtml(state.currentUse.join(', ')) + '</p><p style="margin-top:8px;">' + escapeHtml(summarizeCurrentUse()) + '</p>');
+
+    addSec('AI usage mode', '<p>' + escapeHtml(state.aiUsageMode || '. ') + '</p>');
+
+    var subTier = SUB_OPTS.filter(function (s) { return s.label === state.substitutionRisk; })[0];
+    addSec('Augmentation vs substitution', '<p>' + escapeHtml(state.substitutionRisk) + '</p><p style="margin-top:8px;">' + escapeHtml(subTier ? substitutionReadout(subTier.tier) : '. ') + '</p>');
+
+    addSec('Real costs', '<ul>' + state.fatigueSignals.map(function (l) { return '<li>' + escapeHtml(l) + '</li>'; }).join('') + '</ul><p style="margin-top:8px;">This is time spent fixing outputs you do not trust. You produce more, but ship less.</p>');
+
+    var vOpt = VERIFY_OPTS.filter(function (v) { return v.label === state.verificationLevel; })[0];
+    addSec('Verification level', '<p>' + escapeHtml(state.verificationLevel) + '</p><p style="margin-top:8px;">' + escapeHtml(vOpt ? verificationReadout(vOpt.id) : '. ') + '</p>');
+
+    addSec('Protected data categories', '<p>' + escapeHtml(state.dataExposure.join(', ')) + '</p>');
+
+    addSec('Tool load', '<p>' + state.toolCount + ' tools weekly.</p>');
+
+    addSec('Approved uses', '<ul>' + state.approvedUses.map(function (l) { return '<li>' + escapeHtml(l) + '</li>'; }).join('') + '</ul>');
+    addSec('Restricted uses', '<ul>' + state.restrictedUses.map(function (l) { return '<li>' + escapeHtml(l) + '</li>'; }).join('') + '</ul>');
+
+    addSec('Operating principles', '<ul>' + state.principles.map(function (l) { return '<li>' + escapeHtml(l) + '</li>'; }).join('') + '</ul>');
+    addSec('Generated operating layer statement', '<p>' + escapeHtml(state.operatingLayer) + '</p>');
+  }
+
+  function buildPolicyText() {
+    var lines = [];
+    lines.push('ROOM 5 .  USING AI WITHOUT LOWERING QUALITY');
+    lines.push('');
+    lines.push('CURRENT USE');
+    lines.push(state.currentUse.join(', '));
+    lines.push(summarizeCurrentUse());
+    lines.push('');
+    lines.push('SUBSTITUTION RISK (dominant)');
+    lines.push(state.substitutionRisk);
+    lines.push('');
+    lines.push('COSTS NOTICED');
+    lines.push(state.fatigueSignals.join(', '));
+    lines.push('');
+    lines.push('VERIFICATION');
+    lines.push(state.verificationLevel);
+    var vOpt = VERIFY_OPTS.filter(function (v) { return v.label === state.verificationLevel; })[0];
+    if (vOpt) lines.push(verificationReadout(vOpt.id));
+    lines.push('');
+    lines.push('PROTECTED DATA');
+    lines.push(state.dataExposure.join(', '));
+    lines.push('');
+    lines.push('TOOLS WEEKLY: ' + state.toolCount);
+    lines.push('');
+    lines.push('APPROVED');
+    lines.push(state.approvedUses.join(', '));
+    lines.push('');
+    lines.push('RESTRICTED');
+    lines.push(state.restrictedUses.join(', '));
+    lines.push('');
+    lines.push('PRINCIPLES');
+    lines.push(state.principles.join('\n'));
+    lines.push('');
+    lines.push('OPERATING LAYER');
+    lines.push(state.operatingLayer);
+    lines.push('');
+    buildInterpretation().forEach(function (l) {
+      lines.push(l);
+    });
+    lines.push('');
+    lines.push('If you cannot defend it, do not send it.');
+    lines.push('');
+    lines.push('This only works if you do it.');
+    return lines.join('\n');
+  }
+
+  function copyPolicy() {
+    renderSummary();
+    var t = buildPolicyText();
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(t).then(function () {
+        var b = document.getElementById('btn-copy');
+        var o = b.textContent;
+        b.textContent = 'Copied';
+        setTimeout(function () { b.textContent = o; }, 2000);
+      });
+    }
+  }
+
+  document.getElementById('btn-begin').addEventListener('click', next);
+
+  initCurrentUse();
+  initSub();
+  initCost();
+  initVerify();
+  initData();
+  initRules();
+  initPrinciples();
+
+  var cbBind = document.getElementById('cb-principles-bind');
+  if (cbBind) cbBind.addEventListener('change', updatePrincipleGate);
+
+  document.getElementById('btn-1').addEventListener('click', next);
+  document.getElementById('btn-2').addEventListener('click', next);
+  document.getElementById('btn-3').addEventListener('click', next);
+  document.getElementById('btn-4').addEventListener('click', next);
+  document.getElementById('btn-5').addEventListener('click', next);
+
+  document.getElementById('tool-count').addEventListener('input', computeTools);
+  document.getElementById('btn-6').addEventListener('click', next);
+
+  document.getElementById('btn-7').addEventListener('click', next);
+  document.getElementById('btn-8').addEventListener('click', next);
+
+  document.getElementById('btn-use-pack-05').addEventListener('click', next);
+  document.getElementById('btn-what-next-05').addEventListener('click', next);
+
+  document.getElementById('btn-esc-05').addEventListener('click', next);
+
+  document.getElementById('btn-copy').addEventListener('click', copyPolicy);
+  document.getElementById('btn-to-signal').addEventListener('click', next);
+  document.getElementById('btn-restart').addEventListener('click', function () {
+    location.reload();
+  });
+  document.getElementById('btn-restart-signal').addEventListener('click', function () {
+    location.reload();
+  });
+
+  var rnr = document.getElementById('room-nav-restart');
+  if (rnr) {
+    rnr.addEventListener('click', function (e) {
+      e.preventDefault();
+      if (window.StephuaryProgress) window.StephuaryProgress.confirmRestart();
+    });
+  }
+
+  function applyGuidedDeepLink() {
+    if (!window.StephuaryGuidedRoomEntry) return false;
+    var res = window.StephuaryGuidedRoomEntry.getStepAndSlugForUrl(
+      window.location.pathname,
+      window.location.hash,
+      new URLSearchParams(window.location.search).get('start')
+    );
+    if (!res) return false;
+    showStep(res.step);
+    requestAnimationFrame(function () {
+      var marker = document.getElementById(res.slug);
+      if (marker) marker.scrollIntoView({ block: 'start', behavior: 'smooth' });
+    });
+    return true;
+  }
+
+  if (!applyGuidedDeepLink()) {
+    var params = new URLSearchParams(window.location.search);
+    var rs = params.get('step');
+    if (rs !== null && rs !== '') {
+      var sn = parseInt(rs, 10);
+      if (!isNaN(sn)) showStep(Math.min(Math.max(0, sn), totalSteps - 1));
+    } else {
+      showStep(0);
+    }
+  }
+})();
+  </script>
+  <script src="/stephuary-diagnostic-state.js"></script>
+  <script src="/stephuary-result.js"></script>
+  <script src="/stephuary-room-personalization.js"></script>
+  <script>
+  document.addEventListener('DOMContentLoaded', function () {
+    if (window.StephuaryRoomPersonalization) {
+      window.StephuaryRoomPersonalization.inject(5);
+    }
+  });
+  </script>
+  <script src="/stephuary-interactive.js" defer></script>
+</body>
+</html>

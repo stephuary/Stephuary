@@ -1,0 +1,415 @@
+/**
+ * Diagnostic phases 01–05 — compact progress + Live Read chrome (utility layers).
+ * Load after page styles and stephuary-diagnostic-mobile.css.
+ */
+
+/* —— Layout: two columns (main | live), no left rail column —— */
+.capture-layout--chrome {
+  grid-template-columns: minmax(0, 1fr) minmax(200px, 280px) !important;
+  gap: 20px 28px !important;
+  align-items: start;
+}
+
+.capture-layout--chrome .main-col {
+  order: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.capture-layout--chrome .live-panel--chrome {
+  order: 2;
+}
+
+/* —— Flow: questions first, then compact progress (hierarchy) —— */
+#flow.flow--chrome {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+#flow.flow--chrome #steps-root {
+  order: 1;
+  width: 100%;
+}
+
+#flow.flow--chrome .diag-progress-stack {
+  order: 2;
+  width: 100%;
+  margin-top: 10px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border-dim, rgba(232, 224, 212, 0.08));
+}
+
+/* —— Progress top line —— */
+.diag-progress-topline {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 8px 14px;
+  margin-bottom: 10px;
+}
+
+.diag-progress-area {
+  font-size: 9px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--text-dim, rgba(232, 224, 212, 0.45));
+}
+
+.diag-progress-phase {
+  font-family: var(--serif, 'Cormorant Garamond', Georgia, serif);
+  font-size: 14px;
+  font-weight: 300;
+  color: var(--gold, #c4a35a);
+  line-height: 1.3;
+}
+
+.capture-layout--chrome .progress-bar-wrap {
+  margin-bottom: 8px !important;
+}
+
+.capture-layout--chrome .progress-meta {
+  justify-content: flex-start;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.capture-layout--chrome .progress-label--muted {
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-dim, rgba(232, 224, 212, 0.38));
+}
+
+.capture-layout--chrome .progress-count {
+  font-size: 13px;
+}
+
+/* —— Expandable: step map + 5-phase journey —— */
+.diag-details {
+  border: 1px solid var(--border-dim, rgba(232, 224, 212, 0.08));
+  border-radius: 6px;
+  background: rgba(8, 8, 7, 0.35);
+  margin-top: 8px;
+}
+
+.diag-details__summary {
+  list-style: none;
+  cursor: pointer;
+  padding: 10px 12px;
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-mid, rgba(232, 224, 212, 0.62));
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.diag-details__summary::-webkit-details-marker {
+  display: none;
+}
+
+.diag-details__summary::before {
+  content: '+';
+  display: inline-block;
+  width: 1em;
+  margin-right: 8px;
+  color: var(--gold, #9a8260);
+  font-weight: 600;
+}
+
+.diag-details[open] .diag-details__summary::before {
+  content: '−';
+}
+
+.diag-details__body {
+  padding: 0 12px 12px;
+}
+
+/* Embedded step rail (was left column) */
+.rail.rail--embedded {
+  position: static !important;
+  top: auto !important;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+  padding: 0;
+  max-height: min(36vh, 280px);
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.rail.rail--embedded .rail-item {
+  border-left: none !important;
+  padding: 8px 10px !important;
+  border: 1px solid var(--border-dim, rgba(232, 224, 212, 0.1));
+  border-radius: 4px;
+  font-size: 8px !important;
+  letter-spacing: 0.1em !important;
+  line-height: 1.35 !important;
+}
+
+/* Phase rail host (injectPhaseRail targets this) */
+.diag-phase-rail-host {
+  min-height: 0;
+}
+
+.diag-phase-rail-host .sys-phase-rail-wrap {
+  position: static !important;
+  left: auto !important;
+  bottom: auto !important;
+  z-index: auto !important;
+  pointer-events: auto !important;
+  max-width: 100%;
+  gap: 8px;
+}
+
+.diag-phase-rail-host .sys-phase-rail-nav {
+  flex-wrap: wrap;
+  max-width: 100%;
+}
+
+.diag-phase-rail-host .sys-phase-rail {
+  flex-wrap: wrap;
+}
+
+/* —— Live Read: collapsible shell —— */
+.live-panel--chrome {
+  position: sticky;
+  top: 72px;
+  max-height: min(72vh, 640px);
+  padding: 0;
+  overflow: hidden;
+  border: none !important;
+  box-shadow: none !important;
+  background: transparent !important;
+}
+
+.live-panel__shell {
+  border: 1px solid var(--border, rgba(232, 224, 212, 0.1));
+  border-top: 2px solid var(--gold, #c4a35a);
+  background: var(--surface-raised, rgba(18, 17, 15, 0.96));
+  border-radius: 4px;
+}
+
+.live-panel__shell > summary {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 12px 14px;
+  cursor: pointer;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold, #c4a35a);
+  border-bottom: 1px solid var(--border-dim, rgba(232, 224, 212, 0.08));
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.live-panel__shell > summary::-webkit-details-marker {
+  display: none;
+}
+
+.live-panel__summary-meta {
+  font-size: 8px;
+  letter-spacing: 0.14em;
+  color: var(--text-dim, rgba(232, 224, 212, 0.4));
+  font-weight: 400;
+}
+
+.live-panel__inner {
+  padding: 0 0 8px;
+  max-height: min(58vh, 520px);
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.live-panel__primary .live-field {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border-dim, rgba(232, 224, 212, 0.06));
+}
+
+.live-panel__primary .live-label {
+  font-size: 8px;
+  margin-bottom: 4px;
+}
+
+.live-panel__primary .live-value {
+  font-size: 12px;
+  line-height: 1.45;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.live-panel__more {
+  border-top: 1px solid var(--border-dim, rgba(232, 224, 212, 0.06));
+  margin-top: 4px;
+}
+
+.live-panel__more > summary {
+  list-style: none;
+  padding: 10px 14px;
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-mid, rgba(232, 224, 212, 0.55));
+  cursor: pointer;
+}
+
+.live-panel__more > summary::-webkit-details-marker {
+  display: none;
+}
+
+.live-panel__more .live-field {
+  padding: 8px 14px 12px;
+}
+
+/* Desktop: always show live inner; summary acts as header only */
+@media (min-width: 961px) {
+  .live-panel--chrome {
+    top: 88px;
+    max-height: calc(100vh - 100px);
+  }
+
+  .live-panel__shell > summary {
+    cursor: default;
+    pointer-events: none;
+    border-bottom: 1px solid var(--border-dim, rgba(232, 224, 212, 0.08));
+  }
+
+  .live-panel__summary-meta {
+    display: none;
+  }
+
+  .live-panel__inner {
+    max-height: calc(100vh - 140px);
+  }
+}
+
+/* Mobile: bottom sheet style for live panel */
+@media (max-width: 960px) {
+  .capture-layout--chrome {
+    grid-template-columns: 1fr !important;
+  }
+
+  .capture-layout--chrome .live-panel--chrome {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 95;
+    max-height: min(46vh, 360px);
+    margin: 0;
+    border-radius: 12px 12px 0 0;
+    border-left: 1px solid var(--border-dim, rgba(232, 224, 212, 0.12));
+    border-right: 1px solid var(--border-dim, rgba(232, 224, 212, 0.12));
+    box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.45);
+  }
+
+  .live-panel__shell > summary {
+    padding: 12px 16px;
+    min-height: 48px;
+  }
+
+  body.diag-has-live-chrome #flow.flow--chrome {
+    padding-bottom: max(56px, env(safe-area-inset-bottom, 0px));
+  }
+
+  body.diag-live-open #flow.flow--chrome {
+    padding-bottom: max(120px, calc(72px + env(safe-area-inset-bottom, 0px)));
+  }
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* —— Focus mode: questions only (stephuary-diagnostic-focus.js) —— */
+html.sh-diagnostic-questions .global-nav,
+html.sh-diagnostic-questions .top-nav.diag-phase-top-nav,
+html.sh-diagnostic-questions .sh-global-map-wrap {
+  display: none !important;
+}
+
+html.sh-diagnostic-questions #sh-flow-end {
+  display: none !important;
+}
+
+html.sh-diagnostic-questions .live-panel--chrome {
+  opacity: 0.78;
+}
+
+html.sh-diagnostic-questions .diag-details--phases {
+  opacity: 0.65;
+}
+
+/* Result: collapsed full breakdown (capture + shared) */
+.result-breakdown-details {
+  margin: 20px 0 16px;
+  border: 1px solid var(--border-dim, rgba(232, 224, 212, 0.08));
+  border-radius: 6px;
+  background: rgba(8, 8, 7, 0.35);
+}
+
+.result-breakdown-details > summary {
+  list-style: none;
+  cursor: pointer;
+  padding: 12px 14px;
+  font-family: var(--mono, 'DM Mono', monospace);
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-dim, rgba(232, 224, 212, 0.45));
+  user-select: none;
+}
+
+.result-breakdown-details > summary::-webkit-details-marker {
+  display: none;
+}
+
+.result-breakdown-details[open] > summary {
+  border-bottom: 1px solid var(--border-dim, rgba(232, 224, 212, 0.08));
+}
+
+.result-breakdown-details .result-breakdown-inner {
+  padding: 8px 0 4px;
+}
+
+/* Room forward: one primary + exit line */
+.room-forward-actions--single {
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.room-forward-exit {
+  margin: 0;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  opacity: 0.55;
+}
+
+.room-forward-exit a {
+  color: inherit;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(154, 130, 96, 0.35);
+}
+
+.room-forward-exit a:hover {
+  opacity: 0.95;
+}

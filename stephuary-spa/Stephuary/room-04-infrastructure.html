@@ -1,0 +1,1696 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Room 4 .  Fixing execution and delivery · Stephuary</title>
+  <link rel="stylesheet" href="/stephuary-interactive.css" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0a0908;
+      --surface: rgba(22, 20, 18, 0.72);
+      --surface-grid: rgba(18, 16, 14, 0.92);
+      --line: rgba(232, 224, 212, 0.07);
+      --line-strong: rgba(120, 108, 92, 0.35);
+      --bronze: #5c4d3f;
+      --accent: #8a7a66;
+      --accent-soft: rgba(138, 122, 102, 0.2);
+      --cream: #e4dcd0;
+      --text: #d4ccc0;
+      --muted: #9a9186;
+      --dim: #6a635a;
+      --label: #4a4540;
+      --radius: 4px;
+      --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      --font-serif: ui-serif, Georgia, "Times New Roman", serif;
+      --font-mono: ui-monospace, "SF Mono", Menlo, Monaco, Consolas, monospace;
+    }
+
+    html, body { height: 100%; }
+    body {
+      font-family: var(--font-sans);
+      font-weight: 400;
+      background: var(--bg);
+      background-image:
+        linear-gradient(180deg, rgba(28, 24, 20, 0.35) 0%, transparent 38%),
+        radial-gradient(ellipse 70% 45% at 50% 0%, rgba(60, 52, 44, 0.25) 0%, transparent 55%);
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+      overflow: hidden;
+      font-size: 15px;
+      line-height: 1.55;
+    }
+
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+      opacity: 0.022;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    #room-app {
+      position: relative;
+      z-index: 1;
+      height: 100%;
+      min-height: 100dvh;
+    }
+
+    .room-top {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 200;
+      padding: 20px 22px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      background: linear-gradient(to bottom, rgba(10, 9, 8, 0.94) 0%, rgba(10, 9, 8, 0.5) 70%, transparent 100%);
+      pointer-events: none;
+      border-bottom: 1px solid transparent;
+    }
+    .room-top a {
+      pointer-events: auto;
+      font-family: var(--font-mono);
+      font-size: 8px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--dim);
+      text-decoration: none;
+    }
+    .room-top a:hover { color: var(--muted); }
+    .room-top-left { pointer-events: auto; }
+    .room-top-nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 14px;
+      align-items: center;
+      justify-content: flex-end;
+      pointer-events: auto;
+    }
+    .room-top-nav .nav-club {
+      color: #c4a35a;
+    }
+    .room-flow-saved {
+      margin: 0 0 12px;
+      font-family: var(--font-mono);
+      font-size: 9px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--label);
+      opacity: 0.9;
+      text-align: center;
+      max-width: 320px;
+    }
+    .room-forward-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      width: 100%;
+      max-width: 320px;
+      margin: 0 0 16px;
+    }
+    .room-forward-actions .btn-continue { text-align: center; }
+    .room-secondary-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
+    .room-progress {
+      font-family: var(--font-mono);
+      font-size: 8px;
+      letter-spacing: 0.12em;
+      color: var(--label);
+    }
+
+    .panel {
+      display: none;
+      min-height: 100dvh;
+      max-height: 100dvh;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      padding: 84px 22px 108px;
+      flex-direction: column;
+      align-items: stretch;
+      max-width: 520px;
+      margin: 0 auto;
+      border-left: 1px solid var(--line);
+      border-right: 1px solid var(--line);
+      animation: panelIn 0.38s ease-out;
+    }
+    .panel.active { display: flex; }
+    @keyframes panelIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .panel--entry {
+      justify-content: center;
+      text-align: center;
+      border-left: none;
+      border-right: none;
+      max-width: 440px;
+    }
+    .panel-micro {
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 36px;
+      max-width: 300px;
+      margin-left: auto;
+      margin-right: auto;
+      line-height: 1.6;
+    }
+
+    .section-rule {
+      height: 1px;
+      background: var(--line-strong);
+      margin: 0 0 28px;
+      opacity: 0.5;
+    }
+
+    .panel-title {
+      font-family: var(--font-serif);
+      font-weight: 400;
+      font-size: clamp(24px, 5.5vw, 34px);
+      line-height: 1.12;
+      letter-spacing: -0.02em;
+      margin-bottom: 14px;
+      color: var(--cream);
+    }
+
+    .panel-instruction {
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+
+    .panel-kicker {
+      font-family: var(--font-mono);
+      font-size: 8px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 18px;
+    }
+
+    .ops-block {
+      background: var(--surface-grid);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 18px 16px;
+      margin-bottom: 20px;
+    }
+    .ops-block + .ops-block { margin-top: 8px; }
+
+    .output-block {
+      background: var(--surface);
+      border: 1px solid var(--line-strong);
+      border-radius: var(--radius);
+      padding: 18px 16px;
+      margin: 20px 0 24px;
+    }
+    .output-label {
+      font-family: var(--font-mono);
+      font-size: 7px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--label);
+      margin-bottom: 10px;
+    }
+    .output-body {
+      font-size: 14px;
+      color: var(--text);
+      line-height: 1.55;
+    }
+    .output-body.sm { font-size: 13px; color: var(--muted); }
+
+    .pick-list label.opt {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 14px 12px;
+      margin-bottom: 6px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      cursor: pointer;
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.45;
+      transition: border-color 0.15s ease, background 0.15s ease;
+    }
+    .pick-list label.opt:hover { border-color: rgba(138, 122, 102, 0.35); }
+    .pick-list label.opt:has(input:checked) {
+      border-color: rgba(138, 122, 102, 0.5);
+      background: var(--accent-soft);
+      color: var(--cream);
+    }
+    .pick-list input {
+      margin-top: 3px;
+      accent-color: var(--bronze);
+      width: 15px;
+      height: 15px;
+      flex-shrink: 0;
+    }
+
+    .field { margin-bottom: 0; }
+    .field + .field { margin-top: 12px; }
+    .field label {
+      display: block;
+      font-family: var(--font-mono);
+      font-size: 7px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--dim);
+      margin-bottom: 6px;
+    }
+    .field input[type="text"],
+    .field select,
+    .field textarea {
+      width: 100%;
+      padding: 13px 14px;
+      background: rgba(6, 5, 4, 0.65);
+      border: 1px solid var(--line);
+      color: var(--cream);
+      font-family: var(--font-sans);
+      font-size: 16px;
+      font-weight: 400;
+      border-radius: var(--radius);
+    }
+    .field input:focus,
+    .field select:focus,
+    .field textarea:focus {
+      outline: none;
+      border-color: rgba(138, 122, 102, 0.45);
+    }
+    .field textarea { min-height: 72px; resize: vertical; }
+
+    .domain-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+    @media (min-width: 480px) {
+      .domain-grid { grid-template-columns: 1fr 1fr; }
+    }
+    .domain-card {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 14px 12px;
+      background: rgba(12, 10, 8, 0.5);
+    }
+    .domain-card h4 {
+      font-family: var(--font-mono);
+      font-size: 8px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 12px;
+    }
+    .tier-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .tier-row label {
+      font-family: var(--font-sans);
+      font-size: 12px;
+      color: var(--muted);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+    }
+    .tier-row input { accent-color: var(--bronze); }
+
+    .stability-rg {
+      display: flex;
+      gap: 4px;
+      margin: 0 0 12px;
+    }
+    .stability-rg button {
+      flex: 1;
+      height: 14px;
+      border: none;
+      cursor: pointer;
+      border-radius: 2px;
+      padding: 0;
+      min-width: 0;
+    }
+    .stability-rg button[data-tier="none"] { background: rgba(110, 45, 45, 0.75); }
+    .stability-rg button[data-tier="started"] { background: rgba(130, 110, 45, 0.75); }
+    .stability-rg button[data-tier="functional"] { background: rgba(45, 95, 65, 0.75); }
+    .stability-rg button.active { box-shadow: 0 0 0 2px rgba(244, 237, 224, 0.28); }
+    .viz-lock-grid {
+      margin: 0 0 18px;
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(8, 7, 6, 0.55);
+    }
+    .viz-lock-grid .viz-label {
+      font-family: var(--font-mono);
+      font-size: 8px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 10px;
+    }
+    .lock-grid-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    @media (min-width: 480px) {
+      .lock-grid-inner { grid-template-columns: repeat(3, 1fr); }
+    }
+    .lock-cell {
+      height: 12px;
+      border-radius: 2px;
+    }
+    .lock-cell.none { background: rgba(110, 45, 45, 0.75); }
+    .lock-cell.started { background: rgba(130, 110, 45, 0.75); }
+    .lock-cell.functional { background: rgba(45, 95, 65, 0.75); }
+
+    .action-list {
+      list-style: decimal;
+      padding-left: 1.25em;
+      margin: 0;
+    }
+    .action-list li {
+      padding: 8px 0;
+      font-size: 14px;
+      color: var(--text);
+      border-bottom: 1px solid var(--line);
+    }
+    .action-list li:last-child { border-bottom: none; }
+
+    .btn-continue {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      margin-top: 10px;
+      padding: 16px 20px;
+      min-height: 52px;
+      font-family: var(--font-mono);
+      font-size: 8px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--cream);
+      background: rgba(90, 78, 64, 0.35);
+      border: 1px solid rgba(120, 108, 92, 0.45);
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: opacity 0.2s ease, border-color 0.2s ease;
+    }
+    .btn-continue:hover:not(:disabled) {
+      border-color: rgba(138, 122, 102, 0.65);
+    }
+    .btn-continue:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+    }
+
+    .sys-response {
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid var(--line);
+      font-size: 13px;
+      line-height: 1.55;
+      color: var(--muted);
+    }
+    .sys-response .sys-line { margin: 0 0 8px; }
+    .sys-response strong { color: var(--cream); font-weight: 400; }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--muted);
+      border: 1px solid var(--line);
+      margin-top: 12px;
+    }
+    .btn-secondary:hover:not(:disabled) {
+      color: var(--text);
+      border-color: rgba(138, 122, 102, 0.3);
+    }
+
+    .summary-card {
+      background: linear-gradient(165deg, rgba(22, 20, 18, 0.98) 0%, rgba(10, 9, 8, 0.99) 100%);
+      border: 1px solid var(--line-strong);
+      padding: 28px 22px 24px;
+      margin-bottom: 20px;
+      border-radius: var(--radius);
+    }
+    .summary-card h3 {
+      font-family: var(--font-serif);
+      font-size: 18px;
+      font-weight: 400;
+      color: var(--accent);
+      margin-bottom: 18px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      font-size: 11px;
+      font-family: var(--font-mono);
+      letter-spacing: 0.18em;
+    }
+    .summary-section {
+      margin-bottom: 16px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--line);
+    }
+    .summary-section:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+    .summary-section-title {
+      font-family: var(--font-mono);
+      font-size: 7px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--dim);
+      margin-bottom: 6px;
+    }
+    .summary-section p, .summary-section ul { font-size: 13px; color: var(--muted); line-height: 1.6; }
+    .summary-section ul { padding-left: 1.1em; margin-top: 4px; }
+
+    .final-line {
+      text-align: center;
+      font-family: var(--font-serif);
+      font-size: 17px;
+      font-weight: 400;
+      font-style: italic;
+      color: var(--muted);
+      line-height: 1.5;
+      margin-top: 24px;
+      padding-top: 22px;
+      border-top: 1px solid var(--line-strong);
+    }
+
+    .check-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .check-grid label.opt { margin-bottom: 0; }
+
+    .truth-line {
+      font-size: 14px;
+      color: var(--text);
+      margin: 0 0 16px;
+      line-height: 1.55;
+      border-left: 2px solid var(--line-strong);
+      padding-left: 12px;
+    }
+    .translate-line { font-size: 13px; color: var(--muted); margin-top: 12px; line-height: 1.5; }
+    .consequence-line { font-size: 12px; color: var(--dim); margin-top: 8px; font-style: italic; line-height: 1.5; }
+    .diag-tie {
+      margin: 20px 0;
+      padding: 16px;
+      background: rgba(20, 18, 16, 0.45);
+      border: 1px solid var(--line);
+      border-radius: 6px;
+    }
+    .diag-tie h4 {
+      font-family: var(--font-mono);
+      font-size: 8px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--label);
+      margin: 0 0 8px;
+    }
+    .diag-tie p { margin: 0; font-size: 14px; line-height: 1.55; color: var(--text); }
+    .example-p {
+      font-size: 12px;
+      color: var(--muted);
+      margin: 10px 0 16px;
+      line-height: 1.5;
+      font-style: italic;
+    }
+    .use-pack { margin-top: 8px; }
+    .use-block {
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--line);
+    }
+    .use-block:last-of-type { border-bottom: 0; margin-bottom: 0; padding-bottom: 0; }
+    .use-label {
+      font-family: var(--font-mono);
+      font-size: 8px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--label);
+      margin: 0 0 8px;
+    }
+    .use-block ul { margin: 8px 0 0 18px; font-size: 14px; color: var(--text); line-height: 1.5; }
+    .copy-block {
+      display: block;
+      margin: 0;
+      padding: 14px;
+      font-size: 13px;
+      line-height: 1.5;
+      white-space: pre-wrap;
+      background: rgba(12, 10, 8, 0.55);
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      color: var(--text);
+      font-family: inherit;
+    }
+    .asset-checklist { font-size: 14px; line-height: 1.7; color: var(--text); margin: 0; }
+    .next-pack { margin-top: 8px; }
+    .next-h3 {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--label);
+      margin: 20px 0 8px;
+    }
+    .next-h3:first-child { margin-top: 0; }
+    .next-pack p { margin: 0; font-size: 15px; line-height: 1.55; color: var(--text); }
+    .final-line-action {
+      text-align: center;
+      font-size: 14px;
+      color: var(--muted);
+      margin: 28px 0 8px;
+      font-style: italic;
+    }
+    .final-interpret { font-size: 15px; color: var(--text); margin: 12px 0 0; line-height: 1.55; }
+
+    .escalation-inner {
+      padding-top: 20px;
+      margin-top: 8px;
+      border-top: 1px solid var(--line);
+    }
+    .escalation-copy {
+      font-size: 15px;
+      color: var(--muted);
+      line-height: 1.55;
+      margin: 0 0 22px;
+    }
+    .escalation-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .escalation-actions .btn-continue { width: 100%; text-align: center; }
+    .escalation-actions a.btn-continue { text-decoration: none; display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box; }
+
+    .room-scope {
+      margin-top: 22px;
+      padding: 14px 16px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(0, 0, 0, 0.2);
+      text-align: left;
+    }
+    .room-scope-title {
+      font-family: var(--font-mono);
+      font-size: 8px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--label);
+      margin-bottom: 8px;
+    }
+    .room-scope-body {
+      font-size: 13px;
+      line-height: 1.55;
+      color: var(--muted);
+      margin-bottom: 10px;
+    }
+    .room-scope-out {
+      font-size: 12px;
+      line-height: 1.5;
+      color: var(--dim);
+    }
+
+    @media (min-width: 600px) {
+      .panel { padding-left: 28px; padding-right: 28px; max-width: 540px; }
+    }
+  </style>
+</head>
+<body>
+  <div id="room-app">
+    <header class="room-top">
+      <div class="room-top-left"><a href="/">Stephuary</a></div>
+      <nav class="room-top-nav" aria-label="Primary">
+        <a href="/pricing">Pricing</a>
+        <a href="/access" class="nav-club">.5% Club</a>
+        <a href="https://stephuary.substack.com" target="_blank" rel="noopener">Substack</a>
+        <a href="https://onlysometimesclub.com" target="_blank" rel="noopener noreferrer">Only Sometimes Club</a>
+      </nav>
+      <span class="room-progress" id="progress-text">Room 4</span>
+    </header>
+
+    <section class="panel panel--entry active" data-step="0" id="panel-0">
+      <p class="panel-kicker">Room 4 .  Fixing execution and delivery</p>
+      <h1 class="panel-title">If something breaks tomorrow, can you still make money?</h1>
+      <p class="panel-micro">This room maps how income, delivery, and operations hold when pressure hits .  not lifestyle optimization.<br />Move through it once. Leave with a practical starting point.</p>
+      <div class="room-scope">
+        <p class="room-scope-title">This section only</p>
+        <p class="room-scope-body">Execution, follow-through, delivery, client handling. No new offer from scratch, no leak totals, no AI stack design.</p>
+        <p class="room-scope-out">Assumes an offer exists or is in progress from Room 3. This room does not price or redefine it.</p>
+      </div>
+      <div class="pb-dyn-wrap" hidden>
+        <p class="pb-dyn-open"></p>
+        <p class="pb-dyn-pressure"></p>
+        <p class="pb-dyn-frame"></p>
+        <p class="pb-dyn-next"></p>
+      </div>
+      <button type="button" class="btn-continue" id="btn-begin">Begin</button>
+    </section>
+
+    <section class="panel" data-step="1" id="panel-1">
+      <div class="section-rule" aria-hidden="true"></div>
+      <h2 class="panel-title">Start with your reality</h2>
+      <p class="truth-line">If you pick the flattering story, you fix the wrong layer .  and revenue is what breaks first.</p>
+      <p class="panel-instruction">Choose the situation that matches you now.</p>
+      <p class="example-p">Example: “Pre-revenue” means you define how someone pays you before you deepen tooling .  not another roadmap slide.</p>
+      <div class="pick-list" id="situation-list"></div>
+      <div class="output-block" id="out-situation" style="display:none;">
+        <p class="output-label">Orientation</p>
+        <p class="output-body" id="out-situation-line">. </p>
+        <p class="translate-line">Your income risk has a shape .  you’re not fixing random edges while cash or delivery stay blind.</p>
+        <p class="consequence-line">Skip this and you’ll polish tools while invoices, handoffs, or coverage still fail under load.</p>
+      </div>
+      <div id="sys-response-r4-1" class="sys-response" style="display:none;"></div>
+      <p class="consequence-line" id="pressure-live-04" style="display:none;margin-top:12px;"></p>
+      <p class="consequence-line" id="unchanged-04" style="display:none;">This is what continues if unchanged: the same failure mode under load .  revenue still stalls.</p>
+      <p class="consequence-line" id="freq-04" style="display:none;">If repeated 5–10 times without fixing the weakest layer: lost money, missed revenue, stalled progress.</p>
+      <button type="button" class="btn-continue" id="btn-1" disabled>Continue</button>
+    </section>
+
+    <section class="panel" data-step="2" id="panel-2">
+      <div class="section-rule" aria-hidden="true"></div>
+      <h2 class="panel-title">What phase are you in?</h2>
+      <p class="truth-line">Phase is sequence. Skip steps and the revenue or delivery failure you fear shows up on schedule.</p>
+      <p class="panel-instruction">Pick the closest phase.</p>
+      <div class="pick-list" id="phase-list"></div>
+      <div class="output-block" id="out-phase" style="display:none;">
+        <p class="output-label">Phase</p>
+        <p class="output-body" id="out-phase-title">. </p>
+        <p class="output-body sm" id="out-phase-body" style="margin-top:10px;">. </p>
+      </div>
+      <div class="diag-tie">
+        <h4>How this ties in</h4>
+        <p>Rooms 01–03 handled money, direction, and transactions. Here you’re lining up what keeps income and delivery moving when volume, deadlines, or surprises hit.</p>
+      </div>
+      <div id="sys-response-r4-2" class="sys-response" style="display:none;"></div>
+      <button type="button" class="btn-continue" id="btn-2" disabled>Continue</button>
+    </section>
+
+    <section class="panel" data-step="3" id="panel-3">
+      <div id="delivery-fix" class="room-deep-target" aria-hidden="true"></div>
+      <div class="section-rule" aria-hidden="true"></div>
+      <h2 class="panel-title">Rails before depth</h2>
+      <p class="truth-line">Software without payment, delivery, and comms clarity is overhead .  and overhead doesn’t invoice.</p>
+      <p class="panel-instruction">Pick what already exists.</p>
+      <div class="ops-block check-grid" id="human-infra-wrap"></div>
+      <div class="output-block" id="out-human" style="display:none;">
+        <p class="output-label">Gaps before you deepen the stack</p>
+        <ul class="output-body" id="out-human-list" style="list-style:disc;padding-left:1.2em;margin:0;"></ul>
+      </div>
+      <div id="sys-response-r4-3" class="sys-response" style="display:none;"></div>
+      <button type="button" class="btn-continue" id="btn-3" disabled>Continue</button>
+    </section>
+
+    <section class="panel" data-step="4" id="panel-4">
+      <div id="consistency" class="room-deep-target" aria-hidden="true"></div>
+      <div class="section-rule" aria-hidden="true"></div>
+      <h2 class="panel-title">The Continuity Stack .  what is already in place?</h2>
+      <p class="truth-line">“Functional” means it protects income this week .  not that you set it up once and forgot.</p>
+      <p class="panel-instruction">Score each layer: Money flow · Work delivery · Time + focus · Communication · Backup.</p>
+      <div class="domain-grid" id="domain-grid"></div>
+      <div class="output-block" id="out-domains" style="display:none;">
+        <p class="output-label">Stack layers not yet functional</p>
+        <p class="output-body" id="out-domain-gaps">. </p>
+      </div>
+      <div id="sys-response-r4-4" class="sys-response" style="display:none;"></div>
+      <button type="button" class="btn-continue" id="btn-4" disabled>Continue</button>
+    </section>
+
+    <section class="panel" data-step="5" id="panel-5">
+      <div id="client-flow" class="room-deep-target" aria-hidden="true"></div>
+      <div class="section-rule" aria-hidden="true"></div>
+      <h2 class="panel-title">What fails first?</h2>
+      <p class="truth-line">Operations rarely fail “everywhere at once.” One layer cracks .  then invoices slip, delivery slips, or the client goes quiet.</p>
+      <p class="panel-instruction">Choose the vulnerability that would hit income first if it broke tomorrow.</p>
+      <p class="example-p">Example: Pipeline is thin before software breaks .  cash timing fails first; fix visibility before features.</p>
+      <div class="pick-list" id="priority-list"></div>
+      <div class="output-block" id="out-priority" style="display:none;">
+        <p class="output-label">Priority</p>
+        <p class="output-body" id="out-priority-line">. </p>
+        <p class="translate-line">This is where lost money shows up first if you ignore it.</p>
+        <p class="consequence-line">Leave it unaddressed and every new tool dodges the real failure mode .  revenue still stalls.</p>
+      </div>
+      <div id="sys-response-r4-5" class="sys-response" style="display:none;"></div>
+      <button type="button" class="btn-continue" id="btn-5" disabled>Continue</button>
+    </section>
+
+    <section class="panel" data-step="6" id="panel-6">
+      <div id="handoff" class="room-deep-target" aria-hidden="true"></div>
+      <div class="section-rule" aria-hidden="true"></div>
+      <h2 class="panel-title">Coverage and backup</h2>
+      <p class="truth-line">A contact in your head isn’t coverage. If you can’t reach them on short notice, they can’t protect a deadline or a client thread.</p>
+      <p class="panel-instruction">Start with who could step in .  not who you like posting with.</p>
+      <div class="ops-block">
+        <div class="field">
+          <label for="cohort-status">Coverage status</label>
+          <select id="cohort-status">
+            <option value="">Select…</option>
+            <option value="none">none</option>
+            <option value="1-2">1–2 people in mind</option>
+            <option value="active">active conversations</option>
+            <option value="forming">forming coverage</option>
+            <option value="established">established coverage</option>
+          </select>
+        </div>
+        <div class="field"><label for="cohort-n1">Primary backup contact</label><input type="text" id="cohort-n1" autocomplete="name" /></div>
+        <div class="field"><label for="cohort-n2">Secondary backup contact</label><input type="text" id="cohort-n2" autocomplete="name" /></div>
+      </div>
+      <div class="output-block" id="out-cohort" style="display:none;">
+        <p class="output-label">Your next coverage step</p>
+        <p class="output-body" id="out-cohort-line">. </p>
+      </div>
+      <div class="diag-tie">
+        <h4>How this ties in</h4>
+        <p>Coverage is part of the <strong>Continuity Stack</strong>: when you drop, someone can hold comms or delay .  so delivery and payment don’t silently stop.</p>
+      </div>
+      <div id="sys-response-r4-6" class="sys-response" style="display:none;"></div>
+      <button type="button" class="btn-continue" id="btn-6" disabled>Continue</button>
+    </section>
+
+    <section class="panel" data-step="7" id="panel-7">
+      <div class="section-rule" aria-hidden="true"></div>
+      <h2 class="panel-title">What happens first</h2>
+      <p class="truth-line">Order matters more than speed. Wrong order burns revenue and client trust.</p>
+      <p class="panel-instruction">You don’t need the whole system today.<br />You need the first actions that protect income and delivery .  in order.</p>
+      <div class="ops-block">
+        <ol class="action-list" id="first-actions-list"></ol>
+      </div>
+      <div id="sys-response-r4-7" class="sys-response" style="display:none;"></div>
+      <label class="opt" style="margin-top:14px;display:flex;align-items:flex-start;gap:10px;"><input type="checkbox" id="cb-first-actions-commit" /> I have read the ordered list and commit to completing action #1 before adding tools or scope.</label>
+      <button type="button" class="btn-continue" id="btn-7" disabled>Continue</button>
+    </section>
+
+    <section class="panel" data-step="8" id="panel-8">
+      <div class="section-rule" aria-hidden="true"></div>
+      <h2 class="panel-title">Choose your build pace</h2>
+      <p class="truth-line">A pace you won’t keep is operational debt .  and debt shows up as missed invoices or slipped ship dates.</p>
+      <p class="panel-instruction">Pick the most realistic track.</p>
+      <div class="pick-list" id="timeline-list"></div>
+      <div class="output-block" id="out-timeline" style="display:none;">
+        <p class="output-label">Pace</p>
+        <p class="output-body" id="out-timeline-line">. </p>
+      </div>
+      <div id="sys-response-r4-8" class="sys-response" style="display:none;"></div>
+      <button type="button" class="btn-continue" id="btn-8" disabled>Continue</button>
+    </section>
+
+    <section class="panel" data-step="9" id="panel-9-use">
+      <div class="section-rule" aria-hidden="true"></div>
+      <h2 class="panel-title">Use this</h2>
+      <p class="panel-instruction">Take these with you.</p>
+      <div class="use-pack">
+        <div class="use-block">
+          <p class="use-label">Framework</p>
+          <p><strong>The Continuity Stack</strong> .  Money flow · Work delivery · Time + focus · Communication · Backup. Score each as not started / started / functional. Fix the weakest layer before you deepen the rest .  ask every time: what happens to income if this fails?</p>
+        </div>
+        <div class="use-block">
+          <p class="use-label">Tool stack</p>
+          <ul>
+            <li>Notes (invoice list, “done” definitions, handoff)</li>
+            <li>Calendar (ship dates, renewals, invoice dates)</li>
+            <li>Bank or invoicing export (what is owed and when)</li>
+            <li>Primary client channel (email, Slack, or phone)</li>
+          </ul>
+        </div>
+        <div class="use-block">
+          <p class="use-label">Prompt (copy)</p>
+          <pre class="copy-block">Name my top income risk if one Continuity Stack layer fails (one line). Score Money flow, Work delivery, Time + focus, Communication, Backup. Give three actions in order .  cheapest first .  no new software.</pre>
+        </div>
+        <div class="use-block">
+          <p class="use-label">Asset</p>
+          <p class="asset-checklist">☐ Where money lands + next three invoice or payment dates<br />☐ One-line “done” for your top revenue deliverable<br />☐ Backup contact + number for client escalation<br />☐ One link or folder path someone else could open cold</p>
+        </div>
+      </div>
+      <button type="button" class="btn-continue" id="btn-use-pack-04">Continue</button>
+    </section>
+
+    <section class="panel" data-step="10" id="panel-10-next">
+      <div class="section-rule" aria-hidden="true"></div>
+      <h2 class="panel-title">What happens next</h2>
+      <div class="next-pack">
+        <h3 class="next-h3">1. Do this today</h3>
+        <p>Complete the first action from your ordered list .  the one that touches cash, delivery, or client comms .  not a new subscription.</p>
+        <h3 class="next-h3">2. Change this week</h3>
+        <p>Schedule the second action on the calendar with a time block tied to a ship date or invoice .  not an open-ended “someday.”</p>
+        <h3 class="next-h3">3. Operate like this</h3>
+        <p>No new tools until the rails you checked .  money path, delivery definition, backup .  are honest.</p>
+      </div>
+      <p class="final-line-action">This only works if you do it.</p>
+      <button type="button" class="btn-continue" id="btn-what-next-04">Continue</button>
+    </section>
+
+    <section class="panel" data-step="11" id="panel-11-escalation">
+      <div class="section-rule" aria-hidden="true"></div>
+      <div class="escalation-inner">
+        <h2 class="panel-title">This compounds quickly</h2>
+        <p class="escalation-copy">You can patch operations alone.<br />Or structure income and delivery so they hold under real client and cash pressure.</p>
+        <div class="escalation-actions">
+          <button type="button" class="btn-continue" id="btn-esc-04">I’ll build it</button>
+          <a href="/access" class="btn-continue btn-secondary">Structure this properly (Advisory)</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel" data-step="12" id="panel-12">
+      <div class="section-rule" aria-hidden="true"></div>
+      <h2 class="panel-title">Your Operational Stability record</h2>
+      <p class="panel-instruction">This is your starting structure .  Continuity Stack and next moves.</p>
+      <div class="summary-card">
+        <h3>Record</h3>
+        <div class="viz-lock-grid" id="viz-lock-stack" aria-label="Locked continuity scores">
+          <p class="viz-label">Locked · stack state</p>
+          <div class="lock-grid-inner" id="lock-grid-cells"></div>
+        </div>
+        <div id="summary-interpret"></div>
+        <div id="summary-body"></div>
+      </div>
+      <p class="room-flow-saved">Your progress is saved automatically on this device.</p>
+      <div class="room-forward-actions room-forward-actions--single">
+        <a href="/room-05-cognition" class="btn-continue">Continue to next step</a>
+        <p class="room-forward-exit"><a href="/systems">Exit</a></p>
+      </div>
+      <div class="room-secondary-actions">
+        <button type="button" class="btn-continue btn-secondary" id="btn-copy">Copy plan</button>
+        <button type="button" class="btn-continue btn-secondary" id="btn-restart">Restart</button>
+      </div>
+      <p class="final-line">Clear operations beat silent revenue leaks.</p>
+    </section>
+  </div>
+
+  <script src="/stephuary-os.js"></script>
+  <script src="/stephuary-progress.js"></script>
+  <script src="/stephuary-guided-room-entry.js"></script>
+  <script>
+(function () {
+  var HUMAN_DEFS = [
+    { id: 'payments', label: 'How you get paid is documented (invoice, terms, rails)' },
+    { id: 'comms', label: 'Primary client channel works (inbox, Slack, phone)' },
+    { id: 'delivery', label: '“Done” / delivery path is written' },
+    { id: 'calendar', label: 'Pipeline + invoice dates on calendar' },
+    { id: 'backup', label: 'Backup contact named if you are unavailable' },
+    { id: 'handoff', label: 'Someone else can find status + files' },
+    { id: 'none', label: 'None of these are clearly in place' }
+  ];
+
+  var HUMAN_GAP_ORDER = [
+    { id: 'payments', text: 'Document how you get paid: invoice cadence, terms, and where money lands.' },
+    { id: 'comms', text: 'Lock one primary channel for client updates .  and prove it with one sent message.' },
+    { id: 'delivery', text: 'Write what “done” means for your current revenue work .  scope, handoff, approval.' },
+    { id: 'calendar', text: 'Put ship dates, renewals, and invoice due dates where you actually look this week.' },
+    { id: 'backup', text: 'Name one person who could answer a client or buy time if you go dark.' },
+    { id: 'handoff', text: 'One place: where files, credentials, and status live so someone else could pick up.' }
+  ];
+
+  var DOMAIN_KEYS = ['money_flow', 'work_delivery', 'time_focus', 'communication', 'backup'];
+  var DOMAIN_LABEL = {
+    money_flow: 'Money flow',
+    work_delivery: 'Work delivery',
+    time_focus: 'Time + focus',
+    communication: 'Communication',
+    backup: 'Backup'
+  };
+
+  var SITUATIONS = [
+    { id: 'volatile_solo', text: 'solo .  income jumps or stalls month to month', path: 'Phase 0 .  Stabilize: see cash timing and invoice pipeline; one reliable client channel before new tools.' },
+    { id: 'steady_side', text: 'steady base + variable client or project income', path: 'Phase 0–1 .  Separate runway from billable work; document handoff so side income does not drop under load.' },
+    { id: 'multi_client', text: 'multiple clients or concurrent deliverables', path: 'Phase 1–2 .  Delivery lanes and calendar truth before deepening any one account.' },
+    { id: 'team_small', text: 'small team (you + others)', path: 'Phase 2–3 .  Roles, handoffs, and who speaks for delivery before expanding scope.' },
+    { id: 'pre_revenue', text: 'building .  little or inconsistent billing yet', path: 'Phase 0 .  Define the minimum paid path: offer, price, and how someone pays you.' },
+    { id: 'high_meetings', text: 'calendar-heavy .  meetings or context-switching eat the week', path: 'Phase 1 .  Protect blocks for delivery; revenue follows shipped work, not booked hours.' },
+    { id: 'travel_tz', text: 'travel, time zones, or unreliable availability', path: 'Phase 0–1 .  Async comms, named coverage, and delivery windows clients can rely on.' },
+    { id: 'contract_heavy', text: 'contracts or approvals slow shipping', path: 'Phase 1–2 .  Admin runs in parallel; it does not replace invoice dates or client silence.' },
+    { id: 'single_operator', text: 'only you can execute the core work', path: 'Phase 0–2 .  Document enough that billing and client status are not 100% in your head.' }
+  ];
+
+  var PHASES = [
+    { id: 'p0', label: 'Phase 0 .  Stabilize', body: 'Money is visible: you can invoice, receive, and see what is owed. One client channel works. No new stack until cash and contact are honest.' },
+    { id: 'p1', label: 'Phase 1 .  Secure delivery', body: '“Done” is defined; clients know when to expect work; dates match reality. Income follows delivery .  not intention.' },
+    { id: 'p2', label: 'Phase 2 .  Protect time + focus', body: 'Calendar matches how you earn: deep work and ship dates protected; meetings do not eat the work that bills.' },
+    { id: 'p3', label: 'Phase 3 .  Name coverage', body: 'Backup and escalation exist before a crisis .  not after a missed deadline or silent client.' },
+    { id: 'p4', label: 'Phase 4 .  Document handoff', body: 'Files, status, and access live where someone else can run a thread or finish a deliverable .  income does not stop if you step away.' },
+    { id: 'p5', label: 'Phase 5 .  Maintain and trim', body: 'Expand only what you can run under load; cut sprawl that hides failure modes .  every layer must answer what happens to income if it fails.' }
+  ];
+
+  var PRIORITIES = [
+    { id: 'cash', label: 'cash or pipeline stalls' },
+    { id: 'delivery', label: 'delivery slips or scope drifts' },
+    { id: 'focus', label: 'time + focus collapse' },
+    { id: 'comms', label: 'client communication breaks' },
+    { id: 'money_rails', label: 'invoicing or payment rails fail' },
+    { id: 'coverage', label: 'no backup when you drop' },
+    { id: 'network', label: 'nowhere to escalate' }
+  ];
+
+  var TIMELINES = [
+    { id: '72h', label: '72-hour stabilize', summary: 'Three days to interrupt the worst income risks: what is owed, what ships next, one client touch, one backup name.' },
+    { id: '30d', label: '30-day acceleration', summary: 'One month to compress Phase 0–1: small completions every few days .  cash and delivery clarity first.' },
+    { id: '60d', label: '60-day foundation', summary: 'Two months to lock the Continuity Stack and coverage agreements .  not buy your way past unclear handoffs.' },
+    { id: '90d', label: '90-day steady build', summary: 'Quarterly pace: documentation and rhythm before adding scope .  income continuity over novelty.' }
+  ];
+
+  var state = {
+    situation: '',
+    householdType: '',
+    currentPhase: '',
+    domains: { money_flow: '', work_delivery: '', time_focus: '', communication: '', backup: '' },
+    urgentNeeds: [],
+    firstActions: [],
+    cohortStatus: '',
+    cohortCandidates: [],
+    timeline: '',
+    scenarioPriority: '',
+    finalPlan: {}
+  };
+
+  var humanInfraSelected = [];
+
+  var currentStep = 0;
+  var totalSteps = 13;
+
+  function escapeHtml(s) {
+    if (s == null) return '';
+    return String(s)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  function fillSysResponse(containerId, sys) {
+    var el = document.getElementById(containerId);
+    if (!el || !sys) return;
+    var losing = sys.losing != null ? sys.losing : 'Cash timing or delivery hours at risk on this screen.';
+    var driving =
+      sys.driving != null ? sys.driving : [sys.why, sys.continues].filter(Boolean).join(' · ');
+    var doThis = sys.doThis != null ? sys.doThis : sys.fix;
+    el.style.display = 'block';
+    el.innerHTML =
+      '<p class="sys-line"><strong>This means:</strong> ' +
+      escapeHtml(sys.means) +
+      '</p>' +
+      '<p class="sys-line"><strong>You\'re likely losing:</strong> ' +
+      escapeHtml(losing) +
+      '</p>' +
+      '<p class="sys-line"><strong>What\'s actually driving it:</strong> ' +
+      escapeHtml(driving) +
+      '</p>' +
+      '<p class="sys-line"><strong>Do this:</strong> ' +
+      escapeHtml(doThis) +
+      '</p>';
+  }
+
+  function setProgress() {
+    var el = document.getElementById('progress-text');
+    if (el) el.textContent = 'Room 4 · ' + (currentStep + 1) + ' / ' + totalSteps;
+  }
+
+  function showStep(n) {
+    currentStep = n;
+    document.querySelectorAll('.panel').forEach(function (p) {
+      p.classList.toggle('active', parseInt(p.getAttribute('data-step'), 10) === n);
+    });
+    setProgress();
+    if (n === 7) {
+      var c7 = document.getElementById('cb-first-actions-commit');
+      if (c7) c7.checked = false;
+      renderFirstActions();
+      updateGatePanel7();
+      fillSysResponse('sys-response-r4-7', {
+        means: state.firstActions[0]
+          ? 'Your first move is: ' + state.firstActions[0]
+          : 'Actions are still generating from your inputs.',
+        why: 'Order beats speed .  wrong order burns client trust and calendar.',
+        continues: 'You restart the plan every time you skip the first move.',
+        fix: 'Complete action #1 before you add tools, hires, or scope.'
+      });
+    }
+    if (n === 12) renderSummary();
+    if (window.StephuaryOS) {
+      window.StephuaryOS.record('04', { step: currentStep, totalSteps: totalSteps });
+    }
+  }
+
+  function next() {
+    if (currentStep < totalSteps - 1) showStep(currentStep + 1);
+  }
+
+  function updatePressure04() {
+    var el = document.getElementById('pressure-live-04');
+    var u = document.getElementById('unchanged-04');
+    var fr = document.getElementById('freq-04');
+    if (!el || !state.situation) {
+      if (el) el.style.display = 'none';
+      if (u) u.style.display = 'none';
+      if (fr) fr.style.display = 'none';
+      return;
+    }
+    el.style.display = 'block';
+    el.textContent =
+      'You are currently exposed to the income risk shape you picked — wrong order here costs real money every week it stays unaddressed.';
+    if (u) u.style.display = 'block';
+    if (fr) fr.style.display = 'block';
+  }
+
+  function updateGatePanel7() {
+    var cb = document.getElementById('cb-first-actions-commit');
+    document.getElementById('btn-7').disabled = !(cb && cb.checked);
+  }
+
+  function initSituations() {
+    var wrap = document.getElementById('situation-list');
+    SITUATIONS.forEach(function (s, idx) {
+      var id = 'sit-' + s.id;
+      var lab = document.createElement('label');
+      lab.className = 'opt';
+      var inp = document.createElement('input');
+      inp.type = 'radio';
+      inp.name = 'situation';
+      inp.value = s.id;
+      inp.id = id;
+      var span = document.createElement('span');
+      span.textContent = s.text;
+      lab.appendChild(inp);
+      lab.appendChild(document.createTextNode(' '));
+      lab.appendChild(span);
+      wrap.appendChild(lab);
+      inp.addEventListener('change', function () {
+        state.situation = s.text;
+        var ht = '';
+        if (s.id === 'single_operator') ht = 'single-operator';
+        else if (s.id === 'team_small') ht = 'small team';
+        else if (s.id === 'pre_revenue') ht = 'pre-revenue / inconsistent billing';
+        else if (s.id === 'travel_tz') ht = 'travel or time-zone risk';
+        state.householdType = ht;
+        document.getElementById('out-situation-line').innerHTML =
+          'Start here: <strong>' + escapeHtml(s.path) + '</strong>';
+        document.getElementById('out-situation').style.display = 'block';
+        document.getElementById('btn-1').disabled = false;
+        updatePressure04();
+        fillSysResponse('sys-response-r4-1', {
+          means: 'You’re in a load pattern: ' + state.situation,
+          why: 'Cash and ship dates break when one layer is thin — not because you “aren’t trying.”',
+          continues: 'Invoices slip, clients go quiet, or you vanish from the thread when volume hits.',
+          fix: 'Run the next screen in order — cheapest fix to the layer that touches money first.'
+        });
+      });
+    });
+  }
+
+  function initPhases() {
+    var wrap = document.getElementById('phase-list');
+    PHASES.forEach(function (p) {
+      var id = 'ph-' + p.id;
+      var lab = document.createElement('label');
+      lab.className = 'opt';
+      var inp = document.createElement('input');
+      inp.type = 'radio';
+      inp.name = 'phase';
+      inp.value = p.id;
+      inp.id = id;
+      var span = document.createElement('span');
+      span.textContent = p.label;
+      lab.appendChild(inp);
+      lab.appendChild(document.createTextNode(' '));
+      lab.appendChild(span);
+      wrap.appendChild(lab);
+      inp.addEventListener('change', function () {
+        state.currentPhase = p.label;
+        document.getElementById('out-phase-title').textContent = p.label;
+        document.getElementById('out-phase-body').textContent = p.body;
+        document.getElementById('out-phase').style.display = 'block';
+        document.getElementById('btn-2').disabled = false;
+        fillSysResponse('sys-response-r4-2', {
+          means: 'You placed yourself in: ' + state.currentPhase,
+          why: 'Later phases look like progress while earlier ones stay hollow.',
+          continues: 'Clients see missed invoices and missed dates — not your internal story.',
+          fix: 'Hold work inside this phase definition until your calendar matches it.'
+        });
+      });
+    });
+  }
+
+  function computeHumanGaps() {
+    var selected = humanInfraSelected.slice();
+    if (selected.indexOf('none') !== -1) {
+      return HUMAN_GAP_ORDER.map(function (x) { return x.text; });
+    }
+    var gaps = [];
+    HUMAN_GAP_ORDER.forEach(function (row) {
+      if (selected.indexOf(row.id) === -1) gaps.push(row.text);
+    });
+    return gaps;
+  }
+
+  function refreshHumanInfra() {
+    var wrap = document.getElementById('human-infra-wrap');
+    wrap.innerHTML = '';
+    HUMAN_DEFS.forEach(function (def) {
+      var id = 'hi-' + def.id;
+      var lab = document.createElement('label');
+      lab.className = 'opt';
+      var inp = document.createElement('input');
+      inp.type = 'checkbox';
+      inp.value = def.id;
+      inp.id = id;
+      var span = document.createElement('span');
+      span.textContent = def.label;
+      lab.appendChild(inp);
+      lab.appendChild(document.createTextNode(' '));
+      lab.appendChild(span);
+      wrap.appendChild(lab);
+      inp.addEventListener('change', function () {
+        if (def.id === 'none' && inp.checked) {
+          wrap.querySelectorAll('input[type=checkbox]').forEach(function (c) {
+            if (c.value !== 'none') c.checked = false;
+          });
+        } else if (def.id !== 'none' && inp.checked) {
+          var n = document.getElementById('hi-none');
+          if (n) n.checked = false;
+        }
+        humanInfraSelected = [];
+        wrap.querySelectorAll('input[type=checkbox]:checked').forEach(function (c) {
+          humanInfraSelected.push(c.value);
+        });
+        var listEl = document.getElementById('out-human-list');
+        listEl.innerHTML = '';
+        var gaps = computeHumanGaps();
+        state.urgentNeeds = gaps.slice();
+        if (humanInfraSelected.length === 0) {
+          document.getElementById('out-human').style.display = 'none';
+          document.getElementById('btn-3').disabled = true;
+          return;
+        }
+        gaps.forEach(function (g) {
+          var li = document.createElement('li');
+          li.textContent = g;
+          listEl.appendChild(li);
+        });
+        document.getElementById('out-human').style.display = 'block';
+        document.getElementById('btn-3').disabled = false;
+        fillSysResponse('sys-response-r4-3', {
+          means:
+            state.urgentNeeds.length > 0
+              ? 'Before depth, these gaps stay open: ' + state.urgentNeeds.join(' · ')
+              : 'Rails check recorded .  no gap list.',
+          why: 'Depth without rails moves invoices and delivery into improvisation.',
+          continues: 'New tools hide the same gap until payroll or a client forces it.',
+          fix: 'Close the first gap on the list this week .  top item, not the most interesting.'
+        });
+      });
+    });
+  }
+
+  function syncStabilityRg(key) {
+    var v = state.domains[key];
+    var rg = document.querySelector('.stability-rg[data-domain="' + key + '"]');
+    if (!rg) return;
+    rg.querySelectorAll('button').forEach(function (b) {
+      b.classList.toggle('active', b.getAttribute('data-tier') === v);
+    });
+  }
+
+  function initDomains() {
+    var grid = document.getElementById('domain-grid');
+    DOMAIN_KEYS.forEach(function (key) {
+      var card = document.createElement('div');
+      card.className = 'domain-card';
+      var h = document.createElement('h4');
+      h.textContent = DOMAIN_LABEL[key];
+      card.appendChild(h);
+      var rg = document.createElement('div');
+      rg.className = 'stability-rg';
+      rg.setAttribute('data-domain', key);
+      ['none', 'started', 'functional'].forEach(function (tier) {
+        var btn = document.createElement('button');
+        btn.type = 'button';
+        btn.setAttribute('data-tier', tier);
+        btn.setAttribute('aria-label', DOMAIN_LABEL[key] + ' ' + tier);
+        btn.addEventListener('click', function () {
+          var rid = 'dom-' + key + '-' + tier;
+          var radio = document.getElementById(rid);
+          if (radio) {
+            radio.checked = true;
+            state.domains[key] = tier;
+            syncStabilityRg(key);
+            validateDomains();
+          }
+        });
+        rg.appendChild(btn);
+      });
+      card.appendChild(rg);
+      var row = document.createElement('div');
+      row.className = 'tier-row';
+      [
+        { v: 'none', t: 'Not started' },
+        { v: 'started', t: 'Started' },
+        { v: 'functional', t: 'Functional' }
+      ].forEach(function (tier) {
+        var lid = 'dom-' + key + '-' + tier.v;
+        var lab = document.createElement('label');
+        var inp = document.createElement('input');
+        inp.type = 'radio';
+        inp.name = 'dom-' + key;
+        inp.value = tier.v;
+        inp.id = lid;
+        lab.appendChild(inp);
+        lab.appendChild(document.createTextNode(' ' + tier.t));
+        row.appendChild(lab);
+        inp.addEventListener('change', function () {
+          state.domains[key] = tier.v;
+          syncStabilityRg(key);
+          validateDomains();
+        });
+      });
+      card.appendChild(row);
+      grid.appendChild(card);
+    });
+  }
+
+  function validateDomains() {
+    var anyUnset = DOMAIN_KEYS.some(function (k) {
+      var v = state.domains[k];
+      return v !== 'none' && v !== 'started' && v !== 'functional';
+    });
+    if (anyUnset) {
+      document.getElementById('out-domains').style.display = 'none';
+      document.getElementById('btn-4').disabled = true;
+      return;
+    }
+    var missing = DOMAIN_KEYS.filter(function (k) {
+      return state.domains[k] !== 'functional';
+    }).map(function (k) { return DOMAIN_LABEL[k]; });
+    var gapText = missing.length ? missing.join(', ') : 'All five Continuity Stack layers marked functional .  maintain and document.';
+    document.getElementById('out-domain-gaps').textContent = missing.length
+      ? 'Not yet functional: ' + gapText + '.'
+      : gapText;
+    document.getElementById('out-domains').style.display = 'block';
+    document.getElementById('btn-4').disabled = false;
+    fillSysResponse('sys-response-r4-4', {
+      means: missing.length
+        ? 'The Continuity Stack is not functional at: ' + gapText + '.'
+        : 'All five layers are marked functional .  maintenance is the job now.',
+      why: 'A weak layer routes failure into invoices, ship dates, or silence .  not into “software.”',
+      continues: 'You ship slower while the break stays unnamed.',
+      fix: 'Move the weakest layer to functional before you deepen anything else.'
+    });
+  }
+
+  function initPriority() {
+    var wrap = document.getElementById('priority-list');
+    PRIORITIES.forEach(function (pr) {
+      var lab = document.createElement('label');
+      lab.className = 'opt';
+      var inp = document.createElement('input');
+      inp.type = 'radio';
+      inp.name = 'priority';
+      inp.value = pr.id;
+      var span = document.createElement('span');
+      span.textContent = pr.label;
+      lab.appendChild(inp);
+      lab.appendChild(document.createTextNode(' '));
+      lab.appendChild(span);
+      wrap.appendChild(lab);
+      inp.addEventListener('change', function () {
+        state.scenarioPriority = pr.label;
+        document.getElementById('out-priority-line').textContent = 'Your first priority is: ' + pr.label + '.';
+        document.getElementById('out-priority').style.display = 'block';
+        document.getElementById('btn-5').disabled = false;
+        fillSysResponse('sys-response-r4-5', {
+          means: 'Under pressure, income breaks first at: ' + pr.label + '.',
+          why: 'This layer is the choke point .  not the noisiest problem on your desk.',
+          continues: 'Every new tool avoids this failure mode while revenue still stalls.',
+          fix: 'Spend the next working block only on this vulnerability .  name one concrete move.'
+        });
+      });
+    });
+  }
+
+  function cohortNextStep() {
+    var st = state.cohortStatus;
+    if (st === 'none') return 'Name two people who could cover a client thread or buy time .  numbers on paper, not in your head.';
+    if (st === '1-2') return 'Send one plain message: could they stand in on a thread with notice if revenue is on the line?';
+    if (st === 'active') return 'Agree what “cover” means: response time and what they are allowed to say to the client.';
+    if (st === 'forming') return 'Draft roles: who owns client comms vs delivery when you are unavailable.';
+    if (st === 'established') return 'Run a 15-minute walkthrough: where files live and how invoices go out without you.';
+    return '. ';
+  }
+
+  function computeCohort() {
+    var st = document.getElementById('cohort-status').value;
+    var n1 = document.getElementById('cohort-n1').value.trim();
+    var n2 = document.getElementById('cohort-n2').value.trim();
+    var names = [n1, n2].filter(Boolean);
+    state.cohortStatus = st;
+    state.cohortCandidates = names;
+    var needNames = st && st !== 'none' && names.length === 0;
+    if (!st || needNames) {
+      document.getElementById('out-cohort').style.display = 'none';
+      document.getElementById('btn-6').disabled = true;
+      return;
+    }
+    document.getElementById('out-cohort-line').textContent = cohortNextStep();
+    document.getElementById('out-cohort').style.display = 'block';
+    document.getElementById('btn-6').disabled = false;
+    fillSysResponse('sys-response-r4-6', {
+      means:
+        'Coverage status is ' +
+        st +
+        (names.length ? ' with ' + names.length + ' named contact(s).' : ' .  names still required on paper.'),
+      why: 'A contact in your head does not answer email when you vanish.',
+      continues: 'Deadlines slip with no one authorized to speak for you.',
+      fix: cohortNextStep()
+    });
+  }
+
+  function domainWeak(key) {
+    return state.domains[key] !== 'functional';
+  }
+
+  function generateFirstActions() {
+    var actions = [];
+    function add(a) {
+      if (a && actions.indexOf(a) === -1 && actions.length < 3) actions.push(a);
+    }
+    var hi = humanInfraSelected;
+    var pri = state.scenarioPriority;
+    var sitId = SITUATIONS.filter(function (s) { return s.text === state.situation; })[0];
+    sitId = sitId ? sitId.id : '';
+
+    if (pri === 'cash or pipeline stalls') add('List every open obligation to pay you — amount, due date, channel — in one note today.');
+    if (pri === 'delivery slips or scope drifts') add('Write one paragraph defining “done” for your top revenue deliverable; file or send it.');
+    if (pri === 'time + focus collapse') add('Block two hours this week labeled only for revenue work — not inbox — and protect them.');
+    if (pri === 'client communication breaks') add('Send one proactive status update on your highest-value thread before they chase you.');
+    if (pri === 'invoicing or payment rails fail') add('Confirm how cash hits your account this week: invoice sent, transfer expected, or deposit date.');
+    if (pri === 'no backup when you drop') add('Name one person and one sentence they could send if you are unreachable for 48 hours.');
+    if (pri === 'nowhere to escalate') add('Identify one peer, advisor, or partner you could escalate a stuck deal or scope fight to — message them.');
+
+    if (sitId === 'pre_revenue' || sitId === 'volatile_solo') add('Define price and payment method for the next sale — one line in an email template is enough.');
+    if (sitId === 'contract_heavy') add('Put the next invoice send date on calendar; do not let legal cadence hide revenue timing.');
+    if (sitId === 'high_meetings') add('Cancel or shorten one meeting this week and move that time to a ship milestone.');
+
+    if (hi.indexOf('none') === -1) {
+      if (hi.indexOf('payments') === -1) add('Document invoice cadence, terms, and where payment lands — even in a bullet list.');
+      if (hi.indexOf('comms') === -1) add('Send one test message on your primary client channel to prove the path works.');
+      if (hi.indexOf('backup') === -1) add('Write two backup contacts with phone numbers — who could answer for you.');
+    }
+
+    if (domainWeak('money_flow')) add('Reconcile what is owed vs paid this month; flag any gap older than your terms.');
+    if (domainWeak('work_delivery')) add('List three deliverables due in 14 days with “done” criteria beside each.');
+    if (domainWeak('time_focus')) add('Put ship dates and invoice due dates on the calendar you actually open daily.');
+    if (domainWeak('communication')) add('Reply to every revenue-critical thread within one business day — batch if needed.');
+    if (domainWeak('backup')) add('Text one backup contact: “If I go dark 48h, can you hold this client thread?”');
+
+    if (state.cohortStatus === 'none') add('Schedule one 10-minute call to align coverage before you buy another tool.');
+
+    var fallbacks = [
+      'Export or screenshot your next three invoice or payment due dates into one note.',
+      'Write who owns each open client thread (you vs delegate) in one line per thread.',
+      'List tools you pay for monthly; cancel or consolidate one that does not protect income.',
+      'If you vanished for 48 hours, who texts the client? Name that person on paper.',
+      'Walk your Continuity Stack once: which single layer would stop money if it failed tomorrow?'
+    ];
+    var fi = 0;
+    while (actions.length < 3) {
+      add(fallbacks[fi % fallbacks.length]);
+      fi++;
+    }
+    state.firstActions = actions.slice(0, 3);
+  }
+
+  function renderFirstActions() {
+    generateFirstActions();
+    var ol = document.getElementById('first-actions-list');
+    ol.innerHTML = '';
+    state.firstActions.forEach(function (a) {
+      var li = document.createElement('li');
+      li.textContent = a;
+      ol.appendChild(li);
+    });
+  }
+
+  function initTimeline() {
+    var wrap = document.getElementById('timeline-list');
+    TIMELINES.forEach(function (t) {
+      var lab = document.createElement('label');
+      lab.className = 'opt';
+      var inp = document.createElement('input');
+      inp.type = 'radio';
+      inp.name = 'timeline';
+      inp.value = t.id;
+      var span = document.createElement('span');
+      span.textContent = t.label;
+      lab.appendChild(inp);
+      lab.appendChild(document.createTextNode(' '));
+      lab.appendChild(span);
+      wrap.appendChild(lab);
+      inp.addEventListener('change', function () {
+        state.timeline = t.label;
+        document.getElementById('out-timeline-line').textContent = t.summary;
+        document.getElementById('out-timeline').style.display = 'block';
+        document.getElementById('btn-8').disabled = false;
+        fillSysResponse('sys-response-r4-8', {
+          means: 'You committed to pace: ' + t.label + '.',
+          why: 'A pace you abandon becomes debt — debt shows up as missed dates.',
+          continues: 'The written plan stays fiction.',
+          fix: 'Put the first checkpoint from this pace on your calendar today.'
+        });
+      });
+    });
+  }
+
+  function humanInfraSummary() {
+    if (humanInfraSelected.indexOf('none') !== -1) return 'No operating rails in place yet — full gap list applies.';
+    var labels = HUMAN_DEFS.filter(function (d) {
+      return humanInfraSelected.indexOf(d.id) !== -1 && d.id !== 'none';
+    }).map(function (d) { return d.label; });
+    return labels.length ? labels.join('; ') : '—';
+  }
+
+  function buildInterpretation() {
+    var lines = [];
+    lines.push(
+      'Your highest operational risk to income is ' +
+        (state.scenarioPriority || 'unspecified') +
+        '. Priority is action #1 on your list — not new software or scope.'
+    );
+    if (state.firstActions && state.firstActions[0]) {
+      lines.push('Start with: ' + state.firstActions[0]);
+    } else {
+      lines.push('If the first action stays undone, this plan stays paper.');
+    }
+    return lines.slice(0, 2);
+  }
+
+  function renderSummary() {
+    if (window.StephuaryProgress) window.StephuaryProgress.markRoomComplete('04');
+    var lockWrap = document.getElementById('lock-grid-cells');
+    if (lockWrap) {
+      lockWrap.innerHTML = '';
+      DOMAIN_KEYS.forEach(function (k) {
+        var d = document.createElement('div');
+        var v = state.domains[k] || 'none';
+        d.className = 'lock-cell ' + v;
+        d.title = DOMAIN_LABEL[k] + ': ' + v;
+        d.setAttribute('aria-label', DOMAIN_LABEL[k] + ' ' + v);
+        lockWrap.appendChild(d);
+      });
+    }
+
+    state.finalPlan = {
+      situation: state.situation,
+      householdType: state.householdType,
+      phase: state.currentPhase,
+      humanInfra: humanInfraSummary(),
+      gaps: state.urgentNeeds,
+      domains: JSON.parse(JSON.stringify(state.domains)),
+      priority: state.scenarioPriority,
+      cohortStatus: state.cohortStatus,
+      cohortCandidates: state.cohortCandidates.slice(),
+      firstActions: state.firstActions.slice(),
+      timeline: state.timeline
+    };
+
+    var interpEl = document.getElementById('summary-interpret');
+    if (interpEl) {
+      interpEl.innerHTML = '';
+      buildInterpretation().forEach(function (line) {
+        var p = document.createElement('p');
+        p.className = 'final-interpret';
+        p.textContent = line;
+        interpEl.appendChild(p);
+      });
+    }
+
+    var body = document.getElementById('summary-body');
+    body.innerHTML = '';
+
+    function addSec(title, html) {
+      var d = document.createElement('div');
+      d.className = 'summary-section';
+      var h = document.createElement('p');
+      h.className = 'summary-section-title';
+      h.textContent = title;
+      d.appendChild(h);
+      var inner = document.createElement('div');
+      inner.innerHTML = html;
+      d.appendChild(inner);
+      body.appendChild(d);
+    }
+
+    var gapDom = DOMAIN_KEYS.filter(function (k) { return state.domains[k] !== 'functional'; })
+      .map(function (k) { return DOMAIN_LABEL[k]; }).join(', ') || 'None — all functional';
+
+    addSec('Situation', '<p>' + escapeHtml(state.situation) + '</p>');
+    if (state.householdType) addSec('Context', '<p>' + escapeHtml(state.householdType) + '</p>');
+    addSec('Phase', '<p>' + escapeHtml(state.currentPhase) + '</p>');
+    addSec('Operating rails', '<p>' + escapeHtml(humanInfraSummary()) + '</p>');
+    addSec('Continuity Stack gaps', '<p>' + escapeHtml(gapDom) + '</p>');
+    addSec('Priority vulnerability (income)', '<p>' + escapeHtml(state.scenarioPriority) + '</p>');
+    addSec('Coverage status', '<p>' + escapeHtml(state.cohortStatus) + '</p>');
+    if (state.cohortCandidates.length) {
+      addSec('Backup contacts', '<p>' + escapeHtml(state.cohortCandidates.join(', ')) + '</p>');
+    }
+    var actHtml = '<ul>' + state.firstActions.map(function (a) { return '<li>' + escapeHtml(a) + '</li>'; }).join('') + '</ul>';
+    addSec('First 3 actions', actHtml);
+    addSec('Build pace', '<p>' + escapeHtml(state.timeline) + '</p>');
+  }
+
+  function buildPlanText() {
+    var lines = [];
+    lines.push('ROOM 4 — FIXING EXECUTION AND DELIVERY');
+    lines.push('');
+    lines.push('Situation: ' + state.situation);
+    if (state.householdType) lines.push('Context: ' + state.householdType);
+    lines.push('Phase: ' + state.currentPhase);
+    lines.push('Operating rails: ' + humanInfraSummary());
+    lines.push('Gaps before deepening stack: ' + (state.urgentNeeds.length ? state.urgentNeeds.join(' | ') : '—'));
+    lines.push('Continuity Stack gaps (not functional): ' + DOMAIN_KEYS.filter(function (k) { return state.domains[k] !== 'functional'; }).map(function (k) { return DOMAIN_LABEL[k]; }).join(', ') || 'none');
+    lines.push('Priority (income): ' + state.scenarioPriority);
+    lines.push('Coverage status: ' + state.cohortStatus);
+    lines.push('Backup contacts: ' + (state.cohortCandidates.join(', ') || '—'));
+    lines.push('');
+    lines.push('First actions:');
+    state.firstActions.forEach(function (a, i) { lines.push((i + 1) + '. ' + a); });
+    lines.push('');
+    lines.push('Build pace: ' + state.timeline);
+    lines.push('');
+    buildInterpretation().forEach(function (l) {
+      lines.push(l);
+    });
+    lines.push('');
+    lines.push('This only works if you do it.');
+    return lines.join('\n');
+  }
+
+  function copyPlan() {
+    renderSummary();
+    var t = buildPlanText();
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(t).then(function () {
+        var b = document.getElementById('btn-copy');
+        var o = b.textContent;
+        b.textContent = 'Copied';
+        setTimeout(function () { b.textContent = o; }, 2000);
+      });
+    }
+  }
+
+  document.getElementById('btn-begin').addEventListener('click', next);
+
+  initSituations();
+  initPhases();
+  refreshHumanInfra();
+  initDomains();
+  initPriority();
+  initTimeline();
+
+  document.getElementById('btn-1').addEventListener('click', next);
+  document.getElementById('btn-2').addEventListener('click', next);
+  document.getElementById('btn-3').addEventListener('click', next);
+  document.getElementById('btn-4').addEventListener('click', next);
+  document.getElementById('btn-5').addEventListener('click', next);
+
+  ['cohort-status', 'cohort-n1', 'cohort-n2'].forEach(function (id) {
+    document.getElementById(id).addEventListener('input', computeCohort);
+    document.getElementById(id).addEventListener('change', computeCohort);
+  });
+  document.getElementById('btn-6').addEventListener('click', next);
+
+  var cb7 = document.getElementById('cb-first-actions-commit');
+  if (cb7) cb7.addEventListener('change', updateGatePanel7);
+  document.getElementById('btn-7').addEventListener('click', next);
+  document.getElementById('btn-8').addEventListener('click', next);
+
+  document.getElementById('btn-use-pack-04').addEventListener('click', next);
+  document.getElementById('btn-what-next-04').addEventListener('click', next);
+
+  document.getElementById('btn-esc-04').addEventListener('click', next);
+
+  document.getElementById('btn-copy').addEventListener('click', copyPlan);
+  document.getElementById('btn-restart').addEventListener('click', function () {
+    location.reload();
+  });
+
+  var rnr = document.getElementById('room-nav-restart');
+  if (rnr) {
+    rnr.addEventListener('click', function (e) {
+      e.preventDefault();
+      if (window.StephuaryProgress) window.StephuaryProgress.confirmRestart();
+    });
+  }
+
+  function applyGuidedDeepLink() {
+    if (!window.StephuaryGuidedRoomEntry) return false;
+    var res = window.StephuaryGuidedRoomEntry.getStepAndSlugForUrl(
+      window.location.pathname,
+      window.location.hash,
+      new URLSearchParams(window.location.search).get('start')
+    );
+    if (!res) return false;
+    showStep(res.step);
+    requestAnimationFrame(function () {
+      var marker = document.getElementById(res.slug);
+      if (marker) marker.scrollIntoView({ block: 'start', behavior: 'smooth' });
+    });
+    return true;
+  }
+
+  if (!applyGuidedDeepLink()) {
+    var params = new URLSearchParams(window.location.search);
+    var rs = params.get('step');
+    if (rs !== null && rs !== '') {
+      var sn = parseInt(rs, 10);
+      if (!isNaN(sn)) showStep(Math.min(Math.max(0, sn), totalSteps - 1));
+    } else {
+      showStep(0);
+    }
+  }
+})();
+  </script>
+  <script src="/stephuary-diagnostic-state.js"></script>
+  <script src="/stephuary-result.js"></script>
+  <script src="/stephuary-room-personalization.js"></script>
+  <script>
+  document.addEventListener('DOMContentLoaded', function () {
+    if (window.StephuaryRoomPersonalization) {
+      window.StephuaryRoomPersonalization.inject(4);
+    }
+  });
+  </script>
+  <script src="/stephuary-interactive.js" defer></script>
+</body>
+</html>

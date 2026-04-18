@@ -1,0 +1,2100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Room 2 .  What to change this week · Stephuary</title>
+  <link rel="stylesheet" href="/stephuary-interactive.css" />
+  <link rel="stylesheet" href="/stephuary-system-output.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=DM+Mono:wght@300;400&family=Lato:wght@300;400&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0c0a09;
+      --surface: rgba(26, 22, 18, 0.65);
+      --surface-raised: rgba(32, 28, 24, 0.85);
+      --bronze: #6b5344;
+      --gold: #9a8260;
+      --gold-soft: rgba(154, 130, 96, 0.45);
+      --gold-dim: #7a6b58;
+      --gold-line: rgba(154, 130, 96, 0.22);
+      --gold-glow: rgba(154, 130, 96, 0.12);
+      --cream: #e8e0d4;
+      --text: #ddd5c8;
+      --text-secondary: #b8aea0;
+      --text-muted: #8a8175;
+      --text-dim: #5c554c;
+      --text-label: #4a433c;
+      --border: rgba(232, 224, 212, 0.06);
+      --border-soft: rgba(154, 130, 96, 0.14);
+      --radius: 6px;
+      --radius-sm: 4px;
+      --shadow-inset: inset 0 1px 0 rgba(255,255,255,0.04);
+      --shadow-soft: 0 12px 40px rgba(0,0,0,0.35);
+    }
+
+    html, body { height: 100%; }
+    body {
+      font-family: 'Lato', sans-serif;
+      font-weight: 300;
+      background: var(--bg);
+      background-image:
+        radial-gradient(ellipse 80% 50% at 50% -20%, rgba(107, 83, 68, 0.08) 0%, transparent 50%),
+        radial-gradient(ellipse 60% 40% at 100% 100%, rgba(20, 18, 16, 0.9) 0%, transparent 45%);
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+      overflow: hidden;
+    }
+
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+      opacity: 0.028;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    #room-app {
+      position: relative;
+      z-index: 1;
+      height: 100%;
+      min-height: 100dvh;
+    }
+
+    .room-top {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 200;
+      padding: 22px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      background: linear-gradient(to bottom, rgba(12,10,9,0.92) 0%, rgba(12,10,9,0.55) 65%, transparent 100%);
+      pointer-events: none;
+    }
+    .room-top a {
+      pointer-events: auto;
+      font-family: 'DM Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      text-decoration: none;
+      transition: color 0.25s ease;
+    }
+    .room-top a:hover { color: var(--text-muted); }
+    .room-top-left { pointer-events: auto; }
+    .room-top-nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 14px;
+      align-items: center;
+      justify-content: flex-end;
+      pointer-events: auto;
+    }
+    .room-top-nav .nav-club {
+      color: #c4a35a;
+    }
+    .room-flow-saved {
+      margin: 0 0 12px;
+      font-family: 'DM Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-label);
+      opacity: 0.9;
+      text-align: center;
+      max-width: 320px;
+    }
+    .room-forward-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      width: 100%;
+      max-width: 320px;
+      margin: 0 0 16px;
+    }
+    .room-forward-actions .btn-continue { text-align: center; }
+    .room-secondary-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
+    .room-progress {
+      font-family: 'DM Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.14em;
+      color: var(--text-label);
+    }
+
+    .panel {
+      display: none;
+      min-height: 100dvh;
+      max-height: 100dvh;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      padding: 88px 24px 112px;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: stretch;
+      max-width: 480px;
+      margin: 0 auto;
+      animation: panelIn 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .panel.active { display: flex; }
+    @keyframes panelIn {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: none; }
+    }
+
+    .panel--entry {
+      justify-content: center;
+      text-align: center;
+      padding-top: min(18vh, 140px);
+      padding-bottom: min(18vh, 140px);
+      max-width: 420px;
+    }
+    .panel--entry .panel-kicker { justify-content: center; }
+    .panel--entry .panel-title { margin-bottom: 20px; }
+    .panel--entry .panel-instruction { margin-bottom: 16px; }
+    .panel-micro {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.55;
+      margin-bottom: 40px;
+      max-width: 300px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .panel--entry .btn-continue {
+      max-width: 260px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .panel-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-size: clamp(26px, 6.5vw, 40px);
+      line-height: 1.08;
+      letter-spacing: -0.02em;
+      margin-bottom: 16px;
+      color: var(--cream);
+    }
+
+    .panel-instruction {
+      font-size: 15px;
+      color: var(--text-muted);
+      line-height: 1.58;
+      margin-bottom: 32px;
+      letter-spacing: 0.01em;
+    }
+
+    .panel-kicker {
+      font-family: 'DM Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--gold-dim);
+      margin-bottom: 20px;
+    }
+
+    .reveal-fields {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      margin-bottom: 8px;
+      padding: 20px 18px;
+      background: var(--surface);
+      border: 1px solid var(--border-soft);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-inset), var(--shadow-soft);
+    }
+
+    .output-block {
+      background: var(--surface-raised);
+      border: 1px solid var(--border-soft);
+      border-radius: var(--radius);
+      padding: 28px 22px 22px;
+      margin: 28px 0 32px;
+      box-shadow: var(--shadow-inset), 0 8px 32px rgba(0,0,0,0.25);
+    }
+    .output-block.muted {
+      border-color: rgba(154, 130, 96, 0.12);
+      background: rgba(20, 18, 16, 0.5);
+    }
+
+    .output-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--text-label);
+      margin-bottom: 8px;
+    }
+
+    .output-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 16px;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 14px;
+      color: var(--text-muted);
+    }
+    .output-row:last-child { border-bottom: none; }
+    .output-row span:last-child {
+      color: var(--text);
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .pattern-result {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(20px, 4.5vw, 26px);
+      font-weight: 300;
+      color: var(--cream);
+      line-height: 1.3;
+      letter-spacing: -0.02em;
+    }
+
+    .field { margin-bottom: 0; }
+    .field + .field { margin-top: 14px; }
+    .field label {
+      display: block;
+      font-family: 'DM Mono', monospace;
+      font-size: 8px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin-bottom: 8px;
+    }
+    .field input[type="number"],
+    .field input[type="text"],
+    .field textarea,
+    .field select {
+      width: 100%;
+      padding: 15px 16px;
+      background: rgba(7, 6, 5, 0.6);
+      border: 1px solid var(--border);
+      color: var(--cream);
+      font-family: 'Lato', sans-serif;
+      font-size: 16px;
+      font-weight: 300;
+      border-radius: var(--radius-sm);
+      transition: border-color 0.25s ease, box-shadow 0.25s ease;
+    }
+    .field input::placeholder,
+    .field textarea::placeholder { color: var(--text-label); }
+    .field input:focus,
+    .field textarea:focus,
+    .field select:focus {
+      outline: none;
+      border-color: var(--gold-soft);
+      box-shadow: 0 0 0 1px rgba(154, 130, 96, 0.15), 0 8px 24px rgba(0,0,0,0.2);
+    }
+    .field textarea { min-height: 88px; resize: vertical; line-height: 1.55; }
+    .field textarea.tall { min-height: 120px; }
+
+    .subhead {
+      font-family: 'DM Mono', monospace;
+      font-size: 8px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--gold-dim);
+      margin: 20px 0 12px;
+    }
+    .subhead:first-child { margin-top: 0; }
+
+    .value-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .value-grid label.opt {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 16px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      font-size: 13px;
+      color: var(--text-muted);
+      transition: border-color 0.25s ease, background 0.25s ease;
+      background: rgba(7, 6, 5, 0.35);
+    }
+    .value-grid label.opt:hover {
+      border-color: rgba(154, 130, 96, 0.25);
+    }
+    .value-grid label.opt:has(input:checked) {
+      border-color: rgba(154, 130, 96, 0.45);
+      background: rgba(154, 130, 96, 0.1);
+      color: var(--cream);
+      box-shadow: 0 0 20px var(--gold-glow);
+    }
+    .value-grid input { accent-color: var(--bronze); width: 16px; height: 16px; }
+
+    .trade-row {
+      padding: 18px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .trade-row:last-child { border-bottom: none; }
+    .trade-label {
+      font-size: 14px;
+      color: var(--text-secondary);
+      margin-bottom: 12px;
+      line-height: 1.45;
+    }
+    .trade-btns {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .trade-btns button {
+      font-family: 'DM Mono', monospace;
+      font-size: 8px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 12px 18px;
+      min-height: 44px;
+      border: 1px solid var(--border);
+      background: rgba(7, 6, 5, 0.5);
+      color: var(--text-muted);
+      cursor: pointer;
+      border-radius: var(--radius-sm);
+      transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+    }
+    .trade-btns button:hover {
+      border-color: rgba(154, 130, 96, 0.28);
+      color: var(--text);
+    }
+    .trade-btns button.selected {
+      border-color: rgba(154, 130, 96, 0.5);
+      background: rgba(154, 130, 96, 0.12);
+      color: var(--gold);
+      box-shadow: 0 0 16px var(--gold-glow);
+    }
+
+    .btn-continue {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      margin-top: 12px;
+      padding: 17px 24px;
+      min-height: 54px;
+      font-family: 'DM Mono', monospace;
+      font-size: 9px;
+      font-weight: 400;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--cream);
+      background: linear-gradient(180deg, rgba(154, 130, 96, 0.22) 0%, rgba(107, 83, 68, 0.35) 100%);
+      border: 1px solid rgba(154, 130, 96, 0.35);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease, opacity 0.25s ease;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.06);
+    }
+    .btn-continue:hover:not(:disabled) {
+      transform: translateY(-2px);
+      border-color: rgba(154, 130, 96, 0.5);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.35), 0 0 28px var(--gold-glow), inset 0 1px 0 rgba(255,255,255,0.08);
+    }
+    .btn-continue:disabled {
+      opacity: 0.38;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+      margin-top: 14px;
+      box-shadow: none;
+    }
+    .btn-secondary:hover:not(:disabled) {
+      border-color: rgba(154, 130, 96, 0.25);
+      color: var(--text-secondary);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    }
+
+    .alloc-sliders-wrap {
+      margin: 8px 0 20px;
+      padding: 16px;
+      background: rgba(7, 6, 5, 0.45);
+      border: 1px solid var(--border-soft);
+      border-radius: var(--radius-sm);
+    }
+    .alloc-sliders-wrap .subhead { margin-top: 0; }
+    .slider-row {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 14px;
+    }
+    .slider-row label {
+      font-family: 'DM Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+    }
+    .slider-row input[type="range"] {
+      width: 100%;
+      accent-color: var(--bronze);
+      height: 6px;
+    }
+    .slider-row-static {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin: 0 0 4px;
+    }
+    .slider-row-static strong { color: var(--cream); font-weight: 400; }
+    .stack-bar {
+      display: flex;
+      height: 10px;
+      border-radius: 2px;
+      overflow: hidden;
+      border: 1px solid var(--border-soft);
+      margin-top: 8px;
+    }
+    .stack-bar span { height: 100%; display: block; }
+    .stack-bar .seg-m { background: rgba(90, 90, 90, 0.6); }
+    .stack-bar .seg-b { background: rgba(154, 130, 96, 0.75); }
+    .stack-bar .seg-x { background: rgba(43, 79, 212, 0.45); }
+    .viz-lock-stack {
+      margin: 0 0 20px;
+      padding: 16px;
+      border: 1px solid rgba(154, 130, 96, 0.22);
+      border-radius: var(--radius-sm);
+      background: rgba(7, 6, 5, 0.4);
+    }
+    .viz-lock-stack .viz-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 8px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--gold-dim);
+      margin-bottom: 10px;
+    }
+
+    .summary-card {
+      background: linear-gradient(165deg, rgba(26, 22, 18, 0.95) 0%, rgba(12, 10, 9, 0.98) 100%);
+      border: 1px solid rgba(154, 130, 96, 0.18);
+      padding: 32px 26px 28px;
+      margin-bottom: 24px;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-soft), var(--shadow-inset), 0 0 0 1px rgba(0,0,0,0.2);
+    }
+    .summary-card h3 {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-size: clamp(18px, 4vw, 22px);
+      margin-bottom: 20px;
+      color: var(--gold);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    #summary-body {
+      font-family: 'Lato', sans-serif;
+      font-size: 13px;
+      line-height: 1.65;
+      color: var(--text-secondary);
+    }
+    .summary-section {
+      margin-bottom: 18px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+    .summary-section:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+    .summary-section-title {
+      font-family: 'DM Mono', monospace;
+      font-size: 8px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--gold-dim);
+      margin-bottom: 8px;
+    }
+    .summary-section p { margin-bottom: 6px; color: var(--text-secondary); }
+    .summary-section p:last-child { margin-bottom: 0; }
+
+    .final-line {
+      text-align: center;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 17px;
+      font-weight: 300;
+      font-style: italic;
+      color: var(--text-muted);
+      line-height: 1.55;
+      margin-top: 28px;
+      padding-top: 24px;
+      border-top: 1px solid var(--gold-line);
+    }
+
+    .reveal-micro {
+      margin-top: 18px;
+      padding-top: 18px;
+      border-top: 1px solid var(--border);
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 16px;
+      font-weight: 300;
+      font-style: italic;
+      line-height: 1.55;
+      color: var(--text-secondary);
+    }
+
+    .truth-line {
+      font-size: 14px;
+      color: var(--text-secondary);
+      margin: 0 0 16px;
+      line-height: 1.55;
+      border-left: 2px solid var(--gold-line);
+      padding-left: 12px;
+    }
+    .translate-line { font-size: 13px; color: var(--text-muted); margin-top: 12px; line-height: 1.5; }
+    .consequence-line { font-size: 12px; color: var(--text-dim); margin-top: 8px; font-style: italic; line-height: 1.5; }
+    .diag-tie {
+      margin: 20px 0;
+      padding: 16px;
+      background: rgba(20, 18, 16, 0.5);
+      border: 1px solid var(--border-soft);
+      border-radius: 6px;
+    }
+    .diag-tie h4 {
+      font-family: 'DM Mono', monospace;
+      font-size: 8px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--gold-dim);
+      margin: 0 0 8px;
+    }
+    .diag-tie p { margin: 0; font-size: 14px; line-height: 1.55; color: var(--text-secondary); }
+    .example-p {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin: 10px 0 16px;
+      line-height: 1.5;
+      font-style: italic;
+    }
+    .use-pack { margin-top: 8px; }
+    .use-block {
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border-soft);
+    }
+    .use-block:last-of-type { border-bottom: 0; margin-bottom: 0; padding-bottom: 0; }
+    .use-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 8px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--gold-dim);
+      margin: 0 0 8px;
+    }
+    .use-block ul { margin: 8px 0 0 18px; font-size: 14px; color: var(--text-secondary); line-height: 1.5; }
+    .copy-block {
+      display: block;
+      margin: 0;
+      padding: 14px;
+      font-size: 13px;
+      line-height: 1.5;
+      white-space: pre-wrap;
+      background: rgba(12, 10, 8, 0.6);
+      border: 1px solid var(--border-soft);
+      border-radius: 4px;
+      color: var(--text-secondary);
+      font-family: inherit;
+    }
+    .asset-checklist { font-size: 14px; line-height: 1.7; color: var(--text-secondary); margin: 0; }
+    .next-pack { margin-top: 8px; }
+    .next-h3 {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--gold-dim);
+      margin: 20px 0 8px;
+    }
+    .next-h3:first-child { margin-top: 0; }
+    .next-pack p { margin: 0; font-size: 15px; line-height: 1.55; color: var(--text-secondary); }
+    .final-line-action {
+      text-align: center;
+      font-size: 14px;
+      color: var(--text-muted);
+      margin: 28px 0 8px;
+      font-style: italic;
+    }
+    .final-interpret {
+      font-size: 15px;
+      color: var(--text-secondary);
+      margin: 12px 0 0;
+      line-height: 1.55;
+    }
+
+    .escalation-inner {
+      padding-top: 20px;
+      margin-top: 8px;
+      border-top: 1px solid var(--border-soft);
+    }
+    .escalation-copy {
+      font-size: 15px;
+      color: var(--text-muted);
+      line-height: 1.55;
+      margin: 0 0 22px;
+    }
+    .escalation-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .escalation-actions .btn-continue { width: 100%; text-align: center; }
+    .escalation-actions a.btn-continue { text-decoration: none; display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box; }
+
+    .locked-block {
+      padding: 16px 18px;
+      margin: 12px 0;
+      background: rgba(7, 6, 5, 0.45);
+      border: 1px solid var(--border-soft);
+      border-radius: var(--radius-sm);
+    }
+    .locked-block .locked-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 8px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--gold-dim);
+      margin-bottom: 10px;
+    }
+    .locked-block .alloc-line {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin: 0;
+    }
+    .sys-compare {
+      display: grid;
+      gap: 12px;
+      margin: 16px 0 20px;
+    }
+    .decision-msg {
+      font-size: 15px;
+      color: var(--text-secondary);
+      line-height: 1.55;
+      margin: 16px 0;
+      padding: 14px;
+      border-left: 2px solid var(--gold-line);
+      padding-left: 14px;
+    }
+    .bridge-summary {
+      margin: 20px 0;
+      padding: 18px;
+      background: rgba(7, 6, 5, 0.5);
+      border: 1px solid rgba(154, 130, 96, 0.2);
+      border-radius: var(--radius-sm);
+    }
+    .bridge-summary p { margin: 0 0 8px; font-size: 14px; color: var(--text-muted); line-height: 1.5; }
+    .bridge-summary p:last-child { margin-bottom: 0; }
+    .starter-line {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 18px;
+      color: var(--cream);
+      margin: 16px 0;
+      line-height: 1.4;
+    }
+    .weekly-pre {
+      white-space: pre-wrap;
+      font-family: inherit;
+      font-size: 14px;
+      line-height: 1.65;
+      color: var(--text-secondary);
+      margin: 16px 0;
+      padding: 16px;
+      background: rgba(12, 10, 8, 0.55);
+      border: 1px solid var(--border-soft);
+      border-radius: var(--radius-sm);
+    }
+    a.btn-continue { text-decoration: none; display: inline-flex; box-sizing: border-box; }
+
+    .sys-response {
+      margin-top: 14px;
+      padding-top: 14px;
+      border-top: 1px solid var(--border-soft);
+      font-size: 13px;
+      line-height: 1.55;
+      color: var(--text-secondary);
+    }
+    .sys-response .sys-line { margin: 0 0 8px; }
+    .sys-response strong { color: var(--cream); font-weight: 400; }
+
+    .room-scope {
+      margin-top: 22px;
+      padding: 14px 16px;
+      border: 1px solid var(--border-soft);
+      border-radius: var(--radius-sm);
+      background: rgba(0, 0, 0, 0.2);
+      text-align: left;
+    }
+    .room-scope-title {
+      font-family: 'DM Mono', monospace;
+      font-size: 8px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text-label);
+      margin-bottom: 8px;
+    }
+    .room-scope-body {
+      font-size: 13px;
+      line-height: 1.55;
+      color: var(--text-secondary);
+      margin-bottom: 10px;
+    }
+    .room-scope-out {
+      font-size: 12px;
+      line-height: 1.5;
+      color: var(--text-muted);
+    }
+
+    @media (min-width: 600px) {
+      .panel { max-width: 520px; padding-left: 32px; padding-right: 32px; }
+      .panel--entry { max-width: 440px; }
+    }
+  </style>
+</head>
+<body>
+  <div id="room-app">
+    <header class="room-top">
+      <div class="room-top-left"><a href="/">Stephuary</a></div>
+      <nav class="room-top-nav" aria-label="Primary">
+        <a href="/pricing">Pricing</a>
+        <a href="/access" class="nav-club">.5% Club</a>
+        <a href="https://stephuary.substack.com" target="_blank" rel="noopener">Substack</a>
+        <a href="https://onlysometimesclub.com" target="_blank" rel="noopener noreferrer">Only Sometimes Club</a>
+      </nav>
+      <span class="room-progress" id="progress-text">Room 2</span>
+    </header>
+
+    <!-- 0 Entry -->
+    <section class="panel panel--entry active" data-step="0" id="panel-0">
+      <p class="panel-kicker">Room 2 .  What to change this week</p>
+      <h1 class="panel-title">You are already using your time and money.<br />This room shows whether you are using them on purpose.</h1>
+      <p class="panel-micro">Move through it once.<br />Leave with a weekly system.</p>
+      <div class="room-scope">
+        <p class="room-scope-title">This section only</p>
+        <p class="room-scope-body">Restructure the week: blocks, priorities, one execution plan. No offer build, pricing, deep AI, or platform strategy.</p>
+        <p class="room-scope-out">Assumes Phase 01 is complete and leak math from Room 1 is done if you opened it.</p>
+      </div>
+      <div class="pb-dyn-wrap" hidden>
+        <p class="pb-dyn-open"></p>
+        <p class="pb-dyn-pressure"></p>
+        <p class="pb-dyn-frame"></p>
+        <p class="pb-dyn-next"></p>
+      </div>
+      <button type="button" class="btn-continue" id="btn-begin">Begin</button>
+    </section>
+
+    <!-- 1 Resources -->
+    <section class="panel" data-step="1" id="panel-1">
+      <h2 class="panel-title">Constraints on your week</h2>
+      <p class="truth-line">Income and hours are bounds for scheduling .  not a skills audit. If you cannot state them honestly, you are guessing .  and guessing is how time and money drift.</p>
+      <p class="panel-instruction">Enter real numbers.</p>
+      <div class="reveal-fields">
+        <div class="field">
+          <label for="in-income">Monthly income</label>
+          <input type="number" id="in-income" min="0" step="1" inputmode="decimal" />
+        </div>
+        <div class="field">
+          <label for="in-hours">Hours available per week</label>
+          <input type="number" id="in-hours" min="0" step="0.5" inputmode="decimal" />
+        </div>
+        <div class="field">
+          <label for="in-obligations">Current obligations</label>
+          <textarea id="in-obligations" placeholder="What already owns your time or money"></textarea>
+        </div>
+      </div>
+      <div class="output-block muted" id="out-resources-block" style="display:none;">
+        <p class="output-label">What you are working with</p>
+        <div class="output-row"><span>Income / month</span><span id="out-income">. </span></div>
+        <div class="output-row"><span>Hours / week</span><span id="out-hours">. </span></div>
+        <div class="output-row"><span>Obligations</span><span id="out-obligations-short">. </span></div>
+        <p class="translate-line">This is the real pool you are splitting. Nothing below works if this is fake.</p>
+        <p class="consequence-line">If you skip this, you will cut the wrong line or block time you do not have.</p>
+      </div>
+      <div id="sys-response-r2-1" class="sys-response" style="display:none;"></div>
+      <p class="consequence-line pressure-live" id="pressure-live-02" style="display:none;margin-top:12px;"></p>
+      <p class="consequence-line" id="unchanged-02" style="display:none;">This is what continues if unchanged: the same yearly run rate on screen .  no compounding room.</p>
+      <p class="consequence-line" id="freq-02" style="display:none;">If repeated 5–10 times without a real shift, this leads to: lost money, missed revenue, stalled progress.</p>
+      <button type="button" class="btn-continue" id="btn-1" disabled>Continue</button>
+    </section>
+
+    <!-- 2 Current allocation -->
+    <section class="panel" data-step="2" id="panel-2">
+      <h2 class="panel-title">Where it is going now</h2>
+      <p class="reveal-micro" style="margin-top:0;border-top:0;padding-top:0;">You are already allocating your time and money. The problem is that you may be doing it without deciding.</p>
+      <p class="panel-instruction">Pick a mode first .  then adjust sliders if needed. Each group stays at 100%.</p>
+      <div class="reveal-fields" style="margin-bottom:12px;">
+        <p class="subhead" style="margin-top:0;">Allocation mode</p>
+        <div class="value-grid" id="alloc-mode-grid" style="flex-direction:column;align-items:stretch;">
+          <label class="opt"><input type="radio" name="alloc-mode" value="survival" /> Survival .  heavy maintain, little build</label>
+          <label class="opt"><input type="radio" name="alloc-mode" value="build" /> Build-forward .  more build, protected maintain</label>
+          <label class="opt"><input type="radio" name="alloc-mode" value="leverage" /> Leverage .  meaningful multiply + build</label>
+          <label class="opt"><input type="radio" name="alloc-mode" value="balanced" /> Balanced .  even split across all three</label>
+          <label class="opt"><input type="radio" name="alloc-mode" value="cut" /> Cut waste .  shift off maintain into build</label>
+        </div>
+      </div>
+      <div class="diag-tie" id="alloc-diagnosis" style="display:none;">
+        <h4>System diagnosis</h4>
+        <p id="alloc-diagnosis-text" style="margin:0;font-size:14px;line-height:1.55;color:var(--text-secondary);">. </p>
+      </div>
+      <div id="sys-response-r2-2" class="sys-response" style="display:none;"></div>
+      <div class="alloc-sliders-wrap" id="alloc-sliders-wrap">
+        <p class="subhead">Time .  maintain / build / multiply (= 100%)</p>
+        <div class="slider-row">
+          <label for="sl-m">Maintain <span id="sl-pct-m">34</span>%</label>
+          <input type="range" id="sl-m" min="0" max="100" value="34" step="1" />
+        </div>
+        <div class="slider-row">
+          <label for="sl-b">Build <span id="sl-pct-b">33</span>%</label>
+          <input type="range" id="sl-b" min="0" max="66" value="33" step="1" />
+        </div>
+        <p class="slider-row-static">Multiply <strong id="sl-pct-x">33</strong>%</p>
+        <div class="stack-bar" id="stack-bar-live" aria-hidden="true">
+          <span class="seg-m" id="stack-seg-m" style="width:34%"></span>
+          <span class="seg-b" id="stack-seg-b" style="width:33%"></span>
+          <span class="seg-x" id="stack-seg-x" style="width:33%"></span>
+        </div>
+      </div>
+      <div class="alloc-sliders-wrap" id="money-sliders-wrap">
+        <p class="subhead">Money .  maintain / build / multiply (= 100%)</p>
+        <div class="slider-row">
+          <label for="money-sl-m">Maintain <span id="money-sl-pct-m">34</span>%</label>
+          <input type="range" id="money-sl-m" min="0" max="100" value="34" step="1" />
+        </div>
+        <div class="slider-row">
+          <label for="money-sl-b">Build <span id="money-sl-pct-b">33</span>%</label>
+          <input type="range" id="money-sl-b" min="0" max="66" value="33" step="1" />
+        </div>
+        <p class="slider-row-static">Multiply <strong id="money-sl-pct-x">33</strong>%</p>
+        <div class="stack-bar" id="money-stack-bar" aria-hidden="true">
+          <span class="seg-m" id="money-stack-m" style="width:34%"></span>
+          <span class="seg-b" id="money-stack-b" style="width:33%"></span>
+          <span class="seg-x" id="money-stack-x" style="width:33%"></span>
+        </div>
+      </div>
+      <div class="output-block muted" id="out-cur-alloc-block" style="display:block;">
+        <p class="output-label">Read-back</p>
+        <p class="translate-line" style="margin-top:0;">This shows what your current system is feeding.</p>
+        <p class="consequence-line">If maintain takes everything, nothing grows. If waste stays untouched, nothing changes.</p>
+      </div>
+      <button type="button" class="btn-continue" id="btn-2" disabled>Continue</button>
+    </section>
+
+    <!-- 3 Priority -->
+    <section class="panel" data-step="3" id="panel-3">
+      <div id="priority-compression" class="room-deep-target" aria-hidden="true"></div>
+      <h2 class="panel-title">What gets protected first</h2>
+      <p class="truth-line">If everything matters, nothing moves.</p>
+      <p class="panel-instruction">What gets your best time and attention first this week? Pick one.</p>
+      <div class="value-grid" id="priority-grid">
+        <label class="opt"><input type="radio" name="priority-one" value="Make money" /> Make money</label>
+        <label class="opt"><input type="radio" name="priority-one" value="Stabilize your situation" /> Stabilize your situation</label>
+        <label class="opt"><input type="radio" name="priority-one" value="Reduce stress" /> Reduce stress</label>
+        <label class="opt"><input type="radio" name="priority-one" value="Build something long-term" /> Build something long-term</label>
+      </div>
+      <div class="output-block muted" id="out-value-block" style="display:none;">
+        <p class="output-label">Locked priority</p>
+        <p id="out-value-line" class="pattern-result">. </p>
+        <p class="translate-line">This is what gets resources first.</p>
+        <p class="consequence-line">If you split this across multiple priorities, you go back to drift.</p>
+      </div>
+      <div id="sys-response-r2-3" class="sys-response" style="display:none;"></div>
+      <button type="button" class="btn-continue" id="btn-3" disabled>Continue</button>
+    </section>
+
+    <!-- 4 What stops -->
+    <section class="panel" data-step="4" id="panel-4">
+      <div id="overload-cleanup" class="room-deep-target" aria-hidden="true"></div>
+      <h2 class="panel-title">What gets cut this week</h2>
+      <p class="truth-line">Nothing new fits unless something else leaves.</p>
+      <p class="panel-instruction">What loses time or money this week .  one real cut?</p>
+      <div class="reveal-fields">
+        <div class="value-grid" id="stop-grid" style="flex-direction:column;align-items:stretch;">
+          <label class="opt"><input type="radio" name="stop-one" value="Unnecessary spending" /> Unnecessary spending</label>
+          <label class="opt"><input type="radio" name="stop-one" value="Passive scrolling" /> Passive scrolling</label>
+          <label class="opt"><input type="radio" name="stop-one" value="Convenience spending" /> Convenience spending</label>
+          <label class="opt"><input type="radio" name="stop-one" value="Low-value work" /> Low-value work</label>
+          <label class="opt"><input type="radio" name="stop-one" value="Social overcommitment" /> Social overcommitment</label>
+          <label class="opt"><input type="radio" name="stop-one" value="Content without return" /> Content without return</label>
+          <label class="opt"><input type="radio" name="stop-one" value="Subscriptions or tools not producing anything" /> Subscriptions or tools not producing anything</label>
+          <label class="opt"><input type="radio" name="stop-one" value="Other" /> Other .  name it below</label>
+        </div>
+        <div class="field" style="margin-top:14px;">
+          <label for="stop-other">If other .  one line</label>
+          <input type="text" id="stop-other" placeholder="Only if you picked Other" />
+        </div>
+      </div>
+      <div class="output-block muted" id="out-stop-block" style="display:none;">
+        <p class="output-label">What stops feeding the wrong system</p>
+        <p id="out-stop-line" class="pattern-result">. </p>
+        <p class="translate-line">This is what stops feeding the wrong system.</p>
+        <p class="consequence-line">If nothing stops, your priority is fake.</p>
+      </div>
+      <div id="sys-response-r2-4" class="sys-response" style="display:none;"></div>
+      <button type="button" class="btn-continue" id="btn-4" disabled>Continue</button>
+    </section>
+
+    <!-- 5 Reallocation -->
+    <section class="panel" data-step="5" id="panel-5">
+      <h2 class="panel-title">Where it moves</h2>
+      <p class="truth-line">You are not adding more. You are moving what already exists.</p>
+      <p class="panel-instruction">Revise time and money. Each group must total 100%.</p>
+      <div class="alloc-sliders-wrap">
+        <p class="subhead">Revised time .  maintain / build / multiply</p>
+        <div class="slider-row">
+          <label for="rev-sl-m">Maintain <span id="rev-sl-pct-m">34</span>%</label>
+          <input type="range" id="rev-sl-m" min="0" max="100" value="34" step="1" />
+        </div>
+        <div class="slider-row">
+          <label for="rev-sl-b">Build <span id="rev-sl-pct-b">33</span>%</label>
+          <input type="range" id="rev-sl-b" min="0" max="66" value="33" step="1" />
+        </div>
+        <p class="slider-row-static">Multiply <strong id="rev-sl-pct-x">33</strong>%</p>
+        <div class="stack-bar" id="rev-stack-bar" aria-hidden="true">
+          <span class="seg-m" id="rev-stack-m" style="width:34%"></span>
+          <span class="seg-b" id="rev-stack-b" style="width:33%"></span>
+          <span class="seg-x" id="rev-stack-x" style="width:33%"></span>
+        </div>
+      </div>
+      <div class="alloc-sliders-wrap">
+        <p class="subhead">Revised money .  maintain / build / multiply</p>
+        <div class="slider-row">
+          <label for="rev-money-sl-m">Maintain <span id="rev-money-sl-pct-m">34</span>%</label>
+          <input type="range" id="rev-money-sl-m" min="0" max="100" value="34" step="1" />
+        </div>
+        <div class="slider-row">
+          <label for="rev-money-sl-b">Build <span id="rev-money-sl-pct-b">33</span>%</label>
+          <input type="range" id="rev-money-sl-b" min="0" max="66" value="33" step="1" />
+        </div>
+        <p class="slider-row-static">Multiply <strong id="rev-money-sl-pct-x">33</strong>%</p>
+        <div class="stack-bar" id="rev-money-stack-bar" aria-hidden="true">
+          <span class="seg-m" id="rev-money-stack-m" style="width:34%"></span>
+          <span class="seg-b" id="rev-money-stack-b" style="width:33%"></span>
+          <span class="seg-x" id="rev-money-stack-x" style="width:33%"></span>
+        </div>
+      </div>
+      <div class="diag-tie">
+        <h4>Current vs revised</h4>
+        <p id="compare-teaser">Move the sliders so the revised split matches what you are willing to run this week.</p>
+      </div>
+      <p class="translate-line">This is the shift between how you are living and how you say you want to move.</p>
+      <p class="consequence-line">If the revised version looks the same, nothing changes.</p>
+      <div id="sys-response-r2-5" class="sys-response" style="display:none;"></div>
+      <label class="opt" style="margin-top:14px;display:flex;align-items:flex-start;gap:10px;"><input type="checkbox" id="cb-confirm-rev" /> I confirm this revised split is what I will run this week.</label>
+      <button type="button" class="btn-continue" id="btn-5" disabled>Continue</button>
+    </section>
+
+    <!-- 6 Current system output -->
+    <section class="panel" data-step="6" id="panel-6">
+      <h2 class="panel-title">This is your current system</h2>
+      <div class="sys-compare">
+        <div class="locked-block" id="block-current">
+          <p class="locked-label">Current</p>
+          <p class="alloc-line" id="sys-line-cur-time">Time: Maintain .  / Build .  / Multiply . </p>
+          <p class="alloc-line" id="sys-line-cur-money">Money: Maintain .  / Build .  / Multiply . </p>
+        </div>
+        <div class="locked-block" id="block-revised">
+          <p class="locked-label">Revised</p>
+          <p class="alloc-line" id="sys-line-rev-time">Time: Maintain .  / Build .  / Multiply . </p>
+          <p class="alloc-line" id="sys-line-rev-money">Money: Maintain .  / Build .  / Multiply . </p>
+        </div>
+      </div>
+      <p class="truth-line" style="border-left-color:var(--gold-line);margin-top:8px;">This is what your current system produces.</p>
+      <p class="truth-line">If nothing changes, this is what continues.</p>
+      <p class="pattern-result" id="sys-interpret" style="font-size:18px;margin-top:12px;">. </p>
+      <div class="output-block muted" id="alloc-plain-wrap" style="margin-top:16px;display:none;">
+        <p class="output-label">Where it’s heavy / light</p>
+        <p id="alloc-plain-a" class="pattern-result sm" style="margin-top:8px;">. </p>
+        <p id="alloc-plain-b" class="pattern-result sm">. </p>
+        <p id="alloc-plain-c" class="pattern-result sm">. </p>
+        <p id="alloc-plain-d" class="pattern-result sm">. </p>
+      </div>
+      <div id="sys-response-r2-6" class="sys-response" style="display:none;"></div>
+      <label class="opt" style="margin-top:14px;display:flex;align-items:flex-start;gap:10px;"><input type="checkbox" id="cb-confirm-sys-read" /> I have read the current vs revised output above.</label>
+      <button type="button" class="btn-continue" id="btn-6" disabled>Continue</button>
+    </section>
+
+    <!-- 7 Forced decision -->
+    <section class="panel" data-step="7" id="panel-7">
+      <div id="restart-loop" class="room-deep-target" aria-hidden="true"></div>
+      <h2 class="panel-title">Pick one</h2>
+      <p class="truth-line">You are choosing a result, not a mood.</p>
+      <div class="trade-btns" style="margin-bottom:8px;">
+        <button type="button" id="btn-sys-keep">Keep this system</button>
+        <button type="button" id="btn-sys-change">Change this system</button>
+      </div>
+      <div id="decision-msg" class="decision-msg" style="display:none;"></div>
+      <div id="sys-response-r2-7" class="sys-response" style="display:none;"></div>
+      <button type="button" class="btn-continue" id="btn-7" disabled>Choose above to continue</button>
+    </section>
+
+    <!-- 8 This week -->
+    <section class="panel" data-step="8" id="panel-8">
+      <div id="weekly-reset" class="room-deep-target" aria-hidden="true"></div>
+      <h2 class="panel-title">This week</h2>
+      <p class="truth-line">This only matters if it changes your calendar and your spending this week.</p>
+      <pre class="weekly-pre" id="weekly-generated" aria-live="polite"></pre>
+      <p class="translate-line">This is your weekly operating plan.</p>
+      <p class="consequence-line">If this does not show up in your week, this section did nothing.</p>
+      <div id="sys-response-r2-8" class="sys-response" style="display:none;"></div>
+      <label class="opt" style="margin-top:14px;display:flex;align-items:flex-start;gap:10px;"><input type="checkbox" id="cb-confirm-weekly" /> I commit to placing this weekly plan on my calendar.</label>
+      <button type="button" class="btn-continue" id="btn-8" disabled>Apply this and continue →</button>
+    </section>
+
+    <!-- 9 Escalation -->
+    <section class="panel" data-step="9" id="panel-9-esc">
+      <div class="escalation-inner" style="border-top:0;padding-top:0;margin-top:0;">
+        <h2 class="panel-title" style="margin-bottom:12px;">Follow-through</h2>
+        <p class="escalation-copy">You already know what to do.<br />The gap is usually follow-through, not information.</p>
+        <div class="escalation-actions">
+          <button type="button" class="btn-continue" id="btn-esc-02">I’ll do this</button>
+          <a href="/access" class="btn-continue btn-secondary">Structure this with me</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- 10 Rule -->
+    <section class="panel" data-step="10" id="panel-10-rule">
+      <h2 class="panel-title">Operate like this</h2>
+      <p class="truth-line" style="font-size:17px;color:var(--cream);border-left:2px solid var(--gold-line);padding-left:14px;">If it does not support the priority, it does not get time or money.</p>
+      <p class="consequence-line" style="margin-top:16px;">That rule is not optional.</p>
+      <button type="button" class="btn-continue" id="btn-10">Continue</button>
+    </section>
+
+    <!-- 11 Use this -->
+    <section class="panel" data-step="11" id="panel-11-use">
+      <h2 class="panel-title">Use this</h2>
+      <p class="panel-instruction">The Allocation Stack .  use it when you spend or schedule.</p>
+      <div class="use-pack">
+        <div class="use-block">
+          <p class="use-label">The Allocation Stack</p>
+          <p><strong>Maintain</strong> = keeps life running.<br /><strong>Build</strong> = creates progress.<br /><strong>Multiply</strong> = creates leverage or future return.</p>
+        </div>
+        <div class="use-block">
+          <p class="use-label">Prompt</p>
+          <pre class="copy-block" id="prompt-alloc">List everything you spend time and money on.
+Mark each:
+- maintain
+- build
+- multiply
+
+Reduce anything that is not building or multiplying.</pre>
+        </div>
+        <div class="use-block">
+          <p class="use-label">Checklist</p>
+          <p class="asset-checklist">☐ 1 priority<br />☐ 1 thing removed<br />☐ 1 time shift<br />☐ 1 money shift<br />☐ 1 weekly action</p>
+        </div>
+      </div>
+      <button type="button" class="btn-continue" id="btn-use-pack-02">Continue</button>
+    </section>
+
+    <!-- 12 What happens next -->
+    <section class="panel" data-step="12" id="panel-12-next">
+      <h2 class="panel-title">What happens next</h2>
+      <div class="next-pack">
+        <h3 class="next-h3">Do this today</h3>
+        <p>Block time for your priority and remove one distraction.</p>
+        <h3 class="next-h3">Change this week</h3>
+        <p>Shift time or money toward what actually moves you forward.</p>
+        <h3 class="next-h3">Operate like this</h3>
+        <p>If it’s not a priority, it doesn’t get resources.</p>
+      </div>
+      <p class="final-line-action">If you don’t change anything, nothing changes.</p>
+      <button type="button" class="btn-continue" id="btn-what-next-02">Continue</button>
+    </section>
+
+    <!-- 13 Room 03 bridge -->
+    <section class="panel" data-step="13" id="panel-13-bridge">
+      <h2 class="panel-title">What this becomes next</h2>
+      <p class="truth-line">Now that your time and money have a direction, the next question is simple:<br />What are you turning into money first?</p>
+      <div class="bridge-summary" id="bridge-summary-block">
+        <p><strong>Priority</strong> .  <span id="bridge-priority">. </span></p>
+        <p><strong>Time blocked</strong> .  <span id="bridge-time">. </span></p>
+        <p><strong>Money shifted</strong> .  <span id="bridge-money">. </span></p>
+        <p><strong>What stopped</strong> .  <span id="bridge-stop">. </span></p>
+      </div>
+      <p class="starter-line" id="bridge-starter">. </p>
+      <p class="room-flow-saved">Your progress is saved automatically on this device.</p>
+      <div class="room-forward-actions room-forward-actions--single">
+        <a href="/room-03-transaction" class="btn-continue" id="btn-go-r03">Continue to next step</a>
+        <p class="room-forward-exit"><a href="/systems">Exit</a></p>
+      </div>
+      <p style="margin-top: 14px; text-align: center;">
+        <button type="button" class="btn-continue btn-secondary" id="btn-13-alt">View Direction summary on this page</button>
+      </p>
+    </section>
+
+    <!-- 14 Final -->
+    <section class="panel sys-output-panel" data-step="14" id="panel-14">
+      <div id="sys-output-mount-direction" class="sys-output-mount"></div>
+      <h2 class="panel-title">Your Direction System</h2>
+      <p class="panel-instruction">This is what you are running now.</p>
+      <div class="summary-card sys-output-legacy-hidden" aria-hidden="true">
+        <h3>Summary</h3>
+        <div class="viz-lock-stack" id="viz-lock-alloc" aria-label="Locked time allocation">
+          <p class="viz-label">Locked · time allocation (revised)</p>
+          <div class="stack-bar">
+            <span class="seg-m" id="lock-seg-m" style="width:33%"></span>
+            <span class="seg-b" id="lock-seg-b" style="width:34%"></span>
+            <span class="seg-x" id="lock-seg-x" style="width:33%"></span>
+          </div>
+          <p class="translate-line" style="margin-top:10px;font-size:12px;" id="lock-alloc-labels">Maintain · Build · Multiply</p>
+        </div>
+        <div id="summary-interpret"></div>
+        <div id="summary-body"></div>
+        <div class="summary-section" id="value-realization-r02">
+          <h4 class="summary-section-title">What just changed</h4>
+          <div id="value-realization-r02-body"></div>
+        </div>
+      </div>
+      <p class="room-flow-saved">Your progress is saved automatically on this device.</p>
+      <div class="room-forward-actions room-forward-actions--single">
+        <a href="/room-03-transaction" class="btn-continue">Continue to next step</a>
+        <p class="room-forward-exit"><a href="/systems">Exit</a></p>
+      </div>
+      <div class="room-secondary-actions">
+        <button type="button" class="btn-continue btn-secondary" id="btn-copy">Copy summary</button>
+        <button type="button" class="btn-continue btn-secondary" id="btn-restart">Restart</button>
+      </div>
+      <p class="final-line">If you don’t change anything, nothing changes.</p>
+    </section>
+  </div>
+
+  <script src="/stephuary-os.js"></script>
+  <script src="/stephuary-progress.js"></script>
+  <script src="/stephuary-system-output.js"></script>
+  <script src="/stephuary-guided-room-entry.js"></script>
+  <script>
+(function () {
+  var HANDOFF_KEY = 'stephuary_room02_handoff';
+
+  var state = {
+    income: 0,
+    hours: 0,
+    obligations: '',
+    timeCur: { m: 34, b: 33, x: 33 },
+    moneyCur: { m: 34, b: 33, x: 33 },
+    timeRev: { m: 34, b: 33, x: 33 },
+    moneyRev: { m: 34, b: 33, x: 33 },
+    priority: '',
+    stopChoice: '',
+    stopOther: '',
+    systemChoice: '',
+    weeklyPlanText: '',
+    blockHours: 0,
+    moneyShiftLine: ''
+  };
+
+  var currentStep = 0;
+  var totalSteps = 15;
+
+  function setProgress() {
+    var el = document.getElementById('progress-text');
+    if (el) el.textContent = 'Room 2 · ' + (currentStep + 1) + ' / ' + totalSteps;
+  }
+
+  function showStep(n) {
+    currentStep = n;
+    document.querySelectorAll('.panel').forEach(function (p) {
+      p.classList.toggle('active', parseInt(p.getAttribute('data-step'), 10) === n);
+    });
+    setProgress();
+    if (n === 2) {
+      syncTimeSliders();
+      syncMoneySliders();
+    }
+    if (n === 5) {
+      initRevSlidersFromCurrent();
+      var cr = document.getElementById('cb-confirm-rev');
+      if (cr) cr.checked = false;
+      updateGatePanel5();
+    }
+    if (n === 6) {
+      renderSystemOutput();
+      var cs = document.getElementById('cb-confirm-sys-read');
+      if (cs) cs.checked = false;
+      updateGatePanel6();
+    }
+    if (n === 7) {
+      document.getElementById('btn-sys-keep').classList.remove('selected');
+      document.getElementById('btn-sys-change').classList.remove('selected');
+      if (!state.systemChoice) {
+        document.getElementById('decision-msg').style.display = 'none';
+        document.getElementById('btn-7').disabled = true;
+        document.getElementById('btn-7').textContent = 'Choose above to continue';
+      } else {
+        applyDecisionUi(state.systemChoice);
+      }
+    }
+    if (n === 8) {
+      renderWeeklyPlan();
+      var cw = document.getElementById('cb-confirm-weekly');
+      if (cw) cw.checked = false;
+      updateGatePanel8();
+      fillSysResponse('sys-response-r2-8', {
+        means: 'The weekly plan on screen is hours, money shift, stop, and one finish line.',
+        why: 'Text without calendar placement dies in the inbox.',
+        continues: 'This section completes nothing in your real week.',
+        fix: 'Schedule the first line of the plan before you tap continue.'
+      });
+    }
+    if (n === 13) renderBridgePanel();
+    if (n === 14) renderSummary();
+    if (window.StephuaryOS) {
+      window.StephuaryOS.record('02', { step: currentStep, totalSteps: totalSteps });
+    }
+  }
+
+  function next() {
+    if (currentStep < totalSteps - 1) showStep(currentStep + 1);
+  }
+
+  function fmtMoney(n) {
+    if (isNaN(n)) return '—';
+    return '$' + Math.round(n).toLocaleString();
+  }
+
+  function escapeHtml(s) {
+    if (s == null) return '';
+    return String(s)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  function fillSysResponse(elId, o) {
+    var el = document.getElementById(elId);
+    if (!el || !o) return;
+    var losing = o.losing != null ? o.losing : 'Time or money at the rate shown on this screen.';
+    var driving =
+      o.driving != null ? o.driving : [o.why, o.continues].filter(Boolean).join(' · ');
+    var doThis = o.doThis != null ? o.doThis : o.fix;
+    el.innerHTML =
+      '<p class="sys-line"><strong>This means:</strong> ' + escapeHtml(o.means) + '</p>' +
+      '<p class="sys-line"><strong>You\'re likely losing:</strong> ' + escapeHtml(losing) + '</p>' +
+      '<p class="sys-line"><strong>What\'s actually driving it:</strong> ' + escapeHtml(driving) + '</p>' +
+      '<p class="sys-line"><strong>Do this:</strong> ' + escapeHtml(doThis) + '</p>';
+    el.style.display = 'block';
+  }
+
+  var ALLOC_MODES = {
+    survival: { tm: 65, tb: 25, mm: 62, mb: 28 },
+    build: { tm: 40, tb: 45, mm: 42, mb: 43 },
+    leverage: { tm: 32, tb: 38, mm: 35, mb: 38 },
+    balanced: { tm: 34, tb: 33, mm: 34, mb: 33 },
+    cut: { tm: 48, tb: 40, mm: 38, mb: 45 }
+  };
+
+  function applyAllocMode(key) {
+    var M = ALLOC_MODES[key];
+    if (!M) return;
+    document.getElementById('sl-m').value = M.tm;
+    document.getElementById('sl-b').max = 100 - M.tm;
+    document.getElementById('sl-b').value = M.tb;
+    document.getElementById('money-sl-m').value = M.mm;
+    document.getElementById('money-sl-b').max = 100 - M.mm;
+    document.getElementById('money-sl-b').value = M.mb;
+    syncTimeSliders();
+    syncMoneySliders();
+    document.getElementById('btn-2').disabled = false;
+  }
+
+  function maybeRunAllocDiagnosis() {
+    if (document.querySelector('input[name="alloc-mode"]:checked')) runAllocDiagnosis();
+  }
+
+  function runAllocDiagnosis() {
+    var tc = state.timeCur;
+    var mc = state.moneyCur;
+    var t = document.getElementById('alloc-diagnosis-text');
+    var wrap = document.getElementById('alloc-diagnosis');
+    if (!t || !wrap) return;
+    wrap.style.display = 'block';
+    var msg = '';
+    if (tc.m >= 55 && tc.b < 28) msg = 'Time is mostly maintain — growth is starved unless you steal hours back.';
+    else if (tc.b >= 40) msg = 'Build is getting real weight .  protect it on the calendar or it gets eaten.';
+    else if (tc.x >= 32) msg = 'Multiply has leverage on paper .  it only pays if build is already real.';
+    else if (mc.m >= 55) msg = 'Money is parked in maintain .  you are buying safety, not progress.';
+    else msg = 'Split is workable .  the failure mode is drift, not math.';
+    t.textContent = msg;
+    fillSysResponse('sys-response-r2-2', {
+      means: msg,
+      why: 'Allocation is who gets fed when discipline drops .  not what you wish you valued.',
+      continues: 'Drift restores the old split by Wednesday.',
+      fix: 'Put one build block on the calendar before you adjust sliders again.'
+    });
+  }
+
+  function computeResources() {
+    var inc = parseFloat(document.getElementById('in-income').value);
+    var hrs = parseFloat(document.getElementById('in-hours').value);
+    var obl = document.getElementById('in-obligations').value.trim();
+    if (isNaN(inc) || inc < 0 || isNaN(hrs) || hrs <= 0 || !obl) {
+      document.getElementById('btn-1').disabled = true;
+      document.getElementById('out-resources-block').style.display = 'none';
+      updateLivePressure02();
+      return;
+    }
+    state.income = inc;
+    state.hours = hrs;
+    state.obligations = obl;
+    document.getElementById('out-income').textContent = fmtMoney(inc);
+    document.getElementById('out-hours').textContent = hrs + ' h';
+    var short = obl.length > 72 ? obl.slice(0, 72) + '…' : obl;
+    document.getElementById('out-obligations-short').textContent = short;
+    document.getElementById('out-resources-block').style.display = 'block';
+    document.getElementById('btn-1').disabled = false;
+    fillSysResponse('sys-response-r2-1', {
+      means:
+        'You are operating from ' +
+        fmtMoney(inc) +
+        ' / month, ' +
+        hrs +
+        ' h / week, with obligations named in writing.',
+      why: 'This pool is the ceiling for every choice below .  fiction here breaks the whole room.',
+      continues: 'You defend the wrong expense or schedule hours you do not have.',
+      fix: 'Re-enter these three fields when income or hours change .  not when you feel motivated.'
+    });
+    updateLivePressure02();
+  }
+
+  function updateLivePressure02() {
+    var el = document.getElementById('pressure-live-02');
+    var u = document.getElementById('unchanged-02');
+    var fr = document.getElementById('freq-02');
+    var block = document.getElementById('out-resources-block');
+    if (!el || !block || block.style.display === 'none' || !state.income) {
+      if (el) el.style.display = 'none';
+      if (u) u.style.display = 'none';
+      if (fr) fr.style.display = 'none';
+      return;
+    }
+    el.style.display = 'block';
+    var perWeek = state.income / 4.33;
+    el.textContent =
+      'You are currently allocating approximately ' +
+      fmtMoney(perWeek) +
+      ' per week of income at this run rate .  drift eats that before build does.';
+    if (u) u.style.display = 'block';
+    if (fr) fr.style.display = 'block';
+  }
+
+  function updateGatePanel5() {
+    var cb = document.getElementById('cb-confirm-rev');
+    document.getElementById('btn-5').disabled = !(cb && cb.checked);
+  }
+
+  function updateGatePanel6() {
+    var cb = document.getElementById('cb-confirm-sys-read');
+    document.getElementById('btn-6').disabled = !(cb && cb.checked);
+  }
+
+  function updateGatePanel8() {
+    var cb = document.getElementById('cb-confirm-weekly');
+    document.getElementById('btn-8').disabled = !(cb && cb.checked);
+  }
+
+  function updateStackBar(which, m, b, x) {
+    var ids =
+      which === 'time'
+        ? ['stack-seg-m', 'stack-seg-b', 'stack-seg-x']
+        : which === 'money'
+          ? ['money-stack-m', 'money-stack-b', 'money-stack-x']
+          : which === 'rev'
+            ? ['rev-stack-m', 'rev-stack-b', 'rev-stack-x']
+            : ['rev-money-stack-m', 'rev-money-stack-b', 'rev-money-stack-x'];
+    var sm = document.getElementById(ids[0]);
+    var sb = document.getElementById(ids[1]);
+    var sx = document.getElementById(ids[2]);
+    if (sm) sm.style.width = m + '%';
+    if (sb) sb.style.width = b + '%';
+    if (sx) sx.style.width = x + '%';
+  }
+
+  function syncTimeSliders() {
+    var m = parseInt(document.getElementById('sl-m').value, 10);
+    var slB = document.getElementById('sl-b');
+    var maxB = 100 - m;
+    slB.max = maxB;
+    var b = parseInt(slB.value, 10);
+    if (b > maxB) {
+      b = maxB;
+      slB.value = b;
+    }
+    var x = 100 - m - b;
+    document.getElementById('sl-pct-m').textContent = String(m);
+    document.getElementById('sl-pct-b').textContent = String(b);
+    document.getElementById('sl-pct-x').textContent = String(x);
+    updateStackBar('time', m, b, x);
+    state.timeCur = { m: m, b: b, x: x };
+    maybeRunAllocDiagnosis();
+  }
+
+  function syncMoneySliders() {
+    var m = parseInt(document.getElementById('money-sl-m').value, 10);
+    var slB = document.getElementById('money-sl-b');
+    var maxB = 100 - m;
+    slB.max = maxB;
+    var b = parseInt(slB.value, 10);
+    if (b > maxB) {
+      b = maxB;
+      slB.value = b;
+    }
+    var x = 100 - m - b;
+    document.getElementById('money-sl-pct-m').textContent = String(m);
+    document.getElementById('money-sl-pct-b').textContent = String(b);
+    document.getElementById('money-sl-pct-x').textContent = String(x);
+    updateStackBar('money', m, b, x);
+    state.moneyCur = { m: m, b: b, x: x };
+    maybeRunAllocDiagnosis();
+  }
+
+  function syncRevTimeSliders() {
+    var m = parseInt(document.getElementById('rev-sl-m').value, 10);
+    var slB = document.getElementById('rev-sl-b');
+    var maxB = 100 - m;
+    slB.max = maxB;
+    var b = parseInt(slB.value, 10);
+    if (b > maxB) {
+      b = maxB;
+      slB.value = b;
+    }
+    var x = 100 - m - b;
+    document.getElementById('rev-sl-pct-m').textContent = String(m);
+    document.getElementById('rev-sl-pct-b').textContent = String(b);
+    document.getElementById('rev-sl-pct-x').textContent = String(x);
+    updateStackBar('rev', m, b, x);
+    state.timeRev = { m: m, b: b, x: x };
+    updateRevSys();
+  }
+
+  function syncRevMoneySliders() {
+    var m = parseInt(document.getElementById('rev-money-sl-m').value, 10);
+    var slB = document.getElementById('rev-money-sl-b');
+    var maxB = 100 - m;
+    slB.max = maxB;
+    var b = parseInt(slB.value, 10);
+    if (b > maxB) {
+      b = maxB;
+      slB.value = b;
+    }
+    var x = 100 - m - b;
+    document.getElementById('rev-money-sl-pct-m').textContent = String(m);
+    document.getElementById('rev-money-sl-pct-b').textContent = String(b);
+    document.getElementById('rev-money-sl-pct-x').textContent = String(x);
+    updateStackBar('revMoney', m, b, x);
+    state.moneyRev = { m: m, b: b, x: x };
+    updateRevSys();
+  }
+
+  function updateRevSys() {
+    var tr = state.timeRev;
+    var mr = state.moneyRev;
+    var tc = state.timeCur;
+    var mc = state.moneyCur;
+    var unchanged =
+      tr.m === tc.m &&
+      tr.b === tc.b &&
+      tr.x === tc.x &&
+      mr.m === mc.m &&
+      mr.b === mc.b &&
+      mr.x === mc.x;
+    fillSysResponse('sys-response-r2-5', {
+      means: unchanged
+        ? 'Revised time and money match current .  no shift is committed yet.'
+        : 'Revised time is M ' +
+          tr.m +
+          '% / B ' +
+          tr.b +
+          '% / X ' +
+          tr.x +
+          '% .  money is M ' +
+          mr.m +
+          '% / B ' +
+          mr.b +
+          '% / X ' +
+          mr.x +
+          '%.',
+      why: 'The calendar and card still run the old split until you move real blocks.',
+      continues: 'You repeat the same week while the paper says “revised.”',
+      fix: 'Move one calendar block and one spending line to match this revised split.'
+    });
+  }
+
+  function initRevSlidersFromCurrent() {
+    document.getElementById('rev-sl-m').value = state.timeCur.m;
+    document.getElementById('rev-sl-b').max = 100 - state.timeCur.m;
+    document.getElementById('rev-sl-b').value = state.timeCur.b;
+    document.getElementById('rev-money-sl-m').value = state.moneyCur.m;
+    document.getElementById('rev-money-sl-b').max = 100 - state.moneyCur.m;
+    document.getElementById('rev-money-sl-b').value = state.moneyCur.b;
+    syncRevTimeSliders();
+    syncRevMoneySliders();
+  }
+
+  function lineAlloc(label, o) {
+    return label + ': Maintain ' + o.m + '% / Build ' + o.b + '% / Multiply ' + o.x + '%';
+  }
+
+  function interpretSystem() {
+    var tc = state.timeCur;
+    var mc = state.moneyCur;
+    var tr = state.timeRev;
+    var mr = state.moneyRev;
+    var same =
+      tc.m === tr.m &&
+      tc.b === tr.b &&
+      tc.x === tr.x &&
+      mc.m === mr.m &&
+      mc.b === mr.b &&
+      mc.x === mr.x;
+    if (same) return 'If the revised version looks the same, nothing changes.';
+    if (tc.m >= 55 && tc.b < 25) return 'You are feeding maintenance more than growth.';
+    if (tc.b + tc.x < 30) return 'You are leaving too little time and money for anything to compound.';
+    if (mc.m >= 55 && mc.b < 25) return 'You are protecting comfort more than progress.';
+    if (tc.b < 20 || mc.b < 20) return 'You are feeding maintenance more than growth.';
+    return 'You are running a system that favors what already works over what you say you want next.';
+  }
+
+  function renderPlainAllocReadout() {
+    var wrap = document.getElementById('alloc-plain-wrap');
+    var a = document.getElementById('alloc-plain-a');
+    var b = document.getElementById('alloc-plain-b');
+    var c = document.getElementById('alloc-plain-c');
+    var d = document.getElementById('alloc-plain-d');
+    if (!wrap || !a) return;
+    var tc = state.timeCur;
+    var mc = state.moneyCur;
+    var tr = state.timeRev;
+    var mr = state.moneyRev;
+    var pri = state.priority || '—';
+    var stop = stopLabel() || '—';
+    wrap.style.display = 'block';
+    a.textContent =
+      'Too much still on maintain: ' +
+      tc.m +
+      '% time · ' +
+      mc.m +
+      '% money (current). Build only gets ' +
+      tc.b +
+      '% time · ' +
+      mc.b +
+      '% money unless you move real blocks.';
+    b.textContent =
+      'Revised targets — build ' +
+      tr.b +
+      '% time / ' +
+      mr.b +
+      '% money · multiply ' +
+      tr.x +
+      '% time / ' +
+      mr.x +
+      '% money. That’s what you’re trying to fund.';
+    c.textContent = 'What has to give: ' + stop + '.';
+    d.textContent = 'Protected first: ' + pri + '.';
+  }
+
+  function renderSystemOutput() {
+    document.getElementById('sys-line-cur-time').textContent = lineAlloc('Time', state.timeCur);
+    document.getElementById('sys-line-cur-money').textContent = lineAlloc('Money', state.moneyCur);
+    document.getElementById('sys-line-rev-time').textContent = lineAlloc('Time', state.timeRev);
+    document.getElementById('sys-line-rev-money').textContent = lineAlloc('Money', state.moneyRev);
+    var interp = interpretSystem();
+    document.getElementById('sys-interpret').textContent = interp;
+    renderPlainAllocReadout();
+    fillSysResponse('sys-response-r2-6', {
+      means: interp,
+      why: 'The split produces a weekly lifestyle whether you name it or not.',
+      continues: 'You keep the outcome you keep funding.',
+      fix: 'Run your week from the revised numbers — or come back and move the sliders again.'
+    });
+  }
+
+  function computePriority() {
+    var el = document.querySelector('input[name="priority-one"]:checked');
+    if (!el) {
+      document.getElementById('btn-3').disabled = true;
+      document.getElementById('out-value-block').style.display = 'none';
+      return;
+    }
+    state.priority = el.value;
+    document.getElementById('out-value-line').textContent = el.value;
+    document.getElementById('out-value-block').style.display = 'block';
+    document.getElementById('btn-3').disabled = false;
+    fillSysResponse('sys-response-r2-3', {
+      means: 'Priority is locked to: ' + el.value + '.',
+      why: 'Split priorities split hours and dollars — drift returns immediately.',
+      continues: 'Everything feels urgent — nothing finishes.',
+      fix: 'Spend the first protected block this week only on this priority.'
+    });
+  }
+
+  function stopLabel() {
+    if (state.stopChoice === 'Other') return (state.stopOther || '').trim();
+    return state.stopChoice;
+  }
+
+  function computeStop() {
+    var el = document.querySelector('input[name="stop-one"]:checked');
+    if (!el) {
+      document.getElementById('btn-4').disabled = true;
+      document.getElementById('out-stop-block').style.display = 'none';
+      return;
+    }
+    state.stopChoice = el.value;
+    state.stopOther = document.getElementById('stop-other').value.trim();
+    if (state.stopChoice === 'Other' && !state.stopOther) {
+      document.getElementById('btn-4').disabled = true;
+      document.getElementById('out-stop-block').style.display = 'none';
+      return;
+    }
+    var show = stopLabel();
+    document.getElementById('out-stop-line').textContent = show;
+    document.getElementById('out-stop-block').style.display = 'block';
+    document.getElementById('btn-4').disabled = false;
+    fillSysResponse('sys-response-r2-4', {
+      means: 'This category stops feeding the system: ' + show + '.',
+      why: 'Without a named stop, “priority” stays a label — not a trade.',
+      continues: 'Old leaks eat the hours you reallocated on paper.',
+      fix: 'Delete or downgrade that line from this week’s calendar or card today.'
+    });
+  }
+
+  function moneyShiftSentence() {
+    var mc = state.moneyCur;
+    var mr = state.moneyRev;
+    var dB = mr.b - mc.b;
+    var from = 'maintain';
+    if (dB > 0) {
+      var cutM = mc.m - mr.m;
+      var cutX = mc.x - mr.x;
+      from = cutX >= cutM ? 'multiply' : 'maintain';
+    }
+    var pct = Math.max(1, Math.round(Math.abs(dB)));
+    var inc = state.income || 0;
+    var dollars = Math.round(inc * (pct / 100));
+    if (inc && dollars < 25) dollars = Math.max(25, Math.round(inc * 0.03));
+    if (Math.abs(dB) < 1 && inc) dollars = Math.max(25, Math.round(inc * 0.03));
+    state.moneyShiftLine = 'Move $' + dollars + ' from ' + from + ' to build.';
+    return state.moneyShiftLine;
+  }
+
+  function completeLineForPriority() {
+    var p = state.priority || '';
+    if (p.indexOf('stress') >= 0) return 'Complete one boundary: say no to one request that does not pay.';
+    if (p.indexOf('Stabilize') >= 0) return 'Complete one bill or obligation you have been avoiding.';
+    if (p.indexOf('long-term') >= 0) return 'Complete one asset that still works if you step away for a day.';
+    return 'Complete one paid outreach message.';
+  }
+
+  function renderWeeklyPlan() {
+    var H = state.hours || 40;
+    var blockH = Math.max(1, Math.round((state.timeRev.b / 100) * H));
+    if (blockH < 2 && H >= 10) blockH = 2;
+    state.blockHours = blockH;
+    moneyShiftSentence();
+    var stop = stopLabel() || 'one named leak';
+    var pri = state.priority || 'your priority';
+    var lines = [
+      'This week:',
+      '- Block ' + blockH + ' hours for ' + pri.toLowerCase() + '.',
+      '- ' + state.moneyShiftLine,
+      '- Stop ' + stop + '.',
+      '- ' + completeLineForPriority()
+    ];
+    state.weeklyPlanText = lines.join('\n');
+    document.getElementById('weekly-generated').textContent = state.weeklyPlanText;
+  }
+
+  function buildStarterLine() {
+    var p = state.priority || '';
+    if (p.indexOf('Make money') >= 0) return 'Use your build time to create one paid offer.';
+    if (p.indexOf('Stabilize') >= 0) return 'Use the money you freed to cover one hole so you can sell without panic.';
+    return 'You are not organizing anymore. You are making something sell.';
+  }
+
+  function saveHandoff() {
+    var rm = { hrsPerWk: 0, moneyMo: 0 };
+    try {
+      rm = computeRedirectMetrics();
+    } catch (err) {}
+    var payload = {
+      version: 1,
+      priority: state.priority,
+      removedItem: stopLabel(),
+      revisedBuildTimePct: state.timeRev.b,
+      weeklyAction: completeLineForPriority(),
+      weeklyPlan: state.weeklyPlanText,
+      timeBlockedHours: state.blockHours,
+      moneyShift: state.moneyShiftLine,
+      systemChoice: state.systemChoice,
+      starterLine: buildStarterLine(),
+      timeRedirectHrsPerWeek: rm.hrsPerWk,
+      moneyRedirectMonthly: rm.moneyMo
+    };
+    try {
+      localStorage.setItem(HANDOFF_KEY, JSON.stringify(payload));
+    } catch (e) {}
+  }
+
+  function renderBridgePanel() {
+    document.getElementById('bridge-priority').textContent = state.priority || '. ';
+    document.getElementById('bridge-time').textContent =
+      state.blockHours ? state.blockHours + ' hours on-calendar for priority work' : '. ';
+    document.getElementById('bridge-money').textContent = state.moneyShiftLine || '. ';
+    document.getElementById('bridge-stop').textContent = stopLabel() || '. ';
+    document.getElementById('bridge-starter').textContent = buildStarterLine();
+    saveHandoff();
+  }
+
+  function applyDecisionUi(choice) {
+    state.systemChoice = choice;
+    document.getElementById('btn-sys-keep').classList.toggle('selected', choice === 'keep');
+    document.getElementById('btn-sys-change').classList.toggle('selected', choice === 'change');
+    var msg = document.getElementById('decision-msg');
+    msg.style.display = 'block';
+    if (choice === 'keep') {
+      msg.textContent = 'You are choosing the current result.';
+      document.getElementById('btn-7').textContent = 'Continue with current system →';
+    } else {
+      msg.textContent = 'You need to remove one low-value allocation and increase one priority allocation.';
+      document.getElementById('btn-7').textContent = 'Apply changes and continue →';
+    }
+    document.getElementById('btn-7').disabled = false;
+    fillSysResponse('sys-response-r2-7', {
+      means:
+        choice === 'keep'
+          ? 'You are choosing to keep the current allocation result.'
+          : 'You are choosing to change the system .  not to feel different.',
+      why: 'Mood passes .  the split stays until real time and money move.',
+      continues: 'You resent the same week you refuse to reallocate.',
+      fix:
+        choice === 'keep'
+          ? 'Own this outcome .  stop arguing with the numbers you just kept.'
+          : 'Delete one low-value block this week to fund the build line you drew.'
+    });
+  }
+
+  function buildInterpretation() {
+    return [interpretSystem(), 'Decision: ' + (state.systemChoice === 'keep' ? 'keep' : 'change') + '.'];
+  }
+
+  function computeRedirectMetrics() {
+    var H = state.hours || 0;
+    var tc = state.timeCur;
+    var tr = state.timeRev;
+    var hrsPerWk = Math.max(0, ((tr.b - tc.b) / 100) * H);
+    var mc = state.moneyCur;
+    var mr = state.moneyRev;
+    var dB = mr.b - mc.b;
+    var inc = state.income || 0;
+    var pct = Math.max(1, Math.round(Math.abs(dB)));
+    var dollars = inc ? Math.round(inc * (pct / 100)) : 0;
+    if (inc && dollars < 25) dollars = Math.max(25, Math.round(inc * 0.03));
+    if (Math.abs(dB) < 1 && inc) dollars = Math.max(25, Math.round(inc * 0.03));
+    var fourWkH = hrsPerWk * 4;
+    var fourWkMoney = Math.round(dollars * (4 / 4.345));
+    return {
+      hrsPerWk: hrsPerWk,
+      moneyMo: dollars,
+      fourWkH: fourWkH,
+      fourWkMoney: fourWkMoney
+    };
+  }
+
+  function renderSummary() {
+    if (window.StephuaryProgress) window.StephuaryProgress.markRoomComplete('02');
+    var tr = state.timeRev;
+    var lm = document.getElementById('lock-seg-m');
+    var lb = document.getElementById('lock-seg-b');
+    var lx = document.getElementById('lock-seg-x');
+    var lab = document.getElementById('lock-alloc-labels');
+    if (lm) lm.style.width = tr.m + '%';
+    if (lb) lb.style.width = tr.b + '%';
+    if (lx) lx.style.width = tr.x + '%';
+    if (lab) lab.textContent = 'Maintain ' + tr.m + '% · Build ' + tr.b + '% · Multiply ' + tr.x + '%';
+
+    var interpEl = document.getElementById('summary-interpret');
+    if (interpEl) {
+      interpEl.innerHTML = '';
+      buildInterpretation().forEach(function (line) {
+        var p = document.createElement('p');
+        p.className = 'final-interpret';
+        p.textContent = line;
+        interpEl.appendChild(p);
+      });
+    }
+    var body = document.getElementById('summary-body');
+    body.innerHTML = '';
+
+    function addSec(title, html) {
+      var d = document.createElement('div');
+      d.className = 'summary-section';
+      var h = document.createElement('p');
+      h.className = 'summary-section-title';
+      h.textContent = title;
+      d.appendChild(h);
+      var inner = document.createElement('div');
+      inner.innerHTML = html;
+      d.appendChild(inner);
+      body.appendChild(d);
+    }
+
+    addSec(
+      'Income / time',
+      '<p>Income: ' + fmtMoney(state.income) + ' / month · Hours: ' + state.hours + ' / week</p><p>Obligations: ' + escapeHtml(state.obligations) + '</p>'
+    );
+    addSec('Priority', '<p>' + escapeHtml(state.priority) + '</p>');
+    addSec(
+      'Current vs revised',
+      '<p>' + escapeHtml(lineAlloc('Time (current)', state.timeCur)) + '</p>' +
+        '<p>' + escapeHtml(lineAlloc('Money (current)', state.moneyCur)) + '</p>' +
+        '<p>' + escapeHtml(lineAlloc('Time (revised)', state.timeRev)) + '</p>' +
+        '<p>' + escapeHtml(lineAlloc('Money (revised)', state.moneyRev)) + '</p>'
+    );
+    addSec('What stops', '<p>' + escapeHtml(stopLabel()) + '</p>');
+    addSec('Decision', '<p>' + escapeHtml(state.systemChoice === 'keep' ? 'Keep this system' : 'Change this system') + '</p>');
+    addSec('This week', '<pre class="copy-block" style="white-space:pre-wrap;">' + escapeHtml(state.weeklyPlanText) + '</pre>');
+
+    var vr2 = document.getElementById('value-realization-r02-body');
+    if (vr2) {
+      var rm = computeRedirectMetrics();
+      vr2.innerHTML =
+        '<p>Time redirected per week (into build): ' + rm.hrsPerWk.toFixed(1) + ' h</p>' +
+        '<p>Money redirected per month (into build): ' + fmtMoney(rm.moneyMo) + '</p>' +
+        '<p style="margin-top:12px;">If this holds (4 weeks): ' + rm.fourWkH.toFixed(1) + ' h · ' + fmtMoney(rm.fourWkMoney) + '</p>';
+    }
+    saveHandoff();
+
+    var mount = document.getElementById('sys-output-mount-direction');
+    if (mount && window.StephuarySystemOutput) {
+      var wk = (state.weeklyPlanText || '')
+        .trim()
+        .split(/\n/)
+        .map(function (l) {
+          return l.trim();
+        })
+        .filter(Boolean);
+      var startLine = wk[0] || completeLineForPriority();
+      var fitParts = [];
+      if (state.income) fitParts.push(fmtMoney(state.income) + '/mo');
+      fitParts.push(state.hours + ' h/wk');
+      if ((state.obligations || '').trim()) fitParts.push(state.obligations.trim());
+      var dirData = {
+        identity: state.priority || '—',
+        focus: 'Revised build · ' + state.timeRev.b + '% time · ' + state.moneyRev.b + '% money',
+        ignore: stopLabel() || '—',
+        why: interpretSystem(),
+        fit: fitParts.join(' · ') || '—',
+        start: startLine
+      };
+      var ctaD =
+        '<div class="sys-output__cta">' +
+        '<div class="sys-output__cta-row">' +
+        '<a href="/room-03-transaction" class="sys-output__btn sys-output__btn--pri magnetic">View next step</a>' +
+        '<a href="/systems" class="sys-output__btn sys-output__btn--sec magnetic">Back to Systems</a>' +
+        '</div></div>';
+      window.StephuarySystemOutput.mountDirection(mount, dirData, ctaD);
+    }
+  }
+
+  function buildSummaryPlainText() {
+    var lines = [];
+    lines.push('ROOM 2 — WHAT TO CHANGE THIS WEEK');
+    lines.push('');
+    lines.push('Income / time');
+    lines.push('Income: ' + fmtMoney(state.income) + ' / month · Hours: ' + state.hours + ' / week');
+    lines.push('Obligations: ' + state.obligations);
+    lines.push('');
+    lines.push('Priority');
+    lines.push(state.priority);
+    lines.push('');
+    lines.push('Allocation (current)');
+    lines.push(lineAlloc('Time', state.timeCur));
+    lines.push(lineAlloc('Money', state.moneyCur));
+    lines.push('Allocation (revised)');
+    lines.push(lineAlloc('Time', state.timeRev));
+    lines.push(lineAlloc('Money', state.moneyRev));
+    lines.push('');
+    lines.push('What stops');
+    lines.push(stopLabel());
+    lines.push('');
+    lines.push('Decision');
+    lines.push(state.systemChoice === 'keep' ? 'Keep' : 'Change');
+    lines.push('');
+    lines.push('This week');
+    lines.push(state.weeklyPlanText);
+    lines.push('');
+    var rmx = computeRedirectMetrics();
+    lines.push('What just changed');
+    lines.push('Time redirected per week (into build): ' + rmx.hrsPerWk.toFixed(1) + ' h');
+    lines.push('Money redirected per month (into build): ' + fmtMoney(rmx.moneyMo));
+    lines.push('If this holds (4 weeks): ' + rmx.fourWkH.toFixed(1) + ' h · ' + fmtMoney(rmx.fourWkMoney));
+    lines.push('');
+    lines.push('If you don’t change anything, nothing changes.');
+    return lines.join('\n');
+  }
+
+  function copySummary() {
+    renderSummary();
+    var t = buildSummaryPlainText();
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(t).then(function () {
+        var b = document.getElementById('btn-copy');
+        var o = b.textContent;
+        b.textContent = 'Copied ✓';
+        setTimeout(function () {
+          b.textContent = o;
+        }, 2000);
+      });
+    }
+  }
+
+  document.getElementById('btn-begin').addEventListener('click', next);
+
+  ['in-income', 'in-hours', 'in-obligations'].forEach(function (id) {
+    document.getElementById(id).addEventListener('input', computeResources);
+    document.getElementById(id).addEventListener('change', computeResources);
+  });
+  document.getElementById('btn-1').addEventListener('click', next);
+
+  document.querySelectorAll('input[name="alloc-mode"]').forEach(function (el) {
+    el.addEventListener('change', function () {
+      applyAllocMode(el.value);
+    });
+  });
+  document.getElementById('sl-m').addEventListener('input', syncTimeSliders);
+  document.getElementById('sl-b').addEventListener('input', syncTimeSliders);
+  document.getElementById('money-sl-m').addEventListener('input', syncMoneySliders);
+  document.getElementById('money-sl-b').addEventListener('input', syncMoneySliders);
+  document.getElementById('btn-2').addEventListener('click', next);
+
+  document.querySelectorAll('input[name="priority-one"]').forEach(function (el) {
+    el.addEventListener('change', computePriority);
+  });
+  document.getElementById('btn-3').addEventListener('click', next);
+
+  document.querySelectorAll('input[name="stop-one"]').forEach(function (el) {
+    el.addEventListener('change', computeStop);
+  });
+  document.getElementById('stop-other').addEventListener('input', computeStop);
+  document.getElementById('btn-4').addEventListener('click', next);
+
+  document.getElementById('rev-sl-m').addEventListener('input', syncRevTimeSliders);
+  document.getElementById('rev-sl-b').addEventListener('input', syncRevTimeSliders);
+  document.getElementById('rev-money-sl-m').addEventListener('input', syncRevMoneySliders);
+  document.getElementById('rev-money-sl-b').addEventListener('input', syncRevMoneySliders);
+  var cr = document.getElementById('cb-confirm-rev');
+  if (cr) cr.addEventListener('change', updateGatePanel5);
+  document.getElementById('btn-5').addEventListener('click', next);
+
+  var cs = document.getElementById('cb-confirm-sys-read');
+  if (cs) cs.addEventListener('change', updateGatePanel6);
+  document.getElementById('btn-6').addEventListener('click', next);
+
+  document.getElementById('btn-sys-keep').addEventListener('click', function () {
+    applyDecisionUi('keep');
+  });
+  document.getElementById('btn-sys-change').addEventListener('click', function () {
+    applyDecisionUi('change');
+  });
+  document.getElementById('btn-7').addEventListener('click', next);
+
+  var cw = document.getElementById('cb-confirm-weekly');
+  if (cw) cw.addEventListener('change', updateGatePanel8);
+  document.getElementById('btn-8').addEventListener('click', next);
+
+  document.getElementById('btn-esc-02').addEventListener('click', next);
+
+  document.getElementById('btn-10').addEventListener('click', next);
+
+  document.getElementById('btn-use-pack-02').addEventListener('click', next);
+  document.getElementById('btn-what-next-02').addEventListener('click', next);
+
+  document.getElementById('btn-go-r03').addEventListener('click', function () {
+    saveHandoff();
+  });
+
+  document.getElementById('btn-13-alt').addEventListener('click', function () {
+    showStep(14);
+  });
+
+  document.getElementById('btn-copy').addEventListener('click', copySummary);
+  document.getElementById('btn-restart').addEventListener('click', function () {
+    location.reload();
+  });
+
+  var rnr = document.getElementById('room-nav-restart');
+  if (rnr) {
+    rnr.addEventListener('click', function (e) {
+      e.preventDefault();
+      if (window.StephuaryProgress) window.StephuaryProgress.confirmRestart();
+    });
+  }
+
+  syncTimeSliders();
+  syncMoneySliders();
+
+  function applyGuidedDeepLink() {
+    if (!window.StephuaryGuidedRoomEntry) return false;
+    var res = window.StephuaryGuidedRoomEntry.getStepAndSlugForUrl(
+      window.location.pathname,
+      window.location.hash,
+      new URLSearchParams(window.location.search).get('start')
+    );
+    if (!res) return false;
+    showStep(res.step);
+    requestAnimationFrame(function () {
+      var marker = document.getElementById(res.slug);
+      if (marker) marker.scrollIntoView({ block: 'start', behavior: 'smooth' });
+    });
+    return true;
+  }
+
+  if (!applyGuidedDeepLink()) {
+    var params = new URLSearchParams(window.location.search);
+    var rs = params.get('step');
+    if (rs !== null && rs !== '') {
+      var sn = parseInt(rs, 10);
+      if (!isNaN(sn)) showStep(Math.min(Math.max(0, sn), totalSteps - 1));
+    } else {
+      showStep(0);
+    }
+  }
+})();
+  </script>
+  <script src="/stephuary-diagnostic-state.js"></script>
+  <script src="/stephuary-result.js"></script>
+  <script src="/stephuary-room-personalization.js"></script>
+  <script>
+  document.addEventListener('DOMContentLoaded', function () {
+    if (window.StephuaryRoomPersonalization) {
+      window.StephuaryRoomPersonalization.inject(2);
+    }
+  });
+  </script>
+  <script src="/stephuary-interactive.js" defer></script>
+</body>
+</html>
