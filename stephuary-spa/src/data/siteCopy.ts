@@ -1,101 +1,102 @@
-/** Shell copy — Alignment Diagnostic output lives in `resultRules.ts`. */
+/** Shell copy — detailed diagnostic lines live in `resultRules.ts`. */
 
 export const brandIdentityCopy = {
   name: "Stephuary",
-  diagnosticName: "The Alignment Diagnostic",
-  tagline: "Entry point. Revenue system runs after install.",
+  diagnosticName: "Revenue Diagnostic",
+  tagline: "Finish the questions. Get the problem named. Then pick a paid fix.",
 } as const;
 
 export const homeCopy = {
-  headline: "You already have something people would pay for.",
-  supportLines: ["Revenue path isn't mapped yet.", "Wrong direction masquerades as stuck."],
-  ctaFrameLines: ["Classifies position.", "Incomplete runs are common."],
-  sharedEntryLine: "Shared link. Same diagnostic.",
-  cta: "Run the Alignment Diagnostic",
+  headline: "See where your revenue is leaking.",
+  /** One line: what the diagnostic shows (plain). */
+  subtext: "18 questions. You get named problems, what they cost, and what to buy next.",
+  cta: "Run Diagnostic",
+  secondaryCta: "Watch Breakdown",
+  sharedEntryLine: "Someone sent you this link.",
 } as const;
 
 export const resultsShareCopy = {
-  prompt: "Send this classification.",
+  prompt: "Send this page to someone with the same bottleneck.",
   cta: "Copy link",
   copied: "Copied.",
 } as const;
 
 export const resultsEmailCopy = {
-  prompt: "Email this readout?",
-  followUp: "Same link. Your inbox.",
+  prompt: "Email this summary?",
+  followUp: "Same link in your inbox.",
   send: "Send",
 } as const;
 
 export const postActionMomentCopy = {
-  line1: "Same inputs — same output.",
-  line2: "Pick an install.",
+  line1: "Same week, same habits, same numbers.",
+  line2: "Pick a fix.",
 } as const;
 
-export const installQualifyModalCopy = {
-  headline: "Install the system",
-  bodyLead: "You've already seen what's breaking.",
-  bodyPick: "Pick how you want it fixed.",
+export const revenueGateModalCopy = {
+  headline: "Before the form",
+  bodyLead: "You finished the diagnostic.",
+  bodyPick: "Pick a tier:",
   routes: [
-    "Fix one constraint → Single-thread install",
-    "Fix the system → Full-stack install",
-    "Build it with me → Custom system",
+    "$34 — one offer, one buyer, locked in writing",
+    "$750 — full pass on offer, price, page, and calendar",
+    "Custom — I build it with you, week by week",
   ],
-  closing: "Same inputs produce the same output.",
-  cta: "Choose the install",
+  closing: "No tier = no change in how you work.",
+  cta: "Continue",
 } as const;
 
 export const accessRequestCopy = {
-  title: "Install intake",
+  title: "Tell me what we're fixing",
   lead: "Three answers.",
-  answerYesPrompt: "One route out.",
-  bullets: ["Revenue asset exists", "You ship what gets installed", "Single-thread execution"],
-  microLine1: "Intake is read in order.",
-  microLine2: "Fit: next steps. No fit: one line.",
-  thanksLine1: "Intake logged.",
-  thanksLine2: "Fit gets a reply with next steps.",
+  answerYesPrompt: "I'll reply if it's a fit.",
+  bullets: ["You sell something real today", "You'll follow what we agree", "You're ready to pay for the work"],
+  microLine1: "I read these in order.",
+  microLine2: "Fit: I email next steps. No fit: one sentence why.",
+  thanksLine1: "Got it.",
+  thanksLine2: "If it's a fit, you'll hear from me.",
   labels: {
     name: "Name",
     email: "Email",
-    q1: "What are you turning into revenue right now?",
-    q2: "What's blocking install?",
-    q3: "If this worked, what changes first?",
-    invest: "Ready to fund the install now?",
+    q1: "What are you trying to get paid for right now?",
+    q2: "What's in the way?",
+    q3: "If we fixed it, what would change first?",
+    invest: "Ready to pay for the fix this month?",
   },
   investYes: "Yes",
   investNo: "No",
-  cta: "→ Submit intake",
+  cta: "Submit",
 } as const;
 
 export const applicationConfirmationCopy = {
-  headline: "Intake logged.",
-  subtext: "Queued.",
+  headline: "Received.",
+  subtext: "In the queue.",
   reframeLine1: "",
   reframeLine2: "",
-  expectationLine1: "Read in order.",
-  expectationLine2: "Fit: reply with slot.",
+  expectationLine1: "I read in order.",
+  expectationLine2: "Fit gets a real reply.",
   preframeLine1: "",
   preframeLine2: "",
   optionalLead: "Context:",
-  watchBreakdownCta: "System context",
-  finalLine1: "Inputs unchanged — pattern holds.",
-  finalLine2: "Install is the variable.",
+  watchBreakdownCta: "Watch Breakdown",
+  finalLine1: "Your answers don't change until your inputs change.",
+  finalLine2: "What you buy is what changes.",
 } as const;
 
 export const accessRequestInternalFlow = [
-  "Collect: name, email",
-  "Q1: revenue focus",
-  "Q2: blockers",
-  "Q3: first change if installed",
-  "Optional: fund ready (y/n)",
-  "Route by fit",
+  "Name, email",
+  "Revenue focus",
+  "Blocker",
+  "First change if fixed",
+  "Pay this month? y/n",
+  "Reply by fit",
 ] as const;
 
 export const exploreCopy = {
-  title: "Other entry points",
+  title: "More ways in",
 } as const;
 
 export const realizationMomentCopy = {
-  lines: ["You're not stuck.", "You're split.", "That's why nothing compounds."],
+  lines: ["Two priorities compete.", "The calendar picks neither.", "Continue."],
   cta: "Continue",
 } as const;
 
@@ -106,89 +107,96 @@ export const diagnosticCopy = {
 } as const;
 
 export const resultsReadoutCopy = {
-  openLine1: "Pattern locked.",
-  openLine2: "Not confusion.",
-  classificationHeading: "Classification:",
-  consequenceIntro: "No change costs:",
+  openLine1: "",
+  whatHeading: "What's happening",
+  whyHeading: "Why",
+  whyBody:
+    "Your answers point to where hours and money go—usually too many priorities, delivery clogged, or the pitch doesn't match who pays.",
+  costHeading: "What it costs if you don't fix it",
   consequenceBullets: [
-    "Revenue on work that never ships",
-    "Time on non-paying motion",
-    "Growth delay from split focus",
+    "Money left on work that never gets finished",
+    "Hours on tasks that don't pay",
+    "Growth stalls because the week won't commit",
   ],
-  consequenceClose: "Compounds weekly.",
-  pageTitle: "The Alignment Diagnostic",
+  consequenceClose: "That loss repeats every week you wait.",
+  pageTitle: "Revenue Diagnostic",
 } as const;
 
 export const exclusionAuthorityCopy = {
-  line1: "Diagnostic classifies.",
-  line2: "Intake schedules install.",
+  line1: "No offer yet — run the diagnostic first.",
+  line2: "Selling something real — use the form.",
 } as const;
 
 export const resultsDecisionMomentCopy = {
-  adjustmentLines: ["Slow fixes leak.", "Install holds."],
-  pivotLabel: "Next:",
-  pivotAction: "Pick the install.",
+  adjustmentLines: [] as const,
+  pivotLabel: "",
+  pivotAction: "Pick a paid fix below.",
   ctaFilterLines: [] as const,
 } as const;
 
-/** After diagnostic — before install cards. */
 export const offerTransitionCopy = {
-  headline: "Pick the install.",
-  subtext: "You've seen what's breaking. Choose how you want it fixed.",
+  headline: "Pick what you want done.",
+  subtext: "Three options. Same readout. Different depth.",
+} as const;
+
+export const offerSectionLabels = {
+  whatYouGet: "What you get",
+  whatChanges: "What changes",
+  time: "When you get value",
 } as const;
 
 export const offerInstallTiers = [
   {
     id: "path" as const,
-    title: "Single-thread install",
-    price: "$34",
-    bodyLines: [
-      "Fix one constraint.",
-      "",
-      "We isolate the break,",
-      "remove interference,",
-      "and install one clean revenue path.",
-      "",
-      "No overlap.",
-      "No competing priorities.",
+    headline: "One offer, one buyer. Stop running parallel builds.",
+    whatYouGet: [
+      "Written lane: one buyer, one promise, one price",
+      "Cut list: what you pause or drop this month",
+      "7-day sequence for what you sell first",
+      "Recording or doc so the lane doesn't drift",
     ],
-    cta: "→ Install single thread",
+    whatChanges: "You sell one lane this month instead of three half-built ones.",
+    time: "First pass within 5 business days of payment.",
+    price: "$34",
+    cta: "Get this — $34",
   },
   {
     id: "fix" as const,
-    title: "Full-stack install",
-    price: "$750",
-    bodyLines: [
-      "Fix the system.",
-      "",
-      "We restructure everything that touches revenue:",
-      "offer, positioning, flow, and execution.",
-      "",
-      "What conflicts gets removed.",
-      "What works gets reinforced.",
-      "Everything aligns to one output.",
+    headline: "Full pass on how you describe, price, and deliver what you sell.",
+    whatYouGet: [
+      "Map of each offer and what it earns",
+      "Pricing and scope fixes for the broken line",
+      "One page or core doc rewritten for the buyer you want",
+      "Calendar rules so admin stops eating the week",
+      "Checklist: what's live, what's killed",
     ],
-    cta: "→ Install full system",
+    whatChanges: "Strangers understand what you sell. Bad-fit calls drop.",
+    time: "First deliverables within 10 business days of payment.",
+    price: "$750",
+    cta: "Get the full pass — $750",
   },
   {
     id: "breakdown" as const,
-    title: "Custom system build",
-    price: "Custom scope",
-    bodyLines: [
-      "You don't need pieces fixed.",
-      "",
-      "You need the system rebuilt.",
-      "",
-      "This takes what you have,",
-      "removes what doesn't convert,",
-      "and installs one clear revenue path.",
-      "",
-      "Built with you.",
-      "Implemented with you.",
-      "No guesswork.",
+    headline: "Done-for-you: I rebuild your revenue path with you.",
+    whatYouGet: [
+      "Full written audit: buyers, offers, price, calendar, handoffs",
+      "Ordered plan: what changes first, with rough numbers",
+      "Hands-on rewrites: pages, decks, outbound where needed",
+      "Weekly calls until the path is live",
+      "30 days of email after handoff for tweaks",
     ],
-    cta: "→ Build my system",
+    whatChanges: "One buyer, one main offer, one week that protects delivery.",
+    time: "Scope on a call. Work starts within 2 weeks of deposit.",
+    price: "Custom",
+    cta: "Book a custom build",
   },
 ] as const;
 
 export type OfferTierId = (typeof offerInstallTiers)[number]["id"];
+
+export const diagnosticExitCopy = {
+  title: "Leave the Revenue Diagnostic?",
+  body: "You'll lose this run. Start over if you come back.",
+  stay: "Continue",
+  leave: "Leave",
+} as const;

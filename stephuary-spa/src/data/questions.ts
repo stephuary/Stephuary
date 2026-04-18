@@ -31,18 +31,18 @@ export const QUESTIONS: Question[] = [
   {
     id: "q1",
     phaseIndex: 0,
-    prompt: "This month, most of your working hours went to:",
+    prompt: "Most of your hours this month went to:",
     options: [
-      { id: "q1a", label: "Boundary: clients bleed across the week — no line", tags: ["work:split", "boundary:weak"], scoreDelta: { focus: -8, clarity: -4 } },
-      { id: "q1b", label: "Capacity: one offer — ops runs the calendar", tags: ["work:single_offer", "ops:heavy"], scoreDelta: { clarity: 6, focus: 4, leverage: -6 } },
-      { id: "q1c", label: "Focus: build in private — buyers never see it ship", tags: ["ship:delayed", "buyer:absent"], scoreDelta: { demand: -10, monetization: -6 } },
-      { id: "q1d", label: "Delivery: revenue on the books — shipping stalls", tags: ["work:delivery", "demand:proven"], scoreDelta: { demand: 10, monetization: 6, leverage: -6 } },
+      { id: "q1a", label: "Clients bleeding across the week — no hard line", tags: ["work:split", "boundary:weak"], scoreDelta: { focus: -8, clarity: -4 } },
+      { id: "q1b", label: "One offer, but admin runs your calendar", tags: ["work:single_offer", "ops:heavy"], scoreDelta: { clarity: 6, focus: 4, leverage: -6 } },
+      { id: "q1c", label: "Building in private — buyers never see it go live", tags: ["ship:delayed", "buyer:absent"], scoreDelta: { demand: -10, monetization: -6 } },
+      { id: "q1d", label: "Revenue booked — delivery still stuck", tags: ["work:delivery", "demand:proven"], scoreDelta: { demand: 10, monetization: 6, leverage: -6 } },
     ],
   },
   {
     id: "q2",
     phaseIndex: 0,
-    prompt: "When someone asks what you do, you:",
+    prompt: "Someone asks what you do. You:",
     options: [
       { id: "q2a", label: "List skills — or change it by room", tags: ["pitch:list", "message:weak"], scoreDelta: { clarity: -10, focus: -4 } },
       { id: "q2b", label: "Name one outcome for one buyer", tags: ["pitch:outcome", "niche:stated"], scoreDelta: { clarity: 10, focus: 8 } },
@@ -58,7 +58,7 @@ export const QUESTIONS: Question[] = [
       { id: "q3a", label: "Referrals — people who knew you already", tags: ["lead:warm", "channel:relational"], scoreDelta: { demand: 6, focus: 4 } },
       { id: "q3b", label: "Cold outbound or cold DMs", tags: ["lead:cold", "system:fragile"], scoreDelta: { demand: 2, leverage: -8 } },
       { id: "q3c", label: "Inbound: content, search, or a buy button", tags: ["lead:pull", "asset:live"], scoreDelta: { demand: 10, leverage: 8 } },
-      { id: "q3d", label: "Still trying to land the first paid wins", tags: ["traction:early"], scoreDelta: { demand: -4, monetization: -2 } },
+      { id: "q3d", label: "Still working on first paid clients", tags: ["traction:early"], scoreDelta: { demand: -4, monetization: -2 } },
     ],
   },
   {
@@ -80,7 +80,7 @@ export const QUESTIONS: Question[] = [
     options: [
       { id: "q6a", label: "A blur — checks from unrelated tasks", tags: ["skill:fuzzy"], scoreDelta: { clarity: -10, monetization: -4 } },
       { id: "q6b", label: "One named, repeatable deliverable", tags: ["skill:named"], scoreDelta: { clarity: 8, monetization: 6 } },
-      { id: "q6c", label: "You talk more than you ship.", tags: ["skill:advice"], scoreDelta: { monetization: 4, leverage: 6 } },
+      { id: "q6c", label: "You talk more than you deliver.", tags: ["skill:advice"], scoreDelta: { monetization: 4, leverage: 6 } },
       { id: "q6d", label: "Hands-on execution — your hours are the product", tags: ["skill:labor"], scoreDelta: { monetization: -4, leverage: -8 } },
     ],
   },
@@ -224,7 +224,7 @@ export const QUESTIONS: Question[] = [
     phaseIndex: 4,
     prompt: "Ten focused hours land on your calendar this week. You spend them on:",
     options: [
-      { id: "q24a", label: "A sellable page, asset, or packaged thing", tags: ["think:ship_asset"], scoreDelta: { demand: 8, clarity: 6 } },
+      { id: "q24a", label: "A finished page or product you can sell", tags: ["think:ship_asset"], scoreDelta: { demand: 8, clarity: 6 } },
       { id: "q24b", label: "Clearing client backlog", tags: ["think:catchup"], scoreDelta: { monetization: 4, leverage: -4 } },
       { id: "q24c", label: "Studying, sorting files, rearranging tools", tags: ["think:reorg"], scoreDelta: { leverage: -8 } },
       { id: "q24d", label: "Frozen — no clear first move", tags: ["think:stuck"], scoreDelta: { clarity: -10, focus: -8 } },

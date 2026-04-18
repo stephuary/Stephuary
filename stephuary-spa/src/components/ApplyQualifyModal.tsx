@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { installQualifyModalCopy } from "../data/siteCopy";
+import { revenueGateModalCopy } from "../data/siteCopy";
 
 type Props = {
   open: boolean;
@@ -8,7 +8,7 @@ type Props = {
 };
 
 export function ApplyQualifyModal({ open, onClose, onConfirm }: Props) {
-  const copy = installQualifyModalCopy;
+  const copy = revenueGateModalCopy;
 
   useEffect(() => {
     if (!open) return;
@@ -31,10 +31,10 @@ export function ApplyQualifyModal({ open, onClose, onConfirm }: Props) {
         className="install-qualify-modal screen-copy-panel"
         role="dialog"
         aria-modal="true"
-        aria-labelledby="install-qualify-title"
+        aria-labelledby="revenue-gate-title"
         onClick={(e) => e.stopPropagation()}
       >
-        <h2 id="install-qualify-title" className="install-qualify-modal-title">
+        <h2 id="revenue-gate-title" className="install-qualify-modal-title">
           {copy.headline}
         </h2>
         <p className="install-qualify-modal-lead">{copy.bodyLead}</p>

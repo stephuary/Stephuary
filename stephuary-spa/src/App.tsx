@@ -257,7 +257,12 @@ export default function App() {
 
       <main className={`app-main ${entryLayout ? "app-main--entry" : ""}`.trim()}>
         {step.id === "home" ? (
-          <HomeScreen animKey={stepAnimKey(step)} onStart={startDiagnostic} sharedEntry={sharedEntry} />
+          <HomeScreen
+            animKey={stepAnimKey(step)}
+            onStart={startDiagnostic}
+            onWatchBreakdown={triggerPostAction}
+            sharedEntry={sharedEntry}
+          />
         ) : null}
 
         {step.id === "osc" ? (
@@ -336,7 +341,7 @@ export default function App() {
             animKey={stepAnimKey(step)}
             classificationLabels={classificationLabels}
             primaryCta={{
-              label: "→ Continue to installs",
+              label: "See prices and deliverables",
               onClick: () => {
                 triggerPostAction();
                 setStep({ id: "offer" });
@@ -350,7 +355,7 @@ export default function App() {
             animKey={stepAnimKey(step)}
             recommendedTier={recommendedTier}
             signalCta={triggerPostAction}
-            onInstallIntake={() => {
+            onPaidIntake={() => {
               triggerPostAction();
               requestAccessWithMoment();
             }}

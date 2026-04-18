@@ -1,10 +1,10 @@
 /** .5% Club — full page copy (fixed structure). */
 
 export const clubPageCopy = {
-  headline: "When the public ladder isn’t the shape.",
-  sub: "Private matching for operators who already ship.",
+  headline: "When you need a named connection, not a funnel.",
+  sub: "Private matching for people who already run something real.",
   whoTitle: "Use when",
-  whoLine: "You have a named need.",
+  whoLine: "You can name the need in one sentence.",
   whoBullets: [
     "Senior hire — fast",
     "Deal or capital — named counterparty",
@@ -15,8 +15,8 @@ export const clubPageCopy = {
   ],
   whatTitle: "Mechanism",
   whatLine: "Private. Vetted. Matched.",
-  whatBullets: ["No public profiles", "No browse", "No unapproved contact", "No take rate"],
-  filterLine: "Diagnostic classifies. Intake schedules install.",
-  accessLine: "Fit gates access.",
-  cta: "→ Install intake",
+  whatBullets: ["No public profiles", "No browse", "No cold contact", "No take rate"],
+  filterLine: "Run the diagnostic first if you don't know your bottleneck.",
+  accessLine: "Access is fit-gated.",
+  cta: "Request access",
 } as const;

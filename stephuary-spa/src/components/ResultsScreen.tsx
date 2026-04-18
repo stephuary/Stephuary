@@ -63,21 +63,9 @@ export function ResultsScreen({
     </div>
   );
 
-  const consequenceBlock = (
-    <div className="results-consequence" role="region" aria-label="Cost of inaction">
-      <p className="results-consequence-intro">{r.consequenceIntro}</p>
-      <ul className="results-consequence-list">
-        {r.consequenceBullets.map((b) => (
-          <li key={b}>{b}</li>
-        ))}
-      </ul>
-      <p className="results-consequence-close">{r.consequenceClose}</p>
-    </div>
-  );
-
-  const classificationBlock = (
-    <div className="results-classification" role="region" aria-label="Classification">
-      <p className="results-classification-heading">{r.classificationHeading}</p>
+  const happeningBlock = (
+    <div className="results-happening" role="region" aria-label="What is happening">
+      <p className="results-section-kicker">{r.whatHeading}</p>
       <ul className="results-classification-list">
         {classificationLabels.map((label) => (
           <li key={label} className="results-classification-item">
@@ -88,33 +76,58 @@ export function ResultsScreen({
     </div>
   );
 
+  const whyBlock = (
+    <div className="results-why" role="region" aria-label="Why">
+      <p className="results-section-kicker">{r.whyHeading}</p>
+      <p className="results-why-body">{r.whyBody}</p>
+    </div>
+  );
+
+  const costBlock = (
+    <div className="results-consequence" role="region" aria-label="Cost">
+      <p className="results-section-kicker">{r.costHeading}</p>
+      <ul className="results-consequence-list">
+        {r.consequenceBullets.map((b) => (
+          <li key={b}>{b}</li>
+        ))}
+      </ul>
+      <p className="results-consequence-close">{r.consequenceClose}</p>
+    </div>
+  );
+
   return (
     <ScreenShell animKey={animKey} className="results-screen">
       <div className="results-copy-stack screen-copy-panel">
         <header className="results-header results-header--enter">
-          <p className="results-open-line">{r.openLine1}</p>
-          <p className="results-open-line results-open-line--emph">{r.openLine2}</p>
           <h1 className="results-title">{r.pageTitle}</h1>
+          {r.openLine1 ? <p className="results-open-line results-open-line--solo">{r.openLine1}</p> : null}
         </header>
-        {classificationBlock}
-        {consequenceBlock}
+        {happeningBlock}
+        {whyBlock}
+        {costBlock}
       </div>
       <div className="results-post-readout">{shareBlock}</div>
       <div
         ref={decisionReveal.ref}
         className={`results-decision screen-copy-panel scroll-reveal ${decisionReveal.inView ? "scroll-reveal--in" : ""}`.trim()}
         role="region"
-        aria-label="Decision"
+        aria-label="Next step"
       >
-        <div className="results-decision-adjust">
-          {d.adjustmentLines.map((line) => (
-            <p key={line} className="results-decision-adjust-line">
-              {line}
-            </p>
-          ))}
-        </div>
-        <p className="results-decision-or">{d.pivotLabel}</p>
-        <p className="results-decision-pivot">{d.pivotAction}</p>
+        {d.adjustmentLines.length > 0 ? (
+          <div className="results-decision-adjust">
+            {d.adjustmentLines.map((line) => (
+              <p key={line} className="results-decision-adjust-line">
+                {line}
+              </p>
+            ))}
+          </div>
+        ) : null}
+        {d.pivotAction ? (
+          <>
+            {d.pivotLabel ? <p className="results-decision-or">{d.pivotLabel}</p> : null}
+            <p className="results-decision-pivot">{d.pivotAction}</p>
+          </>
+        ) : null}
       </div>
       <div
         ref={ctaReveal.ref}

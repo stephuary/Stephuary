@@ -7,10 +7,11 @@ const HOME_CTA_IDLE_MS = 5000;
 type Props = {
   animKey: string;
   onStart: () => void;
+  onWatchBreakdown: () => void;
   sharedEntry?: boolean;
 };
 
-export function HomeScreen({ animKey, onStart, sharedEntry = false }: Props) {
+export function HomeScreen({ animKey, onStart, onWatchBreakdown, sharedEntry = false }: Props) {
   const h = homeCopy;
   const [ctaIdleAttention, setCtaIdleAttention] = useState(false);
   const idleTimerRef = useRef<number | null>(null);
@@ -54,13 +55,7 @@ export function HomeScreen({ animKey, onStart, sharedEntry = false }: Props) {
           <div className="home-hero">
             <div className="home-hero-copy">
               <h1 className="home-headline">{h.headline}</h1>
-              <div className="home-support-block">
-                {h.supportLines.map((line) => (
-                  <p key={line} className="home-support-line">
-                    {line}
-                  </p>
-                ))}
-              </div>
+              <p className="home-subtext">{h.subtext}</p>
               {sharedEntry ? (
                 <p className="home-shared-entry-hint" role="note">
                   {h.sharedEntryLine}
@@ -75,12 +70,10 @@ export function HomeScreen({ animKey, onStart, sharedEntry = false }: Props) {
               {h.cta}
             </button>
           </div>
-          <div className="home-cta-frame" role="note">
-            {h.ctaFrameLines.map((line) => (
-              <p key={line} className="home-cta-frame-line">
-                {line}
-              </p>
-            ))}
+          <div className="cta-row home-secondary-cta">
+            <button type="button" className="btn btn-secondary btn-block" onClick={onWatchBreakdown}>
+              {h.secondaryCta}
+            </button>
           </div>
         </div>
       </div>

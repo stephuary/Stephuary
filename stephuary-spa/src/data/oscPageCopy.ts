@@ -1,6 +1,6 @@
 export const oscPageCopy = {
-  headline: "Advisory when conversion and ops touch revenue.",
-  sub: "Positioning, conversion, and experience — installed as constraints, not opinions.",
-  b2bLine: "For operators where the leak is structural.",
-  cta: "→ Install intake",
+  headline: "Advisory when positioning and conversion hurt revenue.",
+  sub: "For operators who need sharper positioning, pricing, and delivery — not another course.",
+  b2bLine: "For teams where the leak shows up in revenue, not slides.",
+  cta: "Request access",
 } as const;

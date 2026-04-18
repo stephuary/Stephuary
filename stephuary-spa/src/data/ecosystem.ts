@@ -20,30 +20,30 @@ export const ecosystemCards: EcosystemCard[] = [
   {
     id: "osc",
     title: "Only Sometimes Club",
-    descriptor: "Advisory when revenue and ops are on the line.",
+    descriptor: "Advisory when money and ops are on the line.",
     action: "install_intake",
-    cta: "→ Install intake",
+    cta: "Request access",
   },
   {
     id: "club",
     title: ".5% Club",
-    descriptor: "Private matching when the public ladder isn’t the shape.",
+    descriptor: "Private matching when you need a named intro, not a funnel.",
     action: "install_intake",
-    cta: "→ Install intake",
+    cta: "Request access",
   },
   {
     id: "grownSpaghetti",
     title: "Grown Spaghetti",
-    descriptor: "Essays on systems, work, and building without noise.",
+    descriptor: "Essays on work, money, and how people actually operate.",
     action: "read_substack",
     cta: "Read Substack",
   },
   {
     id: "customBuild",
     title: "Custom Build",
-    descriptor: "Installed on your business, not templated.",
+    descriptor: "Hands-on rebuild with me. Not a template.",
     action: "install_intake",
-    cta: "→ Install intake",
+    cta: "Request access",
   },
 ];
 

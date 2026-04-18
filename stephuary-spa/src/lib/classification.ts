@@ -3,9 +3,9 @@ import type { EvaluationContext } from "./scoring";
 export type ClassificationId = "split_focus" | "throughput" | "offer_misalignment";
 
 const LABELS: Record<ClassificationId, string> = {
-  split_focus: "Split Focus",
-  throughput: "Throughput Bottleneck",
-  offer_misalignment: "Offer Misalignment",
+  split_focus: "Too many priorities",
+  throughput: "Work backed up",
+  offer_misalignment: "Offer and buyer don't match",
 };
 
 function weightSplit(ctx: EvaluationContext): number {

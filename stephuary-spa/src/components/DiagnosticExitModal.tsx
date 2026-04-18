@@ -1,3 +1,5 @@
+import { diagnosticExitCopy } from "../data/siteCopy";
+
 type Props = {
   open: boolean;
   onStay: () => void;
@@ -5,6 +7,7 @@ type Props = {
 };
 
 export function DiagnosticExitModal({ open, onStay, onExit }: Props) {
+  const c = diagnosticExitCopy;
   if (!open) return null;
 
   return (
@@ -21,15 +24,15 @@ export function DiagnosticExitModal({ open, onStay, onExit }: Props) {
         onClick={(e) => e.stopPropagation()}
       >
         <h2 id="diagnostic-exit-title" className="diagnostic-exit-modal-title">
-          Leave the Alignment Diagnostic?
+          {c.title}
         </h2>
-        <p className="diagnostic-exit-modal-body">Exit = incomplete classification.</p>
+        <p className="diagnostic-exit-modal-body">{c.body}</p>
         <div className="diagnostic-exit-modal-actions">
           <button type="button" className="btn btn-primary diagnostic-exit-modal-stay" onClick={onStay}>
-            Continue
+            {c.stay}
           </button>
           <button type="button" className="btn btn-secondary diagnostic-exit-modal-leave" onClick={onExit}>
-            Leave
+            {c.leave}
           </button>
         </div>
       </div>

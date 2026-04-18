@@ -1,4 +1,9 @@
-import { offerInstallTiers, offerTransitionCopy, type OfferTierId } from "../data/siteCopy";
+import {
+  offerInstallTiers,
+  offerSectionLabels,
+  offerTransitionCopy,
+  type OfferTierId,
+} from "../data/siteCopy";
 import type { RecommendedTier } from "../lib/recommendedTier";
 import { ScrollReveal } from "./ScrollReveal";
 import { ScreenShell } from "./ScreenShell";
@@ -7,7 +12,7 @@ type Props = {
   animKey: string;
   recommendedTier: RecommendedTier;
   signalCta: () => void;
-  onInstallIntake: () => void;
+  onPaidIntake: () => void;
   onRequestCustomBuild: () => void;
 };
 
@@ -22,7 +27,7 @@ export function OfferScreen({
   animKey,
   recommendedTier,
   signalCta,
-  onInstallIntake,
+  onPaidIntake,
   onRequestCustomBuild,
 }: Props) {
   function handleTier(id: OfferTierId) {
@@ -30,9 +35,11 @@ export function OfferScreen({
     if (id === "breakdown") {
       onRequestCustomBuild();
     } else {
-      onInstallIntake();
+      onPaidIntake();
     }
   }
+
+  const L = offerSectionLabels;
 
   return (
     <ScreenShell animKey={animKey} className="offer-screen">
@@ -52,19 +59,22 @@ export function OfferScreen({
                 <article
                   className={`install-card screen-copy-panel ${rec ? "install-card--recommended" : ""}`.trim()}
                 >
-                  {rec ? <span className="install-rec-pill">Fits diagnostic</span> : null}
-                  <h3 className="install-card-title">{tier.title}</h3>
-                  <div className="install-card-body">
-                    {tier.bodyLines.map((line, i) =>
-                      line === "" ? (
-                        <div key={`g-${tier.id}-${i}`} className="install-body-gap" aria-hidden />
-                      ) : (
-                        <p key={`l-${tier.id}-${i}`} className="install-body-line">
-                          {line}
-                        </p>
-                      ),
-                    )}
-                  </div>
+                  {rec ? <span className="install-rec-pill">Matches your answers</span> : null}
+                  <h3 className="install-card-title install-card-title--headline">{tier.headline}</h3>
+
+                  <p className="tier-section-label">{L.whatYouGet}</p>
+                  <ul className="tier-bullet-list">
+                    {tier.whatYouGet.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+
+                  <p className="tier-section-label">{L.whatChanges}</p>
+                  <p className="tier-outcome">{tier.whatChanges}</p>
+
+                  <p className="tier-section-label">{L.time}</p>
+                  <p className="tier-time">{tier.time}</p>
+
                   <p className="install-card-price">{tier.price}</p>
                   <div className="cta-row install-card-cta">
                     <button
