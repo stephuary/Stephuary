@@ -71,13 +71,7 @@
   var RESULT_STORE_KEY = 'stephuary_result_v1';
   var PROGRESS_KEY = 'stephuary_system_progress_v1';
   var OS_KEY = 'stephuary_os_v1';
-  var ROOM_CHAIN = [
-    '/room-01-extraction',
-    '/room-02-direction',
-    '/room-03-transaction',
-    '/room-04-infrastructure',
-    '/room-05-cognition'
-  ];
+  var ROOM_CHAIN = ['/room-losing', '/room-sell', '/room-protect'];
   var PHASE_CHAIN = {
     '/capture': '/monetize',
     '/monetize': '/structure',

@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Room 3 · What to protect · Stephuary</title>
+  <link rel="stylesheet" href="/stephuary-interactive.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400&family=DM+Mono:wght@300;400&family=Lato:wght@300;400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/stephuary-rooms-v2.css" />
+</head>
+<body class="rv2-body">
+  <div class="rv2-top">
+    <a href="/playbooks">← Playbooks</a>
+    <a href="/room-sell">Room 2</a>
+  </div>
+  <div class="rv2-app" id="rv2-app"></div>
+  <script>
+(function () {
+  var KEY = 'stephuary_room_v2_protect';
+  var KEY_R1 = 'stephuary_room_v2_losing';
+  var KEY_R2 = 'stephuary_room_v2_sell';
+
+  var PRIORITIES = [
+    'Make money',
+    'Stabilize what’s already running',
+    'Reduce a specific cost',
+    'Build something that compounds',
+    'Close something that’s open'
+  ];
+
+  var CUTS = [
+    'Unnecessary spending',
+    'Passive scrolling',
+    'Convenience spending on autopilot',
+    'Low-value work I keep doing',
+    'Social commitments that don’t serve the priority',
+    'Subscriptions or tools not producing anything',
+    'Content consumption without return'
+  ];
+
+  var BACKUP_STATUS = [
+    'No one right now',
+    'One or two people in mind',
+    'Active conversations about coverage',
+    'Coverage exists and is tested'
+  ];
+
+  var state = {
+    screen: 0,
+    priority: '',
+    cut: '',
+    backup_name: '',
+    backup_contact: '',
+    backup_covers: '',
+    backup_status: '',
+    committed: false,
+    committed_date: '',
+    room1_data: null,
+    room2_data: null,
+    completed: false,
+    timestamp: ''
+  };
+
+  function $(s) {
+    return document.querySelector(s);
+  }
+
+  function loadR1R2() {
+    try {
+      var r1 = localStorage.getItem(KEY_R1);
+      state.room1_data = r1 ? JSON.parse(r1) : null;
+    } catch (e) {
+      state.room1_data = null;
+    }
+    try {
+      var r2 = localStorage.getItem(KEY_R2);
+      state.room2_data = r2 ? JSON.parse(r2) : null;
+    } catch (e2) {
+      state.room2_data = null;
+    }
+  }
+
+  function save() {
+    try {
+      state.timestamp = new Date().toISOString();
+      localStorage.setItem(KEY, JSON.stringify(state));
+    } catch (e) {}
+  }
+
+  function load() {
+    loadR1R2();
+    try {
+      var r = localStorage.getItem(KEY);
+      if (r) {
+        var d = JSON.parse(r);
+        Object.keys(state).forEach(function (k) {
+          if (d[k] != null && k !== 'room1_data' && k !== 'room2_data') state[k] = d[k];
+        });
+      }
+    } catch (e) {}
+    loadR1R2();
+  }
+
+  function show(n) {
+    state.screen = n;
+    save();
+    render();
+  }
+
+  function broughtForward() {
+    var r1 = state.room1_data;
+    var r2 = state.room2_data;
+    var m = r1 && typeof r1.monthly_loss === 'number' ? r1.monthly_loss : 0;
+    var price = r2 && typeof r2.price === 'number' ? r2.price : 0;
+    var fc = r2 && r2.first_contact ? String(r2.first_contact) : '';
+    if (m > 0 && price > 0 && fc) {
+      return (
+        '<p class="rv2-lead">You’re losing $' +
+        m.toLocaleString() +
+        '/month. You’ve priced your offer at $' +
+        price.toLocaleString() +
+        '. Message sent to ' +
+        fc +
+        '. Now protect it.</p>'
+      );
+    }
+    if (m > 0) {
+      return (
+        '<p class="rv2-lead">You’re losing $' + m.toLocaleString() + '/month. Now protect what matters.</p>'
+      );
+    }
+    return '';
+  }
+
+  function esc(s) {
+    return String(s || '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  function render() {
+    var app = $('#rv2-app');
+    var r1 = state.room1_data;
+    var r2 = state.room2_data;
+    var boundary =
+      r1 && r1.boundary
+        ? String(r1.boundary)
+        : r1 && r1.boundary_id
+          ? String(r1.boundary_id)
+          : '';
+
+    if (state.screen === 0) {
+      app.innerHTML =
+        '<section class="rv2-screen is-active">' +
+        '<p class="rv2-kicker">Room 3 · What to protect</p>' +
+        '<p class="rv2-lead">Your priority, your cut, your backup. Three decisions. One operating rule.</p>' +
+        broughtForward() +
+        '<div class="rv2-scope">This room only: one priority, one cut, one backup plan. No allocation modeling, stack scoring, or AI setup.</div>' +
+        '<button type="button" class="rv2-btn" id="go">Begin</button></section>';
+      $('#go').onclick = function () {
+        show(1);
+      };
+      return;
+    }
+
+    if (state.screen === 1) {
+      var opts = PRIORITIES.map(function (p, i) {
+        return (
+          '<label class="rv2-check"><input type="radio" name="pri" value="' +
+          esc(p) +
+          '"' +
+          (state.priority === p ? ' checked' : '') +
+          ' /><span>' +
+          esc(p) +
+          '</span></label>'
+        );
+      }).join('');
+      app.innerHTML =
+        '<section class="rv2-screen is-active"><p class="rv2-kicker">One priority</p>' +
+        '<h1 class="rv2-h1">What gets your best time this week</h1>' +
+        '<p class="rv2-lead">If everything matters, nothing moves. Pick one.</p>' +
+        '<div class="rv2-radio-row">' +
+        opts +
+        '</div>' +
+        '<div id="pd" class="rv2-big-num" style="display:' +
+        (state.priority ? 'block' : 'none') +
+        ';font-size:22px;margin-top:16px">Priority: ' +
+        esc(state.priority) +
+        '. This gets your best time first.</div>' +
+        '<p class="rv2-note">If you split this across multiple priorities, you go back to drift.</p>' +
+        '<button type="button" class="rv2-btn" id="n1" ' +
+        (state.priority ? '' : 'disabled') +
+        '>Continue</button></section>';
+      app.querySelectorAll('input[name=pri]').forEach(function (inp) {
+        inp.onchange = function () {
+          state.priority = inp.value;
+          save();
+          render();
+        };
+      });
+      $('#n1').onclick = function () {
+        if (!state.priority) return;
+        show(2);
+      };
+      return;
+    }
+
+    if (state.screen === 2) {
+      var cuts = CUTS.map(function (p) {
+        return (
+          '<label class="rv2-check"><input type="radio" name="cut" value="' +
+          esc(p) +
+          '"' +
+          (state.cut === p ? ' checked' : '') +
+          ' /><span>' +
+          esc(p) +
+          '</span></label>'
+        );
+      }).join('');
+      app.innerHTML =
+        '<section class="rv2-screen is-active"><p class="rv2-kicker">What loses time or money</p>' +
+        '<h1 class="rv2-h1">What gets cut</h1>' +
+        '<p class="rv2-lead">Nothing new fits unless something else leaves.</p>' +
+        '<div class="rv2-radio-row">' +
+        cuts +
+        '</div>' +
+        '<p class="rv2-lead" style="margin-top:16px">What stops: ' +
+        esc(state.cut || '—') +
+        '.</p>' +
+        '<p class="rv2-note">If nothing stops, your priority is fake.</p>' +
+        '<button type="button" class="rv2-btn" id="n2" ' +
+        (state.cut ? '' : 'disabled') +
+        '>Continue</button></section>';
+      app.querySelectorAll('input[name=cut]').forEach(function (inp) {
+        inp.onchange = function () {
+          state.cut = inp.value;
+          save();
+          render();
+        };
+      });
+      $('#n2').onclick = function () {
+        if (!state.cut) return;
+        show(3);
+      };
+      return;
+    }
+
+    if (state.screen === 3) {
+      var st = BACKUP_STATUS.map(function (p) {
+        return '<option value="' + esc(p) + '"' + (state.backup_status === p ? ' selected' : '') + '>' + esc(p) + '</option>';
+      }).join('');
+      app.innerHTML =
+        '<section class="rv2-screen is-active"><p class="rv2-kicker">Who covers</p>' +
+        '<h1 class="rv2-h1">If something breaks</h1>' +
+        '<p class="rv2-lead">A contact in your head isn’t coverage.</p>' +
+        '<label class="rv2-select-label">Primary backup (name + how to reach them)</label>' +
+        '<input class="rv2-input" id="bn" value="' +
+        esc(state.backup_name) +
+        '" placeholder="Name — text, email, etc." />' +
+        '<label class="rv2-select-label">What they could cover</label>' +
+        '<input class="rv2-input" id="bc" value="' +
+        esc(state.backup_covers) +
+        '" placeholder="One line" />' +
+        '<label class="rv2-select-label">Coverage status</label>' +
+        '<select class="rv2-select" id="bs">' +
+        st +
+        '</select>' +
+        '<p class="rv2-lead" style="margin-top:16px" id="bl"></p>' +
+        '<p class="rv2-note">If this is blank, you’re the single point of failure for your own income.</p>' +
+        '<button type="button" class="rv2-btn" id="n3">Continue</button></section>';
+      function syncB() {
+        state.backup_name = ($('#bn').value || '').trim();
+        state.backup_contact = state.backup_name;
+        state.backup_covers = ($('#bc').value || '').trim();
+        state.backup_status = $('#bs').value;
+        var line =
+          'Backup: ' +
+          (state.backup_name || '—') +
+          '. Covers: ' +
+          (state.backup_covers || '—') +
+          '. Status: ' +
+          state.backup_status +
+          '.';
+        $('#bl').textContent = line;
+        save();
+      }
+      $('#bn').oninput = syncB;
+      $('#bc').oninput = syncB;
+      $('#bs').onchange = syncB;
+      syncB();
+      $('#n3').onclick = function () {
+        syncB();
+        show(4);
+      };
+      return;
+    }
+
+    if (state.screen === 4) {
+      var offerLine =
+        r2 && r2.offer_sentence
+          ? r2.offer_sentence + ' at $' + (r2.price || 0)
+          : r2 && r2.price
+            ? 'Offer at $' + r2.price
+            : '—';
+      app.innerHTML =
+        '<section class="rv2-screen is-active"><p class="rv2-kicker">This is your system this week</p>' +
+        '<h1 class="rv2-h1">Your operating rule</h1>' +
+        '<div class="rv2-live">' +
+        '<p><strong>Priority:</strong> ' +
+        esc(state.priority) +
+        '</p>' +
+        '<p><strong>What stops:</strong> ' +
+        esc(state.cut) +
+        '</p>' +
+        '<p><strong>Backup:</strong> ' +
+        esc(state.backup_name || '—') +
+        '</p>' +
+        '<p><strong>Offer:</strong> ' +
+        esc(offerLine) +
+        '</p>' +
+        '<p><strong>Leak cut:</strong> ' +
+        esc(boundary || '—') +
+        '</p>' +
+        '</div>' +
+        '<label class="rv2-check"><input type="checkbox" id="comm" ' +
+        (state.committed ? 'checked' : '') +
+        ' /> I commit to running this for seven days before changing anything.</label>' +
+        '<p class="rv2-note">If this doesn’t show up in your calendar and spending this week, this room did nothing.</p>' +
+        '<button type="button" class="rv2-btn" id="n4" disabled>Continue</button></section>';
+      function syncC() {
+        state.committed = $('#comm').checked;
+        if (state.committed) state.committed_date = new Date().toISOString();
+        save();
+        $('#n4').disabled = !state.committed;
+      }
+      $('#comm').onchange = syncC;
+      syncC();
+      $('#n4').onclick = function () {
+        if (!state.committed) return;
+        show(5);
+      };
+      return;
+    }
+
+    if (state.screen === 5) {
+      var price = r2 && typeof r2.price === 'number' ? r2.price : 0;
+      app.innerHTML =
+        '<section class="rv2-screen is-active"><p class="rv2-kicker">Built. Now run it.</p>' +
+        '<h1 class="rv2-h1">Exit</h1>' +
+        '<p class="rv2-lead">1. Today: block time for ' +
+        esc(state.priority) +
+        '. Remove ' +
+        esc(state.cut) +
+        '.</p>' +
+        '<p class="rv2-lead">2. This week: follow up on your sent message. Check in with ' +
+        esc(state.backup_name || 'your backup') +
+        '.</p>' +
+        '<p class="rv2-lead">3. Operating rule: if it’s not ' +
+        esc(state.priority) +
+        ", it doesn’t get resources. Not optional.</p>" +
+        '<div class="rv2-fork">' +
+        '<a class="rv2-btn" href="/systems">I’ve got this</a>' +
+        '<a class="rv2-btn rv2-btn--pri" href="/snapshot">Install this with me → Snapshot · $750</a>' +
+        '</div>' +
+        '<p class="rv2-note"><a href="/pricing#pricing-flow-operator">Operator Access · $4,000/month</a> — two calls, async access, workflow review.</p>' +
+        '<button type="button" class="rv2-btn rv2-btn--ghost" id="tos6">Summary →</button></section>';
+      $('#tos6').onclick = function () {
+        show(6);
+      };
+      return;
+    }
+
+    if (state.screen === 6) {
+      var allDone =
+        r1 &&
+        r1.completed &&
+        r2 &&
+        r2.completed &&
+        state.committed;
+      var cross =
+        allDone && r1 && r2
+          ? '<div class="rv2-summary-block" style="margin-top:14px">' +
+            'Monthly loss identified: $' +
+            (r1.monthly_loss || 0) +
+            '\nOffer set: ' +
+            (r2.offer_sentence || '') +
+            ' at $' +
+            (r2.price || 0) +
+            '\nMessage sent to: ' +
+            (r2.first_contact || '') +
+            '\nPriority locked: ' +
+            state.priority +
+            '\nWhat stopped: ' +
+            state.cut +
+            '</div>'
+          : '';
+      app.innerHTML =
+        '<section class="rv2-screen is-active"><p class="rv2-kicker">Your Operating Record</p>' +
+        '<h1 class="rv2-h1">Summary</h1>' +
+        '<div class="rv2-summary-block">' +
+        'Priority: ' +
+        state.priority +
+        '\nCut: ' +
+        state.cut +
+        '\nBackup: ' +
+        state.backup_name +
+        ' — covers ' +
+        state.backup_covers +
+        '\nOperating rule: If it’s not ' +
+        state.priority +
+        ", it doesn’t get time or money." +
+        '\nCommitted: ' +
+        (state.committed_date ? new Date(state.committed_date).toLocaleDateString() : new Date().toLocaleDateString()) +
+        '</div>' +
+        cross +
+        '<div class="rv2-actions-row"><button type="button" class="rv2-btn rv2-btn--ghost" id="cp">Copy full summary</button></div>' +
+        '<a class="rv2-btn rv2-btn--ghost" href="/systems">Exit to System</a>' +
+        '<button type="button" class="rv2-btn rv2-btn--ghost" id="rst">Restart</button>' +
+        '<p class="rv2-note">If you don’t change anything, nothing changes.</p></section>';
+      state.completed = true;
+      save();
+      $('#cp').onclick = function () {
+        var t = app.querySelectorAll('.rv2-summary-block');
+        var txt = '';
+        t.forEach(function (el) {
+          txt += el.textContent + '\n\n';
+        });
+        navigator.clipboard.writeText(txt.trim());
+      };
+      $('#rst').onclick = function () {
+        if (typeof confirm === 'function' && !confirm('Clear this room’s saved answers on this device?')) return;
+        try {
+          localStorage.removeItem(KEY);
+        } catch (e) {}
+        state.screen = 0;
+        state.priority = '';
+        state.cut = '';
+        state.backup_name = '';
+        state.backup_contact = '';
+        state.backup_covers = '';
+        state.backup_status = '';
+        state.committed = false;
+        state.committed_date = '';
+        state.completed = false;
+        load();
+        show(0);
+      };
+      return;
+    }
+
+    app.innerHTML =
+      '<section class="rv2-screen is-active"><p class="rv2-lead">Unknown step. <a href="/playbooks">Playbooks</a></p></section>';
+  }
+
+  load();
+  render();
+  var GUIDED_HASH = {
+    'weekly-reset': 1,
+    'priority-compression': 1,
+    'restart-loop': 1,
+    'delivery-fix': 2,
+    'handoff': 3,
+    'client-flow': 3,
+    'consistency': 2
+  };
+  function stepFromHash() {
+    var slug = (location.hash || '').replace(/^#/, '');
+    return slug && Object.prototype.hasOwnProperty.call(GUIDED_HASH, slug) ? GUIDED_HASH[slug] : null;
+  }
+  var gh = stepFromHash();
+  if (gh != null) show(gh);
+  window.addEventListener('hashchange', function () {
+    var g = stepFromHash();
+    if (g != null) show(g);
+  });
+})();
+  </script>
+</body>
+</html>

@@ -3,20 +3,19 @@
  */
 (function (global) {
   var PATH_TO_KEY = {
-    '/room-01-extraction': 'r01',
-    '/room-02-direction': 'r02',
-    '/room-03-transaction': 'r03',
-    '/room-04-infrastructure': 'r04',
-    '/room-05-cognition': 'r05'
+    '/room-losing': 'r01',
+    '/room-sell': 'r02',
+    '/room-protect': 'r03'
   };
 
+  /** Slugs → first panel index for each room (v2 flows). */
   var DEEP = {
     r01: {
       map: {
         'time-leak': 1,
         'money-leak': 1,
         'drift-audit': 1,
-        'underuse-cut': 5
+        'underuse-cut': 3
       },
       labels: {
         'time-leak': 'Time leak',
@@ -27,24 +26,10 @@
     },
     r02: {
       map: {
-        'weekly-reset': 8,
-        'restart-loop': 7,
-        'overload-cleanup': 4,
-        'priority-compression': 3
-      },
-      labels: {
-        'weekly-reset': 'Weekly reset',
-        'restart-loop': 'Restart loop',
-        'overload-cleanup': 'Overload cleanup',
-        'priority-compression': 'Priority compression'
-      }
-    },
-    r03: {
-      map: {
-        'buyer-problem': 5,
+        'buyer-problem': 1,
         'offer-line': 2,
-        'price-posture': 4,
-        'outcome-clarity': 9
+        'price-posture': 3,
+        'outcome-clarity': 2
       },
       labels: {
         'buyer-problem': 'Buyer problem',
@@ -53,32 +38,26 @@
         'outcome-clarity': 'Outcome clarity'
       }
     },
-    r04: {
+    r03: {
       map: {
-        'delivery-fix': 3,
-        'handoff': 6,
-        'consistency': 4,
-        'client-flow': 5
+        'weekly-reset': 1,
+        'priority-compression': 1,
+        'restart-loop': 1,
+        'overload-cleanup': 2,
+        'delivery-fix': 2,
+        'consistency': 2,
+        'handoff': 3,
+        'client-flow': 3
       },
       labels: {
+        'weekly-reset': 'Weekly reset',
+        'priority-compression': 'Priority compression',
+        'restart-loop': 'Restart loop',
+        'overload-cleanup': 'Overload cleanup',
         'delivery-fix': 'Delivery fix',
-        'handoff': 'Handoff',
         'consistency': 'Consistency',
+        'handoff': 'Handoff',
         'client-flow': 'Client flow'
-      }
-    },
-    r05: {
-      map: {
-        'bounded-ai-use': 1,
-        'prompt-system': 9,
-        'quality-control': 4,
-        'leverage-stack': 8
-      },
-      labels: {
-        'bounded-ai-use': 'Bounded AI use',
-        'prompt-system': 'Prompt system',
-        'quality-control': 'Quality control',
-        'leverage-stack': 'Leverage stack'
       }
     }
   };
@@ -120,68 +99,38 @@
     return hashLabel('r01', 'time-leak');
   }
 
-  function pickR02(store, archetype) {
-    var p2 = store && store.phase02;
-    var p4 = store && store.phase04;
-    if (p4 && String(p4.feedback_loop || '').indexOf('stalls') >= 0) {
-      return hashLabel('r02', 'restart-loop');
-    }
-    if (archetype === 'Reactive Stabilizer') {
-      return hashLabel('r02', 'overload-cleanup');
-    }
-    if (p2 && String(p2.buyer_type || '').indexOf('broad') >= 0) {
-      return hashLabel('r02', 'priority-compression');
-    }
-    return hashLabel('r02', 'weekly-reset');
-  }
-
   function pickR03(store) {
     var p2 = store && store.phase02;
     var p3 = store && store.phase03;
     if (p2 && String(p2.buyer_type || '').indexOf('broad') >= 0) {
-      return hashLabel('r03', 'buyer-problem');
+      return hashLabel('r02', 'buyer-problem');
     }
     if (p3 && String(p3.outcome || '').indexOf('fuzzy') >= 0) {
-      return hashLabel('r03', 'outcome-clarity');
+      return hashLabel('r02', 'outcome-clarity');
     }
     if (p3 && String(p3.pricing_position || '').indexOf('uncomfortable') >= 0) {
-      return hashLabel('r03', 'price-posture');
+      return hashLabel('r02', 'price-posture');
     }
-    return hashLabel('r03', 'offer-line');
+    return hashLabel('r02', 'offer-line');
   }
 
   function pickR04(store) {
     var p3 = store && store.phase03;
     var p4 = store && store.phase04;
     if (p4 && String(p4.response_type || '').indexOf('Silence') >= 0) {
-      return hashLabel('r04', 'client-flow');
+      return hashLabel('r03', 'client-flow');
     }
     if (p4 && String(p4.validation_status || '') === 'partial') {
-      return hashLabel('r04', 'consistency');
+      return hashLabel('r03', 'consistency');
     }
     if (p3 && String(p3.entry_point || '').indexOf('No obvious') >= 0) {
-      return hashLabel('r04', 'delivery-fix');
+      return hashLabel('r03', 'delivery-fix');
     }
-    return hashLabel('r04', 'delivery-fix');
-  }
-
-  function pickR05(store, archetype) {
-    var p4 = store && store.phase04;
-    var p5 = store && store.phase05;
-    if (archetype === 'Hidden Operator' || archetype === 'Unconverted Thinker') {
-      return hashLabel('r05', 'bounded-ai-use');
-    }
-    if (p4 && String(p4.validation_status || '') === 'partial') {
-      return hashLabel('r05', 'quality-control');
-    }
-    if (p5 && String(p5.leverage_type || '').indexOf('improving') >= 0) {
-      return hashLabel('r05', 'prompt-system');
-    }
-    return hashLabel('r05', 'leverage-stack');
+    return hashLabel('r03', 'delivery-fix');
   }
 
   /**
-   * @param {string} path — e.g. /room-01-extraction
+   * @param {string} path — e.g. /room-losing
    * @param {{ store: object, archetype: string, version: string, diagnostic: object }} ctx
    * @returns {{ hash: string, label: string, slug: string, step: number } | null}
    */
@@ -198,13 +147,9 @@
       case 'r01':
         return pickR01(store, arch, ver);
       case 'r02':
-        return pickR02(store, arch);
-      case 'r03':
         return pickR03(store);
-      case 'r04':
+      case 'r03':
         return pickR04(store);
-      case 'r05':
-        return pickR05(store, arch);
       default:
         return null;
     }

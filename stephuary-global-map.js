@@ -73,6 +73,9 @@
     '/execution': 'diagnostic',
     '/rooms': 'rooms',
     '/playbooks': 'rooms',
+    '/room-losing': 'rooms',
+    '/room-sell': 'rooms',
+    '/room-protect': 'direction',
     '/room-01-extraction': 'rooms',
     '/room-02-direction': 'direction',
     '/room-03-transaction': 'rooms',
@@ -144,7 +147,7 @@
 
     var currentId = PATH_NODE[path] || '';
     if (path.indexOf('/room-') === 0) {
-      if (path.indexOf('room-02') >= 0) currentId = 'direction';
+      if (path.indexOf('room-protect') >= 0 || path.indexOf('room-02') >= 0) currentId = 'direction';
       else currentId = 'rooms';
     }
 
@@ -156,7 +159,14 @@
       done.revenue = true;
       done.direction = true;
     }
-    if (visited.indexOf('/room-02-direction') >= 0 || completed.indexOf('02') >= 0) done.direction = true;
+    if (
+      visited.indexOf('/room-protect') >= 0 ||
+      visited.indexOf('/room-02-direction') >= 0 ||
+      completed.indexOf('03') >= 0 ||
+      completed.indexOf('02') >= 0
+    ) {
+      done.direction = true;
+    }
     if (visited.indexOf('/focused-review') >= 0) done.lock = true;
     if (visited.indexOf('/private-access') >= 0) done.concept = true;
     if (visited.indexOf('/snapshot') >= 0) done.snapshot = true;

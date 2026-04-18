@@ -239,11 +239,11 @@
   };
 
   var PLAYBOOK_ROOM = {
-    Reset: { room: 1, title: 'Where your time and money are going', path: '/room-01-extraction' },
-    Execution: { room: 2, title: 'What to change this week', path: '/room-02-direction' },
-    'Income Architecture': { room: 3, title: 'What you can offer and charge for', path: '/room-03-transaction' },
-    Ownership: { room: 4, title: 'Fixing execution and delivery', path: '/room-04-infrastructure' },
-    'AI Control': { room: 5, title: 'Using AI without lowering quality', path: '/room-05-cognition' }
+    Reset: { room: 1, title: 'What you’re losing', path: '/room-losing' },
+    Execution: { room: 3, title: 'What to protect', path: '/room-protect' },
+    'Income Architecture': { room: 2, title: 'What you can sell', path: '/room-sell' },
+    Ownership: { room: 3, title: 'What to protect', path: '/room-protect' },
+    'AI Control': { room: 1, title: 'System map · AI Rules', path: '/systems' }
   };
 
   var DIAGNOSTIC_BY_VERSION = {
@@ -587,12 +587,12 @@
     positioning: {
       display_name: 'Positioning Room',
       playbook: 'Income Architecture',
-      path: '/room-03-transaction'
+      path: '/room-sell'
     },
-    demand: { display_name: 'Demand Room', playbook: 'Reset', path: '/room-01-extraction' },
-    focus: { display_name: 'Focus Room', playbook: 'Ownership', path: '/room-04-infrastructure' },
-    system: { display_name: 'System Room', playbook: 'Reset', path: '/room-01-extraction' },
-    direction: { display_name: 'Direction Room', playbook: 'Execution', path: '/room-02-direction' }
+    demand: { display_name: 'Demand Room', playbook: 'Reset', path: '/room-losing' },
+    focus: { display_name: 'Focus Room', playbook: 'Ownership', path: '/room-protect' },
+    system: { display_name: 'System Room', playbook: 'Reset', path: '/room-losing' },
+    direction: { display_name: 'Direction Room', playbook: 'Execution', path: '/room-protect' }
   };
 
   function recommendedRoomRecord(key, reason) {
@@ -613,7 +613,7 @@
         key: 'fallback',
         display_name: 'System Room',
         playbook: 'AI Control',
-        path: '/room-05-cognition',
+        path: '/systems',
         reason: nextReason(pb)
       };
     }
@@ -733,7 +733,7 @@
       var rec0 = diag && diag.recommended_room;
       return {
         label: 'Enter Your Room',
-        href: (rec0 && rec0.path) || '/room-03-transaction',
+        href: (rec0 && rec0.path) || '/room-sell',
         kind: 'enter_room'
       };
     }
@@ -749,7 +749,7 @@
     var rec = diag && diag.recommended_room;
     return {
       label: 'Enter Your Room',
-      href: (rec && rec.path) || (diag.next_room && diag.next_room.path) || '/room-02-direction',
+      href: (rec && rec.path) || (diag.next_room && diag.next_room.path) || '/room-losing',
       kind: 'enter_room'
     };
   }

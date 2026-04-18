@@ -6,14 +6,12 @@
   var KEY = 'stephuary_os_v1';
 
   var META = {
-    '01': { path: '/room-01-extraction', title: 'Room 1 · Capture', statuses: ['exposed', 'reducing', 'controlled'] },
-    '02': { path: '/room-02-direction', title: 'Room 2 · Direction', statuses: ['scattered', 'shifting', 'locked'] },
-    '03': { path: '/room-03-transaction', title: 'Room 3 · Transaction', statuses: ['unsent', 'active', 'closed'] },
-    '04': { path: '/room-04-infrastructure', title: 'Room 4 · Infrastructure', statuses: ['fragile', 'stabilizing', 'durable'] },
-    '05': { path: '/room-05-cognition', title: 'Room 5 · Cognition', statuses: ['reactive', 'uneven', 'controlled'] }
+    '01': { path: '/room-losing', title: 'Room 1 · What you’re losing', statuses: ['exposed', 'reducing', 'controlled'] },
+    '02': { path: '/room-sell', title: 'Room 2 · What you can sell', statuses: ['unsent', 'active', 'closed'] },
+    '03': { path: '/room-protect', title: 'Room 3 · What to protect', statuses: ['fragile', 'stabilizing', 'durable'] }
   };
 
-  var ORDER = ['01', '02', '03', '04', '05'];
+  var ORDER = ['01', '02', '03'];
 
   function nowIso() {
     return new Date().toISOString();
@@ -45,10 +43,10 @@
     return Math.min(100, Math.round((step / last) * 100));
   }
 
-  function statusFor03(step, messageSent) {
-    var s = META['03'].statuses;
-    if (step >= 15) return s[2];
-    if (step === 6 && !messageSent) return s[0];
+  function statusForSell(step, messageSent) {
+    var s = META['02'].statuses;
+    if (step >= 5) return s[2];
+    if (step === 4 && !messageSent) return s[0];
     return s[1];
   }
 
@@ -75,9 +73,9 @@
     var comp = completionFromStep(step, totalSteps);
     var sent = opts.messageSent === true || opts.messageCommitted === true;
     var status;
-    if (roomId === '03') {
-      status = statusFor03(step, sent);
-      if (step >= 15) comp = 100;
+    if (roomId === '02') {
+      status = statusForSell(step, sent);
+      if (step >= 5) comp = 100;
     } else {
       status = statusDefault(roomId, comp);
       if (comp >= 100) comp = 100;
@@ -92,7 +90,7 @@
       timestamp: nowIso(),
       step: step
     };
-    if (roomId === '03') room.messageSent = sent;
+    if (roomId === '02') room.messageSent = sent;
     data.rooms[roomId] = room;
     data.lastRoomId = roomId;
     save(data);
@@ -107,17 +105,12 @@
   }
 
   function pickNextAction(data) {
-    var r3 = data.rooms['03'];
-    if (r3 && r3.status === 'unsent') return 'Send the message';
+    var r2 = data.rooms['02'];
+    if (r2 && r2.status === 'unsent') return 'Send the message';
     var c1 = getCompletion(data, '01');
-    if (c1 < 45) return 'Remove one drain';
-    var c2 = getCompletion(data, '02');
-    if (c2 < 45) return 'Shift time to priority';
-    if (r3 && getCompletion(data, '03') < 100) return 'Send the message';
-    var c4 = getCompletion(data, '04');
-    if (c4 < 100) return 'Stabilize one continuity layer';
-    var c5 = getCompletion(data, '05');
-    if (c5 < 100) return 'Name one AI rule you will enforce on paid work';
+    if (c1 < 45) return 'Name the leak and cut one';
+    if (getCompletion(data, '02') < 45) return 'Lock one offer and send one message';
+    if (getCompletion(data, '03') < 100) return 'Lock priority, cut, and backup';
     return 'Open the next room that still shows less than 100%';
   }
 

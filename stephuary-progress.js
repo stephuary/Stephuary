@@ -6,8 +6,8 @@
 (function (global) {
   var KEY = 'stephuary_system_progress_v1';
 
-  var ROOM_ORDER = ['01', '02', '03', '04', '05'];
-  var ROOM_PHASE = { '01': 1, '02': 2, '03': 3, '04': 4, '05': 5 };
+  var ROOM_ORDER = ['01', '02', '03'];
+  var ROOM_PHASE = { '01': 1, '02': 2, '03': 3 };
   var PHASE_PATH = {
     1: '/capture',
     2: '/monetize',
@@ -16,18 +16,14 @@
     5: '/sovereignty'
   };
   var PHASE_LABEL = {
-    1: 'Capture',
-    2: 'Monetize',
-    3: 'Structure',
-    4: 'Automation',
-    5: 'Sovereignty'
+    1: 'What you’re losing',
+    2: 'What you can sell',
+    3: 'What to protect'
   };
   var ROOM_PATH = {
-    '01': '/room-01-extraction',
-    '02': '/room-02-direction',
-    '03': '/room-03-transaction',
-    '04': '/room-04-infrastructure',
-    '05': '/room-05-cognition'
+    '01': '/room-losing',
+    '02': '/room-sell',
+    '03': '/room-protect'
   };
 
   function defaultState() {
@@ -99,7 +95,7 @@
     var idx = ROOM_ORDER.indexOf(roomId);
     if (idx < 0 || idx >= ROOM_ORDER.length - 1) return '/systems';
     var nextId = ROOM_ORDER[idx + 1];
-    return PHASE_PATH[ROOM_PHASE[nextId]];
+    return ROOM_PATH[nextId] || '/systems';
   }
 
   function getResumeLabel() {
@@ -113,7 +109,7 @@
     var ph = ROOM_PHASE[id];
     return {
       href: ROOM_PATH[id] + '?step=' + step,
-      line: 'Continue where you left off → ' + (PHASE_LABEL[ph] || 'Phase ' + ph)
+      line: 'Continue where you left off → Room ' + ph + ' · ' + (PHASE_LABEL[ph] || '')
     };
   }
 
