@@ -16,6 +16,9 @@ export function ResultsScreen({ primaryCta, animKey }: Props) {
   return (
     <ScreenShell animKey={animKey} className="results-screen">
       <header className="results-header results-header--enter">
+        <p className="results-ownership-line" role="note">
+          {r.ownershipLine}
+        </p>
         <h1 className="results-title">{r.pageTitle}</h1>
         <div className="results-pattern-authority" role="note">
           <p className="results-pattern-authority-line">{r.authority.line1}</p>

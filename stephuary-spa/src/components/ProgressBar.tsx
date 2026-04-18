@@ -26,7 +26,9 @@ export function ProgressBar({ current, total, phaseCurrent, phaseTotal }: Props)
           style={{ width: `${pct}%` }}
         />
       </div>
-      <p className="progress-hint">{diagnosticCopy.progressHint}</p>
+      {diagnosticCopy.progressHint.trim() ? (
+        <p className="progress-hint">{diagnosticCopy.progressHint}</p>
+      ) : null}
     </div>
   );
 }

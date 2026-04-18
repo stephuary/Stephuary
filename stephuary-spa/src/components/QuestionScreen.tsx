@@ -33,15 +33,16 @@ export function QuestionScreen({
   animKey,
 }: Props) {
   const canContinue = selectedId !== null;
-  const nearComplete = progress.total > 0 && progress.current >= progress.total - 1;
-  const midpointIndex = Math.ceil(progress.total / 2);
-  const showMidpoint = progress.total > 0 && progress.current === midpointIndex;
-  const showTimeExpectation = progress.current === 1;
+  const { current, total } = progress;
+  const nearComplete = total > 0 && current >= total - 1;
+  const showMidpointPressure = total > 0 && (current === 6 || current === 7);
+  const showMicroCommitment = current === 3 || current === 4;
+  const showTimeExpectation = current === 1;
 
   return (
     <ScreenShell
       animKey={animKey}
-      className={`question-screen question-slide ${showMidpoint ? "question-screen--midpoint" : ""}`.trim()}
+      className={`question-screen question-slide ${showMidpointPressure ? "question-screen--midpoint" : ""}`.trim()}
     >
       <div className="question-inner question-inner--stagger">
         <header className="diagnostic-header">
@@ -61,8 +62,8 @@ export function QuestionScreen({
               {phaseIndex + 1}/{phaseCount} · {phaseLabel}
             </p>
             <ProgressBar
-              current={progress.current}
-              total={progress.total}
+              current={current}
+              total={total}
               phaseCurrent={phaseIndex + 1}
               phaseTotal={phaseCount}
             />
@@ -73,19 +74,28 @@ export function QuestionScreen({
             </button>
           </div>
         </header>
-        <p className="question-progress-count" aria-live="polite">
-          Question {progress.current} of {progress.total}
-        </p>
+        <div className="question-progress-block">
+          <p className="question-progress-count" aria-live="polite">
+            Question {current} of {total}
+          </p>
+          <p className="question-progress-psych" role="note">
+            {diagnosticCopy.progressPsychLine}
+          </p>
+        </div>
         {showTimeExpectation ? (
           <p className="question-time-expectation" role="note">
             {diagnosticCopy.timeExpectation}
           </p>
         ) : null}
-        {showMidpoint ? (
-          <div className="question-midpoint-wrap" role="note">
-            <p className="question-midpoint">{diagnosticCopy.midpointMomentum}</p>
-            <p className="question-midpoint-echo">{diagnosticCopy.decisionEcho}</p>
-          </div>
+        {showMicroCommitment ? (
+          <p className="question-micro-commitment" role="note">
+            {diagnosticCopy.microCommitment}
+          </p>
+        ) : null}
+        {showMidpointPressure ? (
+          <p className="question-midpoint-pressure" role="note">
+            {diagnosticCopy.midpointPressure}
+          </p>
         ) : null}
         {nearComplete ? (
           <p className="question-near-complete">{diagnosticCopy.nearComplete}</p>

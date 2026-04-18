@@ -37,6 +37,7 @@ export const applyQualifyModalCopy = {
   headline: "This is where we fix it properly.",
   filterLine: "Not everyone gets in.",
   prompt: "Answer yes to these:",
+  unsureLine: "If you're unsure, this is not the right step.",
   bullets: [
     "You already have something real — it's just not converting",
     "You're ready to change how you're operating",
@@ -115,15 +116,18 @@ export const realizationMomentCopy = {
 } as const;
 
 export const diagnosticCopy = {
-  progressHint: "Clarity builds as you go.",
-  nearComplete: "You're close. Most people don't get this far.",
+  /** Shown under progress bar; empty hides the hint row in `ProgressBar`. */
+  progressHint: "",
+  progressPsychLine: "You're closer than it feels.",
+  microCommitment: "You're already further than most people get.",
+  midpointPressure: "Most people stop around here.",
+  nearComplete: "Finish this. It only works if you see it fully.",
   timeExpectation: "About two minutes.",
-  midpointMomentum: "Most people drop here. Keep going.",
-  decisionEcho: "This doesn't get fixed with more thinking.",
 } as const;
 
 /** Static results readout — four sections, no scoring UI. */
 export const resultsReadoutCopy = {
+  ownershipLine: "This is based on what you actually chose.",
   pageTitle: "Your Alignment Diagnostic results",
   authority: {
     line1: "I've seen this play out the same way repeatedly.",

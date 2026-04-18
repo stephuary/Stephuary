@@ -696,6 +696,16 @@ body {
   color: var(--muted);
 }
 
+.apply-qualify-modal-unsure {
+  margin: 0 0 0.65rem;
+  font-family: var(--font-sans);
+  font-size: 0.8rem;
+  line-height: 1.45;
+  font-weight: 400;
+  color: var(--muted);
+  opacity: 0.88;
+}
+
 .apply-qualify-modal-bullets {
   margin: 0 0 0.85rem;
   padding: 0 0 0 1rem;
@@ -1997,13 +2007,28 @@ body {
   margin-bottom: 0.5rem;
 }
 
+.question-progress-block {
+  margin: 0 0 0.7rem;
+  text-align: center;
+}
+
 .question-progress-count {
-  margin: 0 0 0.5rem;
+  margin: 0 0 0.38rem;
   font-family: var(--font-sans);
   font-size: 0.72rem;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--muted);
+}
+
+.question-progress-psych {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: 0.78rem;
+  line-height: 1.45;
+  font-weight: 400;
+  color: var(--fg-soft);
+  opacity: 0.88;
 }
 
 .question-time-expectation {
@@ -2014,30 +2039,24 @@ body {
   color: var(--fg-soft);
 }
 
-.question-midpoint-wrap {
-  margin: 0 0 0.85rem;
-}
-
-.question-midpoint-wrap .question-midpoint {
-  margin: 0 0 0.35rem;
-}
-
-.question-midpoint {
-  margin: 0 0 0.85rem;
+.question-micro-commitment {
+  margin: 0 0 0.75rem;
   font-family: var(--font-sans);
   font-size: 0.8rem;
   line-height: 1.45;
-  font-weight: 500;
+  font-weight: 400;
   color: var(--fg-soft);
+  opacity: 0.9;
 }
 
-.question-midpoint-echo {
-  margin: 0;
+.question-midpoint-pressure {
+  margin: 0 0 0.75rem;
   font-family: var(--font-sans);
   font-size: 0.78rem;
   line-height: 1.45;
   font-weight: 500;
   color: var(--muted);
+  opacity: 0.52;
   letter-spacing: 0.02em;
 }
 
@@ -2271,20 +2290,28 @@ body {
   transition-duration: 130ms;
 }
 
+/* Home primary CTA: after idle, one-shot emphasis (no loop). See `HomeScreen`. */
 @media (prefers-reduced-motion: no-preference) {
-  .home-primary-cta .btn-primary:not(:hover):not(:active):not(:disabled) {
-    animation: ctaIdlePulse 4.5s ease-in-out infinite;
-    animation-delay: 4s;
-  }
-}
-
-@keyframes ctaIdlePulse {
-  0%,
-  100% {
+  .home-primary-cta--idle-attention .btn-primary:not(:hover):not(:active):not(:disabled) {
     opacity: 1;
+    filter: brightness(1.04);
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.16) inset,
+      0 0 32px rgba(255, 195, 120, 0.12) inset,
+      0 10px 32px rgba(0, 0, 0, 0.38),
+      0 0 42px rgba(196, 161, 90, 0.14);
+    transition:
+      opacity 0.65s cubic-bezier(0.22, 1, 0.36, 1),
+      box-shadow 0.65s cubic-bezier(0.22, 1, 0.36, 1),
+      filter 0.65s cubic-bezier(0.22, 1, 0.36, 1);
   }
-  50% {
-    opacity: 0.95;
+
+  .home-primary-cta:not(.home-primary-cta--idle-attention) .btn-primary:not(:hover):not(:active):not(:disabled) {
+    opacity: 0.96;
+    transition:
+      opacity 0.45s ease,
+      box-shadow 0.45s ease,
+      filter 0.45s ease;
   }
 }
 
@@ -2316,6 +2343,18 @@ a.btn-block {
 
 .results-header {
   margin-bottom: 1.5rem;
+}
+
+.results-ownership-line {
+  margin: 0 auto 0.55rem;
+  max-width: 22rem;
+  font-family: var(--font-sans);
+  font-size: 0.78rem;
+  line-height: 1.4;
+  font-weight: 500;
+  color: var(--muted);
+  letter-spacing: 0.02em;
+  text-align: center;
 }
 
 .results-pattern-authority {
@@ -2407,14 +2446,19 @@ a.btn-block {
   border-top: 1px solid var(--line-warm);
 }
 
+.results-header--enter .results-ownership-line {
+  opacity: 0;
+  animation: text-rise-support 0.5s cubic-bezier(0.22, 1, 0.36, 1) 0.04s forwards;
+}
+
 .results-header--enter .results-title {
   opacity: 0;
-  animation: text-rise 0.52s cubic-bezier(0.22, 1, 0.36, 1) 0.08s forwards;
+  animation: text-rise 0.52s cubic-bezier(0.22, 1, 0.36, 1) 0.1s forwards;
 }
 
 .results-header--enter .results-pattern-authority {
   opacity: 0;
-  animation: text-rise 0.52s cubic-bezier(0.22, 1, 0.36, 1) 0.14s forwards;
+  animation: text-rise 0.52s cubic-bezier(0.22, 1, 0.36, 1) 0.16s forwards;
 }
 
 .results-title {
@@ -3902,6 +3946,7 @@ a.btn-block {
   .question-inner--stagger .question-title,
   .question-inner--stagger .options .option-btn,
   .question-inner--stagger .cta-row,
+  .results-header--enter .results-ownership-line,
   .results-header--enter .results-title {
     animation: none !important;
     opacity: 1 !important;

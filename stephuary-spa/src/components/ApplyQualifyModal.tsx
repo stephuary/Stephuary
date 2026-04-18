@@ -39,6 +39,7 @@ export function ApplyQualifyModal({ open, onClose, onConfirm }: Props) {
         </h2>
         <p className="apply-qualify-modal-filter">{copy.filterLine}</p>
         <p className="apply-qualify-modal-prompt">{copy.prompt}</p>
+        <p className="apply-qualify-modal-unsure">{copy.unsureLine}</p>
         <ul className="apply-qualify-modal-bullets">
           {copy.bullets.map((line) => (
             <li key={line} className="apply-qualify-modal-bullet">

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { usePostActionMoment } from "./context/PostActionMomentContext";
 import { SUBSTACK_PLACEHOLDER_HREF } from "./data/ecosystem";
 import { brandIdentityCopy } from "./data/siteCopy";
@@ -76,6 +76,8 @@ export default function App() {
   const [pendingAccessIntent, setPendingAccessIntent] = useState<"os" | undefined>();
   const [auraRoutePulse, setAuraRoutePulse] = useState(false);
   const skipAuraRoutePulse = useRef(true);
+  const quizAdvanceLock = useRef(false);
+  const quizMomentumTimer = useRef<number | null>(null);
 
   const evaluationCtx = useMemo(() => buildEvaluationContext(answers), [answers]);
 
@@ -97,6 +99,15 @@ export default function App() {
   useEffect(() => {
     if (step.id !== "quiz") setExitModalOpen(false);
   }, [step.id]);
+
+  useEffect(() => {
+    return () => {
+      if (quizMomentumTimer.current !== null) {
+        window.clearTimeout(quizMomentumTimer.current);
+        quizMomentumTimer.current = null;
+      }
+    };
+  }, []);
 
   useEffect(() => {
     if (skipAuraRoutePulse.current) {
@@ -151,6 +162,25 @@ export default function App() {
     window.open(SUBSTACK_PLACEHOLDER_HREF, "_blank", "noopener,noreferrer");
   }
 
+  const advanceQuizAfterMomentum = useCallback(() => {
+    if (quizAdvanceLock.current) return;
+    quizAdvanceLock.current = true;
+    triggerPostAction();
+    if (quizMomentumTimer.current !== null) window.clearTimeout(quizMomentumTimer.current);
+    const delayMs = 120 + Math.floor(Math.random() * 61);
+    quizMomentumTimer.current = window.setTimeout(() => {
+      quizMomentumTimer.current = null;
+      quizAdvanceLock.current = false;
+      setStep((prev) => {
+        if (prev.id !== "quiz") return prev;
+        const last = prev.index >= QUESTIONS.length - 1;
+        if (last) return { id: "results" };
+        if (prev.index === REALIZATION_AFTER_Q_INDEX) return { id: "realizationMoment" };
+        return { id: "quiz", index: prev.index + 1 };
+      });
+    }, delayMs);
+  }, []);
+
   function handleNav(action: NavAction) {
     triggerPostAction();
     switch (action.kind) {
@@ -184,11 +214,21 @@ export default function App() {
 
   function backQuestion() {
     if (step.id !== "quiz" || step.index <= 0) return;
+    if (quizMomentumTimer.current !== null) {
+      window.clearTimeout(quizMomentumTimer.current);
+      quizMomentumTimer.current = null;
+    }
+    quizAdvanceLock.current = false;
     setStep({ id: "quiz", index: step.index - 1 });
   }
 
   function confirmExitDiagnostic() {
     setExitModalOpen(false);
+    if (quizMomentumTimer.current !== null) {
+      window.clearTimeout(quizMomentumTimer.current);
+      quizMomentumTimer.current = null;
+    }
+    quizAdvanceLock.current = false;
     setAnswers({});
     setStep({ id: "home" });
   }
@@ -270,13 +310,7 @@ export default function App() {
             question={QUESTIONS[step.index]}
             selectedId={answers[QUESTIONS[step.index].id] ?? null}
             onSelect={(id) => setAnswer(QUESTIONS[step.index].id, id)}
-            onContinue={() => {
-              triggerPostAction();
-              const last = step.index >= QUESTIONS.length - 1;
-              if (last) setStep({ id: "results" });
-              else if (step.index === REALIZATION_AFTER_Q_INDEX) setStep({ id: "realizationMoment" });
-              else setStep({ id: "quiz", index: step.index + 1 });
-            }}
+            onContinue={advanceQuizAfterMomentum}
             onBack={backQuestion}
             canGoBack={step.index > 0}
             onExitRequest={() => setExitModalOpen(true)}
