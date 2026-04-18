@@ -127,6 +127,30 @@
     .global-nav .gn-links { display: flex; gap: 16px 18px; flex-wrap: wrap; align-items: center; }
     .global-nav .gn-links a.nav-club { color: var(--gold); }
     .global-nav .gn-links a.nav-club:hover { color: var(--cream); filter: brightness(1.1); }
+    .global-nav .gn-startover {
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 4px 0;
+    }
+    .global-nav .gn-startover:hover { color: var(--cream); }
+
+    .step-micro-hint {
+      font-size: 13px;
+      line-height: 1.45;
+      color: var(--text-muted);
+      margin: 0 0 14px;
+      max-width: 40ch;
+    }
+    .step-directive:empty,
+    .step-micro:empty {
+      display: none;
+    }
 
     .btn {
       display: inline-flex;
@@ -804,37 +828,6 @@
       max-width: 520px;
     }
 
-    /* Capture .  primary CTA layout (overrides global .sys-compact clipping; no color/type changes) */
-    .page-capture #phase-header.sys-compact {
-      max-height: none;
-      min-height: 0;
-      overflow: visible;
-      padding-bottom: max(28px, calc(20px + env(safe-area-inset-bottom, 0px)));
-    }
-
-    .page-capture #phase-header .sys-compact__inner {
-      overflow: visible;
-      position: relative;
-      z-index: 2;
-      padding-bottom: max(16px, calc(12px + env(safe-area-inset-bottom, 0px)));
-    }
-
-    .page-capture #phase-header .sys-compact__bg {
-      z-index: 0;
-    }
-
-    .page-capture #phase-header .sys-actions {
-      position: relative;
-      z-index: 3;
-      margin-top: 8px;
-    }
-
-    .page-capture #phase-header .sys-actions .sys-btn,
-    .page-capture #phase-header .sys-actions a {
-      position: relative;
-      z-index: 4;
-    }
-
     .page-capture #flow-wrap {
       overflow: visible;
     }
@@ -867,10 +860,6 @@
       }
       .capture-layout--chrome .live-panel--chrome {
         order: 2;
-      }
-
-      .page-capture #phase-header.sys-compact {
-        padding-bottom: max(32px, calc(24px + env(safe-area-inset-bottom, 0px)));
       }
 
       body.page-capture.diag-has-live-chrome .capture-layout--chrome .main-col {
@@ -941,6 +930,7 @@
     <a href="/systems">Systems</a>
     <a href="/pricing">Pricing</a>
     <a href="/access" class="nav-club">.5% Club</a>
+    <button type="button" class="gn-startover" id="btnBegin">Start over</button>
     <a href="https://stephuary.substack.com" target="_blank" rel="noopener">Grown spaghetti</a>
     <a href="https://onlysometimesclub.com" target="_blank" rel="noopener noreferrer">Only Sometimes Club</a>
   </div>
@@ -950,32 +940,13 @@
     <div data-global-system-map="minimal"></div>
   </div>
 
-  <header id="phase-header" class="sys-compact">
-    <div class="sys-compact__bg"><canvas aria-hidden="true"></canvas></div>
-    <div class="sys-compact__inner">
-      <p class="sys-label">Phase 1 · Capture</p>
-      <div class="sys-actions sys-actions--capture">
-        <div class="sys-actions__primary">
-          <button type="button" class="sys-btn sys-btn--pri magnetic" id="btnSkip">Continue</button>
-        </div>
-        <details class="sys-actions-more">
-          <summary class="sys-actions-more__summary">More</summary>
-          <div class="sys-actions-more__body">
-            <button type="button" class="sys-btn sys-btn--ghost magnetic" id="btnBegin">Start over</button>
-            <a href="/systems" class="sys-btn sys-btn--ghost magnetic">Save and exit</a>
-          </div>
-        </details>
-      </div>
-    </div>
-  </header>
-
 <div id="flow-wrap">
   <div class="capture-layout capture-layout--chrome">
     <div class="main-col">
       <div id="flow" class="flow--chrome">
         <div id="steps-root"></div>
         <div class="diag-progress-stack">
-          <div class="diag-progress-topline">
+          <div class="diag-progress-topline" hidden aria-hidden="true">
             <span class="diag-progress-phase">1 · Capture</span>
           </div>
           <div class="progress-bar-wrap progress-bar-wrap--sticky-mobile">
@@ -1153,7 +1124,7 @@
   const RESULT_KEY = 'stephuary_result_v1';
   const TOTAL_Q = 6;
   const TOTAL_STEPS = 7;
-  const RAIL_LABELS = ['Context','Signal','Action','Expression','Environment','Failure','Block','Results'];
+  const RAIL_LABELS = ['Signal','Action','Expression','Environment','Failure','Block','Context','Results'];
 
   const ARCHETYPES = [
     'Hidden Operator',
@@ -1649,7 +1620,7 @@
       next = 'Last answer locks avoidance versus search.';
     }
     if (ac >= 6) {
-      next = 'Result locks .  continue to the summary next.';
+      next = 'Context next: what you are building or selling.';
     }
 
     return { main: main, loss: loss, pattern: pattern, next: next };
@@ -1661,12 +1632,12 @@
     }
     var bits = state.bits;
     var n = state.currentStep;
-    if (n === 1) {
-      el('live-notice', state.context ? 'Context locked.' : 'Name what you are building or selling first.');
+    if (n === 7) {
+      el('live-notice', state.context ? 'Context locked.' : 'Name what you are building or selling.');
       el('live-do', '—');
       el('live-hold', '—');
-      el('live-env', state.context ? 'Next: six forced choices map the leak pattern.' : '—');
-      el('live-status', 'Step 1 of ' + TOTAL_STEPS + ' · In progress');
+      el('live-env', state.context ? 'Ready to generate your read.' : '—');
+      el('live-status', 'Step 7 of ' + TOTAL_STEPS + ' · In progress');
       return;
     }
     var L = liveStrings(bits);
@@ -1740,17 +1711,38 @@
         context: state.context,
         bits: state.bits,
         currentStep: state.currentStep,
+        flowOrder: 'binaryFirst',
         ts: Date.now()
       }));
       localStorage.setItem('diagnosticStarted', 'true');
     } catch (e) {}
   }
 
+  /** Legacy: step 1 was context; steps 2–7 were questions. New: steps 1–6 binary, 7 context. */
+  function migrateLegacyStepOrder(d) {
+    if (!d || d.flowOrder === 'binaryFirst') return d;
+    var cs = d.currentStep;
+    if (typeof cs !== 'number') {
+      d.flowOrder = 'binaryFirst';
+      return d;
+    }
+    if (cs === 11) {
+      d.flowOrder = 'binaryFirst';
+      return d;
+    }
+    if (cs >= 2 && cs <= 7) {
+      d.currentStep = cs - 1;
+    }
+    d.flowOrder = 'binaryFirst';
+    return d;
+  }
+
   function loadStorage() {
     try {
       var raw = localStorage.getItem(STORAGE_KEY);
       if (!raw) return null;
-      return JSON.parse(raw);
+      var d = JSON.parse(raw);
+      return migrateLegacyStepOrder(d);
     } catch (e) { return null; }
   }
 
@@ -1781,15 +1773,16 @@
   function buildContextStep() {
     var root = document.getElementById('steps-root');
     var div = document.createElement('div');
-    div.className = 'step active';
-    div.id = 'step-1';
+    div.className = 'step';
+    div.id = 'step-7';
     div.innerHTML =
       '<div class="step-header">' +
         '<div class="step-instruction"></div>' +
         '<label class="sr-only" for="capture-context-field">What you are building or selling</label>' +
         '<textarea id="capture-context-field" class="step-context-field" required maxlength="560" rows="5" placeholder=""></textarea>' +
       '</div>' +
-        '<div class="nav-row">' +
+      '<div class="nav-row">' +
+        '<button type="button" class="btn btn-ghost" data-back-context="1">Back</button>' +
         '<button type="button" class="btn btn-start" id="capture-context-continue" disabled>Continue</button>' +
       '</div>';
 
@@ -1797,6 +1790,7 @@
 
     var ta = div.querySelector('#capture-context-field');
     var cont = div.querySelector('#capture-context-continue');
+    var backCtx = div.querySelector('[data-back-context]');
     function syncContextContinue() {
       var ok = (ta.value || '').trim().length >= 3;
       cont.disabled = !ok;
@@ -1812,10 +1806,16 @@
       state.context = v;
       saveStorage();
       updateLivePanel();
-      runTransitionThen(function() {
-        goTo(2);
-      });
+      document.getElementById('building-overlay').style.display = 'flex';
+      window.setTimeout(function() {
+        showSummary();
+      }, 320);
     });
+    if (backCtx) {
+      backCtx.addEventListener('click', function() {
+        goTo(6);
+      });
+    }
 
     root.appendChild(div);
   }
@@ -1823,12 +1823,11 @@
   function buildSteps() {
     var root = document.getElementById('steps-root');
     root.innerHTML = '';
-    buildContextStep();
 
     QUESTIONS.forEach(function(q, idx) {
-      var stepNum = idx + 2;
+      var stepNum = idx + 1;
       var div = document.createElement('div');
-      div.className = 'step';
+      div.className = 'step' + (stepNum === 1 ? ' active' : '');
       div.id = 'step-' + stepNum;
       div.innerHTML =
         '<div class="step-header">' +
@@ -1842,9 +1841,16 @@
         '</div>' +
         '<div class="step-validation" aria-live="polite"></div>' +
         '<div class="nav-row">' +
-          '<button type="button" class="btn btn-ghost" data-back="' + stepNum + '">Back</button>' +
+          (stepNum > 1 ? '<button type="button" class="btn btn-ghost" data-back="' + stepNum + '">Back</button>' : '') +
         '</div>';
 
+      var header = div.querySelector('.step-header');
+      if (idx === 0) {
+        var hint = document.createElement('p');
+        hint.className = 'step-micro-hint';
+        hint.textContent = 'Choose what’s true most of the time.';
+        header.insertBefore(hint, header.firstChild);
+      }
       div.querySelector('.step-instruction').textContent = q.instruction;
       div.querySelector('.step-directive').textContent = '';
       div.querySelector('.step-micro').textContent = q.micro;
@@ -1869,19 +1875,9 @@
           });
 
           if (idx === TOTAL_Q - 1) {
-            document.getElementById('building-overlay').style.display = 'flex';
-            function finishLast() {
-              window.setTimeout(function() {
-                showSummary();
-              }, 380);
-            }
-            if (window.StephuaryDiagnosticMotion && typeof window.StephuaryDiagnosticMotion.afterAnswer === 'function') {
-              window.StephuaryDiagnosticMotion.afterAnswer(div, finishLast);
-            } else {
-              window.setTimeout(function() {
-                showSummary();
-              }, 700);
-            }
+            runTransitionThen(function() {
+              goTo(7);
+            });
             return;
           }
 
@@ -1900,6 +1896,8 @@
 
       root.appendChild(div);
     });
+
+    buildContextStep();
   }
 
   function syncCaptureShFlowEnd() {
@@ -1923,18 +1921,18 @@
     document.getElementById('progressCount').textContent = 'Step ' + n + ' of ' + TOTAL_STEPS;
     document.getElementById('progressFill').style.width = (n / TOTAL_STEPS * 100) + '%';
 
-    if (n === 1) {
-      var ta = document.getElementById('capture-context-field');
-      var cbtn = document.getElementById('capture-context-continue');
-      if (ta) ta.value = state.context || '';
-      if (cbtn) {
-        cbtn.disabled = ((ta && ta.value) || '').trim().length < 3;
+    if (n === 7) {
+      var ta7 = document.getElementById('capture-context-field');
+      var cbtn7 = document.getElementById('capture-context-continue');
+      if (ta7) ta7.value = state.context || '';
+      if (cbtn7) {
+        cbtn7.disabled = ((ta7 && ta7.value) || '').trim().length < 3;
       }
     }
 
     var cur = document.getElementById('step-' + n);
-    if (cur && n >= 2) {
-      var bi = n - 2;
+    if (cur && n >= 1 && n <= 6) {
+      var bi = n - 1;
       cur.querySelectorAll('.option-item').forEach(function(o) {
         o.classList.remove('dim', 'selected');
         var bit = parseInt(o.getAttribute('data-bit'), 10);
@@ -2166,8 +2164,6 @@
     goTo(1);
     resetLiveWaiting();
     document.getElementById('flow-wrap').style.display = 'block';
-    var ph = document.getElementById('phase-header');
-    if (ph) ph.style.display = 'none';
     if (window.StephuaryDiagnosticMobile && typeof window.StephuaryDiagnosticMobile.scrollToActiveQuestion === 'function') {
       window.requestAnimationFrame(function () {
         window.StephuaryDiagnosticMobile.scrollToActiveQuestion({ behavior: 'auto' });
@@ -2179,8 +2175,6 @@
   }
 
   function startFlow(skipLanding) {
-    var ph = document.getElementById('phase-header');
-    if (ph) ph.style.display = 'none';
     document.getElementById('flow-wrap').style.display = 'block';
     if (!document.getElementById('step-1')) {
       buildRail();
@@ -2211,37 +2205,33 @@
     while (state.bits.length < TOTAL_Q) state.bits.push(null);
     if (state.bits.length > TOTAL_Q) state.bits = state.bits.slice(0, TOTAL_Q);
 
-    if (!String(state.context).trim()) {
-      state.currentStep = 1;
-      if (migratedFromV2Ten) saveStorage();
-      var ph0 = document.getElementById('phase-header');
-      if (ph0) ph0.style.display = 'none';
-      document.getElementById('flow-wrap').style.display = 'block';
-      if (!document.getElementById('step-1')) {
-        buildRail();
-        buildSteps();
+    var ctxOk = String(state.context).trim().length >= 3;
+    var firstEmpty = state.bits.indexOf(null);
+
+    document.getElementById('flow-wrap').style.display = 'block';
+    if (!document.getElementById('step-1')) {
+      buildRail();
+      buildSteps();
+    }
+
+    if (firstEmpty === -1) {
+      if (ctxOk) {
+        if (migratedFromV2Ten) saveStorage();
+        document.getElementById('building-overlay').style.display = 'flex';
+        setTimeout(function() {
+          showSummary();
+        }, 700);
+        return true;
       }
-      goTo(1);
+      state.currentStep = 7;
+      if (migratedFromV2Ten) saveStorage();
+      startFlow(true);
+      goTo(7);
       updateLivePanel();
       return true;
     }
 
-    var firstEmpty = state.bits.indexOf(null);
-    if (firstEmpty === -1) {
-      var ph2 = document.getElementById('phase-header');
-      if (ph2) ph2.style.display = 'none';
-      document.getElementById('flow-wrap').style.display = 'block';
-      if (!document.getElementById('step-1')) {
-        buildRail();
-        buildSteps();
-      }
-      document.getElementById('building-overlay').style.display = 'flex';
-      setTimeout(function() {
-        showSummary();
-      }, 700);
-      return true;
-    }
-    state.currentStep = firstEmpty + 2;
+    state.currentStep = firstEmpty + 1;
     if (migratedFromV2Ten) saveStorage();
     startFlow(true);
     updateLivePanel();
@@ -2266,11 +2256,6 @@
     startFlow(false);
   });
 
-  document.getElementById('btnSkip').addEventListener('click', function() {
-    if (resumeFromStorage()) return;
-    startFlow(false);
-  });
-
   document.getElementById('btnCopy').addEventListener('click', copyAll);
   document.getElementById('btnExport').addEventListener('click', doExport);
   document.getElementById('btnReset').addEventListener('click', resetAll);
@@ -2281,13 +2266,9 @@
     }
   });
 
-  (function() {
-    var st = loadStorage();
-    var hasBits = st && st.bits && st.bits.some(function(b) { return b !== null && b !== undefined; });
-    var hasCtx = st && String(st.context || '').trim();
-    if (hasBits || hasCtx) {
-      document.getElementById('btnSkip').textContent = 'Continue';
-    }
+  (function bootCapture() {
+    if (resumeFromStorage()) return;
+    startFlow(false);
   })();
 
   setTimeout(function() {
