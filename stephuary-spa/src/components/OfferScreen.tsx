@@ -1,4 +1,5 @@
 import {
+  highTicketSectionLabels,
   offerInstallTiers,
   offerSectionLabels,
   offerTransitionCopy,
@@ -40,6 +41,7 @@ export function OfferScreen({
   }
 
   const L = offerSectionLabels;
+  const HT = highTicketSectionLabels;
 
   return (
     <ScreenShell animKey={animKey} className="offer-screen">
@@ -54,6 +56,8 @@ export function OfferScreen({
         <div className="install-tier-stack">
           {offerInstallTiers.map((tier) => {
             const rec = tierMatchesRecommended(tier.id, recommendedTier);
+            const isHigh = tier.id === "breakdown";
+
             return (
               <ScrollReveal key={tier.id} className="install-tier-reveal">
                 <article
@@ -62,18 +66,68 @@ export function OfferScreen({
                   {rec ? <span className="install-rec-pill">Matches your answers</span> : null}
                   <h3 className="install-card-title install-card-title--headline">{tier.headline}</h3>
 
-                  <p className="tier-section-label">{L.whatYouGet}</p>
+                  {isHigh && "whatIDo" in tier && tier.whatIDo ? (
+                    <>
+                      <p className="tier-section-label">{HT.whatIDo}</p>
+                      <ul className="tier-bullet-list">
+                        {tier.whatIDo.map((item) => (
+                          <li key={item}>{item}</li>
+                        ))}
+                      </ul>
+                    </>
+                  ) : null}
+
+                  <p className="tier-section-label">{isHigh ? HT.whatYouGet : L.whatYouGet}</p>
                   <ul className="tier-bullet-list">
                     {tier.whatYouGet.map((item) => (
                       <li key={item}>{item}</li>
                     ))}
                   </ul>
 
-                  <p className="tier-section-label">{L.whatChanges}</p>
-                  <p className="tier-outcome">{tier.whatChanges}</p>
+                  <p className="tier-section-label">{isHigh ? HT.whatChanges : L.whatChanges}</p>
+                  {isHigh && "beforeAfter" in tier && tier.beforeAfter ? (
+                    <div className="tier-before-after">
+                      <p className="tier-ba-line">
+                        <span className="tier-ba-tag">{HT.before}</span> {tier.beforeAfter.before}
+                      </p>
+                      <p className="tier-ba-line">
+                        <span className="tier-ba-tag">{HT.after}</span> {tier.beforeAfter.after}
+                      </p>
+                    </div>
+                  ) : !isHigh ? (
+                    <p className="tier-outcome">{tier.whatChanges}</p>
+                  ) : null}
 
-                  <p className="tier-section-label">{L.time}</p>
+                  <p className="tier-section-label">{isHigh ? HT.timeline : L.time}</p>
                   <p className="tier-time">{tier.time}</p>
+
+                  {isHigh && "whoFor" in tier && tier.whoFor ? (
+                    <>
+                      <p className="tier-section-label">{HT.whoFor}</p>
+                      <ul className="tier-bullet-list tier-bullet-list--who">
+                        {tier.whoFor.map((item) => (
+                          <li key={item}>{item}</li>
+                        ))}
+                      </ul>
+                    </>
+                  ) : null}
+
+                  {isHigh && "afterApply" in tier && tier.afterApply ? (
+                    <div className="tier-after-apply">
+                      <p className="tier-section-label">{HT.afterApply}</p>
+                      <ol className="tier-after-apply-list">
+                        <li>
+                          <strong>{HT.reviewStep}.</strong> {tier.afterApply.review}
+                        </li>
+                        <li>
+                          <strong>{HT.decisionStep}.</strong> {tier.afterApply.decision}
+                        </li>
+                        <li>
+                          <strong>{HT.nextStep}.</strong> {tier.afterApply.nextAction}
+                        </li>
+                      </ol>
+                    </div>
+                  ) : null}
 
                   <p className="install-card-price">{tier.price}</p>
                   <div className="cta-row install-card-cta">

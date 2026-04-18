@@ -145,6 +145,60 @@ export const offerSectionLabels = {
   time: "When you get value",
 } as const;
 
+/** High-ticket only — done-with-you / done-for-you build ($1k–$10k+). */
+export const highTicketSectionLabels = {
+  whatIDo: "What I do",
+  whatYouGet: "What you get",
+  whatChanges: "What changes",
+  before: "Before",
+  after: "After",
+  timeline: "Timeline",
+  whoFor: "Who this is for",
+  afterApply: "What happens after you apply",
+  reviewStep: "Review",
+  decisionStep: "Decision",
+  nextStep: "Next action",
+} as const;
+
+export const highTicketOfferCopy = {
+  headline:
+    "I restructure your offers, pricing, and week so the right buyers pay—without confusion, rework, or four competing priorities.",
+  whatIDo: [
+    "Rip apart overlapping offers: what stays, what merges, what dies",
+    "Rewrite pricing and scope so calls stop bleeding margin",
+    "Rebuild your main buyer touchpoint (page, deck, or one-pager) for one buyer",
+    "Lock delivery and calendar rules so the work that pays wins the week",
+    "Run weekly working sessions until the new path is live in your business",
+  ],
+  whatYouGet: [
+    "A written map: where money comes in, where it leaks, ranked by pain",
+    "A numbered change list: what moves first, who owns it, rough upside",
+    "Drafted or rewritten copy for your primary sales touchpoint",
+    "A price and scope table you can quote on calls",
+    "30 days of async tweaks after handoff",
+  ],
+  beforeAfter: {
+    before:
+      "Too many offers, soft pricing, buyer confused, your calendar owned by everything except the work that pays.",
+    after: "One primary buyer, one main offer, clear dollars, a week built around delivery.",
+  },
+  time: "Engagement starts within 2 weeks of cleared deposit. First working session in week one. Most builds: 4–8 weeks unless we widen scope.",
+  whoFor: [
+    "You're already selling—roughly $10k+ rolling revenue, not ideation",
+    "You'll bring real numbers, pipeline reality, and one honest week of calendar data",
+    "You can show up 60–90 minutes weekly while we build",
+    "You're paying for execution and decisions, not opinions in a folder",
+  ],
+  afterApply: {
+    review: "I read your application and diagnostic. If something's missing, you get one direct ask—not a thread.",
+    decision: "Within 5 business days: yes (fit + slot) or no (one line why—usually timing or scope).",
+    nextAction:
+      "Yes → you get calendar, deposit invoice, and start date. No → you're not stuck on a nurture list.",
+  },
+  price: "$1,000–$10,000+ · final number on a 20-minute scope call after apply",
+  cta: "Apply now",
+} as const;
+
 export const offerInstallTiers = [
   {
     id: "path" as const,
@@ -177,18 +231,7 @@ export const offerInstallTiers = [
   },
   {
     id: "breakdown" as const,
-    headline: "Done-for-you: I rebuild your revenue path with you.",
-    whatYouGet: [
-      "Full written audit: buyers, offers, price, calendar, handoffs",
-      "Ordered plan: what changes first, with rough numbers",
-      "Hands-on rewrites: pages, decks, outbound where needed",
-      "Weekly calls until the path is live",
-      "30 days of email after handoff for tweaks",
-    ],
-    whatChanges: "One buyer, one main offer, one week that protects delivery.",
-    time: "Scope on a call. Work starts within 2 weeks of deposit.",
-    price: "Custom",
-    cta: "Book a custom build",
+    ...highTicketOfferCopy,
   },
 ] as const;
 
