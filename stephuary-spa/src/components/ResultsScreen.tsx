@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from "react";
 import { usePostActionMoment } from "../context/PostActionMomentContext";
 import {
+  resultsDecisionLanguage,
   resultsDecisionMomentCopy,
   resultsEmailCopy,
   resultsImpliedProof,
@@ -147,6 +148,10 @@ export function ResultsScreen({ sections, primaryCta, animKey }: Props) {
         ref={ctaReveal.ref}
         className={`results-decision-cta-wrap scroll-reveal ${ctaReveal.inView ? "scroll-reveal--in" : ""}`.trim()}
       >
+        <div className="results-decision-language" role="note">
+          <p className="results-decision-language-line">{resultsDecisionLanguage.beforeCtaLine1}</p>
+          <p className="results-decision-language-line">{resultsDecisionLanguage.beforeCtaLine2}</p>
+        </div>
         <div className="cta-row results-decision-cta-row">
           <button type="button" className="btn btn-primary btn-block" onClick={primaryCta.onClick}>
             {primaryCta.label}
@@ -166,6 +171,9 @@ export function ResultsScreen({ sections, primaryCta, animKey }: Props) {
         <button type="button" className="btn btn-secondary btn-block results-share-btn" onClick={() => void copyShareLink()}>
           {shareCopied ? resultsShareCopy.copied : resultsShareCopy.cta}
         </button>
+        <p className="results-end-decision" role="note">
+          {resultsDecisionLanguage.endOfResults}
+        </p>
       </div>
     </ScreenShell>
   );

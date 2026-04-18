@@ -1,6 +1,5 @@
 import { useEffect } from "react";
 import { applyQualifyModalCopy } from "../data/siteCopy";
-import { ExclusionAuthorityBlock } from "./ExclusionAuthorityBlock";
 
 type Props = {
   open: boolean;
@@ -36,8 +35,9 @@ export function ApplyQualifyModal({ open, onClose, onConfirm }: Props) {
         onClick={(e) => e.stopPropagation()}
       >
         <h2 id="apply-qualify-title" className="apply-qualify-modal-title">
-          {copy.title}
+          {copy.headline}
         </h2>
+        <p className="apply-qualify-modal-filter">{copy.filterLine}</p>
         <p className="apply-qualify-modal-prompt">{copy.prompt}</p>
         <ul className="apply-qualify-modal-bullets">
           {copy.bullets.map((line) => (
@@ -53,7 +53,7 @@ export function ApplyQualifyModal({ open, onClose, onConfirm }: Props) {
           </span>
           {copy.cta}
         </button>
-        <ExclusionAuthorityBlock className="exclusion-authority--apply-gate" />
+        <p className="apply-qualify-modal-review">{copy.belowButton}</p>
       </div>
     </div>
   );

@@ -26,17 +26,19 @@ export const postActionMomentCopy = {
   line2: "You need a decision.",
 } as const;
 
-/** Shown before the access form; no fields until user confirms. */
+/** Shown before the access form; filter, not pitch. */
 export const applyQualifyModalCopy = {
-  title: "This is not for everyone.",
+  headline: "This is where we fix it properly.",
+  filterLine: "Not everyone gets in.",
   prompt: "Answer yes to these:",
   bullets: [
     "You already have something real — it's just not converting",
-    "You're willing to change how you're operating",
-    "You want this solved, not explored",
+    "You're ready to change how you're operating",
+    "You want this solved, not discussed",
   ],
   bridge: "If that's you:",
-  cta: "Submit application",
+  cta: "Apply now",
+  belowButton: "I review every submission personally.",
 } as const;
 
 export const accessRequestCopy = {
@@ -111,6 +113,8 @@ export const diagnosticCopy = {
   nearComplete: "You're close. Most people don't get this far.",
   timeExpectation: "This takes about 3 minutes.",
   midpointMomentum: "Most people drop here. Keep going.",
+  /** Midpoint echo — action over information. */
+  decisionEcho: "This doesn't get fixed with more thinking.",
   authorityFilter:
     "This is where most people realize they've been solving the wrong problem.",
 } as const;
@@ -132,6 +136,13 @@ export const resultsImpliedProof = {
 export const exclusionAuthorityCopy = {
   line1: "This won't help if you're still figuring out what you want to do.",
   line2: "It's for people who already have something real, and need to make it work.",
+} as const;
+
+/** Decision language — problem is action, not information (2–3 surfaces total). */
+export const resultsDecisionLanguage = {
+  beforeCtaLine1: "You don't need another idea.",
+  beforeCtaLine2: "You need to decide what this is.",
+  endOfResults: "You already know enough. You just haven't committed.",
 } as const;
 
 /** Final results: tension, fork, identity filter (before email + primary CTA). */

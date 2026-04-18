@@ -83,9 +83,10 @@ export function QuestionScreen({
           </p>
         ) : null}
         {showMidpoint ? (
-          <p className="question-midpoint" role="note">
-            {diagnosticCopy.midpointMomentum}
-          </p>
+          <div className="question-midpoint-wrap" role="note">
+            <p className="question-midpoint">{diagnosticCopy.midpointMomentum}</p>
+            <p className="question-midpoint-echo">{diagnosticCopy.decisionEcho}</p>
+          </div>
         ) : null}
         {showAuthorityFilter ? (
           <p className="question-authority-filter" role="note">
