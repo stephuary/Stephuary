@@ -161,10 +161,8 @@ export default function App() {
   return (
     <div className={`app ${showNav ? "app--with-nav" : ""}`.trim()}>
       <div className="aura-field" aria-hidden="true">
-        <div className="aura-layer aura-layer--glow-a" />
-        <div className="aura-layer aura-layer--glow-b" />
-        <div className="aura-layer aura-layer--glow-c" />
-        <div className="aura-layer aura-layer--glow-d" />
+        <div className="aura-layer aura-layer--core" />
+        <div className="aura-layer aura-layer--halo" />
         <div className="aura-depth" />
         <div className="aura-grain" />
         <div className="aura-vignette" />

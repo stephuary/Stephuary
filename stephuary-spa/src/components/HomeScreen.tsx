@@ -11,14 +11,11 @@ export function HomeScreen({ animKey, onStart, onWatchBreakdown }: Props) {
   return (
     <ScreenShell animKey={animKey} className="home-screen">
       <div className="home-inner home-inner--entrance">
-        <h1 className="home-headline">{homeCopy.headline}</h1>
-        <p className="home-sub">{homeCopy.sub}</p>
-        <p className="home-authority">{homeCopy.authorityLine1}</p>
-        <p className="home-authority home-authority--second">{homeCopy.authorityLine2}</p>
-        <p className="home-micro">{homeCopy.micro}</p>
-        <p className="home-qualifier">{homeCopy.qualifier}</p>
-        <p className="home-pre-diagnostic">{homeCopy.preDiagnosticLine1}</p>
-        <p className="home-pre-diagnostic home-pre-diagnostic--second">{homeCopy.preDiagnosticLine2}</p>
+        <div className="home-hero">
+          <h1 className="home-headline">{homeCopy.headline}</h1>
+          <p className="home-sub">{homeCopy.sub}</p>
+          <p className="home-authority">{homeCopy.authority}</p>
+        </div>
         <div className="cta-row home-primary-cta">
           <button type="button" className="btn btn-primary btn-block" onClick={onStart}>
             {homeCopy.cta}

@@ -3,12 +3,7 @@
 export const homeCopy = {
   headline: "You already have something people would pay for.",
   sub: "You'll see what you can sell, who already pays for it, and what's blocking it.",
-  authorityLine1: "Most people are not stuck.",
-  authorityLine2: "They're building in the wrong direction.",
-  micro: "25-question diagnostic. Clear direction in minutes.",
-  qualifier: "For people with experience, skills, or ideas that aren't translating into money yet.",
-  preDiagnosticLine1: "You don't need more ideas.",
-  preDiagnosticLine2: "You need to see what's actually happening.",
+  authority: "Most people are not stuck—they're building in the wrong direction.",
   cta: "Start diagnostic",
   videoTeaseLead: "If you want to understand how this works first:",
   videoTeaseCta: "Watch breakdown",
