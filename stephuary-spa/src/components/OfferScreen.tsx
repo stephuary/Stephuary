@@ -1,5 +1,5 @@
 import { useId, useState } from "react";
-import { offerCopy, type OfferTierId } from "../data/siteCopy";
+import { offerCopy, offerFrictionCopy, type OfferTierId } from "../data/siteCopy";
 import { ScrollReveal } from "./ScrollReveal";
 import { ScreenShell } from "./ScreenShell";
 
@@ -18,6 +18,7 @@ export function OfferScreen({ animKey, onComplete }: Props) {
         <ScrollReveal className="offer-intro-reveal">
           <header className="offer-intro">
             <h2 className="offer-intro-headline">{offerCopy.intro.headline}</h2>
+            <p className="offer-intro-bridge">{offerCopy.intro.bridge}</p>
             <p className="offer-intro-sub">{offerCopy.intro.sub}</p>
           </header>
         </ScrollReveal>
@@ -34,6 +35,7 @@ export function OfferScreen({ animKey, onComplete }: Props) {
                   <li key={b}>{b}</li>
                 ))}
               </ul>
+              <p className="offer-friction">{offerFrictionCopy}</p>
               <button
                 type="button"
                 className="btn btn-primary btn-block offer-primary-btn"
@@ -71,6 +73,9 @@ export function OfferScreen({ animKey, onComplete }: Props) {
                 <span className="offer-card-title offer-card-title--sm">
                   {tier.title}
                 </span>
+                {"trustLine" in tier && tier.trustLine ? (
+                  <p className="offer-card-trust">{tier.trustLine}</p>
+                ) : null}
                 {"opening" in tier && tier.opening ? (
                   <p className="offer-card-opening">{tier.opening}</p>
                 ) : null}

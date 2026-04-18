@@ -1,4 +1,5 @@
 import type { Question } from "../data/questions";
+import { diagnosticCopy } from "../data/siteCopy";
 import { ProgressBar } from "./ProgressBar";
 import { ScreenShell } from "./ScreenShell";
 
@@ -32,6 +33,7 @@ export function QuestionScreen({
   animKey,
 }: Props) {
   const canContinue = selectedId !== null;
+  const nearComplete = progress.total > 0 && progress.current >= progress.total - 1;
 
   return (
     <ScreenShell animKey={animKey} className="question-screen question-slide">
@@ -65,6 +67,9 @@ export function QuestionScreen({
             </button>
           </div>
         </header>
+        {nearComplete ? (
+          <p className="question-near-complete">{diagnosticCopy.nearComplete}</p>
+        ) : null}
         <h2 className="question-title" id={`q-${question.id}`}>
           {question.prompt}
         </h2>

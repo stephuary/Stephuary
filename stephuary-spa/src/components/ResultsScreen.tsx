@@ -1,4 +1,4 @@
-import { resultsBridgeCopy, resultsStakesCopy } from "../data/siteCopy";
+import { resultsBridgeCopy, resultsStakesCopy, resultsTransitionCopy } from "../data/siteCopy";
 import { useScrollRevealOnce } from "../hooks/useScrollRevealOnce";
 import type { SectionOutput } from "../lib/outputGenerator";
 import { ResultSection } from "./ResultSection";
@@ -17,6 +17,9 @@ export function ResultsScreen({ sections, primaryCta, animKey }: Props) {
   return (
     <ScreenShell animKey={animKey} className="results-screen">
       <header className="results-header results-header--enter">
+        <p className="results-transition" role="note">
+          {resultsTransitionCopy}
+        </p>
         <h1 className="results-title">Your readout</h1>
       </header>
       <div className="results-body">

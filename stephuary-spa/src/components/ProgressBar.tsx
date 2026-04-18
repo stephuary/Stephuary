@@ -1,3 +1,5 @@
+import { diagnosticCopy } from "../data/siteCopy";
+
 type Props = {
   current: number;
   total: number;
@@ -20,6 +22,7 @@ export function ProgressBar({ current, total, phaseCurrent, phaseTotal }: Props)
       <div className="progress-track" aria-hidden>
         <div className="progress-fill progress-transition" style={{ width: `${pct}%` }} />
       </div>
+      <p className="progress-hint">{diagnosticCopy.progressHint}</p>
     </div>
   );
 }
