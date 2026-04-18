@@ -207,9 +207,9 @@ export const offerFrictionCopy =
 
 /** Lead line under intro bridge — keyed by `RecommendedTier` from `resolveRecommendedTier`. */
 export const offerTierLead = {
-  entry: "The fastest way forward is to turn this into something you can charge for.",
-  focused: "One thing is clearly off. Fix that first.",
-  full: "There's more than one issue here. This shows you everything at once.",
+  entry: "The obvious next step is to turn what you saw into one path.",
+  focused: "One problem is loud enough to fix on its own.",
+  full: "When everything connects, you need the full map — not another patch.",
 } as const;
 
 /** True value anchor — time + complexity, not money. */
@@ -234,7 +234,15 @@ export const offerDecisionShortcut = {
   full: "Stop guessing entirely",
 } as const;
 
-export const offerSeeDetailsCta = "See details" as const;
+/** Collapsed card — expands to show price + full copy. */
+export const offerSeeDetailsCta = "Details" as const;
+
+/** Primary action in scope row (matches tier CTA intent). */
+export const offerScopePrimaryLabel = {
+  path: "Start here",
+  fix: "Fix this properly",
+  breakdown: "See the full system",
+} as const;
 
 export const offerScopeInlineCopy = {
   header: "Do you want to keep this focused or go deeper?",
@@ -278,67 +286,69 @@ export const offerScrollNudge = {
 } as const;
 
 export const offerCopy = {
-  anchor: {
-    line1: "Most people try to fix everything at once.",
-    line2: "That's why nothing changes.",
-    line3: "This is layered so you only pay for what you actually need.",
-  },
   intro: {
-    headline: "Start here.",
-    bridge: "You don't need more ideas. You need to apply one path.",
+    headline: "Next step",
+    bridge: "This continues what you just saw — pick how deep you want to go.",
   },
+  whatYouGetHeading: "What you get",
   primary: {
     id: "path" as const,
     price: "$34",
-    label: "START HERE",
-    subline: "This is the fastest way to move right now.",
-    collapsedOutcome: "A clear offer you can sell this week.",
-    collapsedTeaser: "Turns your readout into one thing you can charge for.",
-    title: "Turn This Into Something You Can Charge For This Week",
-    line:
-      "This takes what you just saw and turns it into something you can sell immediately.",
-    urgency: "Most people wait. That's why nothing changes.",
-    bullets: [
-      "You pick one path from your results",
-      "It gets turned into a clear offer",
-      "You leave with something you can actually charge for",
+    title: "Fix the direction",
+    collapsedTagline: "One clear path forward",
+    bodyLines: [
+      "This takes what you just saw",
+      "and turns it into one clear path.",
+      "",
+      "Not more options.",
+      "Not more ideas.",
+      "",
+      "One direction that actually converts.",
     ],
-    decisionGuide: "Use this if you want to move immediately.",
-    socialCue: "Most people start here.",
-    cta: "Start here",
+    whatYouGet: ["What to focus on", "What to stop", "What actually leads to money"],
+    subtextLines: [
+      "This is for people who want to move this week.",
+      "If you're still exploring, don't buy it.",
+    ],
   },
   secondary: [
     {
       id: "fix" as const,
       price: "$197",
-      label: "WHEN SOMETHING STILL ISN'T WORKING",
-      title: "Fix What's Not Working",
-      collapsedOutcome: "One problem fixed properly — not a full review.",
-      collapsedTeaser: "Isolates the right issue so you stop patching symptoms.",
-      trustLine: "One thing. Looked at properly.",
-      opening: "This isolates one problem and fixes it properly.",
-      lines: [
+      title: "Fix one thing properly",
+      collapsedTagline: "Solve one real problem",
+      bodyLines: [
         "You don't need everything reviewed.",
+        "",
         "You need the right thing fixed.",
+        "",
+        "This isolates one part of your work",
+        "and shows exactly what's breaking it.",
       ],
-      bullets: ["Built to be used, not read."],
-      decisionGuide: "Use this if one thing is clearly off.",
-      cta: "Fix this",
+      whatYouGet: ["What's actually wrong", "Why it's not working", "What to change immediately"],
+      process: {
+        intro: "You choose one area:",
+        areas: ["offer", "positioning", "structure", "landing page"],
+        closing: "Then it gets reviewed directly.",
+      },
+      subtextLines: ["Most people try to fix everything.", "That's why nothing improves."],
     },
     {
       id: "breakdown" as const,
       price: "$750",
-      label: "WHEN IT'S NOT ONE ISSUE",
-      title: "Full Breakdown",
-      collapsedOutcome: "See the whole system at once.",
-      collapsedTeaser: "Maps every layer so you stop guessing what to fix next.",
-      line: "This looks across everything and shows you what's actually happening.",
-      timeSave: "If you're dealing with multiple problems, this is faster than guessing.",
-      decisionGuide: "Use this if everything feels unclear.",
-      cta: "See everything clearly",
+      title: "Fix the full system",
+      collapsedTagline: "Remove confusion entirely",
+      bodyLines: [
+        "This looks across everything you're running",
+        "— not one piece in isolation.",
+        "",
+        "You get the full map:",
+        "what conflicts, what to fix first, and what can wait.",
+      ],
+      whatYouGet: ["The whole picture", "Where things work against each other", "A clear order of operations"],
+      subtextLines: ["Use this when one problem won't stay in a box."],
     },
   ] as const,
-  seeFullOptions: "Or go deeper if needed.",
 } as const;
 
 export type OfferTierId =

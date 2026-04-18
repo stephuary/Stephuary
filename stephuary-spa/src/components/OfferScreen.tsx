@@ -1,21 +1,16 @@
-import { useEffect, useId, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   highTicketGateCopy,
   offerCopy,
-  offerDecisionShortcut,
-  offerFrictionCopy,
   offerHighTicketShadow,
-  offerInvisibleAnchor,
-  offerMomentumCopy,
   offerPostFixUpsell,
   offerPostPathUpsell,
   offerPostPricingAccess,
   offerScrollNudge,
   offerScopeInlineCopy,
-  offerBeforeOptionsCopy,
+  offerScopePrimaryLabel,
   offerSeeDetailsCta,
   offerTierLead,
-  offerValueAnchor,
   operatorOSGateCopy,
   resultsScaleCopy,
   type OfferTierId,
@@ -46,11 +41,13 @@ function tierMatchesOffer(tier: RecommendedTier, offer: "path" | "fix" | "breakd
 
 function OfferScopeInline({
   pendingTier,
+  primaryLabel,
   onKeepFocused,
   onLookAcross,
   onFixOne,
 }: {
   pendingTier: OfferTierId;
+  primaryLabel: string;
   onKeepFocused: () => void;
   onLookAcross: () => void;
   onFixOne: () => void;
@@ -63,7 +60,7 @@ function OfferScopeInline({
       <h3 className="offer-scope-inline-title">{offerScopeInlineCopy.header}</h3>
       <div className="offer-scope-inline-actions">
         <button type="button" className="btn btn-primary btn-block" onClick={onKeepFocused}>
-          {offerScopeInlineCopy.keepFocused}
+          {primaryLabel}
         </button>
         {showLookAcross ? (
           <button type="button" className="btn btn-secondary btn-block" onClick={onLookAcross}>
@@ -92,13 +89,11 @@ export function OfferScreen({
   onPostOfferAccess,
   onComplete,
 }: Props) {
-  const [showSecondary, setShowSecondary] = useState(() => recommendedTier !== "entry");
   const [expandedTier, setExpandedTier] = useState<OfferTierId | null>(null);
   const [postUpsell, setPostUpsell] = useState<null | "path" | "fix">(null);
   const [hasClickedOffer, setHasClickedOffer] = useState(false);
   const [scrollNudgeVisible, setScrollNudgeVisible] = useState(false);
 
-  const secondaryRegionId = useId();
   const pathRef = useRef<HTMLDivElement>(null);
   const fixRef = useRef<HTMLDivElement>(null);
   const fullRef = useRef<HTMLDivElement>(null);
@@ -122,7 +117,7 @@ export function OfferScreen({
       target.scrollIntoView({ behavior: "smooth", block: "center" });
     }, 120);
     return () => window.clearTimeout(t);
-  }, [recommendedTier, showSecondary]);
+  }, [recommendedTier]);
 
   useEffect(() => {
     const el = scrollSentinelRef.current;
@@ -178,47 +173,30 @@ export function OfferScreen({
   }
 
   const nudgeCls = showScrollNudgeHighlight ? " offer-card--scroll-nudge" : "";
-  const primaryCardClass = `offer-card offer-card--primary ${
-    recPath ? "offer-card--primary-dominant offer-card--recommended" : "offer-card--deemphasized"
-  }${recPath ? nudgeCls : ""}`.trim();
 
-  const pathExpanded = expandedTier === "path";
+  const offerTiers = [offerCopy.primary, ...offerCopy.secondary] as const;
+
+  function tierCardRef(id: OfferTierId) {
+    if (id === "path") return pathRef;
+    if (id === "fix") return fixRef;
+    return fullRef;
+  }
+
+  function tierRecommended(id: OfferTierId) {
+    if (id === "path") return recPath;
+    if (id === "fix") return recFix;
+    return recFull;
+  }
 
   return (
     <ScreenShell animKey={animKey} className="offer-screen">
       <div className="offer-inner">
-        <ScrollReveal className="offer-value-anchor-reveal">
-          <div className="offer-value-anchor" role="note">
-            <p className="offer-value-anchor-line">{offerValueAnchor.line1}</p>
-            <p className="offer-value-anchor-line">{offerValueAnchor.line2}</p>
-          </div>
-        </ScrollReveal>
-
-        <ScrollReveal className="offer-momentum-reveal">
-          <div className="offer-momentum" role="note">
-            <p className="offer-momentum-line">{offerMomentumCopy.line1}</p>
-            <p className="offer-momentum-line">{offerMomentumCopy.line2}</p>
-          </div>
-        </ScrollReveal>
-
-        <ScrollReveal className="offer-invisible-anchor-reveal">
-          <p className="offer-invisible-anchor">{offerInvisibleAnchor}</p>
-        </ScrollReveal>
-
         <ScrollReveal className="offer-intro-reveal">
           <header className="offer-intro">
             <h2 className="offer-intro-headline">{offerCopy.intro.headline}</h2>
             <p className="offer-intro-bridge">{offerCopy.intro.bridge}</p>
             <p className="offer-intro-sub offer-intro-sub--dynamic">{tierLead}</p>
           </header>
-        </ScrollReveal>
-
-        <ScrollReveal className="offer-anchor-reveal">
-          <div className="offer-anchor" role="note">
-            <p className="offer-anchor-line">{offerCopy.anchor.line1}</p>
-            <p className="offer-anchor-line">{offerCopy.anchor.line2}</p>
-            <p className="offer-anchor-line offer-anchor-line--emph">{offerCopy.anchor.line3}</p>
-          </div>
         </ScrollReveal>
 
         {showOperatorOSGate || showHighTicketAccess ? (
@@ -338,151 +316,84 @@ export function OfferScreen({
           </div>
         ) : (
           <>
-            <ScrollReveal className="offer-before-options-reveal">
-              <div className="offer-before-options" role="note">
-                <p className="offer-before-options-line">{offerBeforeOptionsCopy.line1}</p>
-                <p className="offer-before-options-line offer-before-options-line--emph">
-                  {offerBeforeOptionsCopy.line2}
-                </p>
-              </div>
-            </ScrollReveal>
-            <ScrollReveal className="offer-primary-reveal">
-              <div className="offer-primary-wrap">
-                <div ref={pathRef} className={primaryCardClass}>
-                  {recPath ? <span className="offer-recommended-pill">Recommended for you</span> : null}
-                  <span className="offer-card-label">{offerCopy.primary.label}</span>
-                  <span className="offer-card-title">{offerCopy.primary.title}</span>
-                  <p className="offer-card-outcome">{offerCopy.primary.collapsedOutcome}</p>
-                  <p className="offer-card-teaser">{offerCopy.primary.collapsedTeaser}</p>
-
-                  {pathExpanded ? (
-                    <>
-                      <span className="offer-card-price">{offerCopy.primary.price}</span>
-                      <p className="offer-card-time-compress">{offerDecisionShortcut.entry}</p>
-                      <p className="offer-card-eyebrow-sub">{offerCopy.primary.subline}</p>
-                      <p className="offer-card-line">{offerCopy.primary.line}</p>
-                      <p className="offer-card-urgency">{offerCopy.primary.urgency}</p>
-                      <ul className="offer-card-bullets offer-card-bullets--primary">
-                        {offerCopy.primary.bullets.map((b) => (
-                          <li key={b}>{b}</li>
-                        ))}
-                      </ul>
-                      <p className="offer-friction">{offerFrictionCopy}</p>
-                      <p className="offer-card-decision-guide">{offerCopy.primary.decisionGuide}</p>
-                      <OfferScopeInline
-                        pendingTier="path"
-                        onKeepFocused={handleKeepFocused}
-                        onLookAcross={handleLookAcross}
-                        onFixOne={handleFixOne}
-                      />
-                      <p className="offer-card-social-cue">{offerCopy.primary.socialCue}</p>
-                    </>
-                  ) : (
-                    <button
-                      type="button"
-                      className={`btn btn-block offer-primary-btn ${recPath ? "btn-primary" : "btn-secondary offer-cta--deemp"}`.trim()}
-                      onClick={() => expandTier("path")}
-                      aria-expanded={pathExpanded}
-                    >
-                      {offerSeeDetailsCta}
-                    </button>
-                  )}
-                </div>
-
-                <button
-                  type="button"
-                  className="offer-see-full"
-                  aria-expanded={showSecondary}
-                  aria-controls={secondaryRegionId}
-                  onClick={() => setShowSecondary((v) => !v)}
-                >
-                  {offerCopy.seeFullOptions}
-                </button>
-              </div>
-            </ScrollReveal>
-
-            <div
-              id={secondaryRegionId}
-              className={`offer-secondary ${showSecondary ? "offer-secondary--visible" : ""}`}
-              role="region"
-              aria-label="Additional paid options"
-              aria-hidden={!showSecondary}
-            >
-              {offerCopy.secondary.map((tier) => {
-                const isFix = tier.id === "fix";
-                const recommended = isFix ? recFix : recFull;
-                const cardRef = isFix ? fixRef : fullRef;
-                const shortcutKey = isFix ? "focused" : "full";
-                const secNudge = recommended && showScrollNudgeHighlight ? nudgeCls : "";
+            <div className="offer-tier-stack">
+              {offerTiers.map((tier) => {
+                const recommended = tierRecommended(tier.id);
                 const tierExpanded = expandedTier === tier.id;
+                const secNudge = recommended && showScrollNudgeHighlight ? nudgeCls : "";
+                const cardClass = `offer-card offer-card--tier ${
+                  recommended ? "offer-card--recommended" : "offer-card--deemphasized"
+                }${secNudge}`.trim();
+                const process = "process" in tier ? tier.process : undefined;
+
                 return (
                   <ScrollReveal key={tier.id} className="offer-tier-reveal">
-                    <div
-                      ref={cardRef}
-                      className={`offer-card offer-card--secondary ${
-                        recommended ? "offer-card--recommended" : "offer-card--deemphasized"
-                      }${secNudge}`.trim()}
-                    >
+                    <div ref={tierCardRef(tier.id)} className={cardClass}>
                       {recommended ? (
                         <span className="offer-recommended-pill offer-recommended-pill--secondary">
                           Recommended for you
                         </span>
                       ) : null}
-                      {"label" in tier && tier.label ? (
-                        <span className="offer-card-label offer-card-label--secondary">{tier.label}</span>
-                      ) : null}
-                      <span className="offer-card-title offer-card-title--sm">{tier.title}</span>
-                      <p className="offer-card-outcome offer-card-outcome--sm">{tier.collapsedOutcome}</p>
-                      <p className="offer-card-teaser offer-card-teaser--sm">{tier.collapsedTeaser}</p>
+                      <h3 className="offer-card-summary-title">{tier.title}</h3>
+                      <p className="offer-card-summary-tagline">{tier.collapsedTagline}</p>
 
                       {tierExpanded ? (
-                        <>
-                          <span className="offer-card-price offer-card-price--sm">{tier.price}</span>
-                          <p className="offer-card-time-compress offer-card-time-compress--sm">
-                            {offerDecisionShortcut[shortcutKey]}
-                          </p>
-                          {"trustLine" in tier && tier.trustLine ? (
-                            <p className="offer-card-trust">{tier.trustLine}</p>
-                          ) : null}
-                          {"opening" in tier && tier.opening ? (
-                            <p className="offer-card-opening">{tier.opening}</p>
-                          ) : null}
-                          {"lines" in tier && tier.lines
-                            ? tier.lines.map((line) => (
-                                <p key={line} className="offer-card-opening offer-card-opening--tight">
+                        <div className="offer-card-expanded" id={`offer-expanded-${tier.id}`}>
+                          <div className="offer-card-body">
+                            {tier.bodyLines.map((line, i) =>
+                              line.trim() === "" ? (
+                                <div key={`${tier.id}-gap-${i}`} className="offer-body-gap" aria-hidden />
+                              ) : (
+                                <p key={`${tier.id}-line-${i}`} className="offer-body-line">
                                   {line}
                                 </p>
-                              ))
-                            : null}
-                          {"line" in tier && tier.line ? (
-                            <p className="offer-card-line offer-card-line--sm">{tier.line}</p>
+                              ),
+                            )}
+                          </div>
+
+                          <p className="offer-what-heading">{offerCopy.whatYouGetHeading}</p>
+                          <ul className="offer-card-bullets offer-card-bullets--compact">
+                            {tier.whatYouGet.map((item) => (
+                              <li key={item}>{item}</li>
+                            ))}
+                          </ul>
+
+                          {process ? (
+                            <div className="offer-process" role="group" aria-label="Process">
+                              <p className="offer-process-intro">{process.intro}</p>
+                              <ul className="offer-process-areas">
+                                {process.areas.map((a) => (
+                                  <li key={a}>{a}</li>
+                                ))}
+                              </ul>
+                              <p className="offer-process-closing">{process.closing}</p>
+                            </div>
                           ) : null}
-                          {"timeSave" in tier && tier.timeSave ? (
-                            <p className="offer-card-line offer-card-line--sm">{tier.timeSave}</p>
-                          ) : null}
-                          {"bullets" in tier && tier.bullets && tier.bullets.length > 0 ? (
-                            <ul className="offer-card-bullets">
-                              {tier.bullets.map((b) => (
-                                <li key={b}>{b}</li>
-                              ))}
-                            </ul>
-                          ) : null}
-                          {"decisionGuide" in tier && tier.decisionGuide ? (
-                            <p className="offer-card-decision-guide offer-card-decision-guide--secondary">
-                              {tier.decisionGuide}
+
+                          <p className="offer-card-price offer-card-price--reveal" aria-live="polite">
+                            {tier.price}
+                          </p>
+
+                          {tier.subtextLines.map((line, i) => (
+                            <p key={`${tier.id}-sub-${i}`} className="offer-card-subtext">
+                              {line}
                             </p>
-                          ) : null}
+                          ))}
+
                           <OfferScopeInline
                             pendingTier={tier.id}
+                            primaryLabel={offerScopePrimaryLabel[tier.id]}
                             onKeepFocused={handleKeepFocused}
                             onLookAcross={handleLookAcross}
                             onFixOne={handleFixOne}
                           />
-                        </>
+                        </div>
                       ) : (
                         <button
                           type="button"
-                          className={`btn btn-block ${recommended ? "btn-secondary" : "btn-secondary offer-cta--deemp"}`.trim()}
+                          className={`btn btn-block offer-tier-details-btn ${
+                            recommended ? "btn-secondary" : "btn-secondary offer-cta--deemp"
+                          }`.trim()}
                           onClick={() => expandTier(tier.id)}
                           aria-expanded={tierExpanded}
                         >
