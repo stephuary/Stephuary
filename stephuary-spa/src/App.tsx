@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { SUBSTACK_PLACEHOLDER_HREF } from "./data/ecosystem";
 import { QUESTIONS, phaseMeta } from "./data/questions";
 import { AccessRequestScreen } from "./components/AccessRequestScreen";
@@ -11,7 +11,7 @@ import { GrownSpaghettiScreen } from "./components/GrownSpaghettiScreen";
 import { HomeScreen } from "./components/HomeScreen";
 import { OfferScreen } from "./components/OfferScreen";
 import { OscScreen } from "./components/OscScreen";
-import { ProgressBar } from "./components/ProgressBar";
+import { DiagnosticExitModal } from "./components/DiagnosticExitModal";
 import { QuestionScreen } from "./components/QuestionScreen";
 import { ResultsScreen } from "./components/ResultsScreen";
 import { buildEvaluationContext } from "./lib/scoring";
@@ -50,11 +50,16 @@ function stepAnimKey(step: FlowStep): string {
 export default function App() {
   const [step, setStep] = useState<FlowStep>({ id: "home" });
   const [answers, setAnswers] = useState<AnswersMap>({});
+  const [exitModalOpen, setExitModalOpen] = useState(false);
 
   const sections = useMemo(() => {
     const ctx = buildEvaluationContext(answers);
     return generateSectionOutputs(ctx);
   }, [answers]);
+
+  useEffect(() => {
+    if (step.id !== "quiz") setExitModalOpen(false);
+  }, [step.id]);
 
   const showNav = !NAV_HIDDEN.has(step.id);
 
@@ -103,6 +108,17 @@ export default function App() {
     step.id === "accessRequest" ||
     step.id === "explore";
 
+  function backQuestion() {
+    if (step.id !== "quiz" || step.index <= 0) return;
+    setStep({ id: "quiz", index: step.index - 1 });
+  }
+
+  function confirmExitDiagnostic() {
+    setExitModalOpen(false);
+    setAnswers({});
+    setStep({ id: "home" });
+  }
+
   return (
     <div className={`app ${showNav ? "app--with-nav" : ""}`.trim()}>
       <div className="aura-field" aria-hidden="true">
@@ -114,18 +130,11 @@ export default function App() {
       </div>
       <AppNav visible={showNav} onAction={handleNav} />
 
-      {step.id === "quiz" ? (
-        <header className="app-header">
-          <div className="app-header-inner app-header-inner--narrow">
-            <ProgressBar
-              current={step.index + 1}
-              total={QUESTIONS.length}
-              phaseCurrent={phaseMeta(step.index).phaseIndex + 1}
-              phaseTotal={PHASE_TOTAL}
-            />
-          </div>
-        </header>
-      ) : null}
+      <DiagnosticExitModal
+        open={exitModalOpen}
+        onStay={() => setExitModalOpen(false)}
+        onExit={confirmExitDiagnostic}
+      />
 
       <main className={`app-main ${entryLayout ? "app-main--entry" : ""}`.trim()}>
         {step.id === "home" ? (
@@ -175,6 +184,9 @@ export default function App() {
               if (last) setStep({ id: "results" });
               else setStep({ id: "quiz", index: step.index + 1 });
             }}
+            onBack={backQuestion}
+            canGoBack={step.index > 0}
+            onExitRequest={() => setExitModalOpen(true)}
             progress={{
               current: step.index + 1,
               total: QUESTIONS.length,

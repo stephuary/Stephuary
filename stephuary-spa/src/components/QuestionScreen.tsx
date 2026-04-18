@@ -1,4 +1,5 @@
 import type { Question } from "../data/questions";
+import { ProgressBar } from "./ProgressBar";
 import { ScreenShell } from "./ScreenShell";
 
 type Props = {
@@ -6,6 +7,9 @@ type Props = {
   selectedId: string | null;
   onSelect: (optionId: string) => void;
   onContinue: () => void;
+  onBack: () => void;
+  canGoBack: boolean;
+  onExitRequest: () => void;
   progress: { current: number; total: number };
   phaseLabel: string;
   phaseIndex: number;
@@ -18,6 +22,9 @@ export function QuestionScreen({
   selectedId,
   onSelect,
   onContinue,
+  onBack,
+  canGoBack,
+  onExitRequest,
   progress,
   phaseLabel,
   phaseIndex,
@@ -29,14 +36,35 @@ export function QuestionScreen({
   return (
     <ScreenShell animKey={animKey} className="question-screen question-slide">
       <div className="question-inner question-inner--stagger">
-        <div className="phase-row">
-          <span className="phase-pill">
-            {phaseIndex + 1}/{phaseCount} · {phaseLabel}
-          </span>
-        </div>
-        <p className="eyebrow question-eyebrow">
-          {progress.current} / {progress.total}
-        </p>
+        <header className="diagnostic-header">
+          <div className="diagnostic-header-side diagnostic-header-side--left">
+            <button
+              type="button"
+              className="diagnostic-header-btn"
+              onClick={onBack}
+              disabled={!canGoBack}
+              aria-disabled={!canGoBack}
+            >
+              Back
+            </button>
+          </div>
+          <div className="diagnostic-header-center">
+            <p className="diagnostic-header-phase">
+              {phaseIndex + 1}/{phaseCount} · {phaseLabel}
+            </p>
+            <ProgressBar
+              current={progress.current}
+              total={progress.total}
+              phaseCurrent={phaseIndex + 1}
+              phaseTotal={phaseCount}
+            />
+          </div>
+          <div className="diagnostic-header-side diagnostic-header-side--right">
+            <button type="button" className="diagnostic-header-btn" onClick={onExitRequest}>
+              Exit
+            </button>
+          </div>
+        </header>
         <h2 className="question-title" id={`q-${question.id}`}>
           {question.prompt}
         </h2>
