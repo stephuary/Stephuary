@@ -27,6 +27,7 @@ type Props = {
   recommendedTier: RecommendedTier;
   showOperatorOSGate: boolean;
   showHighTicketAccess: boolean;
+  signalCta: () => void;
   onRequestOperatorOS: () => void;
   onRequestCustomBuild: () => void;
   onRequestOsc: () => void;
@@ -55,6 +56,7 @@ export function OfferScreen({
   recommendedTier,
   showOperatorOSGate,
   showHighTicketAccess,
+  signalCta,
   onRequestOperatorOS,
   onRequestCustomBuild,
   onRequestOsc,
@@ -111,12 +113,14 @@ export function OfferScreen({
   const tierLead = offerTierLead[recommendedTier];
 
   function openScope(tierId: OfferTierId) {
+    signalCta();
     setPendingTier(tierId);
     setScopeModalOpen(true);
     setHasClickedOffer(true);
   }
 
   function handleKeepFocused() {
+    signalCta();
     setScopeModalOpen(false);
     if (!pendingTier) return;
     if (pendingTier === "breakdown") {
@@ -133,12 +137,14 @@ export function OfferScreen({
   }
 
   function handleLookAcross() {
+    signalCta();
     setScopeModalOpen(false);
     setPendingTier(null);
     onComplete("breakdown");
   }
 
   function handleFixOne() {
+    signalCta();
     setScopeModalOpen(false);
     setPendingTier(null);
     onComplete("fix");
@@ -207,7 +213,10 @@ export function OfferScreen({
               <button
                 type="button"
                 className="btn btn-secondary btn-block offer-operator-os-gate-btn"
-                onClick={onRequestOperatorOS}
+                onClick={() => {
+                  signalCta();
+                  onRequestOperatorOS();
+                }}
               >
                 {operatorOSGateCopy.cta}
               </button>
@@ -224,7 +233,10 @@ export function OfferScreen({
               <button
                 type="button"
                 className="btn btn-secondary btn-block offer-high-ticket-btn"
-                onClick={onRequestCustomBuild}
+                onClick={() => {
+                  signalCta();
+                  onRequestCustomBuild();
+                }}
                 aria-label="Request access for custom build"
               >
                 {highTicketGateCopy.cta}
@@ -235,7 +247,10 @@ export function OfferScreen({
               <button
                 type="button"
                 className="btn btn-secondary btn-block offer-high-ticket-btn"
-                onClick={onRequestOsc}
+                onClick={() => {
+                  signalCta();
+                  onRequestOsc();
+                }}
                 aria-label="Request access for Only Sometimes Club"
               >
                 {highTicketGateCopy.cta}
@@ -249,10 +264,24 @@ export function OfferScreen({
             <p className="offer-post-upsell-line">{offerPostPathUpsell.line1}</p>
             <p className="offer-post-upsell-line">{offerPostPathUpsell.line2}</p>
             <div className="offer-post-upsell-actions">
-              <button type="button" className="btn btn-primary btn-block" onClick={() => onComplete("fix")}>
+              <button
+                type="button"
+                className="btn btn-primary btn-block"
+                onClick={() => {
+                  signalCta();
+                  onComplete("fix");
+                }}
+              >
                 {offerPostPathUpsell.ctaUpgrade}
               </button>
-              <button type="button" className="btn btn-secondary btn-block" onClick={() => onComplete("path")}>
+              <button
+                type="button"
+                className="btn btn-secondary btn-block"
+                onClick={() => {
+                  signalCta();
+                  onComplete("path");
+                }}
+              >
                 {offerPostPathUpsell.ctaContinue}
               </button>
             </div>
@@ -261,10 +290,24 @@ export function OfferScreen({
           <div className="offer-post-upsell offer-post-upsell--fix" role="region" aria-label="Optional upgrade">
             <p className="offer-post-upsell-line">{offerPostFixUpsell.line1}</p>
             <div className="offer-post-upsell-actions">
-              <button type="button" className="btn btn-primary btn-block" onClick={() => onComplete("breakdown")}>
+              <button
+                type="button"
+                className="btn btn-primary btn-block"
+                onClick={() => {
+                  signalCta();
+                  onComplete("breakdown");
+                }}
+              >
                 {offerPostFixUpsell.ctaUpgrade}
               </button>
-              <button type="button" className="btn btn-secondary btn-block" onClick={() => onComplete("fix")}>
+              <button
+                type="button"
+                className="btn btn-secondary btn-block"
+                onClick={() => {
+                  signalCta();
+                  onComplete("fix");
+                }}
+              >
                 {offerPostFixUpsell.ctaContinue}
               </button>
             </div>
@@ -409,7 +452,14 @@ export function OfferScreen({
 
         <div className="offer-post-pricing-access">
           <p className="offer-post-pricing-line">{offerPostPricingAccess.line}</p>
-          <button type="button" className="btn btn-secondary btn-block offer-post-pricing-btn" onClick={onPostOfferAccess}>
+          <button
+            type="button"
+            className="btn btn-secondary btn-block offer-post-pricing-btn"
+            onClick={() => {
+              signalCta();
+              onPostOfferAccess();
+            }}
+          >
             {offerPostPricingAccess.cta}
           </button>
         </div>

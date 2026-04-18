@@ -1,3 +1,4 @@
+import { usePostActionMoment } from "../context/PostActionMomentContext";
 import { SUBSTACK_PLACEHOLDER_HREF } from "../data/ecosystem";
 import { grownSpaghettiPageCopy } from "../data/grownSpaghettiPageCopy";
 import { ScrollReveal } from "./ScrollReveal";
@@ -8,6 +9,8 @@ type Props = {
 };
 
 export function GrownSpaghettiScreen({ animKey }: Props) {
+  const triggerPostAction = usePostActionMoment();
+
   return (
     <ScreenShell animKey={animKey} className="eco-page eco-page--gs">
       <ScrollReveal className="eco-head-reveal">
@@ -21,6 +24,7 @@ export function GrownSpaghettiScreen({ animKey }: Props) {
             href={SUBSTACK_PLACEHOLDER_HREF}
             target="_blank"
             rel="noopener noreferrer"
+            onClick={() => triggerPostAction()}
           >
             {grownSpaghettiPageCopy.cta}
           </a>

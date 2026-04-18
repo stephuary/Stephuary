@@ -1,4 +1,6 @@
 import { useState, type FormEvent } from "react";
+import { usePostActionMoment } from "../context/PostActionMomentContext";
+import { accessRequestCopy } from "../data/siteCopy";
 import { ScrollReveal } from "./ScrollReveal";
 import { ScreenShell } from "./ScreenShell";
 
@@ -10,13 +12,18 @@ type Props = {
 };
 
 export function AccessRequestScreen({ animKey, intent, onDone }: Props) {
+  const triggerPostAction = usePostActionMoment();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [fixingNow, setFixingNow] = useState("");
   const [need, setNeed] = useState("");
   const [sent, setSent] = useState(false);
 
   function handleSubmit(e: FormEvent) {
     e.preventDefault();
+    const trimmed = fixingNow.trim();
+    if (!trimmed) return;
+    triggerPostAction();
     setSent(true);
   }
 
@@ -26,7 +33,14 @@ export function AccessRequestScreen({ animKey, intent, onDone }: Props) {
         <ScrollReveal className="access-block-reveal">
           <p className="access-thanks">Received.</p>
           <div className="cta-row">
-            <button type="button" className="btn btn-primary btn-block" onClick={onDone}>
+            <button
+              type="button"
+              className="btn btn-primary btn-block"
+              onClick={() => {
+                triggerPostAction();
+                onDone();
+              }}
+            >
               Back
             </button>
           </div>
@@ -60,6 +74,17 @@ export function AccessRequestScreen({ animKey, intent, onDone }: Props) {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               autoComplete="email"
+            />
+          </label>
+          <label className="access-field">
+            <span className="access-label">{accessRequestCopy.fixingLabel}</span>
+            <textarea
+              className="access-textarea"
+              name="fixing_now"
+              value={fixingNow}
+              onChange={(e) => setFixingNow(e.target.value)}
+              rows={3}
+              required
             />
           </label>
           <label className="access-field">

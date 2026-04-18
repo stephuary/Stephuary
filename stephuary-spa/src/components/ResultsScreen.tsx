@@ -1,7 +1,10 @@
+import { useState } from "react";
+import { usePostActionMoment } from "../context/PostActionMomentContext";
 import {
   resultsAuthorityCopy,
   resultsBridgeCopy,
   resultsScaleCopy,
+  resultsShareCopy,
   resultsStakesCopy,
   resultsTransitionCopy,
 } from "../data/siteCopy";
@@ -17,8 +20,22 @@ type Props = {
 };
 
 export function ResultsScreen({ sections, primaryCta, animKey }: Props) {
+  const triggerPostAction = usePostActionMoment();
+  const [shareCopied, setShareCopied] = useState(false);
   const bridgeReveal = useScrollRevealOnce<HTMLDivElement>();
   const ctaReveal = useScrollRevealOnce<HTMLDivElement>();
+
+  async function copyShareLink() {
+    const url = typeof window !== "undefined" ? window.location.href : "";
+    try {
+      await navigator.clipboard.writeText(url);
+    } catch {
+      return;
+    }
+    triggerPostAction();
+    setShareCopied(true);
+    window.setTimeout(() => setShareCopied(false), 2000);
+  }
 
   return (
     <ScreenShell animKey={animKey} className="results-screen">
@@ -57,6 +74,12 @@ export function ResultsScreen({ sections, primaryCta, animKey }: Props) {
       >
         <button type="button" className="btn btn-primary btn-block" onClick={primaryCta.onClick}>
           {primaryCta.label}
+        </button>
+      </div>
+      <div className="results-share" role="region" aria-label="Share">
+        <p className="results-share-prompt">{resultsShareCopy.prompt}</p>
+        <button type="button" className="btn btn-secondary btn-block results-share-btn" onClick={() => void copyShareLink()}>
+          {shareCopied ? resultsShareCopy.copied : resultsShareCopy.cta}
         </button>
       </div>
     </ScreenShell>

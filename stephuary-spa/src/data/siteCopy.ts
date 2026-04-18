@@ -6,6 +6,23 @@ export const homeCopy = {
   micro: "25-question diagnostic. Clear direction in minutes.",
   qualifier: "For people with experience, skills, or ideas that aren't translating into money yet.",
   cta: "Start diagnostic",
+  videoTeaseLead: "If you want to understand how this works first:",
+  videoTeaseCta: "Watch breakdown",
+} as const;
+
+export const resultsShareCopy = {
+  prompt: "Know someone dealing with this?",
+  cta: "Share this",
+  copied: "Link copied",
+} as const;
+
+export const postActionMomentCopy = {
+  line1: "You don't need more time.",
+  line2: "You need a decision.",
+} as const;
+
+export const accessRequestCopy = {
+  fixingLabel: "What are you trying to fix right now?",
 } as const;
 
 export const exploreCopy = {

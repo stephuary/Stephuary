@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { usePostActionMoment } from "./context/PostActionMomentContext";
 import { SUBSTACK_PLACEHOLDER_HREF } from "./data/ecosystem";
 import { QUESTIONS, phaseMeta } from "./data/questions";
 import { AccessRequestScreen } from "./components/AccessRequestScreen";
@@ -54,6 +55,7 @@ function stepAnimKey(step: FlowStep): string {
 }
 
 export default function App() {
+  const triggerPostAction = usePostActionMoment();
   const [step, setStep] = useState<FlowStep>({ id: "home" });
   const [answers, setAnswers] = useState<AnswersMap>({});
   const [exitModalOpen, setExitModalOpen] = useState(false);
@@ -91,6 +93,7 @@ export default function App() {
   }
 
   function startDiagnostic() {
+    triggerPostAction();
     setAnswers({});
     setStep({ id: "quiz", index: 0 });
   }
@@ -103,14 +106,22 @@ export default function App() {
     }
   }
 
+  function requestAccessWithMoment(intent?: "os") {
+    triggerPostAction();
+    goAccess(intent);
+  }
+
   function openSubstack() {
+    triggerPostAction();
     window.open(SUBSTACK_PLACEHOLDER_HREF, "_blank", "noopener,noreferrer");
   }
 
   function handleNav(action: NavAction) {
+    triggerPostAction();
     switch (action.kind) {
       case "start":
-        startDiagnostic();
+        setAnswers({});
+        setStep({ id: "quiz", index: 0 });
         break;
       case "osc":
         setStep({ id: "osc" });
@@ -166,15 +177,15 @@ export default function App() {
 
       <main className={`app-main ${entryLayout ? "app-main--entry" : ""}`.trim()}>
         {step.id === "home" ? (
-          <HomeScreen animKey={stepAnimKey(step)} onStart={startDiagnostic} />
+          <HomeScreen animKey={stepAnimKey(step)} onStart={startDiagnostic} onWatchBreakdown={triggerPostAction} />
         ) : null}
 
         {step.id === "osc" ? (
-          <OscScreen animKey={stepAnimKey(step)} onRequestAccess={goAccess} />
+          <OscScreen animKey={stepAnimKey(step)} onRequestAccess={() => requestAccessWithMoment()} />
         ) : null}
 
         {step.id === "club" ? (
-          <ClubScreen animKey={stepAnimKey(step)} onRequestAccess={goAccess} />
+          <ClubScreen animKey={stepAnimKey(step)} onRequestAccess={() => requestAccessWithMoment()} />
         ) : null}
 
         {step.id === "grownSpaghetti" ? (
@@ -182,7 +193,7 @@ export default function App() {
         ) : null}
 
         {step.id === "customBuild" ? (
-          <CustomBuildScreen animKey={stepAnimKey(step)} onRequestAccess={goAccess} />
+          <CustomBuildScreen animKey={stepAnimKey(step)} onRequestAccess={() => requestAccessWithMoment()} />
         ) : null}
 
         {step.id === "accessRequest" ? (
@@ -194,13 +205,16 @@ export default function App() {
         ) : null}
 
         {step.id === "operatorOS" ? (
-          <OperatorOSScreen animKey={stepAnimKey(step)} onRequestAccess={() => goAccess("os")} />
+          <OperatorOSScreen
+            animKey={stepAnimKey(step)}
+            onRequestAccess={() => requestAccessWithMoment("os")}
+          />
         ) : null}
 
         {step.id === "explore" ? (
           <ExploreScreen
             animKey={stepAnimKey(step)}
-            onRequestAccess={goAccess}
+            onRequestAccess={() => requestAccessWithMoment()}
             onReadSubstack={openSubstack}
             onHome={() => setStep({ id: "home" })}
           />
@@ -213,6 +227,7 @@ export default function App() {
             selectedId={answers[QUESTIONS[step.index].id] ?? null}
             onSelect={(id) => setAnswer(QUESTIONS[step.index].id, id)}
             onContinue={() => {
+              triggerPostAction();
               const last = step.index >= QUESTIONS.length - 1;
               if (last) setStep({ id: "results" });
               else setStep({ id: "quiz", index: step.index + 1 });
@@ -236,7 +251,10 @@ export default function App() {
             sections={sections}
             primaryCta={{
               label: "Continue",
-              onClick: () => setStep({ id: "offer" }),
+              onClick: () => {
+                triggerPostAction();
+                setStep({ id: "offer" });
+              },
             }}
           />
         ) : null}
@@ -251,6 +269,7 @@ export default function App() {
             onRequestCustomBuild={() => setStep({ id: "customBuild" })}
             onRequestOsc={() => setStep({ id: "osc" })}
             onPostOfferAccess={goAccess}
+            signalCta={triggerPostAction}
             onComplete={() => {
               setStep({ id: "explore" });
             }}
