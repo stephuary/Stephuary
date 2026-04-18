@@ -2,7 +2,6 @@ export type NavAction =
   | { kind: "start" }
   | { kind: "osc" }
   | { kind: "club" }
-  | { kind: "grownSpaghetti" }
   | { kind: "customBuild" };
 
 type Props = {
@@ -24,13 +23,6 @@ export function AppNav({ visible, onAction }: Props) {
         </button>
         <button type="button" className="app-nav-link" onClick={() => onAction({ kind: "club" })}>
           .5% Club
-        </button>
-        <button
-          type="button"
-          className="app-nav-link"
-          onClick={() => onAction({ kind: "grownSpaghetti" })}
-        >
-          Grown Spaghetti
         </button>
         <button type="button" className="app-nav-link" onClick={() => onAction({ kind: "customBuild" })}>
           Custom Build

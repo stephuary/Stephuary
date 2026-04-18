@@ -181,6 +181,10 @@ export const highTicketOfferCopy = {
     "You stop doing work that doesn't pay.",
     "You start getting paid for what you already know how to do.",
   ],
+  whatYouDontGet: [
+    "Not a course, community, or template library.",
+    "Ongoing ads or daily ops unless scoped separately.",
+  ],
   time: "Initial breakdown within 48 hours. Build and changes begin immediately after.",
   whoFor: [
     "You already have experience or clients",
@@ -200,6 +204,7 @@ export const offerInstallTiers = [
   {
     id: "path" as const,
     headline: "Fix One Area",
+    collapsedOutcome: "One revenue area diagnosed and corrected—fast.",
     headlineSub: "Pick one part of your work that isn't turning into money.",
     pickOneIntro: "Choose one:",
     pickOneOptions: ["Your offer", "Your positioning", "Your structure", "Your landing page"],
@@ -218,6 +223,7 @@ export const offerInstallTiers = [
   {
     id: "fix" as const,
     headline: "Full Breakdown",
+    collapsedOutcome: "Full picture of what pays, what leaks, and what to do next.",
     headlineSub: "See exactly what's working, what isn't, and where money is being lost.",
     whatYouGet: [
       "Where your time is actually going",
@@ -240,6 +246,7 @@ export const offerInstallTiers = [
   },
   {
     id: "breakdown" as const,
+    collapsedOutcome: "Custom rebuild of offer, path, and revenue structure.",
     ...highTicketOfferCopy,
   },
 ] as const;

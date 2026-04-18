@@ -30,14 +30,6 @@ const PHASE_TOTAL = 5;
 /** After Q4 (index 3): full-screen realization before next question. */
 const REALIZATION_AFTER_Q_INDEX = 3;
 
-const NAV_HIDDEN = new Set<FlowStep["id"]>([
-  "quiz",
-  "realizationMoment",
-  "results",
-  "offer",
-  "operatorOS",
-]);
-
 function stepAnimKey(step: FlowStep): string {
   switch (step.id) {
     case "home":
@@ -115,7 +107,7 @@ export default function App() {
     return () => window.clearTimeout(id);
   }, [step]);
 
-  const showNav = !NAV_HIDDEN.has(step.id);
+  const showNav = true;
 
   function setAnswer(questionId: string, optionId: string) {
     setAnswers((prev) => ({ ...prev, [questionId]: optionId }));
@@ -189,9 +181,6 @@ export default function App() {
         break;
       case "club":
         setStep({ id: "club" });
-        break;
-      case "grownSpaghetti":
-        setStep({ id: "grownSpaghetti" });
         break;
       case "customBuild":
         setStep({ id: "customBuild" });
