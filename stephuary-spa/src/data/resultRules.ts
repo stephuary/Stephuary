@@ -120,7 +120,7 @@ export const resultRules: Record<SectionId, SectionRules> = {
         lines: [
           "You practice in private.",
           "Buyers pay dated outcomes.",
-          "Set a ship date someone could pay for — tiny scope.",
+          "Set a ship date someone pays for — tiny scope.",
         ],
       },
       {

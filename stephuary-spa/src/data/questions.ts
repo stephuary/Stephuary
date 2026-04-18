@@ -95,7 +95,7 @@ export const QUESTIONS: Question[] = [
   {
     id: "q7",
     phaseIndex: 1,
-    prompt: "Proof you could show a stranger in the next hour:",
+    prompt: "Proof you can show a stranger in the next hour:",
     options: [
       { id: "q7a", label: "Logo wall — no numbers on it", tags: ["proof:logo_only"], scoreDelta: { demand: -4, clarity: -4 } },
       { id: "q7b", label: "Before/after numbers with context", tags: ["proof:numbers"], scoreDelta: { demand: 10, clarity: 6 } },
@@ -223,7 +223,7 @@ export const QUESTIONS: Question[] = [
       { id: "q18a", label: "Daily tabs — shipping slows down", tags: ["dir:comp_watch"], scoreDelta: { focus: -10, leverage: -6 } },
       { id: "q18b", label: "Named when a buyer brings them up", tags: ["dir:comp_real"], scoreDelta: { demand: 4 } },
       { id: "q18c", label: "Barely tracked — you study buyers instead", tags: ["dir:buyer_focus"], scoreDelta: { focus: 8, demand: 6 } },
-      { id: "q18d", label: "You could not name three — no map", tags: ["dir:comp_blind"], scoreDelta: { clarity: -6 } },
+      { id: "q18d", label: "You can't name three — no map", tags: ["dir:comp_blind"], scoreDelta: { clarity: -6 } },
     ],
   },
   {

@@ -36,6 +36,11 @@ export function ResultSection({ section }: Props) {
       className={`result-section ${niche ? "result-section--niche" : ""} scroll-reveal ${reveal}`.trim()}
     >
       <h3 className="result-section-title">{section.title}</h3>
+      {section.authorityContrast ? (
+        <p className="result-authority-contrast" role="note">
+          {section.authorityContrast}
+        </p>
+      ) : null}
       <div className="result-section-body">
         {section.insights.map((line, i) => (
           <p key={`${section.id}-in-${i}`} className={insightClass}>

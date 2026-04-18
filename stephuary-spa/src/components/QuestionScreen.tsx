@@ -37,6 +37,7 @@ export function QuestionScreen({
   const midpointIndex = Math.ceil(progress.total / 2);
   const showMidpoint = progress.total > 0 && progress.current === midpointIndex;
   const showTimeExpectation = progress.current === 1;
+  const showAuthorityFilter = progress.current === 12;
 
   return (
     <ScreenShell animKey={animKey} className="question-screen question-slide">
@@ -81,6 +82,11 @@ export function QuestionScreen({
         {showMidpoint ? (
           <p className="question-midpoint" role="note">
             {diagnosticCopy.midpointMomentum}
+          </p>
+        ) : null}
+        {showAuthorityFilter ? (
+          <p className="question-authority-filter" role="note">
+            {diagnosticCopy.authorityFilter}
           </p>
         ) : null}
         {nearComplete ? (

@@ -14,6 +14,12 @@ export type SectionOutput = {
   consequence: string;
   instruction: string;
   matchedRuleId: string | null;
+  authorityContrast?: string;
+};
+
+const AUTHORITY_CONTRAST: Partial<Record<SectionId, string>> = {
+  wrong: "This is not a time problem. It's a direction problem.",
+  niche: "This is not a visibility issue. It's a positioning issue.",
 };
 
 function pickBestRule(rules: ResultRule[], ctx: EvaluationContext): ResultRule | null {
@@ -47,6 +53,7 @@ export function generateSectionOutputs(ctx: EvaluationContext): SectionOutput[] 
       title: block.title,
       ...buildThreeLines(raw),
       matchedRuleId: hit ? hit.id : null,
+      authorityContrast: AUTHORITY_CONTRAST[id],
     };
   });
 }

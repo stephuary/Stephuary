@@ -1,14 +1,14 @@
 import { useState, type FormEvent } from "react";
 import { usePostActionMoment } from "../context/PostActionMomentContext";
 import {
-  resultsAuthorityCopy,
+  resultsAuthorityLead,
   resultsBridgeCopy,
   resultsEmailCopy,
-  resultsReadoutCloseCopy,
+  resultsFailureSignal,
+  resultsHowIThink,
   resultsScaleCopy,
   resultsShareCopy,
   resultsStakesCopy,
-  resultsTransitionCopy,
 } from "../data/siteCopy";
 import { useScrollRevealOnce } from "../hooks/useScrollRevealOnce";
 import type { SectionOutput } from "../lib/outputGenerator";
@@ -52,8 +52,11 @@ export function ResultsScreen({ sections, primaryCta, animKey }: Props) {
   return (
     <ScreenShell animKey={animKey} className="results-screen">
       <header className="results-header results-header--enter">
-        <p className="results-transition" role="note">
-          {resultsTransitionCopy}
+        <p className="results-authority-lead" role="note">
+          {resultsAuthorityLead.line1}
+        </p>
+        <p className="results-authority-lead results-authority-lead--tight" role="note">
+          {resultsAuthorityLead.line2}
         </p>
         <h1 className="results-title">Your readout</h1>
       </header>
@@ -63,14 +66,16 @@ export function ResultsScreen({ sections, primaryCta, animKey }: Props) {
         ))}
       </div>
       <div className="results-readout-close" role="note">
-        <p className="results-readout-close-line">{resultsReadoutCloseCopy.line1}</p>
-        <p className="results-readout-close-line">{resultsReadoutCloseCopy.line2}</p>
+        <p className="results-readout-close-line">{resultsFailureSignal}</p>
       </div>
       <p className="results-stakes" role="note">
         {resultsStakesCopy}
       </p>
-      <p className="results-authority" role="note">
-        {resultsAuthorityCopy}
+      <p className="results-how-i-think" role="note">
+        {resultsHowIThink.line1}
+      </p>
+      <p className="results-how-i-think results-how-i-think--second" role="note">
+        {resultsHowIThink.line2}
       </p>
       <p className="results-scale" role="note">
         {resultsScaleCopy}

@@ -3,8 +3,12 @@
 export const homeCopy = {
   headline: "You already have something people would pay for.",
   sub: "You'll see what you can sell, who already pays for it, and what's blocking it.",
+  authorityLine1: "Most people are not stuck.",
+  authorityLine2: "They're building in the wrong direction.",
   micro: "25-question diagnostic. Clear direction in minutes.",
   qualifier: "For people with experience, skills, or ideas that aren't translating into money yet.",
+  preDiagnosticLine1: "You don't need more ideas.",
+  preDiagnosticLine2: "You need to see what's actually happening.",
   cta: "Start diagnostic",
   videoTeaseLead: "If you want to understand how this works first:",
   videoTeaseCta: "Watch breakdown",
@@ -51,10 +55,14 @@ export const diagnosticCopy = {
   nearComplete: "You're close. Most people don't get this far.",
   timeExpectation: "This takes about 3 minutes.",
   midpointMomentum: "Most people drop here. Keep going.",
+  authorityFilter:
+    "This is where most people realize they've been solving the wrong problem.",
 } as const;
 
-export const resultsTransitionCopy =
-  "This is where most people realize what's actually been happening." as const;
+export const resultsAuthorityLead = {
+  line1: "Most people don't see this clearly.",
+  line2: "That's why nothing changes.",
+} as const;
 
 export const resultsBridgeCopy = {
   line1: "You already have something here.",
@@ -64,19 +72,19 @@ export const resultsBridgeCopy = {
 export const resultsStakesCopy =
   "If nothing changes, this is exactly how next month looks too." as const;
 
-export const resultsAuthorityCopy =
-  "Some situations don't get solved in a single pass." as const;
+export const resultsHowIThink = {
+  line1: "I don't look at what you say you're building.",
+  line2: "I look at what actually leads to revenue.",
+} as const;
+
+export const resultsFailureSignal =
+  "I've seen this play out the same way repeatedly." as const;
 
 export const resultsScaleCopy = "This scales beyond one person." as const;
 
-export const resultsReadoutCloseCopy = {
-  line1: "Most people never see this clearly.",
-  line2: "That's why they stay stuck repeating it.",
-} as const;
-
 export const offerBeforeOptionsCopy = {
-  line1: "Now you have two options:",
-  line2: "apply it, or keep guessing.",
+  line1: "You already know what's wrong now.",
+  line2: "The only question is whether you fix it.",
 } as const;
 
 export const operatorOSGateCopy = {
