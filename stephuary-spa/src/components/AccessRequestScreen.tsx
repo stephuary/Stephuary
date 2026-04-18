@@ -4,10 +4,12 @@ import { ScreenShell } from "./ScreenShell";
 
 type Props = {
   animKey: string;
+  /** Internal routing only — sets hidden field for OS intake. */
+  intent?: "os";
   onDone: () => void;
 };
 
-export function AccessRequestScreen({ animKey, onDone }: Props) {
+export function AccessRequestScreen({ animKey, intent, onDone }: Props) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [need, setNeed] = useState("");
@@ -38,6 +40,7 @@ export function AccessRequestScreen({ animKey, onDone }: Props) {
       <ScrollReveal className="access-block-reveal">
         <h1 className="access-title">Request access</h1>
         <form className="access-form" onSubmit={handleSubmit}>
+          {intent === "os" ? <input type="hidden" name="intent" value="OS inquiry" aria-hidden /> : null}
           <label className="access-field">
             <span className="access-label">Name</span>
             <input

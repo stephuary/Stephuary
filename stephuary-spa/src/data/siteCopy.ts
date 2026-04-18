@@ -9,7 +9,7 @@ export const homeCopy = {
 } as const;
 
 export const exploreCopy = {
-  title: "Explore other ways to work together",
+  title: "Other ways to work together",
 } as const;
 
 export const diagnosticCopy = {
@@ -27,6 +27,17 @@ export const resultsBridgeCopy = {
 
 export const resultsStakesCopy =
   "If nothing changes, this is exactly how next month looks too." as const;
+
+export const resultsAuthorityCopy =
+  "Some situations don't get solved in a single pass." as const;
+
+export const resultsScaleCopy = "This scales beyond one person." as const;
+
+export const operatorOSGateCopy = {
+  header: "This can be run as a system.",
+  sub: "Not just for you. Across your work.",
+  cta: "Request access",
+} as const;
 
 export const offerFrictionCopy =
   "Doing nothing keeps everything the same." as const;
@@ -82,6 +93,19 @@ export const offerPostFixUpsell = {
 
 export const offerHighTicketShadow =
   "For deeper builds or full system installs, request access." as const;
+
+export const highTicketGateCopy = {
+  header: "This isn't a simple fix.",
+  sub: "You're dealing with something more complex than one path.",
+  customLabel: "Custom build",
+  oscLabel: "Only Sometimes Club",
+  cta: "Request access",
+} as const;
+
+export const offerPostPricingAccess = {
+  line: "If this doesn't fit what you need, request access.",
+  cta: "Request access",
+} as const;
 
 export const offerScrollNudge = {
   line1: "You don't need more time.",

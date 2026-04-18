@@ -1,5 +1,7 @@
 export const customBuildPageCopy = {
-  headline: "Custom Build",
-  sub: "For people who need this built around their business, thinking, and workflow.",
+  headline: "This gets built around you.",
+  sub: "For situations where this isn't a template problem.",
+  body:
+    "This is for people who need this applied directly to their business, not figured out alone.",
   cta: "Request Access",
 } as const;

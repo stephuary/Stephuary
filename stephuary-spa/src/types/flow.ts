@@ -4,7 +4,8 @@ export type FlowStep =
   | { id: "club" }
   | { id: "grownSpaghetti" }
   | { id: "customBuild" }
-  | { id: "accessRequest" }
+  | { id: "accessRequest"; intent?: "os" }
+  | { id: "operatorOS" }
   | { id: "explore" }
   | { id: "quiz"; index: number }
   | { id: "results" }

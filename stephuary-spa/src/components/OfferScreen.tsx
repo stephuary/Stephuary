@@ -1,5 +1,6 @@
 import { useEffect, useId, useRef, useState } from "react";
 import {
+  highTicketGateCopy,
   offerCopy,
   offerDecisionShortcut,
   offerFrictionCopy,
@@ -8,9 +9,12 @@ import {
   offerMomentumCopy,
   offerPostFixUpsell,
   offerPostPathUpsell,
+  offerPostPricingAccess,
   offerScrollNudge,
   offerTierLead,
   offerValueAnchor,
+  operatorOSGateCopy,
+  resultsScaleCopy,
   type OfferTierId,
 } from "../data/siteCopy";
 import type { RecommendedTier } from "../lib/recommendedTier";
@@ -21,6 +25,12 @@ import { ScreenShell } from "./ScreenShell";
 type Props = {
   animKey: string;
   recommendedTier: RecommendedTier;
+  showOperatorOSGate: boolean;
+  showHighTicketAccess: boolean;
+  onRequestOperatorOS: () => void;
+  onRequestCustomBuild: () => void;
+  onRequestOsc: () => void;
+  onPostOfferAccess: () => void;
   onComplete: (tierId: OfferTierId) => void;
 };
 
@@ -40,7 +50,17 @@ function ctaLabel(offer: "path" | "fix" | "breakdown", recommended: boolean): st
   return "See everything clearly";
 }
 
-export function OfferScreen({ animKey, recommendedTier, onComplete }: Props) {
+export function OfferScreen({
+  animKey,
+  recommendedTier,
+  showOperatorOSGate,
+  showHighTicketAccess,
+  onRequestOperatorOS,
+  onRequestCustomBuild,
+  onRequestOsc,
+  onPostOfferAccess,
+  onComplete,
+}: Props) {
   const [showSecondary, setShowSecondary] = useState(() => recommendedTier !== "entry");
   const [scopeModalOpen, setScopeModalOpen] = useState(false);
   const [pendingTier, setPendingTier] = useState<OfferTierId | null>(null);
@@ -170,6 +190,59 @@ export function OfferScreen({ animKey, recommendedTier, onComplete }: Props) {
             <p className="offer-anchor-line offer-anchor-line--emph">{offerCopy.anchor.line3}</p>
           </div>
         </ScrollReveal>
+
+        {showOperatorOSGate || showHighTicketAccess ? (
+          <ScrollReveal className="offer-scale-hint-reveal">
+            <p className="offer-scale-hint" role="note">
+              {resultsScaleCopy}
+            </p>
+          </ScrollReveal>
+        ) : null}
+
+        {showOperatorOSGate ? (
+          <ScrollReveal className="offer-operator-os-gate-reveal">
+            <div className="offer-operator-os-gate" role="region" aria-label="Operator system">
+              <p className="offer-operator-os-gate-header">{operatorOSGateCopy.header}</p>
+              <p className="offer-operator-os-gate-sub">{operatorOSGateCopy.sub}</p>
+              <button
+                type="button"
+                className="btn btn-secondary btn-block offer-operator-os-gate-btn"
+                onClick={onRequestOperatorOS}
+              >
+                {operatorOSGateCopy.cta}
+              </button>
+            </div>
+          </ScrollReveal>
+        ) : null}
+
+        {showHighTicketAccess ? (
+          <div className="offer-high-ticket-gate" role="region" aria-label="Additional access">
+            <p className="offer-high-ticket-gate-header">{highTicketGateCopy.header}</p>
+            <p className="offer-high-ticket-gate-sub">{highTicketGateCopy.sub}</p>
+            <div className="offer-high-ticket-gate-row">
+              <span className="offer-high-ticket-gate-label">{highTicketGateCopy.customLabel}</span>
+              <button
+                type="button"
+                className="btn btn-secondary btn-block offer-high-ticket-btn"
+                onClick={onRequestCustomBuild}
+                aria-label="Request access for custom build"
+              >
+                {highTicketGateCopy.cta}
+              </button>
+            </div>
+            <div className="offer-high-ticket-gate-row">
+              <span className="offer-high-ticket-gate-label">{highTicketGateCopy.oscLabel}</span>
+              <button
+                type="button"
+                className="btn btn-secondary btn-block offer-high-ticket-btn"
+                onClick={onRequestOsc}
+                aria-label="Request access for Only Sometimes Club"
+              >
+                {highTicketGateCopy.cta}
+              </button>
+            </div>
+          </div>
+        ) : null}
 
         {postUpsell === "path" ? (
           <div className="offer-post-upsell offer-post-upsell--path" role="region" aria-label="Optional upgrade">
@@ -333,6 +406,13 @@ export function OfferScreen({ animKey, recommendedTier, onComplete }: Props) {
         </p>
 
         <p className="offer-high-ticket-shadow">{offerHighTicketShadow}</p>
+
+        <div className="offer-post-pricing-access">
+          <p className="offer-post-pricing-line">{offerPostPricingAccess.line}</p>
+          <button type="button" className="btn btn-secondary btn-block offer-post-pricing-btn" onClick={onPostOfferAccess}>
+            {offerPostPricingAccess.cta}
+          </button>
+        </div>
       </div>
 
       <OfferScopeModal

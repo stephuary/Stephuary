@@ -41,6 +41,7 @@ export function ClubScreen({ animKey, onRequestAccess }: Props) {
 
       <ScrollReveal className="eco-filter-reveal">
         <p className="eco-filter-line">{clubPageCopy.filterLine}</p>
+        <p className="eco-access-line">{clubPageCopy.accessLine}</p>
       </ScrollReveal>
 
       <ScrollReveal className="eco-cta-reveal">

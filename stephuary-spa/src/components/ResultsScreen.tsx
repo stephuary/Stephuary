@@ -1,4 +1,10 @@
-import { resultsBridgeCopy, resultsStakesCopy, resultsTransitionCopy } from "../data/siteCopy";
+import {
+  resultsAuthorityCopy,
+  resultsBridgeCopy,
+  resultsScaleCopy,
+  resultsStakesCopy,
+  resultsTransitionCopy,
+} from "../data/siteCopy";
 import { useScrollRevealOnce } from "../hooks/useScrollRevealOnce";
 import type { SectionOutput } from "../lib/outputGenerator";
 import { ResultSection } from "./ResultSection";
@@ -29,6 +35,12 @@ export function ResultsScreen({ sections, primaryCta, animKey }: Props) {
       </div>
       <p className="results-stakes" role="note">
         {resultsStakesCopy}
+      </p>
+      <p className="results-authority" role="note">
+        {resultsAuthorityCopy}
+      </p>
+      <p className="results-scale" role="note">
+        {resultsScaleCopy}
       </p>
       <div
         ref={bridgeReveal.ref}

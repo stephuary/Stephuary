@@ -10,10 +10,13 @@ import { ExploreScreen } from "./components/ExploreScreen";
 import { GrownSpaghettiScreen } from "./components/GrownSpaghettiScreen";
 import { HomeScreen } from "./components/HomeScreen";
 import { OfferScreen } from "./components/OfferScreen";
+import { OperatorOSScreen } from "./components/OperatorOSScreen";
 import { OscScreen } from "./components/OscScreen";
 import { DiagnosticExitModal } from "./components/DiagnosticExitModal";
 import { QuestionScreen } from "./components/QuestionScreen";
 import { ResultsScreen } from "./components/ResultsScreen";
+import { shouldShowHighTicketAccess } from "./lib/highTicketSignals";
+import { shouldShowOperatorOSGate } from "./lib/operatorOSSignals";
 import { resolveRecommendedTier } from "./lib/recommendedTier";
 import { buildEvaluationContext } from "./lib/scoring";
 import { generateSectionOutputs } from "./lib/outputGenerator";
@@ -21,7 +24,7 @@ import type { AnswersMap, FlowStep } from "./types/flow";
 
 const PHASE_TOTAL = 5;
 
-const NAV_HIDDEN = new Set<FlowStep["id"]>(["quiz", "results", "offer"]);
+const NAV_HIDDEN = new Set<FlowStep["id"]>(["quiz", "results", "offer", "operatorOS"]);
 
 function stepAnimKey(step: FlowStep): string {
   switch (step.id) {
@@ -37,6 +40,8 @@ function stepAnimKey(step: FlowStep): string {
       return "customBuild";
     case "accessRequest":
       return "accessRequest";
+    case "operatorOS":
+      return "operatorOS";
     case "explore":
       return "explore";
     case "quiz":
@@ -65,6 +70,16 @@ export default function App() {
     [evaluationCtx],
   );
 
+  const showHighTicketAccess = useMemo(
+    () => shouldShowHighTicketAccess(evaluationCtx),
+    [evaluationCtx],
+  );
+
+  const showOperatorOSGate = useMemo(
+    () => shouldShowOperatorOSGate(evaluationCtx),
+    [evaluationCtx],
+  );
+
   useEffect(() => {
     if (step.id !== "quiz") setExitModalOpen(false);
   }, [step.id]);
@@ -80,8 +95,12 @@ export default function App() {
     setStep({ id: "quiz", index: 0 });
   }
 
-  function goAccess() {
-    setStep({ id: "accessRequest" });
+  function goAccess(intent?: "os") {
+    if (intent === "os") {
+      setStep({ id: "accessRequest", intent: "os" });
+    } else {
+      setStep({ id: "accessRequest" });
+    }
   }
 
   function openSubstack() {
@@ -114,6 +133,7 @@ export default function App() {
     step.id === "grownSpaghetti" ||
     step.id === "customBuild" ||
     step.id === "accessRequest" ||
+    step.id === "operatorOS" ||
     step.id === "explore";
 
   function backQuestion() {
@@ -168,8 +188,13 @@ export default function App() {
         {step.id === "accessRequest" ? (
           <AccessRequestScreen
             animKey={stepAnimKey(step)}
+            intent={step.intent === "os" ? "os" : undefined}
             onDone={() => setStep({ id: "home" })}
           />
+        ) : null}
+
+        {step.id === "operatorOS" ? (
+          <OperatorOSScreen animKey={stepAnimKey(step)} onRequestAccess={() => goAccess("os")} />
         ) : null}
 
         {step.id === "explore" ? (
@@ -220,6 +245,12 @@ export default function App() {
           <OfferScreen
             animKey={stepAnimKey(step)}
             recommendedTier={recommendedTier}
+            showOperatorOSGate={showOperatorOSGate}
+            showHighTicketAccess={showHighTicketAccess}
+            onRequestOperatorOS={() => setStep({ id: "operatorOS" })}
+            onRequestCustomBuild={() => setStep({ id: "customBuild" })}
+            onRequestOsc={() => setStep({ id: "osc" })}
+            onPostOfferAccess={goAccess}
             onComplete={() => {
               setStep({ id: "explore" });
             }}

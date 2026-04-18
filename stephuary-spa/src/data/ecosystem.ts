@@ -17,29 +17,25 @@ export const ecosystemCards: EcosystemCard[] = [
   {
     id: "osc",
     title: "Only Sometimes Club",
-    descriptor:
-      "For businesses that need sharper positioning, better conversion, and a stronger customer experience.",
+    descriptor: "Advisory access when the work is business-critical.",
     cta: "Request Access",
   },
   {
     id: "club",
     title: ".5% Club",
-    descriptor:
-      "Private access for people already building who need the right connection, not more options.",
+    descriptor: "Private matching when a public path is not the right shape.",
     cta: "Request Access",
   },
   {
     id: "grownSpaghetti",
     title: "Grown Spaghetti",
-    descriptor:
-      "Essays, ideas, and ongoing thinking on work, systems, culture, and building differently.",
+    descriptor: "Essays and ongoing thinking on work, systems, and building differently.",
     cta: "Read Substack",
   },
   {
     id: "customBuild",
     title: "Custom Build",
-    descriptor:
-      "For people who need this built around their business, thinking, and workflow.",
+    descriptor: "When this needs to be applied to your business, not templated.",
     cta: "Request Access",
   },
 ];
