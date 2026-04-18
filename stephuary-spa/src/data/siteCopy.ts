@@ -2,10 +2,10 @@
 
 export const homeCopy = {
   headline: "You already have something people would pay for.",
-  sub: "You'll see what you can sell, who already pays for it, and what's blocking it.",
-  authority: "Most people are not stuck—they're building in the wrong direction.",
+  bodyHook: "You just haven't seen it clearly yet.",
+  bodyShows: "This shows you what it is, who pays for it, and where it's breaking.",
+  bodyTension: "Most people don't finish this.",
   cta: "Start diagnostic",
-  videoTeaseLead: "If you want to understand how this works first:",
   videoTeaseCta: "Watch breakdown",
 } as const;
 
