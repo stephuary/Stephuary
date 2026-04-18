@@ -13,7 +13,6 @@ export type SectionOutput = {
   insights: string[];
   consequence: string;
   instruction: string;
-  steps?: string[];
   matchedRuleId: string | null;
 };
 
@@ -25,46 +24,16 @@ function pickBestRule(rules: ResultRule[], ctx: EvaluationContext): ResultRule |
   return null;
 }
 
-function buildNicheStructured(raw: string[]): Pick<
+/** Each block is exactly 3 lines: statement → consequence → action. */
+function buildThreeLines(raw: string[]): Pick<
   SectionOutput,
   "insights" | "consequence" | "instruction"
 > {
   const lines = raw.map((s) => (typeof s === "string" ? s.trim() : "")).filter((s) => s.length > 0);
-  if (lines.length >= 4) {
-    return {
-      insights: [lines[0], lines[1]].filter(Boolean),
-      consequence: lines[2],
-      instruction: lines[3],
-    };
-  }
-  if (lines.length === 3) {
-    return { insights: [lines[0]], consequence: lines[1], instruction: lines[2] };
-  }
-  if (lines.length === 2) {
-    return { insights: [lines[0]], consequence: "", instruction: lines[1] };
-  }
-  return { insights: lines[0] ? [lines[0]] : [], consequence: "", instruction: "" };
-}
-
-function buildStructured(
-  id: SectionId,
-  raw: string[],
-): Pick<SectionOutput, "insights" | "consequence" | "instruction" | "steps"> {
-  const lines = raw.map((s) => (typeof s === "string" ? s.trim() : "")).filter((s) => s.length > 0);
-
-  if (id === "first") {
-    return {
-      insights: [lines[0], lines[1]].filter(Boolean),
-      consequence: lines[2] ?? "",
-      instruction: "",
-      steps: lines.slice(3),
-    };
-  }
-
   return {
-    insights: [lines[0], lines[1]].filter(Boolean),
-    consequence: lines[2] ?? "",
-    instruction: lines[3] ?? "",
+    insights: lines[0] ? [lines[0]] : [],
+    consequence: lines[1] ?? "",
+    instruction: lines[2] ?? "",
   };
 }
 
@@ -73,14 +42,10 @@ export function generateSectionOutputs(ctx: EvaluationContext): SectionOutput[] 
     const block = resultRules[id];
     const hit = pickBestRule(block.rules, ctx);
     const raw = hit ? hit.lines : block.defaults;
-    const structured =
-      id === "niche"
-        ? buildNicheStructured(raw)
-        : buildStructured(id, raw);
     return {
       id,
       title: block.title,
-      ...structured,
+      ...buildThreeLines(raw),
       matchedRuleId: hit ? hit.id : null,
     };
   });

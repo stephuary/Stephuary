@@ -2,7 +2,7 @@
 
 export const homeCopy = {
   headline: "You already have something people would pay for.",
-  sub: "This shows you what it is, who pays for it, and what's stopping it from working.",
+  sub: "You'll see what you can sell, who already pays for it, and what's blocking it.",
   micro: "25-question diagnostic. Clear direction in minutes.",
   qualifier: "For people with experience, skills, or ideas that aren't translating into money yet.",
   cta: "Start diagnostic",
