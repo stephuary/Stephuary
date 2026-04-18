@@ -1,3 +1,4 @@
+import { resultsBridgeCopy } from "../data/siteCopy";
 import type { SectionOutput } from "../lib/outputGenerator";
 import { ResultSection } from "./ResultSection";
 import { ScreenShell } from "./ScreenShell";
@@ -18,6 +19,12 @@ export function ResultsScreen({ sections, primaryCta, animKey }: Props) {
         {sections.map((s) => (
           <ResultSection key={s.id} section={s} />
         ))}
+      </div>
+      <div className="results-bridge">
+        <p className="results-bridge-line">{resultsBridgeCopy.line1}</p>
+        <p className="results-bridge-line results-bridge-line--emph">
+          {resultsBridgeCopy.line2}
+        </p>
       </div>
       <div className="cta-row">
         <button type="button" className="btn btn-primary btn-block" onClick={primaryCta.onClick}>
