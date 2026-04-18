@@ -107,9 +107,11 @@ export const offerDecisionShortcut = {
   full: "Stop guessing entirely",
 } as const;
 
-export const offerScopeModalCopy = {
+export const offerSeeDetailsCta = "See details" as const;
+
+export const offerScopeInlineCopy = {
   header: "Do you want to keep this focused or go deeper?",
-  keepFocused: "Keep it focused",
+  keepFocused: "Keep this focused",
   lookAcross: "Look across everything",
   fixOne: "Fix one thing properly",
 } as const;
@@ -163,6 +165,8 @@ export const offerCopy = {
     price: "$34",
     label: "START HERE",
     subline: "This is the fastest way to move right now.",
+    collapsedOutcome: "A clear offer you can sell this week.",
+    collapsedTeaser: "Turns your readout into one thing you can charge for.",
     title: "Turn This Into Something You Can Charge For This Week",
     line:
       "This takes what you just saw and turns it into something you can sell immediately.",
@@ -182,6 +186,8 @@ export const offerCopy = {
       price: "$197",
       label: "WHEN SOMETHING STILL ISN'T WORKING",
       title: "Fix What's Not Working",
+      collapsedOutcome: "One problem fixed properly — not a full review.",
+      collapsedTeaser: "Isolates the right issue so you stop patching symptoms.",
       trustLine: "One thing. Looked at properly.",
       opening: "This isolates one problem and fixes it properly.",
       lines: [
@@ -197,6 +203,8 @@ export const offerCopy = {
       price: "$750",
       label: "WHEN IT'S NOT ONE ISSUE",
       title: "Full Breakdown",
+      collapsedOutcome: "See the whole system at once.",
+      collapsedTeaser: "Maps every layer so you stop guessing what to fix next.",
       line: "This looks across everything and shows you what's actually happening.",
       timeSave: "If you're dealing with multiple problems, this is faster than guessing.",
       decisionGuide: "Use this if everything feels unclear.",

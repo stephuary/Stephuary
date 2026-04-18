@@ -11,6 +11,8 @@ import {
   offerPostPathUpsell,
   offerPostPricingAccess,
   offerScrollNudge,
+  offerScopeInlineCopy,
+  offerSeeDetailsCta,
   offerTierLead,
   offerValueAnchor,
   operatorOSGateCopy,
@@ -18,7 +20,6 @@ import {
   type OfferTierId,
 } from "../data/siteCopy";
 import type { RecommendedTier } from "../lib/recommendedTier";
-import { OfferScopeModal } from "./OfferScopeModal";
 import { ScrollReveal } from "./ScrollReveal";
 import { ScreenShell } from "./ScreenShell";
 
@@ -42,13 +43,40 @@ function tierMatchesOffer(tier: RecommendedTier, offer: "path" | "fix" | "breakd
   return false;
 }
 
-function ctaLabel(offer: "path" | "fix" | "breakdown", recommended: boolean): string {
-  if (!recommended) {
-    return offer === "path" ? "Continue" : "Choose this";
-  }
-  if (offer === "path") return "Start here";
-  if (offer === "fix") return "Fix this now";
-  return "See everything clearly";
+function OfferScopeInline({
+  pendingTier,
+  onKeepFocused,
+  onLookAcross,
+  onFixOne,
+}: {
+  pendingTier: OfferTierId;
+  onKeepFocused: () => void;
+  onLookAcross: () => void;
+  onFixOne: () => void;
+}) {
+  const showFixOne = pendingTier === "path";
+  const showLookAcross = pendingTier !== "breakdown";
+
+  return (
+    <div className="offer-scope-inline" role="group" aria-label="Choose how to proceed">
+      <h3 className="offer-scope-inline-title">{offerScopeInlineCopy.header}</h3>
+      <div className="offer-scope-inline-actions">
+        <button type="button" className="btn btn-primary btn-block" onClick={onKeepFocused}>
+          {offerScopeInlineCopy.keepFocused}
+        </button>
+        {showLookAcross ? (
+          <button type="button" className="btn btn-secondary btn-block" onClick={onLookAcross}>
+            {offerScopeInlineCopy.lookAcross}
+          </button>
+        ) : null}
+        {showFixOne ? (
+          <button type="button" className="btn btn-secondary btn-block" onClick={onFixOne}>
+            {offerScopeInlineCopy.fixOne}
+          </button>
+        ) : null}
+      </div>
+    </div>
+  );
 }
 
 export function OfferScreen({
@@ -64,8 +92,7 @@ export function OfferScreen({
   onComplete,
 }: Props) {
   const [showSecondary, setShowSecondary] = useState(() => recommendedTier !== "entry");
-  const [scopeModalOpen, setScopeModalOpen] = useState(false);
-  const [pendingTier, setPendingTier] = useState<OfferTierId | null>(null);
+  const [expandedTier, setExpandedTier] = useState<OfferTierId | null>(null);
   const [postUpsell, setPostUpsell] = useState<null | "path" | "fix">(null);
   const [hasClickedOffer, setHasClickedOffer] = useState(false);
   const [scrollNudgeVisible, setScrollNudgeVisible] = useState(false);
@@ -112,53 +139,49 @@ export function OfferScreen({
 
   const tierLead = offerTierLead[recommendedTier];
 
-  function openScope(tierId: OfferTierId) {
+  function expandTier(tierId: OfferTierId) {
     signalCta();
-    setPendingTier(tierId);
-    setScopeModalOpen(true);
+    setExpandedTier(tierId);
     setHasClickedOffer(true);
   }
 
   function handleKeepFocused() {
     signalCta();
-    setScopeModalOpen(false);
-    if (!pendingTier) return;
-    if (pendingTier === "breakdown") {
+    if (!expandedTier) return;
+    if (expandedTier === "breakdown") {
       onComplete("breakdown");
+      setExpandedTier(null);
       return;
     }
-    if (pendingTier === "fix") {
+    if (expandedTier === "fix") {
       setPostUpsell("fix");
+      setExpandedTier(null);
       return;
     }
-    if (pendingTier === "path") {
+    if (expandedTier === "path") {
       setPostUpsell("path");
+      setExpandedTier(null);
     }
   }
 
   function handleLookAcross() {
     signalCta();
-    setScopeModalOpen(false);
-    setPendingTier(null);
+    setExpandedTier(null);
     onComplete("breakdown");
   }
 
   function handleFixOne() {
     signalCta();
-    setScopeModalOpen(false);
-    setPendingTier(null);
+    setExpandedTier(null);
     onComplete("fix");
-  }
-
-  function closeScopeModal() {
-    setScopeModalOpen(false);
-    setPendingTier(null);
   }
 
   const nudgeCls = showScrollNudgeHighlight ? " offer-card--scroll-nudge" : "";
   const primaryCardClass = `offer-card offer-card--primary ${
     recPath ? "offer-card--primary-dominant offer-card--recommended" : "offer-card--deemphasized"
   }${recPath ? nudgeCls : ""}`.trim();
+
+  const pathExpanded = expandedTier === "path";
 
   return (
     <ScreenShell animKey={animKey} className="offer-screen">
@@ -319,27 +342,42 @@ export function OfferScreen({
                 <div ref={pathRef} className={primaryCardClass}>
                   {recPath ? <span className="offer-recommended-pill">Recommended for you</span> : null}
                   <span className="offer-card-label">{offerCopy.primary.label}</span>
-                  <p className="offer-card-eyebrow-sub">{offerCopy.primary.subline}</p>
-                  <span className="offer-card-price">{offerCopy.primary.price}</span>
-                  <p className="offer-card-time-compress">{offerDecisionShortcut.entry}</p>
                   <span className="offer-card-title">{offerCopy.primary.title}</span>
-                  <p className="offer-card-line">{offerCopy.primary.line}</p>
-                  <p className="offer-card-urgency">{offerCopy.primary.urgency}</p>
-                  <ul className="offer-card-bullets offer-card-bullets--primary">
-                    {offerCopy.primary.bullets.map((b) => (
-                      <li key={b}>{b}</li>
-                    ))}
-                  </ul>
-                  <p className="offer-friction">{offerFrictionCopy}</p>
-                  <p className="offer-card-decision-guide">{offerCopy.primary.decisionGuide}</p>
-                  <button
-                    type="button"
-                    className={`btn btn-block offer-primary-btn ${recPath ? "btn-primary" : "btn-secondary offer-cta--deemp"}`.trim()}
-                    onClick={() => openScope(offerCopy.primary.id)}
-                  >
-                    {ctaLabel("path", recPath)}
-                  </button>
-                  <p className="offer-card-social-cue">{offerCopy.primary.socialCue}</p>
+                  <p className="offer-card-outcome">{offerCopy.primary.collapsedOutcome}</p>
+                  <p className="offer-card-teaser">{offerCopy.primary.collapsedTeaser}</p>
+
+                  {pathExpanded ? (
+                    <>
+                      <span className="offer-card-price">{offerCopy.primary.price}</span>
+                      <p className="offer-card-time-compress">{offerDecisionShortcut.entry}</p>
+                      <p className="offer-card-eyebrow-sub">{offerCopy.primary.subline}</p>
+                      <p className="offer-card-line">{offerCopy.primary.line}</p>
+                      <p className="offer-card-urgency">{offerCopy.primary.urgency}</p>
+                      <ul className="offer-card-bullets offer-card-bullets--primary">
+                        {offerCopy.primary.bullets.map((b) => (
+                          <li key={b}>{b}</li>
+                        ))}
+                      </ul>
+                      <p className="offer-friction">{offerFrictionCopy}</p>
+                      <p className="offer-card-decision-guide">{offerCopy.primary.decisionGuide}</p>
+                      <OfferScopeInline
+                        pendingTier="path"
+                        onKeepFocused={handleKeepFocused}
+                        onLookAcross={handleLookAcross}
+                        onFixOne={handleFixOne}
+                      />
+                      <p className="offer-card-social-cue">{offerCopy.primary.socialCue}</p>
+                    </>
+                  ) : (
+                    <button
+                      type="button"
+                      className={`btn btn-block offer-primary-btn ${recPath ? "btn-primary" : "btn-secondary offer-cta--deemp"}`.trim()}
+                      onClick={() => expandTier("path")}
+                      aria-expanded={pathExpanded}
+                    >
+                      {offerSeeDetailsCta}
+                    </button>
+                  )}
                 </div>
 
                 <button
@@ -367,6 +405,7 @@ export function OfferScreen({
                 const cardRef = isFix ? fixRef : fullRef;
                 const shortcutKey = isFix ? "focused" : "full";
                 const secNudge = recommended && showScrollNudgeHighlight ? nudgeCls : "";
+                const tierExpanded = expandedTier === tier.id;
                 return (
                   <ScrollReveal key={tier.id} className="offer-tier-reveal">
                     <div
@@ -383,53 +422,64 @@ export function OfferScreen({
                       {"label" in tier && tier.label ? (
                         <span className="offer-card-label offer-card-label--secondary">{tier.label}</span>
                       ) : null}
-                      <span className="offer-card-price offer-card-price--sm">
-                        {tier.price}
-                      </span>
-                      <p className="offer-card-time-compress offer-card-time-compress--sm">
-                        {offerDecisionShortcut[shortcutKey]}
-                      </p>
-                      <span className="offer-card-title offer-card-title--sm">
-                        {tier.title}
-                      </span>
-                      {"trustLine" in tier && tier.trustLine ? (
-                        <p className="offer-card-trust">{tier.trustLine}</p>
-                      ) : null}
-                      {"opening" in tier && tier.opening ? (
-                        <p className="offer-card-opening">{tier.opening}</p>
-                      ) : null}
-                      {"lines" in tier && tier.lines
-                        ? tier.lines.map((line) => (
-                            <p key={line} className="offer-card-opening offer-card-opening--tight">
-                              {line}
+                      <span className="offer-card-title offer-card-title--sm">{tier.title}</span>
+                      <p className="offer-card-outcome offer-card-outcome--sm">{tier.collapsedOutcome}</p>
+                      <p className="offer-card-teaser offer-card-teaser--sm">{tier.collapsedTeaser}</p>
+
+                      {tierExpanded ? (
+                        <>
+                          <span className="offer-card-price offer-card-price--sm">{tier.price}</span>
+                          <p className="offer-card-time-compress offer-card-time-compress--sm">
+                            {offerDecisionShortcut[shortcutKey]}
+                          </p>
+                          {"trustLine" in tier && tier.trustLine ? (
+                            <p className="offer-card-trust">{tier.trustLine}</p>
+                          ) : null}
+                          {"opening" in tier && tier.opening ? (
+                            <p className="offer-card-opening">{tier.opening}</p>
+                          ) : null}
+                          {"lines" in tier && tier.lines
+                            ? tier.lines.map((line) => (
+                                <p key={line} className="offer-card-opening offer-card-opening--tight">
+                                  {line}
+                                </p>
+                              ))
+                            : null}
+                          {"line" in tier && tier.line ? (
+                            <p className="offer-card-line offer-card-line--sm">{tier.line}</p>
+                          ) : null}
+                          {"timeSave" in tier && tier.timeSave ? (
+                            <p className="offer-card-line offer-card-line--sm">{tier.timeSave}</p>
+                          ) : null}
+                          {"bullets" in tier && tier.bullets && tier.bullets.length > 0 ? (
+                            <ul className="offer-card-bullets">
+                              {tier.bullets.map((b) => (
+                                <li key={b}>{b}</li>
+                              ))}
+                            </ul>
+                          ) : null}
+                          {"decisionGuide" in tier && tier.decisionGuide ? (
+                            <p className="offer-card-decision-guide offer-card-decision-guide--secondary">
+                              {tier.decisionGuide}
                             </p>
-                          ))
-                        : null}
-                      {"line" in tier && tier.line ? (
-                        <p className="offer-card-line offer-card-line--sm">{tier.line}</p>
-                      ) : null}
-                      {"timeSave" in tier && tier.timeSave ? (
-                        <p className="offer-card-line offer-card-line--sm">{tier.timeSave}</p>
-                      ) : null}
-                      {"bullets" in tier && tier.bullets && tier.bullets.length > 0 ? (
-                        <ul className="offer-card-bullets">
-                          {tier.bullets.map((b) => (
-                            <li key={b}>{b}</li>
-                          ))}
-                        </ul>
-                      ) : null}
-                      {"decisionGuide" in tier && tier.decisionGuide ? (
-                        <p className="offer-card-decision-guide offer-card-decision-guide--secondary">
-                          {tier.decisionGuide}
-                        </p>
-                      ) : null}
-                      <button
-                        type="button"
-                        className={`btn btn-block ${recommended ? "btn-primary" : "btn-secondary offer-cta--deemp"}`.trim()}
-                        onClick={() => openScope(tier.id)}
-                      >
-                        {ctaLabel(isFix ? "fix" : "breakdown", recommended)}
-                      </button>
+                          ) : null}
+                          <OfferScopeInline
+                            pendingTier={tier.id}
+                            onKeepFocused={handleKeepFocused}
+                            onLookAcross={handleLookAcross}
+                            onFixOne={handleFixOne}
+                          />
+                        </>
+                      ) : (
+                        <button
+                          type="button"
+                          className={`btn btn-block ${recommended ? "btn-secondary" : "btn-secondary offer-cta--deemp"}`.trim()}
+                          onClick={() => expandTier(tier.id)}
+                          aria-expanded={tierExpanded}
+                        >
+                          {offerSeeDetailsCta}
+                        </button>
+                      )}
                     </div>
                   </ScrollReveal>
                 );
@@ -464,15 +514,6 @@ export function OfferScreen({
           </button>
         </div>
       </div>
-
-      <OfferScopeModal
-        open={scopeModalOpen && pendingTier !== null}
-        pendingTier={pendingTier ?? "path"}
-        onClose={closeScopeModal}
-        onKeepFocused={handleKeepFocused}
-        onLookAcross={handleLookAcross}
-        onFixOne={handleFixOne}
-      />
     </ScreenShell>
   );
 }
