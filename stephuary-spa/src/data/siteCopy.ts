@@ -52,6 +52,22 @@ export const accessRequestCopy = {
   cta: "Submit application",
 } as const;
 
+/** Post-submit confirmation (access application). */
+export const applicationConfirmationCopy = {
+  headline: "You're in.",
+  subtext: "I've received your application.",
+  reframeLine1: "Most people don't make it this far.",
+  reframeLine2: "They stay in the loop instead of deciding.",
+  expectationLine1: "I review every application personally.",
+  expectationLine2: "If it's a fit, you'll hear from me with next steps.",
+  preframeLine1: "If this moves forward, it won't be casual.",
+  preframeLine2: "We'll focus on what actually changes your situation.",
+  optionalLead: "If you want to understand how this works before I respond:",
+  watchBreakdownCta: "Watch breakdown",
+  finalLine1: "You already know what's not working.",
+  finalLine2: "Now we decide what to do about it.",
+} as const;
+
 /** Internal — embedded for operator reference; not shown in the UI. */
 export const accessRequestInternalFlow = [
   "Collect: name, email",

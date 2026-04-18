@@ -214,7 +214,7 @@ export default function App() {
           <AccessRequestScreen
             animKey={stepAnimKey(step)}
             intent={step.intent === "os" ? "os" : undefined}
-            onDone={() => setStep({ id: "home" })}
+            onWatchBreakdown={triggerPostAction}
           />
         ) : null}
 

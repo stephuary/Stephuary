@@ -1,6 +1,10 @@
 import { useState, type FormEvent } from "react";
 import { usePostActionMoment } from "../context/PostActionMomentContext";
-import { accessRequestCopy, accessRequestInternalFlow } from "../data/siteCopy";
+import {
+  accessRequestCopy,
+  accessRequestInternalFlow,
+  applicationConfirmationCopy,
+} from "../data/siteCopy";
 import { ScrollReveal } from "./ScrollReveal";
 import { ScreenShell } from "./ScreenShell";
 
@@ -8,10 +12,11 @@ type Props = {
   animKey: string;
   /** Internal routing only — sets hidden field for OS intake. */
   intent?: "os";
-  onDone: () => void;
+  /** Post-submit: same moment as home “Watch breakdown”. */
+  onWatchBreakdown: () => void;
 };
 
-export function AccessRequestScreen({ animKey, intent, onDone }: Props) {
+export function AccessRequestScreen({ animKey, intent, onWatchBreakdown }: Props) {
   const triggerPostAction = usePostActionMoment();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -35,23 +40,35 @@ export function AccessRequestScreen({ animKey, intent, onDone }: Props) {
   }
 
   if (sent) {
+    const c = applicationConfirmationCopy;
     return (
-      <ScreenShell animKey={animKey} className="access-screen">
-        <ScrollReveal className="access-block-reveal">
-          <p className="access-thanks">{accessRequestCopy.thanksLine1}</p>
-          <p className="access-thanks-sub">{accessRequestCopy.thanksLine2}</p>
-          <div className="cta-row">
-            <button
-              type="button"
-              className="btn btn-primary btn-block"
-              onClick={() => {
-                triggerPostAction();
-                onDone();
-              }}
-            >
-              Back
+      <ScreenShell animKey={animKey} className="access-screen access-screen--confirm">
+        <ScrollReveal className="access-block-reveal access-confirm">
+          <h1 className="access-confirm-headline">{c.headline}</h1>
+          <p className="access-confirm-sub">{c.subtext}</p>
+          <section className="access-confirm-section" aria-label="Context">
+            <p>{c.reframeLine1}</p>
+            <p>{c.reframeLine2}</p>
+          </section>
+          <section className="access-confirm-section" aria-label="What happens next">
+            <p>{c.expectationLine1}</p>
+            <p>{c.expectationLine2}</p>
+          </section>
+          <section className="access-confirm-section" aria-label="If we work together">
+            <p>{c.preframeLine1}</p>
+            <p>{c.preframeLine2}</p>
+          </section>
+          <div className="access-confirm-optional">
+            <p className="access-confirm-optional-lead">{c.optionalLead}</p>
+            <button type="button" className="home-video-tease-btn" onClick={onWatchBreakdown}>
+              {c.watchBreakdownCta}
             </button>
           </div>
+          <p className="access-confirm-final">
+            {c.finalLine1}
+            <br />
+            {c.finalLine2}
+          </p>
         </ScrollReveal>
       </ScreenShell>
     );
