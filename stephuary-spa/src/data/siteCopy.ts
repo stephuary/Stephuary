@@ -69,6 +69,16 @@ export const resultsAuthorityCopy =
 
 export const resultsScaleCopy = "This scales beyond one person." as const;
 
+export const resultsReadoutCloseCopy = {
+  line1: "Most people never see this clearly.",
+  line2: "That's why they stay stuck repeating it.",
+} as const;
+
+export const offerBeforeOptionsCopy = {
+  line1: "Now you have two options:",
+  line2: "apply it, or keep guessing.",
+} as const;
+
 export const operatorOSGateCopy = {
   header: "This can be run as a system.",
   sub: "Not just for you. Across your work.",

@@ -12,6 +12,7 @@ import {
   offerPostPricingAccess,
   offerScrollNudge,
   offerScopeInlineCopy,
+  offerBeforeOptionsCopy,
   offerSeeDetailsCta,
   offerTierLead,
   offerValueAnchor,
@@ -337,6 +338,14 @@ export function OfferScreen({
           </div>
         ) : (
           <>
+            <ScrollReveal className="offer-before-options-reveal">
+              <div className="offer-before-options" role="note">
+                <p className="offer-before-options-line">{offerBeforeOptionsCopy.line1}</p>
+                <p className="offer-before-options-line offer-before-options-line--emph">
+                  {offerBeforeOptionsCopy.line2}
+                </p>
+              </div>
+            </ScrollReveal>
             <ScrollReveal className="offer-primary-reveal">
               <div className="offer-primary-wrap">
                 <div ref={pathRef} className={primaryCardClass}>

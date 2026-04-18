@@ -4,6 +4,7 @@ import {
   resultsAuthorityCopy,
   resultsBridgeCopy,
   resultsEmailCopy,
+  resultsReadoutCloseCopy,
   resultsScaleCopy,
   resultsShareCopy,
   resultsStakesCopy,
@@ -60,6 +61,10 @@ export function ResultsScreen({ sections, primaryCta, animKey }: Props) {
         {sections.map((s) => (
           <ResultSection key={s.id} section={s} />
         ))}
+      </div>
+      <div className="results-readout-close" role="note">
+        <p className="results-readout-close-line">{resultsReadoutCloseCopy.line1}</p>
+        <p className="results-readout-close-line">{resultsReadoutCloseCopy.line2}</p>
       </div>
       <p className="results-stakes" role="note">
         {resultsStakesCopy}
