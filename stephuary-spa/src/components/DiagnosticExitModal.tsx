@@ -23,7 +23,7 @@ export function DiagnosticExitModal({ open, onStay, onExit }: Props) {
         <h2 id="diagnostic-exit-title" className="diagnostic-exit-modal-title">
           Leave the Alignment Diagnostic?
         </h2>
-        <p className="diagnostic-exit-modal-body">{"Leave now and you'll stay guessing."}</p>
+        <p className="diagnostic-exit-modal-body">Exit = incomplete classification.</p>
         <div className="diagnostic-exit-modal-actions">
           <button type="button" className="btn btn-primary diagnostic-exit-modal-stay" onClick={onStay}>
             Continue

@@ -14,7 +14,7 @@ export function EcosystemCards({ onRequestAccess, onReadSubstack }: Props) {
           <div className="ecosystem-card">
             <h3 className="ecosystem-card-title">{card.title}</h3>
             <p className="ecosystem-card-desc">{card.descriptor}</p>
-            {card.cta === "Read Substack" ? (
+            {card.action === "read_substack" ? (
               <button
                 type="button"
                 className="btn btn-secondary btn-block ecosystem-card-btn"

@@ -19,8 +19,6 @@ import { DiagnosticExitModal } from "./components/DiagnosticExitModal";
 import { QuestionScreen } from "./components/QuestionScreen";
 import { RealizationMomentScreen } from "./components/RealizationMomentScreen";
 import { ResultsScreen } from "./components/ResultsScreen";
-import { shouldShowHighTicketAccess } from "./lib/highTicketSignals";
-import { shouldShowOperatorOSGate } from "./lib/operatorOSSignals";
 import { resolveRecommendedTier } from "./lib/recommendedTier";
 import { resolveClassificationLabels } from "./lib/classification";
 import { buildEvaluationContext } from "./lib/scoring";
@@ -74,7 +72,7 @@ export default function App() {
   const [step, setStep] = useState<FlowStep>({ id: "home" });
   const [answers, setAnswers] = useState<AnswersMap>({});
   const [exitModalOpen, setExitModalOpen] = useState(false);
-  const [applyQualifyOpen, setApplyQualifyOpen] = useState(false);
+  const [installQualifyOpen, setInstallQualifyOpen] = useState(false);
   const [pendingAccessIntent, setPendingAccessIntent] = useState<"os" | undefined>();
   const [auraRoutePulse, setAuraRoutePulse] = useState(false);
   const skipAuraRoutePulse = useRef(true);
@@ -91,16 +89,6 @@ export default function App() {
 
   const recommendedTier = useMemo(
     () => resolveRecommendedTier(evaluationCtx),
-    [evaluationCtx],
-  );
-
-  const showHighTicketAccess = useMemo(
-    () => shouldShowHighTicketAccess(evaluationCtx),
-    [evaluationCtx],
-  );
-
-  const showOperatorOSGate = useMemo(
-    () => shouldShowOperatorOSGate(evaluationCtx),
     [evaluationCtx],
   );
 
@@ -147,22 +135,22 @@ export default function App() {
     }
   }
 
-  function closeApplyQualify() {
-    setApplyQualifyOpen(false);
+  function closeInstallQualify() {
+    setInstallQualifyOpen(false);
     setPendingAccessIntent(undefined);
   }
 
-  function confirmApplyQualify() {
+  function confirmInstallQualify() {
     const intent = pendingAccessIntent;
     triggerPostAction();
-    closeApplyQualify();
+    closeInstallQualify();
     goAccess(intent);
   }
 
   function requestAccessWithMoment(intent?: "os") {
     triggerPostAction();
     setPendingAccessIntent(intent);
-    setApplyQualifyOpen(true);
+    setInstallQualifyOpen(true);
   }
 
   function openSubstack() {
@@ -262,9 +250,9 @@ export default function App() {
       />
 
       <ApplyQualifyModal
-        open={applyQualifyOpen}
-        onClose={closeApplyQualify}
-        onConfirm={confirmApplyQualify}
+        open={installQualifyOpen}
+        onClose={closeInstallQualify}
+        onConfirm={confirmInstallQualify}
       />
 
       <main className={`app-main ${entryLayout ? "app-main--entry" : ""}`.trim()}>
@@ -346,10 +334,9 @@ export default function App() {
         {step.id === "results" ? (
           <ResultsScreen
             animKey={stepAnimKey(step)}
-            sharedEntry={sharedEntry}
             classificationLabels={classificationLabels}
             primaryCta={{
-              label: "Install system",
+              label: "→ Continue to installs",
               onClick: () => {
                 triggerPostAction();
                 setStep({ id: "offer" });
@@ -362,15 +349,14 @@ export default function App() {
           <OfferScreen
             animKey={stepAnimKey(step)}
             recommendedTier={recommendedTier}
-            showOperatorOSGate={showOperatorOSGate}
-            showHighTicketAccess={showHighTicketAccess}
-            onRequestOperatorOS={() => setStep({ id: "operatorOS" })}
-            onRequestCustomBuild={() => setStep({ id: "customBuild" })}
-            onRequestOsc={() => setStep({ id: "osc" })}
-            onPostOfferAccess={() => requestAccessWithMoment()}
             signalCta={triggerPostAction}
-            onComplete={() => {
-              setStep({ id: "explore" });
+            onInstallIntake={() => {
+              triggerPostAction();
+              requestAccessWithMoment();
+            }}
+            onRequestCustomBuild={() => {
+              triggerPostAction();
+              setStep({ id: "customBuild" });
             }}
           />
         ) : null}

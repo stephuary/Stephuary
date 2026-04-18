@@ -50,36 +50,38 @@ export function HomeScreen({ animKey, onStart, sharedEntry = false }: Props) {
   return (
     <ScreenShell animKey={animKey} className="home-screen">
       <div className="home-inner home-inner--entrance">
-        <div className="home-hero">
-          <div className="home-hero-copy">
-            <h1 className="home-headline">{h.headline}</h1>
-            <div className="home-support-block">
-              {h.supportLines.map((line) => (
-                <p key={line} className="home-support-line">
-                  {line}
+        <div className="home-copy-panel screen-copy-panel">
+          <div className="home-hero">
+            <div className="home-hero-copy">
+              <h1 className="home-headline">{h.headline}</h1>
+              <div className="home-support-block">
+                {h.supportLines.map((line) => (
+                  <p key={line} className="home-support-line">
+                    {line}
+                  </p>
+                ))}
+              </div>
+              {sharedEntry ? (
+                <p className="home-shared-entry-hint" role="note">
+                  {h.sharedEntryLine}
                 </p>
-              ))}
+              ) : null}
             </div>
-            {sharedEntry ? (
-              <p className="home-shared-entry-hint" role="note">
-                {h.sharedEntryLine}
-              </p>
-            ) : null}
           </div>
-        </div>
-        <div
-          className={`cta-row home-primary-cta ${ctaIdleAttention ? "home-primary-cta--idle-attention" : ""}`.trim()}
-        >
-          <button type="button" className="btn btn-primary btn-block" onClick={onStart}>
-            {h.cta}
-          </button>
-        </div>
-        <div className="home-cta-frame" role="note">
-          {h.ctaFrameLines.map((line) => (
-            <p key={line} className="home-cta-frame-line">
-              {line}
-            </p>
-          ))}
+          <div
+            className={`cta-row home-primary-cta ${ctaIdleAttention ? "home-primary-cta--idle-attention" : ""}`.trim()}
+          >
+            <button type="button" className="btn btn-primary btn-block" onClick={onStart}>
+              {h.cta}
+            </button>
+          </div>
+          <div className="home-cta-frame" role="note">
+            {h.ctaFrameLines.map((line) => (
+              <p key={line} className="home-cta-frame-line">
+                {line}
+              </p>
+            ))}
+          </div>
         </div>
       </div>
     </ScreenShell>

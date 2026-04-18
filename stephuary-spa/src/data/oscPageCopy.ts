@@ -1,8 +1,6 @@
 export const oscPageCopy = {
-  headline:
-    "For businesses that need sharper positioning, better conversion, and a stronger customer experience.",
-  sub: "This is advisory for businesses that need to improve how they present, convert, and operate.",
-  b2bLine:
-    "For businesses where positioning, conversion, or experience is costing real revenue.",
-  cta: "Apply to work with me",
+  headline: "Advisory when conversion and ops touch revenue.",
+  sub: "Positioning, conversion, and experience — installed as constraints, not opinions.",
+  b2bLine: "For operators where the leak is structural.",
+  cta: "→ Install intake",
 } as const;

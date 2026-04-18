@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { applyQualifyModalCopy } from "../data/siteCopy";
+import { installQualifyModalCopy } from "../data/siteCopy";
 
 type Props = {
   open: boolean;
@@ -8,7 +8,7 @@ type Props = {
 };
 
 export function ApplyQualifyModal({ open, onClose, onConfirm }: Props) {
-  const copy = applyQualifyModalCopy;
+  const copy = installQualifyModalCopy;
 
   useEffect(() => {
     if (!open) return;
@@ -23,38 +23,36 @@ export function ApplyQualifyModal({ open, onClose, onConfirm }: Props) {
 
   return (
     <div
-      className="apply-qualify-modal-overlay"
+      className="install-qualify-modal-overlay"
       role="presentation"
       onClick={onClose}
     >
       <div
-        className="apply-qualify-modal"
+        className="install-qualify-modal screen-copy-panel"
         role="dialog"
         aria-modal="true"
-        aria-labelledby="apply-qualify-title"
+        aria-labelledby="install-qualify-title"
         onClick={(e) => e.stopPropagation()}
       >
-        <h2 id="apply-qualify-title" className="apply-qualify-modal-title">
+        <h2 id="install-qualify-title" className="install-qualify-modal-title">
           {copy.headline}
         </h2>
-        <p className="apply-qualify-modal-filter">{copy.filterLine}</p>
-        <p className="apply-qualify-modal-prompt">{copy.prompt}</p>
-        <p className="apply-qualify-modal-unsure">{copy.unsureLine}</p>
-        <ul className="apply-qualify-modal-bullets">
-          {copy.bullets.map((line) => (
-            <li key={line} className="apply-qualify-modal-bullet">
+        <p className="install-qualify-modal-lead">{copy.bodyLead}</p>
+        <p className="install-qualify-modal-pick">{copy.bodyPick}</p>
+        <ul className="install-qualify-modal-routes">
+          {copy.routes.map((line) => (
+            <li key={line} className="install-qualify-modal-route">
               {line}
             </li>
           ))}
         </ul>
-        <p className="apply-qualify-modal-bridge">{copy.bridge}</p>
-        <button type="button" className="btn btn-primary btn-block apply-qualify-modal-cta" onClick={onConfirm}>
-          <span className="apply-qualify-modal-cta-arrow" aria-hidden>
+        <p className="install-qualify-modal-closing">{copy.closing}</p>
+        <button type="button" className="btn btn-primary btn-block install-qualify-modal-cta" onClick={onConfirm}>
+          <span className="install-qualify-modal-cta-arrow" aria-hidden>
             →
           </span>
           {copy.cta}
         </button>
-        <p className="apply-qualify-modal-review">{copy.belowButton}</p>
       </div>
     </div>
   );

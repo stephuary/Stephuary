@@ -1,7 +1,6 @@
 export const customBuildPageCopy = {
-  headline: "This gets built around you.",
-  sub: "For situations where this isn't a template problem.",
-  body:
-    "This is for people who need this applied directly to their business, not figured out alone.",
-  cta: "Apply to work with me",
+  headline: "Built around your constraints.",
+  sub: "Not a template pass. Direct install on your stack.",
+  body: "Pieces don’t fail in isolation. The system does. This rebuilds the path revenue runs on.",
+  cta: "→ Install intake",
 } as const;

@@ -45,31 +45,37 @@ export function AccessRequestScreen({ animKey, intent, onWatchBreakdown }: Props
     return (
       <ScreenShell animKey={animKey} className="access-screen access-screen--confirm">
         <ScrollReveal className="access-block-reveal access-confirm">
-          <h1 className="access-confirm-headline">{c.headline}</h1>
-          <p className="access-confirm-sub">{c.subtext}</p>
-          <section className="access-confirm-section" aria-label="Context">
-            <p>{c.reframeLine1}</p>
-            <p>{c.reframeLine2}</p>
-          </section>
-          <section className="access-confirm-section" aria-label="What happens next">
-            <p>{c.expectationLine1}</p>
-            <p>{c.expectationLine2}</p>
-          </section>
-          <section className="access-confirm-section" aria-label="If we work together">
-            <p>{c.preframeLine1}</p>
-            <p>{c.preframeLine2}</p>
-          </section>
-          <div className="access-confirm-optional">
-            <p className="access-confirm-optional-lead">{c.optionalLead}</p>
-            <button type="button" className="home-video-tease-btn" onClick={onWatchBreakdown}>
-              {c.watchBreakdownCta}
-            </button>
+          <div className="screen-copy-panel access-confirm-panel">
+            <h1 className="access-confirm-headline">{c.headline}</h1>
+            <p className="access-confirm-sub">{c.subtext}</p>
+            {(c.reframeLine1 || c.reframeLine2) && (
+              <section className="access-confirm-section" aria-label="Context">
+                {c.reframeLine1 ? <p>{c.reframeLine1}</p> : null}
+                {c.reframeLine2 ? <p>{c.reframeLine2}</p> : null}
+              </section>
+            )}
+            <section className="access-confirm-section" aria-label="Next">
+              <p>{c.expectationLine1}</p>
+              <p>{c.expectationLine2}</p>
+            </section>
+            {(c.preframeLine1 || c.preframeLine2) && (
+              <section className="access-confirm-section" aria-label="Scope">
+                {c.preframeLine1 ? <p>{c.preframeLine1}</p> : null}
+                {c.preframeLine2 ? <p>{c.preframeLine2}</p> : null}
+              </section>
+            )}
+            <div className="access-confirm-optional">
+              <p className="access-confirm-optional-lead">{c.optionalLead}</p>
+              <button type="button" className="home-video-tease-btn" onClick={onWatchBreakdown}>
+                {c.watchBreakdownCta}
+              </button>
+            </div>
+            <p className="access-confirm-final">
+              {c.finalLine1}
+              <br />
+              {c.finalLine2}
+            </p>
           </div>
-          <p className="access-confirm-final">
-            {c.finalLine1}
-            <br />
-            {c.finalLine2}
-          </p>
         </ScrollReveal>
       </ScreenShell>
     );
@@ -78,6 +84,7 @@ export function AccessRequestScreen({ animKey, intent, onWatchBreakdown }: Props
   return (
     <ScreenShell animKey={animKey} className="access-screen">
       <ScrollReveal className="access-block-reveal">
+        <div className="screen-copy-panel access-form-panel">
         <h1 className="access-title">{accessRequestCopy.title}</h1>
         <div className="access-intro">
           <p className="access-lead">{accessRequestCopy.lead}</p>
@@ -191,6 +198,7 @@ export function AccessRequestScreen({ animKey, intent, onWatchBreakdown }: Props
           </div>
         </form>
         <ExclusionAuthorityBlock className="exclusion-authority--access" />
+        </div>
       </ScrollReveal>
     </ScreenShell>
   );
