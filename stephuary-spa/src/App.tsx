@@ -122,12 +122,7 @@ export default function App() {
 
       <main className={`app-main ${entryLayout ? "app-main--entry" : ""}`.trim()}>
         {step.id === "home" ? (
-          <HomeScreen
-            animKey={stepAnimKey(step)}
-            onStart={startDiagnostic}
-            onRequestAccess={goAccess}
-            onReadSubstack={openSubstack}
-          />
+          <HomeScreen animKey={stepAnimKey(step)} onStart={startDiagnostic} />
         ) : null}
 
         {step.id === "osc" ? (

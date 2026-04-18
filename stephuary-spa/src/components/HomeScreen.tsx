@@ -1,20 +1,12 @@
 import { homeCopy } from "../data/siteCopy";
-import { EcosystemCards } from "./EcosystemCards";
 import { ScreenShell } from "./ScreenShell";
 
 type Props = {
   animKey: string;
   onStart: () => void;
-  onRequestAccess: () => void;
-  onReadSubstack: () => void;
 };
 
-export function HomeScreen({
-  animKey,
-  onStart,
-  onRequestAccess,
-  onReadSubstack,
-}: Props) {
+export function HomeScreen({ animKey, onStart }: Props) {
   return (
     <ScreenShell animKey={animKey} className="home-screen">
       <div className="home-inner">
@@ -25,7 +17,6 @@ export function HomeScreen({
             {homeCopy.cta}
           </button>
         </div>
-        <EcosystemCards onRequestAccess={onRequestAccess} onReadSubstack={onReadSubstack} />
       </div>
     </ScreenShell>
   );
