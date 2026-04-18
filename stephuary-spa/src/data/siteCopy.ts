@@ -1,9 +1,11 @@
 /** Shell copy — diagnostic output lives in `resultRules.ts`. */
 
 export const homeCopy = {
-  headline: "You're sitting on something people would pay for.",
-  sub: "Find your niche, high-ticket work, and who needs it now.",
-  cta: "Start",
+  headline: "You already have something people would pay for.",
+  sub: "This shows you what it is, who pays for it, and what's stopping it from working.",
+  micro: "25-question diagnostic. Clear direction in minutes.",
+  qualifier: "For people with experience, skills, or ideas that aren't translating into money yet.",
+  cta: "Start diagnostic",
 } as const;
 
 export const exploreCopy = {

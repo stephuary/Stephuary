@@ -12,6 +12,8 @@ export function HomeScreen({ animKey, onStart }: Props) {
       <div className="home-inner home-inner--entrance">
         <h1 className="home-headline">{homeCopy.headline}</h1>
         <p className="home-sub">{homeCopy.sub}</p>
+        <p className="home-micro">{homeCopy.micro}</p>
+        <p className="home-qualifier">{homeCopy.qualifier}</p>
         <div className="cta-row home-primary-cta">
           <button type="button" className="btn btn-primary btn-block" onClick={onStart}>
             {homeCopy.cta}
