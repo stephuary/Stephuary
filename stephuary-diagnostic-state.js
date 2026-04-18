@@ -3,7 +3,8 @@
  * Phase pages + results load this before stephuary-result.js where synthesis runs.
  */
 (function (global) {
-  var P01 = 'stephuary_capture_p01_v2';
+  var P01 = 'stephuary_capture_p01_v3';
+  var P01_LEGACY = 'stephuary_capture_p01_v2';
   var P02 = 'stephuary_monetize_p02_v1';
   var P03 = 'stephuary_structure_p03_v1';
   var P04 = 'stephuary_validation_p04_v1';
@@ -62,6 +63,12 @@
     } catch (e) {
       return null;
     }
+  }
+
+  function loadP01Bits() {
+    var b = loadBits(P01);
+    if (b && b.length) return b;
+    return loadBits(P01_LEGACY);
   }
 
   function completeP01(bits) {
@@ -218,7 +225,7 @@
   }
 
   function collectAll() {
-    var b1 = loadBits(P01);
+    var b1 = loadP01Bits();
     var b2 = loadBits(P02);
     var b3 = loadBits(P03);
     var b4 = loadBits(P04);
@@ -276,6 +283,6 @@
     completeP04: completeP04,
     migrateP05Bits: migrateP05Bits,
     completeP05: completeP05,
-    KEYS: { P01: P01, P02: P02, P03: P03, P04: P04, P05: P05 }
+    KEYS: { P01: P01, P01_LEGACY: P01_LEGACY, P02: P02, P03: P03, P04: P04, P05: P05 }
   };
 })(typeof window !== 'undefined' ? window : this);

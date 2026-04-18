@@ -4,7 +4,6 @@
  */
 (function (global) {
   var KEY = 'stephuary_user_state_v1';
-  var CAPTURE_KEY = 'stephuary_capture_p01_v2';
   var RESULT_KEY = 'stephuary_result_v1';
   var PROGRESS_KEY = 'stephuary_system_progress_v1';
   var DIAGNOSTIC_ANSWERS_KEY = 'stephuary_diagnostic_answers_v1';
@@ -129,6 +128,12 @@
     } catch (e) {
       return null;
     }
+  }
+
+  function lsGetCaptureState() {
+    var v = lsGet('stephuary_capture_p01_v3');
+    if (v) return v;
+    return lsGet('stephuary_capture_p01_v2');
   }
 
   function lsSet(k, o) {
@@ -327,7 +332,7 @@
         state.answers = Object.assign(defaultState().answers, da.answers);
       }
 
-      var cap = lsGet(CAPTURE_KEY);
+      var cap = lsGetCaptureState();
       if ((!state.answers || !state.answers.source) && cap && cap.bits) {
         var capBits = cap.bits;
         if (Array.isArray(capBits) && capBits.length === 10) {
@@ -602,7 +607,7 @@
       executionIssue: ''
     };
     var a = state.answers || {};
-    var cap = lsGet(CAPTURE_KEY);
+    var cap = lsGetCaptureState();
     var bits = cap && cap.bits ? cap.bits : null;
     if (bits && bits.length === 10) {
       bits = [bits[0], bits[1], bits[6], bits[8], bits[5], bits[9]];

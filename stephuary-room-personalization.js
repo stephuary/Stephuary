@@ -36,7 +36,9 @@
 
     if (!archetype && global.StephuaryResult && typeof global.StephuaryResult.buildFromPhase01 === 'function') {
       try {
-        var p01raw = localStorage.getItem('stephuary_capture_p01_v2');
+        var p01raw =
+          localStorage.getItem('stephuary_capture_p01_v3') ||
+          localStorage.getItem('stephuary_capture_p01_v2');
         var p01 = p01raw ? JSON.parse(p01raw) : null;
         var bits = p01 && p01.bits ? p01.bits : null;
         var built = global.StephuaryResult.buildFromPhase01(bits);

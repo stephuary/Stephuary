@@ -3,8 +3,10 @@
  * Phase 01 = Capture … Phase 05 = Sovereignty. Results and Rooms follow Phase 05.
  */
 (function (global) {
+  /** Phase 01 Capture writes v3; v2 remains for legacy reads. */
+  var P01_STORAGE_KEYS = ['stephuary_capture_p01_v3', 'stephuary_capture_p01_v2'];
   var PHASE_STORAGE = {
-    1: 'stephuary_capture_p01_v2',
+    1: 'stephuary_capture_p01_v3',
     2: 'stephuary_monetize_p02_v1',
     3: 'stephuary_structure_p03_v1',
     4: 'stephuary_validation_p04_v1',
@@ -60,7 +62,17 @@
   }
 
   function migrateCompletionFlags() {
-    if (lsGet('capture_complete') === 'true' || isStorageSummaryOrComplete(PHASE_STORAGE[1])) {
+    var p01StoredComplete = isStorageSummaryOrComplete(PHASE_STORAGE[1]);
+    if (!p01StoredComplete) {
+      var pi;
+      for (pi = 0; pi < P01_STORAGE_KEYS.length; pi++) {
+        if (isStorageSummaryOrComplete(P01_STORAGE_KEYS[pi])) {
+          p01StoredComplete = true;
+          break;
+        }
+      }
+    }
+    if (lsGet('capture_complete') === 'true' || p01StoredComplete) {
       if (lsGet('capture_complete') !== 'true') lsSet('capture_complete', 'true');
     }
     var n;
@@ -135,6 +147,7 @@
 
   global.StephuaryDiagnosticFlow = {
     PHASE_PATH: PHASE_PATH,
+    P01_STORAGE_KEYS: P01_STORAGE_KEYS,
     phaseDone: phaseDone,
     markPhaseComplete: markPhaseComplete,
     clearCompletionFromPhase: clearCompletionFromPhase,

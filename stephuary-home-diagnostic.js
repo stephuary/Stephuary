@@ -318,14 +318,18 @@
       syncEntryCta: syncEntryCta
     };
 
-    global.StephuaryDiagnosticFlow = {
+    var existingFlow =
+      global.StephuaryDiagnosticFlow && typeof global.StephuaryDiagnosticFlow === 'object'
+        ? global.StephuaryDiagnosticFlow
+        : {};
+    global.StephuaryDiagnosticFlow = Object.assign({}, existingFlow, {
       getCurrentStep: function () {
         return state.currentStep;
       },
       getMode: function () {
         return state.mode;
       }
-    };
+    });
   }
 
   if (global.document.readyState === 'loading') {

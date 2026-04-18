@@ -67,7 +67,7 @@
   var PHASE_SHORT = ['Capture', 'Monetize', 'Structure', 'Automation', 'Sovereignty'];
   var STORAGE_VISITED = 'stephuary_phases_visited';
   var SESSION_SNAPSHOT_KEY = 'stephuary_session_snapshot_v1';
-  var CAPTURE_STORE_KEY = 'stephuary_capture_p01_v2';
+  var CAPTURE_STORE_KEYS = ['stephuary_capture_p01_v3', 'stephuary_capture_p01_v2'];
   var RESULT_STORE_KEY = 'stephuary_result_v1';
   var PROGRESS_KEY = 'stephuary_system_progress_v1';
   var OS_KEY = 'stephuary_os_v1';
@@ -101,6 +101,15 @@
     }
   }
 
+  function lsGetCaptureJson() {
+    var i;
+    for (i = 0; i < CAPTURE_STORE_KEYS.length; i++) {
+      var o = lsGetJson(CAPTURE_STORE_KEYS[i]);
+      if (o) return o;
+    }
+    return null;
+  }
+
   function lsSetJson(k, o) {
     try {
       localStorage.setItem(k, JSON.stringify(o));
@@ -111,7 +120,7 @@
     hasActiveSession: function () {
       try {
         if (localStorage.getItem('capture_complete') === 'true') return true;
-        var cap = lsGetJson(CAPTURE_STORE_KEY);
+        var cap = lsGetCaptureJson();
         if (cap && typeof cap.currentStep === 'number' && cap.currentStep > 1) return true;
         if (cap && cap.bits && cap.bits.some(function (b) { return b !== null && b !== undefined; })) return true;
         var res = lsGetJson(RESULT_STORE_KEY);
@@ -135,7 +144,7 @@
         var lbl = window.StephuaryProgress.getResumeLabel();
         if (lbl && lbl.href) return lbl.href;
       }
-      var cap = lsGetJson(CAPTURE_STORE_KEY);
+      var cap = lsGetCaptureJson();
       if (cap && cap.currentStep) return '/capture';
       return '/capture';
     },
@@ -172,7 +181,7 @@
           useContextual: true
         };
       }
-      var cap = lsGetJson(CAPTURE_STORE_KEY);
+      var cap = lsGetCaptureJson();
       if (cap && cap.bits && cap.bits.length) {
         var filled = 0;
         for (var i = 0; i < cap.bits.length; i++) {
@@ -214,7 +223,7 @@
         if (pr) snap.phase = pr.phase;
         var os = lsGetJson(OS_KEY);
         if (os && os.lastRoomId) snap.room = os.lastRoomId;
-        var cap = lsGetJson(CAPTURE_STORE_KEY);
+        var cap = lsGetCaptureJson();
         if (cap && cap.currentStep != null) snap.captureStep = cap.currentStep;
         var res = lsGetJson(RESULT_STORE_KEY);
         if (res && res.type_primary) snap.resultType = res.type_primary;

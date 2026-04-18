@@ -947,7 +947,17 @@
   var P03_KEY = 'stephuary_structure_p03_v1';
   var PROFILE_KEY = 'stephuary_p01_profile';
   var P02_KEY = 'stephuary_monetize_p02_v1';
-  var P01_KEY = 'stephuary_capture_p01_v2';
+  var P01_KEYS = ['stephuary_capture_p01_v3', 'stephuary_capture_p01_v2'];
+  function getP01CaptureRaw() {
+    try {
+      var i;
+      for (i = 0; i < P01_KEYS.length; i++) {
+        var r = localStorage.getItem(P01_KEYS[i]);
+        if (r) return r;
+      }
+    } catch (e0) {}
+    return null;
+  }
   var TOTAL_Q = 5;
   var RAIL_LABELS = ['Exposure','Response','Direct ask','Loop','Speed','Results'];
 
@@ -1096,7 +1106,7 @@
     var p3 = loadP3Bits();
     var p1 = loadP01Profile() || (function() {
       try {
-        var raw = localStorage.getItem(P01_KEY);
+        var raw = getP01CaptureRaw();
         if (!raw) return null;
         var d = JSON.parse(raw);
         if (!d.bits || d.bits.indexOf(null) >= 0) return null;
@@ -1362,17 +1372,13 @@
   }
 
   function priorPhaseDataCount() {
-    var keys = [
-      'stephuary_capture_p01_v2',
-      'stephuary_monetize_p02_v1',
-      'stephuary_structure_p03_v1'
-    ];
     var n = 0;
-    var i;
     try {
-      for (i = 0; i < keys.length; i++) {
-        if (localStorage.getItem(keys[i])) n++;
+      if (localStorage.getItem('stephuary_capture_p01_v3') || localStorage.getItem('stephuary_capture_p01_v2')) {
+        n++;
       }
+      if (localStorage.getItem('stephuary_monetize_p02_v1')) n++;
+      if (localStorage.getItem('stephuary_structure_p03_v1')) n++;
     } catch (e) {}
     return n;
   }
