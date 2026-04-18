@@ -91,6 +91,19 @@ export function OfferScreen({
                     <p className="install-card-subhead">{tier.headlineSub}</p>
                   ) : null}
 
+                  {"pickOneOptions" in tier && tier.pickOneOptions?.length ? (
+                    <>
+                      <p className="tier-section-label tier-section-label--pick">
+                        {"pickOneIntro" in tier && tier.pickOneIntro ? tier.pickOneIntro : "Choose one:"}
+                      </p>
+                      <ul className="tier-bullet-list tier-bullet-list--pick">
+                        {tier.pickOneOptions.map((item) => (
+                          <li key={item}>{item}</li>
+                        ))}
+                      </ul>
+                    </>
+                  ) : null}
+
                   {isHigh && "whatIDo" in tier && tier.whatIDo ? (
                     <>
                       <p className="tier-section-label">{HT.whatIDo}</p>

@@ -37,7 +37,7 @@ export const revenueGateModalCopy = {
   bodyLead: "You finished the diagnostic.",
   bodyPick: "Pick a tier:",
   routes: [
-    "$34 — one offer, one buyer, locked in writing",
+    "$34 — Fix One Area: offer, positioning, structure, or page",
     "$750 — Full Breakdown: where money leaks, what to stop, what to focus on",
     "Custom Build — I rebuild how your expertise makes you revenue",
   ],
@@ -199,17 +199,21 @@ export const highTicketOfferCopy = {
 export const offerInstallTiers = [
   {
     id: "path" as const,
-    headline: "One offer, one buyer. Stop running parallel builds.",
+    headline: "Fix One Area",
+    headlineSub: "Pick one part of your work that isn't turning into money.",
+    pickOneIntro: "Choose one:",
+    pickOneOptions: ["Your offer", "Your positioning", "Your structure", "Your landing page"],
     whatYouGet: [
-      "Written lane: one buyer, one promise, one price",
-      "Cut list: what you pause or drop this month",
-      "7-day sequence for what you sell first",
-      "Recording or doc so the lane doesn't drift",
+      "What's not working",
+      "What's causing it",
+      "What to remove",
+      "What to change it to",
     ],
-    whatChanges: "You sell one lane this month instead of three half-built ones.",
-    time: "First pass within 5 business days of payment.",
+    whatChanges: "That one area stops stalling and starts producing.",
+    whatYouDontGet: ["Nothing outside of what you chose is reviewed."],
+    time: "Delivered within 48 hours",
     price: "$34",
-    cta: "Get this — $34",
+    cta: "Fix this properly",
   },
   {
     id: "fix" as const,
