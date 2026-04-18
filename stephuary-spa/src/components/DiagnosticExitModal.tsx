@@ -21,7 +21,7 @@ export function DiagnosticExitModal({ open, onStay, onExit }: Props) {
         onClick={(e) => e.stopPropagation()}
       >
         <h2 id="diagnostic-exit-title" className="diagnostic-exit-modal-title">
-          Leave diagnostic?
+          Leave the Alignment Diagnostic?
         </h2>
         <p className="diagnostic-exit-modal-body">Your progress on this run will be lost.</p>
         <div className="diagnostic-exit-modal-actions">

@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { usePostActionMoment } from "./context/PostActionMomentContext";
 import { SUBSTACK_PLACEHOLDER_HREF } from "./data/ecosystem";
+import { brandIdentityCopy } from "./data/siteCopy";
 import { QUESTIONS, phaseMeta } from "./data/questions";
 import { AccessRequestScreen } from "./components/AccessRequestScreen";
 import type { NavAction } from "./components/AppNav";
@@ -330,6 +331,11 @@ export default function App() {
           />
         ) : null}
       </main>
+
+      <footer className="app-brand-footer">
+        <p className="app-brand-name">{brandIdentityCopy.name}</p>
+        <p className="app-brand-tagline">{brandIdentityCopy.tagline}</p>
+      </footer>
     </div>
   );
 }

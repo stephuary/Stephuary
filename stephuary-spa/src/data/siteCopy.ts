@@ -1,4 +1,9 @@
-/** Shell copy — diagnostic output lives in `resultRules.ts`. */
+/** Shell copy — Alignment Diagnostic output lives in `resultRules.ts`. */
+
+export const brandIdentityCopy = {
+  name: "Stephuary",
+  tagline: "Intentional life design through clarity and work that pays.",
+} as const;
 
 export const homeCopy = {
   headline: "You already have something people would pay for.",
@@ -6,7 +11,7 @@ export const homeCopy = {
   showsLead: "This shows you:",
   showsLines: ["what it is,", "who pays for it,", "and where it's breaking."],
   bodyTension: "Most people don't finish this.",
-  cta: "Start diagnostic",
+  cta: "Run the Alignment Diagnostic",
   videoTeaseCta: "Watch breakdown",
 } as const;
 
@@ -119,7 +124,7 @@ export const diagnosticCopy = {
 
 /** Static results readout — four sections, no scoring UI. */
 export const resultsReadoutCopy = {
-  pageTitle: "Your readout",
+  pageTitle: "Your Alignment Diagnostic results",
   authority: {
     line1: "I've seen this play out the same way repeatedly.",
     line2: "Most people are one decision away from fixing this.",
