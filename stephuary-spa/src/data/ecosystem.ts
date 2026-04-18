@@ -10,7 +10,7 @@ export type EcosystemCard = {
   id: EcosystemRouteId;
   title: string;
   descriptor: string;
-  cta: "Request Access" | "Read Substack";
+  cta: "Apply to work with me" | "Read Substack";
 };
 
 export const ecosystemCards: EcosystemCard[] = [
@@ -18,13 +18,13 @@ export const ecosystemCards: EcosystemCard[] = [
     id: "osc",
     title: "Only Sometimes Club",
     descriptor: "Advisory access when the work is business-critical.",
-    cta: "Request Access",
+    cta: "Apply to work with me",
   },
   {
     id: "club",
     title: ".5% Club",
     descriptor: "Private matching when a public path is not the right shape.",
-    cta: "Request Access",
+    cta: "Apply to work with me",
   },
   {
     id: "grownSpaghetti",
@@ -36,7 +36,7 @@ export const ecosystemCards: EcosystemCard[] = [
     id: "customBuild",
     title: "Custom Build",
     descriptor: "When this needs to be applied to your business, not templated.",
-    cta: "Request Access",
+    cta: "Apply to work with me",
   },
 ];
 

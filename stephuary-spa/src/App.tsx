@@ -13,6 +13,7 @@ import { HomeScreen } from "./components/HomeScreen";
 import { OfferScreen } from "./components/OfferScreen";
 import { OperatorOSScreen } from "./components/OperatorOSScreen";
 import { OscScreen } from "./components/OscScreen";
+import { ApplyQualifyModal } from "./components/ApplyQualifyModal";
 import { DiagnosticExitModal } from "./components/DiagnosticExitModal";
 import { QuestionScreen } from "./components/QuestionScreen";
 import { RealizationMomentScreen } from "./components/RealizationMomentScreen";
@@ -71,6 +72,8 @@ export default function App() {
   const [step, setStep] = useState<FlowStep>({ id: "home" });
   const [answers, setAnswers] = useState<AnswersMap>({});
   const [exitModalOpen, setExitModalOpen] = useState(false);
+  const [applyQualifyOpen, setApplyQualifyOpen] = useState(false);
+  const [pendingAccessIntent, setPendingAccessIntent] = useState<"os" | undefined>();
   const [auraRoutePulse, setAuraRoutePulse] = useState(false);
   const skipAuraRoutePulse = useRef(true);
 
@@ -130,9 +133,22 @@ export default function App() {
     }
   }
 
+  function closeApplyQualify() {
+    setApplyQualifyOpen(false);
+    setPendingAccessIntent(undefined);
+  }
+
+  function confirmApplyQualify() {
+    const intent = pendingAccessIntent;
+    triggerPostAction();
+    closeApplyQualify();
+    goAccess(intent);
+  }
+
   function requestAccessWithMoment(intent?: "os") {
     triggerPostAction();
-    goAccess(intent);
+    setPendingAccessIntent(intent);
+    setApplyQualifyOpen(true);
   }
 
   function openSubstack() {
@@ -199,6 +215,12 @@ export default function App() {
         open={exitModalOpen}
         onStay={() => setExitModalOpen(false)}
         onExit={confirmExitDiagnostic}
+      />
+
+      <ApplyQualifyModal
+        open={applyQualifyOpen}
+        onClose={closeApplyQualify}
+        onConfirm={confirmApplyQualify}
       />
 
       <main className={`app-main ${entryLayout ? "app-main--entry" : ""}`.trim()}>
@@ -306,7 +328,7 @@ export default function App() {
             onRequestOperatorOS={() => setStep({ id: "operatorOS" })}
             onRequestCustomBuild={() => setStep({ id: "customBuild" })}
             onRequestOsc={() => setStep({ id: "osc" })}
-            onPostOfferAccess={goAccess}
+            onPostOfferAccess={() => requestAccessWithMoment()}
             signalCta={triggerPostAction}
             onComplete={() => {
               setStep({ id: "explore" });

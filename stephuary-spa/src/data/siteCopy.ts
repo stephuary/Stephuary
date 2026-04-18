@@ -26,6 +26,19 @@ export const postActionMomentCopy = {
   line2: "You need a decision.",
 } as const;
 
+/** Shown before the access form; no fields until user confirms. */
+export const applyQualifyModalCopy = {
+  title: "This is not for everyone.",
+  prompt: "Answer yes to these:",
+  bullets: [
+    "You already have something real — it's just not converting",
+    "You're willing to change how you're operating",
+    "You want this solved, not explored",
+  ],
+  bridge: "If that's you:",
+  cta: "Submit application",
+} as const;
+
 export const accessRequestCopy = {
   title: "Apply to work with me",
   lead: "If this matches what you're dealing with, don't overthink it.",
@@ -200,7 +213,7 @@ export const highTicketGateCopy = {
 
 export const offerPostPricingAccess = {
   line: "If this doesn't fit what you need, apply to work together.",
-  cta: "Apply",
+  cta: "Apply to work with me",
 } as const;
 
 export const offerScrollNudge = {

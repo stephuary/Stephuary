@@ -23,5 +23,5 @@ export const clubPageCopy = {
   ],
   filterLine: "If you're still figuring things out, start with the system first.",
   accessLine: "Access depends on fit, not interest.",
-  cta: "Request Access",
+  cta: "Apply to work with me",
 } as const;

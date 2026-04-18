@@ -515,7 +515,6 @@ export function OfferScreen({
             type="button"
             className="btn btn-secondary btn-block offer-post-pricing-btn"
             onClick={() => {
-              signalCta();
               onPostOfferAccess();
             }}
           >

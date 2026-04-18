@@ -13,5 +13,5 @@ export const operatorOSPageCopy = {
   changeTitle: "What changes",
   changeLead: "Instead of guessing:",
   changeEmphasis: "You run decisions through a system.",
-  cta: "Request Access",
+  cta: "Apply to work with me",
 } as const;
