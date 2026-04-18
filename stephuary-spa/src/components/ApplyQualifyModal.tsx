@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { applyQualifyModalCopy } from "../data/siteCopy";
+import { ExclusionAuthorityBlock } from "./ExclusionAuthorityBlock";
 
 type Props = {
   open: boolean;
@@ -52,6 +53,7 @@ export function ApplyQualifyModal({ open, onClose, onConfirm }: Props) {
           </span>
           {copy.cta}
         </button>
+        <ExclusionAuthorityBlock className="exclusion-authority--apply-gate" />
       </div>
     </div>
   );

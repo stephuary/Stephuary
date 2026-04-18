@@ -5,6 +5,7 @@ import {
   accessRequestInternalFlow,
   applicationConfirmationCopy,
 } from "../data/siteCopy";
+import { ExclusionAuthorityBlock } from "./ExclusionAuthorityBlock";
 import { ScrollReveal } from "./ScrollReveal";
 import { ScreenShell } from "./ScreenShell";
 
@@ -189,6 +190,7 @@ export function AccessRequestScreen({ animKey, intent, onWatchBreakdown }: Props
             </button>
           </div>
         </form>
+        <ExclusionAuthorityBlock className="exclusion-authority--access" />
       </ScrollReveal>
     </ScreenShell>
   );

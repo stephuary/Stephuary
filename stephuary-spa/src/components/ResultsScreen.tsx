@@ -3,9 +3,11 @@ import { usePostActionMoment } from "../context/PostActionMomentContext";
 import {
   resultsDecisionMomentCopy,
   resultsEmailCopy,
+  resultsImpliedProof,
   resultsPatternAuthority,
   resultsShareCopy,
 } from "../data/siteCopy";
+import { ExclusionAuthorityBlock } from "./ExclusionAuthorityBlock";
 import { useScrollRevealOnce } from "../hooks/useScrollRevealOnce";
 import type { SectionOutput } from "../lib/outputGenerator";
 import { ResultSection } from "./ResultSection";
@@ -46,6 +48,39 @@ export function ResultsScreen({ sections, primaryCta, animKey }: Props) {
     setEmailSubmitted(true);
   }
 
+  function renderReadoutSections() {
+    if (sections.length === 0) return null;
+    const ip = resultsImpliedProof;
+    const impliedProofBlock = (
+      <div className="results-implied-proof" role="note">
+        <p className="results-implied-proof-line">{ip.line1}</p>
+        <p className="results-implied-proof-line">{ip.line2}</p>
+      </div>
+    );
+    if (sections.length === 1) {
+      return (
+        <>
+          {impliedProofBlock}
+          <ResultSection key={sections[0].id} section={sections[0]} />
+        </>
+      );
+    }
+    const split = Math.ceil(sections.length / 2);
+    const first = sections.slice(0, split);
+    const rest = sections.slice(split);
+    return (
+      <>
+        {first.map((s) => (
+          <ResultSection key={s.id} section={s} />
+        ))}
+        {impliedProofBlock}
+        {rest.map((s) => (
+          <ResultSection key={s.id} section={s} />
+        ))}
+      </>
+    );
+  }
+
   return (
     <ScreenShell animKey={animKey} className="results-screen">
       <header className="results-header results-header--enter">
@@ -60,11 +95,7 @@ export function ResultsScreen({ sections, primaryCta, animKey }: Props) {
           </p>
         </div>
       </header>
-      <div className="results-body">
-        {sections.map((s) => (
-          <ResultSection key={s.id} section={s} />
-        ))}
-      </div>
+      <div className="results-body">{renderReadoutSections()}</div>
       <div
         ref={decisionReveal.ref}
         className={`results-decision scroll-reveal ${decisionReveal.inView ? "scroll-reveal--in" : ""}`.trim()}
@@ -128,6 +159,7 @@ export function ResultsScreen({ sections, primaryCta, animKey }: Props) {
             </p>
           ))}
         </div>
+        <ExclusionAuthorityBlock className="exclusion-authority--results" />
       </div>
       <div className="results-share" role="region" aria-label="Share">
         <p className="results-share-prompt">{resultsShareCopy.prompt}</p>

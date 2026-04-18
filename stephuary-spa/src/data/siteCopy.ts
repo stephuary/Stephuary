@@ -122,6 +122,18 @@ export const resultsPatternAuthority = {
   line3: "Just the details.",
 } as const;
 
+/** Mid readout — implied repetition; no numbers beyond grounded “one or two”. */
+export const resultsImpliedProof = {
+  line1: "Most people here are within one or two decisions of fixing this.",
+  line2: "This is usually where people realize what's actually been blocking them.",
+} as const;
+
+/** Neutral exclusion — below primary apply CTAs (results, gate modal, access form). */
+export const exclusionAuthorityCopy = {
+  line1: "This won't help if you're still figuring out what you want to do.",
+  line2: "It's for people who already have something real, and need to make it work.",
+} as const;
+
 /** Final results: tension, fork, identity filter (before email + primary CTA). */
 export const resultsDecisionMomentCopy = {
   openLines: ["If nothing changes,", "this is exactly how next month looks too."],
