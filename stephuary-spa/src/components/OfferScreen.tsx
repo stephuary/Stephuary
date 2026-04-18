@@ -2,12 +2,15 @@ import { useEffect, useRef, useState } from "react";
 import {
   highTicketGateCopy,
   offerCopy,
+  offerFilterNearCtaCopy,
+  offerGovernanceCopy,
   offerHighTicketShadow,
   offerPostFixUpsell,
   offerPostPathUpsell,
   offerPostPricingAccess,
   offerPressureAfterCopy,
   offerPressureBeforeCopy,
+  offerPricingFrameCopy,
   offerScrollNudge,
   offerScopeInlineCopy,
   offerScopePrimaryLabel,
@@ -199,6 +202,25 @@ export function OfferScreen({
             <p className="offer-intro-bridge">{offerCopy.intro.bridge}</p>
             <p className="offer-intro-sub offer-intro-sub--dynamic">{tierLead}</p>
           </header>
+        </ScrollReveal>
+
+        <ScrollReveal className="offer-governance-reveal">
+          <p className="offer-governance-line" role="note">
+            {offerGovernanceCopy.line}
+          </p>
+          <div className="offer-pricing-frame" role="note">
+            <p className="offer-pricing-frame-lead">{offerPricingFrameCopy.lead}</p>
+            <ul className="offer-pricing-frame-bullets">
+              {offerPricingFrameCopy.bullets.map((b) => (
+                <li key={b}>
+                  <span className="offer-pricing-frame-arrow" aria-hidden>
+                    •
+                  </span>
+                  {b}
+                </li>
+              ))}
+            </ul>
+          </div>
         </ScrollReveal>
 
         {showOperatorOSGate || showHighTicketAccess ? (
@@ -449,6 +471,8 @@ export function OfferScreen({
         <p className="offer-high-ticket-shadow">{offerHighTicketShadow}</p>
 
         <div className="offer-post-pricing-access">
+          <p className="offer-filter-near-cta">{offerFilterNearCtaCopy.line1}</p>
+          <p className="offer-filter-near-cta offer-filter-near-cta--sub">{offerFilterNearCtaCopy.line2}</p>
           <p className="offer-post-pricing-line">{offerPostPricingAccess.line}</p>
           <button
             type="button"

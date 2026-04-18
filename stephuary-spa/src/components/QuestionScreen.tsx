@@ -34,17 +34,10 @@ export function QuestionScreen({
 }: Props) {
   const canContinue = selectedId !== null;
   const { current, total } = progress;
-  const nearComplete = total > 0 && current >= total - 1;
-  const showMidpointPressure = total > 0 && (current === 6 || current === 7);
-  const showMicroCommitment = current === 3 || current === 4;
-  const showTimeExpectation = current === 1;
-  const showSendEasier = total > 0 && current === total;
+  const psych = diagnosticCopy.progressPsychLine.trim();
 
   return (
-    <ScreenShell
-      animKey={animKey}
-      className={`question-screen question-slide ${showMidpointPressure ? "question-screen--midpoint" : ""}`.trim()}
-    >
+    <ScreenShell animKey={animKey} className="question-screen question-slide">
       <div className="question-inner question-inner--stagger">
         <header className="diagnostic-header">
           <div className="diagnostic-header-side diagnostic-header-side--left">
@@ -79,33 +72,12 @@ export function QuestionScreen({
           <p className="question-progress-count" aria-live="polite">
             Question {current} of {total}
           </p>
-          <p className="question-progress-psych" role="note">
-            {diagnosticCopy.progressPsychLine}
-          </p>
+          {psych ? (
+            <p className="question-progress-psych" role="note">
+              {psych}
+            </p>
+          ) : null}
         </div>
-        {showTimeExpectation ? (
-          <p className="question-time-expectation" role="note">
-            {diagnosticCopy.timeExpectation}
-          </p>
-        ) : null}
-        {showMicroCommitment ? (
-          <p className="question-micro-commitment" role="note">
-            {diagnosticCopy.microCommitment}
-          </p>
-        ) : null}
-        {showMidpointPressure ? (
-          <p className="question-midpoint-pressure" role="note">
-            {diagnosticCopy.midpointPressure}
-          </p>
-        ) : null}
-        {nearComplete ? (
-          <p className="question-near-complete">{diagnosticCopy.nearComplete}</p>
-        ) : null}
-        {showSendEasier ? (
-          <p className="question-send-easier" role="note">
-            {diagnosticCopy.sendEasierLine}
-          </p>
-        ) : null}
         <h2 className="question-title" id={`q-${question.id}`}>
           {question.prompt}
         </h2>

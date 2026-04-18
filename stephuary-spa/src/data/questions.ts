@@ -33,10 +33,10 @@ export const QUESTIONS: Question[] = [
     phaseIndex: 0,
     prompt: "This month, most of your working hours went to:",
     options: [
-      { id: "q1a", label: "Hopping clients — no real boundary", tags: ["work:split", "boundary:weak"], scoreDelta: { focus: -8, clarity: -4 } },
-      { id: "q1b", label: "One offer — admin eats the calendar", tags: ["work:single_offer", "ops:heavy"], scoreDelta: { clarity: 6, focus: 4, leverage: -6 } },
-      { id: "q1c", label: "Learning and building — nothing ships to buyers", tags: ["ship:delayed", "buyer:absent"], scoreDelta: { demand: -10, monetization: -6 } },
-      { id: "q1d", label: "Sold work — backlog hurts, not sales", tags: ["work:delivery", "demand:proven"], scoreDelta: { demand: 10, monetization: 6, leverage: -6 } },
+      { id: "q1a", label: "Boundary: clients bleed across the week — no line", tags: ["work:split", "boundary:weak"], scoreDelta: { focus: -8, clarity: -4 } },
+      { id: "q1b", label: "Capacity: one offer — ops runs the calendar", tags: ["work:single_offer", "ops:heavy"], scoreDelta: { clarity: 6, focus: 4, leverage: -6 } },
+      { id: "q1c", label: "Focus: build in private — buyers never see it ship", tags: ["ship:delayed", "buyer:absent"], scoreDelta: { demand: -10, monetization: -6 } },
+      { id: "q1d", label: "Delivery: revenue on the books — shipping stalls", tags: ["work:delivery", "demand:proven"], scoreDelta: { demand: 10, monetization: 6, leverage: -6 } },
     ],
   },
   {

@@ -22,6 +22,7 @@ import { ResultsScreen } from "./components/ResultsScreen";
 import { shouldShowHighTicketAccess } from "./lib/highTicketSignals";
 import { shouldShowOperatorOSGate } from "./lib/operatorOSSignals";
 import { resolveRecommendedTier } from "./lib/recommendedTier";
+import { resolveClassificationLabels } from "./lib/classification";
 import { buildEvaluationContext } from "./lib/scoring";
 import { isSharedEntrySearch } from "./lib/shareEntry";
 import type { AnswersMap, FlowStep } from "./types/flow";
@@ -82,6 +83,11 @@ export default function App() {
   const [sharedEntry, setSharedEntry] = useState(false);
 
   const evaluationCtx = useMemo(() => buildEvaluationContext(answers), [answers]);
+
+  const classificationLabels = useMemo(
+    () => resolveClassificationLabels(evaluationCtx),
+    [evaluationCtx],
+  );
 
   const recommendedTier = useMemo(
     () => resolveRecommendedTier(evaluationCtx),
@@ -263,12 +269,7 @@ export default function App() {
 
       <main className={`app-main ${entryLayout ? "app-main--entry" : ""}`.trim()}>
         {step.id === "home" ? (
-          <HomeScreen
-            animKey={stepAnimKey(step)}
-            onStart={startDiagnostic}
-            onWatchBreakdown={triggerPostAction}
-            sharedEntry={sharedEntry}
-          />
+          <HomeScreen animKey={stepAnimKey(step)} onStart={startDiagnostic} sharedEntry={sharedEntry} />
         ) : null}
 
         {step.id === "osc" ? (
@@ -346,8 +347,9 @@ export default function App() {
           <ResultsScreen
             animKey={stepAnimKey(step)}
             sharedEntry={sharedEntry}
+            classificationLabels={classificationLabels}
             primaryCta={{
-              label: "Start here",
+              label: "Install system",
               onClick: () => {
                 triggerPostAction();
                 setStep({ id: "offer" });
@@ -376,6 +378,7 @@ export default function App() {
 
       <footer className="app-brand-footer">
         <p className="app-brand-name">{brandIdentityCopy.name}</p>
+        <p className="app-brand-diagnostic">{brandIdentityCopy.diagnosticName}</p>
         <p className="app-brand-tagline">{brandIdentityCopy.tagline}</p>
       </footer>
     </div>

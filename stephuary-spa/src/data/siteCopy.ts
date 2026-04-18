@@ -2,19 +2,26 @@
 
 export const brandIdentityCopy = {
   name: "Stephuary",
-  tagline: "Intentional life design through clarity and work that pays.",
+  /** Shown once in footer — system naming. */
+  diagnosticName: "The Alignment Diagnostic",
+  tagline: "This is part of a larger system. This is the entry point.",
 } as const;
 
 export const homeCopy = {
   headline: "You already have something people would pay for.",
-  subtext: "You just haven't seen it clearly yet.",
-  showsLead: "This shows you:",
-  showsLines: ["what it is,", "who pays for it,", "and where it's breaking."],
-  bodyTension: "Most people don't finish this.",
-  /** Shown under hero when `?from=share` (or other share tags). */
+  supportLines: [
+    "You just haven't seen it clearly yet.",
+    "Most people aren't stuck.",
+    "They're building in the wrong direction.",
+  ],
+  /** Under primary CTA — classification framing. */
+  ctaFrameLines: [
+    "This doesn't collect answers.",
+    "It classifies where you are.",
+    "Most people won't finish it.",
+  ],
   sharedEntryLine: "Someone sent you this for a reason.",
   cta: "Run the Alignment Diagnostic",
-  videoTeaseCta: "Watch breakdown",
 } as const;
 
 export const resultsShareCopy = {
@@ -31,39 +38,39 @@ export const resultsEmailCopy = {
 } as const;
 
 export const postActionMomentCopy = {
-  line1: "You don't need more time.",
-  line2: "You need a decision.",
+  line1: "Same inputs — same output.",
+  line2: "Decide.",
 } as const;
 
 /** Shown before the access form; filter, not pitch. */
 export const applyQualifyModalCopy = {
-  headline: "This is where we fix it properly.",
-  filterLine: "Not everyone gets in.",
+  headline: "Apply to work with me",
+  filterLine: "This is not for everyone.",
   prompt: "Answer yes to these:",
   unsureLine: "If you're unsure, this is not the right step.",
   bullets: [
-    "You already have something real — it's just not converting",
-    "You're ready to change how you're operating",
-    "You want this solved, not discussed",
+    "You already have something real — it's not converting",
+    "You'll change how you operate",
+    "You want this fixed, not discussed",
   ],
   bridge: "If that's you:",
-  cta: "Apply now",
-  belowButton: "I review every submission personally.",
+  cta: "Apply to install",
+  belowButton: "It's for people ready to fix what's actually broken.",
 } as const;
 
 export const accessRequestCopy = {
   title: "Apply to work with me",
-  lead: "If this matches what you're dealing with, don't overthink it.",
-  answerYesPrompt: "Answer yes to these 3:",
+  lead: "Answer 3 questions.",
+  answerYesPrompt: "If it fits, we move.",
   bullets: [
-    "You see exactly what's not working",
-    "You're ready to act on it now",
-    "You want this fixed properly, not adjusted again",
+    "You see what's broken",
+    "You'll act on it now",
+    "You want it fixed — not adjusted again",
   ],
-  microLine1: "I review every application personally.",
+  microLine1: "I read every application myself.",
   microLine2: "If it's a fit, you'll hear from me.",
   thanksLine1: "Application received.",
-  thanksLine2: "I review every submission personally. If it's a fit, you'll hear from me.",
+  thanksLine2: "I read every submission. If it's a fit, you'll hear from me.",
   labels: {
     name: "Name",
     email: "Email",
@@ -74,7 +81,7 @@ export const accessRequestCopy = {
   },
   investYes: "Yes",
   investNo: "No",
-  cta: "Apply now",
+  cta: "Apply to install",
 } as const;
 
 /** Post-submit confirmation (access application). */
@@ -83,12 +90,12 @@ export const applicationConfirmationCopy = {
   subtext: "I've received your application.",
   reframeLine1: "Most people don't make it this far.",
   reframeLine2: "They stay in the loop instead of deciding.",
-  expectationLine1: "I review every application personally.",
+  expectationLine1: "I read every application myself.",
   expectationLine2: "If it's a fit, you'll hear from me with next steps.",
   preframeLine1: "If this moves forward, it won't be casual.",
   preframeLine2: "We'll focus on what actually changes your situation.",
   optionalLead: "If you want to understand how this works before I respond:",
-  watchBreakdownCta: "Watch breakdown",
+  watchBreakdownCta: "System context",
   finalLine1: "You already know what's not working.",
   finalLine2: "Now we decide what to do about it.",
 } as const;
@@ -100,93 +107,40 @@ export const accessRequestInternalFlow = [
   "Q2: blockers",
   "Q3: immediate change if it worked",
   "Optional: ready to invest (yes/no)",
-  "Review → reply if fit",
+  "Reply if fit",
 ] as const;
 
 export const exploreCopy = {
   title: "Other ways to work together",
 } as const;
 
-/** Interstitial after Q4: observation, not instruction. */
+/** Interstitial after Q4 — tension only. */
 export const realizationMomentCopy = {
-  lines: [
-    "You're starting to see it now.",
-    "It's not that nothing works.",
-    "It's that everything is split.",
-    "That's why nothing compounds.",
-  ],
+  lines: ["You're not stuck.", "You're split.", "That's why nothing compounds."],
   cta: "Continue",
-  shareNudgeLines: ["If someone else comes to mind,", "send this to them."],
 } as const;
 
 export const diagnosticCopy = {
-  /** Shown under progress bar; empty hides the hint row in `ProgressBar`. */
   progressHint: "",
-  progressPsychLine: "You're closer than it feels.",
-  microCommitment: "You're already further than most people get.",
-  midpointPressure: "Most people stop around here.",
-  nearComplete: "Finish this. It only works if you see it fully.",
-  /** Last question only — loop continuity before results. */
-  sendEasierLine: "This is easier to send than explain.",
-  timeExpectation: "About two minutes.",
+  progressPsychLine: "",
+  timeExpectation: "",
 } as const;
 
-/** Static results readout — four sections, no scoring UI. */
+/** Results — classification + cost + share hook (no long readout). */
 export const resultsReadoutCopy = {
-  ownershipLead: "This is based on how you're actually operating.",
-  ownershipSub: "Most people don't see this clearly.",
-  /** Identity transfer — placed after readout, before share cluster. */
-  recognitionLine: "You've seen someone else do this.",
-  socialProofLine: "Most people don't see this until it's pointed out.",
-  pageTitle: "Your Alignment Diagnostic results",
-  authority: {
-    line1: "I've seen this play out the same way repeatedly.",
-    line2: "Most people are one decision away from fixing this.",
-  },
-  sections: [
-    {
-      id: "happening",
-      title: "What's actually happening",
-      paragraphs: [
-        "You're not stuck.",
-        "You're split.",
-        "You're running multiple directions at once, so nothing compounds.",
-        "Some of what you're doing works.",
-        "But it's buried under everything else.",
-      ],
-    },
-    {
-      id: "time",
-      title: "Where you're losing time",
-      paragraphs: [
-        "Your time isn't the issue.",
-        "It's where it's going.",
-        "You're spending it on things that don't convert, or things that don't finish.",
-        "You're switching too often.",
-      ],
-    },
-    {
-      id: "money",
-      title: "Where money actually is",
-      paragraphs: [
-        "Money isn't in doing more.",
-        "It's in narrowing.",
-        "There's already a version of your work that people will pay for.",
-        "You just haven't committed to it.",
-      ],
-    },
-    {
-      id: "now",
-      title: "What to do now",
-      paragraphs: [
-        "You don't need to fix everything.",
-        "You need to pick one direction and structure it so it sells.",
-        "One offer.",
-        "One outcome.",
-        "One buyer.",
-      ],
-    },
+  openLine1: "You're not confused.",
+  openLine2: "You're in a known pattern.",
+  classificationHeading: "You are in:",
+  consequenceIntro: "If nothing changes, this costs you:",
+  consequenceBullets: [
+    "Revenue from work that never ships",
+    "Time spent on non-paying activity",
+    "Delayed growth from split focus",
   ],
+  consequenceClose: "This compounds weekly.",
+  pageTitle: "The Alignment Diagnostic",
+  recognitionLine: "You've seen someone else do this.",
+  socialProofLine: "Most people don't see this until it's named.",
 } as const;
 
 /** Slightly sharper observational lines when lander arrived via shared link. */
@@ -196,68 +150,71 @@ export const resultsReadoutCopyShared = {
 
 /** Neutral exclusion — below primary apply CTAs (access form). */
 export const exclusionAuthorityCopy = {
-  line1: "This won't help if you're still figuring out what you want to do.",
-  line2: "It's for people who already have something real, and need to make it work.",
+  line1: "Not if you're still choosing what to do.",
+  line2: "Only if you already have something real and need it to work.",
 } as const;
 
-/** Final results: tension, fork, identity filter (before email + primary CTA). */
+/** After consequence — before primary CTA to offer. */
 export const resultsDecisionMomentCopy = {
-  openLines: ["If nothing changes,", "this is exactly how next month looks too."],
-  sameLines: ["Same effort.", "Same confusion.", "Same result."],
-  pivotLabel: "Or—",
-  pivotAction: "you can fix it now.",
-  ctaFilterLines: [
-    "This is for people who want to move this week.",
-    "If that's not you,",
-    "don't buy it.",
-  ],
+  adjustmentLines: ["You can keep adjusting this slowly.", "Or fix it properly."],
+  pivotLabel: "Next:",
+  pivotAction: "Install the system.",
+  ctaFilterLines: ["This is not for everyone.", "If you're not ready to fix what's broken, don't continue."],
 } as const;
 
-export const resultsScaleCopy = "This scales beyond one person." as const;
+export const resultsScaleCopy = "Built to run beyond one person." as const;
 
 export const offerBeforeOptionsCopy = {
-  line1: "You already know what's wrong now.",
-  line2: "The only question is whether you fix it.",
+  line1: "You already know what's wrong.",
+  line2: "The only question is whether you install the fix.",
 } as const;
 
-/** Calm pressure — before tier cards (not salesy). */
+export const offerGovernanceCopy = {
+  line: "This doesn't just fix the problem. It prevents it from coming back.",
+} as const;
+
+export const offerPricingFrameCopy = {
+  lead: "This is not time-based.",
+  bullets: ["revenue", "output", "decision speed"],
+} as const;
+
+export const offerFilterNearCtaCopy = {
+  line1: "This is not for everyone.",
+  line2: "It's for people ready to fix what's actually broken.",
+} as const;
+
+/** Before tier cards. */
 export const offerPressureBeforeCopy = {
-  lines: [
-    "You already know what's not working.",
-    "The only question is whether you fix it.",
-  ],
+  lines: ["System installation.", "We don't tune what you have. We restructure it to produce revenue."],
 } as const;
 
-/** Calm certainty — after tier cards. */
+/** After tier cards. */
 export const offerPressureAfterCopy = {
-  lines: ["Nothing here is new.", "You've already seen it.", "This just makes it usable."],
+  lines: ["Pick a depth. Then we install."],
 } as const;
 
 export const operatorOSGateCopy = {
   header: "This can be run as a system.",
   sub: "Not just for you. Across your work.",
-  cta: "Apply",
+  cta: "Apply to install",
 } as const;
 
-export const offerFrictionCopy =
-  "Doing nothing keeps everything the same." as const;
+export const offerFrictionCopy = "No install — no change." as const;
 
-/** Lead line under intro bridge — keyed by `RecommendedTier` from `resolveRecommendedTier`. */
 export const offerTierLead = {
-  entry: "The obvious next step is to turn what you saw into one path.",
-  focused: "One problem is loud enough to fix on its own.",
-  full: "When everything connects, you need the full map — not another patch.",
+  entry: "One lane. One revenue path.",
+  focused: "One failure type gets installed out.",
+  full: "Full stack — no loose ends.",
 } as const;
 
-/** True value anchor — time + complexity, not money. */
 export const offerValueAnchor = {
-  line1: "This is the same work usually done across multiple sessions.",
-  line2: "Here, it's compressed into one decision.",
+  line1: "This is not time-based.",
+  line2: "It's built to increase revenue, output, and decision speed.",
 } as const;
 
 export const offerMomentumCopy = {
-  line1: "You already did the hard part.",
-  line2: "Now you either apply it or stay where you are.",
+  line1: "Classification is done.",
+  line2: "Install or stay split.",
 } as const;
 
 /** Time-cost anchor — no price mention. */
@@ -274,30 +231,29 @@ export const offerDecisionShortcut = {
 /** Collapsed card — expands to show price + full copy. */
 export const offerSeeDetailsCta = "Details" as const;
 
-/** Primary action in scope row (matches tier CTA intent). */
 export const offerScopePrimaryLabel = {
-  path: "Start here",
-  fix: "Fix this properly",
-  breakdown: "See the full system",
+  path: "Apply to install",
+  fix: "Apply to install",
+  breakdown: "Apply to install",
 } as const;
 
 export const offerScopeInlineCopy = {
-  header: "Do you want to keep this focused or go deeper?",
-  keepFocused: "Keep this focused",
-  lookAcross: "Look across everything",
-  fixOne: "Fix one thing properly",
+  header: "Stay narrow or go full stack?",
+  keepFocused: "Stay narrow",
+  lookAcross: "Full stack",
+  fixOne: "Single-thread install",
 } as const;
 
 export const offerPostPathUpsell = {
-  line1: "Most people come back to fix what this reveals.",
-  line2: "You can skip that step and fix it properly now.",
-  ctaUpgrade: "Upgrade to focused review",
+  line1: "Most people come back for the deeper install.",
+  line2: "You can skip that and go deeper now.",
+  ctaUpgrade: "Upgrade install depth",
   ctaContinue: "Continue with this",
 } as const;
 
 export const offerPostFixUpsell = {
-  line1: "You'll likely uncover more than one issue.",
-  ctaUpgrade: "See everything at once",
+  line1: "You'll likely need more than one install thread.",
+  ctaUpgrade: "Full-stack install",
   ctaContinue: "Continue with this",
 } as const;
 
@@ -309,81 +265,74 @@ export const highTicketGateCopy = {
   sub: "You're dealing with something more complex than one path.",
   customLabel: "Custom build",
   oscLabel: "Only Sometimes Club",
-  cta: "Apply",
+  cta: "Apply to install",
 } as const;
 
 export const offerPostPricingAccess = {
-  line: "If this doesn't fit what you need, apply to work together.",
+  line: "If none of this fits, apply direct.",
   cta: "Apply to work with me",
 } as const;
 
 export const offerScrollNudge = {
-  line1: "You don't need more time.",
-  line2: "You need a decision.",
+  line1: "Adjust slowly — or install.",
+  line2: "No third path.",
 } as const;
 
 export const offerCopy = {
   intro: {
-    headline: "Next step",
-    bridge: "This continues what you just saw — pick how deep you want to go.",
+    headline: "System installation",
+    bridge: "We don't tune your work. We restructure it so it produces revenue.",
   },
-  whatYouGetHeading: "What you get",
+  whatYouGetHeading: "What gets installed",
   primary: {
     id: "path" as const,
     price: "$34",
-    title: "Fix the direction",
-    collapsedTagline: "One clear path forward",
+    title: "Single-lane install",
+    collapsedTagline: "One path, one buyer",
     bodyLines: [
-      "This takes what you just saw",
-      "and turns it into one clear path.",
+      "Takes your classification",
+      "and forces one revenue lane.",
       "",
-      "Not more options.",
-      "Not more ideas.",
-      "",
-      "One direction that actually converts.",
+      "No parallel builds.",
+      "No competing offers.",
     ],
-    whatYouGet: ["What to focus on", "What to stop", "What actually leads to money"],
-    subtextLines: [
-      "This is for people who want to move this week.",
-      "If you're still exploring, don't buy it.",
-    ],
+    whatYouGet: ["Lane lock", "Cut list", "Revenue sequence"],
+    subtextLines: ["Move this week or don't buy.", "Still exploring — don't buy."],
   },
   secondary: [
     {
       id: "fix" as const,
       price: "$197",
-      title: "Fix one thing properly",
-      collapsedTagline: "Solve one real problem",
+      title: "Thread install",
+      collapsedTagline: "One failure type, removed",
       bodyLines: [
-        "You don't need everything reviewed.",
+        "Pick one thread.",
+        "We install the fix end-to-end.",
         "",
-        "You need the right thing fixed.",
-        "",
-        "This isolates one part of your work",
-        "and shows exactly what's breaking it.",
+        "Not the whole business.",
+        "One break — sealed.",
       ],
-      whatYouGet: ["What's actually wrong", "Why it's not working", "What to change immediately"],
+      whatYouGet: ["Failure thread", "Install spec", "Ship checklist"],
       process: {
-        intro: "You choose one area:",
+        intro: "Pick one surface:",
         areas: ["offer", "positioning", "structure", "landing page"],
-        closing: "Then it gets reviewed directly.",
+        closing: "Then we install on that surface only.",
       },
-      subtextLines: ["Most people try to fix everything.", "That's why nothing improves."],
+      subtextLines: ["Trying to fix everything is why nothing moves.", "One thread only."],
     },
     {
       id: "breakdown" as const,
       price: "$750",
-      title: "Fix the full system",
-      collapsedTagline: "Remove confusion entirely",
+      title: "Full-stack install",
+      collapsedTagline: "Everything tied to revenue",
       bodyLines: [
-        "This looks across everything you're running",
-        "— not one piece in isolation.",
+        "Crosses every lane you're running.",
         "",
-        "You get the full map:",
-        "what conflicts, what to fix first, and what can wait.",
+        "Install order:",
+        "what conflicts, what ships first, what waits.",
       ],
-      whatYouGet: ["The whole picture", "Where things work against each other", "A clear order of operations"],
-      subtextLines: ["Use this when one problem won't stay in a box."],
+      whatYouGet: ["Stack map", "Conflict kills", "Install order"],
+      subtextLines: ["When one thread won't stay in a box."],
     },
   ] as const,
 } as const;

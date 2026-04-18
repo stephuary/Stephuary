@@ -13,11 +13,16 @@ import { ScreenShell } from "./ScreenShell";
 type Props = {
   primaryCta: { label: string; onClick: () => void };
   animKey: string;
-  /** From shared URL — prioritizes share block + alternate social line. */
   sharedEntry?: boolean;
+  classificationLabels: string[];
 };
 
-export function ResultsScreen({ primaryCta, animKey, sharedEntry = false }: Props) {
+export function ResultsScreen({
+  primaryCta,
+  animKey,
+  sharedEntry = false,
+  classificationLabels,
+}: Props) {
   const decisionReveal = useScrollRevealOnce<HTMLDivElement>();
   const ctaReveal = useScrollRevealOnce<HTMLDivElement>();
   const d = resultsDecisionMomentCopy;
@@ -74,37 +79,40 @@ export function ResultsScreen({ primaryCta, animKey, sharedEntry = false }: Prop
     </div>
   );
 
+  const consequenceBlock = (
+    <div className="results-consequence" role="region" aria-label="Cost of inaction">
+      <p className="results-consequence-intro">{r.consequenceIntro}</p>
+      <ul className="results-consequence-list">
+        {r.consequenceBullets.map((b) => (
+          <li key={b}>{b}</li>
+        ))}
+      </ul>
+      <p className="results-consequence-close">{r.consequenceClose}</p>
+    </div>
+  );
+
+  const classificationBlock = (
+    <div className="results-classification" role="region" aria-label="Classification">
+      <p className="results-classification-heading">{r.classificationHeading}</p>
+      <ul className="results-classification-list">
+        {classificationLabels.map((label) => (
+          <li key={label} className="results-classification-item">
+            → {label}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+
   return (
     <ScreenShell animKey={animKey} className="results-screen">
       <header className="results-header results-header--enter">
-        <p className="results-ownership-line" role="note">
-          {r.ownershipLead}
-        </p>
-        <p className="results-ownership-sub" role="note">
-          {r.ownershipSub}
-        </p>
+        <p className="results-open-line">{r.openLine1}</p>
+        <p className="results-open-line results-open-line--emph">{r.openLine2}</p>
         <h1 className="results-title">{r.pageTitle}</h1>
-        <div className="results-pattern-authority" role="note">
-          <p className="results-pattern-authority-line">{r.authority.line1}</p>
-          <p className="results-pattern-authority-line results-pattern-authority-line--secondary">
-            {r.authority.line2}
-          </p>
-        </div>
       </header>
-      <div className="results-body results-body--static">
-        {r.sections.map((section) => (
-          <article key={section.id} className="results-readout-section">
-            <h2 className="results-readout-title">{section.title}</h2>
-            <div className="results-readout-prose">
-              {section.paragraphs.map((p, i) => (
-                <p key={`${section.id}-${i}`} className="results-readout-p">
-                  {p}
-                </p>
-              ))}
-            </div>
-          </article>
-        ))}
-      </div>
+      {classificationBlock}
+      {consequenceBlock}
       <div
         className={`results-post-readout ${sharedEntry ? "results-post-readout--shared-priority" : ""}`.trim()}
       >
@@ -128,16 +136,9 @@ export function ResultsScreen({ primaryCta, animKey, sharedEntry = false }: Prop
         role="region"
         aria-label="Decision"
       >
-        <div className="results-decision-open">
-          {d.openLines.map((line) => (
-            <p key={line} className="results-decision-open-line">
-              {line}
-            </p>
-          ))}
-        </div>
-        <div className="results-decision-same">
-          {d.sameLines.map((line) => (
-            <p key={line} className="results-decision-same-line">
+        <div className="results-decision-adjust">
+          {d.adjustmentLines.map((line) => (
+            <p key={line} className="results-decision-adjust-line">
               {line}
             </p>
           ))}

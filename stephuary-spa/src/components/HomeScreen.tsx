@@ -7,12 +7,10 @@ const HOME_CTA_IDLE_MS = 5000;
 type Props = {
   animKey: string;
   onStart: () => void;
-  onWatchBreakdown: () => void;
-  /** True when URL tags a shared entry (e.g. ?from=share). */
   sharedEntry?: boolean;
 };
 
-export function HomeScreen({ animKey, onStart, onWatchBreakdown, sharedEntry = false }: Props) {
+export function HomeScreen({ animKey, onStart, sharedEntry = false }: Props) {
   const h = homeCopy;
   const [ctaIdleAttention, setCtaIdleAttention] = useState(false);
   const idleTimerRef = useRef<number | null>(null);
@@ -55,16 +53,13 @@ export function HomeScreen({ animKey, onStart, onWatchBreakdown, sharedEntry = f
         <div className="home-hero">
           <div className="home-hero-copy">
             <h1 className="home-headline">{h.headline}</h1>
-            <p className="home-subtext">{h.subtext}</p>
-            <div className="home-shows" role="note">
-              <p className="home-shows-lead">{h.showsLead}</p>
-              {h.showsLines.map((line) => (
-                <p key={line} className="home-shows-line">
+            <div className="home-support-block">
+              {h.supportLines.map((line) => (
+                <p key={line} className="home-support-line">
                   {line}
                 </p>
               ))}
             </div>
-            <p className="home-body-tension">{h.bodyTension}</p>
             {sharedEntry ? (
               <p className="home-shared-entry-hint" role="note">
                 {h.sharedEntryLine}
@@ -79,10 +74,12 @@ export function HomeScreen({ animKey, onStart, onWatchBreakdown, sharedEntry = f
             {h.cta}
           </button>
         </div>
-        <div className="home-video-tease" role="note">
-          <button type="button" className="home-video-tease-btn" onClick={onWatchBreakdown}>
-            {h.videoTeaseCta}
-          </button>
+        <div className="home-cta-frame" role="note">
+          {h.ctaFrameLines.map((line) => (
+            <p key={line} className="home-cta-frame-line">
+              {line}
+            </p>
+          ))}
         </div>
       </div>
     </ScreenShell>
