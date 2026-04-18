@@ -40,6 +40,10 @@
   --t-hover: 180ms;
   --t-active: 120ms;
   --t-step: 280ms;
+  /* Diagnostic: restrained step transitions (150–250ms band) */
+  --t-diagnostic-enter: 220ms;
+  --t-diagnostic-midpoint-enter: 480ms;
+  --ease-diagnostic: cubic-bezier(0.22, 1, 0.36, 1);
   --t-modal: 240ms;
   --t-reveal: 520ms;
   --stagger: 80ms;
@@ -719,11 +723,16 @@ body {
 }
 
 .question-slide.screen-transition {
-  animation: screen-enter-question calc(var(--t-step) + 0.02s) var(--ease-premium) both;
+  animation: screen-enter-question var(--t-diagnostic-enter) var(--ease-diagnostic) both;
+}
+
+.question-screen--midpoint.question-slide.screen-transition {
+  animation-duration: var(--t-diagnostic-midpoint-enter);
+  animation-timing-function: cubic-bezier(0.18, 0.88, 0.22, 1);
 }
 
 .realization-screen.screen-transition {
-  animation: screen-enter-realization 0.48s cubic-bezier(0.2, 0.85, 0.2, 1) both;
+  animation: screen-enter-realization 0.58s cubic-bezier(0.2, 0.85, 0.2, 1) both;
 }
 
 .results-screen.screen-transition {
@@ -762,8 +771,8 @@ body {
 @keyframes screen-enter-question {
   from {
     opacity: 0;
-    transform: translateY(6px);
-    filter: blur(2.5px);
+    transform: translateY(5px);
+    filter: blur(1px);
   }
   to {
     opacity: 1;
@@ -1987,18 +1996,19 @@ body {
 }
 
 .option-btn:hover {
-  border-color: rgba(198, 161, 91, 0.48);
-  background: color-mix(in srgb, var(--panel) 82%, rgba(198, 161, 91, 0.08));
+  border-color: rgba(198, 161, 91, 0.52);
+  background: color-mix(in srgb, var(--panel) 80%, rgba(198, 161, 91, 0.1));
   box-shadow:
-    0 10px 36px rgba(0, 0, 0, 0.42),
-    0 0 0 1px rgba(198, 161, 91, 0.16) inset,
-    0 0 32px rgba(198, 161, 91, 0.1);
-  transform: translateY(-2px);
+    0 8px 32px rgba(0, 0, 0, 0.4),
+    0 0 0 1px rgba(198, 161, 91, 0.18) inset,
+    0 0 40px rgba(198, 161, 91, 0.14);
+  transform: translateY(-1px);
 }
 
 .option-btn:active {
-  transform: translateY(0) scale(0.995);
-  transition-duration: var(--t-active);
+  transform: scale(0.98);
+  transition-duration: 120ms;
+  transition-timing-function: var(--ease-ui);
 }
 
 .option-btn:focus-visible {
@@ -2011,42 +2021,31 @@ body {
 }
 
 .option-btn--active {
-  border-color: rgba(198, 161, 91, 0.58);
-  background: color-mix(in srgb, var(--panel-elevated) 82%, rgba(198, 161, 91, 0.14));
+  border-color: rgba(198, 161, 91, 0.62);
+  background: color-mix(in srgb, var(--panel-elevated) 76%, rgba(198, 161, 91, 0.18));
   color: var(--fg);
-  transform: scale(1.01);
   box-shadow:
-    var(--shadow-glow-soft),
-    0 8px 32px rgba(0, 0, 0, 0.4),
-    0 0 0 1px rgba(198, 161, 91, 0.14) inset,
-    0 0 36px rgba(198, 161, 91, 0.06);
-  animation: optionSelectSettle 0.45s var(--ease-ui) both;
+    0 0 0 1px rgba(198, 161, 91, 0.22) inset,
+    0 0 48px rgba(198, 161, 91, 0.14),
+    0 8px 30px rgba(0, 0, 0, 0.38);
+  transform: none;
+  transition:
+    border-color 200ms var(--ease-diagnostic),
+    background 200ms var(--ease-diagnostic),
+    box-shadow 260ms var(--ease-diagnostic),
+    color 200ms var(--ease-diagnostic);
 }
 
-@keyframes optionSelectSettle {
-  0% {
-    transform: scale(1);
-    box-shadow:
-      0 6px 28px rgba(0, 0, 0, 0.35),
-      0 0 0 1px rgba(255, 255, 255, 0.03) inset,
-      0 0 44px rgba(198, 161, 91, 0.22);
-  }
-  40% {
-    transform: scale(1.012);
-    box-shadow:
-      var(--shadow-glow-soft),
-      0 10px 40px rgba(0, 0, 0, 0.45),
-      0 0 0 1px rgba(198, 161, 91, 0.22) inset,
-      0 0 52px rgba(198, 161, 91, 0.14);
-  }
-  100% {
-    transform: scale(1.01);
-    box-shadow:
-      var(--shadow-glow-soft),
-      0 8px 32px rgba(0, 0, 0, 0.4),
-      0 0 0 1px rgba(198, 161, 91, 0.14) inset,
-      0 0 36px rgba(198, 161, 91, 0.06);
-  }
+.option-btn--active:hover {
+  border-color: rgba(198, 161, 91, 0.68);
+  box-shadow:
+    0 0 0 1px rgba(198, 161, 91, 0.28) inset,
+    0 0 52px rgba(198, 161, 91, 0.18),
+    0 10px 34px rgba(0, 0, 0, 0.4);
+}
+
+.option-btn--active:active {
+  transform: scale(0.98);
 }
 
 .option-label {
@@ -2127,6 +2126,37 @@ body {
   box-shadow:
     0 1px 0 rgba(255, 255, 255, 0.1) inset,
     0 6px 18px rgba(0, 0, 0, 0.4);
+}
+
+/* Diagnostic / realization primary CTAs — restrained gradient shift + glow */
+.question-screen .btn-primary,
+.realization-screen .btn-primary {
+  transition:
+    background 220ms var(--ease-diagnostic),
+    border-color 220ms var(--ease-diagnostic),
+    box-shadow 240ms var(--ease-diagnostic),
+    transform 180ms var(--ease-diagnostic),
+    filter 220ms var(--ease-diagnostic);
+}
+
+.question-screen .btn-primary:hover:not(:disabled),
+.realization-screen .btn-primary:hover:not(:disabled) {
+  background: linear-gradient(188deg, #d6b584 0%, #b89262 52%, #8f7348 100%);
+  border-color: rgba(210, 175, 120, 0.55);
+  filter: brightness(1.03);
+  transform: translateY(-1px);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.15) inset,
+    0 0 40px rgba(255, 200, 130, 0.1) inset,
+    0 0 52px rgba(255, 175, 90, 0.14),
+    0 10px 28px rgba(0, 0, 0, 0.38);
+}
+
+.question-screen .btn-primary:active:not(:disabled),
+.realization-screen .btn-primary:active:not(:disabled) {
+  transform: scale(0.98);
+  filter: brightness(1.02);
+  transition-duration: 130ms;
 }
 
 @media (prefers-reduced-motion: no-preference) {

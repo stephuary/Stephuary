@@ -40,7 +40,10 @@ export function QuestionScreen({
   const showAuthorityFilter = progress.current === 12;
 
   return (
-    <ScreenShell animKey={animKey} className="question-screen question-slide">
+    <ScreenShell
+      animKey={animKey}
+      className={`question-screen question-slide ${showMidpoint ? "question-screen--midpoint" : ""}`.trim()}
+    >
       <div className="question-inner question-inner--stagger">
         <header className="diagnostic-header">
           <div className="diagnostic-header-side diagnostic-header-side--left">
