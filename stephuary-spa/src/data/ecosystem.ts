@@ -41,7 +41,7 @@ export const ecosystemCards: EcosystemCard[] = [
   {
     id: "customBuild",
     title: "Custom Build",
-    descriptor: "Hands-on rebuild with me. Not a template.",
+    descriptor: "I rebuild how your expertise makes you revenue.",
     action: "install_intake",
     cta: "Request access",
   },

@@ -24,6 +24,24 @@ function tierMatchesRecommended(id: OfferTierId, r: RecommendedTier): boolean {
   return false;
 }
 
+function renderWhatChanges(tier: (typeof offerInstallTiers)[number]) {
+  if ("whatChangesParagraphs" in tier && tier.whatChangesParagraphs?.length) {
+    return (
+      <div className="tier-change-paragraphs">
+        {tier.whatChangesParagraphs.map((p) => (
+          <p key={p} className="tier-outcome tier-outcome--para">
+            {p}
+          </p>
+        ))}
+      </div>
+    );
+  }
+  if ("whatChanges" in tier && tier.whatChanges) {
+    return <p className="tier-outcome">{tier.whatChanges}</p>;
+  }
+  return null;
+}
+
 export function OfferScreen({
   animKey,
   recommendedTier,
@@ -64,7 +82,14 @@ export function OfferScreen({
                   className={`install-card screen-copy-panel ${rec ? "install-card--recommended" : ""}`.trim()}
                 >
                   {rec ? <span className="install-rec-pill">Matches your answers</span> : null}
+
+                  {"headlineLead" in tier && tier.headlineLead ? (
+                    <p className="install-card-eyebrow">{tier.headlineLead}</p>
+                  ) : null}
                   <h3 className="install-card-title install-card-title--headline">{tier.headline}</h3>
+                  {"headlineSub" in tier && tier.headlineSub ? (
+                    <p className="install-card-subhead">{tier.headlineSub}</p>
+                  ) : null}
 
                   {isHigh && "whatIDo" in tier && tier.whatIDo ? (
                     <>
@@ -85,17 +110,17 @@ export function OfferScreen({
                   </ul>
 
                   <p className="tier-section-label">{isHigh ? HT.whatChanges : L.whatChanges}</p>
-                  {isHigh && "beforeAfter" in tier && tier.beforeAfter ? (
-                    <div className="tier-before-after">
-                      <p className="tier-ba-line">
-                        <span className="tier-ba-tag">{HT.before}</span> {tier.beforeAfter.before}
-                      </p>
-                      <p className="tier-ba-line">
-                        <span className="tier-ba-tag">{HT.after}</span> {tier.beforeAfter.after}
-                      </p>
-                    </div>
-                  ) : !isHigh ? (
-                    <p className="tier-outcome">{tier.whatChanges}</p>
+                  {renderWhatChanges(tier)}
+
+                  {"whatYouDontGet" in tier && tier.whatYouDontGet?.length ? (
+                    <>
+                      <p className="tier-section-label">{L.whatYouDontGet}</p>
+                      <ul className="tier-bullet-list tier-bullet-list--dont">
+                        {tier.whatYouDontGet.map((item) => (
+                          <li key={item}>{item}</li>
+                        ))}
+                      </ul>
+                    </>
                   ) : null}
 
                   <p className="tier-section-label">{isHigh ? HT.timeline : L.time}</p>

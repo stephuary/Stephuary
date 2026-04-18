@@ -38,8 +38,8 @@ export const revenueGateModalCopy = {
   bodyPick: "Pick a tier:",
   routes: [
     "$34 — one offer, one buyer, locked in writing",
-    "$750 — full pass on offer, price, page, and calendar",
-    "Custom — I build it with you, week by week",
+    "$750 — Full Breakdown: where money leaks, what to stop, what to focus on",
+    "Custom Build — I rebuild how your expertise makes you revenue",
   ],
   closing: "No tier = no change in how you work.",
   cta: "Continue",
@@ -142,6 +142,7 @@ export const offerTransitionCopy = {
 export const offerSectionLabels = {
   whatYouGet: "What you get",
   whatChanges: "What changes",
+  whatYouDontGet: "What you don't get",
   time: "When you get value",
 } as const;
 
@@ -161,42 +162,38 @@ export const highTicketSectionLabels = {
 } as const;
 
 export const highTicketOfferCopy = {
-  headline:
-    "I restructure your offers, pricing, and week so the right buyers pay—without confusion, rework, or four competing priorities.",
+  headlineLead: "Custom Build",
+  headline: "I rebuild how your expertise makes you revenue.",
   whatIDo: [
-    "Rip apart overlapping offers: what stays, what merges, what dies",
-    "Rewrite pricing and scope so calls stop bleeding margin",
-    "Rebuild your main buyer touchpoint (page, deck, or one-pager) for one buyer",
-    "Lock delivery and calendar rules so the work that pays wins the week",
-    "Run weekly working sessions until the new path is live in your business",
+    "Identify what people would actually pay for right now",
+    "Remove offers, pages, and work that don't lead to payment",
+    "Restructure everything into one clear direction",
+    "Rewrite how your offer is explained so it's understood instantly",
+    "Fix the path from interest → decision → payment",
   ],
   whatYouGet: [
-    "A written map: where money comes in, where it leaks, ranked by pain",
-    "A numbered change list: what moves first, who owns it, rough upside",
-    "Drafted or rewritten copy for your primary sales touchpoint",
-    "A price and scope table you can quote on calls",
-    "30 days of async tweaks after handoff",
+    "One clear offer people understand immediately",
+    "A direct path from someone finding you to paying you",
+    "Clear pricing and positioning",
+    "A structure you can actually operate without confusion",
   ],
-  beforeAfter: {
-    before:
-      "Too many offers, soft pricing, buyer confused, your calendar owned by everything except the work that pays.",
-    after: "One primary buyer, one main offer, clear dollars, a week built around delivery.",
-  },
-  time: "Engagement starts within 2 weeks of cleared deposit. First working session in week one. Most builds: 4–8 weeks unless we widen scope.",
+  whatChangesParagraphs: [
+    "You stop doing work that doesn't pay.",
+    "You start getting paid for what you already know how to do.",
+  ],
+  time: "Initial breakdown within 48 hours. Build and changes begin immediately after.",
   whoFor: [
-    "You're already selling—roughly $10k+ rolling revenue, not ideation",
-    "You'll bring real numbers, pipeline reality, and one honest week of calendar data",
-    "You can show up 60–90 minutes weekly while we build",
-    "You're paying for execution and decisions, not opinions in a folder",
+    "You already have experience or clients",
+    "You're working, but it's inconsistent or unclear",
+    "You're ready to change how you operate, not talk about it",
   ],
   afterApply: {
-    review: "I read your application and diagnostic. If something's missing, you get one direct ask—not a thread.",
-    decision: "Within 5 business days: yes (fit + slot) or no (one line why—usually timing or scope).",
-    nextAction:
-      "Yes → you get calendar, deposit invoice, and start date. No → you're not stuck on a nurture list.",
+    review: "I review your current setup.",
+    decision: "If there's a real opportunity, you'll get next steps.",
+    nextAction: "If not, you won't be pushed into anything.",
   },
-  price: "$1,000–$10,000+ · final number on a 20-minute scope call after apply",
-  cta: "Apply now",
+  price: "Custom investment · final scope after apply",
+  cta: "Apply for custom build",
 } as const;
 
 export const offerInstallTiers = [
@@ -216,18 +213,26 @@ export const offerInstallTiers = [
   },
   {
     id: "fix" as const,
-    headline: "Full pass on how you describe, price, and deliver what you sell.",
+    headline: "Full Breakdown",
+    headlineSub: "See exactly what's working, what isn't, and where money is being lost.",
     whatYouGet: [
-      "Map of each offer and what it earns",
-      "Pricing and scope fixes for the broken line",
-      "One page or core doc rewritten for the buyer you want",
-      "Calendar rules so admin stops eating the week",
-      "Checklist: what's live, what's killed",
+      "Where your time is actually going",
+      "What's bringing in money",
+      "What people are ignoring or not understanding",
+      "What to stop doing immediately",
+      "What to focus on instead",
     ],
-    whatChanges: "Strangers understand what you sell. Bad-fit calls drop.",
-    time: "First deliverables within 10 business days of payment.",
+    whatChangesParagraphs: [
+      "You stop splitting effort across too many things.",
+      "You see one clear direction that can actually pay.",
+    ],
+    whatYouDontGet: [
+      "Nothing is built for you.",
+      "You'll know what to do. You'll decide if you do it yourself or not.",
+    ],
+    time: "Clarity within 48 hours",
     price: "$750",
-    cta: "Get the full pass — $750",
+    cta: "See the full breakdown",
   },
   {
     id: "breakdown" as const,

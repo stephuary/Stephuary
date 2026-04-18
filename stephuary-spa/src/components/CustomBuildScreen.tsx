@@ -14,6 +14,7 @@ export function CustomBuildScreen({ animKey, onRequestAccess }: Props) {
   return (
     <ScreenShell animKey={animKey} className="eco-page eco-page--custom">
       <ScrollReveal className="eco-head-reveal">
+        {t.headlineLead ? <p className="install-card-eyebrow eco-eyebrow">{t.headlineLead}</p> : null}
         <h1 className="eco-page-headline">{t.headline}</h1>
       </ScrollReveal>
 
@@ -37,13 +38,12 @@ export function CustomBuildScreen({ animKey, onRequestAccess }: Props) {
 
       <ScrollReveal className="custom-build-block">
         <p className="tier-section-label">{L.whatChanges}</p>
-        <div className="tier-before-after">
-          <p className="tier-ba-line">
-            <span className="tier-ba-tag">{L.before}</span> {t.beforeAfter.before}
-          </p>
-          <p className="tier-ba-line">
-            <span className="tier-ba-tag">{L.after}</span> {t.beforeAfter.after}
-          </p>
+        <div className="tier-change-paragraphs">
+          {t.whatChangesParagraphs.map((p) => (
+            <p key={p} className="tier-outcome tier-outcome--para">
+              {p}
+            </p>
+          ))}
         </div>
       </ScrollReveal>
 
