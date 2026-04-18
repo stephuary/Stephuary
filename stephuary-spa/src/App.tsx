@@ -15,6 +15,7 @@ import { OperatorOSScreen } from "./components/OperatorOSScreen";
 import { OscScreen } from "./components/OscScreen";
 import { DiagnosticExitModal } from "./components/DiagnosticExitModal";
 import { QuestionScreen } from "./components/QuestionScreen";
+import { RealizationMomentScreen } from "./components/RealizationMomentScreen";
 import { ResultsScreen } from "./components/ResultsScreen";
 import { shouldShowHighTicketAccess } from "./lib/highTicketSignals";
 import { shouldShowOperatorOSGate } from "./lib/operatorOSSignals";
@@ -25,7 +26,16 @@ import type { AnswersMap, FlowStep } from "./types/flow";
 
 const PHASE_TOTAL = 5;
 
-const NAV_HIDDEN = new Set<FlowStep["id"]>(["quiz", "results", "offer", "operatorOS"]);
+/** After Q5 (index 4): show realization interstitial before Q6. */
+const REALIZATION_AFTER_Q_INDEX = 4;
+
+const NAV_HIDDEN = new Set<FlowStep["id"]>([
+  "quiz",
+  "realizationMoment",
+  "results",
+  "offer",
+  "operatorOS",
+]);
 
 function stepAnimKey(step: FlowStep): string {
   switch (step.id) {
@@ -47,6 +57,8 @@ function stepAnimKey(step: FlowStep): string {
       return "explore";
     case "quiz":
       return `quiz-${step.index}`;
+    case "realizationMoment":
+      return "realizationMoment";
     case "results":
       return "results";
     case "offer":
@@ -244,6 +256,7 @@ export default function App() {
               triggerPostAction();
               const last = step.index >= QUESTIONS.length - 1;
               if (last) setStep({ id: "results" });
+              else if (step.index === REALIZATION_AFTER_Q_INDEX) setStep({ id: "realizationMoment" });
               else setStep({ id: "quiz", index: step.index + 1 });
             }}
             onBack={backQuestion}
@@ -259,12 +272,23 @@ export default function App() {
           />
         ) : null}
 
+        {step.id === "realizationMoment" ? (
+          <RealizationMomentScreen
+            animKey={stepAnimKey(step)}
+            onContinue={() => {
+              triggerPostAction();
+              setStep({ id: "quiz", index: REALIZATION_AFTER_Q_INDEX + 1 });
+            }}
+            onExitRequest={() => setExitModalOpen(true)}
+          />
+        ) : null}
+
         {step.id === "results" ? (
           <ResultsScreen
             animKey={stepAnimKey(step)}
             sections={sections}
             primaryCta={{
-              label: "Continue",
+              label: "Start here",
               onClick: () => {
                 triggerPostAction();
                 setStep({ id: "offer" });

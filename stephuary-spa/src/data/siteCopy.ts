@@ -82,6 +82,17 @@ export const exploreCopy = {
   title: "Other ways to work together",
 } as const;
 
+/** Interstitial after Q5: observation, not instruction. */
+export const realizationMomentCopy = {
+  lines: [
+    "You're starting to see it now.",
+    "It's not that nothing works.",
+    "It's that everything is split.",
+    "That's why nothing compounds.",
+  ],
+  cta: "Continue",
+} as const;
+
 export const diagnosticCopy = {
   progressHint: "Clarity builds as you go.",
   nearComplete: "You're close. Most people don't get this far.",
@@ -96,21 +107,18 @@ export const resultsAuthorityLead = {
   line2: "That's why nothing changes.",
 } as const;
 
-export const resultsBridgeCopy = {
-  line1: "You already have something here.",
-  line2: "Now turn it into something that pays you.",
+/** Final results: tension, fork, identity filter (before email + primary CTA). */
+export const resultsDecisionMomentCopy = {
+  openLines: ["If nothing changes,", "this is exactly how next month looks too."],
+  sameLines: ["Same effort.", "Same confusion.", "Same result."],
+  pivotLabel: "Or—",
+  pivotAction: "you can fix it now.",
+  ctaFilterLines: [
+    "This is for people who want to move this week.",
+    "If that's not you,",
+    "don't buy it.",
+  ],
 } as const;
-
-export const resultsStakesCopy =
-  "If nothing changes, this is exactly how next month looks too." as const;
-
-export const resultsHowIThink = {
-  line1: "I don't look at what you say you're building.",
-  line2: "I look at what actually leads to revenue.",
-} as const;
-
-export const resultsFailureSignal =
-  "I've seen this play out the same way repeatedly." as const;
 
 export const resultsScaleCopy = "This scales beyond one person." as const;
 

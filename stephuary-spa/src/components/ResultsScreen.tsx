@@ -2,13 +2,9 @@ import { useState, type FormEvent } from "react";
 import { usePostActionMoment } from "../context/PostActionMomentContext";
 import {
   resultsAuthorityLead,
-  resultsBridgeCopy,
+  resultsDecisionMomentCopy,
   resultsEmailCopy,
-  resultsFailureSignal,
-  resultsHowIThink,
-  resultsScaleCopy,
   resultsShareCopy,
-  resultsStakesCopy,
 } from "../data/siteCopy";
 import { useScrollRevealOnce } from "../hooks/useScrollRevealOnce";
 import type { SectionOutput } from "../lib/outputGenerator";
@@ -26,8 +22,9 @@ export function ResultsScreen({ sections, primaryCta, animKey }: Props) {
   const [shareCopied, setShareCopied] = useState(false);
   const [emailDraft, setEmailDraft] = useState("");
   const [emailSubmitted, setEmailSubmitted] = useState(false);
-  const bridgeReveal = useScrollRevealOnce<HTMLDivElement>();
+  const decisionReveal = useScrollRevealOnce<HTMLDivElement>();
   const ctaReveal = useScrollRevealOnce<HTMLDivElement>();
+  const d = resultsDecisionMomentCopy;
 
   async function copyShareLink() {
     const url = typeof window !== "undefined" ? window.location.href : "";
@@ -65,29 +62,28 @@ export function ResultsScreen({ sections, primaryCta, animKey }: Props) {
           <ResultSection key={s.id} section={s} />
         ))}
       </div>
-      <div className="results-readout-close" role="note">
-        <p className="results-readout-close-line">{resultsFailureSignal}</p>
-      </div>
-      <p className="results-stakes" role="note">
-        {resultsStakesCopy}
-      </p>
-      <p className="results-how-i-think" role="note">
-        {resultsHowIThink.line1}
-      </p>
-      <p className="results-how-i-think results-how-i-think--second" role="note">
-        {resultsHowIThink.line2}
-      </p>
-      <p className="results-scale" role="note">
-        {resultsScaleCopy}
-      </p>
       <div
-        ref={bridgeReveal.ref}
-        className={`results-bridge scroll-reveal ${bridgeReveal.inView ? "scroll-reveal--in" : ""}`.trim()}
+        ref={decisionReveal.ref}
+        className={`results-decision scroll-reveal ${decisionReveal.inView ? "scroll-reveal--in" : ""}`.trim()}
+        role="region"
+        aria-label="Decision"
       >
-        <p className="results-bridge-line">{resultsBridgeCopy.line1}</p>
-        <p className="results-bridge-line results-bridge-line--emph">
-          {resultsBridgeCopy.line2}
-        </p>
+        <div className="results-decision-open">
+          {d.openLines.map((line) => (
+            <p key={line} className="results-decision-open-line">
+              {line}
+            </p>
+          ))}
+        </div>
+        <div className="results-decision-same">
+          {d.sameLines.map((line) => (
+            <p key={line} className="results-decision-same-line">
+              {line}
+            </p>
+          ))}
+        </div>
+        <p className="results-decision-or">{d.pivotLabel}</p>
+        <p className="results-decision-pivot">{d.pivotAction}</p>
       </div>
       <div className="results-email-capture" role="region" aria-label="Email">
         <p className="results-email-prompt">{resultsEmailCopy.prompt}</p>
@@ -115,11 +111,20 @@ export function ResultsScreen({ sections, primaryCta, animKey }: Props) {
       </div>
       <div
         ref={ctaReveal.ref}
-        className={`cta-row results-cta-reveal scroll-reveal ${ctaReveal.inView ? "scroll-reveal--in" : ""}`.trim()}
+        className={`results-decision-cta-wrap scroll-reveal ${ctaReveal.inView ? "scroll-reveal--in" : ""}`.trim()}
       >
-        <button type="button" className="btn btn-primary btn-block" onClick={primaryCta.onClick}>
-          {primaryCta.label}
-        </button>
+        <div className="cta-row results-decision-cta-row">
+          <button type="button" className="btn btn-primary btn-block" onClick={primaryCta.onClick}>
+            {primaryCta.label}
+          </button>
+        </div>
+        <div className="results-decision-cta-sub" role="note">
+          {d.ctaFilterLines.map((line) => (
+            <p key={line} className="results-decision-cta-sub-line">
+              {line}
+            </p>
+          ))}
+        </div>
       </div>
       <div className="results-share" role="region" aria-label="Share">
         <p className="results-share-prompt">{resultsShareCopy.prompt}</p>

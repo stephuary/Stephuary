@@ -8,6 +8,8 @@ export type FlowStep =
   | { id: "operatorOS" }
   | { id: "explore" }
   | { id: "quiz"; index: number }
+  /** Full-screen pause after Q5 (index 4), before Q6. */
+  | { id: "realizationMoment" }
   | { id: "results" }
   | { id: "offer" };
 
