@@ -12,8 +12,14 @@ export const homeCopy = {
 
 export const resultsShareCopy = {
   prompt: "Know someone dealing with this?",
-  cta: "Share this",
-  copied: "Link copied",
+  cta: "Copy link",
+  copied: "Copied",
+} as const;
+
+export const resultsEmailCopy = {
+  prompt: "Send this to your email?",
+  followUp: "You'll get this again so you can actually use it.",
+  send: "Send",
 } as const;
 
 export const postActionMomentCopy = {
@@ -22,8 +28,19 @@ export const postActionMomentCopy = {
 } as const;
 
 export const accessRequestCopy = {
-  fixingLabel: "What are you trying to fix right now?",
+  fixingLabel: "What specifically are you trying to fix right now?",
+  thanksLine1: "Your request was received.",
+  thanksLine2: "You'll hear back with next steps based on what you submitted.",
 } as const;
+
+/** Internal — embedded for operator reference; not shown in the UI. */
+export const accessRequestInternalFlow = [
+  "What are you trying to fix?",
+  "What have you tried?",
+  "What's not working?",
+  "Confirm real issue",
+  "Then offer",
+] as const;
 
 export const exploreCopy = {
   title: "Other ways to work together",
@@ -32,6 +49,8 @@ export const exploreCopy = {
 export const diagnosticCopy = {
   progressHint: "Clarity builds as you go.",
   nearComplete: "You're close. Most people don't get this far.",
+  timeExpectation: "This takes about 3 minutes.",
+  midpointMomentum: "Most people drop here. Keep going.",
 } as const;
 
 export const resultsTransitionCopy =

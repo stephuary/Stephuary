@@ -1,6 +1,6 @@
 import { useState, type FormEvent } from "react";
 import { usePostActionMoment } from "../context/PostActionMomentContext";
-import { accessRequestCopy } from "../data/siteCopy";
+import { accessRequestCopy, accessRequestInternalFlow } from "../data/siteCopy";
 import { ScrollReveal } from "./ScrollReveal";
 import { ScreenShell } from "./ScreenShell";
 
@@ -31,7 +31,8 @@ export function AccessRequestScreen({ animKey, intent, onDone }: Props) {
     return (
       <ScreenShell animKey={animKey} className="access-screen">
         <ScrollReveal className="access-block-reveal">
-          <p className="access-thanks">Received.</p>
+          <p className="access-thanks">{accessRequestCopy.thanksLine1}</p>
+          <p className="access-thanks-sub">{accessRequestCopy.thanksLine2}</p>
           <div className="cta-row">
             <button
               type="button"
@@ -53,8 +54,35 @@ export function AccessRequestScreen({ animKey, intent, onDone }: Props) {
     <ScreenShell animKey={animKey} className="access-screen">
       <ScrollReveal className="access-block-reveal">
         <h1 className="access-title">Request access</h1>
+        {/*
+          Internal — operator response flow (not shown to users):
+          - What are you trying to fix?
+          - What have you tried?
+          - What's not working?
+          - Confirm real issue
+          - Then offer
+        */}
+        <div className="access-internal-flow" hidden aria-hidden="true">
+          <span className="access-internal-flow-title">Conversation flow (internal)</span>
+          <ol>
+            {accessRequestInternalFlow.map((line) => (
+              <li key={line}>{line}</li>
+            ))}
+          </ol>
+        </div>
         <form className="access-form" onSubmit={handleSubmit}>
           {intent === "os" ? <input type="hidden" name="intent" value="OS inquiry" aria-hidden /> : null}
+          <label className="access-field access-field--prominent">
+            <span className="access-label access-label--prominent">{accessRequestCopy.fixingLabel}</span>
+            <textarea
+              className="access-textarea access-textarea--prominent"
+              name="fixing_now"
+              value={fixingNow}
+              onChange={(e) => setFixingNow(e.target.value)}
+              rows={5}
+              required
+            />
+          </label>
           <label className="access-field">
             <span className="access-label">Name</span>
             <input
@@ -77,17 +105,6 @@ export function AccessRequestScreen({ animKey, intent, onDone }: Props) {
             />
           </label>
           <label className="access-field">
-            <span className="access-label">{accessRequestCopy.fixingLabel}</span>
-            <textarea
-              className="access-textarea"
-              name="fixing_now"
-              value={fixingNow}
-              onChange={(e) => setFixingNow(e.target.value)}
-              rows={3}
-              required
-            />
-          </label>
-          <label className="access-field">
             <span className="access-label">What do you need?</span>
             <textarea
               className="access-textarea"
@@ -99,7 +116,7 @@ export function AccessRequestScreen({ animKey, intent, onDone }: Props) {
           </label>
           <div className="cta-row">
             <button type="submit" className="btn btn-primary btn-block">
-              Submit
+              Request access
             </button>
           </div>
         </form>

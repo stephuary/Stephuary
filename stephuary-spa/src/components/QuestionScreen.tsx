@@ -34,6 +34,9 @@ export function QuestionScreen({
 }: Props) {
   const canContinue = selectedId !== null;
   const nearComplete = progress.total > 0 && progress.current >= progress.total - 1;
+  const midpointIndex = Math.ceil(progress.total / 2);
+  const showMidpoint = progress.total > 0 && progress.current === midpointIndex;
+  const showTimeExpectation = progress.current === 1;
 
   return (
     <ScreenShell animKey={animKey} className="question-screen question-slide">
@@ -67,6 +70,19 @@ export function QuestionScreen({
             </button>
           </div>
         </header>
+        <p className="question-progress-count" aria-live="polite">
+          Question {progress.current} of {progress.total}
+        </p>
+        {showTimeExpectation ? (
+          <p className="question-time-expectation" role="note">
+            {diagnosticCopy.timeExpectation}
+          </p>
+        ) : null}
+        {showMidpoint ? (
+          <p className="question-midpoint" role="note">
+            {diagnosticCopy.midpointMomentum}
+          </p>
+        ) : null}
         {nearComplete ? (
           <p className="question-near-complete">{diagnosticCopy.nearComplete}</p>
         ) : null}

@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useState, type FormEvent } from "react";
 import { usePostActionMoment } from "../context/PostActionMomentContext";
 import {
   resultsAuthorityCopy,
   resultsBridgeCopy,
+  resultsEmailCopy,
   resultsScaleCopy,
   resultsShareCopy,
   resultsStakesCopy,
@@ -22,6 +23,8 @@ type Props = {
 export function ResultsScreen({ sections, primaryCta, animKey }: Props) {
   const triggerPostAction = usePostActionMoment();
   const [shareCopied, setShareCopied] = useState(false);
+  const [emailDraft, setEmailDraft] = useState("");
+  const [emailSubmitted, setEmailSubmitted] = useState(false);
   const bridgeReveal = useScrollRevealOnce<HTMLDivElement>();
   const ctaReveal = useScrollRevealOnce<HTMLDivElement>();
 
@@ -35,6 +38,14 @@ export function ResultsScreen({ sections, primaryCta, animKey }: Props) {
     triggerPostAction();
     setShareCopied(true);
     window.setTimeout(() => setShareCopied(false), 2000);
+  }
+
+  function submitResultsEmail(e: FormEvent) {
+    e.preventDefault();
+    const trimmed = emailDraft.trim();
+    if (!trimmed || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed)) return;
+    triggerPostAction();
+    setEmailSubmitted(true);
   }
 
   return (
@@ -67,6 +78,30 @@ export function ResultsScreen({ sections, primaryCta, animKey }: Props) {
         <p className="results-bridge-line results-bridge-line--emph">
           {resultsBridgeCopy.line2}
         </p>
+      </div>
+      <div className="results-email-capture" role="region" aria-label="Email">
+        <p className="results-email-prompt">{resultsEmailCopy.prompt}</p>
+        {emailSubmitted ? (
+          <p className="results-email-followup" role="status">
+            {resultsEmailCopy.followUp}
+          </p>
+        ) : (
+          <form className="results-email-form" onSubmit={submitResultsEmail}>
+            <input
+              className="results-email-input"
+              type="email"
+              name="results_email"
+              autoComplete="email"
+              placeholder="Email"
+              aria-label="Email"
+              value={emailDraft}
+              onChange={(e) => setEmailDraft(e.target.value)}
+            />
+            <button type="submit" className="btn btn-secondary btn-block results-email-send">
+              {resultsEmailCopy.send}
+            </button>
+          </form>
+        )}
       </div>
       <div
         ref={ctaReveal.ref}
