@@ -3,8 +3,7 @@
   --font-display: "Cormorant Garamond", "Palatino Linotype", Palatino, Georgia, serif;
   --font-sans: "Inter", system-ui, -apple-system, sans-serif;
 
-  /* Deep charcoal base (no pure black) */
-  --bg-deep: #0d0c0a;
+  --bg-deep: #030201;
   --bg-base: #141210;
   --panel: rgba(18, 16, 14, 0.72);
   --panel-elevated: rgba(28, 26, 22, 0.88);
@@ -50,11 +49,7 @@
 body {
   margin: 0;
   min-height: 100dvh;
-  background:
-    radial-gradient(ellipse 92% 80% at 50% 40%, #2e261e 0%, #1e1a15 32%, #12100e 58%, #0a0908 100%),
-    radial-gradient(ellipse 48% 42% at 8% 92%, rgba(55, 62, 58, 0.22) 0%, transparent 55%),
-    radial-gradient(ellipse 42% 38% at 94% 12%, rgba(58, 42, 38, 0.18) 0%, transparent 52%),
-    linear-gradient(165deg, #161412 0%, #0e0d0b 45%, #121110 100%);
+  background: #030201;
   color: var(--fg);
   -webkit-font-smoothing: antialiased;
 }
@@ -73,157 +68,90 @@ body {
   flex-direction: column;
 }
 
-/* Layered aura field: glows + ring lines are separate stacks (see prefers-reduced-motion) */
+/* Pricing-page aura stack (original structure; see prefers-reduced-motion) */
 .aura-field {
   position: fixed;
   inset: 0;
   z-index: 0;
   pointer-events: none;
   overflow: hidden;
+  background: #030201;
 }
 
-/* Foundation: charcoal, olive, bronze — no pure black */
-.aura-base {
+.pricing-aura__spot {
   position: absolute;
-  inset: 0;
-  z-index: 0;
-  background:
-    radial-gradient(ellipse 100% 90% at 50% 45%, #1a1714 0%, #12100e 48%, #0c0b09 100%),
-    radial-gradient(ellipse 50% 45% at 10% 88%, rgba(52, 58, 56, 0.2) 0%, transparent 58%),
-    radial-gradient(ellipse 48% 42% at 90% 14%, rgba(72, 48, 42, 0.16) 0%, transparent 55%),
-    linear-gradient(145deg, rgba(26, 22, 18, 0.9) 0%, rgba(14, 12, 10, 0.98) 100%);
+  inset: -18% -8% -28% -8%;
+  z-index: 1;
+  background: radial-gradient(
+    ellipse 48% 72% at 50% 36%,
+    rgba(238, 200, 120, 0.65) 0%,
+    rgba(118, 128, 72, 0.45) 32%,
+    rgba(32, 42, 28, 0.65) 58%,
+    rgba(6, 5, 4, 0.92) 100%
+  );
+  filter: blur(28px);
+  opacity: 0.95;
+  transform-origin: 50% 36%;
+  animation: auraDrift 28s ease-in-out infinite;
+  will-change: transform;
 }
 
-/* Inner: warm gold bloom (content focal region) */
-.aura-glow {
+.pricing-aura__spot-b {
   position: absolute;
-  left: 50%;
-  top: 40%;
-  border-radius: 50%;
-  pointer-events: none;
+  inset: -22% -12% -32% -12%;
+  z-index: 1;
+  background: radial-gradient(
+    ellipse 56% 68% at 48% 40%,
+    rgba(200, 155, 72, 0.32) 0%,
+    rgba(62, 78, 48, 0.35) 42%,
+    transparent 70%
+  );
+  filter: blur(42px);
+  opacity: 0.55;
+  transform-origin: 48% 40%;
+  animation: auraDriftSpotB 34s ease-in-out infinite;
   will-change: transform, opacity;
-  transform: translate(-50%, -50%);
 }
 
-.aura-glow--inner {
-  z-index: 1;
-  width: min(82vw, 500px);
-  height: min(76vw, 470px);
-  background: radial-gradient(
-    circle at 50% 48%,
-    rgba(210, 175, 115, 0.22) 0%,
-    rgba(165, 135, 88, 0.12) 38%,
-    rgba(88, 72, 52, 0.05) 62%,
-    transparent 74%
-  );
-  filter: blur(52px);
-  opacity: 0.68;
-  animation: aura-glow-inner-motion 34s ease-in-out infinite;
-}
-
-/* Mid: olive + bronze halo */
-.aura-glow--mid {
-  z-index: 1;
-  width: min(125vw, 720px);
-  height: min(118vw, 680px);
-  background: radial-gradient(
-    circle at 48% 46%,
-    rgba(118, 108, 72, 0.18) 0%,
-    rgba(72, 62, 48, 0.12) 45%,
-    rgba(42, 38, 32, 0.06) 68%,
-    transparent 82%
-  );
-  filter: blur(72px);
-  opacity: 0.48;
-  animation: aura-glow-mid-motion 38s ease-in-out infinite;
-}
-
-/* Outer: wide desaturated field + faint cool shadow */
-.aura-glow--outer {
-  z-index: 1;
-  width: min(175vw, 1020px);
-  height: min(165vw, 980px);
-  background:
-    radial-gradient(
-      circle at 50% 50%,
-      rgba(58, 54, 48, 0.14) 0%,
-      rgba(38, 36, 34, 0.08) 52%,
-      transparent 72%
-    ),
-    radial-gradient(
-      circle at 62% 38%,
-      rgba(40, 48, 52, 0.1) 0%,
-      transparent 55%
-    );
-  filter: blur(92px);
-  opacity: 0.38;
-  animation: aura-glow-outer-motion 42s ease-in-out infinite;
-}
-
-/* Ring stack: etched light only (no fill glow mixed in) */
-.aura-rings {
+.pricing-aura__rings {
   position: absolute;
   inset: 0;
   z-index: 2;
   pointer-events: none;
-}
-
-.aura-ring-line {
-  position: absolute;
-  left: 50%;
-  top: 40%;
-  transform: translate(-50%, -50%);
-  border-radius: 50%;
-  pointer-events: none;
-  background: transparent;
-  border-style: solid;
+  background:
+    radial-gradient(
+      circle at 50% 42%,
+      transparent 52%,
+      rgba(196, 163, 90, 0.18) 54%,
+      transparent 56%
+    ),
+    radial-gradient(
+      circle at 50% 42%,
+      transparent 64%,
+      rgba(196, 163, 90, 0.12) 66%,
+      transparent 68%
+    ),
+    radial-gradient(
+      circle at 50% 42%,
+      transparent 78%,
+      rgba(196, 163, 90, 0.08) 80%,
+      transparent 82%
+    );
   filter: blur(1px);
-  will-change: transform, opacity;
+  opacity: 0.6;
 }
 
-.aura-ring-line--a {
-  width: min(92vw, 540px);
-  height: min(92vw, 540px);
-  border-width: 1px;
-  border-color: rgba(198, 161, 91, 0.09);
-  box-shadow:
-    0 0 0 1px rgba(198, 161, 91, 0.05),
-    inset 0 0 36px rgba(198, 161, 91, 0.03);
-  opacity: 0.75;
-  animation: aura-ring-line-motion-a 32s ease-in-out infinite;
-}
-
-.aura-ring-line--b {
-  width: min(122vw, 720px);
-  height: min(122vw, 720px);
-  border-width: 1px;
-  border-color: rgba(175, 155, 118, 0.065);
-  box-shadow: 0 0 0 1px rgba(210, 190, 150, 0.04);
-  opacity: 0.55;
-  animation: aura-ring-line-motion-b 36s ease-in-out infinite;
-}
-
-.aura-ring-line--c {
-  width: min(152vw, 900px);
-  height: min(152vw, 900px);
-  border-width: 1px;
-  border-color: rgba(130, 118, 98, 0.055);
-  box-shadow:
-    0 0 0 1px rgba(90, 82, 72, 0.06),
-    inset 0 0 0 1px rgba(45, 42, 38, 0.12);
-  opacity: 0.45;
-  animation: aura-ring-line-motion-c 40s ease-in-out infinite;
-}
-
-.aura-vignette {
+.pricing-aura__vignette {
   position: absolute;
   inset: 0;
   z-index: 3;
-  background:
-    radial-gradient(ellipse 82% 74% at 50% 42%, transparent 34%, rgba(6, 5, 4, 0.5) 100%),
-    radial-gradient(ellipse 128% 98% at 50% 50%, transparent 56%, rgba(4, 3, 2, 0.68) 100%);
-  opacity: 0.9;
   pointer-events: none;
+  background: radial-gradient(
+    ellipse 88% 78% at 50% 42%,
+    transparent 0%,
+    transparent 40%,
+    rgba(0, 0, 0, 0.45) 100%
+  );
 }
 
 .aura-noise {
@@ -238,75 +166,25 @@ body {
   will-change: opacity;
 }
 
-@keyframes aura-glow-inner-motion {
+@keyframes auraDrift {
   0%,
   100% {
-    transform: translate(-50%, -50%) translate(0, 0) scale(1);
-    opacity: 0.62;
+    transform: scale(1);
   }
   50% {
-    transform: translate(-50%, -50%) translate(1.2%, -1%) scale(1.04);
-    opacity: 0.72;
+    transform: scale(1.04);
   }
 }
 
-@keyframes aura-glow-mid-motion {
+@keyframes auraDriftSpotB {
   0%,
   100% {
-    transform: translate(-50%, -50%) translate(0, 0) scale(1);
-    opacity: 0.42;
-  }
-  50% {
-    transform: translate(-50%, -50%) translate(-1.5%, 1.2%) scale(1.05);
-    opacity: 0.52;
-  }
-}
-
-@keyframes aura-glow-outer-motion {
-  0%,
-  100% {
-    transform: translate(-50%, -50%) scale(1);
-    opacity: 0.34;
-  }
-  50% {
-    transform: translate(-50%, -50%) translate(1%, 0.8%) scale(1.03);
-    opacity: 0.42;
-  }
-}
-
-@keyframes aura-ring-line-motion-a {
-  0%,
-  100% {
-    transform: translate(-50%, -50%) scale(1);
-    opacity: 0.72;
-  }
-  50% {
-    transform: translate(-50%, -50%) scale(1.008);
-    opacity: 0.82;
-  }
-}
-
-@keyframes aura-ring-line-motion-b {
-  0%,
-  100% {
-    transform: translate(-50%, -50%) scale(1);
+    transform: scale(1);
     opacity: 0.52;
   }
   50% {
-    transform: translate(-50%, -50%) scale(1.012);
-    opacity: 0.62;
-  }
-}
-
-@keyframes aura-ring-line-motion-c {
-  0%,
-  100% {
-    transform: translate(-50%, -50%) scale(1);
-    opacity: 0.42;
-  }
-  50% {
-    transform: translate(-50%, -50%) scale(1.015);
-    opacity: 0.52;
+    transform: scale(1.025);
+    opacity: 0.58;
   }
 }
 
@@ -1442,39 +1320,18 @@ a.btn-block {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .aura-glow,
-  .aura-ring-line {
+  .pricing-aura__spot,
+  .pricing-aura__spot-b {
     animation: none !important;
   }
 
-  .aura-glow--inner {
-    opacity: 0.58;
-    transform: translate(-50%, -50%);
+  .pricing-aura__spot {
+    transform: scale(1);
   }
 
-  .aura-glow--mid {
-    opacity: 0.4;
-    transform: translate(-50%, -50%);
-  }
-
-  .aura-glow--outer {
-    opacity: 0.32;
-    transform: translate(-50%, -50%);
-  }
-
-  .aura-ring-line--a {
-    opacity: 0.62;
-    transform: translate(-50%, -50%);
-  }
-
-  .aura-ring-line--b {
-    opacity: 0.48;
-    transform: translate(-50%, -50%);
-  }
-
-  .aura-ring-line--c {
-    opacity: 0.38;
-    transform: translate(-50%, -50%);
+  .pricing-aura__spot-b {
+    transform: scale(1);
+    opacity: 0.55;
   }
 
   .aura-noise {
