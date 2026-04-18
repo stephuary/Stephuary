@@ -10,14 +10,25 @@ export function ResultSection({ section }: Props) {
   const reveal = inView ? "scroll-reveal--in" : "";
 
   if (section.id === "niche") {
-    const line = section.lines[0] ?? "";
     return (
       <article
         ref={ref}
         className={`result-section result-section--niche scroll-reveal ${reveal}`.trim()}
       >
         <h3 className="result-section-title">{section.title}</h3>
-        <p className="niche-sentence">{line}</p>
+        <div className="result-section-body">
+          {section.insights.map((line, i) => (
+            <p key={`${section.id}-in-${i}`} className="result-insight result-insight--lead">
+              {line}
+            </p>
+          ))}
+          {section.consequence ? (
+            <p className="result-consequence">{section.consequence}</p>
+          ) : null}
+          {section.instruction ? (
+            <p className="result-instruction">{section.instruction}</p>
+          ) : null}
+        </div>
       </article>
     );
   }
@@ -29,11 +40,23 @@ export function ResultSection({ section }: Props) {
         className={`result-section result-section--first scroll-reveal ${reveal}`.trim()}
       >
         <h3 className="result-section-title">{section.title}</h3>
-        <ol className="steps-list">
-          {section.lines.map((line, i) => (
-            <li key={`${section.id}-${i}`}>{line}</li>
+        <div className="result-section-body">
+          {section.insights.map((line, i) => (
+            <p key={`${section.id}-in-${i}`} className="result-insight">
+              {line}
+            </p>
           ))}
-        </ol>
+          {section.consequence ? (
+            <p className="result-consequence">{section.consequence}</p>
+          ) : null}
+          {section.steps && section.steps.length > 0 ? (
+            <ol className="steps-list steps-list--tight">
+              {section.steps.map((line, i) => (
+                <li key={`${section.id}-st-${i}`}>{line}</li>
+              ))}
+            </ol>
+          ) : null}
+        </div>
       </article>
     );
   }
@@ -44,11 +67,19 @@ export function ResultSection({ section }: Props) {
       className={`result-section scroll-reveal ${reveal}`.trim()}
     >
       <h3 className="result-section-title">{section.title}</h3>
-      <ul className="result-section-list">
-        {section.lines.map((line, i) => (
-          <li key={`${section.id}-${i}`}>{line}</li>
+      <div className="result-section-body">
+        {section.insights.map((line, i) => (
+          <p key={`${section.id}-in-${i}`} className="result-insight">
+            {line}
+          </p>
         ))}
-      </ul>
+        {section.consequence ? (
+          <p className="result-consequence">{section.consequence}</p>
+        ) : null}
+        {section.instruction ? (
+          <p className="result-instruction">{section.instruction}</p>
+        ) : null}
+      </div>
     </article>
   );
 }

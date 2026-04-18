@@ -1,4 +1,4 @@
-import { resultsBridgeCopy } from "../data/siteCopy";
+import { resultsBridgeCopy, resultsStakesCopy } from "../data/siteCopy";
 import { useScrollRevealOnce } from "../hooks/useScrollRevealOnce";
 import type { SectionOutput } from "../lib/outputGenerator";
 import { ResultSection } from "./ResultSection";
@@ -24,6 +24,9 @@ export function ResultsScreen({ sections, primaryCta, animKey }: Props) {
           <ResultSection key={s.id} section={s} />
         ))}
       </div>
+      <p className="results-stakes" role="note">
+        {resultsStakesCopy}
+      </p>
       <div
         ref={bridgeReveal.ref}
         className={`results-bridge scroll-reveal ${bridgeReveal.inView ? "scroll-reveal--in" : ""}`.trim()}

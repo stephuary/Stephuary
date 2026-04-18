@@ -17,6 +17,9 @@ export const resultsBridgeCopy = {
   line2: "Now turn it into something that pays you.",
 } as const;
 
+export const resultsStakesCopy =
+  "If nothing changes, this is exactly how next month looks too." as const;
+
 export const offerCopy = {
   intro: {
     headline: "Start here.",
