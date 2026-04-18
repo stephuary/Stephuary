@@ -2,8 +2,9 @@
 
 export const homeCopy = {
   headline: "You already have something people would pay for.",
-  bodyHook: "You just haven't seen it clearly yet.",
-  bodyShows: "This shows you what it is, who pays for it, and where it's breaking.",
+  subtext: "You just haven't seen it clearly yet.",
+  showsLead: "This shows you:",
+  showsLines: ["what it is,", "who pays for it,", "and where it's breaking."],
   bodyTension: "Most people don't finish this.",
   cta: "Start diagnostic",
   videoTeaseCta: "Watch breakdown",
@@ -64,7 +65,7 @@ export const accessRequestCopy = {
   },
   investYes: "Yes",
   investNo: "No",
-  cta: "Submit application",
+  cta: "Apply now",
 } as const;
 
 /** Post-submit confirmation (access application). */
@@ -97,7 +98,7 @@ export const exploreCopy = {
   title: "Other ways to work together",
 } as const;
 
-/** Interstitial after Q5: observation, not instruction. */
+/** Interstitial after Q4: observation, not instruction. */
 export const realizationMomentCopy = {
   lines: [
     "You're starting to see it now.",
@@ -111,38 +112,68 @@ export const realizationMomentCopy = {
 export const diagnosticCopy = {
   progressHint: "Clarity builds as you go.",
   nearComplete: "You're close. Most people don't get this far.",
-  timeExpectation: "This takes about 3 minutes.",
+  timeExpectation: "About two minutes.",
   midpointMomentum: "Most people drop here. Keep going.",
-  /** Midpoint echo — action over information. */
   decisionEcho: "This doesn't get fixed with more thinking.",
-  authorityFilter:
-    "This is where most people realize they've been solving the wrong problem.",
 } as const;
 
-/** Pattern authority — above readout sections; no bio, no credentials. */
-export const resultsPatternAuthority = {
-  line1: "I've seen this play out the same way repeatedly.",
-  line2: "The pattern doesn't change.",
-  line3: "Just the details.",
+/** Static results readout — four sections, no scoring UI. */
+export const resultsReadoutCopy = {
+  pageTitle: "Your readout",
+  authority: {
+    line1: "I've seen this play out the same way repeatedly.",
+    line2: "Most people are one decision away from fixing this.",
+  },
+  sections: [
+    {
+      id: "happening",
+      title: "What's actually happening",
+      paragraphs: [
+        "You're not stuck.",
+        "You're split.",
+        "You're running multiple directions at once, so nothing compounds.",
+        "Some of what you're doing works.",
+        "But it's buried under everything else.",
+      ],
+    },
+    {
+      id: "time",
+      title: "Where you're losing time",
+      paragraphs: [
+        "Your time isn't the issue.",
+        "It's where it's going.",
+        "You're spending it on things that don't convert, or things that don't finish.",
+        "You're switching too often.",
+      ],
+    },
+    {
+      id: "money",
+      title: "Where money actually is",
+      paragraphs: [
+        "Money isn't in doing more.",
+        "It's in narrowing.",
+        "There's already a version of your work that people will pay for.",
+        "You just haven't committed to it.",
+      ],
+    },
+    {
+      id: "now",
+      title: "What to do now",
+      paragraphs: [
+        "You don't need to fix everything.",
+        "You need to pick one direction and structure it so it sells.",
+        "One offer.",
+        "One outcome.",
+        "One buyer.",
+      ],
+    },
+  ],
 } as const;
 
-/** Mid readout — implied repetition; no numbers beyond grounded “one or two”. */
-export const resultsImpliedProof = {
-  line1: "Most people here are within one or two decisions of fixing this.",
-  line2: "This is usually where people realize what's actually been blocking them.",
-} as const;
-
-/** Neutral exclusion — below primary apply CTAs (results, gate modal, access form). */
+/** Neutral exclusion — below primary apply CTAs (access form). */
 export const exclusionAuthorityCopy = {
   line1: "This won't help if you're still figuring out what you want to do.",
   line2: "It's for people who already have something real, and need to make it work.",
-} as const;
-
-/** Decision language — problem is action, not information (2–3 surfaces total). */
-export const resultsDecisionLanguage = {
-  beforeCtaLine1: "You don't need another idea.",
-  beforeCtaLine2: "You need to decide what this is.",
-  endOfResults: "You already know enough. You just haven't committed.",
 } as const;
 
 /** Final results: tension, fork, identity filter (before email + primary CTA). */

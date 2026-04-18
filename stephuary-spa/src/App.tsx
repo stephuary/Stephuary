@@ -22,13 +22,12 @@ import { shouldShowHighTicketAccess } from "./lib/highTicketSignals";
 import { shouldShowOperatorOSGate } from "./lib/operatorOSSignals";
 import { resolveRecommendedTier } from "./lib/recommendedTier";
 import { buildEvaluationContext } from "./lib/scoring";
-import { generateSectionOutputs } from "./lib/outputGenerator";
 import type { AnswersMap, FlowStep } from "./types/flow";
 
 const PHASE_TOTAL = 5;
 
-/** After Q5 (index 4): show realization interstitial before Q6. */
-const REALIZATION_AFTER_Q_INDEX = 4;
+/** After Q4 (index 3): full-screen realization before next question. */
+const REALIZATION_AFTER_Q_INDEX = 3;
 
 const NAV_HIDDEN = new Set<FlowStep["id"]>([
   "quiz",
@@ -78,11 +77,6 @@ export default function App() {
   const skipAuraRoutePulse = useRef(true);
 
   const evaluationCtx = useMemo(() => buildEvaluationContext(answers), [answers]);
-
-  const sections = useMemo(
-    () => generateSectionOutputs(evaluationCtx),
-    [evaluationCtx],
-  );
 
   const recommendedTier = useMemo(
     () => resolveRecommendedTier(evaluationCtx),
@@ -309,7 +303,6 @@ export default function App() {
         {step.id === "results" ? (
           <ResultsScreen
             animKey={stepAnimKey(step)}
-            sections={sections}
             primaryCta={{
               label: "Start here",
               onClick: () => {
