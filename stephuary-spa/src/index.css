@@ -3,8 +3,9 @@
   --font-display: "Cormorant Garamond", "Palatino Linotype", Palatino, Georgia, serif;
   --font-sans: "Inter", system-ui, -apple-system, sans-serif;
 
-  --bg-deep: #030303;
-  --bg-base: #0a0908;
+  /* Edge black; content sits on layered auras for center warmth */
+  --bg-deep: #020201;
+  --bg-base: #12100d;
   --panel: rgba(18, 16, 14, 0.72);
   --panel-elevated: rgba(28, 26, 22, 0.88);
   --panel-glass: rgba(12, 11, 9, 0.55);
@@ -49,11 +50,12 @@
 body {
   margin: 0;
   min-height: 100dvh;
+  /* Cinematic center bloom: warm bronze mid-tone → near-black edges (matches live Stephuary) */
   background:
-    radial-gradient(ellipse 110% 65% at 50% -5%, rgba(198, 161, 91, 0.07) 0%, transparent 48%),
-    radial-gradient(ellipse 70% 55% at 105% 45%, rgba(72, 68, 52, 0.14) 0%, transparent 52%),
-    radial-gradient(ellipse 55% 45% at -5% 85%, rgba(42, 38, 34, 0.35) 0%, transparent 55%),
-    linear-gradient(168deg, #080706 0%, var(--bg-deep) 42%, #050504 100%);
+    radial-gradient(ellipse 88% 78% at 50% 42%, #2a231c 0%, #1a1612 28%, #0f0d0a 52%, #060504 78%, var(--bg-deep) 100%),
+    radial-gradient(ellipse 55% 45% at 80% 15%, rgba(90, 78, 55, 0.2) 0%, transparent 55%),
+    radial-gradient(ellipse 50% 40% at 12% 88%, rgba(25, 22, 18, 0.85) 0%, transparent 50%),
+    #000000;
   color: var(--fg);
   -webkit-font-smoothing: antialiased;
 }
@@ -86,11 +88,11 @@ body {
   inset: 0;
   z-index: 0;
   background:
-    radial-gradient(ellipse 95% 70% at 50% 38%, rgba(198, 161, 91, 0.055) 0%, transparent 58%),
-    radial-gradient(ellipse 70% 55% at 15% 75%, rgba(95, 88, 62, 0.09) 0%, transparent 55%),
-    radial-gradient(ellipse 65% 50% at 88% 30%, rgba(110, 105, 70, 0.07) 0%, transparent 52%),
-    radial-gradient(ellipse 90% 80% at 50% 100%, rgba(35, 32, 28, 0.45) 0%, transparent 58%),
-    linear-gradient(180deg, rgba(8, 7, 6, 0.97) 0%, rgba(3, 3, 3, 0.99) 100%);
+    radial-gradient(ellipse 72% 62% at 50% 40%, rgba(198, 161, 91, 0.14) 0%, rgba(120, 98, 68, 0.06) 42%, transparent 58%),
+    radial-gradient(ellipse 100% 85% at 50% 44%, rgba(43, 38, 30, 0.55) 0%, transparent 62%),
+    radial-gradient(ellipse 70% 55% at 18% 72%, rgba(62, 56, 44, 0.12) 0%, transparent 55%),
+    radial-gradient(ellipse 65% 50% at 85% 28%, rgba(75, 68, 52, 0.1) 0%, transparent 52%),
+    radial-gradient(ellipse 95% 70% at 50% 100%, rgba(18, 15, 12, 0.65) 0%, transparent 55%);
 }
 
 .aura-blob {
@@ -104,32 +106,34 @@ body {
 }
 
 .aura-blob--a {
-  width: min(120vw, 720px);
-  height: min(120vw, 720px);
-  left: -10%;
-  top: -18%;
+  width: min(130vw, 780px);
+  height: min(115vw, 680px);
+  /* Centered horizontally without transform (drift keyframes own transform) */
+  left: calc(50% - min(65vw, 390px));
+  top: 5%;
   background: radial-gradient(
     circle,
-    rgba(198, 161, 91, 0.2) 0%,
-    rgba(120, 95, 65, 0.08) 45%,
-    transparent 70%
+    rgba(198, 161, 91, 0.26) 0%,
+    rgba(100, 82, 58, 0.14) 38%,
+    rgba(45, 38, 30, 0.06) 62%,
+    transparent 72%
   );
   animation: aura-drift-a 48s ease-in-out infinite, aura-breathe 10s ease-in-out infinite;
 }
 
 .aura-blob--b {
-  width: min(100vw, 560px);
-  height: min(90vw, 520px);
-  right: -25%;
-  top: 22%;
+  width: min(95vw, 540px);
+  height: min(88vw, 500px);
+  right: -18%;
+  top: 28%;
   background: radial-gradient(
     circle,
-    rgba(95, 88, 62, 0.18) 0%,
-    rgba(55, 45, 38, 0.1) 50%,
-    transparent 68%
+    rgba(110, 98, 72, 0.2) 0%,
+    rgba(58, 52, 40, 0.12) 48%,
+    transparent 70%
   );
   animation: aura-drift-b 56s ease-in-out infinite, aura-breathe 12s ease-in-out infinite 2s;
-  opacity: 0.45;
+  opacity: 0.52;
 }
 
 .aura-blob--c {
@@ -173,13 +177,13 @@ body {
   border-radius: 50%;
   pointer-events: none;
   background: radial-gradient(
-    ellipse 50% 42% at 50% 50%,
-    rgba(198, 161, 91, 0.09) 0%,
-    rgba(120, 100, 72, 0.04) 42%,
-    transparent 68%
+    ellipse 52% 44% at 50% 48%,
+    rgba(198, 161, 91, 0.14) 0%,
+    rgba(90, 76, 54, 0.08) 45%,
+    transparent 70%
   );
-  filter: blur(56px);
-  opacity: 0.48;
+  filter: blur(52px);
+  opacity: 0.62;
   will-change: transform, opacity;
   animation: aura-ellipse-drift 64s ease-in-out infinite, aura-breathe 14s ease-in-out infinite 1.5s;
 }
@@ -197,12 +201,12 @@ body {
 .aura-ring--main {
   width: min(140vw, 820px);
   height: min(140vw, 820px);
-  border: 1px solid rgba(198, 161, 91, 0.07);
+  border: 1px solid rgba(198, 161, 91, 0.1);
   box-shadow:
-    0 0 0 1px rgba(198, 161, 91, 0.04) inset,
-    0 0 120px rgba(198, 161, 91, 0.06);
+    0 0 0 1px rgba(198, 161, 91, 0.06) inset,
+    0 0 140px rgba(198, 161, 91, 0.09);
   animation: aura-ring-pulse 18s ease-in-out infinite;
-  opacity: 0.85;
+  opacity: 0.88;
 }
 
 .aura-ring--soft {
@@ -217,10 +221,11 @@ body {
   position: absolute;
   inset: 0;
   z-index: 2;
+  /* Darken edges only; keep center warm so the bloom reads like the reference */
   background:
-    radial-gradient(ellipse 78% 68% at 50% 42%, transparent 28%, rgba(0, 0, 0, 0.38) 100%),
-    radial-gradient(ellipse 120% 90% at 50% 50%, transparent 55%, rgba(0, 0, 0, 0.55) 100%);
-  opacity: 0.96;
+    radial-gradient(ellipse 80% 72% at 50% 42%, transparent 36%, rgba(0, 0, 0, 0.42) 100%),
+    radial-gradient(ellipse 125% 95% at 50% 50%, transparent 58%, rgba(0, 0, 0, 0.62) 100%);
+  opacity: 0.92;
   pointer-events: none;
 }
 
@@ -228,7 +233,7 @@ body {
   position: absolute;
   inset: 0;
   z-index: 3;
-  opacity: 0.034;
+  opacity: 0.048;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   mix-blend-mode: overlay;
   pointer-events: none;
