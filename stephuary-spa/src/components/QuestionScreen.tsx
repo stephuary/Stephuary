@@ -38,6 +38,7 @@ export function QuestionScreen({
   const showMidpointPressure = total > 0 && (current === 6 || current === 7);
   const showMicroCommitment = current === 3 || current === 4;
   const showTimeExpectation = current === 1;
+  const showSendEasier = total > 0 && current === total;
 
   return (
     <ScreenShell
@@ -99,6 +100,11 @@ export function QuestionScreen({
         ) : null}
         {nearComplete ? (
           <p className="question-near-complete">{diagnosticCopy.nearComplete}</p>
+        ) : null}
+        {showSendEasier ? (
+          <p className="question-send-easier" role="note">
+            {diagnosticCopy.sendEasierLine}
+          </p>
         ) : null}
         <h2 className="question-title" id={`q-${question.id}`}>
           {question.prompt}

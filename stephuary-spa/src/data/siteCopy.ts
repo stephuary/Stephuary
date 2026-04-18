@@ -11,15 +11,17 @@ export const homeCopy = {
   showsLead: "This shows you:",
   showsLines: ["what it is,", "who pays for it,", "and where it's breaking."],
   bodyTension: "Most people don't finish this.",
+  /** Shown under hero when `?from=share` (or other share tags). */
+  sharedEntryLine: "Someone sent you this for a reason.",
   cta: "Run the Alignment Diagnostic",
   videoTeaseCta: "Watch breakdown",
 } as const;
 
 export const resultsShareCopy = {
-  prompt: "Know someone stuck in this exact spot?",
+  prompt: "Know someone stuck in this exact pattern?",
   cta: "Copy link",
-  copied: "Link copied",
-  sendNudge: "Send it before you overthink it",
+  /** Single confirmation line after copy. */
+  copied: "Sent before you overthink it.",
 } as const;
 
 export const resultsEmailCopy = {
@@ -124,15 +126,18 @@ export const diagnosticCopy = {
   microCommitment: "You're already further than most people get.",
   midpointPressure: "Most people stop around here.",
   nearComplete: "Finish this. It only works if you see it fully.",
+  /** Last question only — loop continuity before results. */
+  sendEasierLine: "This is easier to send than explain.",
   timeExpectation: "About two minutes.",
 } as const;
 
 /** Static results readout — four sections, no scoring UI. */
 export const resultsReadoutCopy = {
-  ownershipLine: "This is based on what you actually chose.",
-  recognitionLine: "You've seen someone else do this too.",
+  ownershipLead: "This is based on how you're actually operating.",
+  ownershipSub: "Most people don't see this clearly.",
+  /** Identity transfer — placed after readout, before share cluster. */
+  recognitionLine: "You've seen someone else do this.",
   socialProofLine: "Most people don't see this until it's pointed out.",
-  sendEasierLine: "This is easier to send than explain.",
   pageTitle: "Your Alignment Diagnostic results",
   authority: {
     line1: "I've seen this play out the same way repeatedly.",
@@ -182,6 +187,11 @@ export const resultsReadoutCopy = {
       ],
     },
   ],
+} as const;
+
+/** Slightly sharper observational lines when lander arrived via shared link. */
+export const resultsReadoutCopyShared = {
+  socialProofLine: "Most people don't see the pattern until someone names it.",
 } as const;
 
 /** Neutral exclusion — below primary apply CTAs (access form). */

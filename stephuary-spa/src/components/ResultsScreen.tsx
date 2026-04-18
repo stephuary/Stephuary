@@ -2,23 +2,28 @@ import { useEffect, useRef, useState } from "react";
 import {
   resultsDecisionMomentCopy,
   resultsReadoutCopy,
+  resultsReadoutCopyShared,
   resultsShareCopy,
 } from "../data/siteCopy";
 import { copyTextToClipboard } from "../lib/copyToClipboard";
+import { buildShareablePageUrl } from "../lib/shareEntry";
 import { useScrollRevealOnce } from "../hooks/useScrollRevealOnce";
 import { ScreenShell } from "./ScreenShell";
 
 type Props = {
   primaryCta: { label: string; onClick: () => void };
   animKey: string;
+  /** From shared URL — prioritizes share block + alternate social line. */
+  sharedEntry?: boolean;
 };
 
-export function ResultsScreen({ primaryCta, animKey }: Props) {
+export function ResultsScreen({ primaryCta, animKey, sharedEntry = false }: Props) {
   const decisionReveal = useScrollRevealOnce<HTMLDivElement>();
   const ctaReveal = useScrollRevealOnce<HTMLDivElement>();
   const d = resultsDecisionMomentCopy;
   const r = resultsReadoutCopy;
   const share = resultsShareCopy;
+  const socialLine = sharedEntry ? resultsReadoutCopyShared.socialProofLine : r.socialProofLine;
 
   const [copyFeedback, setCopyFeedback] = useState<"idle" | "copied">("idle");
   const copyResetRef = useRef<number | null>(null);
@@ -30,7 +35,7 @@ export function ResultsScreen({ primaryCta, animKey }: Props) {
   }, []);
 
   async function handleCopyLink() {
-    const ok = await copyTextToClipboard(window.location.href);
+    const ok = await copyTextToClipboard(buildShareablePageUrl(window.location.href));
     if (!ok) return;
     setCopyFeedback("copied");
     if (copyResetRef.current !== null) window.clearTimeout(copyResetRef.current);
@@ -40,11 +45,43 @@ export function ResultsScreen({ primaryCta, animKey }: Props) {
     }, 4500);
   }
 
+  const identityBlock = (
+    <p className="results-identity-line" role="note">
+      {r.recognitionLine}
+    </p>
+  );
+
+  const socialBlock = (
+    <p className="results-social-proof-line" role="note">
+      {socialLine}
+    </p>
+  );
+
+  const shareBlock = (
+    <div className="results-share">
+      <p className="results-share-prompt">{share.prompt}</p>
+      <div className="results-share-row">
+        <button type="button" className="results-share-link" onClick={() => void handleCopyLink()}>
+          <span className="results-share-link-arrow" aria-hidden>
+            →
+          </span>
+          {share.cta}
+        </button>
+      </div>
+      <div className="results-share-feedback" aria-live="polite">
+        {copyFeedback === "copied" ? <p className="results-share-copied">{share.copied}</p> : null}
+      </div>
+    </div>
+  );
+
   return (
     <ScreenShell animKey={animKey} className="results-screen">
       <header className="results-header results-header--enter">
         <p className="results-ownership-line" role="note">
-          {r.ownershipLine}
+          {r.ownershipLead}
+        </p>
+        <p className="results-ownership-sub" role="note">
+          {r.ownershipSub}
         </p>
         <h1 className="results-title">{r.pageTitle}</h1>
         <div className="results-pattern-authority" role="note">
@@ -53,9 +90,6 @@ export function ResultsScreen({ primaryCta, animKey }: Props) {
             {r.authority.line2}
           </p>
         </div>
-        <p className="results-recognition-line" role="note">
-          {r.recognitionLine}
-        </p>
       </header>
       <div className="results-body results-body--static">
         {r.sections.map((section) => (
@@ -71,32 +105,22 @@ export function ResultsScreen({ primaryCta, animKey }: Props) {
           </article>
         ))}
       </div>
-      <div className="results-post-readout">
-        <p className="results-social-proof-line" role="note">
-          {r.socialProofLine}
-        </p>
-        <p className="results-send-easier-line" role="note">
-          {r.sendEasierLine}
-        </p>
-        <div className="results-share">
-          <p className="results-share-prompt">{share.prompt}</p>
-          <div className="results-share-row">
-            <button type="button" className="results-share-link" onClick={() => void handleCopyLink()}>
-              <span className="results-share-link-arrow" aria-hidden>
-                →
-              </span>
-              {share.cta}
-            </button>
-          </div>
-          <div className="results-share-feedback" aria-live="polite">
-            {copyFeedback === "copied" ? (
-              <>
-                <p className="results-share-copied">{share.copied}</p>
-                <p className="results-share-send-nudge">{share.sendNudge}</p>
-              </>
-            ) : null}
-          </div>
-        </div>
+      <div
+        className={`results-post-readout ${sharedEntry ? "results-post-readout--shared-priority" : ""}`.trim()}
+      >
+        {sharedEntry ? (
+          <>
+            {shareBlock}
+            {identityBlock}
+            {socialBlock}
+          </>
+        ) : (
+          <>
+            {identityBlock}
+            {socialBlock}
+            {shareBlock}
+          </>
+        )}
       </div>
       <div
         ref={decisionReveal.ref}

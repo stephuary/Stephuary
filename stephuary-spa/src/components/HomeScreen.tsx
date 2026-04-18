@@ -8,9 +8,11 @@ type Props = {
   animKey: string;
   onStart: () => void;
   onWatchBreakdown: () => void;
+  /** True when URL tags a shared entry (e.g. ?from=share). */
+  sharedEntry?: boolean;
 };
 
-export function HomeScreen({ animKey, onStart, onWatchBreakdown }: Props) {
+export function HomeScreen({ animKey, onStart, onWatchBreakdown, sharedEntry = false }: Props) {
   const h = homeCopy;
   const [ctaIdleAttention, setCtaIdleAttention] = useState(false);
   const idleTimerRef = useRef<number | null>(null);
@@ -63,6 +65,11 @@ export function HomeScreen({ animKey, onStart, onWatchBreakdown }: Props) {
               ))}
             </div>
             <p className="home-body-tension">{h.bodyTension}</p>
+            {sharedEntry ? (
+              <p className="home-shared-entry-hint" role="note">
+                {h.sharedEntryLine}
+              </p>
+            ) : null}
           </div>
         </div>
         <div

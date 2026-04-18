@@ -23,6 +23,7 @@ import { shouldShowHighTicketAccess } from "./lib/highTicketSignals";
 import { shouldShowOperatorOSGate } from "./lib/operatorOSSignals";
 import { resolveRecommendedTier } from "./lib/recommendedTier";
 import { buildEvaluationContext } from "./lib/scoring";
+import { isSharedEntrySearch } from "./lib/shareEntry";
 import type { AnswersMap, FlowStep } from "./types/flow";
 
 const PHASE_TOTAL = 5;
@@ -78,6 +79,7 @@ export default function App() {
   const skipAuraRoutePulse = useRef(true);
   const quizAdvanceLock = useRef(false);
   const quizMomentumTimer = useRef<number | null>(null);
+  const [sharedEntry, setSharedEntry] = useState(false);
 
   const evaluationCtx = useMemo(() => buildEvaluationContext(answers), [answers]);
 
@@ -261,7 +263,12 @@ export default function App() {
 
       <main className={`app-main ${entryLayout ? "app-main--entry" : ""}`.trim()}>
         {step.id === "home" ? (
-          <HomeScreen animKey={stepAnimKey(step)} onStart={startDiagnostic} onWatchBreakdown={triggerPostAction} />
+          <HomeScreen
+            animKey={stepAnimKey(step)}
+            onStart={startDiagnostic}
+            onWatchBreakdown={triggerPostAction}
+            sharedEntry={sharedEntry}
+          />
         ) : null}
 
         {step.id === "osc" ? (
@@ -338,6 +345,7 @@ export default function App() {
         {step.id === "results" ? (
           <ResultsScreen
             animKey={stepAnimKey(step)}
+            sharedEntry={sharedEntry}
             primaryCta={{
               label: "Start here",
               onClick: () => {
