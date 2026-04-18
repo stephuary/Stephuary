@@ -14,6 +14,7 @@ import { OscScreen } from "./components/OscScreen";
 import { DiagnosticExitModal } from "./components/DiagnosticExitModal";
 import { QuestionScreen } from "./components/QuestionScreen";
 import { ResultsScreen } from "./components/ResultsScreen";
+import { resolveRecommendedTier } from "./lib/recommendedTier";
 import { buildEvaluationContext } from "./lib/scoring";
 import { generateSectionOutputs } from "./lib/outputGenerator";
 import type { AnswersMap, FlowStep } from "./types/flow";
@@ -52,10 +53,17 @@ export default function App() {
   const [answers, setAnswers] = useState<AnswersMap>({});
   const [exitModalOpen, setExitModalOpen] = useState(false);
 
-  const sections = useMemo(() => {
-    const ctx = buildEvaluationContext(answers);
-    return generateSectionOutputs(ctx);
-  }, [answers]);
+  const evaluationCtx = useMemo(() => buildEvaluationContext(answers), [answers]);
+
+  const sections = useMemo(
+    () => generateSectionOutputs(evaluationCtx),
+    [evaluationCtx],
+  );
+
+  const recommendedTier = useMemo(
+    () => resolveRecommendedTier(evaluationCtx),
+    [evaluationCtx],
+  );
 
   useEffect(() => {
     if (step.id !== "quiz") setExitModalOpen(false);
@@ -211,6 +219,7 @@ export default function App() {
         {step.id === "offer" ? (
           <OfferScreen
             animKey={stepAnimKey(step)}
+            recommendedTier={recommendedTier}
             onComplete={() => {
               setStep({ id: "explore" });
             }}

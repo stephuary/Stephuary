@@ -31,15 +31,78 @@ export const resultsStakesCopy =
 export const offerFrictionCopy =
   "Doing nothing keeps everything the same." as const;
 
+/** Lead line under intro bridge — keyed by `RecommendedTier` from `resolveRecommendedTier`. */
+export const offerTierLead = {
+  entry: "The fastest way forward is to turn this into something you can charge for.",
+  focused: "One thing is clearly off. Fix that first.",
+  full: "There's more than one issue here. This shows you everything at once.",
+} as const;
+
+/** True value anchor — time + complexity, not money. */
+export const offerValueAnchor = {
+  line1: "This is the same work usually done across multiple sessions.",
+  line2: "Here, it's compressed into one decision.",
+} as const;
+
+export const offerMomentumCopy = {
+  line1: "You already did the hard part.",
+  line2: "Now you either apply it or stay where you are.",
+} as const;
+
+/** Time-cost anchor — no price mention. */
+export const offerInvisibleAnchor =
+  "Most people spend months trying to figure this out." as const;
+
+/** Decision shortcuts under each tier (not feature lists). */
+export const offerDecisionShortcut = {
+  entry: "Fastest way to move",
+  focused: "Fix it once, properly",
+  full: "Stop guessing entirely",
+} as const;
+
+export const offerScopeModalCopy = {
+  header: "Do you want to keep this focused or go deeper?",
+  keepFocused: "Keep it focused",
+  lookAcross: "Look across everything",
+  fixOne: "Fix one thing properly",
+} as const;
+
+export const offerPostPathUpsell = {
+  line1: "Most people come back to fix what this reveals.",
+  line2: "You can skip that step and fix it properly now.",
+  ctaUpgrade: "Upgrade to focused review",
+  ctaContinue: "Continue with this",
+} as const;
+
+export const offerPostFixUpsell = {
+  line1: "You'll likely uncover more than one issue.",
+  ctaUpgrade: "See everything at once",
+  ctaContinue: "Continue with this",
+} as const;
+
+export const offerHighTicketShadow =
+  "For deeper builds or full system installs, request access." as const;
+
+export const offerScrollNudge = {
+  line1: "You don't need more time.",
+  line2: "You need a decision.",
+} as const;
+
 export const offerCopy = {
+  anchor: {
+    line1: "Most people try to fix everything at once.",
+    line2: "That's why nothing changes.",
+    line3: "This is layered so you only pay for what you actually need.",
+  },
   intro: {
     headline: "Start here.",
     bridge: "You don't need more ideas. You need to apply one path.",
-    sub: "Based on your results, the fastest way forward is to turn this into something you can sell.",
   },
   primary: {
     id: "path" as const,
     price: "$34",
+    label: "START HERE",
+    subline: "This is the fastest way to move right now.",
     title: "Turn This Into Something You Can Charge For This Week",
     line:
       "This takes what you just saw and turns it into something you can sell immediately.",
@@ -49,33 +112,38 @@ export const offerCopy = {
       "It gets turned into a clear offer",
       "You leave with something you can actually charge for",
     ],
-    cta: "Turn this into an offer",
+    decisionGuide: "Use this if you want to move immediately.",
+    socialCue: "Most people start here.",
+    cta: "Start here",
   },
   secondary: [
     {
       id: "fix" as const,
       price: "$197",
+      label: "WHEN SOMETHING STILL ISN'T WORKING",
       title: "Fix What's Not Working",
       trustLine: "One thing. Looked at properly.",
-      opening:
-        "Once you have direction, this fixes the part that isn't working.",
-      bullets: [
-        "Not broad. Not general.",
-        "This is built to be used, not read.",
-        "Most people try to fix everything at once. That is why nothing improves.",
+      opening: "This isolates one problem and fixes it properly.",
+      lines: [
+        "You don't need everything reviewed.",
+        "You need the right thing fixed.",
       ],
-      cta: "Continue with this",
+      bullets: ["Built to be used, not read."],
+      decisionGuide: "Use this if one thing is clearly off.",
+      cta: "Fix this",
     },
     {
       id: "breakdown" as const,
       price: "$750",
+      label: "WHEN IT'S NOT ONE ISSUE",
       title: "Full Breakdown",
-      trustLine: "For when one issue isn't the problem.",
-      line: "Go deeper and prioritize everything properly.",
-      cta: "Continue with this",
+      line: "This looks across everything and shows you what's actually happening.",
+      timeSave: "If you're dealing with multiple problems, this is faster than guessing.",
+      decisionGuide: "Use this if everything feels unclear.",
+      cta: "See everything clearly",
     },
   ] as const,
-  seeFullOptions: "See full options",
+  seeFullOptions: "Or go deeper if needed.",
 } as const;
 
 export type OfferTierId =
