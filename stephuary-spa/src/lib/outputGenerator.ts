@@ -14,12 +14,6 @@ export type SectionOutput = {
   consequence: string;
   instruction: string;
   matchedRuleId: string | null;
-  authorityContrast?: string;
-};
-
-const AUTHORITY_CONTRAST: Partial<Record<SectionId, string>> = {
-  wrong: "This is not a time problem. It's a direction problem.",
-  niche: "This is not a visibility issue. It's a positioning issue.",
 };
 
 function pickBestRule(rules: ResultRule[], ctx: EvaluationContext): ResultRule | null {
@@ -30,16 +24,17 @@ function pickBestRule(rules: ResultRule[], ctx: EvaluationContext): ResultRule |
   return null;
 }
 
-/** Each block is exactly 3 lines: statement → consequence → action. */
+/** Each block is up to 3 observation lines (pattern recognition, not advice). */
 function buildThreeLines(raw: string[]): Pick<
   SectionOutput,
   "insights" | "consequence" | "instruction"
 > {
   const lines = raw.map((s) => (typeof s === "string" ? s.trim() : "")).filter((s) => s.length > 0);
+  const obs = lines.slice(0, 3);
   return {
-    insights: lines[0] ? [lines[0]] : [],
-    consequence: lines[1] ?? "",
-    instruction: lines[2] ?? "",
+    insights: obs,
+    consequence: "",
+    instruction: "",
   };
 }
 
@@ -53,7 +48,6 @@ export function generateSectionOutputs(ctx: EvaluationContext): SectionOutput[] 
       title: block.title,
       ...buildThreeLines(raw),
       matchedRuleId: hit ? hit.id : null,
-      authorityContrast: AUTHORITY_CONTRAST[id],
     };
   });
 }

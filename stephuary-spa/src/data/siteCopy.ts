@@ -115,9 +115,11 @@ export const diagnosticCopy = {
     "This is where most people realize they've been solving the wrong problem.",
 } as const;
 
-export const resultsAuthorityLead = {
-  line1: "Most people don't see this clearly.",
-  line2: "That's why nothing changes.",
+/** Pattern authority — above readout sections; no bio, no credentials. */
+export const resultsPatternAuthority = {
+  line1: "I've seen this play out the same way repeatedly.",
+  line2: "The pattern doesn't change.",
+  line3: "Just the details.",
 } as const;
 
 /** Final results: tension, fork, identity filter (before email + primary CTA). */

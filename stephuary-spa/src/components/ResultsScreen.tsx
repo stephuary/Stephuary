@@ -1,9 +1,9 @@
 import { useState, type FormEvent } from "react";
 import { usePostActionMoment } from "../context/PostActionMomentContext";
 import {
-  resultsAuthorityLead,
   resultsDecisionMomentCopy,
   resultsEmailCopy,
+  resultsPatternAuthority,
   resultsShareCopy,
 } from "../data/siteCopy";
 import { useScrollRevealOnce } from "../hooks/useScrollRevealOnce";
@@ -49,13 +49,16 @@ export function ResultsScreen({ sections, primaryCta, animKey }: Props) {
   return (
     <ScreenShell animKey={animKey} className="results-screen">
       <header className="results-header results-header--enter">
-        <p className="results-authority-lead" role="note">
-          {resultsAuthorityLead.line1}
-        </p>
-        <p className="results-authority-lead results-authority-lead--tight" role="note">
-          {resultsAuthorityLead.line2}
-        </p>
         <h1 className="results-title">Your readout</h1>
+        <div className="results-pattern-authority" role="note">
+          <p className="results-pattern-authority-line">{resultsPatternAuthority.line1}</p>
+          <p className="results-pattern-authority-line results-pattern-authority-line--secondary">
+            {resultsPatternAuthority.line2}
+          </p>
+          <p className="results-pattern-authority-line results-pattern-authority-line--secondary">
+            {resultsPatternAuthority.line3}
+          </p>
+        </div>
       </header>
       <div className="results-body">
         {sections.map((s) => (

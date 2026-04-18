@@ -38,9 +38,9 @@ export const resultRules: Record<SectionId, SectionRules> = {
   wrong: {
     title: "What you're doing wrong",
     defaults: [
-      "Meetings pile up before one offer is locked.",
-      "Three answers to ‘what do you do’ in one week.",
-      "One package, one page, one price band — live the page.",
+      "The story keeps changing before the same room hears it twice.",
+      "You're running two lanes at once.",
+      "Neither one finishes.",
     ],
     rules: [
       {
@@ -48,9 +48,9 @@ export const resultRules: Record<SectionId, SectionRules> = {
         priority: 96,
         match: { allTags: ["work:split", "pitch:list"] },
         lines: [
-          "You split clients and still pitch a skill list.",
-          "Buyers see no lane and no checkout.",
-          "One buyer sentence + one boundary. Say no once this week.",
+          "Clients split across the week — the pitch is still a skill list.",
+          "Nobody sees a lane or a checkout.",
+          "Same pattern: busy calendar, thin receipt.",
         ],
       },
       {
@@ -58,9 +58,9 @@ export const resultRules: Record<SectionId, SectionRules> = {
         priority: 95,
         match: { allTags: ["audience:split", "pitch:soft"] },
         lines: [
-          "Two audiences, price hidden.",
-          "Deals drag — nobody knows what they’re buying.",
-          "One price band, one audience. Park the other page.",
+          "Two audiences. Price stays off the table.",
+          "Deals stretch — nobody knows what they’re buying.",
+          "I’ve watched this stall the same way: two pages, one nervous calendar.",
         ],
       },
       {
@@ -70,7 +70,7 @@ export const resultRules: Record<SectionId, SectionRules> = {
         lines: [
           "Two directions at once.",
           "Neither lane lands.",
-          "Split pages or park one lane 60 days.",
+          "Same fork: split attention, split proof.",
         ],
       },
       {
@@ -78,9 +78,9 @@ export const resultRules: Record<SectionId, SectionRules> = {
         priority: 90,
         match: { allTags: ["pitch:list"] },
         lines: [
-          "You answer with skills.",
+          "The answer is still a list of skills.",
           "No named outcome to buy.",
-          "Finish: ‘I fix ___ for ___ by ___’ — use it in bios two weeks.",
+          "The intro dies in the first sentence — every time.",
         ],
       },
       {
@@ -88,9 +88,9 @@ export const resultRules: Record<SectionId, SectionRules> = {
         priority: 88,
         match: { allTags: ["work:split"] },
         lines: [
-          "You hop clients with no written boundary.",
-          "Scope leaks every day.",
-          "Put scope in writing. Bill anything outside.",
+          "Client-hopping with nothing in writing.",
+          "Scope leaks in the thread.",
+          "The boundary never shows up — only the ping.",
         ],
       },
       {
@@ -98,9 +98,9 @@ export const resultRules: Record<SectionId, SectionRules> = {
         priority: 86,
         match: { allTags: ["offer:stacked"] },
         lines: [
-          "New lines stack before old ones die.",
-          "Three offers fight for one calendar.",
-          "Retire one URL or SKU. Redirect to the live offer.",
+          "New lines ship before old ones die.",
+          "Three offers, one calendar.",
+          "Same clutter: more SKUs, same hours.",
         ],
       },
       {
@@ -108,9 +108,9 @@ export const resultRules: Record<SectionId, SectionRules> = {
         priority: 84,
         match: { allTags: ["brand:split"] },
         lines: [
-          "Two names split search and intros.",
-          "Nobody knows which door is real.",
-          "Pick the name money flows through. Forward the rest.",
+          "Two names. Two doors.",
+          "Search and intros land on the wrong one.",
+          "Money already picked a door — the traffic didn’t.",
         ],
       },
       {
@@ -118,9 +118,9 @@ export const resultRules: Record<SectionId, SectionRules> = {
         priority: 80,
         match: { allTags: ["ship:delayed"] },
         lines: [
-          "You practice in private.",
-          "Buyers pay dated outcomes.",
-          "Set a ship date someone pays for — tiny scope.",
+          "Building where nobody pays yet.",
+          "Buyers only show up for dated outcomes.",
+          "The ship date stays private — so the check does too.",
         ],
       },
       {
@@ -128,9 +128,9 @@ export const resultRules: Record<SectionId, SectionRules> = {
         priority: 48,
         match: { maxScore: { clarity: 40 } },
         lines: [
-          "You rewrite before the same people hear the same version twice.",
-          "Nobody trusts one claim.",
-          "Freeze the story 14 days. Examples only.",
+          "The story edits itself before anyone hears the same line twice.",
+          "Trust never sticks.",
+          "Same churn: new words, same thin pipeline.",
         ],
       },
     ],
@@ -138,9 +138,9 @@ export const resultRules: Record<SectionId, SectionRules> = {
   wasting: {
     title: "What's wasting your time",
     defaults: [
-      "You retype the same explanations in email and DMs.",
-      "Weeks vanish — **you are the throughput limit.**",
-      "Record once. Send before the next thread. Batch replies to two windows.",
+      "The same explanation retyped in three threads.",
+      "**You are the throughput limit.**",
+      "The week disappears — the asset doesn’t move.",
     ],
     rules: [
       {
@@ -150,7 +150,7 @@ export const resultRules: Record<SectionId, SectionRules> = {
         lines: [
           "Every pass-through still hits your hands.",
           "**You are the throughput limit.**",
-          "Record once. Delegate the next repeat or raise volume price.",
+          "Delivery looks busy — leverage never compounds.",
         ],
       },
       {
@@ -158,9 +158,9 @@ export const resultRules: Record<SectionId, SectionRules> = {
         priority: 96,
         match: { allTags: ["time:comms_heavy", "stack:overlap"] },
         lines: [
-          "Threads and duplicate apps eat the day.",
-          "Noise replaces delivery.",
-          "Kill one duplicate tool. Batch replies twice daily.",
+          "Threads and duplicate apps own the morning.",
+          "Noise eats the slot where build was supposed to be.",
+          "Same stack: two tools, one job, zero truth.",
         ],
       },
       {
@@ -168,9 +168,9 @@ export const resultRules: Record<SectionId, SectionRules> = {
         priority: 92,
         match: { allTags: ["time:comms_heavy"] },
         lines: [
-          "You answer buyers who already paid for a result.",
-          "Access replaced delivery.",
-          "One weekly status note. Put the rest behind office hours.",
+          "Replies to people who already paid for a result.",
+          "Access ate the delivery window.",
+          "The inbox runs the day — the work waits.",
         ],
       },
       {
@@ -178,9 +178,9 @@ export const resultRules: Record<SectionId, SectionRules> = {
         priority: 90,
         match: { allTags: ["time:meetings_packed"] },
         lines: [
-          "Back-to-back calls leave no build time.",
-          "The calendar eats the work.",
-          "Block two half-days, zero calls. Guard them.",
+          "Back-to-back — no block left to build.",
+          "The calendar is the product now.",
+          "I’ve seen this exact wall: zero contiguous hours.",
         ],
       },
       {
@@ -188,9 +188,9 @@ export const resultRules: Record<SectionId, SectionRules> = {
         priority: 88,
         match: { allTags: ["stack:overlap"] },
         lines: [
-          "You pay twice for overlapping tools.",
-          "You maintain two truths.",
-          "One system of record. Delete the extra login.",
+          "Two subscriptions. Same job.",
+          "Two truths in two dashboards.",
+          "Money leaks in duplicate — attention leaks with it.",
         ],
       },
       {
@@ -198,9 +198,9 @@ export const resultRules: Record<SectionId, SectionRules> = {
         priority: 86,
         match: { allTags: ["focus:fragmented"] },
         lines: [
-          "You never get 90 minutes straight.",
-          "Context-switching is the tax.",
-          "Batch one work type each morning. Pings off until lunch.",
+          "Ninety minutes never shows up intact.",
+          "Context-switch is the real bill.",
+          "Fragments look like hustle — they read as delay.",
         ],
       },
       {
@@ -208,9 +208,9 @@ export const resultRules: Record<SectionId, SectionRules> = {
         priority: 84,
         match: { allTags: ["lead:cold", "inbound:thin"] },
         lines: [
-          "Cold volume while warm pipe is empty.",
-          "Effort feels random.",
-          "Twenty messages to people who know you beat two hundred cold.",
+          "Cold volume while warm sits quiet.",
+          "Effort scatters — nothing compounds.",
+          "Same pattern: loud outreach, empty relationship row.",
         ],
       },
       {
@@ -218,9 +218,9 @@ export const resultRules: Record<SectionId, SectionRules> = {
         priority: 82,
         match: { allTags: ["lead:cold"] },
         lines: [
-          "Cold work without a tight list or one offer line.",
-          "Volume hides bad fit.",
-          "30 accounts. One case, one ask, one link.",
+          "Cold without a tight list or one clean line.",
+          "Volume masks bad fit.",
+          "The spreadsheet looks full — the bank doesn’t.",
         ],
       },
       {
@@ -228,9 +228,9 @@ export const resultRules: Record<SectionId, SectionRules> = {
         priority: 78,
         match: { allTags: ["dir:comp_watch"] },
         lines: [
-          "You scroll competitors daily.",
-          "Shipping drops.",
-          "15 minutes on competitors weekly. Rest on five buyer calls.",
+          "Competitors get daily tabs.",
+          "Ship dates slip.",
+          "Same loop: scroll, compare, stall.",
         ],
       },
       {
@@ -238,19 +238,19 @@ export const resultRules: Record<SectionId, SectionRules> = {
         priority: 45,
         match: { maxScore: { leverage: 38 } },
         lines: [
-          "The same onboarding live every time.",
-          "Leverage never compounds — you are the system.",
-          "Record once. Checklist the third repeat fix.",
+          "Onboarding still live in your head every time.",
+          "Leverage can’t compound — you’re the system.",
+          "Repeat work never becomes an asset — just more you.",
         ],
       },
     ],
   },
   niche: {
-    title: "Your actual niche",
+    title: "Who pays you",
     defaults: [
-      "Small teams already buying this kind of help.",
-      "They need it this month — not explained forever.",
-      "Name them in one sentence. Top of the next page.",
+      "Small teams already buying this shape of help.",
+      "They needed it last quarter — not after another deck.",
+      "The receipt already named them — the sentence didn’t.",
     ],
     rules: [
       {
@@ -258,9 +258,9 @@ export const resultRules: Record<SectionId, SectionRules> = {
         priority: 96,
         match: { allTags: ["niche:sharp", "niche:metric"] },
         lines: [
-          "Buyers who own budget and one number you move in 30 days.",
-          "That is who writes the check when the outcome is concrete.",
-          "Lead with the number. One sentence everywhere.",
+          "Budget owner + one number you move inside a month.",
+          "That’s who signs when the outcome isn’t abstract.",
+          "Same clarity every time I’ve seen this land: number first.",
         ],
       },
       {
@@ -268,9 +268,9 @@ export const resultRules: Record<SectionId, SectionRules> = {
         priority: 95,
         match: { anyTags: ["niche:sharp", "niche:metric"] },
         lines: [
-          "People who already pay for this category.",
-          "Cold traffic wastes you — you are built for buyers who already buy.",
-          "Name the outcome they pay for. Cut the rest.",
+          "People who already cut checks in this category.",
+          "Cold traffic isn’t your leak — fit is.",
+          "The buyer who paid last time is still the signal.",
         ],
       },
       {
@@ -278,9 +278,9 @@ export const resultRules: Record<SectionId, SectionRules> = {
         priority: 90,
         match: { allTags: ["lead:warm", "proof:numbers"] },
         lines: [
-          "Teams one referral away.",
-          "Proof is buried — warm leads stall.",
-          "One numbered before/after on the next page.",
+          "One referral away — proof still buried.",
+          "Warm stalls when math stays off the page.",
+          "Same stall: trust in the thread, doubt on the site.",
         ],
       },
       {
@@ -288,9 +288,9 @@ export const resultRules: Record<SectionId, SectionRules> = {
         priority: 86,
         match: { allTags: ["pitch:outcome"] },
         lines: [
-          "Buyers who pay for the outcome you name.",
-          "Calls feel mushy — the buy is missing.",
-          "Open with price band or deposit. Same every time.",
+          "They’ll pay for the outcome you name — when the buy is visible.",
+          "Calls stay mushy — the price never arrives.",
+          "The pattern: strong outcome language, weak close.",
         ],
       },
       {
@@ -298,9 +298,9 @@ export const resultRules: Record<SectionId, SectionRules> = {
         priority: 82,
         match: { allTags: ["work:delivery"] },
         lines: [
-          "Buyers need backlog cleared.",
-          "They pay for the slot, not the slide.",
-          "Next start date on the page. Nothing else above the fold.",
+          "They’re buying the slot — not another slide.",
+          "Backlog is the product — the deck isn’t.",
+          "Start date talks — everything else is noise.",
         ],
       },
       {
@@ -308,9 +308,9 @@ export const resultRules: Record<SectionId, SectionRules> = {
         priority: 70,
         match: { allTags: ["niche:wide"] },
         lines: [
-          "An industry label is not a niche.",
-          "Nobody self-selects — pain isn’t expensive enough on the page.",
-          "One expensive problem + who signs. Delete the rest this week.",
+          "Industry label on the page — nobody self-selects.",
+          "Pain reads cheap — nobody moves.",
+          "Same wide net: traffic, thin yes.",
         ],
       },
       {
@@ -318,9 +318,9 @@ export const resultRules: Record<SectionId, SectionRules> = {
         priority: 65,
         match: { allTags: ["niche:draft"] },
         lines: [
-          "People who paid you in 90 days.",
-          "That cluster is your draft niche.",
-          "One sentence: bio, footer, proposal header.",
+          "Who paid you in ninety days is already the draft.",
+          "The cluster is visible — the sentence isn’t.",
+          "Receipts say one thing — the bio says another.",
         ],
       },
       {
@@ -328,9 +328,9 @@ export const resultRules: Record<SectionId, SectionRules> = {
         priority: 50,
         match: { maxScore: { focus: 42 } },
         lines: [
-          "The buyer you served fastest with fewest questions.",
-          "That is the signal.",
-          "Build the sentence around them. Cut the rest 30 days.",
+          "Fastest close — fewest questions — same buyer.",
+          "That’s the signal — not the funnel.",
+          "Proof keeps scattering before it stacks.",
         ],
       },
     ],
@@ -338,9 +338,9 @@ export const resultRules: Record<SectionId, SectionRules> = {
   money: {
     title: "Where money is",
     defaults: [
-      "Past buyers asking for a smaller paid step before a big one.",
-      "You keep hunting strangers instead.",
-      "Five past-buyer messages: one offer, one price band, one start week.",
+      "Past buyers asking for a smaller paid step before the big one.",
+      "Strangers get the outreach — receipts get silence.",
+      "The last invoice already showed who pays.",
     ],
     rules: [
       {
@@ -348,9 +348,9 @@ export const resultRules: Record<SectionId, SectionRules> = {
         priority: 94,
         match: { allTags: ["lead:pull", "work:delivery"] },
         lines: [
-          "Inbound is hitting and the queue is full.",
+          "Inbound hits — the queue is full.",
           "Revenue caps when nobody can buy a slot.",
-          "Start date + deposit on the page. Rerun same topic with price.",
+          "Same choke: demand without a dated slot.",
         ],
       },
       {
@@ -358,9 +358,9 @@ export const resultRules: Record<SectionId, SectionRules> = {
         priority: 92,
         match: { allTags: ["lead:pull"] },
         lines: [
-          "Traffic is on one topic.",
+          "Traffic clumps on one topic.",
           "**You split attention before you double what works.**",
-          "Double that topic before a new one. Fees next to proof on the same URL.",
+          "The pattern: new topic before the old one pays twice.",
         ],
       },
       {
@@ -369,8 +369,8 @@ export const resultRules: Record<SectionId, SectionRules> = {
         match: { allTags: ["lead:warm"] },
         lines: [
           "Warm intros — receipts in past work.",
-          "You skip people who already said yes once.",
-          "Three past clients: fixed fee, start week, one link.",
+          "The second yes is quieter than the first.",
+          "Same miss: relationship row full, invoice row thin.",
         ],
       },
       {
@@ -378,9 +378,9 @@ export const resultRules: Record<SectionId, SectionRules> = {
         priority: 88,
         match: { allTags: ["work:delivery"] },
         lines: [
-          "Backlog and start dates are the product.",
-          "You sell meetings instead of throughput.",
-          "Sell the next slot. Rush fee on the page.",
+          "Backlog and start dates are what they buy.",
+          "Meetings sell — throughput doesn’t.",
+          "The slot is the product — the deck isn’t.",
         ],
       },
       {
@@ -388,9 +388,9 @@ export const resultRules: Record<SectionId, SectionRules> = {
         priority: 86,
         match: { allTags: ["buyer:metric"] },
         lines: [
-          "Buyers who track a number you move.",
-          "Generic pitches bounce.",
-          "Tie your fee to that delta in writing.",
+          "They track the number you move — or they don’t buy.",
+          "Generic pitches bounce off that wall.",
+          "Fee without delta is a conversation — not a check.",
         ],
       },
       {
@@ -399,8 +399,8 @@ export const resultRules: Record<SectionId, SectionRules> = {
         match: { allTags: ["traction:early"] },
         lines: [
           "Small shops with one expensive manual step you remove.",
-          "Early-stage money: speed beats polish.",
-          "Same-day quote + start. Fixed price. One case on the page.",
+          "Early money — speed wins.",
+          "Same early-stage shape: one case, one price, one week.",
         ],
       },
       {
@@ -408,9 +408,9 @@ export const resultRules: Record<SectionId, SectionRules> = {
         priority: 68,
         match: { allTags: ["lead:cold"] },
         lines: [
-          "Cold works when the list is tight.",
-          "Effort looks busy — bank doesn’t move.",
-          "30 accounts max. One case, one ask, one link.",
+          "Cold only works when the list is tight.",
+          "Activity reads like progress — the account doesn’t.",
+          "Volume hides the wrong names.",
         ],
       },
     ],
@@ -418,9 +418,9 @@ export const resultRules: Record<SectionId, SectionRules> = {
   charge: {
     title: "What to charge",
     defaults: [
-      "You quote hours and hope they math into a living.",
-      "The ask stays fuzzy — money stays on the table.",
-      "$800–$2k sprint, named deliverable, stop date. Milestones + revision caps on big builds.",
+      "Hours quoted — nobody does the math but you.",
+      "The ask stays soft — money stays hypothetical.",
+      "Same table: vague total, quiet invoice.",
     ],
     rules: [
       {
@@ -428,9 +428,9 @@ export const resultRules: Record<SectionId, SectionRules> = {
         priority: 92,
         match: { allTags: ["think:price_solid", "skill:named"] },
         lines: [
-          "You know your number — you still wait for them to drag it out.",
-          "Checks stall — price is last.",
-          "$1.5k–$4k fixed, two weeks, one revision — say it before you end.",
+          "You know the number — the call still ends without it.",
+          "Checks stall when price is last.",
+          "I’ve seen this exact stall: solid work, soft close.",
         ],
       },
       {
@@ -438,9 +438,9 @@ export const resultRules: Record<SectionId, SectionRules> = {
         priority: 90,
         match: { allTags: ["think:price_solid"] },
         lines: [
-          "Floor is clear — exceptions sneak in on DMs.",
-          "You break your own rule in private.",
-          "$1.5k–$5k fixed two-week outcome. Stop under the new floor.",
+          "Floor is clear — DMs carve exceptions.",
+          "The rule breaks in private first.",
+          "Same pattern: public floor, private discount.",
         ],
       },
       {
@@ -448,9 +448,9 @@ export const resultRules: Record<SectionId, SectionRules> = {
         priority: 88,
         match: { allTags: ["skill:named"] },
         lines: [
-          "You sell expertise — not another open retainer.",
-          "They get ‘let me think’ — nothing is easy to buy.",
-          "$1k–$2.5k packaged review + two options on paper.",
+          "Expertise sold — retainer left open.",
+          "They get “let me think” — nothing is easy to buy.",
+          "Named deliverable — unnamed receipt.",
         ],
       },
       {
@@ -458,9 +458,9 @@ export const resultRules: Record<SectionId, SectionRules> = {
         priority: 84,
         match: { allTags: ["skill:labor"] },
         lines: [
-          "Hourly is how you get mined.",
-          "Every week renegotiates itself.",
-          "$75–$150/hr with weekly caps — or weekly bucket $2k–$4k.",
+          "Hourly is how the work gets mined.",
+          "Every week negotiates itself again.",
+          "Same leak: open clock, closed margin.",
         ],
       },
       {
@@ -468,9 +468,9 @@ export const resultRules: Record<SectionId, SectionRules> = {
         priority: 82,
         match: { allTags: ["think:price_fear", "pitch:soft"] },
         lines: [
-          "You cut price before you cut scope.",
-          "You trained negotiators.",
-          "Same work, smaller paid step: $500–$1.5k micro-engagements.",
+          "Price cuts before scope does.",
+          "They learned to push — you taught them how.",
+          "Same dance: smaller number, same scope.",
         ],
       },
       {
@@ -478,9 +478,9 @@ export const resultRules: Record<SectionId, SectionRules> = {
         priority: 78,
         match: { allTags: ["skill:advice"] },
         lines: [
-          "Advice without boundaries becomes a leash.",
-          "Access replaced leverage.",
-          "$2k–$8k fixed calls + async windows. Dates + agendas.",
+          "Advice without edges becomes a leash.",
+          "Access ate leverage.",
+          "The calendar fills — the line item doesn’t.",
         ],
       },
       {
@@ -488,9 +488,9 @@ export const resultRules: Record<SectionId, SectionRules> = {
         priority: 48,
         match: { maxScore: { monetization: 40 } },
         lines: [
-          "Cash is tight — you shrink the ask, not the scope.",
-          "Small checks feel safe — they don’t fix the math.",
-          "$300–$800 review, half credit toward build.",
+          "Cash tight — the ask shrinks, the scope doesn’t.",
+          "Small checks feel safe — the math stays broken.",
+          "Same squeeze: thin revenue, full brief.",
         ],
       },
     ],
@@ -498,9 +498,9 @@ export const resultRules: Record<SectionId, SectionRules> = {
   stop: {
     title: "What to stop",
     defaults: [
-      "Calls with no price band and no written scope.",
-      "You open new channels before one channel pays.",
-      "No band on the invite. One channel until deposits land.",
+      "Calls with no band — no scope in writing.",
+      "New channel opens before one channel pays.",
+      "Same habit: more surface area, same deposit row.",
     ],
     rules: [
       {
@@ -508,9 +508,9 @@ export const resultRules: Record<SectionId, SectionRules> = {
         priority: 92,
         match: { allTags: ["slow:panic_yes"] },
         lines: [
-          "Pipeline dips — you say yes to bad fit.",
-          "Panic writes your terms.",
-          "One sentence: what you don’t do. Send before the next yes.",
+          "Pipeline dips — yes lands on bad fit.",
+          "Panic picks the terms.",
+          "Same signature: urgency, soft boundary.",
         ],
       },
       {
@@ -518,9 +518,9 @@ export const resultRules: Record<SectionId, SectionRules> = {
         priority: 90,
         match: { allTags: ["offer:stacked"] },
         lines: [
-          "New lines ship before an old one dies.",
-          "Three offers fight for one calendar.",
-          "Retire one URL or SKU. Redirect to the live offer.",
+          "New line ships before the old one dies.",
+          "Three offers — one calendar.",
+          "Same clutter: more doors, one tired buyer.",
         ],
       },
       {
@@ -528,9 +528,9 @@ export const resultRules: Record<SectionId, SectionRules> = {
         priority: 88,
         match: { allTags: ["slow:consume"] },
         lines: [
-          "Invoices thin — you buy another course.",
-          "Consumption ate execution.",
-          "Swap one module for one invoice this week.",
+          "Invoices thin — another curriculum opens.",
+          "Consumption ate the execution window.",
+          "Same swap: learning for earning.",
         ],
       },
       {
@@ -538,9 +538,9 @@ export const resultRules: Record<SectionId, SectionRules> = {
         priority: 84,
         match: { anyTags: ["think:blame_market", "think:blame_cred"] },
         lines: [
-          "You blame the market — or the next certificate.",
-          "Blame beats a dated ship.",
-          "One paid test. Name the buyer. Price it.",
+          "Market’s crowded — or the credential’s next.",
+          "Blame ships quieter than a test.",
+          "Same stall: story about forces, thin artifact.",
         ],
       },
       {
@@ -548,9 +548,9 @@ export const resultRules: Record<SectionId, SectionRules> = {
         priority: 82,
         match: { allTags: ["dir:comp_watch"] },
         lines: [
-          "You scroll competitors daily.",
-          "Shipping drops.",
-          "15 minutes on competitors weekly. Five buyer conversations with the rest.",
+          "Competitors get daily attention.",
+          "Ship dates slip.",
+          "Comparison eats the afternoon — again.",
         ],
       },
       {
@@ -558,9 +558,9 @@ export const resultRules: Record<SectionId, SectionRules> = {
         priority: 78,
         match: { allTags: ["think:price_avoid"] },
         lines: [
-          "Proposals go out late — or never.",
-          "Deals die in silence.",
-          "Same-day proposal — or paid scoping with a deadline.",
+          "Proposals leave late — or not at all.",
+          "Deals die in the quiet.",
+          "Same ending: strong meeting, missing number.",
         ],
       },
     ],
@@ -568,9 +568,9 @@ export const resultRules: Record<SectionId, SectionRules> = {
   focus: {
     title: "What to focus on",
     defaults: [
-      "One offer on one page.",
-      "You keep starting over instead of deepening one lane.",
-      "Past buyers + warm intros before new cold. Block build time.",
+      "One offer — one page.",
+      "New starts instead of depth in one lane.",
+      "Same drift: another channel, same thin proof.",
     ],
     rules: [
       {
@@ -578,9 +578,9 @@ export const resultRules: Record<SectionId, SectionRules> = {
         priority: 90,
         match: { allTags: ["buyer:metric"] },
         lines: [
-          "Buyers think in the number you move.",
-          "Proposals bounce — the metric is buried.",
-          "Number in headline + every proposal header. One case slide with math.",
+          "They think in the number you move.",
+          "Proposals bounce — the metric never made the header.",
+          "Same miss: strong body, buried math.",
         ],
       },
       {
@@ -588,9 +588,9 @@ export const resultRules: Record<SectionId, SectionRules> = {
         priority: 88,
         match: { allTags: ["plan:vague"] },
         lines: [
-          "You have a task list — not a revenue plan.",
-          "Quarters disappear — nothing tied to a count.",
-          "One 90-day target ÷ weeks = ships per week. Three ship weeks on the calendar.",
+          "Tasks without a revenue shape.",
+          "Quarters leave — nothing tied to a count.",
+          "Same fog: busy calendar, fuzzy target.",
         ],
       },
       {
@@ -599,8 +599,8 @@ export const resultRules: Record<SectionId, SectionRules> = {
         match: { allTags: ["think:embrace_narrow"] },
         lines: [
           "One lane already closes.",
-          "You never starve the wrong work.",
-          "Say no to everything else 30 days. Publish the cut.",
+          "The wrong work never starves.",
+          "Narrow wins — breadth hides that.",
         ],
       },
       {
@@ -608,9 +608,9 @@ export const resultRules: Record<SectionId, SectionRules> = {
         priority: 84,
         match: { allTags: ["think:fear_narrow"] },
         lines: [
-          "The smallest list is the one that already paid.",
-          "Breadth hides weak proof.",
-          "One case study that matches that list. Nothing broader until it runs.",
+          "Smallest list — the one that already paid.",
+          "Breadth covers weak proof.",
+          "Same fear: visible range, thin case.",
         ],
       },
       {
@@ -618,9 +618,9 @@ export const resultRules: Record<SectionId, SectionRules> = {
         priority: 82,
         match: { allTags: ["slow:reactivate"] },
         lines: [
-          "Past buyers are the asset.",
-          "Revenue spikes and crashes — you ignore trust.",
-          "One email, one offer, one start date. Referrals after a written win.",
+          "Past buyers sit in the asset column.",
+          "Revenue swings — trust sits quiet.",
+          "Same gap: relationship row full, reactivation row empty.",
         ],
       },
       {
@@ -628,9 +628,9 @@ export const resultRules: Record<SectionId, SectionRules> = {
         priority: 48,
         match: { maxScore: { focus: 42 } },
         lines: [
-          "You add channels before one page converts.",
+          "Channels multiply before one page converts.",
           "**You split attention before you double what works.**",
-          "One sellable page before a channel. Two half-days weekly, zero calls.",
+          "Same pattern: new surface, old conversion.",
         ],
       },
     ],
@@ -638,9 +638,9 @@ export const resultRules: Record<SectionId, SectionRules> = {
   first: {
     title: "What to do first",
     defaults: [
-      "You already know the next move.",
-      "Nothing ships without a dated artifact.",
-      "One page: who for, what they get, price band, next start date.",
+      "The next move is already obvious — it’s waiting for a date.",
+      "Nothing moves without an artifact with a date on it.",
+      "Same gap: clear head, empty calendar row.",
     ],
     rules: [
       {
@@ -648,9 +648,9 @@ export const resultRules: Record<SectionId, SectionRules> = {
         priority: 94,
         match: { allTags: ["think:stuck", "work:split"] },
         lines: [
-          "Split across clients — and stuck.",
+          "Split across clients — stuck in the middle.",
           "The last invoice already named who pays.",
-          "Copy their words into a one-page offer. Three calls only that type.",
+          "Same stuck shape: many threads, one nervous close.",
         ],
       },
       {
@@ -658,9 +658,9 @@ export const resultRules: Record<SectionId, SectionRules> = {
         priority: 90,
         match: { allTags: ["think:stuck"] },
         lines: [
-          "Waiting for clarity — clarity is in the last person who paid.",
-          "Motion feels productive — you spin.",
-          "One page from last buyer’s words. Ship a mini-asset in 48 hours.",
+          "Waiting for clarity — the last payer already had it.",
+          "Motion reads busy — the ship date doesn’t.",
+          "Same loop: research tabs, thin send.",
         ],
       },
       {
@@ -668,9 +668,9 @@ export const resultRules: Record<SectionId, SectionRules> = {
         priority: 88,
         match: { allTags: ["plan:vague"] },
         lines: [
-          "Goals — not a ship cadence.",
-          "The plan dissolves — nothing is on the calendar.",
-          "90-day number ÷ 12 = weekly ships. Block three ship weeks now.",
+          "Goals without a ship cadence.",
+          "The plan dissolves — the calendar stays empty.",
+          "Same fog: round number in the head, zero dated blocks.",
         ],
       },
       {
@@ -678,9 +678,9 @@ export const resultRules: Record<SectionId, SectionRules> = {
         priority: 86,
         match: { allTags: ["think:ship_asset"] },
         lines: [
-          "The asset is 80% done.",
-          "Buyers never see a checkout.",
-          "Finish: headline, price, buy — no new sections. Email with a deadline.",
+          "The asset is mostly done — buyers never see the buy.",
+          "Checkout stays hypothetical.",
+          "Same stall: almost shipped, never priced.",
         ],
       },
       {
@@ -689,8 +689,8 @@ export const resultRules: Record<SectionId, SectionRules> = {
         match: { allTags: ["niche:draft"] },
         lines: [
           "Who paid — not an abstract niche.",
-          "Messaging stays mushy — you skip the receipts.",
-          "Ten payers → three traits → one sentence in bio + footer.",
+          "Messaging stays mushy — receipts stay ignored.",
+          "Same miss: payers in the data, strangers in the copy.",
         ],
       },
       {
@@ -698,9 +698,9 @@ export const resultRules: Record<SectionId, SectionRules> = {
         priority: 80,
         match: { allTags: ["inbound:thin"] },
         lines: [
-          "Inbound is thin — so you wait.",
+          "Inbound thin — waiting became the strategy.",
           "Outreach never became a number.",
-          "Twenty outreaches: one case, one ask, one link.",
+          "Same quiet: empty pipe, busy prep.",
         ],
       },
     ],

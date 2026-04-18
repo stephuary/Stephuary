@@ -36,24 +36,28 @@ export function ResultSection({ section }: Props) {
       className={`result-section ${niche ? "result-section--niche" : ""} scroll-reveal ${reveal}`.trim()}
     >
       <h3 className="result-section-title">{section.title}</h3>
-      {section.authorityContrast ? (
-        <p className="result-authority-contrast" role="note">
-          {section.authorityContrast}
-        </p>
-      ) : null}
       <div className="result-section-body">
         {section.insights.map((line, i) => (
-          <p key={`${section.id}-in-${i}`} className={insightClass}>
+          <p key={`${section.id}-in-${i}`} className={`${insightClass} result-observation`}>
+            <span className="result-observation-mark" aria-hidden>
+              →{" "}
+            </span>
             <EmphasisParts text={line} />
           </p>
         ))}
         {section.consequence ? (
-          <p className="result-consequence">
+          <p className="result-consequence result-observation">
+            <span className="result-observation-mark" aria-hidden>
+              →{" "}
+            </span>
             <EmphasisParts text={section.consequence} />
           </p>
         ) : null}
         {section.instruction ? (
-          <p className="result-instruction">
+          <p className="result-instruction result-observation">
+            <span className="result-observation-mark" aria-hidden>
+              →{" "}
+            </span>
             <EmphasisParts text={section.instruction} />
           </p>
         ) : null}
