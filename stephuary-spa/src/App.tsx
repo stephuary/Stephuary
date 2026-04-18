@@ -203,9 +203,10 @@ export default function App() {
       className={`app ${showNav ? "app--with-nav" : ""} ${auraRoutePulse ? "app--aura-route" : ""}`.trim()}
     >
       <div className="aura-field" aria-hidden="true">
-        <div className="aura-layer aura-layer--core" />
-        <div className="aura-layer aura-layer--halo" />
-        <div className="aura-depth" />
+        <div className="aura-layer aura-layer--base" />
+        <div className="aura-layer aura-layer--outer" />
+        <div className="aura-layer aura-layer--mid" />
+        <div className="aura-layer aura-layer--glow" />
         <div className="aura-grain" />
         <div className="aura-vignette" />
       </div>
