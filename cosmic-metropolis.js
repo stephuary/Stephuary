@@ -36,7 +36,7 @@
   function isHome() {
     try {
       var p = window.location.pathname || '/';
-      return p === '/' || p === '/index' || p === '/index.html';
+      return p === '/' || p === '/index' || p === '/index.html' || p === '/homepage' || p === '/homepage.html';
     } catch (e) {
       return false;
     }
