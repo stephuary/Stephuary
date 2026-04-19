@@ -21,9 +21,9 @@
     3: 'What to protect'
   };
   var ROOM_PATH = {
-    '01': '/room-losing',
-    '02': '/room-sell',
-    '03': '/room-protect'
+    '01': '/playbooks',
+    '02': '/playbooks',
+    '03': '/playbooks'
   };
 
   function defaultState() {

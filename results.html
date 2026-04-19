@@ -24,6 +24,7 @@
   <meta name="description" content="Structured read of how you operate. Next steps, no noise." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400&family=Inter:wght@400;500&family=Playfair+Display:wght@500&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/stephuary-early-mode.css" />
   <link rel="stylesheet" href="/stephuary-god-hour.css" />
   <link rel="stylesheet" href="/stephuary-design-tokens.css" />
@@ -839,6 +840,138 @@
       margin-bottom: 8px;
       font-family: 'Lato', sans-serif;
     }
+
+    /* —— Visual score reveal (tokens: stephuary-design-tokens.css) —— */
+    .results-score-reveal {
+      position: relative;
+      z-index: 1;
+      background: var(--bg-primary, #030303);
+      padding: 80px var(--container-pad-x, 24px) 0;
+      max-width: 100%;
+    }
+    .results-score-reveal__grain {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.045;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-size: 180px 180px;
+    }
+    .results-score-reveal__inner {
+      position: relative;
+      z-index: 1;
+      max-width: 520px;
+      margin: 0 auto;
+    }
+    .results-score-reveal__number-row {
+      text-align: center;
+      padding-bottom: 48px;
+    }
+    .results-score-reveal__number {
+      font-family: var(--font-serif, 'Playfair Display', Georgia, serif);
+      font-weight: var(--font-weight-serif, 500);
+      font-size: clamp(64px, 10vw, 96px);
+      line-height: 1;
+      color: var(--text-primary, #f4ede0);
+      font-variant-numeric: tabular-nums;
+    }
+    .results-score-reveal__number--terra { color: #b85c38; }
+    .results-score-reveal__number--gold { color: #C6A15B; }
+    .results-score-reveal__suffix {
+      display: block;
+      margin-top: 8px;
+      font-family: var(--font-mono, 'DM Mono', monospace);
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text-tertiary, #7a7268);
+    }
+    .results-score-reveal__bars {
+      max-width: 480px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .results-vis-bar-row {
+      display: grid;
+      grid-template-columns: minmax(0, 100px) minmax(0, 1fr);
+      align-items: center;
+      gap: 12px 16px;
+    }
+    .results-vis-bar-row__label {
+      font-family: var(--font-mono, 'DM Mono', monospace);
+      font-size: 9px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--text-tertiary, #7a7268);
+    }
+    .results-vis-bar-row__track {
+      height: 4px;
+      background: rgba(244, 237, 224, 0.06);
+      border-radius: 1px;
+      overflow: hidden;
+    }
+    .results-vis-bar-row__fill {
+      height: 100%;
+      width: 0%;
+      background: var(--text-tertiary, #7a7268);
+      border-radius: 1px;
+      transition: width 1.2s cubic-bezier(0.33, 1, 0.68, 1);
+      will-change: width;
+    }
+    .results-vis-bar-row--low .results-vis-bar-row__fill {
+      background: #b85c38;
+    }
+    .results-score-reveal__line {
+      margin: 32px auto 0;
+      max-width: 42ch;
+      text-align: center;
+      font-family: var(--font-sans, 'Inter', system-ui, sans-serif);
+      font-size: 16px;
+      font-weight: 400;
+      line-height: 1.5;
+      color: var(--text-secondary, #b5aa9c);
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+    .results-score-reveal__line.is-visible { opacity: 1; }
+    .results-score-reveal__sep {
+      height: 1px;
+      max-width: 120px;
+      margin: 64px auto;
+      background: rgba(244, 237, 224, 0.06);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    .results-score-reveal__sep.is-visible { opacity: 1; }
+    @media (max-width: 639px) {
+      .results-score-reveal {
+        padding: 48px 20px 0;
+        max-height: none;
+      }
+      .results-score-reveal__number {
+        font-size: 64px;
+      }
+      .results-score-reveal__bars {
+        max-width: none;
+        padding: 0;
+      }
+      .results-vis-bar-row {
+        grid-template-columns: 1fr;
+        gap: 8px;
+      }
+      .results-vis-bar-row__label {
+        margin-bottom: 2px;
+      }
+      .results-score-reveal__number-row {
+        padding-bottom: 32px;
+      }
+      .results-score-reveal__sep {
+        margin: 40px auto;
+      }
+    }
   </style>
 </head>
 <body data-sh-env="systems">
@@ -862,6 +995,38 @@
   </div>
 
   <main id="state-result">
+    <section class="results-score-reveal" id="results-score-reveal" aria-label="Score summary">
+      <div class="results-score-reveal__grain" aria-hidden="true"></div>
+      <div class="results-score-reveal__inner">
+        <div class="results-score-reveal__number-row">
+          <span class="results-score-reveal__number" id="results-vis-score-num">0</span>
+          <span class="results-score-reveal__suffix">/100</span>
+        </div>
+        <div class="results-score-reveal__bars" id="results-vis-bars">
+          <div class="results-vis-bar-row" data-area="clarity">
+            <span class="results-vis-bar-row__label">Clarity</span>
+            <div class="results-vis-bar-row__track">
+              <div class="results-vis-bar-row__fill"></div>
+            </div>
+          </div>
+          <div class="results-vis-bar-row" data-area="positioning">
+            <span class="results-vis-bar-row__label">Positioning</span>
+            <div class="results-vis-bar-row__track">
+              <div class="results-vis-bar-row__fill"></div>
+            </div>
+          </div>
+          <div class="results-vis-bar-row" data-area="structure">
+            <span class="results-vis-bar-row__label">Structure</span>
+            <div class="results-vis-bar-row__track">
+              <div class="results-vis-bar-row__fill"></div>
+            </div>
+          </div>
+        </div>
+        <p class="results-score-reveal__line" id="results-vis-dynamic-line"></p>
+        <div class="results-score-reveal__sep" id="results-vis-sep" aria-hidden="true"></div>
+      </div>
+    </section>
+
     <section class="hero-result" data-sh-flow-section>
       <div class="wrap">
         <p class="hero-kicker">Your pattern</p>
@@ -906,7 +1071,7 @@
           <p class="results-sec__lead" id="rec-room-name"></p>
           <p class="body-text" id="rec-room-reason" style="margin-top:8px"></p>
           <div style="margin-top:14px">
-            <a class="btn btn-ghost magnetic" id="rec-room-cta" href="/room-losing" data-sh-flow-secondary>Enter Room</a>
+            <a class="btn btn-ghost magnetic" id="rec-room-cta" href="/playbooks" data-sh-flow-secondary>Open playbooks</a>
           </div>
         </div>
       </div>
@@ -972,6 +1137,7 @@
   <script src="/stephuary-diagnostic-flow.js"></script>
   <script src="/stephuary-diagnostic-state.js"></script>
   <script src="/stephuary-result.js"></script>
+  <script src="/stephuary-results-score-reveal.js"></script>
   <script src="/stephuary-personalization.js"></script>
   <script src="/stephuary-cei-bridge.js"></script>
   <script src="/stephuary-founder-reveal.js"></script>
@@ -1261,10 +1427,10 @@
 
   /** Maps legacy result “playbook” names to Room routes. */
   var PLAYBOOK_TO_ROOM = {
-    'Reset': '/room-losing',
-    'Execution': '/room-protect',
-    'Income Architecture': '/room-sell',
-    'Ownership': '/room-protect',
+    'Reset': '/playbooks',
+    'Execution': '/playbooks',
+    'Income Architecture': '/playbooks',
+    'Ownership': '/playbooks',
     'AI Control': '/playbooks'
   };
 
@@ -1648,6 +1814,11 @@
     showMissing();
     return;
   }
+  try {
+    if (window.StephuaryResult && typeof window.StephuaryResult.computeResultsVisualScores === 'function') {
+      window.__resultsVisualScores = window.StephuaryResult.computeResultsVisualScores();
+    }
+  } catch (eVS) {}
   if (loaded.fromLegacy) {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
@@ -1656,6 +1827,12 @@
 
   var version = resolveVersion(data);
   showResult(data, version);
+
+  try {
+    if (window.ResultsScoreReveal && typeof window.ResultsScoreReveal.init === 'function' && window.__resultsVisualScores) {
+      window.ResultsScoreReveal.init(window.__resultsVisualScores);
+    }
+  } catch (eSR) {}
 
   function scheduleMagneticRefresh() {
     var tries = 0;

@@ -14,9 +14,9 @@
     },
     {
       id: 'rooms',
-      label: 'Rooms',
-      path: '/rooms',
-      tip: 'Break down one problem clearly'
+      label: 'Playbooks',
+      path: '/playbooks',
+      tip: 'Next steps after your diagnostic'
     },
     {
       id: 'direction',
@@ -73,14 +73,6 @@
     '/execution': 'diagnostic',
     '/rooms': 'rooms',
     '/playbooks': 'rooms',
-    '/room-losing': 'rooms',
-    '/room-sell': 'rooms',
-    '/room-protect': 'direction',
-    '/room-01-extraction': 'rooms',
-    '/room-02-direction': 'direction',
-    '/room-03-transaction': 'rooms',
-    '/room-04-infrastructure': 'rooms',
-    '/room-05-cognition': 'rooms',
     '/phases/direction': 'direction',
     '/direction-system': 'direction',
     '/monetize': 'revenue',
@@ -146,10 +138,6 @@
     var visited = getVisitedPhases();
 
     var currentId = PATH_NODE[path] || '';
-    if (path.indexOf('/room-') === 0) {
-      if (path.indexOf('room-protect') >= 0 || path.indexOf('room-02') >= 0) currentId = 'direction';
-      else currentId = 'rooms';
-    }
 
     var done = {};
     if (diagDone) done.diagnostic = true;
@@ -159,12 +147,7 @@
       done.revenue = true;
       done.direction = true;
     }
-    if (
-      visited.indexOf('/room-protect') >= 0 ||
-      visited.indexOf('/room-02-direction') >= 0 ||
-      completed.indexOf('03') >= 0 ||
-      completed.indexOf('02') >= 0
-    ) {
+    if (visited.indexOf('/playbooks') >= 0 || completed.indexOf('03') >= 0 || completed.indexOf('02') >= 0) {
       done.direction = true;
     }
     if (visited.indexOf('/focused-review') >= 0) done.lock = true;

@@ -71,7 +71,7 @@
   var RESULT_STORE_KEY = 'stephuary_result_v1';
   var PROGRESS_KEY = 'stephuary_system_progress_v1';
   var OS_KEY = 'stephuary_os_v1';
-  var ROOM_CHAIN = ['/room-losing', '/room-sell', '/room-protect'];
+  var ROOM_CHAIN = ['/playbooks'];
   var PHASE_CHAIN = {
     '/capture': '/monetize',
     '/monetize': '/structure',
@@ -506,7 +506,7 @@
     var zone = 'default';
     if (path === '/systems' || path === '/') zone = 'cei';
     else if (path === '/pricing') zone = 'pricing';
-    else if (path.indexOf('/room-') === 0 || path === '/capture' || path === '/results' || path === '/execution' || path === '/playbooks') zone = 'cei';
+    else if (path === '/capture' || path === '/results' || path === '/execution' || path === '/playbooks') zone = 'cei';
 
     var mobileLight = isMobile;
     var body = document.body;
@@ -1471,7 +1471,7 @@
       { path: '/pricing', n: 0, name: 'Pricing', where: 'Pricing', cat: 'Entry choice', act: 'Pick one tier that matches how much help you want.' },
       { path: '/results', n: 0, name: 'Results', where: 'Results', cat: 'Readout', act: 'Do one thing from this page today.' },
       { path: '/execution', n: 0, name: 'Execution', where: 'Execution layer', cat: 'Next moves', act: 'Choose one action and schedule it.' },
-      { path: '/playbooks', n: 0, name: 'Rooms', where: 'Rooms', cat: 'Focused topic', act: 'Finish one room before opening another.' },
+      { path: '/playbooks', n: 0, name: 'Playbooks', where: 'Playbooks', cat: 'Next steps', act: 'Use your results page for the primary move.' },
       { path: '/access', n: 0, name: 'Access', where: 'Club access', cat: 'Request', act: 'Request .5% Club access when you need it.' },
       {
         path: '/private-access',
@@ -1489,13 +1489,13 @@
       for (var i = 0; i < PATH_PHASES.length; i++) {
         if (PATH_PHASES[i].path === p) return PATH_PHASES[i];
       }
-      if (/^\/room-/.test(p)) {
+      if (p === '/playbooks') {
         return {
           n: 0,
-          name: 'Room',
-          where: "You're in a room",
-          cat: 'Focused topic',
-          act: 'Finish this room before opening another.'
+          name: 'Playbooks',
+          where: 'Playbooks hub',
+          cat: 'Next steps',
+          act: 'Use your results and diagnostic for the primary move.'
         };
       }
       return {

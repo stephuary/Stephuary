@@ -239,10 +239,10 @@
   };
 
   var PLAYBOOK_ROOM = {
-    Reset: { room: 1, title: 'What you’re losing', path: '/room-losing' },
-    Execution: { room: 3, title: 'What to protect', path: '/room-protect' },
-    'Income Architecture': { room: 2, title: 'What you can sell', path: '/room-sell' },
-    Ownership: { room: 3, title: 'What to protect', path: '/room-protect' },
+    Reset: { room: 1, title: 'What you’re losing', path: '/playbooks' },
+    Execution: { room: 3, title: 'What to protect', path: '/playbooks' },
+    'Income Architecture': { room: 2, title: 'What you can sell', path: '/playbooks' },
+    Ownership: { room: 3, title: 'What to protect', path: '/playbooks' },
     'AI Control': { room: 1, title: 'Playbooks · AI Rules', path: '/playbooks' }
   };
 
@@ -587,12 +587,12 @@
     positioning: {
       display_name: 'Positioning Room',
       playbook: 'Income Architecture',
-      path: '/room-sell'
+      path: '/playbooks'
     },
-    demand: { display_name: 'Demand Room', playbook: 'Reset', path: '/room-losing' },
-    focus: { display_name: 'Focus Room', playbook: 'Ownership', path: '/room-protect' },
-    system: { display_name: 'System Room', playbook: 'Reset', path: '/room-losing' },
-    direction: { display_name: 'Direction Room', playbook: 'Execution', path: '/room-protect' }
+    demand: { display_name: 'Demand Room', playbook: 'Reset', path: '/playbooks' },
+    focus: { display_name: 'Focus Room', playbook: 'Ownership', path: '/playbooks' },
+    system: { display_name: 'System Room', playbook: 'Reset', path: '/playbooks' },
+    direction: { display_name: 'Direction Room', playbook: 'Execution', path: '/playbooks' }
   };
 
   function recommendedRoomRecord(key, reason) {
@@ -733,7 +733,7 @@
       var rec0 = diag && diag.recommended_room;
       return {
         label: 'Enter Your Room',
-        href: (rec0 && rec0.path) || '/room-sell',
+        href: (rec0 && rec0.path) || '/playbooks',
         kind: 'enter_room'
       };
     }
@@ -749,7 +749,7 @@
     var rec = diag && diag.recommended_room;
     return {
       label: 'Enter Your Room',
-      href: (rec && rec.path) || (diag.next_room && diag.next_room.path) || '/room-losing',
+      href: (rec && rec.path) || (diag.next_room && diag.next_room.path) || '/playbooks',
       kind: 'enter_room'
     };
   }
@@ -851,6 +851,66 @@
     return data;
   }
 
+  /**
+   * Visual score strip (results page): three pillars from the same localStorage bits
+   * as StephuaryDiagnosticState / mergeCrossPhase (not stored separately on result JSON).
+   * Clarity ← Phase 02 (monetize), Positioning ← Phase 03 (structure/offer),
+   * Structure ← average of Phase 04 (automation) and Phase 05 (sovereignty).
+   * Each pillar is the percentage of "aligned" binary answers in that phase (ideal = bit === 0).
+   * Total is the simple average of the three pillar percentages, rounded 0–100.
+   */
+  function scorePhaseAlignedPercent(rawBits, migrateFn, isGood) {
+    var b = migrateFn(rawBits);
+    if (!b || !b.length) return { pct: 0, answered: 0 };
+    var good = 0;
+    var answered = 0;
+    for (var i = 0; i < b.length; i++) {
+      if (b[i] === null || b[i] === undefined) continue;
+      answered++;
+      if (isGood(i, b[i])) good++;
+    }
+    if (answered === 0) return { pct: 0, answered: 0 };
+    return { pct: Math.round((good / answered) * 100), answered: answered };
+  }
+
+  function goodBitIdealFirst(i, bit) {
+    return bit === 0;
+  }
+
+  function computeResultsVisualScores() {
+    var p2 = loadStoredBits(LS_P02);
+    var p3 = loadStoredBits(LS_P03);
+    var p4 = loadStoredBits(LS_P04);
+    var p5 = loadStoredBits(LS_P05);
+
+    var clarity = scorePhaseAlignedPercent(p2, migrateMonetizeBits, goodBitIdealFirst);
+    var positioning = scorePhaseAlignedPercent(p3, migrateStructureBits, goodBitIdealFirst);
+    var s4 = scorePhaseAlignedPercent(p4, migrateAutomationBits, goodBitIdealFirst);
+    var s5 = scorePhaseAlignedPercent(p5, migrateSovereigntyBits, goodBitIdealFirst);
+
+    var structurePct = 0;
+    if (s4.answered && s5.answered) {
+      structurePct = Math.round((s4.pct + s5.pct) / 2);
+    } else if (s4.answered) {
+      structurePct = s4.pct;
+    } else if (s5.answered) {
+      structurePct = s5.pct;
+    }
+
+    var c = clarity.pct;
+    var p = positioning.pct;
+    var s = structurePct;
+    var total = Math.round((c + p + s) / 3);
+
+    return {
+      clarity: c,
+      positioning: p,
+      structure: s,
+      total: total,
+      _answered: { clarity: clarity.answered, positioning: positioning.answered, structure: s4.answered || s5.answered }
+    };
+  }
+
   function buildFromPhase01(bits) {
     var fallback = {
       type_primary: '',
@@ -899,6 +959,7 @@
     computeRecommendedRoom: computeRecommendedRoom,
     assignRecommendedRoom: assignRecommendedRoom,
     PLAYBOOK_ROOM: PLAYBOOK_ROOM,
-    VERSION_PLAYBOOKS: VERSION_PLAYBOOKS
+    VERSION_PLAYBOOKS: VERSION_PLAYBOOKS,
+    computeResultsVisualScores: computeResultsVisualScores
   };
 })(typeof window !== 'undefined' ? window : this);

@@ -6,9 +6,9 @@
   var KEY = 'stephuary_os_v1';
 
   var META = {
-    '01': { path: '/room-losing', title: 'Room 1 · What you’re losing', statuses: ['exposed', 'reducing', 'controlled'] },
-    '02': { path: '/room-sell', title: 'Room 2 · What you can sell', statuses: ['unsent', 'active', 'closed'] },
-    '03': { path: '/room-protect', title: 'Room 3 · What to protect', statuses: ['fragile', 'stabilizing', 'durable'] }
+    '01': { path: '/playbooks', title: 'Room 1 · What you’re losing', statuses: ['exposed', 'reducing', 'controlled'] },
+    '02': { path: '/playbooks', title: 'Room 2 · What you can sell', statuses: ['unsent', 'active', 'closed'] },
+    '03': { path: '/playbooks', title: 'Room 3 · What to protect', statuses: ['fragile', 'stabilizing', 'durable'] }
   };
 
   var ORDER = ['01', '02', '03'];
