@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   highTicketSectionLabels,
   offerInstallTiers,
@@ -9,6 +9,8 @@ import {
 import type { RecommendedTier } from "../lib/recommendedTier";
 import { ScrollReveal } from "./ScrollReveal";
 import { ScreenShell } from "./ScreenShell";
+
+const OFFER_SCROLL_KEY = "stephuary-offer-scroll";
 
 type Props = {
   animKey: string;
@@ -23,6 +25,10 @@ function tierMatchesRecommended(id: OfferTierId, r: RecommendedTier): boolean {
   if (r === "focused" && id === "fix") return true;
   if (r === "full" && id === "breakdown") return true;
   return false;
+}
+
+function collapsedTitle(tier: (typeof offerInstallTiers)[number]): string {
+  return "headlineLead" in tier && tier.headlineLead ? tier.headlineLead : tier.headline;
 }
 
 function renderWhatChanges(tier: (typeof offerInstallTiers)[number]) {
@@ -52,6 +58,19 @@ export function OfferScreen({
 }: Props) {
   const [expandedId, setExpandedId] = useState<OfferTierId | null>(null);
 
+  useEffect(() => {
+    try {
+      if (sessionStorage.getItem(OFFER_SCROLL_KEY)) {
+        sessionStorage.removeItem(OFFER_SCROLL_KEY);
+        requestAnimationFrame(() => {
+          document.getElementById("offer-stack")?.scrollIntoView({ behavior: "smooth", block: "start" });
+        });
+      }
+    } catch {
+      /* ignore */
+    }
+  }, []);
+
   function handleTier(id: OfferTierId) {
     signalCta();
     if (id === "breakdown") {
@@ -78,12 +97,13 @@ export function OfferScreen({
           </header>
         </ScrollReveal>
 
-        <div className="install-tier-stack">
+        <div className="install-tier-stack" id="offer-stack">
           {offerInstallTiers.map((tier) => {
             const rec = tierMatchesRecommended(tier.id, recommendedTier);
             const isHigh = tier.id === "breakdown";
             const isOpen = expandedId === tier.id;
             const panelId = `offer-panel-${tier.id}`;
+            const showPriceLead = tier.id !== "breakdown";
 
             return (
               <ScrollReveal key={tier.id} className="install-tier-reveal">
@@ -102,12 +122,13 @@ export function OfferScreen({
                   >
                     <span className="install-card-chevron" aria-hidden />
                     <span className="install-card-toggle-main">
-                      {"headlineLead" in tier && tier.headlineLead ? (
-                        <p className="install-card-eyebrow install-card-eyebrow--toggle">{tier.headlineLead}</p>
+                      {showPriceLead ? (
+                        <span className="install-card-price-lead">{tier.price}</span>
                       ) : null}
-                      <span className="install-card-title install-card-title--headline">{tier.headline}</span>
+                      <span className="install-card-title install-card-title--headline install-card-title--collapsed">
+                        {collapsedTitle(tier)}
+                      </span>
                       <span className="install-card-collapsed-outcome">{tier.collapsedOutcome}</span>
-                      <span className="install-card-price install-card-price--toggle">{tier.price}</span>
                     </span>
                   </button>
 
@@ -133,7 +154,7 @@ export function OfferScreen({
                   >
                     <div className="install-card-expand-inner">
                       {"pickOneOptions" in tier && tier.pickOneOptions?.length ? (
-                        <>
+                        <div className="tier-panel-section">
                           <p className="tier-section-label tier-section-label--pick">
                             {"pickOneIntro" in tier && tier.pickOneIntro ? tier.pickOneIntro : "Choose one:"}
                           </p>
@@ -142,57 +163,63 @@ export function OfferScreen({
                               <li key={item}>{item}</li>
                             ))}
                           </ul>
-                        </>
+                        </div>
                       ) : null}
 
                       {isHigh && "whatIDo" in tier && tier.whatIDo ? (
-                        <>
-                          <p className="tier-section-label tier-section-label--nested">{HT.whatIDo}</p>
+                        <div className="tier-panel-section">
+                          <p className="tier-section-label">{HT.whatIDo}</p>
                           <ul className="tier-bullet-list">
                             {tier.whatIDo.map((item) => (
                               <li key={item}>{item}</li>
                             ))}
                           </ul>
-                        </>
+                        </div>
                       ) : null}
 
-                      <p className="tier-section-label">{isHigh ? HT.whatYouGet : L.whatYouGet}</p>
-                      <ul className="tier-bullet-list">
-                        {tier.whatYouGet.map((item) => (
-                          <li key={item}>{item}</li>
-                        ))}
-                      </ul>
+                      <div className="tier-panel-section">
+                        <p className="tier-section-label">{isHigh ? HT.whatYouGet : L.whatYouGet}</p>
+                        <ul className="tier-bullet-list">
+                          {tier.whatYouGet.map((item) => (
+                            <li key={item}>{item}</li>
+                          ))}
+                        </ul>
+                      </div>
 
-                      <p className="tier-section-label">{isHigh ? HT.whatChanges : L.whatChanges}</p>
-                      {renderWhatChanges(tier)}
+                      <div className="tier-panel-section">
+                        <p className="tier-section-label">{isHigh ? HT.whatChanges : L.whatChanges}</p>
+                        {renderWhatChanges(tier)}
+                      </div>
 
                       {"whatYouDontGet" in tier && tier.whatYouDontGet?.length ? (
-                        <>
+                        <div className="tier-panel-section">
                           <p className="tier-section-label">{L.whatYouDontGet}</p>
                           <ul className="tier-bullet-list tier-bullet-list--dont">
                             {tier.whatYouDontGet.map((item) => (
                               <li key={item}>{item}</li>
                             ))}
                           </ul>
-                        </>
+                        </div>
                       ) : null}
 
-                      <p className="tier-section-label">{isHigh ? HT.timeline : L.time}</p>
-                      <p className="tier-time">{tier.time}</p>
+                      <div className="tier-panel-section">
+                        <p className="tier-section-label">{isHigh ? HT.timeline : L.time}</p>
+                        <p className="tier-time">{tier.time}</p>
+                      </div>
 
                       {isHigh && "whoFor" in tier && tier.whoFor ? (
-                        <>
+                        <div className="tier-panel-section tier-panel-section--support">
                           <p className="tier-section-label tier-section-label--nested">{HT.whoFor}</p>
                           <ul className="tier-bullet-list tier-bullet-list--who">
                             {tier.whoFor.map((item) => (
                               <li key={item}>{item}</li>
                             ))}
                           </ul>
-                        </>
+                        </div>
                       ) : null}
 
                       {isHigh && "afterApply" in tier && tier.afterApply ? (
-                        <div className="tier-after-apply">
+                        <div className="tier-panel-section tier-panel-section--support">
                           <p className="tier-section-label tier-section-label--nested">{HT.afterApply}</p>
                           <ol className="tier-after-apply-list">
                             <li>

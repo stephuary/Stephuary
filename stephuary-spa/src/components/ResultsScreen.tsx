@@ -1,12 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import {
-  resultsDecisionMomentCopy,
+  resultsOfferBridgeCopy,
   resultsReadoutCopy,
   resultsShareCopy,
 } from "../data/siteCopy";
 import { copyTextToClipboard } from "../lib/copyToClipboard";
 import { buildShareablePageUrl } from "../lib/shareEntry";
-import { useScrollRevealOnce } from "../hooks/useScrollRevealOnce";
 import { ScreenShell } from "./ScreenShell";
 
 type Props = {
@@ -20,11 +19,9 @@ export function ResultsScreen({
   animKey,
   classificationLabels,
 }: Props) {
-  const decisionReveal = useScrollRevealOnce<HTMLDivElement>();
-  const ctaReveal = useScrollRevealOnce<HTMLDivElement>();
-  const d = resultsDecisionMomentCopy;
   const r = resultsReadoutCopy;
   const share = resultsShareCopy;
+  const bridge = resultsOfferBridgeCopy;
 
   const [copyFeedback, setCopyFeedback] = useState<"idle" | "copied">("idle");
   const copyResetRef = useRef<number | null>(null);
@@ -106,48 +103,17 @@ export function ResultsScreen({
         {whyBlock}
         {costBlock}
       </div>
-      <div className="results-post-readout">{shareBlock}</div>
-      <div
-        ref={decisionReveal.ref}
-        className={`results-decision screen-copy-panel scroll-reveal ${decisionReveal.inView ? "scroll-reveal--in" : ""}`.trim()}
-        role="region"
-        aria-label="Next step"
-      >
-        {d.adjustmentLines.length > 0 ? (
-          <div className="results-decision-adjust">
-            {d.adjustmentLines.map((line) => (
-              <p key={line} className="results-decision-adjust-line">
-                {line}
-              </p>
-            ))}
-          </div>
-        ) : null}
-        {d.pivotAction ? (
-          <>
-            {d.pivotLabel ? <p className="results-decision-or">{d.pivotLabel}</p> : null}
-            <p className="results-decision-pivot">{d.pivotAction}</p>
-          </>
-        ) : null}
-      </div>
-      <div
-        ref={ctaReveal.ref}
-        className={`results-decision-cta-wrap scroll-reveal ${ctaReveal.inView ? "scroll-reveal--in" : ""}`.trim()}
-      >
-        <div className="cta-row results-decision-cta-row">
+
+      <div className="results-offer-bridge screen-copy-panel" aria-label="Paid options">
+        <h2 className="results-offer-bridge-headline">{bridge.headline}</h2>
+        <div className="cta-row results-offer-bridge-cta">
           <button type="button" className="btn btn-primary btn-block" onClick={primaryCta.onClick}>
             {primaryCta.label}
           </button>
         </div>
-        {d.ctaFilterLines.length > 0 ? (
-          <div className="results-decision-cta-sub" role="note">
-            {d.ctaFilterLines.map((line) => (
-              <p key={line} className="results-decision-cta-sub-line">
-                {line}
-              </p>
-            ))}
-          </div>
-        ) : null}
       </div>
+
+      <div className="results-post-readout">{shareBlock}</div>
     </ScreenShell>
   );
 }

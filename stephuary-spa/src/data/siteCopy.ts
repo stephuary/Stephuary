@@ -134,9 +134,15 @@ export const resultsDecisionMomentCopy = {
   ctaFilterLines: [] as const,
 } as const;
 
+/** Tight bridge from diagnostic results → offer stack (same flow, not a new page). */
+export const resultsOfferBridgeCopy = {
+  headline: "Pick the paid fix below.",
+  cta: "See prices and deliverables",
+} as const;
+
 export const offerTransitionCopy = {
   headline: "Pick what you want done.",
-  subtext: "Three options. Same readout. Different depth.",
+  subtext: "Expand a card for deliverables and timing.",
 } as const;
 
 export const offerSectionLabels = {
@@ -204,7 +210,7 @@ export const offerInstallTiers = [
   {
     id: "path" as const,
     headline: "Fix One Area",
-    collapsedOutcome: "One revenue area diagnosed and corrected—fast.",
+    collapsedOutcome: "Fix one part of your work that isn't turning into money.",
     headlineSub: "Pick one part of your work that isn't turning into money.",
     pickOneIntro: "Choose one:",
     pickOneOptions: ["Your offer", "Your positioning", "Your structure", "Your landing page"],
@@ -223,7 +229,8 @@ export const offerInstallTiers = [
   {
     id: "fix" as const,
     headline: "Full Breakdown",
-    collapsedOutcome: "Full picture of what pays, what leaks, and what to do next.",
+    collapsedOutcome:
+      "See exactly what's working, what isn't, and where money is being lost.",
     headlineSub: "See exactly what's working, what isn't, and where money is being lost.",
     whatYouGet: [
       "Where your time is actually going",
@@ -246,8 +253,8 @@ export const offerInstallTiers = [
   },
   {
     id: "breakdown" as const,
-    collapsedOutcome: "Custom rebuild of offer, path, and revenue structure.",
     ...highTicketOfferCopy,
+    collapsedOutcome: "I rebuild how your expertise makes you revenue.",
   },
 ] as const;
 

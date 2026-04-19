@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { usePostActionMoment } from "./context/PostActionMomentContext";
 import { SUBSTACK_PLACEHOLDER_HREF } from "./data/ecosystem";
-import { brandIdentityCopy } from "./data/siteCopy";
+import { brandIdentityCopy, resultsOfferBridgeCopy } from "./data/siteCopy";
 import { QUESTIONS, phaseMeta } from "./data/questions";
 import { AccessRequestScreen } from "./components/AccessRequestScreen";
 import type { NavAction } from "./components/AppNav";
@@ -330,9 +330,14 @@ export default function App() {
             animKey={stepAnimKey(step)}
             classificationLabels={classificationLabels}
             primaryCta={{
-              label: "See prices and deliverables",
+              label: resultsOfferBridgeCopy.cta,
               onClick: () => {
                 triggerPostAction();
+                try {
+                  sessionStorage.setItem("stephuary-offer-scroll", "1");
+                } catch {
+                  /* ignore */
+                }
                 setStep({ id: "offer" });
               },
             }}
