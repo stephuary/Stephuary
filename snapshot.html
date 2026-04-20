@@ -1,362 +1,654 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>Snapshot | Stephuary</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Snapshot | Stephuary</title>
+  <meta name="description" content="Snapshot: a focused breakdown tied to your diagnostic. Delivered within 48 hours." />
   <link rel="stylesheet" href="/stephuary-interactive.css" />
-<meta name="description" content="Remove guesswork in 48 hours. Full diagnostic across your situation. $950."/>
-<link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Lato:wght@300;400&display=swap" rel="stylesheet"/>
-<style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Lato:wght@300;400;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-:root{
-  --bg:        #080807;
-  --bg-1:      #0e0e0c;
-  --bg-2:      #141412;
-  --bg-3:      #1a1a17;
-  --gold:      #c4a35a;
-  --gold-hi:   #d4b46a;
-  --gold-line: rgba(196,163,90,0.2);
-  --gold-f:    rgba(196,163,90,0.06);
-  --blue:      #2b4fd4;
-  --blue-hi:   #3560e8;
-  --text:      #f4ede0;
-  --text-2:    #cbc3b4;
-  --text-3:    #a09889;
-  --text-4:    #6e6558;
-  --text-5:    #4a4540;
-  --line:      rgba(244,237,224,0.08);
-  --line-2:    rgba(244,237,224,0.05);
-  --serif: "Cormorant Garamond", Georgia, serif;
-  --sans:  "Lato", systems-ui, sans-serif;
-  --r: 2px;
-}
+    :root {
+      --bg: #080807;
+      --bg-1: #0e0e0c;
+      --gold: #c4a35a;
+      --gold-line: rgba(196, 163, 90, 0.22);
+      --blue: #2b4fd4;
+      --blue-hi: #3560e8;
+      --text: #f4ede0;
+      --text-2: #d8d0c4;
+      --text-muted: #a89f92;
+      --line: rgba(244, 237, 224, 0.1);
+      --line-2: rgba(244, 237, 224, 0.06);
+      --serif: "Cormorant Garamond", Georgia, serif;
+      --sans: "Lato", system-ui, sans-serif;
+      --r: 2px;
+      --max: 640px;
+    }
 
-html,body{
-  background:var(--bg);color:var(--text);
-  font-family:var(--sans);font-weight:300;
-  font-size:17px;line-height:1.65;min-height:100%;
-  -webkit-font-smoothing:antialiased;
-}
-a{color:inherit;text-decoration:none}
+    html, body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      font-weight: 300;
+      font-size: 17px;
+      line-height: 1.65;
+      min-height: 100%;
+      -webkit-font-smoothing: antialiased;
+    }
 
-body::after{
-  content:"";position:fixed;inset:0;pointer-events:none;z-index:100;opacity:0.022;
-  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  background-size:200px 200px;
-}
+    a { color: inherit; text-decoration: none; }
 
-.page{max-width:680px;margin:0 auto;padding:0 24px 120px}
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 100;
+      opacity: 0.022;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-size: 200px 200px;
+    }
 
-.top-nav{
-  padding:28px 0 0;display:flex;justify-content:space-between;align-items:center;
-  margin-bottom:88px;
-}
-.nav-logo{font-family:var(--serif);font-size:13px;letter-spacing:0.18em;text-transform:uppercase;color:var(--gold);font-weight:300;}
-.nav-links{display:flex;gap:20px;align-items:center;}
-.nav-link{font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--text-5);transition:color 150ms;}
-.nav-link:hover{color:var(--text-4)}
-.nav-link--club{color:var(--gold)}
+    .page {
+      position: relative;
+      z-index: 1;
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 0 24px 120px;
+    }
 
-.overline{font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);font-weight:400;display:block;margin-bottom:16px;}
-.overline-dim{font-size:10px;letter-spacing:0.18em;text-transform:uppercase;color:var(--text-5);font-weight:400;display:block;margin-bottom:12px;}
+    .top-nav {
+      padding: 28px 0 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 56px;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
 
-h1{
-  font-family:var(--serif);font-weight:300;
-  font-size:clamp(40px,7.5vw,68px);
-  line-height:1.04;letter-spacing:-0.02em;color:var(--text);
-}
-h1 em{font-style:italic;color:var(--text-3)}
+    .nav-logo {
+      font-family: var(--serif);
+      font-size: 13px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--gold);
+      font-weight: 300;
+    }
 
-h2{font-family:var(--serif);font-weight:300;font-size:clamp(24px,4vw,36px);line-height:1.1;letter-spacing:-0.01em;color:var(--text);margin-bottom:14px;}
-p{color:var(--text-2);max-width:52ch}
+    .nav-links {
+      display: flex;
+      gap: 18px 20px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
 
-.section{margin-bottom:80px}
+    .nav-link {
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      transition: color 150ms;
+    }
 
-.hero{margin-bottom:80px}
-.hero-price{display:inline-flex;align-items:baseline;gap:8px;margin:28px 0 24px;}
-.hero-price-val{font-family:var(--serif);font-size:clamp(34px,5vw,50px);font-weight:300;color:var(--text);letter-spacing:-0.02em;}
-.hero-price-note{font-size:13px;color:var(--text-4);letter-spacing:0.06em}
-.hero-sub{font-family:var(--serif);font-weight:300;font-style:italic;font-size:clamp(17px,2.5vw,21px);color:var(--text-3);line-height:1.5;max-width:40ch;margin-bottom:32px;}
+    .nav-link:hover { color: var(--text-2); }
+    .nav-link--club { color: var(--gold); }
 
-.delivery-note{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text-5);letter-spacing:0.08em;margin-top:14px;}
-.delivery-dot{width:5px;height:5px;border-radius:50%;background:var(--gold);opacity:0.45;flex-shrink:0;}
+    .kicker {
+      font-size: 10px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--gold);
+      font-weight: 400;
+      margin-bottom: 20px;
+    }
 
-.btn{
-  display:inline-flex;align-items:center;justify-content:center;
-  min-height:54px;padding:16px 30px;border-radius:var(--r);
-  font-size:11px;letter-spacing:0.16em;text-transform:uppercase;
-  font-family:var(--sans);font-weight:400;cursor:pointer;border:none;
-  transition:all 150ms ease;white-space:nowrap;text-decoration:none;width:100%;
-}
-.btn:active{transform:scale(0.97)}
-.btn-primary{background:var(--blue);color:#fff;}
-.btn-primary:hover{background:var(--blue-hi)}
-.btn-secondary{background:transparent;border:1px solid var(--line);color:var(--text-3);}
-.btn-secondary:hover{border-color:var(--gold-line);color:var(--text-2)}
+    .diagnosis-strip {
+      font-size: 14px;
+      font-weight: 400;
+      line-height: 1.5;
+      color: var(--text-2);
+      padding: 14px 18px;
+      border: 1px solid var(--gold-line);
+      border-left: 3px solid var(--gold);
+      background: rgba(196, 163, 90, 0.06);
+      border-radius: var(--r);
+      margin-bottom: 36px;
+      max-width: 100%;
+    }
 
-/* step down */
-.step-down{
-  background:var(--bg-1);border:1px solid var(--line);
-  border-radius:var(--r);padding:20px 22px;
-  margin-bottom:32px;
-}
-.step-down-label{font-size:10px;letter-spacing:0.16em;text-transform:uppercase;color:var(--text-5);display:block;margin-bottom:10px;}
-.step-down-title{font-family:var(--serif);font-size:18px;color:var(--text-2);margin-bottom:14px;}
-.step-down-cta{
-  display:inline-flex;align-items:center;gap:8px;
-  font-size:10px;letter-spacing:0.14em;text-transform:uppercase;
-  color:var(--text-4);border:1px solid var(--line);
-  border-radius:var(--r);padding:10px 16px;
-  text-decoration:none;transition:border-color 150ms,color 150ms;font-family:var(--sans);
-}
-.step-down-cta:hover{border-color:var(--gold-line);color:var(--text-2)}
+    .diagnosis-strip--default {
+      border-left-color: var(--text-muted);
+    }
 
-/* receive list */
-.receive-list{list-style:none;display:flex;flex-direction:column;gap:0;border-top:1px solid var(--line-2);margin-top:20px;}
-.receive-item{display:flex;align-items:flex-start;gap:18px;padding:16px 0;border-bottom:1px solid var(--line-2);}
-.receive-n{font-family:var(--serif);font-size:13px;color:var(--gold);opacity:0.5;min-width:18px;padding-top:3px;}
-.receive-text{font-size:16px;color:var(--text-2);line-height:1.55}
-.closing-italic{font-size:14px;color:var(--text-5);letter-spacing:0.04em;margin-top:20px;font-style:italic;font-family:var(--serif);}
+    h1 {
+      font-family: var(--serif);
+      font-weight: 300;
+      font-size: clamp(36px, 7vw, 58px);
+      line-height: 1.06;
+      letter-spacing: -0.02em;
+      color: var(--text);
+      margin-bottom: 18px;
+      max-width: 18ch;
+    }
 
-/* steps */
-.steps{display:flex;flex-direction:column;gap:0;margin-top:20px}
-.step{display:grid;grid-template-columns:30px 1fr;gap:16px;padding:15px 0;border-bottom:1px solid var(--line-2);align-items:start;}
-.step:first-child{border-top:1px solid var(--line-2)}
-.step:last-child{border-bottom:none}
-.step-n{font-family:var(--serif);font-size:25px;font-weight:300;color:var(--gold);opacity:0.33;line-height:1.1;}
-.step-text{font-size:16px;color:var(--text-2);line-height:1.55;padding-top:4px}
+    .hero-sub {
+      font-size: 17px;
+      line-height: 1.6;
+      color: var(--text-2);
+      max-width: 38ch;
+      margin-bottom: 20px;
+    }
 
-/* fit */
-.fit-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-.fit-block{padding:24px 20px;border-radius:var(--r);}
-.fit-yes{background:rgba(196,163,90,0.05);border:1px solid var(--gold-line);}
-.fit-no{background:var(--bg-1);border:1px solid var(--line);}
-.fit-title{font-size:10px;letter-spacing:0.16em;text-transform:uppercase;font-weight:400;margin-bottom:14px;display:block;}
-.fit-yes .fit-title{color:var(--gold)}
-.fit-no .fit-title{color:var(--text-5)}
-.fit-list{list-style:none;display:flex;flex-direction:column;gap:10px}
-.fit-list li{font-size:15px;line-height:1.5;padding-left:14px;position:relative;}
-.fit-yes .fit-list li{color:var(--text-2)}
-.fit-yes .fit-list li::before{content:"";width:4px;height:4px;border-radius:50%;background:var(--gold);opacity:0.55;position:absolute;top:8px;left:0;}
-.fit-no .fit-list li{color:var(--text-4)}
-.fit-no .fit-list li::before{content:"";width:4px;height:4px;border-radius:50%;background:var(--text-5);opacity:0.6;position:absolute;top:8px;left:0;}
+    .delivery-line {
+      font-size: 13px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 56px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
 
-/* price reframe */
-.price-reframe{border-top:1px solid var(--gold-line);border-bottom:1px solid var(--gold-line);padding:32px 0;}
-.price-reframe-text{font-family:var(--serif);font-weight:300;font-size:clamp(19px,3vw,26px);color:var(--text-2);line-height:1.5;font-style:italic;max-width:38ch;}
-.price-reframe-text strong{color:var(--text);font-weight:400;font-style:normal;}
+    .delivery-line::before {
+      content: "";
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--gold);
+      opacity: 0.5;
+      flex-shrink: 0;
+    }
 
-/* escalation */
-.escalation{background:var(--bg-1);border:1px solid var(--line);border-radius:var(--r);padding:28px 24px;}
-.escalation-eyebrow{font-size:10px;letter-spacing:0.16em;text-transform:uppercase;color:var(--text-5);display:block;margin-bottom:14px;}
-.escalation-title{font-family:var(--serif);font-weight:300;font-size:clamp(19px,3vw,24px);color:var(--text);margin-bottom:10px;}
-.escalation-body{font-size:15px;color:var(--text-4);margin-bottom:22px;max-width:44ch;}
+    .section { margin-bottom: 64px; }
 
-.div{height:1px;background:var(--line-2);margin:0}
+    .section h2 {
+      font-family: var(--serif);
+      font-weight: 300;
+      font-size: clamp(22px, 3.5vw, 30px);
+      line-height: 1.15;
+      letter-spacing: -0.01em;
+      color: var(--text);
+      margin-bottom: 14px;
+    }
 
-.foot{border-top:1px solid var(--line-2);padding-top:22px;display:flex;flex-wrap:wrap;gap:10px 16px;margin-top:80px;}
-.foot a{font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-5);transition:color 140ms;}
-.foot a:hover{color:var(--text-4)}
-.foot a.nav-club{color:var(--gold)}
-.foot a.nav-club:hover{color:var(--gold);filter:brightness(1.12)}
+    .section p,
+    .section li {
+      font-size: 16px;
+      line-height: 1.65;
+      color: var(--text-2);
+      max-width: 46ch;
+    }
 
-@media(max-width:560px){
-  .fit-grid{grid-template-columns:1fr}
-  h1{font-size:clamp(34px,9vw,48px)}
-  .page{padding:0 18px 80px}
-  .top-nav{margin-bottom:64px}
-  .nav-links{gap:14px}
-}
-</style>
+    .section p + p { margin-top: 12px; }
+
+    .bullet-list {
+      list-style: none;
+      margin-top: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      border-top: 1px solid var(--line-2);
+    }
+
+    .bullet-list li {
+      padding: 14px 0 14px 20px;
+      border-bottom: 1px solid var(--line-2);
+      position: relative;
+      max-width: none;
+    }
+
+    .bullet-list li::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 1.15em;
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--gold);
+      opacity: 0.45;
+    }
+
+    .emphasis-block {
+      background: var(--bg-1);
+      border: 1px solid var(--line);
+      border-top: 2px solid var(--gold);
+      border-radius: var(--r);
+      padding: 24px 22px;
+    }
+
+    .emphasis-block h2 { margin-bottom: 16px; }
+
+    .urgency-block p {
+      max-width: 46ch;
+    }
+
+    .clarifier {
+      font-size: 15px;
+      line-height: 1.6;
+      color: var(--text-2);
+      padding: 20px 0;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      max-width: 46ch;
+    }
+
+    .cta-area {
+      margin-top: 48px;
+    }
+
+    .hero-price {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .hero-price-val {
+      font-family: var(--serif);
+      font-size: clamp(30px, 5vw, 44px);
+      font-weight: 300;
+      color: var(--text);
+      letter-spacing: -0.02em;
+    }
+
+    .hero-price-note {
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 54px;
+      padding: 16px 28px;
+      border-radius: var(--r);
+      font-size: 11px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      font-family: var(--sans);
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: background 150ms ease, transform 120ms ease;
+      text-decoration: none;
+      width: 100%;
+    }
+
+    .btn:active { transform: scale(0.98); }
+
+    .btn-primary {
+      background: var(--blue);
+      color: #fff;
+    }
+
+    .btn-primary:hover { background: var(--blue-hi); }
+
+    .cta-support {
+      margin-top: 16px;
+      font-size: 15px;
+      line-height: 1.6;
+      color: var(--text-2);
+      max-width: 44ch;
+    }
+
+    .fallback-link {
+      display: inline-block;
+      margin-top: 22px;
+      font-size: 12px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--gold);
+      border-bottom: 1px solid transparent;
+      padding-bottom: 2px;
+      transition: border-color 150ms;
+    }
+
+    .fallback-link:hover { border-bottom-color: var(--gold-line); }
+
+    .fallback-link[hidden] { display: none !important; }
+
+    .foot {
+      border-top: 1px solid var(--line-2);
+      padding-top: 24px;
+      margin-top: 72px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px 18px;
+    }
+
+    .foot a {
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      transition: color 140ms;
+    }
+
+    .foot a:hover { color: var(--text-2); }
+    .foot a.nav-club { color: var(--gold); }
+
+    @media (max-width: 560px) {
+      .page { padding: 0 18px 96px; }
+      h1 { max-width: none; }
+      .top-nav { margin-bottom: 44px; }
+    }
+  </style>
 </head>
 <body>
-<div class="page">
+  <div class="page">
+    <header class="top-nav">
+      <a href="/" class="nav-logo">Stephuary</a>
+      <nav class="nav-links" aria-label="Primary">
+        <a href="/pricing" class="nav-link">Pricing</a>
+        <a href="/access" class="nav-link nav-link--club">.5% Club</a>
+        <a href="https://stephuary.substack.com" class="nav-link" target="_blank" rel="noopener">Substack</a>
+      </nav>
+    </header>
 
-  <div class="top-nav">
-    <a href="/" class="nav-logo">Stephuary</a>
-    <div class="nav-links">
-      <a href="/pricing" class="nav-link">Pricing</a>
-      <a href="/access" class="nav-link nav-link--club">.5% Club</a>
-      <a href="https://stephuary.substack.com" class="nav-link" target="_blank" rel="noopener">Grown spaghetti</a>
-      <a href="https://onlysometimesclub.com" class="nav-link" target="_blank" rel="noopener noreferrer">Only Sometimes Club</a>
-    </div>
+    <main id="snapshot-root">
+      <p class="kicker">Snapshot</p>
+      <p class="diagnosis-strip" id="el-diagnosis" aria-live="polite"></p>
+      <h1 id="el-headline"></h1>
+      <p class="hero-sub" id="el-subhead"></p>
+      <p class="delivery-line">Delivered within 48 hours</p>
+
+      <section class="section" aria-labelledby="meaning-heading">
+        <h2 id="meaning-heading">What this usually means</h2>
+        <p id="el-meaning"></p>
+      </section>
+
+      <section class="section" aria-labelledby="what-you-get-heading">
+        <h2 id="what-you-get-heading">What you get</h2>
+        <p>In 48 hours, you’ll receive a clear breakdown of:</p>
+        <ul class="bullet-list" id="list-what-you-get"></ul>
+      </section>
+
+      <section class="section emphasis-block" aria-labelledby="emphasis-heading">
+        <h2 id="emphasis-heading"></h2>
+        <ul class="bullet-list" id="list-emphasis"></ul>
+      </section>
+
+      <section class="section urgency-block" aria-labelledby="urgency-heading">
+        <h2 id="urgency-heading">Why this matters now</h2>
+        <p id="el-urgency"></p>
+      </section>
+
+      <p class="clarifier" id="el-clarifier"></p>
+
+      <section class="cta-area" aria-labelledby="cta-price-label">
+        <div class="hero-price" id="cta-price-wrap">
+          <span class="hero-price-val" aria-hidden="true">$950</span>
+          <span class="hero-price-note" id="cta-price-label">Snapshot</span>
+        </div>
+        <a class="btn btn-primary" id="el-cta" href="https://checkout.stripe.com/snapshot-placeholder">Get your Snapshot</a>
+        <p class="cta-support" id="el-cta-support"></p>
+        <a class="fallback-link" id="el-fallback-diagnostic" href="/capture">Start Diagnostic</a>
+      </section>
+    </main>
+
+    <footer class="foot">
+      <a href="/">Home</a>
+      <a href="/pricing">Pricing</a>
+      <a href="/access" class="nav-club">.5% Club</a>
+      <a href="https://stephuary.substack.com" target="_blank" rel="noopener">Substack</a>
+    </footer>
   </div>
 
-  <!-- HERO -->
-  <section class="hero">
-
-    <!-- STEP-DOWN BLOCK | appears first -->
-    <div class="step-down">
-      <span class="step-down-label">Not ready for a full breakdown?</span>
-      <p class="step-down-title">Start with the free diagnostic.</p>
-      <a href="/capture" class="step-down-cta">Start Diagnostic &rarr;</a>
-    </div>
-
-    <span class="overline">Snapshot</span>
-    <h1>Remove guesswork in 48 hours</h1>
-
-    <div class="hero-price">
-      <span class="hero-price-val">$950</span>
-      <span class="hero-price-note">full diagnostic</span>
-    </div>
-
-    <p class="hero-sub">You already see the problem. This makes it usable.<br><br>Clear direction. No overthinking.</p>
-
-    <a class="btn btn-primary" href="https://checkout.stripe.com/snapshot-placeholder">
-      Request a Snapshot
-    </a>
-    <p style="font-size:12px;color:var(--text-5);letter-spacing:0.06em;margin-top:14px;line-height:1.5;max-width:42ch;">48-hour clarity. No guesswork.</p>
-    <div class="delivery-note">
-      <span class="delivery-dot"></span>
-      <span>Delivered within 48 hours</span>
-    </div>
-  </section>
-
-  <!-- WHAT THIS IS -->
-  <section class="section">
-    <span class="overline-dim">What this is</span>
-    <h2>Everything reviewed.<br>One priority order.</h2>
-    <p style="margin-top:16px;font-size:16px;line-height:1.7;color:var(--text-2);max-width:46ch;">
-      This covers your full situation: offer, positioning, audience, revenue model, and execution.
-    </p>
-    <p style="margin-top:12px;font-size:16px;color:var(--text-3);max-width:46ch;">
-      You get one clear document. What's wrong, why, what to fix first.
-    </p>
-  </section>
-
-  <div class="div" style="margin-bottom:80px;"></div>
-
-  <!-- WHAT YOU RECEIVE -->
-  <section class="section">
-    <span class="overline-dim">What you receive</span>
-    <ul class="receive-list">
-      <li class="receive-item">
-        <span class="receive-n">01</span>
-        <span class="receive-text">Primary issue identified with reasoning</span>
-      </li>
-      <li class="receive-item">
-        <span class="receive-n">02</span>
-        <span class="receive-text">Full audit of offer, audience, positioning, and revenue model</span>
-      </li>
-      <li class="receive-item">
-        <span class="receive-n">03</span>
-        <span class="receive-text">What to ignore for now and why</span>
-      </li>
-      <li class="receive-item">
-        <span class="receive-n">04</span>
-        <span class="receive-text">Priority order for what to fix</span>
-      </li>
-      <li class="receive-item">
-        <span class="receive-n">05</span>
-        <span class="receive-text">Immediate next steps, specific and actionable</span>
-      </li>
-    </ul>
-    <p class="closing-italic">This is built to be used, not read.</p>
-  </section>
-
-  <div class="div" style="margin-bottom:80px;"></div>
-
-  <!-- HOW IT WORKS -->
-  <section class="section">
-    <span class="overline-dim">How it works</span>
-    <div class="steps">
-      <div class="step">
-        <span class="step-n">1</span>
-        <span class="step-text">Submit your current situation after checkout. As much or as little as you know.</span>
-      </div>
-      <div class="step">
-        <span class="step-n">2</span>
-        <span class="step-text">I review it directly across all key areas.</span>
-      </div>
-      <div class="step">
-        <span class="step-n">3</span>
-        <span class="step-text">You receive your Snapshot within 48 hours, ready to act on.</span>
-      </div>
-    </div>
-  </section>
-
-  <div class="div" style="margin-bottom:80px;"></div>
-
-  <!-- FIT -->
-  <section class="section">
-    <div class="fit-grid">
-      <div class="fit-block fit-yes">
-        <span class="fit-title">This is for you if</span>
-        <ul class="fit-list">
-          <li>More than one thing feels off</li>
-          <li>You want the full picture before deciding</li>
-          <li>You need priority order, not just a list</li>
-        </ul>
-      </div>
-      <div class="fit-block fit-no">
-        <span class="fit-title">Not for you if</span>
-        <ul class="fit-list">
-          <li>You already know the issue</li>
-          <li>You only need one thing reviewed</li>
-          <li>You want general advice</li>
-        </ul>
-      </div>
-    </div>
-  </section>
-
-  <!-- PRICE REFRAME -->
-  <section class="section">
-    <div class="price-reframe">
-      <p class="price-reframe-text">
-        <strong>$950</strong> is not for the report.<br><br>
-        It is for knowing exactly what to work on, in what order, so nothing is wasted.
-      </p>
-    </div>
-  </section>
-
-  <!-- ESCALATION | Private Access -->
-  <section class="section">
-    <div class="escalation">
-      <span class="escalation-eyebrow">If you need more than a diagnostic</span>
-      <p class="escalation-title">Private Access is the next layer.</p>
-      <p class="escalation-body">Custom systemss, direct work, and private builds for situations that go beyond a review.</p>
-      <a class="btn btn-secondary" href="/private-access">Request Private Access</a>
-    </div>
-  </section>
-
-  <!-- FINAL CTA -->
-  <section>
-    <div class="div" style="margin-bottom:48px;"></div>
-    <span class="overline-dim" style="margin-bottom:20px;">Ready</span>
-    <a class="btn btn-primary" href="https://checkout.stripe.com/snapshot-placeholder" style="margin-bottom:14px;">
-      Request a Snapshot
-    </a>
-    <p style="font-size:12px;color:var(--text-5);letter-spacing:0.06em;margin-top:12px;">48-hour clarity. No guesswork.</p>
-    <div class="delivery-note">
-      <span class="delivery-dot"></span>
-      <span>Delivered within 48 hours.</span>
-    </div>
-  </section>
-
-  <footer class="foot">
-    <a href="/">Home</a>
-    <a href="/access" class="nav-club">.5% Club</a>
-    <a href="https://stephuary.substack.com" target="_blank" rel="noopener">Substack</a>
-    <a href="https://onlysometimesclub.com" target="_blank" rel="noopener noreferrer">Only Sometimes Club</a>
-  </footer>
-
-</div>
-<script src="/stephuary-progress.js"></script>
-<script>
+  <script src="/stephuary-progress.js"></script>
+  <script>
 (function () {
-  var el = document.getElementById('snap-nav-restart');
-  if (el) {
-    el.addEventListener('click', function (e) {
+  /* --- snapshotContent: single source of truth for copy variants --- */
+  const snapshotContent = {
+    clarity: {
+      diagnosisLabel: "Based on your result: Clarity is your current bottleneck",
+      headline: "Fix your clarity first. Everything else follows.",
+      subhead: "People are seeing your work, but they’re not understanding it fast enough to act.",
+      meaning: "The problem is not always the quality of the offer. It’s that the offer is not landing clearly enough for someone to make a decision quickly. When that happens, people hesitate, leave, or tell themselves they’ll come back later.",
+      emphasisTitle: "Your Snapshot will show:",
+      emphasisBullets: [
+        "where your message gets unclear",
+        "what people are not understanding fast enough",
+        "how to tighten the offer so the next step feels obvious"
+      ],
+      urgency: "More visibility will not fix a weak landing. If people don’t understand what they’re buying, more traffic just means more missed conversion.",
+      ctaSupport: "Get the exact breakdown of what to clarify, what to remove, and what to fix first."
+    },
+    positioning: {
+      diagnosisLabel: "Based on your result: Positioning is your current bottleneck",
+      headline: "Your offer is not wrong. It’s aimed wrong.",
+      subhead: "The work may be strong. The issue is who it’s reaching, how it’s framed, and what it’s being compared to.",
+      meaning: "Positioning problems show up when the right people are not locking in fast enough, while the wrong people keep circling. That usually leads to explaining too much, attracting mixed-fit buyers, and pricing that feels harder to defend than it should.",
+      emphasisTitle: "Your Snapshot will show:",
+      emphasisBullets: [
+        "who the offer is actually strongest for",
+        "where the framing is pulling in the wrong buyer",
+        "how to reposition without rebuilding everything"
+      ],
+      urgency: "When positioning is off, even a strong offer feels weaker than it is. You end up competing on personality, trust, or availability instead of fit and value.",
+      ctaSupport: "Get the exact breakdown of what to reposition, what to stop saying, and where the offer should actually land."
+    },
+    structure: {
+      diagnosisLabel: "Based on your result: Structure is your current bottleneck",
+      headline: "You are doing too much manually. That’s the leak.",
+      subhead: "The issue is not just what you sell. It’s what happens before, during, and after someone says yes.",
+      meaning: "Structure problems show up when delivery depends too heavily on you each time. That creates hidden friction, inconsistent follow-through, unnecessary labor, and revenue that feels harder to stabilize than it should.",
+      emphasisTitle: "Your Snapshot will show:",
+      emphasisBullets: [
+        "where your process is breaking down",
+        "what should be standardized, sequenced, or automated",
+        "how to reduce drag without losing quality"
+      ],
+      urgency: "A business that depends on constant manual adjustment becomes harder to grow, harder to price, and harder to trust at scale.",
+      ctaSupport: "Get the exact breakdown of what to systemize, what to simplify, and what to fix first."
+    },
+    default: {
+      diagnosisLabel: "Find the real bottleneck first",
+      headline: "Fix the right thing first.",
+      subhead: "Snapshot turns your diagnostic into a clear correction plan.",
+      meaning: "You’ll get a focused breakdown of what is happening, what it’s costing, and what to fix first.",
+      emphasisTitle: "Your Snapshot will show:",
+      emphasisBullets: [
+        "why the problem is happening",
+        "where money or momentum is being lost",
+        "what to fix first"
+      ],
+      urgency: "Most people waste time fixing the wrong layer first.",
+      ctaSupport: "Start with the diagnostic for a more precise breakdown."
+    }
+  };
+
+  const WHAT_YOU_GET_BULLETS = [
+    "why this problem is happening",
+    "where money or momentum is being lost",
+    "what to fix first",
+    "what not to touch yet",
+    "the cleanest next-step path forward"
+  ];
+
+  /* --- localStorage parsing: try keys in priority order, never throw --- */
+  function safeParse(raw) {
+    if (!raw || typeof raw !== "string") return null;
+    try {
+      return JSON.parse(raw);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function readDiagnosticResults() {
+    try {
+      return safeParse(localStorage.getItem("diagnosticResults"));
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function readStephuaryResultV1() {
+    try {
+      return safeParse(localStorage.getItem("stephuary_result_v1"));
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function normalizeArea(value) {
+    if (!value || typeof value !== "string") return null;
+    var v = value.trim().toLowerCase();
+    if (v === "clarity" || v === "positioning" || v === "structure") return v;
+    return null;
+  }
+
+  function bottleneckFromScores(scores) {
+    if (!scores || typeof scores !== "object") return null;
+    var c = Number(scores.clarity);
+    var p = Number(scores.positioning);
+    var s = Number(scores.structure);
+    if (isNaN(c)) c = 0;
+    if (isNaN(p)) p = 0;
+    if (isNaN(s)) s = 0;
+    var max = Math.max(c, p, s);
+    if (max === 0) return null;
+    var order = ["clarity", "positioning", "structure"];
+    var candidates = order.filter(function (k) {
+      return (Number(scores[k]) || 0) === max;
+    });
+    if (candidates.length === 0) return null;
+    if (candidates.length === 1) return candidates[0];
+    for (var i = 0; i < order.length; i++) {
+      if (candidates.indexOf(order[i]) !== -1) return order[i];
+    }
+    return null;
+  }
+
+  function keywordAreaFromMainProblem(text) {
+    if (!text || typeof text !== "string") return null;
+    var t = text.toLowerCase();
+    if (t.indexOf("clarity") !== -1) return "clarity";
+    if (t.indexOf("positioning") !== -1) return "positioning";
+    if (t.indexOf("structure") !== -1) return "structure";
+    return null;
+  }
+
+  /* --- primary issue detection: lowest_area → main_problem keywords → scores → default --- */
+  function detectPrimaryIssue() {
+    var dr = readDiagnosticResults();
+    var legacy = readStephuaryResultV1();
+
+    if (dr && typeof dr === "object") {
+      if (dr.result && normalizeArea(dr.result.topCategory)) {
+        return normalizeArea(dr.result.topCategory);
+      }
+      var fromScores = bottleneckFromScores(dr.scores);
+      if (fromScores) return fromScores;
+      if (dr.diagnostic && typeof dr.diagnostic === "object") {
+        var dLow = normalizeArea(dr.diagnostic.lowest_area);
+        if (dLow) return dLow;
+        var dKw = keywordAreaFromMainProblem(String(dr.diagnostic.main_problem || dr.diagnostic.primary_issue || ""));
+        if (dKw) return dKw;
+      }
+    }
+
+    var diag = null;
+    if (legacy && typeof legacy === "object") {
+      if (legacy.diagnostic && typeof legacy.diagnostic === "object") {
+        diag = legacy.diagnostic;
+      } else {
+        diag = legacy;
+      }
+    }
+
+    if (diag) {
+      var low = normalizeArea(diag.lowest_area);
+      if (low) return low;
+      var mp = diag.main_problem || diag.primary_issue || "";
+      var kw = keywordAreaFromMainProblem(String(mp));
+      if (kw) return kw;
+    }
+
+    if (dr && typeof dr === "object" && dr.result && dr.result.headline) {
+      var hkw = keywordAreaFromMainProblem(String(dr.result.headline));
+      if (hkw) return hkw;
+    }
+
+    return "default";
+  }
+
+  /* --- content rendering + fallback handling --- */
+  function fillList(el, items) {
+    if (!el || !items) return;
+    el.innerHTML = "";
+    items.forEach(function (text) {
+      var li = document.createElement("li");
+      li.textContent = text;
+      el.appendChild(li);
+    });
+  }
+
+  function render() {
+    var key = detectPrimaryIssue();
+    if (key !== "clarity" && key !== "positioning" && key !== "structure") {
+      key = "default";
+    }
+
+    var content = snapshotContent[key] || snapshotContent.default;
+    var isDefault = key === "default";
+
+    var elDiagnosis = document.getElementById("el-diagnosis");
+    var elHeadline = document.getElementById("el-headline");
+    var elSub = document.getElementById("el-subhead");
+    var elMeaning = document.getElementById("el-meaning");
+    var elEmphasisTitle = document.getElementById("emphasis-heading");
+    var elUrgency = document.getElementById("el-urgency");
+    var elClarifier = document.getElementById("el-clarifier");
+    var elCtaSupport = document.getElementById("el-cta-support");
+    var elFallback = document.getElementById("el-fallback-diagnostic");
+
+    if (elDiagnosis) {
+      elDiagnosis.textContent = isDefault ? "Find the real bottleneck first" : content.diagnosisLabel;
+      elDiagnosis.classList.toggle("diagnosis-strip--default", isDefault);
+    }
+    if (elHeadline) elHeadline.textContent = content.headline;
+    if (elSub) elSub.textContent = content.subhead;
+    if (elMeaning) elMeaning.textContent = content.meaning;
+    if (elEmphasisTitle) elEmphasisTitle.textContent = content.emphasisTitle;
+    if (elUrgency) elUrgency.textContent = content.urgency;
+    if (elClarifier) {
+      elClarifier.textContent = isDefault
+        ? "Start with the diagnostic for a more precise breakdown."
+        : "This is not a general audit. It is built directly from your diagnostic result.";
+    }
+    if (elCtaSupport) elCtaSupport.textContent = content.ctaSupport;
+    if (elFallback) {
+      if (isDefault) elFallback.removeAttribute("hidden");
+      else elFallback.setAttribute("hidden", "");
+    }
+
+    fillList(document.getElementById("list-what-you-get"), WHAT_YOU_GET_BULLETS);
+    fillList(document.getElementById("list-emphasis"), content.emphasisBullets || []);
+  }
+
+  render();
+
+  var elRestart = document.getElementById("snap-nav-restart");
+  if (elRestart) {
+    elRestart.addEventListener("click", function (e) {
       e.preventDefault();
       if (window.StephuaryProgress) window.StephuaryProgress.confirmRestart();
     });
   }
 })();
-</script>
+  </script>
   <script src="/stephuary-interactive.js" defer></script>
 </body>
 </html>
