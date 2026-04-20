@@ -1,2135 +1,428 @@
-
 <!DOCTYPE html>
-<html lang="en" class="phase-page-min">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <script>
-    try {
-      var h = new Date().getHours();
-      var em = h >= 3 && h < 7;
-      var gh = h >= 4 && h < 7;
-      document.documentElement.classList.toggle('early-mode', em);
-      document.documentElement.classList.toggle('god-hour', gh);
-      document.documentElement.setAttribute('data-early-mode', em ? 'true' : 'false');
-      document.documentElement.setAttribute('data-god-hour', gh ? 'true' : 'false');
-    } catch (e) {
-      document.documentElement.setAttribute('data-early-mode', 'false');
-      document.documentElement.setAttribute('data-god-hour', 'false');
-    }
-  </script>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>Diagnostic · Phase 01 .  Capture · Stephuary</title>
-  <meta name="description" content="Diagnostic phase 01 (Capture). How you perceive, respond, and where avoidance sits." />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link rel="stylesheet" href="/stephuary-interactive.css" />
-
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Stephuary Diagnostic</title>
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    .sr-only {
-      position: absolute;
-      width: 1px;
-      height: 1px;
-      padding: 0;
-      margin: -1px;
-      overflow: hidden;
-      clip: rect(0, 0, 0, 0);
-      white-space: nowrap;
-      border: 0;
-    }
-
     :root {
-      --bg: #0c0a09;
-      --bg-deep: #070605;
-      --surface: rgba(26, 22, 18, 0.72);
-      --surface-raised: rgba(32, 28, 24, 0.88);
-      --border: rgba(154, 130, 96, 0.18);
-      --border-dim: rgba(232, 224, 212, 0.06);
-      --blue: #3a6bff;
-      --blue-soft: rgba(58, 107, 255, 0.12);
-      --gold: #9a8260;
-      --gold-dim: #7a6b58;
-      --gold-line: rgba(154, 130, 96, 0.22);
-      --cream: #e8e0d4;
-      --selected-bg: rgba(154, 130, 96, 0.09);
-      --text: #ddd5c8;
-      --text-dim: rgba(221, 213, 200, 0.48);
-      --text-mid: #b8aea0;
-      --text-muted: #8a8175;
-      --serif: var(--font-serif, 'Playfair Display', Georgia, serif);
-      --sans: var(--font-sans, 'Inter', system-ui, sans-serif);
-      --mono: 'DM Mono', ui-monospace, monospace;
-      --radius: 6px;
-      --trans: 200ms ease;
+      --bg: #0a0a1a;
+      --surface: rgba(255, 255, 255, 0.03);
+      --surface-2: rgba(255, 255, 255, 0.05);
+      --line: rgba(255, 255, 255, 0.12);
+      --text: #ffffff;
+      --text-muted: #a0a0b0;
+      --gold: #c8a96e;
+      --gold-soft: rgba(200, 169, 110, 0.18);
+      --ok: #88d39c;
+      --danger: #ff8a9f;
     }
 
-    html {
-      background: var(--bg);
-      color: var(--text);
-      font-family: var(--sans);
-      font-weight: 400;
-      font-size: var(--text-body, 1rem);
-      -webkit-font-smoothing: antialiased;
-    }
+    * { box-sizing: border-box; }
 
     body {
+      margin: 0;
       min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 52px 16px 100px;
-      position: relative;
-      background-image:
-        radial-gradient(ellipse 80% 50% at 50% -20%, rgba(107, 83, 68, 0.08) 0%, transparent 50%),
-        radial-gradient(ellipse 60% 40% at 100% 100%, rgba(20, 18, 16, 0.9) 0%, transparent 45%);
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(120% 70% at 20% 0%, rgba(61, 12, 44, 0.28) 0%, transparent 60%),
+        radial-gradient(110% 80% at 90% 85%, rgba(61, 12, 44, 0.2) 0%, transparent 58%),
+        linear-gradient(180deg, #0a0a1a 0%, #0f0b1c 100%);
+      display: grid;
+      place-items: center;
+      padding: 20px;
     }
 
-    body::after {
-      content: '';
-      position: fixed;
-      inset: 0;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
-      opacity: 0.028;
-      pointer-events: none;
-      z-index: 0;
+    .app {
+      width: 100%;
+      max-width: 760px;
+      border: 1px solid var(--line);
+      background: var(--surface);
+      backdrop-filter: blur(6px);
+      border-radius: 16px;
+      padding: 24px;
+      transform: translateY(0);
+      opacity: 1;
+      transition: opacity 240ms ease, transform 240ms ease;
     }
 
-    #flow-wrap {
-      position: relative;
-      z-index: 1;
+    .app.is-transitioning {
+      opacity: 0;
+      transform: translateY(10px);
     }
 
-    .global-nav {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      z-index: 200;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 18px 48px 20px;
-      background: linear-gradient(to bottom, rgba(12, 10, 9, 0.94) 0%, rgba(12, 10, 9, 0.65) 70%, transparent 100%);
-      border-bottom: 1px solid var(--border-dim);
-      box-shadow: 0 1px 0 rgba(58, 107, 255, 0.06);
+    .progress {
+      font-size: 12px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 18px;
     }
-    .global-nav a {
-      font-family: var(--mono);
-      font-size: 9px;
+
+    .question {
+      font-family: "Playfair Display", Georgia, serif;
+      font-size: clamp(28px, 4vw, 40px);
+      line-height: 1.15;
+      margin: 0 0 20px;
+      letter-spacing: -0.01em;
+    }
+
+    .answers {
+      display: grid;
+      gap: 12px;
+    }
+
+    .answer-btn {
+      width: 100%;
+      text-align: left;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: var(--surface);
+      color: var(--text);
+      padding: 18px 16px;
+      font-size: 16px;
+      line-height: 1.45;
+      cursor: pointer;
+      transition: border-color 180ms ease, background 180ms ease, transform 180ms ease;
+      min-height: 64px;
+    }
+
+    .answer-btn:hover {
+      border-color: rgba(200, 169, 110, 0.5);
+      background: var(--surface-2);
+    }
+
+    .answer-btn:active { transform: translateY(1px); }
+
+    .answer-btn.is-selected {
+      border-color: var(--gold);
+      background: var(--gold-soft);
+    }
+
+    .answer-btn.is-locked { pointer-events: none; opacity: 0.65; }
+
+    .feedback {
+      margin-top: 14px;
+      padding: 12px 14px;
+      border: 1px solid var(--line);
+      border-left: 3px solid var(--gold);
+      border-radius: 10px;
+      color: var(--text-muted);
+      font-size: 14px;
+      line-height: 1.5;
+      background: rgba(255, 255, 255, 0.02);
+      display: none;
+    }
+
+    .feedback.is-visible { display: block; }
+    .feedback.good { border-left-color: var(--ok); }
+    .feedback.warn { border-left-color: var(--danger); }
+
+    .interstitial,
+    .analyzing {
+      text-align: center;
+      padding: 42px 14px;
+    }
+
+    .interstitial-tag,
+    .analyzing-tag {
+      font-size: 11px;
       letter-spacing: 0.16em;
       text-transform: uppercase;
-      text-decoration: none;
-      color: var(--text-muted);
-    }
-    .global-nav a:hover { color: var(--cream); }
-    .global-nav .gn-logo { color: var(--gold); letter-spacing: 0.22em; }
-    .global-nav .gn-links { display: flex; gap: 16px 18px; flex-wrap: wrap; align-items: center; }
-    .global-nav .gn-links a.nav-club { color: var(--gold); }
-    .global-nav .gn-links a.nav-club:hover { color: var(--cream); filter: brightness(1.1); }
-    .global-nav .gn-startover {
-      font-family: var(--mono);
-      font-size: 9px;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: var(--text-muted);
-      background: none;
-      border: none;
-      cursor: pointer;
-      padding: 4px 0;
-    }
-    .global-nav .gn-startover:hover { color: var(--cream); }
-
-    .step-micro-hint {
-      font-size: 13px;
-      line-height: 1.45;
-      color: var(--text-muted);
-      margin: 0 0 14px;
-      max-width: 40ch;
-    }
-    .step-directive:empty,
-    .step-micro:empty {
-      display: none;
-    }
-
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      font-family: var(--sans);
-      font-weight: 300;
-      font-size: 11px;
-      letter-spacing: 0.22em;
-      text-transform: uppercase;
-      padding: 14px 36px;
-      border: 1px solid var(--gold);
-      background: transparent;
       color: var(--gold);
-      cursor: pointer;
-      transition: background var(--trans), color var(--trans), border-color var(--trans);
-      border-radius: var(--radius);
-      min-height: 48px;
-      text-decoration: none;
+      margin-bottom: 10px;
     }
 
-    .btn:hover:not(:disabled) {
-      background: var(--gold);
-      color: var(--bg);
-    }
-
-    .btn:disabled {
-      opacity: 0.4;
-      cursor: not-allowed;
-      border-color: #383832;
-      color: #383832;
-      background: transparent;
-    }
-
-    .btn-ghost {
-      border-color: var(--border-dim);
-      color: var(--text-dim);
-      font-size: 10px;
-      padding: 12px 22px;
-    }
-
-    .btn-ghost:hover:not(:disabled) {
-      border-color: var(--border);
-      color: var(--text-mid);
-      background: transparent;
-    }
-
-    .btn-start {
-      background: var(--gold);
-      color: var(--bg);
-      border-color: var(--gold);
-      font-size: 11px;
-      padding: 16px 48px;
-    }
-
-    .btn-start:hover {
-      background: #d4b36a;
-      border-color: #d4b36a;
-      color: var(--bg);
-    }
-
-    .btn-terminal {
-      background: var(--gold);
-      color: var(--bg);
-      border-color: var(--gold);
-    }
-
-    .btn-terminal:hover:not(:disabled) {
-      background: #d4b36a;
-      border-color: #d4b36a;
-      color: var(--bg);
-    }
-
-    #flow-wrap {
-      display: none;
-      width: 100%;
-      max-width: 1180px;
-      padding-top: 44px;
-    }
-
-    .capture-layout {
-      display: grid;
-      grid-template-columns: 112px minmax(0, 1fr) minmax(220px, 280px);
-      gap: 28px 32px;
-      align-items: start;
-      width: 100%;
-    }
-
-    .rail {
-      position: sticky;
-      top: 72px;
-      display: flex;
-      flex-direction: column;
-      gap: 0;
-      padding-top: 8px;
-    }
-
-    .rail-item {
-      font-size: 9px;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: var(--text-dim);
-      padding: 10px 0;
-      border-left: 2px solid var(--border-dim);
-      padding-left: 12px;
-      transition: color var(--trans), border-color var(--trans);
-      line-height: 1.35;
-    }
-
-    .rail-item.done {
-      color: var(--text-mid);
-      border-left-color: rgba(154, 130, 96, 0.4);
-    }
-
-    .rail-item.active {
-      color: var(--gold);
-      border-left-color: var(--gold);
-    }
-
-    .main-col {
-      min-width: 0;
-      max-width: 580px;
-      justify-self: center;
-      width: 100%;
-    }
-
-    .live-panel {
-      position: sticky;
-      top: 72px;
-      border: 1px solid var(--border);
-      border-top: 2px solid var(--gold);
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04), 0 12px 40px rgba(0, 0, 0, 0.35);
-      background: var(--surface-raised);
-      padding: 0;
-      max-height: calc(100vh - 100px);
-      overflow-y: auto;
-    }
-
-    .live-panel-head {
-      font-size: 10px;
-      letter-spacing: 0.22em;
-      text-transform: uppercase;
-      color: var(--gold);
-      padding: 18px 20px 12px;
-      border-bottom: 1px solid var(--border-dim);
-    }
-
-    .live-field {
-      padding: 14px 20px;
-      border-bottom: 1px solid var(--border-dim);
-    }
-
-    .live-field:last-child { border-bottom: none; }
-
-    .live-label {
-      font-size: 9px;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      color: var(--text-dim);
-      margin-bottom: 8px;
-    }
-
-    .live-value {
-      font-size: 12px;
-      color: var(--text-mid);
-      line-height: 1.65;
-    }
-
-    .step-checkpoint {
-      font-size: 12px;
-      color: var(--text-dim);
-      letter-spacing: 0.04em;
-      line-height: 1.55;
-      margin: 0 0 20px;
-      padding: 12px 14px;
-      border-left: 2px solid rgba(196, 163, 90, 0.45);
-    }
-
-    .step-validation {
-      font-size: 12px;
-      color: var(--gold-dim);
-      letter-spacing: 0.03em;
-      line-height: 1.5;
-      margin: 14px 0 0;
-      min-height: 1.4em;
-    }
-
-    .capture-flash {
-      display: none;
-      position: fixed;
-      bottom: 28px;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 150;
-      font-size: 11px;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--gold);
-      text-align: center;
-      min-height: 1.2em;
-      pointer-events: none;
-    }
-
-    #building-overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      z-index: 500;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      background: rgba(8, 8, 7, 0.92);
-      backdrop-filter: blur(6px);
-    }
-
-    #building-overlay p {
-      font-family: var(--serif);
-      font-size: clamp(22px, 4vw, 32px);
-      font-weight: 300;
-      color: var(--text);
-      letter-spacing: -0.02em;
-    }
-
-    .sys-lead-note {
-      font-size: 13px;
-      line-height: 1.55;
-      color: var(--text-dim);
-      margin: 0 0 10px;
-      max-width: 48ch;
-    }
-
-    .summary-hit {
-      font-family: var(--serif);
-      font-size: clamp(28px, 5vw, 40px);
-      font-weight: 300;
-      line-height: 1.15;
-      margin-bottom: 12px;
-      color: var(--text);
-    }
-
-    .summary-confidence {
-      font-size: 13px;
-      color: var(--text-dim);
-      letter-spacing: 0.03em;
-      line-height: 1.65;
-      margin-bottom: 28px;
-      max-width: 42em;
-    }
-
-    .progress-bar-wrap {
-      width: 100%;
-      margin-bottom: 40px;
-    }
-
-    .progress-meta {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 12px;
-    }
-
-    .progress-label {
-      font-size: 10px;
-      letter-spacing: 0.25em;
-      text-transform: uppercase;
-      color: var(--text-dim);
-    }
-
-    .progress-count {
-      font-family: var(--serif);
-      font-size: 13px;
-      color: var(--gold);
-    }
-
-    .progress-track {
-      width: 100%;
-      height: 2px;
-      background: var(--border-dim);
-      border-radius: 1px;
-      box-shadow: 0 0 20px rgba(58, 107, 255, 0.08);
-    }
-
-    .progress-fill {
-      height: 100%;
-      background: linear-gradient(90deg, var(--gold) 0%, rgba(58, 107, 255, 0.65) 100%);
-      border-radius: 1px;
-      transition: width 520ms cubic-bezier(0.4,0,0.2,1);
-    }
-
-    .step {
-      display: none;
-      flex-direction: column;
-      width: 100%;
-      animation: stepIn 380ms ease forwards;
-    }
-
-    .step.active { display: flex; }
-
-    @keyframes stepIn {
-      from { opacity: 0; transform: translateY(12px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-
-    .step-header { margin-bottom: 36px; }
-
-    .step-instruction {
-      font-family: var(--serif);
-      font-size: clamp(26px, 4.5vw, 40px);
-      font-weight: 300;
-      line-height: 1.15;
-      margin-bottom: 12px;
-    }
-
-    .step-directive {
-      font-size: 14px;
-      font-weight: 300;
-      color: var(--text-mid);
-      line-height: 1.7;
-    }
-
-    .step-micro {
-      font-size: 11px;
-      color: var(--text-dim);
-      letter-spacing: 0.04em;
-      margin-top: 10px;
-      line-height: 1.7;
-    }
-
-    .option-list {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      margin-bottom: 8px;
-    }
-
-    .option-item {
-      display: flex;
-      align-items: center;
-      padding: 18px 20px;
-      border: 1px solid var(--border);
-      cursor: pointer;
-      transition: border-color var(--trans), background var(--trans), color var(--trans);
-      border-radius: var(--radius);
-      font-size: 14px;
-      font-weight: 300;
-      color: var(--text-mid);
-      letter-spacing: 0.015em;
-      user-select: none;
-      -webkit-tap-highlight-color: transparent;
-      line-height: 1.45;
-    }
-
-    .option-item:hover {
-      border-color: var(--gold-dim);
-      color: var(--text);
-    }
-
-    .option-item.selected {
-      border-color: var(--gold);
-      color: var(--text);
-      background: var(--selected-bg);
-    }
-
-    .option-item.selected::after {
-      content: '';
-      display: block;
-      width: 5px;
-      height: 5px;
-      border-radius: 50%;
-      background: var(--gold);
-      margin-left: auto;
-      flex-shrink: 0;
-    }
-
-    .option-item.dim { pointer-events: none; opacity: 0.45; }
-
-    .nav-row {
-      display: flex;
-      gap: 12px;
-      margin-top: 36px;
-      align-items: center;
-    }
-
-    #summary {
-      display: none;
-      flex-direction: column;
-      width: 100%;
-      max-width: 640px;
-      padding-top: 32px;
-      animation: stepIn 400ms ease forwards;
-      margin: 0 auto;
-    }
-
-    .summary-phase-tag {
-      font-size: 10px;
-      letter-spacing: 0.28em;
-      text-transform: uppercase;
-      color: var(--gold);
-      margin-bottom: 18px;
-    }
-
-    .summary-title {
-      font-family: var(--serif);
-      font-size: clamp(30px, 5.5vw, 48px);
-      font-weight: 300;
-      line-height: 1.1;
-      margin-bottom: 12px;
-    }
-
-    .summary-sub {
-      font-size: 13px;
-      color: var(--text-dim);
-      letter-spacing: 0.04em;
-      margin-bottom: 36px;
-    }
-
-    .result-section {
-      margin-bottom: 32px;
-    }
-
-    .result-h {
-      font-size: 10px;
-      letter-spacing: 0.22em;
-      text-transform: uppercase;
-      color: var(--gold);
-      margin-bottom: 12px;
-    }
-
-    .result-archetype {
-      font-family: var(--serif);
+    .interstitial-copy,
+    .analyzing-copy {
+      font-family: "Playfair Display", Georgia, serif;
       font-size: clamp(26px, 4vw, 34px);
-      font-weight: 300;
       line-height: 1.2;
-      margin-bottom: 8px;
-    }
-
-    .result-body {
-      font-size: 14px;
-      color: var(--text-mid);
-      line-height: 1.85;
-    }
-
-    .result-body p { margin-bottom: 12px; }
-    .result-body p:last-child { margin-bottom: 0; }
-
-    .result-list {
-      list-style: none;
-      margin-top: 8px;
-    }
-
-    .result-list li {
-      font-size: 14px;
-      color: var(--text-mid);
-      line-height: 1.75;
-      padding-left: 14px;
-      position: relative;
-      margin-bottom: 8px;
-    }
-
-    .result-list li::before {
-      content: '';
-      position: absolute;
-      left: 0;
-      top: 0.55em;
-      width: 4px;
-      height: 4px;
-      background: var(--gold-dim);
-      border-radius: 50%;
-      opacity: 0.75;
-    }
-
-    .result-direction {
-      border: 1px solid var(--border);
-      border-top: 2px solid var(--gold);
-      padding: 22px 24px;
-      margin: 28px 0;
-    }
-
-    .result-direction p {
-      font-family: var(--serif);
-      font-size: 18px;
-      font-weight: 300;
-      color: var(--text);
-      line-height: 1.45;
-    }
-
-    .result-router {
-      border: 1px solid var(--border);
-      padding: 22px 24px;
-      margin: 28px 0;
-    }
-
-    .result-router-directive {
-      margin-bottom: 18px;
-    }
-
-    .result-router-line {
-      font-size: 14px;
-      color: var(--text-mid);
-      line-height: 1.75;
-      margin: 0 0 8px 0;
-    }
-
-    .result-router-line:last-child {
-      margin-bottom: 0;
-    }
-
-    .result-diagnosis {
-      font-family: var(--serif);
-      font-size: clamp(17px, 2.4vw, 21px);
-      font-weight: 300;
-      line-height: 1.45;
-      color: var(--cream);
-      margin: 0 0 18px;
-      white-space: pre-line;
-    }
-
-    .result-context-bridge {
-      font-size: 14px;
-      line-height: 1.65;
-      color: var(--text-mid);
-      margin: 0 0 18px;
-    }
-
-    .result-primary-action {
-      font-size: 15px;
-      line-height: 1.6;
-      color: var(--text);
-      margin: 0 0 8px;
-    }
-
-    .result-h--supporting {
-      font-family: var(--mono);
-      font-size: 9px;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      color: var(--gold-dim);
-      margin-bottom: 8px;
-    }
-
-    .step-context-field {
-      width: 100%;
-      min-height: 120px;
-      margin: 12px 0 20px;
-      padding: 14px 16px;
-      font-family: var(--sans);
-      font-size: 15px;
-      line-height: 1.5;
-      color: var(--text);
-      background: rgba(8, 8, 7, 0.55);
-      border: 1px solid var(--border-dim);
-      border-radius: var(--radius);
-      resize: vertical;
-    }
-
-    .step-context-field:focus {
-      outline: none;
-      border-color: rgba(154, 130, 96, 0.45);
-    }
-
-    .step-context-hint {
-      font-size: 12px;
-      color: var(--text-dim);
-      margin-bottom: 8px;
-      line-height: 1.5;
-    }
-
-    .result-router-actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      align-items: center;
-    }
-
-    .result-router-actions .btn-terminal {
-      box-shadow: 0 0 0 1px rgba(58, 107, 255, 0.08);
-    }
-
-    .action-primary {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      margin-bottom: 8px;
-    }
-
-    .capture-flow-saved {
-      margin: 0 0 14px;
-      font-family: var(--mono);
-      font-size: 9px;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--gold-dim);
-      text-align: center;
-    }
-
-    .capture-flow-tools {
-      margin-top: 4px;
-    }
-
-    .copy-confirm {
-      font-size: 11px;
-      color: var(--gold);
-      letter-spacing: 0.1em;
-      margin-bottom: 24px;
-      min-height: 18px;
-      opacity: 0;
-      transition: opacity 300ms ease;
-    }
-
-    .copy-confirm.visible { opacity: 1; }
-
-    .action-secondary {
-      padding-top: 20px;
-      border-top: 1px solid var(--border-dim);
-    }
-
-    .capture-footer {
-      margin-top: 44px;
-      padding-top: 24px;
-      border-top: 1px solid var(--border-dim);
-      width: 100%;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 16px;
-    }
-
-    .capture-footer__links {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 14px 20px;
-      justify-content: center;
-      align-items: flex-start;
-    }
-
-    .capture-footer a {
-      font-size: 9px;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      color: var(--text-dim);
-      text-decoration: none;
-    }
-
-    .capture-footer a:hover { color: var(--text-mid); }
-    .capture-footer a.nav-club { color: var(--gold); }
-    .capture-footer a.nav-club:hover { color: var(--cream); }
-
-    .capture-footer__stack {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      max-width: 22ch;
-      align-items: flex-start;
-    }
-    .capture-footer .identity-micro {
-      font-family: var(--sans);
-      font-size: 10px;
-      font-weight: 300;
-      line-height: 1.45;
-      letter-spacing: 0.02em;
-      color: rgba(160, 152, 137, 0.72);
-      max-width: 32ch;
-    }
-    .capture-foot-micro {
       margin: 0;
-      text-align: center;
-      font-family: 'DM Mono', monospace;
-      font-size: 7px;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: rgba(110, 101, 88, 0.55);
-      padding-top: 12px;
-      border-top: 1px solid var(--border-dim);
-      width: 100%;
-      max-width: 520px;
-    }
-
-    .page-capture #flow-wrap {
-      overflow: visible;
-    }
-
-    .page-capture .capture-layout--chrome .main-col {
-      overflow: visible;
-    }
-
-    .page-capture #summary {
-      padding-bottom: max(32px, calc(24px + env(safe-area-inset-bottom, 0px)));
-    }
-
-    .page-capture #summary .action-primary {
-      position: relative;
-      z-index: 5;
-    }
-
-    .page-capture #summary .action-primary .btn-terminal {
-      position: relative;
-      z-index: 6;
-    }
-
-    @media (max-width: 960px) {
-      .capture-layout {
-        grid-template-columns: 1fr;
-        gap: 20px;
-      }
-      .capture-layout--chrome .main-col {
-        order: 1;
-      }
-      .capture-layout--chrome .live-panel--chrome {
-        order: 2;
-      }
-
-      body.page-capture.diag-has-live-chrome .capture-layout--chrome .main-col {
-        padding-bottom: max(80px, calc(56px + env(safe-area-inset-bottom, 0px)));
-      }
-
-      body.page-capture.diag-live-open .capture-layout--chrome .main-col {
-        padding-bottom: max(120px, calc(88px + env(safe-area-inset-bottom, 0px)));
-      }
-
-      body.page-capture.diag-has-live-chrome #summary {
-        padding-bottom: max(96px, calc(80px + env(safe-area-inset-bottom, 0px)));
-      }
-
-      body.page-capture.diag-live-open #summary {
-        padding-bottom: max(136px, calc(120px + env(safe-area-inset-bottom, 0px)));
-      }
-    }
-
-    @media (max-width: 720px) {
-      .global-nav { padding-left: 24px; padding-right: 24px; }
-    }
-    @media (max-width: 480px) {
-      body {
-        padding: 0 12px max(100px, calc(80px + env(safe-area-inset-bottom, 0px)));
-      }
-      .step-instruction { font-size: 24px; }
-      .nav-row { flex-direction: column-reverse; align-items: stretch; }
-      .nav-row .btn { justify-content: center; }
-      .action-primary { flex-direction: column; }
-      .action-primary .btn { justify-content: center; }
-    }
-  </style>
-  <link rel="stylesheet" href="/stephuary-early-mode.css" />
-  <link rel="stylesheet" href="/stephuary-god-hour.css" />
-  <link rel="stylesheet" href="/stephuary-design-tokens.css" />
-  <link rel="stylesheet" href="/stephuary-shell.css" />
-  <link rel="stylesheet" href="/stephuary-diagnostic-mobile.css" />
-  <link rel="stylesheet" href="/stephuary-diagnostic-chrome.css" />
-  <link rel="stylesheet" href="/stephuary-editorial.css" />
-  <link rel="stylesheet" href="/stephuary-diagnostic-motion.css" />
-  <!-- After shared CSS: Capture-only body/hero CTA layout (safe-area + unclip) -->
-  <style>
-    html.phase-page-min body.page-capture {
-      padding-bottom: max(100px, calc(80px + env(safe-area-inset-bottom, 0px)));
+      color: var(--text);
     }
 
     @media (max-width: 768px) {
-      html.phase-page-min body.page-capture:has(.global-nav) {
-        padding-bottom: max(100px, calc(80px + env(safe-area-inset-bottom, 0px)));
-      }
+      .app { padding: 20px; }
+      .answers { gap: 10px; }
+      .answer-btn { padding: 16px 14px; }
     }
   </style>
-  <script src="/stephuary-diagnostic-mobile.js"></script>
-  <script src="/stephuary-diagnostic-focus.js"></script>
 </head>
-<body class="page-capture">
-<div id="page-transition" aria-hidden="true"></div>
-<script src="/stephuary-interactive.js" defer></script>
-<script src="/stephuary-early-mode.js" defer></script>
-<script src="/stephuary-personalization.js" defer></script>
-<script src="/stephuary-global-map.js" defer></script>
+<body>
+  <main class="app" id="app" aria-live="polite"></main>
 
-<nav class="global-nav" aria-label="Primary">
-  <a href="/" class="gn-logo">Stephuary</a>
-  <div class="gn-links">
-    <a href="/pricing">Pricing</a>
-    <a href="/access" class="nav-club">.5% Club</a>
-    <button type="button" class="gn-startover" id="btnBegin">Start over</button>
-    <a href="https://stephuary.substack.com" target="_blank" rel="noopener">Grown spaghetti</a>
-    <a href="https://onlysometimesclub.com" target="_blank" rel="noopener noreferrer">Only Sometimes Club</a>
-  </div>
-</nav>
-
-  <div class="sh-global-map-wrap" style="padding:6px 0 10px" hidden aria-hidden="true">
-    <div data-global-system-map="minimal"></div>
-  </div>
-
-<div id="flow-wrap">
-  <div class="capture-layout capture-layout--chrome">
-    <div class="main-col">
-      <div id="flow" class="flow--chrome">
-        <div id="steps-root"></div>
-        <div class="diag-progress-stack">
-          <div class="diag-progress-topline" hidden aria-hidden="true">
-            <span class="diag-progress-phase">1 · Capture</span>
-          </div>
-          <div class="progress-bar-wrap progress-bar-wrap--sticky-mobile">
-            <div class="progress-meta">
-              <span class="progress-label progress-label--muted">Progress</span>
-              <span class="progress-count" id="progressCount">Step 1 of 15</span>
-            </div>
-            <div class="progress-track">
-              <div class="progress-fill" id="progressFill" style="width:6.67%"></div>
-            </div>
-          </div>
-          <button type="button" class="live-read-drawer-toggle" id="liveReadDrawerToggle" aria-expanded="false" aria-controls="livePanel" hidden aria-hidden="true">View live read</button>
-          <div hidden aria-hidden="true">
-          <details class="diag-details diag-details--steps">
-            <summary class="diag-details__summary">Step map</summary>
-            <div class="diag-details__body">
-              <aside class="rail rail--embedded" id="rail" aria-label="Steps in this phase"></aside>
-            </div>
-          </details>
-          <details class="diag-details diag-details--phases">
-            <summary class="diag-details__summary">Five-phase journey</summary>
-            <div class="diag-details__body">
-              <div id="diag-phase-rail-host" class="diag-phase-rail-host"></div>
-            </div>
-          </details>
-          </div>
-        </div>
-      </div>
-
-      <div id="capture-flash" class="capture-flash" aria-live="polite"></div>
-
-      <div id="building-overlay" role="status" aria-live="assertive"><p class="sr-only">Loading.</p></div>
-
-      <div id="summary" aria-hidden="true"></div>
-    </div>
-
-    <aside class="live-panel live-panel--chrome" id="livePanel" aria-live="polite" hidden aria-hidden="true">
-      <details class="live-panel__shell" id="livePanelShell">
-        <summary class="live-panel__summary">
-          <span class="live-panel__summary-title">Live read</span>
-          <span class="live-panel__summary-meta">3 signals</span>
-        </summary>
-        <div class="live-panel__inner">
-          <div class="live-panel__primary">
-            <div class="live-field">
-              <div class="live-label">Main issue</div>
-              <div class="live-value" id="live-notice">Answer to load the first signal.</div>
-            </div>
-            <div class="live-field">
-              <div class="live-label">Current pattern</div>
-              <div class="live-value" id="live-hold">. </div>
-            </div>
-            <div class="live-field">
-              <div class="live-label">Likely next step</div>
-              <div class="live-value" id="live-env">. </div>
-            </div>
-          </div>
-          <details class="live-panel__more">
-            <summary class="live-panel__more-sum">Full readout</summary>
-            <div class="live-field">
-              <div class="live-label">Biggest loss (emerging)</div>
-              <div class="live-value" id="live-do">. </div>
-            </div>
-            <div class="live-field">
-              <div class="live-label">Phase status</div>
-              <div class="live-value" id="live-status">Not started.</div>
-            </div>
-          </details>
-        </div>
-      </details>
-    </aside>
-  </div>
-</div>
-
-<div id="liveReadBackdrop" class="live-read-backdrop" aria-hidden="true"></div>
-
-<script src="/stephuary-diagnostic-flow.js"></script>
-<script src="/stephuary-result.js"></script>
-<script src="/stephuary-diagnostic-motion.js"></script>
-<script>
-(function(){
-  const STORAGE_KEY = 'stephuary_capture_p01_v3';
-  const RESULT_KEY = 'stephuary_result_v1';
-  const TOTAL_Q = 15;
-  const TOTAL_STEPS = 15;
-  const RAIL_LABELS = [
-    'Q1 Clarity',
-    'Q2 Positioning',
-    'Q3 Structure',
-    'Q4 Clarity',
-    'Q5 Positioning',
-    'Q6 Structure',
-    'Q7 Clarity',
-    'Q8 Positioning',
-    'Q9 Structure',
-    'Q10 Clarity',
-    'Q11 Positioning',
-    'Q12 Structure',
-    'Q13 Clarity',
-    'Q14 Positioning',
-    'Q15 Structure',
-    'Results'
-  ];
-
-  const ARCHETYPES = [
-    'Hidden Operator',
-    'Delayed Builder',
-    'Miscast Strategist',
-    'Reactive Stabilizer',
-    'Structural Refiner',
-    'Unconverted Thinker'
-  ];
-
-  const QUESTIONS = [
-    {
-      instruction: 'If someone asks what you do, you usually:',
-      micro: '',
-      a: { text: 'Give a clear one-sentence answer that includes who it is for and what they get', bit: 0 },
-      b: { text: 'Adjust your answer depending on who is asking and how much time you have', bit: 1 }
-    },
-    {
-      instruction: 'Your pricing was set based on:',
-      micro: '',
-      a: { text: 'What similar people charge, what felt fair, or what you thought someone would pay', bit: 0 },
-      b: { text: 'A specific calculation tied to your costs, time, and the result the buyer gets', bit: 1 }
-    },
-    {
-      instruction: 'When someone pays you, what happens next is:',
-      micro: '',
-      a: { text: 'The same every time, with steps they can see and a clear timeline', bit: 0 },
-      b: { text: 'Mostly figured out as you go, depending on the project', bit: 1 }
-    },
-    {
-      instruction: 'The last time you described your offer to someone new, they:',
-      micro: '',
-      a: { text: 'Asked follow-up questions about how to buy or how it works', bit: 0 },
-      b: { text: 'Nodded, said it sounded interesting, and moved on', bit: 1 }
-    },
-    {
-      instruction: 'If you doubled your price tomorrow:',
-      micro: '',
-      a: { text: 'You could explain why it is worth it in two sentences', bit: 0 },
-      b: { text: 'You would feel like you need to add more to justify it', bit: 1 }
-    },
-    {
-      instruction: 'If you disappeared for two weeks, your business would:',
-      micro: '',
-      a: { text: 'Keep running because systems, sequences, and delivery are documented', bit: 0 },
-      b: { text: 'Stall because most of it depends on you being present', bit: 1 }
-    },
-    {
-      instruction: 'Right now you have:',
-      micro: '',
-      a: { text: 'One main offer that does one thing for one type of person', bit: 0 },
-      b: { text: 'Several offers, or one offer you describe differently depending on the situation', bit: 1 }
-    },
-    {
-      instruction: 'The people who buy from you tend to be:',
-      micro: '',
-      a: { text: 'The exact type of person you designed the offer for', bit: 0 },
-      b: { text: 'A mix, including some you did not expect and some you wish you could filter out', bit: 1 }
-    },
-    {
-      instruction: 'Your follow-up after someone buys is:',
-      micro: '',
-      a: { text: 'Automated or systematized so it happens without you thinking about it', bit: 0 },
-      b: { text: 'Manual, inconsistent, or something you keep meaning to set up', bit: 1 }
-    },
-    {
-      instruction: 'If someone looked at your website or social media for 30 seconds, they would know:',
-      micro: '',
-      a: { text: 'Exactly what you sell, who it is for, and how to buy it', bit: 0 },
-      b: { text: 'You do something interesting, but they would need to dig to understand the offer', bit: 1 }
-    },
-    {
-      instruction: 'Compared to other people who do similar work, your offer is:',
-      micro: '',
-      a: { text: 'Different in a way you can name, priced to reflect that difference', bit: 0 },
-      b: { text: 'Similar to others, competing mostly on personality, trust, or availability', bit: 1 }
-    },
-    {
-      instruction: 'Your revenue right now is:',
-      micro: '',
-      a: { text: 'Predictable month to month; you can roughly forecast the next 90 days', bit: 0 },
-      b: { text: 'Inconsistent, with good months and bad months and no clear pattern', bit: 1 }
-    },
-    {
-      instruction: 'The single biggest reason people do not buy from you is:',
-      micro: '',
-      a: { text: 'They cannot afford it or timing is not right; they understood the offer and wanted it', bit: 0 },
-      b: { text: 'You are not sure, or you think they did not fully understand what you were offering', bit: 1 }
-    },
-    {
-      instruction: 'When you think about raising your prices, you feel:',
-      micro: '',
-      a: { text: 'Fine with it; the value is there', bit: 0 },
-      b: { text: 'Nervous that you will lose the people who already buy', bit: 1 }
-    },
-    {
-      instruction: 'If you had to onboard a new client tomorrow using only written documentation, you could:',
-      micro: '',
-      a: { text: 'Hand them a link or document and they would know what to do', bit: 0 },
-      b: { text: 'Need to create something or explain it live', bit: 1 }
-    }
-  ];
-
-  var NOT_PROBLEM_WORD = {
-    execution: 'motivation',
-    clarity: 'information',
-    structure: 'ideas',
-    environment: 'discipline',
-    direction: 'strategy'
-  };
-
-  var PRIMARY_ACTION_LINE = {
-    execution: 'You need to move from knowing to shipping.',
-    clarity: 'You need to commit to a direction.',
-    structure: 'You need to install a system.',
-    environment: 'You are in the wrong context.',
-    direction: 'You need to choose a path.'
-  };
-
-  function scoreBreakdownFromResult(bits, context) {
-    if (window.StephuaryResult && typeof window.StephuaryResult.scoreBreakdown === 'function') {
-      return window.StephuaryResult.scoreBreakdown(bits, context);
-    }
-    return 'direction';
-  }
-
-  function getRouteFromResult(breakdown) {
-    if (window.StephuaryResult && typeof window.StephuaryResult.getRoute === 'function') {
-      return window.StephuaryResult.getRoute(breakdown);
-    }
-    return {
-      primary: { href: '/focused-review', label: 'Get Direction' },
-      secondary: { href: '/snapshot', label: 'Snapshot' }
-    };
-  }
-
-  function diagnosisLines(breakdown) {
-    var notW = NOT_PROBLEM_WORD[breakdown] || 'focus';
-    var bLabel = breakdown.charAt(0).toUpperCase() + breakdown.slice(1);
-    return {
-      full:
-        'You don’t have a ' +
-        notW +
-        ' problem.\nYou have a ' +
-        bLabel.toLowerCase() +
-        ' problem.',
-      notProblem: notW,
-      breakdownLabel: bLabel
-    };
-  }
-
-  function scoreArchetype(bits) {
-    const s = {};
-    ARCHETYPES.forEach(function(a){ s[a] = 0; });
-
-    function w(step, choice, table) {
-      var k = choice === 0 ? 'a' : 'b';
-      if (table[step] && table[step][k]) {
-        Object.keys(table[step][k]).forEach(function(name) {
-          s[name] += table[step][k][name];
-        });
+  <script>
+    const questions = [
+      {
+        id: 1,
+        category: "clarity",
+        question: "If someone lands on your page right now, would they know what to buy in under 10 seconds?",
+        answers: {
+          A: {
+            text: "Yes, it is obvious what I sell and who it is for",
+            feedback: "Clear offers convert faster and require less effort to sell."
+          },
+          B: {
+            text: "No, they would need to read or figure it out",
+            feedback: "Most people do not leave because they are not interested. They leave because they do not understand fast enough."
+          }
+        }
+      },
+      {
+        id: 2,
+        category: "clarity",
+        question: "Can you explain your offer in one sentence without adding extra context?",
+        answers: {
+          A: {
+            text: "Yes, it is concise and repeatable",
+            feedback: "Simple language reduces friction and helps buyers self-qualify."
+          },
+          B: {
+            text: "No, I usually need to explain more",
+            feedback: "When explanation is required, trust drops and decision speed slows."
+          }
+        }
+      },
+      {
+        id: 3,
+        category: "positioning",
+        question: "Do you clearly differentiate your offer from alternatives your buyer already knows?",
+        answers: {
+          A: {
+            text: "Yes, the difference is obvious and valuable",
+            feedback: "Strong positioning gives buyers a reason to choose you now."
+          },
+          B: {
+            text: "No, it sounds similar to other options",
+            feedback: "If your offer feels replaceable, price pressure increases and close rates drop."
+          }
+        }
+      },
+      {
+        id: 4,
+        category: "positioning",
+        question: "Are you consistently attracting the exact type of buyer you want?",
+        answers: {
+          A: {
+            text: "Yes, most inbound fits my ideal client profile",
+            feedback: "Right-fit demand shortens sales cycles and improves retention."
+          },
+          B: {
+            text: "No, I get mixed leads or poor-fit inquiries",
+            feedback: "Misaligned demand is usually a positioning problem, not an effort problem."
+          }
+        }
+      },
+      {
+        id: 5,
+        category: "structure",
+        question: "After a client says yes, is delivery mapped and repeatable from start to finish?",
+        answers: {
+          A: {
+            text: "Yes, there is a clear system and timeline",
+            feedback: "Reliable delivery protects margin and improves client outcomes."
+          },
+          B: {
+            text: "No, it is mostly managed manually each time",
+            feedback: "Manual delivery introduces variability and hidden operational drag."
+          }
+        }
+      },
+      {
+        id: 6,
+        category: "structure",
+        question: "Could your offer run for a week without you touching every step?",
+        answers: {
+          A: {
+            text: "Yes, core steps continue without bottlenecks",
+            feedback: "Operational leverage creates capacity and stabilizes revenue."
+          },
+          B: {
+            text: "No, most steps still depend on me directly",
+            feedback: "Founder dependency is a common structural leak in growing businesses."
+          }
+        }
+      },
+      {
+        id: 7,
+        category: "clarity",
+        question: "Do your pricing and outcomes feel easy to justify at first glance?",
+        answers: {
+          A: {
+            text: "Yes, the value and price connection is clear",
+            feedback: "When price and promise align, conversion resistance decreases."
+          },
+          B: {
+            text: "No, buyers often need extra reassurance",
+            feedback: "If value is not instantly legible, objections appear earlier and more often."
+          }
+        }
       }
-    }
-
-    var T = [
-      { a: { 'Hidden Operator': 2, 'Structural Refiner': 1 }, b: { 'Unconverted Thinker': 2, 'Miscast Strategist': 1 } },
-      { a: { 'Structural Refiner': 3, 'Hidden Operator': 2 }, b: { 'Reactive Stabilizer': 3, 'Unconverted Thinker': 1 } },
-      { a: { 'Hidden Operator': 3, 'Delayed Builder': 2 }, b: { 'Reactive Stabilizer': 2, 'Miscast Strategist': 1 } },
-      { a: { 'Miscast Strategist': 4 }, b: { 'Structural Refiner': 2, 'Reactive Stabilizer': 2 } },
-      { a: { 'Structural Refiner': 3 }, b: { 'Reactive Stabilizer': 3 } },
-      { a: { 'Delayed Builder': 3, 'Unconverted Thinker': 2 }, b: { 'Miscast Strategist': 2, 'Unconverted Thinker': 1 } }
     ];
 
-    for (var i = 0; i < TOTAL_Q; i++) {
-      var tbl = {};
-      tbl[i] = T[i];
-      w(i, bits[i], tbl);
+    const patternInterstitials = {
+      2: "Early signal: This usually points to a clarity issue, not a traffic issue.",
+      4: "Pattern forming: This is starting to look more like a positioning gap.",
+      6: "This is typically where most businesses leak time and revenue."
+    };
+
+    let currentIndex = 0;
+    let answers = [];
+    let scores = {
+      clarity: 0,
+      positioning: 0,
+      structure: 0
+    };
+
+    const app = document.getElementById("app");
+
+    function getResultSummary() {
+      const order = ["clarity", "positioning", "structure"];
+      const topCategory = order.reduce((worst, category) => {
+        return scores[category] > scores[worst] ? category : worst;
+      }, "clarity");
+
+      const topScore = scores[topCategory];
+      const balanced = Math.max(scores.clarity, scores.positioning, scores.structure) -
+        Math.min(scores.clarity, scores.positioning, scores.structure) <= 1;
+
+      let headline = "Your core friction point is " + topCategory + ".";
+      if (balanced && topScore > 0) headline = "Your gaps are distributed across clarity, positioning, and structure.";
+      if (topScore === 0) headline = "Your baseline is strong across all three categories.";
+
+      const nextStepByCategory = {
+        clarity: "Tighten offer language so a new visitor understands value in under 10 seconds.",
+        positioning: "Narrow the buyer frame and sharpen why this offer is the right fit now.",
+        structure: "Standardize delivery and remove manual bottlenecks that slow fulfillment."
+      };
+
+      return {
+        headline,
+        topCategory,
+        topScore,
+        nextStep: topScore === 0
+          ? "Keep offer and operations tight; test one conversion lever at a time."
+          : nextStepByCategory[topCategory]
+      };
     }
 
-    var best = ARCHETYPES[0];
-    var max = -1;
-    ARCHETYPES.forEach(function(a) {
-      if (s[a] > max) { max = s[a]; best = a; }
-    });
-    var tie = ARCHETYPES.filter(function(a) { return s[a] === max; });
-    if (tie.length > 1) {
-      if (bits[2] === 0) best = tie.indexOf('Hidden Operator') >= 0 ? 'Hidden Operator' : tie[0];
-      else if (bits[3] === 0) best = tie.indexOf('Miscast Strategist') >= 0 ? 'Miscast Strategist' : tie[0];
-      else if (bits[5] === 0) best = tie.indexOf('Delayed Builder') >= 0 ? 'Delayed Builder' : tie[0];
-      else best = tie[0];
-    }
-    return best;
-  }
-
-  const COPY_BLOCKS = {
-    'Hidden Operator': {
-      core: function(bits) {
-        return (
-          '<p>You run intent under language and act on that model before it is public.</p>' +
-          '<p>Credit lags: the read is real before anyone can cite it.</p>'
-        );
-      },
-      look: function(bits) {
-        return [
-          'Subtext and unstated stakes before content.',
-          bits[1] === 0 ? 'You stabilize by naming the frame.' : 'You stabilize by changing one lever.',
-          bits[1] === 0 ? 'Permission never arrives; you still hold the model.' : 'You move and absorb mess.'
-        ];
-      },
-      mainBlock: function(bits) {
-        return (
-          '<p>You trade visibility for continuity. ' +
-          (bits[3] === 0
-            ? 'Judgment gets used without authority.'
-            : 'Your thinking is relied on; exposure replaces cover.') +
-          '</p><p>' +
-          (bits[5] === 0
-            ? 'You avoid the moment that makes the read accountable.'
-            : 'Committing closes paths you keep open.') +
-          '</p>'
-        );
-      },
-      cost: function(bits) {
-        return [
-          'Best work happens where it cannot be quoted.',
-          'Outcomes improve while your line stays invisible.',
-          'Execution eats the credit for the read that enabled it.'
-        ];
-      },
-      next: function(bits) {
-        return (
-          '<p>Phase 02 needs a buyer and a paid problem in plain language .  not a sharper private read.</p>' +
-          '<p>Next: one sentence a stranger repeats: who pays, for what outcome.</p>'
-        );
-      }
-    },
-    'Delayed Builder': {
-      core: function(bits) {
-        return (
-          '<p>Reads land early; motion lands late. The gap is commitment, not blindness.</p>' +
-          '<p>Knowing reads as partial credit until something ships.</p>'
-        );
-      },
-      look: function(bits) {
-        return [
-          bits[2] === 1 ? 'You track intent under the line.' : 'You work from what is stated.',
-          bits[1] === 0 ? 'You wait for certainty that matches your bar.' : 'You move, then over-correct.',
-          bits[5] === 0 ? 'Going public with the read is what stalls.' : 'Every lane feels like it closes too much.'
-        ];
-      },
-      mainBlock: function(bits) {
-        return (
-          '<p>' +
-          (bits[2] === 0
-            ? 'Naming the read feels like rupture; it stays private.'
-            : 'When you speak, it lands hard .  it was queued too long.') +
-          ' ' +
-          (bits[3] === 0
-            ? 'The room does not require your best contribution.'
-            : 'The room uses your thinking; pace still mis-matches.') +
-          '</p><p>Acting collapses ambiguity you still use as shelter.</p>'
-        );
-      },
-      cost: function(bits) {
-        return [
-          'Critiques stack where nobody hears them.',
-          'The internal case strengthens; the external one never opens.',
-          'Hesitation passes for discernment.'
-        ];
-      },
-      next: function(bits) {
-        return (
-          '<p>Phase 02 forces one paid shape. This fails when the week has no visible close.</p>' +
-          '<p>Next: one deliverable with a date .  smaller than you want, real enough to count.</p>'
-        );
-      }
-    },
-    'Miscast Strategist': {
-      core: function(bits) {
-        return (
-          '<p>Strength is real; fit is not. You shape yourself to what the room rewards.</p>' +
-          '<p>Effort with thin returns reads as hustle, not confusion about ability.</p>'
-        );
-      },
-      look: function(bits) {
-        return [
-          bits[0] === 0 ? 'You prove value through granularity.' : 'You prove value through synthesis.',
-          bits[1] === 0 ? 'You explain the mismatch in analysis.' : 'You patch what is in front of you.',
-          bits[2] === 0 ? 'You swallow the fit critique until it is safe to say.' : 'You say the misfit out loud.'
-        ];
-      },
-      mainBlock: function(bits) {
-        return (
-          '<p>Rewards point away from your sharpest gear. ' +
-          (bits[2] === 0
-            ? 'You keep the critique internal so it does not read as complaint.'
-            : 'You name the misfit even when it costs rapport.') +
-          '</p><p>' +
-          (bits[5] === 0
-            ? 'Leaving is uncertain; staying is the known failure mode.'
-            : 'No lane feels right; you avoid choosing one.') +
-          '</p>'
-        );
-      },
-      cost: function(bits) {
-        return [
-          'Skill in the wrong frame reads as effort without leverage.',
-          'Underuse becomes a story you call temperament.',
-          'Proof stacks; leverage does not.'
-        ];
-      },
-      next: function(bits) {
-        return (
-          '<p>Phase 02 tests who pays against fit .  not how hard you work.</p>' +
-          '<p>Next: one reward structure you are in, then one context where your strength is the job.</p>'
-        );
-      }
-    },
-    'Reactive Stabilizer': {
-      core: function(bits) {
-        return (
-          '<p>You change what is broken in front of you before the theory is closed.</p>' +
-          '<p>Urgent repair beats structural repair .  until the structure keeps failing.</p>'
-        );
-      },
-      look: function(bits) {
-        return [
-          'What is loud before what is load-bearing.',
-          bits[1] === 1 ? 'Intervention before full proof.' : 'A clean map before you touch anything.',
-          bits[1] === 1 ? 'Early motion, then correction.' : 'Motion after an internal threshold.'
-        ];
-      },
-      mainBlock: function(bits) {
-        return (
-          '<p>' +
-          (bits[2] === 1
-            ? 'You name tension when silence lets cost grow.'
-            : 'You eat disruption quietly to keep throughput up.') +
-          ' ' +
-          (bits[3] === 1
-            ? 'The environment pulls on how you think.'
-            : 'The room does not ask for your best tool; you compensate.') +
-          '</p><p>' +
-          (bits[5] === 1
-            ? 'Closing one option feels like error; search replaces commitment.'
-            : 'You know the move and still buffer.') +
-          '</p>'
-        );
-      },
-      cost: function(bits) {
-        return [
-          'You win fights and inherit systems that still fail quietly.',
-          'People learn rescue, not prevention.',
-          'Your bar for "handled" is higher than the room\'s.'
-        ];
-      },
-      next: function(bits) {
-        return (
-          '<p>Phase 02 asks what people pay for before you optimize how you save the room.</p>' +
-          '<p>Next: one drain you cut this week .  before you add another fix.</p>'
-        );
-      }
-    },
-    'Structural Refiner': {
-      core: function(bits) {
-        return (
-          '<p>You reach for cause, prevention, and the delta between fine and finished.</p>' +
-          '<p>The room often wants motion; your eye stays on what is missing.</p>'
-        );
-      },
-      look: function(bits) {
-        return [
-          bits[0] === 0 ? 'Faults and gaps others skim.' : 'Structural gaps across cases.',
-          bits[4] === 0 ? 'You fault prevention first.' : 'You fault response quality first.',
-          bits[1] === 0 ? 'You hold until work matches your bar.' : 'You ship, then tighten in passes.'
-        ];
-      },
-      mainBlock: function(bits) {
-        return (
-          '<p>' +
-          (bits[2] === 0
-            ? 'You hold the gap until speaking feels cheaper than error.'
-            : 'You surface the gap; it can read as never satisfied.') +
-          ' ' +
-          (bits[3] === 1
-            ? 'Thinking quality is load-bearing here.'
-            : 'The room rewards fine; you see the missing slice.') +
-          '</p><p>' +
-          (bits[5] === 1
-            ? 'Cleaner frames replace shipping imperfect work.'
-            : 'You negotiate with your standard instead of closing.') +
-          '</p>'
-        );
-      },
-      cost: function(bits) {
-        return [
-          'Work stays internal while the window moves.',
-          'Your bar reads as delay, not care.',
-          'You win on correctness and lose on timing.'
-        ];
-      },
-      next: function(bits) {
-        return (
-          '<p>Phase 02 needs price and demand .  not a tighter gap analysis.</p>' +
-          '<p>Next: one rough slice with a number, then refine.</p>'
-        );
-      }
-    },
-    'Unconverted Thinker': {
-      core: function(bits) {
-        return (
-          '<p>You register friction and upgrade paths before the room settles .  then the signal stays partly private.</p>' +
-          '<p>The leak is not detection. It is conversion: thought without a receipt.</p>'
-        );
-      },
-      look: function(bits) {
-        return [
-          'Mismatch and cost land before others name them.',
-          bits[1] === 0 ? 'You map cause before you touch anything.' : 'You change conditions before you explain.',
-          bits[1] === 0 ? 'You wait on a green light.' : 'You move and repair in motion.'
-        ];
-      },
-      mainBlock: function(bits) {
-        return (
-          '<p>' +
-          (bits[2] === 0
-            ? 'You hold reads when speaking would spike cost.'
-            : 'You push the read when silence is more expensive than tension.') +
-          ' ' +
-          (bits[3] === 0
-            ? 'Context rarely pulls for your sharpest gear.'
-            : 'What you are good at is load-bearing here.') +
-          '</p><p>' +
-          (bits[5] === 0
-            ? 'You know the move; naming it binds you, so you buffer.'
-            : 'Direction stays open; mapping replaces a ship date.') +
-          '</p>'
-        );
-      },
-      cost: function(bits) {
-        return [
-          'Signal compresses into tension or cynicism.',
-          'Others hear silence, not your standard.',
-          'You carry corrections before anyone asks.'
-        ];
-      },
-      next: function(bits) {
-        return (
-          '<p>Phase 02 tests paid demand, not your radar. One buyer noun, one paid problem.</p>' +
-          '<p>Next: one sentence for the move you are not making .  or one lane you close for seven days.</p>'
-        );
-      }
-    }
-  };
-
-  function applyBreakdownRouting(breakdown) {
-    var wrap = document.getElementById('result-router-wrap');
-    var dir = document.getElementById('out-router-directive');
-    if (!wrap || !dir) return;
-    var route = getRouteFromResult(breakdown);
-    wrap.removeAttribute('hidden');
-    dir.innerHTML = '';
-    var p = document.createElement('p');
-    p.className = 'result-router-line';
-    p.textContent = 'One route. One next step.';
-    dir.appendChild(p);
-    var a1 = document.getElementById('out-router-primary');
-    var a2 = document.getElementById('out-router-secondary');
-    if (a1 && route.primary) {
-      a1.href = route.primary.href;
-      a1.textContent = route.primary.label;
-    }
-    if (a2 && route.secondary) {
-      a2.href = route.secondary.href;
-      a2.textContent = route.secondary.label;
-    }
-  }
-
-  function getRoutingExport(breakdown) {
-    return getRouteFromResult(breakdown);
-  }
-
-  function answeredCount(bits) {
-    var c = 0;
-    for (var i = 0; i < TOTAL_Q; i++) {
-      if (bits[i] !== null && bits[i] !== undefined) c++;
-      else break;
-    }
-    return c;
-  }
-
-  function liveStrings(bits) {
-    var ac = answeredCount(bits);
-
-    var main = 'Answer to load the first signal.';
-    var loss = '—';
-    var pattern = '—';
-    var next = '—';
-
-    if (ac === 1) {
-      loss = 'Loss shape not isolated yet.';
-      next = 'One more answer narrows it.';
+    function transition(callback, delay = 220) {
+      app.classList.add("is-transitioning");
+      window.setTimeout(() => {
+        callback();
+        app.classList.remove("is-transitioning");
+      }, delay);
     }
 
-    if (ac >= 1 && bits[0] !== null && bits[0] !== undefined) {
-      main = bits[0] === 0
-        ? 'Misalignment surfaces before consensus forms.'
-        : 'Upgrade paths register before comfort does.';
-    }
-    if (ac >= 2 && bits[1] !== null && bits[1] !== undefined) {
-      main += bits[1] === 0 ? ' Diagnosis runs ahead of motion.' : ' Motion runs ahead of full proof.';
-      loss = bits[1] === 0
-        ? 'Time lost mapping before you intervene.'
-        : 'Cost from moving before the map is tight.';
-    }
-    if (ac >= 3 && bits[2] !== null && bits[2] !== undefined) {
-      main += bits[2] === 0 ? ' Important reads stay queued.' : ' Important reads enter the room.';
-      loss += bits[2] === 0 ? ' Signal stays partial in the room.' : ' Dynamic shifts when you name it.';
-    }
-    if (ac >= 4 && bits[3] !== null && bits[3] !== undefined) {
-      pattern = bits[3] === 0
-        ? 'Your environment underuses your best gear.'
-        : 'Your environment pulls on how you think.';
-    }
-    if (ac >= 5 && bits[4] !== null && bits[4] !== undefined) {
-      pattern += bits[4] === 0 ? ' Failure reads as prevention miss first.' : ' Failure reads as handling quality first.';
-    }
-    if (ac >= 6 && bits[5] !== null && bits[5] !== undefined) {
-      main = bits[5] === 0
-        ? 'You already have usable signal .  motion is the gap.'
-        : 'Direction is still open .  closure is the gap.';
-      loss = bits[3] === 0
-        ? 'You already have usable skill .  not using it fully in this context.'
-        : 'Skill structurally used .  volume and load are the risk.';
-      next = bits[5] === 0
-        ? 'Next: one public move that matches the read.'
-        : 'Next: pick one lane and close the others.';
-    }
+    function renderQuestion() {
+      const q = questions[currentIndex];
+      const questionNumber = currentIndex + 1;
 
-    if (ac >= 1 && ac < 3) {
-      next = 'Next answers lock in the loss shape.';
-    }
-    if (ac >= 3 && ac < 5) {
-      next = 'Environment and failure answers tighten the pattern.';
-    }
-    if (ac >= 5 && ac < 6) {
-      next = 'Last answer locks avoidance versus search.';
-    }
-    if (ac >= 6) {
-      next = 'Keep going. You are now in the back-half pressure checks.';
-    }
+      app.innerHTML = `
+        <div class="progress">Question ${questionNumber} of 7</div>
+        <h1 class="question">${q.question}</h1>
+        <div class="answers">
+          <button class="answer-btn" data-key="A">${q.answers.A.text}</button>
+          <button class="answer-btn" data-key="B">${q.answers.B.text}</button>
+        </div>
+        <div class="feedback" id="feedback"></div>
+      `;
 
-    return { main: main, loss: loss, pattern: pattern, next: next };
-  }
+      const buttons = Array.from(app.querySelectorAll(".answer-btn"));
+      const feedbackEl = document.getElementById("feedback");
 
-  function updateLivePanel() {
-    function el(id, t) {
-      document.getElementById(id).textContent = t;
-    }
-    var bits = state.bits;
-    var n = state.currentStep;
-    var L = liveStrings(bits);
-    el('live-notice', L.main);
-    el('live-do', L.loss);
-    el('live-hold', L.pattern);
-    el('live-env', L.next);
-    el('live-status', 'Step ' + n + ' of ' + TOTAL_STEPS + ' · In progress');
-  }
+      buttons.forEach((button) => {
+        button.addEventListener("click", () => {
+          if (button.classList.contains("is-locked")) return;
 
-  function resetLiveWaiting() {
-    document.getElementById('live-notice').textContent = 'Answer to load the first signal.';
-    document.getElementById('live-do').textContent = '. ';
-    document.getElementById('live-hold').textContent = '. ';
-    document.getElementById('live-env').textContent = '. ';
-    document.getElementById('live-status').textContent = 'Not started.';
-  }
+          const selected = button.dataset.key;
+          const category = q.category;
+          const selectedAnswer = q.answers[selected];
 
-  var state = {
-    context: '',
-    bits: Array(TOTAL_Q).fill(null),
-    currentStep: 1,
-    answers: {}
-  };
-
-  var lastTransitionPick = -1;
-  var TRANSITION_PHRASES = ['Noted.', 'That matters.', 'This connects.', 'Keep going.', 'Locked in.', 'Recorded.'];
-
-  function pickTransitionPhrase() {
-    var pool = [];
-    for (var i = 0; i < TRANSITION_PHRASES.length; i++) {
-      if (i !== lastTransitionPick) pool.push(i);
-    }
-    var pick = pool[Math.floor(Math.random() * pool.length)];
-    lastTransitionPick = pick;
-    return TRANSITION_PHRASES[pick];
-  }
-
-  function runTransitionThen(cb) {
-    var flash = document.getElementById('capture-flash');
-    var active = document.querySelector('#flow .step.active');
-    if (flash) {
-      flash.textContent = pickTransitionPhrase();
-      flash.style.display = 'block';
-      window.setTimeout(function() {
-        if (flash) {
-          flash.style.display = 'none';
-          flash.textContent = '';
-        }
-      }, 200);
-    }
-    if (window.StephuaryDiagnosticMotion && typeof window.StephuaryDiagnosticMotion.afterAnswer === 'function' && active) {
-      window.StephuaryDiagnosticMotion.afterAnswer(active, cb);
-    } else {
-      window.setTimeout(cb, 560);
-    }
-  }
-
-  function updateStepValidation() {
-    document.querySelectorAll('.step').forEach(function(panel, i) {
-      var vel = panel.querySelector('.step-validation');
-      if (!vel) return;
-      vel.textContent = '';
-      vel.style.display = 'none';
-    });
-  }
-
-  function saveStorage() {
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify({
-        context: '',
-        bits: state.bits,
-        currentStep: state.currentStep,
-        flowOrder: 'singleFlow15',
-        ts: Date.now()
-      }));
-      localStorage.setItem('diagnosticStarted', 'true');
-    } catch (e) {}
-  }
-
-  /** Legacy step migration: normalize to single-flow 15-question sequence. */
-  function migrateLegacyStepOrder(d) {
-    if (!d) return d;
-    if (d.flowOrder === 'singleFlow15') return d;
-    var cs = d.currentStep;
-    if (typeof cs !== 'number' || cs < 1) cs = 1;
-    if (cs > TOTAL_STEPS + 1) cs = TOTAL_STEPS + 1;
-    d.currentStep = cs;
-    d.flowOrder = 'singleFlow15';
-    return d;
-  }
-
-  function loadStorage() {
-    try {
-      var raw = localStorage.getItem(STORAGE_KEY);
-      if (!raw) return null;
-      var d = JSON.parse(raw);
-      return migrateLegacyStepOrder(d);
-    } catch (e) { return null; }
-  }
-
-  function buildRail() {
-    var rail = document.getElementById('rail');
-    rail.innerHTML = '';
-    RAIL_LABELS.forEach(function(label, i) {
-      var d = document.createElement('div');
-      d.className = 'rail-item';
-      d.textContent = (i + 1) + ' ' + label;
-      d.dataset.idx = i;
-      rail.appendChild(d);
-    });
-  }
-
-  function updateRail() {
-    var items = document.querySelectorAll('.rail-item');
-    var phase = state.currentStep;
-    items.forEach(function(el, i) {
-      el.classList.remove('active', 'done');
-      if (i === RAIL_LABELS.length - 1) {
-        if (phase > TOTAL_STEPS) el.classList.add('active');
-      } else if (i + 1 < phase) el.classList.add('done');
-      else if (i + 1 === phase) el.classList.add('active');
-    });
-  }
-
-  function buildSteps() {
-    var root = document.getElementById('steps-root');
-    root.innerHTML = '';
-
-    QUESTIONS.forEach(function(q, idx) {
-      var stepNum = idx + 1;
-      var div = document.createElement('div');
-      div.className = 'step' + (stepNum === 1 ? ' active' : '');
-      div.id = 'step-' + stepNum;
-      div.innerHTML =
-        '<div class="step-header">' +
-          '<div class="step-instruction"></div>' +
-          '<div class="step-directive"></div>' +
-          '<div class="step-micro"></div>' +
-        '</div>' +
-        '<div class="option-list">' +
-          '<div class="option-item" data-bit="0" tabindex="0" role="button"></div>' +
-          '<div class="option-item" data-bit="1" tabindex="0" role="button"></div>' +
-        '</div>' +
-        '<div class="step-validation" aria-live="polite"></div>' +
-        '<div class="nav-row">' +
-          (stepNum > 1 ? '<button type="button" class="btn btn-ghost" data-back="' + stepNum + '">Back</button>' : '') +
-        '</div>';
-
-      var header = div.querySelector('.step-header');
-      if (idx === 0) {
-        var hint = document.createElement('p');
-        hint.className = 'step-micro-hint';
-        hint.textContent = 'Choose what’s true most of the time.';
-        header.insertBefore(hint, header.firstChild);
-      }
-      div.querySelector('.step-instruction').textContent = q.instruction;
-      div.querySelector('.step-directive').textContent = '';
-      div.querySelector('.step-micro').textContent = q.micro;
-      var opts = div.querySelectorAll('.option-item');
-      opts[0].textContent = q.a.text;
-      opts[1].textContent = q.b.text;
-
-      opts.forEach(function(opt) {
-        opt.addEventListener('click', function() {
-          if (opt.classList.contains('dim')) return;
-          var bit = parseInt(opt.getAttribute('data-bit'), 10);
-          opts.forEach(function(o) {
-            o.classList.remove('selected');
+          buttons.forEach((btn) => {
+            btn.classList.add("is-locked");
+            btn.classList.remove("is-selected");
           });
-          opt.classList.add('selected');
-          state.bits[idx] = bit;
-          saveStorage();
-          updateLivePanel();
+          button.classList.add("is-selected");
 
-          opts.forEach(function(o) {
-            o.classList.add('dim');
-          });
-
-          if (idx === TOTAL_Q - 1) {
-            runTransitionThen(function() {
-              completePhase01AndContinue();
-            });
-            return;
+          if (selected === "B") {
+            scores[category]++;
           }
 
-          runTransitionThen(function() {
-            goTo(stepNum + 1);
+          answers.push({
+            id: q.id,
+            category: q.category,
+            selected,
+            answerText: selectedAnswer.text
           });
+
+          feedbackEl.textContent = selectedAnswer.feedback;
+          feedbackEl.className = "feedback is-visible " + (selected === "A" ? "good" : "warn");
+
+          window.setTimeout(() => {
+            const justAnswered = questionNumber;
+            const interstitialMessage = patternInterstitials[justAnswered];
+
+            if (interstitialMessage) {
+              renderInterstitial(interstitialMessage);
+              return;
+            }
+
+            currentIndex++;
+            if (currentIndex < questions.length) {
+              transition(renderQuestion);
+            } else {
+              renderAnalyzing();
+            }
+          }, 800);
         });
       });
-
-      var backBtn = div.querySelector('[data-back]');
-      if (backBtn) {
-        backBtn.addEventListener('click', function() {
-          goTo(stepNum - 1);
-        });
-      }
-
-      root.appendChild(div);
-    });
-
-  }
-
-  function syncCaptureShFlowEnd() {
-    var fe = document.getElementById('sh-flow-end');
-    if (!fe) return;
-    var sum = document.getElementById('summary');
-    var showing =
-      sum &&
-      (sum.style.display === 'flex' || window.getComputedStyle(sum).display === 'flex');
-    if (showing) fe.setAttribute('hidden', '');
-    else fe.removeAttribute('hidden');
-  }
-
-  function goTo(n) {
-    state.currentStep = n;
-    saveStorage();
-    for (var i = 1; i <= TOTAL_STEPS; i++) {
-      var s = document.getElementById('step-' + i);
-      if (s) s.classList.toggle('active', i === n);
     }
-    document.getElementById('progressCount').textContent = 'Step ' + n + ' of ' + TOTAL_STEPS;
-    document.getElementById('progressFill').style.width = (n / TOTAL_STEPS * 100) + '%';
 
-    var cur = document.getElementById('step-' + n);
-    if (cur && n >= 1 && n <= TOTAL_Q) {
-      var bi = n - 1;
-      cur.querySelectorAll('.option-item').forEach(function(o) {
-        o.classList.remove('dim', 'selected');
-        var bit = parseInt(o.getAttribute('data-bit'), 10);
-        if (state.bits[bi] === bit) o.classList.add('selected');
+    function renderInterstitial(message) {
+      transition(() => {
+        app.innerHTML = `
+          <section class="interstitial">
+            <div class="interstitial-tag">Pattern recognition</div>
+            <p class="interstitial-copy">${message}</p>
+          </section>
+        `;
       });
+
+      window.setTimeout(() => {
+        currentIndex++;
+        if (currentIndex < questions.length) {
+          transition(renderQuestion);
+        } else {
+          renderAnalyzing();
+        }
+      }, 1200);
     }
 
-    updateLivePanel();
-    updateStepValidation();
-    updateRail();
-    function doScrollToStep() {
-      if (window.StephuaryDiagnosticMobile && typeof window.StephuaryDiagnosticMobile.scrollToActiveQuestion === 'function') {
-        window.StephuaryDiagnosticMobile.scrollToActiveQuestion({ offsetExtra: 10 });
-      } else {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      }
-    }
-    try {
-      if (window.matchMedia && window.matchMedia('(max-width: 768px)').matches) {
-        window.setTimeout(doScrollToStep, 140);
-      } else {
-        doScrollToStep();
-      }
-    } catch (eScroll) {
-      doScrollToStep();
-    }
-    syncCaptureShFlowEnd();
-  }
-
-  function completePhase01AndContinue() {
-    state.currentStep = TOTAL_STEPS + 1;
-    saveStorage();
-    document.getElementById('building-overlay').style.display = 'none';
-    try {
-      localStorage.setItem('diagnosticStarted', 'true');
-      localStorage.setItem('diagnosticCompleted', 'true');
-      localStorage.setItem('capture_complete', 'true');
-      if (window.StephuaryDiagnosticFlow && typeof window.StephuaryDiagnosticFlow.markPhaseComplete === 'function') {
-        window.StephuaryDiagnosticFlow.markPhaseComplete(1);
-        window.StephuaryDiagnosticFlow.markPhaseComplete(2);
-        window.StephuaryDiagnosticFlow.markPhaseComplete(3);
-        window.StephuaryDiagnosticFlow.markPhaseComplete(4);
-        window.StephuaryDiagnosticFlow.markPhaseComplete(5);
-      }
-      if (
-        window.StephuaryPersonalize &&
-        typeof window.StephuaryPersonalize.persistDiagnosticFromBits === 'function'
-      ) {
-        try {
-          window.StephuaryPersonalize.persistDiagnosticFromBits(state.bits);
-        } catch (ePersist) {}
-      }
-      if (window.StephuaryResult && typeof window.StephuaryResult.buildFromPhase01 === 'function') {
-        var resultPayload = window.StephuaryResult.buildFromPhase01(state.bits);
-        localStorage.setItem(RESULT_KEY, JSON.stringify(resultPayload));
-      }
-    } catch (e) {}
-    window.location.href = '/results';
-  }
-
-  function exportText() {
-    function flattenHtml(h) {
-      return String(h || '')
-        .replace(/<\/p>/gi, '\n\n')
-        .replace(/<[^>]+>/g, ' ')
-        .replace(/\s+/g, ' ')
-        .trim();
-    }
-    var bits = state.bits.map(function(b) { return b == null ? 0 : b; });
-    var breakdown = scoreBreakdownFromResult(bits, state.context);
-    var diag = diagnosisLines(breakdown);
-    var arch = scoreArchetype(bits);
-    var block = COPY_BLOCKS[arch];
-    var lines = [
-      'Stephuary · Phase 01 .  Capture',
-      '',
-      'Context',
-      String(state.context || '').trim(),
-      '',
-      'Diagnosis',
-      diag.full,
-      '',
-      'Primary move',
-      PRIMARY_ACTION_LINE[breakdown] || PRIMARY_ACTION_LINE.direction,
-      '',
-      'Supporting insight · Pattern name',
-      arch,
-      '',
-      '2. Core read',
-      flattenHtml(block.core(bits)),
-      '',
-      '3. What this looks like',
-      block.look(bits).map(function(l) { return '- ' + l; }).join('\n'),
-      '',
-      '4. Main block',
-      flattenHtml(block.mainBlock(bits)),
-      '',
-      '5. What this costs',
-      block.cost(bits).map(function(l) { return '- ' + l; }).join('\n'),
-      '',
-      '6. What happens next',
-      flattenHtml(block.next(bits))
-    ];
-    var route = getRoutingExport(breakdown);
-    if (route && route.primary && route.secondary) {
-      lines.push(
-        '',
-        '7. Routed next step',
-        route.primary.label + ': ' + route.primary.href,
-        route.secondary.label + ': ' + route.secondary.href
-      );
-    }
-    return lines.join('\n');
-  }
-
-  function copyAll() {
-    var text = exportText();
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(text).then(flash);
-    } else {
-      var ta = Object.assign(document.createElement('textarea'), { value: text });
-      ta.style.cssText = 'position:fixed;opacity:0;';
-      document.body.appendChild(ta);
-      ta.focus(); ta.select();
-      document.execCommand('copy');
-      document.body.removeChild(ta);
-      flash();
-    }
-  }
-
-  function flash() {
-    var el = document.getElementById('copyConfirm');
-    if (!el) return;
-    el.classList.add('visible');
-    setTimeout(function() { el.classList.remove('visible'); }, 2800);
-  }
-
-  function doExport() {
-    var text = exportText();
-    var blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
-    var a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = 'stephuary-phase-01-capture.txt';
-    a.click();
-    URL.revokeObjectURL(a.href);
-  }
-
-  function resetAll() {
-    try {
-      localStorage.removeItem(STORAGE_KEY);
-      localStorage.removeItem('capture_complete');
-      localStorage.removeItem('diagnosticStarted');
-      localStorage.removeItem('diagnosticCompleted');
-      localStorage.removeItem(RESULT_KEY);
-      if (window.StephuaryDiagnosticFlow && typeof window.StephuaryDiagnosticFlow.clearCompletionFromPhase === 'function') {
-        window.StephuaryDiagnosticFlow.clearCompletionFromPhase(1);
-      }
-    } catch (e) {}
-    state.context = '';
-    state.bits = Array(TOTAL_Q).fill(null);
-    state.currentStep = 1;
-    state.answers = {};
-    lastTransitionPick = -1;
-    document.documentElement.classList.remove('diag-summary-open');
-    var sumElReset = document.getElementById('summary');
-    if (sumElReset) sumElReset.classList.remove('summary--motion-stagger');
-    document.getElementById('building-overlay').style.display = 'none';
-    document.getElementById('capture-flash').style.display = 'none';
-    document.getElementById('capture-flash').textContent = '';
-    document.getElementById('summary').style.display = 'none';
-    document.getElementById('flow').style.display = 'block';
-    document.querySelectorAll('.step').forEach(function(s, i) {
-      s.classList.toggle('active', i === 0);
-      s.querySelectorAll('.option-item').forEach(function(o) {
-        o.classList.remove('selected', 'dim');
+    function renderAnalyzing() {
+      transition(() => {
+        app.innerHTML = `
+          <section class="analyzing">
+            <div class="analyzing-tag">Finalizing diagnostic</div>
+            <p class="analyzing-copy">Analyzing your responses...</p>
+          </section>
+        `;
       });
-    });
-    goTo(1);
-    resetLiveWaiting();
-    document.getElementById('flow-wrap').style.display = 'block';
-    if (window.StephuaryDiagnosticMobile && typeof window.StephuaryDiagnosticMobile.scrollToActiveQuestion === 'function') {
-      window.requestAnimationFrame(function () {
-        window.StephuaryDiagnosticMobile.scrollToActiveQuestion({ behavior: 'auto' });
-      });
-    } else {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-    syncCaptureShFlowEnd();
-  }
 
-  function startFlow(skipLanding) {
-    document.getElementById('flow-wrap').style.display = 'block';
-    if (!document.getElementById('step-1')) {
-      buildRail();
-      buildSteps();
-    }
-    goTo(state.currentStep > 0 && state.currentStep <= TOTAL_STEPS ? state.currentStep : 1);
-    if (!skipLanding) resetLiveWaiting();
-  }
-
-  function migrateBitsV2TenToSix(oldBits) {
-    if (!oldBits || oldBits.length !== 10) return null;
-    return [oldBits[0], oldBits[1], oldBits[6], oldBits[8], oldBits[5], oldBits[9]];
-  }
-
-  function resumeFromStorage() {
-    var d = loadStorage();
-    if (!d || !d.bits) return false;
-    state.bits = d.bits.slice();
-    state.context = '';
-    var migratedFromV2Ten = false;
-    if (state.bits.length === 10) {
-      var migrated = migrateBitsV2TenToSix(state.bits);
-      if (migrated) {
-        state.bits = migrated;
-        migratedFromV2Ten = true;
-      }
-    }
-    while (state.bits.length < TOTAL_Q) state.bits.push(null);
-    if (state.bits.length > TOTAL_Q) state.bits = state.bits.slice(0, TOTAL_Q);
-
-    var firstEmpty = state.bits.indexOf(null);
-
-    document.getElementById('flow-wrap').style.display = 'block';
-    if (!document.getElementById('step-1')) {
-      buildRail();
-      buildSteps();
+      window.setTimeout(() => {
+        const result = getResultSummary();
+        localStorage.setItem("diagnosticResults", JSON.stringify({
+          scores,
+          answers,
+          result
+        }));
+        window.location.href = "/results";
+      }, 1500);
     }
 
-    if (firstEmpty === -1) {
-      if (migratedFromV2Ten) saveStorage();
-      completePhase01AndContinue();
-      updateLivePanel();
-      return true;
-    }
-
-    state.currentStep = firstEmpty + 1;
-    if (migratedFromV2Ten) saveStorage();
-    startFlow(true);
-    updateLivePanel();
-    return true;
-  }
-
-  document.getElementById('btnBegin').addEventListener('click', function() {
-    try {
-      localStorage.removeItem('capture_complete');
-      localStorage.removeItem('diagnosticStarted');
-      localStorage.removeItem('diagnosticCompleted');
-      localStorage.removeItem(STORAGE_KEY);
-      localStorage.removeItem(RESULT_KEY);
-      if (window.StephuaryDiagnosticFlow && typeof window.StephuaryDiagnosticFlow.clearCompletionFromPhase === 'function') {
-        window.StephuaryDiagnosticFlow.clearCompletionFromPhase(1);
-      }
-    } catch (e) {}
-    state.context = '';
-    state.bits = Array(TOTAL_Q).fill(null);
-    state.currentStep = 1;
-    saveStorage();
-    startFlow(false);
-  });
-
-  var btnCopy = document.getElementById('btnCopy');
-  if (btnCopy) btnCopy.addEventListener('click', copyAll);
-  var btnExport = document.getElementById('btnExport');
-  if (btnExport) btnExport.addEventListener('click', doExport);
-  var btnReset = document.getElementById('btnReset');
-  if (btnReset) btnReset.addEventListener('click', resetAll);
-
-  window.addEventListener('keydown', function(e) {
-    if (e.key === 'Enter' && e.target.classList && e.target.classList.contains('option-item')) {
-      e.target.click();
-    }
-  });
-
-  (function bootCapture() {
-    if (resumeFromStorage()) return;
-    startFlow(false);
-  })();
-
-  setTimeout(function() {
-    syncCaptureShFlowEnd();
-  }, 0);
-})();
-</script>
-<script src="/stephuary-progress.js"></script>
-<script>
-(function () {
-  var el = document.getElementById('gn-restart');
-  if (el) {
-    el.addEventListener('click', function (e) {
-      e.preventDefault();
-      if (window.StephuaryProgress) window.StephuaryProgress.confirmRestart();
-    });
-  }
-})();
-</script>
+    renderQuestion();
+  </script>
 </body>
 </html>
