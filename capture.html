@@ -950,10 +950,10 @@
           <div class="progress-bar-wrap progress-bar-wrap--sticky-mobile">
             <div class="progress-meta">
               <span class="progress-label progress-label--muted">Progress</span>
-              <span class="progress-count" id="progressCount">Step 1 of 7</span>
+              <span class="progress-count" id="progressCount">Step 1 of 15</span>
             </div>
             <div class="progress-track">
-              <div class="progress-fill" id="progressFill" style="width:14.29%"></div>
+              <div class="progress-fill" id="progressFill" style="width:6.67%"></div>
             </div>
           </div>
           <button type="button" class="live-read-drawer-toggle" id="liveReadDrawerToggle" aria-expanded="false" aria-controls="livePanel" hidden aria-hidden="true">View live read</button>
@@ -1028,9 +1028,26 @@
 (function(){
   const STORAGE_KEY = 'stephuary_capture_p01_v3';
   const RESULT_KEY = 'stephuary_result_v1';
-  const TOTAL_Q = 6;
-  const TOTAL_STEPS = 7;
-  const RAIL_LABELS = ['Signal','Action','Expression','Environment','Failure','Block','Context','Results'];
+  const TOTAL_Q = 15;
+  const TOTAL_STEPS = 15;
+  const RAIL_LABELS = [
+    'Q1 Clarity',
+    'Q2 Positioning',
+    'Q3 Structure',
+    'Q4 Clarity',
+    'Q5 Positioning',
+    'Q6 Structure',
+    'Q7 Clarity',
+    'Q8 Positioning',
+    'Q9 Structure',
+    'Q10 Clarity',
+    'Q11 Positioning',
+    'Q12 Structure',
+    'Q13 Clarity',
+    'Q14 Positioning',
+    'Q15 Structure',
+    'Results'
+  ];
 
   const ARCHETYPES = [
     'Hidden Operator',
@@ -1043,40 +1060,94 @@
 
   const QUESTIONS = [
     {
-      instruction: 'When entering a new situation, what happens first?',
+      instruction: 'If someone asks what you do, you usually:',
       micro: '',
-      a: { text: 'I immediately see what’s off', bit: 0 },
-      b: { text: 'I immediately see how to improve it', bit: 1 }
+      a: { text: 'Give a clear one-sentence answer that includes who it is for and what they get', bit: 0 },
+      b: { text: 'Adjust your answer depending on who is asking and how much time you have', bit: 1 }
     },
     {
-      instruction: 'When something is clearly broken, you:',
+      instruction: 'Your pricing was set based on:',
       micro: '',
-      a: { text: 'You break down why it is happening', bit: 0 },
-      b: { text: 'You adjust something immediately', bit: 1 }
+      a: { text: 'What similar people charge, what felt fair, or what you thought someone would pay', bit: 0 },
+      b: { text: 'A specific calculation tied to your costs, time, and the result the buyer gets', bit: 1 }
     },
     {
-      instruction: 'When you notice something important:',
+      instruction: 'When someone pays you, what happens next is:',
       micro: '',
-      a: { text: 'You hold it because it would disrupt something', bit: 0 },
-      b: { text: 'You say it even if it changes the dynamic', bit: 1 }
+      a: { text: 'The same every time, with steps they can see and a clear timeline', bit: 0 },
+      b: { text: 'Mostly figured out as you go, depending on the project', bit: 1 }
     },
     {
-      instruction: 'Across your usual environments:',
+      instruction: 'The last time you described your offer to someone new, they:',
       micro: '',
-      a: { text: 'Your environment does not require what you are best at', bit: 0 },
-      b: { text: 'Your environment depends on how you think', bit: 1 }
+      a: { text: 'Asked follow-up questions about how to buy or how it works', bit: 0 },
+      b: { text: 'Nodded, said it sounded interesting, and moved on', bit: 1 }
     },
     {
-      instruction: 'When something fails, you blame:',
+      instruction: 'If you doubled your price tomorrow:',
       micro: '',
-      a: { text: 'It should have been prevented', bit: 0 },
-      b: { text: 'It should have been handled better', bit: 1 }
+      a: { text: 'You could explain why it is worth it in two sentences', bit: 0 },
+      b: { text: 'You would feel like you need to add more to justify it', bit: 1 }
     },
     {
-      instruction: 'The more accurate stall label:',
+      instruction: 'If you disappeared for two weeks, your business would:',
       micro: '',
-      a: { text: 'You already know what to do but avoid acting', bit: 0 },
-      b: { text: 'You are still searching for direction', bit: 1 }
+      a: { text: 'Keep running because systems, sequences, and delivery are documented', bit: 0 },
+      b: { text: 'Stall because most of it depends on you being present', bit: 1 }
+    },
+    {
+      instruction: 'Right now you have:',
+      micro: '',
+      a: { text: 'One main offer that does one thing for one type of person', bit: 0 },
+      b: { text: 'Several offers, or one offer you describe differently depending on the situation', bit: 1 }
+    },
+    {
+      instruction: 'The people who buy from you tend to be:',
+      micro: '',
+      a: { text: 'The exact type of person you designed the offer for', bit: 0 },
+      b: { text: 'A mix, including some you did not expect and some you wish you could filter out', bit: 1 }
+    },
+    {
+      instruction: 'Your follow-up after someone buys is:',
+      micro: '',
+      a: { text: 'Automated or systematized so it happens without you thinking about it', bit: 0 },
+      b: { text: 'Manual, inconsistent, or something you keep meaning to set up', bit: 1 }
+    },
+    {
+      instruction: 'If someone looked at your website or social media for 30 seconds, they would know:',
+      micro: '',
+      a: { text: 'Exactly what you sell, who it is for, and how to buy it', bit: 0 },
+      b: { text: 'You do something interesting, but they would need to dig to understand the offer', bit: 1 }
+    },
+    {
+      instruction: 'Compared to other people who do similar work, your offer is:',
+      micro: '',
+      a: { text: 'Different in a way you can name, priced to reflect that difference', bit: 0 },
+      b: { text: 'Similar to others, competing mostly on personality, trust, or availability', bit: 1 }
+    },
+    {
+      instruction: 'Your revenue right now is:',
+      micro: '',
+      a: { text: 'Predictable month to month; you can roughly forecast the next 90 days', bit: 0 },
+      b: { text: 'Inconsistent, with good months and bad months and no clear pattern', bit: 1 }
+    },
+    {
+      instruction: 'The single biggest reason people do not buy from you is:',
+      micro: '',
+      a: { text: 'They cannot afford it or timing is not right; they understood the offer and wanted it', bit: 0 },
+      b: { text: 'You are not sure, or you think they did not fully understand what you were offering', bit: 1 }
+    },
+    {
+      instruction: 'When you think about raising your prices, you feel:',
+      micro: '',
+      a: { text: 'Fine with it; the value is there', bit: 0 },
+      b: { text: 'Nervous that you will lose the people who already buy', bit: 1 }
+    },
+    {
+      instruction: 'If you had to onboard a new client tomorrow using only written documentation, you could:',
+      micro: '',
+      a: { text: 'Hand them a link or document and they would know what to do', bit: 0 },
+      b: { text: 'Need to create something or explain it live', bit: 1 }
     }
   ];
 
@@ -1526,7 +1597,7 @@
       next = 'Last answer locks avoidance versus search.';
     }
     if (ac >= 6) {
-      next = 'Context next: what you are building or selling.';
+      next = 'Keep going. You are now in the back-half pressure checks.';
     }
 
     return { main: main, loss: loss, pattern: pattern, next: next };
@@ -1538,14 +1609,6 @@
     }
     var bits = state.bits;
     var n = state.currentStep;
-    if (n === 7) {
-      el('live-notice', state.context ? 'Context locked.' : 'Name what you are building or selling.');
-      el('live-do', '—');
-      el('live-hold', '—');
-      el('live-env', state.context ? 'Ready to generate your read.' : '—');
-      el('live-status', 'Step 7 of ' + TOTAL_STEPS + ' · In progress');
-      return;
-    }
     var L = liveStrings(bits);
     el('live-notice', L.main);
     el('live-do', L.loss);
@@ -1614,32 +1677,25 @@
   function saveStorage() {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify({
-        context: state.context,
+        context: '',
         bits: state.bits,
         currentStep: state.currentStep,
-        flowOrder: 'binaryFirst',
+        flowOrder: 'singleFlow15',
         ts: Date.now()
       }));
       localStorage.setItem('diagnosticStarted', 'true');
     } catch (e) {}
   }
 
-  /** Legacy: step 1 was context; steps 2–7 were questions. New: steps 1–6 binary, 7 context. */
+  /** Legacy step migration: normalize to single-flow 15-question sequence. */
   function migrateLegacyStepOrder(d) {
-    if (!d || d.flowOrder === 'binaryFirst') return d;
+    if (!d) return d;
+    if (d.flowOrder === 'singleFlow15') return d;
     var cs = d.currentStep;
-    if (typeof cs !== 'number') {
-      d.flowOrder = 'binaryFirst';
-      return d;
-    }
-    if (cs === 11) {
-      d.flowOrder = 'binaryFirst';
-      return d;
-    }
-    if (cs >= 2 && cs <= 7) {
-      d.currentStep = cs - 1;
-    }
-    d.flowOrder = 'binaryFirst';
+    if (typeof cs !== 'number' || cs < 1) cs = 1;
+    if (cs > TOTAL_STEPS + 1) cs = TOTAL_STEPS + 1;
+    d.currentStep = cs;
+    d.flowOrder = 'singleFlow15';
     return d;
   }
 
@@ -1670,57 +1726,10 @@
     items.forEach(function(el, i) {
       el.classList.remove('active', 'done');
       if (i === RAIL_LABELS.length - 1) {
-        if (phase === 11) el.classList.add('active');
+        if (phase > TOTAL_STEPS) el.classList.add('active');
       } else if (i + 1 < phase) el.classList.add('done');
       else if (i + 1 === phase) el.classList.add('active');
     });
-  }
-
-  function buildContextStep() {
-    var root = document.getElementById('steps-root');
-    var div = document.createElement('div');
-    div.className = 'step';
-    div.id = 'step-7';
-    div.innerHTML =
-      '<div class="step-header">' +
-        '<div class="step-instruction"></div>' +
-        '<label class="sr-only" for="capture-context-field">What you are building or selling</label>' +
-        '<textarea id="capture-context-field" class="step-context-field" required maxlength="560" rows="5" placeholder=""></textarea>' +
-      '</div>' +
-      '<div class="nav-row">' +
-        '<button type="button" class="btn btn-ghost" data-back-context="1">Back</button>' +
-        '<button type="button" class="btn btn-start" id="capture-context-continue" disabled>Continue</button>' +
-      '</div>';
-
-    div.querySelector('.step-instruction').textContent = 'What are you currently trying to build or sell?';
-
-    var ta = div.querySelector('#capture-context-field');
-    var cont = div.querySelector('#capture-context-continue');
-    var backCtx = div.querySelector('[data-back-context]');
-    function syncContextContinue() {
-      var ok = (ta.value || '').trim().length >= 3;
-      cont.disabled = !ok;
-    }
-    ta.addEventListener('input', syncContextContinue);
-    syncContextContinue();
-    cont.addEventListener('click', function() {
-      var v = (ta.value || '').trim();
-      if (v.length < 3) {
-        ta.focus();
-        return;
-      }
-      state.context = v;
-      saveStorage();
-      updateLivePanel();
-      completePhase01AndContinue();
-    });
-    if (backCtx) {
-      backCtx.addEventListener('click', function() {
-        goTo(6);
-      });
-    }
-
-    root.appendChild(div);
   }
 
   function buildSteps() {
@@ -1779,7 +1788,7 @@
 
           if (idx === TOTAL_Q - 1) {
             runTransitionThen(function() {
-              goTo(7);
+              completePhase01AndContinue();
             });
             return;
           }
@@ -1800,7 +1809,6 @@
       root.appendChild(div);
     });
 
-    buildContextStep();
   }
 
   function syncCaptureShFlowEnd() {
@@ -1824,17 +1832,8 @@
     document.getElementById('progressCount').textContent = 'Step ' + n + ' of ' + TOTAL_STEPS;
     document.getElementById('progressFill').style.width = (n / TOTAL_STEPS * 100) + '%';
 
-    if (n === 7) {
-      var ta7 = document.getElementById('capture-context-field');
-      var cbtn7 = document.getElementById('capture-context-continue');
-      if (ta7) ta7.value = state.context || '';
-      if (cbtn7) {
-        cbtn7.disabled = ((ta7 && ta7.value) || '').trim().length < 3;
-      }
-    }
-
     var cur = document.getElementById('step-' + n);
-    if (cur && n >= 1 && n <= 6) {
+    if (cur && n >= 1 && n <= TOTAL_Q) {
       var bi = n - 1;
       cur.querySelectorAll('.option-item').forEach(function(o) {
         o.classList.remove('dim', 'selected');
@@ -1866,14 +1865,19 @@
   }
 
   function completePhase01AndContinue() {
-    state.currentStep = 11;
+    state.currentStep = TOTAL_STEPS + 1;
     saveStorage();
     document.getElementById('building-overlay').style.display = 'none';
     try {
       localStorage.setItem('diagnosticStarted', 'true');
+      localStorage.setItem('diagnosticCompleted', 'true');
       localStorage.setItem('capture_complete', 'true');
       if (window.StephuaryDiagnosticFlow && typeof window.StephuaryDiagnosticFlow.markPhaseComplete === 'function') {
         window.StephuaryDiagnosticFlow.markPhaseComplete(1);
+        window.StephuaryDiagnosticFlow.markPhaseComplete(2);
+        window.StephuaryDiagnosticFlow.markPhaseComplete(3);
+        window.StephuaryDiagnosticFlow.markPhaseComplete(4);
+        window.StephuaryDiagnosticFlow.markPhaseComplete(5);
       }
       if (
         window.StephuaryPersonalize &&
@@ -1883,12 +1887,12 @@
           window.StephuaryPersonalize.persistDiagnosticFromBits(state.bits);
         } catch (ePersist) {}
       }
+      if (window.StephuaryResult && typeof window.StephuaryResult.buildFromPhase01 === 'function') {
+        var resultPayload = window.StephuaryResult.buildFromPhase01(state.bits);
+        localStorage.setItem(RESULT_KEY, JSON.stringify(resultPayload));
+      }
     } catch (e) {}
-    var href =
-      window.StephuaryDiagnosticFlow && typeof window.StephuaryDiagnosticFlow.getNextPhaseHrefAfterComplete === 'function'
-        ? window.StephuaryDiagnosticFlow.getNextPhaseHrefAfterComplete(1)
-        : '/monetize';
-    window.location.href = href || '/monetize';
+    window.location.href = '/results';
   }
 
   function exportText() {
@@ -2040,7 +2044,7 @@
     var d = loadStorage();
     if (!d || !d.bits) return false;
     state.bits = d.bits.slice();
-    state.context = typeof d.context === 'string' ? d.context : '';
+    state.context = '';
     var migratedFromV2Ten = false;
     if (state.bits.length === 10) {
       var migrated = migrateBitsV2TenToSix(state.bits);
@@ -2052,7 +2056,6 @@
     while (state.bits.length < TOTAL_Q) state.bits.push(null);
     if (state.bits.length > TOTAL_Q) state.bits = state.bits.slice(0, TOTAL_Q);
 
-    var ctxOk = String(state.context).trim().length >= 3;
     var firstEmpty = state.bits.indexOf(null);
 
     document.getElementById('flow-wrap').style.display = 'block';
@@ -2062,15 +2065,8 @@
     }
 
     if (firstEmpty === -1) {
-      if (ctxOk) {
-        if (migratedFromV2Ten) saveStorage();
-        completePhase01AndContinue();
-        return true;
-      }
-      state.currentStep = 7;
       if (migratedFromV2Ten) saveStorage();
-      startFlow(true);
-      goTo(7);
+      completePhase01AndContinue();
       updateLivePanel();
       return true;
     }

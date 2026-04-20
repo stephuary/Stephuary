@@ -8,6 +8,14 @@
   }
 
   function dynamicLine(scores) {
+    if (
+      scores &&
+      scores._raw &&
+      window.StephuaryResult &&
+      typeof window.StephuaryResult.dynamicLineFromSingleFlow === 'function'
+    ) {
+      return window.StephuaryResult.dynamicLineFromSingleFlow(scores._raw);
+    }
     var c = scores.clarity;
     var p = scores.positioning;
     var s = scores.structure;

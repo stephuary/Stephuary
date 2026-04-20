@@ -19,6 +19,7 @@
     5: 'sovereignty_complete'
   };
   var PHASE_PATH = { 1: '/capture', 2: '/monetize', 3: '/structure', 4: '/automation', 5: '/sovereignty' };
+  var SINGLE_FLOW_KEY = 'stephuary_capture_p01_v3';
 
   function lsGet(k) {
     try {
@@ -42,6 +43,21 @@
 
   function storageKeyForPhase(n) {
     return PHASE_STORAGE[n] || null;
+  }
+
+  function isSingleFlowComplete() {
+    try {
+      var raw = lsGet(SINGLE_FLOW_KEY);
+      if (!raw) return false;
+      var d = JSON.parse(raw);
+      if (!d || !Array.isArray(d.bits) || d.bits.length < 15) return false;
+      for (var i = 0; i < 15; i++) {
+        if (d.bits[i] === null || d.bits[i] === undefined) return false;
+      }
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
 
   function isStorageSummaryOrComplete(key) {
@@ -87,6 +103,7 @@
 
   function phaseDone(n) {
     migrateCompletionFlags();
+    if (isSingleFlowComplete()) return true;
     if (n === 1) return lsGet('capture_complete') === 'true';
     var f = PHASE_DONE[n];
     return f && lsGet(f) === 'true';
@@ -117,6 +134,7 @@
 
   function canEnterPhase(n) {
     migrateCompletionFlags();
+    if (isSingleFlowComplete()) return n === 1;
     if (n <= 1) return true;
     return phaseDone(n - 1);
   }
@@ -126,6 +144,7 @@
    */
   function getResumeHref() {
     migrateCompletionFlags();
+    if (isSingleFlowComplete()) return '/results';
     var p;
     for (p = 1; p <= 5; p++) {
       if (!phaseDone(p)) return PHASE_PATH[p];
@@ -138,6 +157,7 @@
 
   function isFullyComplete() {
     migrateCompletionFlags();
+    if (isSingleFlowComplete()) return lsGet('diagnosticCompleted') === 'true';
     try {
       return phaseDone(5) && lsGet('diagnosticCompleted') === 'true';
     } catch (e2) {

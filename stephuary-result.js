@@ -330,6 +330,10 @@
   var LS_P03 = 'stephuary_structure_p03_v1';
   var LS_P04 = 'stephuary_validation_p04_v1';
   var LS_P05 = 'stephuary_sovereignty_p05_v1';
+  var LS_SINGLE_FLOW = 'stephuary_capture_p01_v3';
+  var SINGLE_FLOW_TOTAL_Q = 15;
+  var SINGLE_FLOW_KEY_BY_INDEX = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+  SINGLE_FLOW_KEY_BY_INDEX[1] = 1;
 
   var MONETIZE_Q = 5;
   var STRUCTURE_Q = 5;
@@ -422,6 +426,112 @@
     } catch (e) {
       return null;
     }
+  }
+
+  function loadSingleFlowBits() {
+    return loadStoredBits(LS_SINGLE_FLOW);
+  }
+
+  function isSingleFlowBits(bits) {
+    return Array.isArray(bits) && bits.length >= SINGLE_FLOW_TOTAL_Q;
+  }
+
+  function scoreSingleFlow(bits) {
+    if (!isSingleFlowBits(bits)) return null;
+    var idx = {
+      clarity: [0, 3, 6, 9, 12],
+      positioning: [1, 4, 7, 10, 13],
+      structure: [2, 5, 8, 11, 14]
+    };
+    function scoreArea(areaIdx) {
+      var score = 0;
+      for (var i = 0; i < areaIdx.length; i++) {
+        var q = areaIdx[i];
+        if (bits[q] === SINGLE_FLOW_KEY_BY_INDEX[q]) score += 1;
+      }
+      return score;
+    }
+    var cScore = scoreArea(idx.clarity);
+    var pScore = scoreArea(idx.positioning);
+    var sScore = scoreArea(idx.structure);
+    var totalCorrect = cScore + pScore + sScore;
+    return {
+      mode: 'single_flow_15',
+      raw: { clarity: cScore, positioning: pScore, structure: sScore, total: totalCorrect },
+      clarity: Math.round((cScore / 5) * 100),
+      positioning: Math.round((pScore / 5) * 100),
+      structure: Math.round((sScore / 5) * 100),
+      total: Math.round((totalCorrect / 15) * 100)
+    };
+  }
+
+  function resolveSingleFlowLowest(scoresRaw) {
+    var c = scoresRaw.clarity;
+    var p = scoresRaw.positioning;
+    var s = scoresRaw.structure;
+    var min = Math.min(c, p, s);
+    var max = Math.max(c, p, s);
+    var balanced = max - min <= 1;
+    if (balanced) return { kind: 'balanced', area: c <= p && c <= s ? 'clarity' : p <= s ? 'positioning' : 'structure' };
+    var lowest = [];
+    if (c === min) lowest.push('clarity');
+    if (p === min) lowest.push('positioning');
+    if (s === min) lowest.push('structure');
+    if (lowest.length === 1) return { kind: 'single', area: lowest[0] };
+    if (lowest.length === 2) return { kind: 'two_tied', areas: lowest };
+    return { kind: 'single', area: 'clarity' };
+  }
+
+  function dynamicLineFromSingleFlow(scoresRaw) {
+    var low = resolveSingleFlowLowest(scoresRaw);
+    var c = scoresRaw.clarity;
+    var p = scoresRaw.positioning;
+    var s = scoresRaw.structure;
+    if (low.kind === 'balanced') {
+      if (c === 5 && p === 5 && s === 5) return 'Nothing is broken here. The next move is scale, not repair.';
+      if (c <= 2 && p <= 2 && s <= 2) return 'All three areas are underbuilt. Start with clarity, the rest follows.';
+      return 'Solid across the board. Look at the lowest bar, that is your only real gap.';
+    }
+    if (low.kind === 'two_tied') {
+      var k = low.areas.slice().sort().join('|');
+      if (k === 'clarity|positioning') return 'The offer and its framing are both off. Fix clarity first, positioning corrects with it.';
+      if (k === 'clarity|structure') return 'You cannot explain it and you cannot deliver it consistently. Clarity first.';
+      return 'The offer is clear but it is aimed wrong and the backend does not hold. Start with positioning.';
+    }
+    if (low.area === 'clarity') return c <= 1 ? 'Your offer is not landing. Nothing downstream can fix that.' : 'Clarity is the drag. Your positioning and structure are waiting on it.';
+    if (low.area === 'positioning') return p <= 1 ? 'You built something good and aimed it at the wrong people.' : 'Positioning is the gap. The offer works, it is just framed wrong.';
+    return s <= 1 ? 'You are doing the work manually every time. That is where the money goes.' : 'Structure is the weak point. The offer and positioning are ahead of your backend.';
+  }
+
+  function keepReadingForArea(area) {
+    var map = {
+      clarity: { href: 'https://stephuary.substack.com/?topic=clarity', label: 'Keep reading' },
+      positioning: { href: 'https://stephuary.substack.com/?topic=positioning', label: 'Keep reading' },
+      structure: { href: 'https://stephuary.substack.com/?topic=structure', label: 'Keep reading' }
+    };
+    return map[area] || map.clarity;
+  }
+
+  function resolveTieredPaths(scoresRaw, overallPct) {
+    var low = resolveSingleFlowLowest(scoresRaw);
+    var lowArea = low.area || (low.areas && low.areas[0]) || 'clarity';
+    var keepReading = keepReadingForArea(lowArea);
+    if (overallPct > 70) {
+      return {
+        primary: { href: keepReading.href, label: 'Keep reading', copy: 'Not much is broken. Go deeper on the one area that scored lowest.' },
+        secondary: { href: '/snapshot', label: 'Get the full breakdown', copy: 'If you want the detailed version, it is here.' },
+        quiet: { href: '/private-access', label: 'Apply for Private Access' }
+      };
+    }
+    var copy =
+      overallPct < 40
+        ? 'Your score identified the problem. This shows you exactly what it is costing and what to change.'
+        : 'You are close. The breakdown shows where the gap is and what one fix changes.';
+    return {
+      primary: { href: '/snapshot', label: 'Get the full breakdown', copy: copy },
+      secondary: { href: '/private-access', label: 'Apply for Private Access', copy: 'For complex situations that need more than a breakdown.' },
+      quiet: { href: keepReading.href, label: 'Keep reading' }
+    };
   }
 
   function validationTierP4(b) {
@@ -878,6 +988,18 @@
   }
 
   function computeResultsVisualScores() {
+    var sfBits = loadSingleFlowBits();
+    var sf = scoreSingleFlow(sfBits);
+    if (sf) {
+      return {
+        clarity: sf.clarity,
+        positioning: sf.positioning,
+        structure: sf.structure,
+        total: sf.total,
+        _raw: sf.raw,
+        _mode: sf.mode
+      };
+    }
     var p2 = loadStoredBits(LS_P02);
     var p3 = loadStoredBits(LS_P03);
     var p4 = loadStoredBits(LS_P04);
@@ -912,6 +1034,52 @@
   }
 
   function buildFromPhase01(bits) {
+    var sf = scoreSingleFlow(bits);
+    if (sf) {
+      var low = resolveSingleFlowLowest(sf.raw);
+      var lowArea = low.area || (low.areas && low.areas[0]) || 'clarity';
+      var paths = resolveTieredPaths(sf.raw, sf.total);
+      var opener =
+        lowArea === 'clarity'
+          ? 'Clarity is your current conversion bottleneck.'
+          : lowArea === 'positioning'
+            ? 'Positioning is your current conversion bottleneck.'
+            : 'Structure is your current conversion bottleneck.';
+      return {
+        type_primary: 'Single-flow diagnostic',
+        type_secondary: '15-question conversion read',
+        block: '',
+        environment: '',
+        signals: {
+          clarity_score: String(sf.raw.clarity) + '/5',
+          positioning_score: String(sf.raw.positioning) + '/5',
+          structure_score: String(sf.raw.structure) + '/5',
+          overall_score: String(sf.total) + '/100'
+        },
+        playbooks: ['Execution'],
+        result_version: 'mixed_general',
+        diagnostic: {
+          single_flow_v2: true,
+          main_problem: opener,
+          primary_issue: dynamicLineFromSingleFlow(sf.raw),
+          synthesis_summary: dynamicLineFromSingleFlow(sf.raw),
+          what_it_costs: 'Clarity, positioning, and structure are scored independently so the lowest layer is visible.',
+          what_you_have: 'Clarity ' + sf.raw.clarity + '/5 · Positioning ' + sf.raw.positioning + '/5 · Structure ' + sf.raw.structure + '/5.',
+          fix_first: 'Start with ' + lowArea + '.',
+          lowest_area: lowArea,
+          area_scores: { clarity: sf.raw.clarity, positioning: sf.raw.positioning, structure: sf.raw.structure },
+          overall_score: sf.total,
+          results_cta: { href: paths.primary.href, label: paths.primary.label },
+          results_secondary_cta: paths.secondary,
+          results_quiet_cta: paths.quiet,
+          next_reason: paths.primary.copy || '',
+          cta_single: false,
+          diagnosis_issues: [dynamicLineFromSingleFlow(sf.raw)],
+          priority_moves: ['Fix the lowest scoring area first.', 'Run one concrete change this week.', 'Re-score after shipping the change.']
+        }
+      };
+    }
+
     var fallback = {
       type_primary: '',
       type_secondary: '',
@@ -960,6 +1128,9 @@
     assignRecommendedRoom: assignRecommendedRoom,
     PLAYBOOK_ROOM: PLAYBOOK_ROOM,
     VERSION_PLAYBOOKS: VERSION_PLAYBOOKS,
-    computeResultsVisualScores: computeResultsVisualScores
+    computeResultsVisualScores: computeResultsVisualScores,
+    scoreSingleFlow: scoreSingleFlow,
+    dynamicLineFromSingleFlow: dynamicLineFromSingleFlow,
+    resolveTieredPaths: resolveTieredPaths
   };
 })(typeof window !== 'undefined' ? window : this);

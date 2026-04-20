@@ -1628,7 +1628,12 @@
         data.diagnostic = window.StephuaryResult.buildDiagnostic(ver, prim);
       } catch (e) {}
     }
-    if (data.diagnostic && typeof window.StephuaryResult !== 'undefined' && typeof window.StephuaryResult.mergeCrossPhase === 'function') {
+    if (
+      data.diagnostic &&
+      !data.diagnostic.single_flow_v2 &&
+      typeof window.StephuaryResult !== 'undefined' &&
+      typeof window.StephuaryResult.mergeCrossPhase === 'function'
+    ) {
       try {
         window.StephuaryResult.mergeCrossPhase(data);
       } catch (eX) {}
@@ -1794,6 +1799,7 @@
 
     var ctaPri = document.getElementById('results-primary-cta');
     var ctaSub = document.getElementById('results-primary-sub');
+    var flowLinks = document.getElementById('results-flow-links');
     var routesSec = document.getElementById('sh-results-routes');
     var diagEsc = document.getElementById('results-diag-esc');
     if (ctaPri && diag) {
@@ -1806,7 +1812,7 @@
       }
     }
     if (ctaSub) {
-      if (diag && String(diag.next_reason || '').trim() && !(diag.results_cta && diag.cta_single)) {
+      if (diag && String(diag.next_reason || '').trim()) {
         ctaSub.hidden = false;
         ctaSub.textContent = String(diag.next_reason).trim();
       } else {
@@ -1814,11 +1820,37 @@
         ctaSub.textContent = '';
       }
     }
+    if (flowLinks) {
+      if (diag && diag.results_secondary_cta && diag.results_secondary_cta.href && diag.results_secondary_cta.label) {
+        var links = [];
+        links.push(
+          '<a href="' +
+            esc(diag.results_secondary_cta.href) +
+            '" data-sh-flow-secondary>' +
+            esc(diag.results_secondary_cta.label) +
+            '</a>'
+        );
+        if (diag.results_quiet_cta && diag.results_quiet_cta.href && diag.results_quiet_cta.label) {
+          links.push(
+            '<a href="' +
+              esc(diag.results_quiet_cta.href) +
+              '" target="_blank" rel="noopener" data-sh-flow-secondary>' +
+              esc(diag.results_quiet_cta.label) +
+              '</a>'
+          );
+        }
+        flowLinks.innerHTML = links.join(' · ');
+        flowLinks.hidden = false;
+      } else {
+        flowLinks.hidden = true;
+        flowLinks.innerHTML = '';
+      }
+    }
     if (routesSec) {
-      routesSec.hidden = !!(diag && diag.cta_single);
+      routesSec.hidden = !!(diag && diag.cta_single) || !!(diag && diag.single_flow_v2);
     }
     if (diagEsc) {
-      diagEsc.hidden = !!(diag && diag.cta_single);
+      diagEsc.hidden = !!(diag && diag.cta_single) || !!(diag && diag.single_flow_v2);
     }
 
     var recSec = document.getElementById('results-recommended-room');
