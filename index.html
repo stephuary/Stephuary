@@ -16,7 +16,7 @@
     (function () {
       try {
         var p = location.pathname || '/';
-        var home = p === '/' || p === '/index' || p === '/index.html';
+        var home = p === '/' || p === '/index' || p === '/index.html' || p === '/homepage' || p === '/homepage.html';
         if (!home) return;
         var k = 'stephuary_cosmic_metropolis';
         if (sessionStorage.getItem(k) === '1') {
@@ -28,24 +28,16 @@
     })();
   </script>
   <style id="cosmic-entry-shell">
-    /* First-paint: intro owns the screen; no header/hero/ambient flash (runs before body CSS). */
-    html.cosmic-intro--pending {
-      overflow: hidden;
-      height: 100%;
-    }
+    html.cosmic-intro--pending { overflow: hidden; height: 100%; }
     html.cosmic-intro--pending body {
-      margin: 0;
-      background: #030303;
-      overflow: hidden !important;
-      overscroll-behavior: none;
-      touch-action: none;
+      margin: 0; background: #030303; overflow: hidden !important;
+      overscroll-behavior: none; touch-action: none;
     }
     html.cosmic-intro--pending.early-mode body {
       background: linear-gradient(180deg, #1a0f28 0%, #2d1830 45%, #4a2038 100%);
     }
     html.cosmic-intro--pending body > *:not(#cosmic-metropolis) {
-      visibility: hidden !important;
-      pointer-events: none !important;
+      visibility: hidden !important; pointer-events: none !important;
     }
   </style>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -58,15 +50,8 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     .sr-only {
-      position: absolute;
-      width: 1px;
-      height: 1px;
-      padding: 0;
-      margin: -1px;
-      overflow: hidden;
-      clip: rect(0, 0, 0, 0);
-      white-space: nowrap;
-      border: 0;
+      position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+      overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0;
     }
 
     :root {
@@ -83,695 +68,286 @@
       --line: rgba(244, 237, 224, 0.08);
     }
 
-    html {
-      scroll-behavior: smooth;
-      overflow-x: hidden;
-    }
+    html { scroll-behavior: smooth; overflow-x: hidden; }
 
     body {
-      background: var(--bg);
-      color: var(--text);
+      background: var(--bg); color: var(--text);
       font-family: var(--font-sans, 'Inter', system-ui, sans-serif);
       font-weight: var(--font-weight-body, 400);
       font-size: var(--text-body-lg, 1.125rem);
       line-height: var(--lh-body, 1.6);
       -webkit-font-smoothing: antialiased;
-      overflow-x: hidden;
-      min-height: 100vh;
-      margin: 0;
+      overflow-x: hidden; min-height: 100vh; margin: 0;
     }
 
-    .ambient {
-      position: fixed;
-      inset: 0;
-      z-index: 0;
-      pointer-events: none;
-    }
+    /* ── Ambient ── */
+    .ambient { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
     .ambient__grad {
-      position: absolute;
-      inset: 0;
-      background:
-        linear-gradient(125deg, #030303 0%, rgba(59, 13, 13, 0.55) 38%, rgba(15, 22, 48, 0.5) 62%, #030303 100%);
-      background-size: 200% 200%;
-      animation: gradDrift 24s ease-in-out infinite;
+      position: absolute; inset: 0;
+      background: linear-gradient(125deg, #030303 0%, rgba(59,13,13,0.55) 38%, rgba(15,22,48,0.5) 62%, #030303 100%);
+      background-size: 200% 200%; animation: gradDrift 24s ease-in-out infinite;
     }
-    @keyframes gradDrift {
-      0%, 100% { background-position: 0% 40%; }
-      50% { background-position: 100% 60%; }
-    }
+    @keyframes gradDrift { 0%,100%{background-position:0% 40%} 50%{background-position:100% 60%} }
     .ambient__noise {
-      position: absolute;
-      inset: 0;
-      opacity: 0.045;
+      position: absolute; inset: 0; opacity: 0.045;
       background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
       background-size: 180px 180px;
     }
-    .ambient__particles {
-      position: absolute;
-      inset: 0;
-      overflow: hidden;
-    }
+    .ambient__particles { position: absolute; inset: 0; overflow: hidden; }
     .ambient__particles span {
-      position: absolute;
-      width: 2px;
-      height: 2px;
-      border-radius: 50%;
-      background: rgba(244, 237, 224, 0.15);
-      animation: floatP 15.5s ease-in-out infinite;
+      position: absolute; width: 2px; height: 2px; border-radius: 50%;
+      background: rgba(244,237,224,0.15); animation: floatP 15.5s ease-in-out infinite;
     }
-    .ambient__particles span:nth-child(1) { left: 12%; top: 22%; animation-delay: 0s; }
-    .ambient__particles span:nth-child(2) { left: 78%; top: 18%; animation-delay: -4s; }
-    .ambient__particles span:nth-child(3) { left: 44%; top: 65%; animation-delay: -8s; }
-    .ambient__particles span:nth-child(4) { left: 88%; top: 72%; animation-delay: -2s; }
-    .ambient__particles span:nth-child(5) { left: 22%; top: 80%; animation-delay: -11s; }
-    @keyframes floatP {
-      0%, 100% { transform: translate(0, 0); opacity: 0.35; }
-      50% { transform: translate(8px, -12px); opacity: 0.7; }
-    }
+    .ambient__particles span:nth-child(1){left:12%;top:22%;animation-delay:0s}
+    .ambient__particles span:nth-child(2){left:78%;top:18%;animation-delay:-4s}
+    .ambient__particles span:nth-child(3){left:44%;top:65%;animation-delay:-8s}
+    .ambient__particles span:nth-child(4){left:88%;top:72%;animation-delay:-2s}
+    .ambient__particles span:nth-child(5){left:22%;top:80%;animation-delay:-11s}
+    @keyframes floatP { 0%,100%{transform:translate(0,0);opacity:.35} 50%{transform:translate(8px,-12px);opacity:.7} }
 
-    .page {
-      position: relative;
-      z-index: 1;
-    }
+    .page { position: relative; z-index: 1; }
 
+    /* ── Nav ── */
     nav#main-nav {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      z-index: 10000;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
+      position: fixed; top: 0; left: 0; right: 0; z-index: 10000;
+      display: flex; align-items: center; justify-content: space-between; gap: 16px;
       padding: 12px 36px;
-      background: rgba(3, 3, 3, 0.52);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
+      background: rgba(3,3,3,0.52);
+      backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
       border-bottom: 1px solid transparent;
       transition: border-color 0.25s ease, background 0.25s ease;
     }
     nav#main-nav.is-scrolled {
-      border-bottom-color: rgba(244, 237, 224, 0.06);
-      background: rgba(4, 4, 4, 0.82);
+      border-bottom-color: rgba(244,237,224,0.06); background: rgba(4,4,4,0.82);
     }
-
     .nav-mark {
-      font-family: var(--font-sans, 'Inter', system-ui, sans-serif);
-      font-size: 11px;
-      font-weight: 500;
-      letter-spacing: 0.16em;
-      text-transform: uppercase;
-      color: var(--text);
-      text-decoration: none;
-      opacity: 0.92;
-      transition: opacity 0.2s ease;
+      font-family: var(--font-sans); font-size: 11px; font-weight: 500;
+      letter-spacing: 0.16em; text-transform: uppercase;
+      color: var(--text); text-decoration: none; opacity: 0.92;
     }
-    .nav-mark:hover {
-      opacity: 1;
-    }
-
-    .nav-links {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 22px;
-      align-items: center;
-      justify-content: flex-end;
-    }
-
+    .nav-mark:hover { opacity: 1; }
+    .nav-links { display: flex; flex-wrap: wrap; gap: 22px; align-items: center; justify-content: flex-end; }
     .nav-link {
       font-family: var(--font-mono, 'DM Mono', monospace);
-      font-size: 9px;
-      font-weight: 400;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--text-2);
-      text-decoration: none;
-      padding-bottom: 1px;
+      font-size: 9px; font-weight: 400; letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--text-2); text-decoration: none; padding-bottom: 1px;
       border-bottom: 1px solid transparent;
-      transition: color 0.2s ease, border-color 0.2s ease, opacity 0.2s ease;
+      transition: color 0.2s ease, border-color 0.2s ease;
     }
-    .nav-link:hover {
-      color: var(--text);
-      border-bottom-color: rgba(244, 237, 224, 0.25);
-    }
-    .nav-link--primary {
-      color: var(--text);
-      opacity: 1;
-    }
-    .nav-link--secondary {
-      color: var(--text-3);
-      opacity: 0.72;
-    }
-    .nav-link--secondary:hover {
-      opacity: 1;
-      color: var(--text-2);
-    }
-    .nav-link--tertiary {
-      color: var(--text-3);
-      opacity: 0.5;
-    }
-    .nav-link--tertiary:hover {
-      opacity: 0.85;
-      color: var(--text-2);
-    }
+    .nav-link:hover { color: var(--text); border-bottom-color: rgba(244,237,224,0.25); }
 
+    /* ── Hero ── */
     #hero {
-      position: relative;
-      overflow: hidden;
-      contain: paint;
-      min-height: min(100vh, 880px);
-      min-height: min(100dvh, 880px);
-      padding: 0;
+      position: relative; overflow: hidden; contain: paint;
+      min-height: min(100vh, 880px); min-height: min(100dvh, 880px); padding: 0;
     }
-
     .hero-container {
-      position: relative;
-      overflow: hidden;
-      min-height: min(100vh, 880px);
-      min-height: min(100dvh, 880px);
-      display: flex;
-      flex-direction: column;
+      position: relative; overflow: hidden;
+      min-height: min(100vh, 880px); min-height: min(100dvh, 880px);
+      display: flex; flex-direction: column;
       background:
-        radial-gradient(ellipse 120% 85% at 50% 18%, rgba(72, 14, 14, 0.52) 0%, transparent 58%),
-        radial-gradient(ellipse 95% 65% at 82% 88%, rgba(28, 48, 118, 0.42) 0%, transparent 52%),
+        radial-gradient(ellipse 120% 85% at 50% 18%, rgba(72,14,14,0.52) 0%, transparent 58%),
+        radial-gradient(ellipse 95% 65% at 82% 88%, rgba(28,48,118,0.42) 0%, transparent 52%),
         linear-gradient(160deg, #050505 0%, #120a0a 38%, #070a14 72%, #040406 100%);
     }
-
     .hero-canvas-wrap {
-      position: absolute;
-      inset: 0;
-      z-index: 0;
-      pointer-events: none;
-      min-height: 100%;
-      min-height: 100vh;
-      min-height: 100dvh;
+      position: absolute; inset: 0; z-index: 0; pointer-events: none;
+      min-height: 100%; min-height: 100vh; min-height: 100dvh;
     }
-
-    #hero-canvas {
-      display: block;
-      width: 100%;
-      height: 100%;
-      vertical-align: top;
-      opacity: 1;
-    }
-
+    #hero-canvas { display: block; width: 100%; height: 100%; vertical-align: top; }
     .hero-overlay {
-      position: absolute;
-      inset: 0;
-      background: radial-gradient(ellipse 85% 75% at 50% 45%, rgba(0, 0, 0, 0.15) 0%, rgba(0, 0, 0, 0.42) 100%);
-      z-index: 1;
-      pointer-events: none;
+      position: absolute; inset: 0; z-index: 1; pointer-events: none;
+      background: radial-gradient(ellipse 85% 75% at 50% 45%, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.42) 100%);
     }
-
     .hero-content {
-      position: relative;
-      z-index: 2;
-      flex: 1 1 auto;
+      position: relative; z-index: 2; flex: 1 1 auto;
       min-height: min(88vh, 820px);
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      padding: 104px 40px 64px;
-      width: 100%;
+      display: flex; flex-direction: column; justify-content: center;
+      padding: 104px 40px 64px; width: 100%;
     }
-
     .hero-inner {
       max-width: min(var(--prose-narrow, 640px), 100%);
-      margin: 0 auto;
-      width: 100%;
-      position: relative;
-      z-index: 2;
-      will-change: transform;
-      text-align: left;
+      margin: 0 auto; width: 100%; position: relative; z-index: 2; text-align: left;
     }
-
     .home-hero__title {
       font-family: var(--font-serif, 'Playfair Display', Georgia, serif);
       font-weight: var(--font-weight-serif, 500);
-      font-size: var(--text-h1);
-      line-height: var(--lh-h1, 1.1);
+      font-size: var(--text-h1); line-height: var(--lh-h1, 1.1);
       letter-spacing: var(--letter-h, -0.02em);
-      max-width: 20ch;
-      margin-bottom: var(--sp-3, 24px);
-      color: var(--text);
+      max-width: 22ch; margin-bottom: var(--sp-3, 24px); color: var(--text);
     }
-
     .home-hero__sub {
-      font-family: var(--font-sans, 'Inter', system-ui, sans-serif);
-      font-size: var(--text-body-lg);
-      font-weight: var(--font-weight-body, 400);
-      line-height: var(--lh-body, 1.6);
-      color: var(--text-2);
-      max-width: 38ch;
-      margin-bottom: var(--sp-4, 32px);
+      font-family: var(--font-sans); font-size: var(--text-body-lg);
+      font-weight: var(--font-weight-body, 400); line-height: var(--lh-body, 1.6);
+      color: var(--text-2); max-width: 40ch; margin-bottom: 28px;
+    }
+    .hero-areas {
+      display: flex; gap: 28px; flex-wrap: wrap; margin: 0 0 32px;
+    }
+    .hero-areas__item {
+      display: flex; align-items: center; gap: 8px;
+      font-family: var(--font-mono, 'DM Mono', monospace);
+      font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-3);
+    }
+    .hero-areas__dot { width: 6px; height: 6px; border-radius: 50%; background: var(--gold-dim); flex-shrink: 0; }
+    .hero-actions { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; }
+    .hero-meta {
+      font-family: var(--font-mono, 'DM Mono', monospace);
+      font-size: 9px; letter-spacing: 0.16em; text-transform: uppercase;
+      color: var(--text-3); opacity: 0.6;
     }
 
-    .hero-actions {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 16px;
-    }
-
-    .hero-cta--soft-emphasis {
-      box-shadow: none;
-      border-color: rgba(244, 237, 224, 0.35);
-      background: rgba(244, 237, 224, 0.06);
-    }
-
-    .home-restart-note {
-      font-size: 13px;
-      color: var(--text-3);
-    }
-    .home-restart-note button {
-      font: inherit;
-      color: var(--text-3);
-      background: none;
-      border: none;
-      padding: 0;
-      cursor: pointer;
-      text-decoration: underline;
-      text-underline-offset: 3px;
-    }
-    .home-restart-note button:hover {
-      color: var(--text-2);
-    }
-
+    /* ── Buttons ── */
     .btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      font-family: var(--font-sans, 'Inter', system-ui, sans-serif);
-      font-size: var(--text-label, 11px);
-      font-weight: var(--font-weight-medium, 500);
-      letter-spacing: var(--letter-ui, 0.12em);
-      text-transform: uppercase;
-      text-decoration: none;
+      display: inline-flex; align-items: center; justify-content: center;
+      font-family: var(--font-sans);
+      font-size: var(--text-label, 11px); font-weight: var(--font-weight-medium, 500);
+      letter-spacing: var(--letter-ui, 0.12em); text-transform: uppercase; text-decoration: none;
       padding: var(--btn-pad-y, 12px) var(--btn-pad-x, 24px);
       border-radius: var(--radius-sm, 2px);
-      border: 1px solid rgba(244, 237, 224, 0.22);
-      background: transparent;
-      color: var(--text);
+      border: 1px solid rgba(244,237,224,0.22); background: transparent; color: var(--text);
       transition: opacity 0.2s ease, border-color 0.2s ease, background 0.2s ease;
-    }
-    .btn:hover {
-      opacity: 0.88;
-      border-color: rgba(244, 237, 224, 0.38);
-      background: rgba(244, 237, 224, 0.04);
-    }
-    .btn:active { opacity: 0.95; }
-
-    .btn--pri {
-      background: transparent;
-      color: var(--text);
-      border: 1px solid rgba(244, 237, 224, 0.28);
-      box-shadow: none;
-    }
-    .btn--pri:hover {
-      box-shadow: none;
-      transform: none;
-      opacity: 0.92;
-      border-color: rgba(244, 237, 224, 0.45);
-      background: rgba(244, 237, 224, 0.05);
-    }
-
-    .home-section {
-      padding: var(--section-y-desktop, 96px) var(--container-pad-x, 24px);
-      border-top: 1px solid rgba(244, 237, 224, 0.06);
-      position: relative;
-      z-index: 1;
-    }
-    .home-section__inner {
-      max-width: min(var(--prose-width, 720px), 100%);
-      margin: 0 auto;
-    }
-    .home-section__inner--wide {
-      max-width: 44rem;
-    }
-
-    .home-section__label {
-      font-family: var(--font-mono, 'DM Mono', monospace);
-      font-size: 8px;
-      font-weight: 400;
-      letter-spacing: 0.22em;
-      text-transform: uppercase;
-      color: rgba(198, 161, 91, 0.75);
-      margin-bottom: 18px;
-    }
-
-    .home-section__title {
-      font-family: var(--font-serif, 'Playfair Display', Georgia, serif);
-      font-size: var(--text-h3);
-      font-weight: var(--font-weight-serif, 500);
-      letter-spacing: var(--letter-h);
-      margin-bottom: var(--sp-2, 16px);
-    }
-
-    .home-section__body {
-      font-size: var(--text-body);
-      font-weight: var(--font-weight-body, 400);
-      line-height: var(--lh-body, 1.6);
-      color: var(--text-2);
-    }
-    .home-section__body p + p {
-      margin-top: 12px;
-    }
-    .home-section__inner > .home-section__body + .home-section__body {
-      margin-top: 12px;
-    }
-
-    .home-section--micro .home-section__inner {
-      max-width: 40rem;
-      text-align: left;
-    }
-
-    .home-micro {
-      display: flex;
-      flex-direction: column;
-      gap: 0;
-    }
-    .home-micro__pair {
-      margin: 0 0 48px;
-      padding: 0;
-      border: none;
-    }
-    .home-micro__pair:last-child {
-      margin-bottom: 0;
-    }
-    .home-micro__pair span {
-      display: block;
-      font-size: clamp(17px, 1.6vw, 20px);
-      font-weight: 400;
-      line-height: 1.5;
-      color: var(--text-2);
-    }
-    .home-micro__pair span:first-child {
-      font-family: var(--font-serif, 'Playfair Display', Georgia, serif);
-      font-weight: 500;
-      font-size: clamp(19px, 1.85vw, 22px);
-      color: var(--text);
-      margin-bottom: 8px;
-      letter-spacing: -0.02em;
-    }
-
-    .home-list {
-      list-style: none;
-      margin: 16px 0 0;
-      padding: 0;
-    }
-    .home-list li {
-      position: relative;
-      padding-left: 1.15em;
-      margin-bottom: 10px;
-      font-size: 17px;
-      line-height: 1.55;
-      color: var(--text-2);
-    }
-    .home-list li::before {
-      content: '';
-      position: absolute;
-      left: 0;
-      top: 0.62em;
-      width: 6px;
-      height: 1px;
-      background: rgba(198, 161, 91, 0.35);
-    }
-
-    .home-cta-row {
-      margin-top: 32px;
-    }
-
-    .home-section--consequence {
-      background: rgba(0, 0, 0, 0.28);
-      border-top-color: rgba(244, 237, 224, 0.05);
-    }
-
-    .home-section--path .home-section__inner {
-      max-width: 36rem;
-      text-align: center;
-    }
-    .home-section--path .home-path {
-      text-align: left;
-      max-width: 28rem;
-      margin: 0 auto;
-    }
-
-    .home-section__label--quiet {
-      opacity: 0.65;
-    }
-
-    .home-accordion {
-      margin-top: 4px;
-    }
-    .home-accordion__title {
-      font-family: var(--font-serif, 'Playfair Display', Georgia, serif);
-      font-size: var(--text-h2);
-      font-weight: var(--font-weight-serif, 500);
-      letter-spacing: var(--letter-h);
-      margin-bottom: var(--sp-2, 16px);
-    }
-
-    .home-acc-item {
-      border: none;
-      border-radius: 0;
-      background: transparent;
-      margin: 0;
-      border-bottom: 1px solid rgba(244, 237, 224, 0.07);
-    }
-    .home-acc-item:first-of-type {
-      border-top: 1px solid rgba(244, 237, 224, 0.07);
-    }
-
-    .home-acc-item summary {
-      font-family: var(--font-sans, 'Inter', system-ui, sans-serif);
-      font-size: var(--text-h4);
-      font-weight: var(--font-weight-medium, 500);
-      letter-spacing: var(--letter-body);
-      text-transform: none;
-      color: var(--text);
-      padding: var(--sp-3, 24px) 0;
       cursor: pointer;
-      list-style: none;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 16px;
+    }
+    .btn:hover { opacity: 0.88; border-color: rgba(244,237,224,0.38); background: rgba(244,237,224,0.04); }
+    .btn--pri { border-color: rgba(244,237,224,0.28); }
+    .btn--pri:hover { border-color: rgba(244,237,224,0.45); background: rgba(244,237,224,0.05); }
+
+    /* ── Collapsible folds ── */
+    .home-fold {
+      border: none; border-radius: 0; background: transparent; margin: 0;
+      border-bottom: 1px solid rgba(244,237,224,0.06);
+    }
+    .home-fold:first-of-type { border-top: 1px solid rgba(244,237,224,0.06); }
+
+    .home-fold summary {
+      display: flex; justify-content: space-between; align-items: center; gap: 16px;
+      padding: var(--sp-4, 32px) var(--container-pad-x, 24px);
+      cursor: pointer; list-style: none;
+      max-width: min(var(--prose-width, 720px), 100%); margin: 0 auto;
       transition: opacity 0.2s ease;
     }
-    .home-acc-item summary:hover {
-      opacity: 0.85;
+    .home-fold summary:hover { opacity: 0.8; }
+    .home-fold summary::-webkit-details-marker { display: none; }
+
+    .home-fold__title {
+      font-family: var(--font-serif, 'Playfair Display', Georgia, serif);
+      font-size: var(--text-h4, clamp(17px, 1.6vw, 20px));
+      font-weight: var(--font-weight-serif, 500);
+      letter-spacing: var(--letter-h, -0.02em); color: var(--text);
     }
-    .home-acc-item summary::-webkit-details-marker { display: none; }
-    .home-acc-item summary::after {
-      content: '+';
+    .home-fold__indicator {
       font-family: var(--font-mono, 'DM Mono', monospace);
-      font-size: 11px;
-      font-weight: 400;
-      color: var(--text-3);
-      opacity: 0.55;
-      transition: transform 0.25s ease, opacity 0.2s ease;
+      font-size: 11px; font-weight: 400; color: var(--text-3); opacity: 0.5;
+      transition: transform 0.25s ease, opacity 0.2s ease; flex-shrink: 0;
     }
-    .home-acc-item[open] summary::after {
-      content: '–';
-      transform: rotate(0deg);
-      opacity: 0.75;
-    }
+    .home-fold[open] .home-fold__indicator { transform: rotate(45deg); opacity: 0.7; }
 
-    .home-acc-item__panel {
-      display: grid;
-      grid-template-rows: 0fr;
-      transition: grid-template-rows 0.28s ease;
+    .home-fold__body {
+      max-width: min(var(--prose-width, 720px), 100%); margin: 0 auto;
+      padding: 0 var(--container-pad-x, 24px) var(--sp-5, 40px);
     }
-    .home-acc-item[open] .home-acc-item__panel {
-      grid-template-rows: 1fr;
+    .home-fold__body p {
+      font-size: var(--text-body, 1rem); font-weight: var(--font-weight-body, 400);
+      line-height: var(--lh-body, 1.6); color: var(--text-2);
     }
-    .home-acc-item__panel-inner {
-      overflow: hidden;
-      min-height: 0;
-    }
+    .home-fold__body p + p { margin-top: 12px; }
 
-    .home-acc-item__body {
-      padding: 0 0 20px;
-      font-size: 16px;
-      font-weight: 400;
-      line-height: 1.55;
-      color: var(--text-3);
-      max-width: 42ch;
+    /* ── Area cards inside fold ── */
+    .area-card { padding: 20px 0; border-bottom: 1px solid rgba(244,237,224,0.04); }
+    .area-card:last-child { border-bottom: none; }
+    .area-card__label {
+      font-family: var(--font-mono, 'DM Mono', monospace);
+      font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase;
+      color: var(--gold-dim); margin-bottom: 6px;
     }
+    .area-card__title {
+      font-family: var(--font-serif, 'Playfair Display', Georgia, serif);
+      font-size: clamp(17px, 1.6vw, 20px); font-weight: 500;
+      color: var(--text); margin-bottom: 6px; letter-spacing: -0.015em;
+    }
+    .area-card__body { font-size: 15px; line-height: 1.55; color: var(--text-3); max-width: 48ch; }
 
-    @media (prefers-reduced-motion: reduce) {
-      .ambient__grad { animation: none; }
+    /* ── How steps inside fold ── */
+    .how-steps { margin-top: 8px; }
+    .how-step { padding: 16px 0; border-bottom: 1px solid rgba(244,237,224,0.04); }
+    .how-step:last-child { border-bottom: none; }
+    .how-step__num {
+      font-family: var(--font-mono, 'DM Mono', monospace);
+      font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--gold-dim); margin-bottom: 6px;
     }
+    .how-step__title {
+      font-family: var(--font-serif, 'Playfair Display', Georgia, serif);
+      font-size: clamp(16px, 1.4vw, 18px); font-weight: 500;
+      color: var(--text); margin-bottom: 4px; letter-spacing: -0.01em;
+    }
+    .how-step__desc { font-size: 15px; line-height: 1.55; color: var(--text-3); }
 
-    .home-consequence {
-      list-style: none;
-      margin: 18px 0 0;
-      padding: 0;
-    }
-    .home-consequence li {
-      padding: 6px 0 6px 1.1em;
-      position: relative;
-      font-size: 17px;
-      line-height: 1.55;
-      color: var(--text-2);
-    }
-    .home-consequence li::before {
-      content: '';
-      position: absolute;
-      left: 0;
-      top: 0.65em;
-      width: 6px;
-      height: 1px;
-      background: rgba(198, 161, 91, 0.28);
-    }
-
-    .home-path {
-      font-size: 17px;
-      line-height: 1.65;
-      color: var(--text-2);
-    }
-    .home-path ul {
-      list-style: none;
-      margin: 12px 0;
-      padding: 0;
-    }
-    .home-path li {
-      padding-left: 1.1em;
-      position: relative;
-      margin-bottom: 6px;
-    }
-    .home-path li::before {
-      content: '';
-      position: absolute;
-      left: 0;
-      top: 0.55em;
-      width: 5px;
-      height: 1px;
-      background: var(--gold-dim);
-    }
-
+    /* ── Final section ── */
     .home-final {
-      text-align: center;
+      padding: var(--section-y-desktop, 96px) var(--container-pad-x, 24px);
+      border-top: 1px solid rgba(244,237,224,0.06);
+      position: relative; z-index: 1;
     }
-    .home-final .home-section__inner {
-      max-width: 36rem;
+    .home-final__inner { max-width: min(var(--prose-width, 720px), 100%); margin: 0 auto; }
+    .home-final__title {
+      font-family: var(--font-serif, 'Playfair Display', Georgia, serif);
+      font-size: var(--text-h3); font-weight: var(--font-weight-serif, 500);
+      letter-spacing: var(--letter-h); margin-bottom: 12px;
     }
-    .home-final .home-section__body {
-      max-width: 22ch;
-      margin-left: auto;
-      margin-right: auto;
+    .home-final__body {
+      font-size: var(--text-body); line-height: var(--lh-body, 1.6);
+      color: var(--text-2); max-width: 38ch; margin-bottom: 20px;
     }
-    .home-final .home-cta-row {
-      display: flex;
-      justify-content: center;
-    }
-
+    /* ── Footer ── */
     footer.home-footer {
-      padding: 36px 40px 44px;
-      border-top: 1px solid var(--line);
-      background: var(--bg);
-      position: relative;
-      z-index: 1;
+      padding: 36px 40px 44px; border-top: 1px solid var(--line);
+      background: var(--bg); position: relative; z-index: 1;
     }
     .foot-inner {
-      max-width: 720px;
-      margin: 0 auto;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-      align-items: center;
-      text-align: center;
+      max-width: 720px; margin: 0 auto;
+      display: flex; flex-direction: column; gap: 16px; align-items: center; text-align: center;
     }
     .foot-mark {
-      font-family: var(--font-sans, 'Inter', system-ui, sans-serif);
-      font-size: var(--text-small);
-      font-weight: 500;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: var(--text-3);
+      font-family: var(--font-sans); font-size: var(--text-small); font-weight: 500;
+      letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-3);
     }
-    .foot-links {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 20px;
-      list-style: none;
-      justify-content: center;
-    }
+    .foot-links { display: flex; flex-wrap: wrap; gap: 20px; list-style: none; justify-content: center; }
     .foot-links a {
       font-family: var(--font-mono, 'DM Mono', monospace);
-      font-size: 9px;
-      letter-spacing: 0.16em;
-      text-transform: uppercase;
-      color: var(--text-3);
-      text-decoration: none;
-      opacity: 0.75;
+      font-size: 9px; letter-spacing: 0.16em; text-transform: uppercase;
+      color: var(--text-3); text-decoration: none; opacity: 0.75;
       transition: opacity 0.2s ease, color 0.2s ease;
     }
-    .foot-links a:hover {
-      color: var(--text-2);
-      opacity: 1;
-    }
-    .foot-links a.foot-link--primary {
-      color: var(--text-2);
-      opacity: 0.9;
-    }
-    .foot-links a.foot-link--muted {
-      opacity: 0.5;
-    }
+    .foot-links a:hover { color: var(--text-2); opacity: 1; }
     .foot-micro-line {
       font-family: var(--font-mono, 'DM Mono', monospace);
-      font-size: 7px;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: rgba(110, 101, 88, 0.55);
+      font-size: 7px; letter-spacing: 0.14em; text-transform: uppercase;
+      color: rgba(110,101,88,0.55);
     }
 
-    .home-reveal {
-      opacity: 0;
-      transform: translateY(16px);
-    }
-    .home-reveal.is-in {
-      opacity: 1;
-      transform: translateY(0);
-      transition: opacity 0.45s ease, transform 0.45s ease;
-    }
+    .home-reveal { opacity: 0; transform: translateY(16px); }
+    .home-reveal.is-in { opacity: 1; transform: translateY(0); transition: opacity 0.45s ease, transform 0.45s ease; }
 
+    @media (prefers-reduced-motion: reduce) { .ambient__grad { animation: none; } }
     @media (max-width: 767px) {
-      #hero {
-        min-height: min(100dvh, 760px);
-      }
-      .hero-container {
-        min-height: min(100dvh, 760px);
-      }
-      .hero-content {
-        padding: 88px 22px 40px;
-      }
+      #hero { min-height: min(100dvh, 760px); }
+      .hero-container { min-height: min(100dvh, 760px); }
+      .hero-content { padding: 88px 22px 40px; }
+      .hero-areas { gap: 16px; }
     }
-
     @media (max-width: 640px) {
       nav#main-nav { padding: var(--sp-2, 16px) var(--container-pad-x, 20px); }
-      .home-section {
-        padding: var(--section-y-mobile-lg, 72px) var(--container-pad-x, 20px);
-      }
+      .home-fold summary { padding-left: var(--container-pad-x, 20px); padding-right: var(--container-pad-x, 20px); }
+      .home-fold__body { padding-left: var(--container-pad-x, 20px); padding-right: var(--container-pad-x, 20px); }
+      .home-final { padding: var(--section-y-mobile-lg, 72px) var(--container-pad-x, 20px); }
       footer.home-footer { padding: var(--sp-7, 64px) var(--container-pad-x, 20px) var(--sp-6, 48px); }
     }
 
-    /* Override global finale CTA chrome for minimal luxury treatment */
-    .btn.home-diag-cta.sh-home-results-cta {
-      transform: none !important;
-      filter: none !important;
-      box-shadow: none !important;
-    }
-    .btn.home-diag-cta.sh-home-results-cta:hover {
-      transform: none !important;
-      filter: none !important;
-      box-shadow: none !important;
-      opacity: 0.9;
-    }
-    .btn.home-diag-cta.sh-home-results-cta::after {
-      display: none !important;
-    }
+    .btn.home-diag-cta.sh-home-results-cta { transform: none !important; filter: none !important; box-shadow: none !important; }
+    .btn.home-diag-cta.sh-home-results-cta:hover { transform: none !important; filter: none !important; box-shadow: none !important; opacity: 0.9; }
+    .btn.home-diag-cta.sh-home-results-cta::after { display: none !important; }
   </style>
   <link rel="stylesheet" href="/stephuary-early-mode.css" />
   <link rel="stylesheet" href="/stephuary-private-selection.css" />
@@ -780,12 +356,11 @@
 </head>
 <body data-sh-env="home">
 
+  <!-- ═══ Cosmic Intro ═══ -->
   <div id="cosmic-metropolis" aria-hidden="true">
     <div class="cosmic-metropolis__camera">
       <div class="cosmic-metropolis__dim"></div>
-      <div class="cosmic-metropolis__particles" aria-hidden="true">
-        <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
-      </div>
+      <div class="cosmic-metropolis__particles" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
       <div class="cosmic-metropolis__grid" aria-hidden="true"></div>
       <svg class="cosmic-metropolis__signals" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
         <path class="cosmic-metropolis__signals-line" d="M0,52 Q28,46 52,52 T100,50" />
@@ -796,11 +371,7 @@
         <div class="cosmic-metropolis__orbit cosmic-metropolis__orbit--b"></div>
         <div class="cosmic-metropolis__orbit cosmic-metropolis__orbit--c"></div>
       </div>
-      <div class="cosmic-metropolis__nodes" aria-hidden="true">
-        <span class="cosmic-metropolis__node-dot"></span>
-        <span class="cosmic-metropolis__node-dot"></span>
-        <span class="cosmic-metropolis__node-dot"></span>
-      </div>
+      <div class="cosmic-metropolis__nodes" aria-hidden="true"><span class="cosmic-metropolis__node-dot"></span><span class="cosmic-metropolis__node-dot"></span><span class="cosmic-metropolis__node-dot"></span></div>
       <div class="cosmic-metropolis__halo" aria-hidden="true"></div>
       <div class="cosmic-metropolis__core" aria-hidden="true"></div>
       <div class="cosmic-metropolis__ripple" aria-hidden="true"></div>
@@ -808,53 +379,31 @@
     </div>
     <div class="cosmic-metropolis__copy">
       <div class="cosmic-metropolis__copy-layout">
-        <div class="cosmic-metropolis__signal-rail" aria-hidden="true">
-          <span class="cosmic-metropolis__signal-node"></span>
-          <span class="cosmic-metropolis__signal-stem"></span>
-        </div>
+        <div class="cosmic-metropolis__signal-rail" aria-hidden="true"><span class="cosmic-metropolis__signal-node"></span><span class="cosmic-metropolis__signal-stem"></span></div>
         <div class="cosmic-metropolis__copy-stack">
-          <p class="cosmic-metropolis__line cosmic-metropolis__line--a">
-            <span class="cm-default-only">Welcome in</span>
-            <span class="cm-early-only">You're doing what most people won't.</span>
-          </p>
-          <p class="cosmic-metropolis__line cosmic-metropolis__line--b">
-            <span class="cm-default-only">This is designed to show you</span>
-            <span class="cm-early-only">Now use it.</span>
-          </p>
-          <p class="cosmic-metropolis__line cosmic-metropolis__line--c">
-            <span class="cm-default-only">what most people miss</span>
-            <span class="cm-early-only cm-early-only--blank" aria-hidden="true"></span>
-          </p>
+          <p class="cosmic-metropolis__line cosmic-metropolis__line--a"><span class="cm-default-only">Welcome in</span><span class="cm-early-only">You're doing what most people won't.</span></p>
+          <p class="cosmic-metropolis__line cosmic-metropolis__line--b"><span class="cm-default-only">This is designed to show you</span><span class="cm-early-only">Now use it.</span></p>
+          <p class="cosmic-metropolis__line cosmic-metropolis__line--c"><span class="cm-default-only">what most people miss</span><span class="cm-early-only cm-early-only--blank" aria-hidden="true"></span></p>
         </div>
       </div>
       <div class="cosmic-metropolis__avatar-wrap" aria-hidden="true">
-        <img
-          class="cosmic-metropolis__avatar"
-          src="/cosmic-metropolis-avatar.png"
-          alt=""
-          width="220"
-          height="220"
-          decoding="async"
-          loading="eager"
-        />
+        <img class="cosmic-metropolis__avatar" src="/cosmic-metropolis-avatar.png" alt="" width="220" height="220" decoding="async" loading="eager" />
       </div>
     </div>
   </div>
 
+  <!-- ═══ Site Shell ═══ -->
   <div id="site-shell" class="site-shell">
+
   <div class="ambient" aria-hidden="true">
     <div class="ambient__grad"></div>
     <div class="ambient__noise"></div>
-    <div class="ambient__particles">
-      <span></span><span></span><span></span><span></span><span></span>
-    </div>
+    <div class="ambient__particles"><span></span><span></span><span></span><span></span><span></span></div>
   </div>
 
   <div id="cosmic-settled" aria-hidden="true">
     <div class="cosmic-settled__grid" aria-hidden="true"></div>
-    <div class="cosmic-settled__particles" aria-hidden="true">
-      <span></span><span></span><span></span><span></span>
-    </div>
+    <div class="cosmic-settled__particles" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
   </div>
 
   <div class="page">
@@ -868,35 +417,124 @@
     </nav>
 
     <main id="main-content">
-    <section id="hero" data-sh-flow-section>
-      <div class="hero-container">
-        <div class="hero-canvas-wrap" id="hero-canvas-wrap" aria-hidden="true">
-          <canvas id="hero-canvas"></canvas>
-        </div>
-        <div class="hero-overlay" aria-hidden="true"></div>
-        <div class="hero-content">
-          <div class="hero-inner" id="hero-parallax">
-            <h1 class="home-hero__title" id="hero-h1">You don’t need another offer.<br />You need to see where yours is breaking.</h1>
-            <p class="home-hero__sub" id="hero-lead">Most people don’t have a product problem.<br />They have a clarity, positioning, or structure problem.<br /><br />This shows you exactly where.</p>
-            <p class="hero-personal-line" id="hero-personal-line" hidden></p>
-            <div class="hero-actions" id="hero-actions">
-              <a href="/capture" class="btn btn--pri home-diag-cta" id="hero-cta-primary">Start Diagnostic</a>
+
+      <!-- ═══ HERO ═══ -->
+      <section id="hero" data-sh-flow-section>
+        <div class="hero-container">
+          <div class="hero-canvas-wrap" id="hero-canvas-wrap" aria-hidden="true">
+            <canvas id="hero-canvas"></canvas>
+          </div>
+          <div class="hero-overlay" aria-hidden="true"></div>
+          <div class="hero-content">
+            <div class="hero-inner" id="hero-parallax">
+
+              <h1 class="home-hero__title" id="hero-h1">You've been fixing the wrong thing.</h1>
+
+              <p class="home-hero__sub" id="hero-lead">15 questions. Scored across clarity, positioning, and structure. You'll see exactly where your offer is stalling and what to do about it.</p>
+
+              <div class="hero-areas" id="hero-areas-list">
+                <div class="hero-areas__item"><span class="hero-areas__dot"></span> Clarity</div>
+                <div class="hero-areas__item"><span class="hero-areas__dot"></span> Positioning</div>
+                <div class="hero-areas__item"><span class="hero-areas__dot"></span> Structure</div>
+              </div>
+
+              <div class="hero-actions" id="hero-actions">
+                <a href="/capture" class="btn btn--pri home-diag-cta" id="hero-cta-primary">Start Diagnostic</a>
+                <span class="hero-meta">3 min · free · immediate results</span>
+              </div>
+
             </div>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
+
+      <!-- ═══ COLLAPSED SECTIONS ═══ -->
+
+      <details class="home-fold home-reveal">
+        <summary>
+          <span class="home-fold__title">What gets measured</span>
+          <span class="home-fold__indicator">+</span>
+        </summary>
+        <div class="home-fold__body">
+          <div class="area-card">
+            <div class="area-card__label">01</div>
+            <div class="area-card__title">Clarity</div>
+            <p class="area-card__body">Can you explain what you sell in one sentence, to a stranger, and have them understand why it costs what it costs? Most people can't. That kills conversion before anything else gets a chance.</p>
+          </div>
+          <div class="area-card">
+            <div class="area-card__label">02</div>
+            <div class="area-card__title">Positioning</div>
+            <p class="area-card__body">Good product, wrong frame. Priced too low, aimed too broad, sold to someone who'll never pay. Positioning is the gap between what you built and who's actually buying.</p>
+          </div>
+          <div class="area-card">
+            <div class="area-card__label">03</div>
+            <div class="area-card__title">Structure</div>
+            <p class="area-card__body">Revenue stalls when the offer, pricing, and delivery don't connect. You're doing the work but the backend doesn't hold. When structure is off, everything leaks.</p>
+          </div>
+        </div>
+      </details>
+
+      <details class="home-fold home-reveal">
+        <summary>
+          <span class="home-fold__title">How it works</span>
+          <span class="home-fold__indicator">+</span>
+        </summary>
+        <div class="home-fold__body">
+          <div class="how-steps">
+            <div class="how-step">
+              <div class="how-step__num">01</div>
+              <div class="how-step__title">Answer 15 questions</div>
+              <div class="how-step__desc">Binary choices. No overthinking. About 3 minutes.</div>
+            </div>
+            <div class="how-step">
+              <div class="how-step__num">02</div>
+              <div class="how-step__title">Get your score</div>
+              <div class="how-step__desc">One number across three areas. Plus a breakdown of where you're losing money or time.</div>
+            </div>
+            <div class="how-step">
+              <div class="how-step__num">03</div>
+              <div class="how-step__title">See your next move</div>
+              <div class="how-step__desc">A specific recommendation based on where you scored. Not a generic plan.</div>
+            </div>
+          </div>
+        </div>
+      </details>
+
+      <details class="home-fold home-reveal">
+        <summary>
+          <span class="home-fold__title">Who built this</span>
+          <span class="home-fold__indicator">+</span>
+        </summary>
+        <div class="home-fold__body">
+          <p>20+ years in service and hospitality operations. The scoring system comes from pattern recognition across real businesses, not a template.</p>
+        </div>
+      </details>
+
+      <!-- ═══ START ═══ -->
+      <section class="home-final home-reveal" id="start">
+        <div class="home-final__inner">
+          <h2 class="home-final__title">Find out where it's breaking.</h2>
+          <p class="home-final__body">15 questions. One score. A specific next step.</p>
+          <a href="/capture" class="btn btn--pri home-diag-cta">Start Diagnostic</a>
+        </div>
+      </section>
 
     </main>
 
     <footer class="home-footer">
       <div class="foot-inner">
         <span class="foot-mark">Stephuary</span>
+        <ul class="foot-links">
+          <li><a href="/pricing">Pricing</a></li>
+          <li><a href="/access">.5% Club</a></li>
+          <li><a href="https://stephuary.substack.com" target="_blank" rel="noopener">Substack</a></li>
+        </ul>
         <p class="foot-micro-line">Built by Stephanie. Designed to work without you.</p>
       </div>
     </footer>
   </div>
 
+  <!-- ═══ Private Selection Overlay ═══ -->
   <div id="ps-overlay" class="ps-overlay" role="dialog" aria-modal="true" aria-label="One Free Spot" aria-hidden="true">
     <div class="ps-overlay__bg" data-ps-close tabindex="-1" aria-hidden="true"></div>
     <div class="ps-overlay__particles" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
@@ -926,32 +564,11 @@
       <div id="ps-view-form" class="ps-view" hidden>
         <form id="ps-form" autocomplete="off">
           <label class="ps-label" for="ps-field-q1">What are you actually trying to build right now?</label>
-          <textarea
-            id="ps-field-q1"
-            class="ps-input"
-            name="q1"
-            rows="4"
-            required
-            placeholder="Not a full plan. Just what you're working toward."
-          ></textarea>
+          <textarea id="ps-field-q1" class="ps-input" name="q1" rows="4" required placeholder="Not a full plan. Just what you're working toward."></textarea>
           <label class="ps-label" for="ps-field-q2">What's not clicking or not working?</label>
-          <textarea
-            id="ps-field-q2"
-            class="ps-input"
-            name="q2"
-            rows="4"
-            required
-            placeholder="Where are you stuck, unclear, or going in circles?"
-          ></textarea>
+          <textarea id="ps-field-q2" class="ps-input" name="q2" rows="4" required placeholder="Where are you stuck, unclear, or going in circles?"></textarea>
           <label class="ps-label" for="ps-field-q3">Why should I pick you for this?</label>
-          <textarea
-            id="ps-field-q3"
-            class="ps-input"
-            name="q3"
-            rows="4"
-            required
-            placeholder="Keep it real. Effort, clarity, or perspective matters more than polish."
-          ></textarea>
+          <textarea id="ps-field-q3" class="ps-input" name="q3" rows="4" required placeholder="Keep it real. Effort, clarity, or perspective matters more than polish."></textarea>
           <button type="submit" class="btn btn--pri ps-submit">Submit</button>
         </form>
       </div>
@@ -969,6 +586,7 @@
 
   </div>
 
+  <!-- ═══ Scripts ═══ -->
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
   <script src="/stephuary-os.js" defer></script>
@@ -984,241 +602,91 @@
     (function () {
       gsap.registerPlugin(ScrollTrigger);
 
+      /* ── Cosmic done ── */
       window.addEventListener('cosmicmetropolisdone', function () {
-        try {
-          ScrollTrigger.refresh();
-        } catch (e) {}
+        try { ScrollTrigger.refresh(); } catch (e) {}
       });
+      window.addEventListener('pageshow', function (ev) {
+        try { if (ev.persisted && typeof ScrollTrigger !== 'undefined') ScrollTrigger.refresh(true); } catch (e) {}
+      }, false);
 
-      window.addEventListener(
-        'pageshow',
-        function (ev) {
-          try {
-            if (ev.persisted && typeof ScrollTrigger !== 'undefined') {
-              ScrollTrigger.refresh(true);
-            }
-          } catch (e) {}
-        },
-        false
-      );
-
+      /* ── Hero canvas ── */
       (function heroImmersive() {
         var container = document.querySelector('.hero-container');
         var heroEl = document.getElementById('hero');
         var canvas = document.getElementById('hero-canvas');
         var canvasWrap = document.getElementById('hero-canvas-wrap');
         if (!container || !canvas) return;
-
         var ctx = canvas.getContext('2d', { alpha: false });
         if (!ctx) return;
-
-        var width = 300;
-        var height = 300;
-        var t = 0;
-        var particles = [];
-
+        var width = 300, height = 300, t = 0, particles = [];
         function makeParticle(layer, w, h) {
-          var cfg = {
-            far: { rMin: 0.18, rMax: 0.85, sp: 0.032, a: 0.048 },
-            mid: { rMin: 0.45, rMax: 1.45, sp: 0.075, a: 0.11 },
-            near: { rMin: 0.9, rMax: 2.35, sp: 0.048, a: 0.19 }
-          };
-          var c = cfg[layer];
-          var bright = layer === 'near' && Math.random() < 0.28;
-          var baseA = bright ? Math.min(0.38, c.a * 1.75) : c.a;
-          return {
-            layer: layer,
-            x: Math.random() * w,
-            y: Math.random() * h,
-            r: c.rMin + Math.random() * (c.rMax - c.rMin),
-            dx: (Math.random() - 0.5) * c.sp,
-            dy: (Math.random() - 0.5) * c.sp,
-            alpha: baseA,
-            twinkle: bright ? 0.35 + Math.random() * 0.5 : 0
-          };
+          var cfg = { far:{rMin:0.18,rMax:0.85,sp:0.032,a:0.048}, mid:{rMin:0.45,rMax:1.45,sp:0.075,a:0.11}, near:{rMin:0.9,rMax:2.35,sp:0.048,a:0.19} };
+          var c = cfg[layer]; var bright = layer==='near'&&Math.random()<0.28;
+          return { layer:layer, x:Math.random()*w, y:Math.random()*h, r:c.rMin+Math.random()*(c.rMax-c.rMin),
+            dx:(Math.random()-0.5)*c.sp, dy:(Math.random()-0.5)*c.sp,
+            alpha:bright?Math.min(0.38,c.a*1.75):c.a, twinkle:bright?0.35+Math.random()*0.5:0 };
         }
-
         function initParticles() {
-          var w = Math.max(1, width);
-          var h = Math.max(1, height);
-          var narrow = window.matchMedia('(max-width: 767px)').matches;
-          var nFar = narrow ? 42 : 68;
-          var nMid = narrow ? 32 : 52;
-          var nNear = narrow ? 11 : 18;
-          particles = [];
-          var i;
-          for (i = 0; i < nFar; i++) particles.push(makeParticle('far', w, h));
-          for (i = 0; i < nMid; i++) particles.push(makeParticle('mid', w, h));
-          for (i = 0; i < nNear; i++) particles.push(makeParticle('near', w, h));
+          var w=Math.max(1,width),h=Math.max(1,height); var narrow=window.matchMedia('(max-width:767px)').matches;
+          particles=[];
+          for(var i=0;i<(narrow?42:68);i++) particles.push(makeParticle('far',w,h));
+          for(var j=0;j<(narrow?32:52);j++) particles.push(makeParticle('mid',w,h));
+          for(var k=0;k<(narrow?11:18);k++) particles.push(makeParticle('near',w,h));
         }
-
-        function measure() {
-          var el = heroEl || container;
-          var rect = el.getBoundingClientRect();
-          var w = Math.floor(rect.width);
-          var h = Math.floor(rect.height);
-          if (w < 2 || h < 2) {
-            w = Math.max(2, Math.floor(window.innerWidth));
-            h = Math.max(2, Math.floor(window.innerHeight));
-          }
-          return { w: w, h: h };
-        }
-
-        function resize() {
-          var m = measure();
-          width = m.w;
-          height = m.h;
-          var dpr = Math.min(window.devicePixelRatio || 1, 2);
-          canvas.width = Math.floor(width * dpr);
-          canvas.height = Math.floor(height * dpr);
-          canvas.style.width = width + 'px';
-          canvas.style.height = height + 'px';
-          ctx.setTransform(1, 0, 0, 1, 0, 0);
-          ctx.scale(dpr, dpr);
-          initParticles();
-        }
-
+        function measure(){var el=heroEl||container;var rect=el.getBoundingClientRect();var w=Math.floor(rect.width),h=Math.floor(rect.height);if(w<2||h<2){w=Math.max(2,Math.floor(window.innerWidth));h=Math.max(2,Math.floor(window.innerHeight));}return{w:w,h:h};}
+        function resize(){var m=measure();width=m.w;height=m.h;var dpr=Math.min(window.devicePixelRatio||1,2);canvas.width=Math.floor(width*dpr);canvas.height=Math.floor(height*dpr);canvas.style.width=width+'px';canvas.style.height=height+'px';ctx.setTransform(1,0,0,1,0,0);ctx.scale(dpr,dpr);initParticles();}
         resize();
-        window.addEventListener('resize', resize, { passive: true });
-
-        if (typeof ResizeObserver !== 'undefined') {
-          var ro = new ResizeObserver(function () {
-            resize();
-          });
-          ro.observe(container);
-          if (heroEl) ro.observe(heroEl);
-        }
-
-        requestAnimationFrame(function () {
-          requestAnimationFrame(resize);
-        });
-        window.addEventListener('load', resize, { passive: true });
-
-        function draw() {
-          t += 0.0019;
-          var em =
-            typeof document !== 'undefined' &&
-            document.documentElement &&
-            document.documentElement.classList.contains('early-mode');
-          var ox = 0.62 + Math.sin(t * 0.85) * 0.14;
-          var bl = 0.58 + Math.cos(t * 0.72) * 0.14;
-          var grad = ctx.createLinearGradient(0, 0, width, height);
-          if (em) {
-            grad.addColorStop(0, '#070605');
-            grad.addColorStop(0.36, 'rgba(120, 38, 28, ' + ox + ')');
-            grad.addColorStop(0.63, 'rgba(88, 42, 92, ' + bl + ')');
-            grad.addColorStop(1, '#050408');
-          } else {
-            grad.addColorStop(0, '#060608');
-            grad.addColorStop(0.36, 'rgba(118, 12, 12, ' + ox + ')');
-            grad.addColorStop(0.63, 'rgba(22, 48, 132, ' + bl + ')');
-            grad.addColorStop(1, '#050508');
-          }
-          ctx.fillStyle = grad;
-          ctx.fillRect(0, 0, width, height);
-
-          var ap = t * 0.437;
-          ctx.save();
-          ctx.lineWidth = 1;
-          ctx.globalAlpha = em ? 0.048 : 0.042;
-          ctx.strokeStyle = em ? 'rgba(212, 140, 88, 0.9)' : 'rgba(58, 107, 255, 0.95)';
-          ctx.beginPath();
-          if (typeof ctx.ellipse === 'function') {
-            ctx.ellipse(width * 0.27, height * 0.54, width * 0.44, height * 0.36, ap * 0.14, 0.15, Math.PI * 1.32);
-          } else {
-            ctx.arc(width * 0.35, height * 0.5, width * 0.35, 0.2, Math.PI * 1.2);
-          }
-          ctx.stroke();
-          ctx.globalAlpha = em ? 0.042 : 0.036;
-          ctx.strokeStyle = em ? 'rgba(180, 64, 48, 0.88)' : 'rgba(140, 36, 36, 0.9)';
-          ctx.beginPath();
-          if (typeof ctx.ellipse === 'function') {
-            ctx.ellipse(width * 0.74, height * 0.4, width * 0.34, height * 0.29, -ap * 0.11, -0.08, Math.PI * 1.48);
-          } else {
-            ctx.arc(width * 0.68, height * 0.42, width * 0.28, -0.1, Math.PI * 1.35);
-          }
-          ctx.stroke();
-          ctx.restore();
-
-          var aBoost = em ? 1.14 : 1;
-          particles.forEach(function (p) {
-            p.x += p.dx;
-            p.y += p.dy;
-            if (p.x < -6 || p.x > width + 6) p.dx *= -1;
-            if (p.y < -6 || p.y > height + 6) p.dy *= -1;
-            var a = p.alpha * aBoost;
-            if (p.twinkle) {
-              a *= 0.82 + 0.18 * Math.sin(t * 2.2 + p.x * 0.008 + p.y * 0.006);
-            }
-            ctx.beginPath();
-            ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-            if (em) {
-              ctx.fillStyle = 'rgba(255, 220, 200,' + Math.min(0.95, a) + ')';
-            } else {
-              ctx.fillStyle = 'rgba(255,255,255,' + a + ')';
-            }
-            ctx.fill();
-          });
-
+        window.addEventListener('resize',resize,{passive:true});
+        if(typeof ResizeObserver!=='undefined'){var ro=new ResizeObserver(function(){resize();});ro.observe(container);if(heroEl)ro.observe(heroEl);}
+        requestAnimationFrame(function(){requestAnimationFrame(resize);});
+        window.addEventListener('load',resize,{passive:true});
+        function draw(){
+          t+=0.0019;var em=document.documentElement.classList.contains('early-mode');
+          var ox=0.62+Math.sin(t*0.85)*0.14,bl=0.58+Math.cos(t*0.72)*0.14;
+          var grad=ctx.createLinearGradient(0,0,width,height);
+          if(em){grad.addColorStop(0,'#070605');grad.addColorStop(0.36,'rgba(120,38,28,'+ox+')');grad.addColorStop(0.63,'rgba(88,42,92,'+bl+')');grad.addColorStop(1,'#050408');}
+          else{grad.addColorStop(0,'#060608');grad.addColorStop(0.36,'rgba(118,12,12,'+ox+')');grad.addColorStop(0.63,'rgba(22,48,132,'+bl+')');grad.addColorStop(1,'#050508');}
+          ctx.fillStyle=grad;ctx.fillRect(0,0,width,height);
+          var ap=t*0.437;ctx.save();ctx.lineWidth=1;
+          ctx.globalAlpha=em?0.048:0.042;ctx.strokeStyle=em?'rgba(212,140,88,0.9)':'rgba(58,107,255,0.95)';ctx.beginPath();
+          if(typeof ctx.ellipse==='function')ctx.ellipse(width*0.27,height*0.54,width*0.44,height*0.36,ap*0.14,0.15,Math.PI*1.32);else ctx.arc(width*0.35,height*0.5,width*0.35,0.2,Math.PI*1.2);ctx.stroke();
+          ctx.globalAlpha=em?0.042:0.036;ctx.strokeStyle=em?'rgba(180,64,48,0.88)':'rgba(140,36,36,0.9)';ctx.beginPath();
+          if(typeof ctx.ellipse==='function')ctx.ellipse(width*0.74,height*0.4,width*0.34,height*0.29,-ap*0.11,-0.08,Math.PI*1.48);else ctx.arc(width*0.68,height*0.42,width*0.28,-0.1,Math.PI*1.35);ctx.stroke();ctx.restore();
+          var aBoost=em?1.14:1;
+          particles.forEach(function(p){p.x+=p.dx;p.y+=p.dy;if(p.x<-6||p.x>width+6)p.dx*=-1;if(p.y<-6||p.y>height+6)p.dy*=-1;var a=p.alpha*aBoost;if(p.twinkle)a*=0.82+0.18*Math.sin(t*2.2+p.x*0.008+p.y*0.006);ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fillStyle=em?'rgba(255,220,200,'+Math.min(0.95,a)+')':'rgba(255,255,255,'+a+')';ctx.fill();});
           requestAnimationFrame(draw);
         }
         draw();
-
-        if (canvasWrap && typeof gsap !== 'undefined') {
-          try {
-            gsap.to(canvasWrap, {
-              y: 32,
-              ease: 'none',
-              scrollTrigger: {
-                trigger: '#hero',
-                start: 'top top',
-                end: 'bottom top',
-                scrub: 0.75
-              }
-            });
-          } catch (e1) {}
-        }
+        if(canvasWrap&&typeof gsap!=='undefined'){try{gsap.to(canvasWrap,{y:32,ease:'none',scrollTrigger:{trigger:'#hero',start:'top top',end:'bottom top',scrub:0.75}});}catch(e1){}}
       })();
 
-      var nav = document.getElementById('main-nav');
-      function updateNavScroll() {
-        if (nav) nav.classList.toggle('is-scrolled', window.scrollY > 40);
-      }
-      window.addEventListener('scroll', updateNavScroll, { passive: true });
-      updateNavScroll();
+      /* ── Nav scroll ── */
+      var nav=document.getElementById('main-nav');
+      function updateNavScroll(){if(nav)nav.classList.toggle('is-scrolled',window.scrollY>40);}
+      window.addEventListener('scroll',updateNavScroll,{passive:true});updateNavScroll();
 
-      var heroParallax = document.getElementById('hero-parallax');
-      if (heroParallax && typeof gsap !== 'undefined') {
-        try {
-          gsap.to(heroParallax, {
-            y: 44,
-            ease: 'none',
-            scrollTrigger: {
-              trigger: '#hero',
-              start: 'top top',
-              end: 'bottom top',
-              scrub: 0.5
-            }
-          });
-        } catch (e) {}
-      }
+      /* ── Hero parallax ── */
+      var heroParallax=document.getElementById('hero-parallax');
+      if(heroParallax&&typeof gsap!=='undefined'){try{gsap.to(heroParallax,{y:44,ease:'none',scrollTrigger:{trigger:'#hero',start:'top top',end:'bottom top',scrub:0.5}});}catch(e){}}
 
-      var tlHero = gsap.timeline({ defaults: { ease: 'power2.out' } });
-      tlHero.from('.hero-inner', { opacity: 0, y: 14, duration: 0.55 }, 0);
-      tlHero.from('#hero-h1', { opacity: 0, y: 14, duration: 0.55 }, 0.06);
-      tlHero.from('#hero-lead', { opacity: 0, y: 10, duration: 0.45 }, 0.14);
-      tlHero.from('#hero-actions', { opacity: 0, y: 8, duration: 0.4 }, 0.22);
+      /* ── Hero entrance ── */
+      var tlHero=gsap.timeline({defaults:{ease:'power2.out'}});
+      tlHero.from('.hero-inner',{opacity:0,y:14,duration:0.55},0);
+      tlHero.from('#hero-h1',{opacity:0,y:14,duration:0.55},0.06);
+      tlHero.from('#hero-lead',{opacity:0,y:10,duration:0.45},0.14);
+      tlHero.from('#hero-areas-list',{opacity:0,y:8,duration:0.4},0.2);
+      tlHero.from('#hero-actions',{opacity:0,y:8,duration:0.4},0.28);
 
-      window.addEventListener('load', function () {
+      /* ── Scroll reveals ── */
+      document.querySelectorAll('.home-reveal').forEach(function(el){
+        ScrollTrigger.create({trigger:el,start:'top 88%',once:true,onEnter:function(){el.classList.add('is-in');}});
+      });
+
+      /* ── Load hooks ── */
+      window.addEventListener('load',function(){
         ScrollTrigger.refresh();
-        try {
-          if (window.StephuaryPersonalize && typeof window.StephuaryPersonalize.applyHomeHero === 'function') {
-            window.StephuaryPersonalize.applyHomeHero();
-          }
-          if (window.StephuaryHomeFinale && typeof window.StephuaryHomeFinale.refreshCtas === 'function') {
-            window.StephuaryHomeFinale.refreshCtas();
-          }
-        } catch (e2) {}
+        try{if(window.StephuaryPersonalize&&typeof window.StephuaryPersonalize.applyHomeHero==='function')window.StephuaryPersonalize.applyHomeHero();if(window.StephuaryHomeFinale&&typeof window.StephuaryHomeFinale.refreshCtas==='function')window.StephuaryHomeFinale.refreshCtas();}catch(e2){}
       });
     })();
   </script>

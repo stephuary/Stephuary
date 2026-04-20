@@ -927,8 +927,13 @@
     return state;
   }
 
+  function isHomePath() {
+    var p = normPath(global.location.pathname);
+    return p === '/' || p === '/homepage' || p === '/homepage.html';
+  }
+
   function applyHomeHero() {
-    if (normPath(global.location.pathname) !== '/') return;
+    if (!isHomePath()) return;
     refresh();
     var line = global.document.getElementById('hero-personal-line');
     var hint = global.document.getElementById('hero-tier-hint');
