@@ -255,7 +255,6 @@
 
     /* Minimal results: score strip, one read, share, single CTA only */
     body.results--minimal .hero-kicker,
-    body.results--minimal #results-dom-line,
     body.results--minimal .results-conversion-soft,
     body.results--minimal #typePill,
     body.results--minimal #results-cei-strip,
@@ -270,6 +269,72 @@
     body.results--minimal #sh-results-routes,
     body.results--minimal #results-primary-sub {
       display: none !important;
+    }
+    body.results--minimal #results-share {
+      display: none !important;
+    }
+
+    .results-observable-body {
+      max-width: 620px;
+      margin: 0 auto 8px;
+      text-align: left;
+    }
+    .results-obs__h {
+      font-family: 'Lato', sans-serif;
+      font-size: 10px;
+      font-weight: 400;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(244, 237, 224, 0.42);
+      margin: 28px 0 12px;
+    }
+    .results-obs__h:first-child {
+      margin-top: 8px;
+    }
+    .results-obs__ul {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 4px;
+    }
+    .results-obs__ul li {
+      position: relative;
+      padding-left: 16px;
+      margin-bottom: 10px;
+      font-size: 15px;
+      line-height: 1.55;
+      color: rgba(244, 237, 224, 0.78);
+    }
+    .results-obs__ul li::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0.55em;
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: rgba(196, 163, 90, 0.55);
+    }
+    .results-obs__p {
+      font-size: 16px;
+      line-height: 1.6;
+      color: rgba(244, 237, 224, 0.86);
+      margin: 0 0 6px;
+      max-width: 52ch;
+    }
+    .results-obs__bridge {
+      margin-top: 28px;
+      padding-top: 22px;
+      border-top: 1px solid var(--line-soft);
+      max-width: 52ch;
+    }
+    .results-obs-bridge__p {
+      font-size: 15px;
+      line-height: 1.62;
+      color: rgba(244, 237, 224, 0.78);
+      margin: 0 0 12px;
+    }
+    .results-obs-bridge__p:last-child {
+      margin-bottom: 0;
     }
 
     .results-minimal-foot {
@@ -1138,19 +1203,19 @@
         </div>
         <div class="results-score-reveal__bars" id="results-vis-bars">
           <div class="results-vis-bar-row" data-area="clarity">
-            <span class="results-vis-bar-row__label">Clarity</span>
+            <span class="results-vis-bar-row__label">First read</span>
             <div class="results-vis-bar-row__track">
               <div class="results-vis-bar-row__fill"></div>
             </div>
           </div>
           <div class="results-vis-bar-row" data-area="positioning">
-            <span class="results-vis-bar-row__label">Positioning</span>
+            <span class="results-vis-bar-row__label">Who responds</span>
             <div class="results-vis-bar-row__track">
               <div class="results-vis-bar-row__fill"></div>
             </div>
           </div>
           <div class="results-vis-bar-row" data-area="structure">
-            <span class="results-vis-bar-row__label">Structure</span>
+            <span class="results-vis-bar-row__label">After yes</span>
             <div class="results-vis-bar-row__track">
               <div class="results-vis-bar-row__fill"></div>
             </div>
@@ -1163,14 +1228,14 @@
 
     <section class="hero-result" data-sh-flow-section>
       <div class="wrap">
-        <p class="hero-kicker">Your result</p>
-        <p class="results-dom-line" id="results-dom-line"></p>
+        <p class="hero-kicker">Based on your answers</p>
         <p class="results-conversion-soft" hidden>
           Want this mapped to your actual business?
           <a href="/snapshot">View Snapshot</a>
         </p>
         <h1 class="hero-h1 hero-h1--support" id="openingRead"></h1>
-        <p class="hero-sub" id="results-hero-sub"></p>
+        <div class="results-observable-body" id="results-observable-body" aria-live="polite"></div>
+        <p class="hero-sub" id="results-hero-sub" hidden></p>
         <div class="type-pill" id="typePill" aria-label="Detected types"></div>
         <div id="results-cei-strip" class="cei-node-strip" aria-label="Pressure map"></div>
         <p class="sys-lead-note" style="margin:0 auto 16px;max-width:52ch;text-align:left"></p>
@@ -1338,20 +1403,163 @@
     return { clarity: cPct, positioning: pPct, structure: sPct, total: total };
   }
 
+  var OBSERVABLE_BRIDGE_HTML =
+    '<p class="results-obs-bridge__p">You can try to fix this yourself.</p>' +
+    '<p class="results-obs-bridge__p">Or you can get a full breakdown of what to change, in order, based on your answers.</p>';
+
+  var OBSERVABLE_PACKS = {
+    steady: {
+      headline: 'People see your work, then stop before they buy.',
+      scoreLine: 'They get far enough to look, then nothing moves when it is time to pay or book.',
+      looks: [
+        'They read the page and leave without starting checkout or booking.',
+        'They ask questions, then go quiet when you send the price or the link.',
+        'They say it sounds good, then do not pick a time and do not send the deposit.'
+      ],
+      leads: [
+        'Money comes in uneven weeks even when your inbox is busy.',
+        'You explain the same offer more than once and it still does not close.',
+        'You spend hours on people who never pay full price.'
+      ],
+      fix: 'Put what you sell, who it is for, the price, and the next step on the first screen they land on so they can decide without a long thread.',
+      bridgeHtml: OBSERVABLE_BRIDGE_HTML
+    },
+    firstread: {
+      headline: 'People land on what you wrote and still do not know what to buy.',
+      scoreLine: 'They read, then they ask basic questions you thought you already answered in writing.',
+      looks: [
+        'They ask what you actually sell after they already scrolled.',
+        'They ask how much it costs before they understand what they are buying.',
+        'They say they need to think about it and you never hear a yes.'
+      ],
+      leads: [
+        'You keep answering the same questions on calls and in DMs.',
+        'People who were never going to buy use up your time.',
+        'You lose sales to hesitation because the offer never reads as obvious.'
+      ],
+      fix: 'Rewrite the top of the page so a stranger can name the product, the price, and the next click in one pass without asking you.',
+      bridgeHtml: OBSERVABLE_BRIDGE_HTML
+    },
+    buyers: {
+      headline: 'The wrong people take your time, or the right people freeze when money comes up.',
+      scoreLine: 'You get attention, but checks do not line up with the effort you put in.',
+      looks: [
+        'You get leads that do not match the work you want to do.',
+        'They push on price before they agree on scope.',
+        'They stall after the proposal even when they said they were ready.'
+      ],
+      leads: [
+        'You cut price to keep a deal that was never a fit.',
+        'You run demos and calls that do not turn into paid work on a steady rhythm.',
+        'You re-write proposals for people who were never going to sign.'
+      ],
+      fix: 'Say out loud who you will not take money from, then raise the bar on who gets a call so price talks happen with the right buyer only.',
+      bridgeHtml: OBSERVABLE_BRIDGE_HTML
+    },
+    afteryes: {
+      headline: 'After someone pays, too much still depends on you redoing steps by hand each time.',
+      scoreLine: 'Delivery looks different every time because the checklist lives in your head.',
+      looks: [
+        'You re-send instructions because the first version was incomplete.',
+        'You move deadlines because a step was not ready when the client expected it.',
+        'You answer the same onboarding question from scratch for each new buyer.'
+      ],
+      leads: [
+        'You work nights to catch up after busy sales weeks.',
+        'Clients get uneven quality depending on how tired you were that week.',
+        'You cannot take on more volume without adding more hours.'
+      ],
+      fix: 'Write the exact sequence from payment to delivery once, then send the same links and dates every time so buyers know what happens next without asking you.',
+      bridgeHtml: OBSERVABLE_BRIDGE_HTML
+    }
+  };
+
+  function observablePackKeyFromSeven(dr) {
+    var c = Number(dr.scores && dr.scores.clarity) || 0;
+    var p = Number(dr.scores && dr.scores.positioning) || 0;
+    var s = Number(dr.scores && dr.scores.structure) || 0;
+    var max = Math.max(c, p, s);
+    if (max === 0) return 'steady';
+    if (c === max) return 'firstread';
+    if (p === max) return 'buyers';
+    return 'afteryes';
+  }
+
+  function observablePackKeyFromLegacy(diag) {
+    if (!diag) return 'steady';
+    var raw = String(diag.main_problem || '') + ' ' + String(diag.primary_issue || '') + ' ' + String(diag.synthesis_summary || '');
+    raw = raw.toLowerCase();
+    if (raw.indexOf('price') !== -1 || raw.indexOf('position') !== -1 || raw.indexOf('buyer') !== -1) return 'buyers';
+    if (raw.indexOf('manual') !== -1 || raw.indexOf('depend') !== -1 || raw.indexOf('deliver') !== -1 || raw.indexOf('after') !== -1) return 'afteryes';
+    if (raw.indexOf('clarit') !== -1 || raw.indexOf('understand') !== -1 || raw.indexOf('sentence') !== -1) return 'firstread';
+    return 'steady';
+  }
+
+  function observableHtmlFromPack(pack) {
+    function lis(arr) {
+      return arr
+        .map(function (t) {
+          return '<li>' + esc(t) + '</li>';
+        })
+        .join('');
+    }
+    return (
+      '<h2 class="results-obs__h">What this looks like</h2>' +
+      '<ul class="results-obs__ul">' +
+      lis(pack.looks) +
+      '</ul>' +
+      '<h2 class="results-obs__h">What this leads to</h2>' +
+      '<ul class="results-obs__ul">' +
+      lis(pack.leads) +
+      '</ul>' +
+      '<h2 class="results-obs__h">What to fix first</h2>' +
+      '<p class="results-obs__p">' +
+      esc(pack.fix) +
+      '</p>' +
+      '<div class="results-obs__bridge">' +
+      pack.bridgeHtml +
+      '</div>'
+    );
+  }
+
+  function fillObservableReadout(ctx) {
+    var body = document.getElementById('results-observable-body');
+    var h1 = document.getElementById('openingRead');
+    if (!body || !h1) return;
+    var key = 'steady';
+    if (ctx && ctx.mode === 'seven' && ctx.dr) {
+      key = observablePackKeyFromSeven(ctx.dr);
+    } else if (ctx && ctx.mode === 'legacy' && ctx.data && ctx.data.diagnostic) {
+      key = observablePackKeyFromLegacy(ctx.data.diagnostic);
+    }
+    var pack = OBSERVABLE_PACKS[key] || OBSERVABLE_PACKS.steady;
+    window.__observableScoreLine = pack.scoreLine;
+    h1.textContent = pack.headline;
+    body.innerHTML = observableHtmlFromPack(pack);
+    var sub = document.getElementById('results-hero-sub');
+    if (sub) {
+      sub.textContent = '';
+      sub.setAttribute('hidden', '');
+    }
+  }
+
+  function applyObservableScoreLine() {
+    var line = document.getElementById('results-vis-dynamic-line');
+    if (line && window.__observableScoreLine) {
+      line.textContent = window.__observableScoreLine;
+      line.classList.add('is-visible');
+    }
+    var sep = document.getElementById('results-vis-sep');
+    if (sep) sep.classList.add('is-visible');
+  }
+
   function renderSevenQuestionPage(dr) {
     document.body.classList.add('results--minimal');
     document.getElementById('state-missing').classList.remove('visible');
     document.getElementById('state-email-gate').classList.remove('visible');
     document.getElementById('state-result').classList.add('visible');
 
-    var headline = dr.result && dr.result.headline ? String(dr.result.headline).trim() : '';
-    var sub = dr.result && dr.result.nextStep ? String(dr.result.nextStep).trim() : '';
-    document.getElementById('openingRead').textContent = headline || 'Your diagnostic is complete.';
-    var subEl = document.getElementById('results-hero-sub');
-    if (subEl) subEl.textContent = sub || '';
-
-    var domLine = document.getElementById('results-dom-line');
-    if (domLine) domLine.textContent = '';
+    fillObservableReadout({ mode: 'seven', dr: dr });
 
     var pill = document.getElementById('typePill');
     if (pill) pill.innerHTML = '';
@@ -2073,6 +2281,12 @@
         window.StephuaryFounderReveal.scheduleDiagnostic();
       }
     } catch (fr) {}
+
+    if (document.getElementById('results-observable-body')) {
+      try {
+        fillObservableReadout({ mode: 'legacy', data: data, version: version });
+      } catch (obsFill) {}
+    }
   }
 
   function buildSnapshotText() {
@@ -2085,20 +2299,20 @@
         if (window.__resultsVisualScores && typeof window.__resultsVisualScores.total === 'number') {
           lines7.push('Overall: ' + window.__resultsVisualScores.total + '/100');
           lines7.push(
-            'Clarity ' +
+            'First read ' +
               window.__resultsVisualScores.clarity +
-              ' · Positioning ' +
+              ' · Who responds ' +
               window.__resultsVisualScores.positioning +
-              ' · Structure ' +
+              ' · After yes ' +
               window.__resultsVisualScores.structure
           );
           lines7.push('');
         }
       } catch (e7a) {}
-      var h7 = diag.main_problem ? String(diag.main_problem).trim() : '';
-      var n7 = diag.fix_first ? String(diag.fix_first).trim() : '';
-      if (h7) lines7.push(h7);
-      if (n7) lines7.push('', n7);
+      var hEl7 = document.getElementById('openingRead');
+      var bEl7 = document.getElementById('results-observable-body');
+      if (hEl7 && String(hEl7.textContent || '').trim()) lines7.push(String(hEl7.textContent).trim());
+      if (bEl7 && String(bEl7.innerText || '').trim()) lines7.push('', String(bEl7.innerText).trim());
       lines7.push('', 'https://stephuary.com/results');
       return lines7.join('\n');
     }
@@ -2131,6 +2345,10 @@
       lines.push('');
     }
     lines.push('https://stephuary.com');
+    var obsEl = document.getElementById('results-observable-body');
+    if (obsEl && document.body.classList.contains('results--minimal') && String(obsEl.innerText || '').trim()) {
+      lines.push('', String(obsEl.innerText).trim());
+    }
     return lines.join('\n');
   }
 
@@ -2289,6 +2507,9 @@
             window.ResultsScoreReveal.init(window.__resultsVisualScores);
           }
         } catch (eSR) {}
+        try {
+          applyObservableScoreLine();
+        } catch (eOSL) {}
         initSnapshotActions();
         scheduleMagneticRefresh();
       },
@@ -2326,6 +2547,9 @@
         window.ResultsScoreReveal.init(window.__resultsVisualScores);
       }
     } catch (eSR7) {}
+    try {
+      applyObservableScoreLine();
+    } catch (eOSL7) {}
     initSnapshotActions();
     scheduleMagneticRefresh();
     return;
@@ -2358,6 +2582,9 @@
       window.ResultsScoreReveal.init(window.__resultsVisualScores);
     }
   } catch (eSR) {}
+  try {
+    applyObservableScoreLine();
+  } catch (eOSL) {}
 
   initSnapshotActions();
   scheduleMagneticRefresh();
