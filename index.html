@@ -27,16 +27,16 @@
     }
 
     :root {
-      --bg: #030303;
+      --bg: #0a0a1a;
       --blue: #3A6BFF;
       --blue-soft: rgba(58, 107, 255, 0.14);
       --blue-glow: rgba(58, 107, 255, 0.35);
-      --oxblood: #3B0D0D;
-      --gold: #C6A15B;
-      --gold-dim: rgba(198, 161, 91, 0.45);
+      --oxblood: #3D0C2C;
+      --gold: #C8A96E;
+      --gold-dim: rgba(200, 169, 110, 0.52);
       --text: #f4ede0;
-      --text-2: #b5aa9c;
-      --text-3: #7a7268;
+      --text-2: #A0A0B0;
+      --text-3: rgba(160,160,176,0.72);
       --line: rgba(244, 237, 224, 0.08);
     }
 
@@ -56,7 +56,10 @@
     .ambient { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
     .ambient__grad {
       position: absolute; inset: 0;
-      background: linear-gradient(125deg, #030303 0%, rgba(59,13,13,0.55) 38%, rgba(15,22,48,0.5) 62%, #030303 100%);
+      background:
+        radial-gradient(ellipse 120% 75% at 20% 18%, rgba(61,12,44,0.34) 0%, transparent 52%),
+        radial-gradient(ellipse 95% 65% at 78% 62%, rgba(95,46,82,0.2) 0%, transparent 55%),
+        linear-gradient(168deg, #0a0a1a 0%, #120b20 44%, #09091a 100%);
       background-size: 200% 200%; animation: gradDrift 24s ease-in-out infinite;
     }
     @keyframes gradDrift { 0%,100%{background-position:0% 40%} 50%{background-position:100% 60%} }
@@ -84,16 +87,16 @@
       position: fixed; top: 0; left: 0; right: 0; z-index: 10000;
       display: flex; align-items: center; justify-content: space-between; gap: 16px;
       padding: 12px 36px;
-      background: rgba(3,3,3,0.52);
+      background: rgba(192, 0, 42, 0.88);
       backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
       border-bottom: 1px solid transparent;
       transition: border-color 0.25s ease, background 0.25s ease;
     }
     nav#main-nav.is-scrolled {
-      border-bottom-color: rgba(244,237,224,0.06); background: rgba(4,4,4,0.82);
+      border-bottom-color: rgba(244,237,224,0.18); background: rgba(192, 0, 42, 0.96);
     }
     .nav-mark {
-      font-family: var(--font-sans); font-size: 11px; font-weight: 500;
+      font-family: var(--font-sans); font-size: 12px; font-weight: 600;
       letter-spacing: 0.16em; text-transform: uppercase;
       color: var(--text); text-decoration: none; opacity: 0.92;
     }
@@ -101,12 +104,12 @@
     .nav-links { display: flex; flex-wrap: wrap; gap: 22px; align-items: center; justify-content: flex-end; }
     .nav-link {
       font-family: var(--font-mono, 'DM Mono', monospace);
-      font-size: 9px; font-weight: 400; letter-spacing: 0.2em; text-transform: uppercase;
-      color: var(--text-2); text-decoration: none; padding-bottom: 1px;
+      font-size: 10px; font-weight: 500; letter-spacing: 0.18em; text-transform: uppercase;
+      color: rgba(255,255,255,0.92); text-decoration: none; padding-bottom: 1px;
       border-bottom: 1px solid transparent;
       transition: color 0.2s ease, border-color 0.2s ease;
     }
-    .nav-link:hover { color: var(--text); border-bottom-color: rgba(244,237,224,0.25); }
+    .nav-link:hover { color: #fff; border-bottom-color: rgba(255,255,255,0.45); }
 
     /* ── Hero ── */
     #hero {
@@ -118,9 +121,9 @@
       min-height: min(100vh, 880px); min-height: min(100dvh, 880px);
       display: flex; flex-direction: column;
       background:
-        radial-gradient(ellipse 120% 85% at 50% 18%, rgba(72,14,14,0.52) 0%, transparent 58%),
-        radial-gradient(ellipse 95% 65% at 82% 88%, rgba(28,48,118,0.42) 0%, transparent 52%),
-        linear-gradient(160deg, #050505 0%, #120a0a 38%, #070a14 72%, #040406 100%);
+        radial-gradient(ellipse 120% 85% at 50% 15%, rgba(61,12,44,0.5) 0%, transparent 58%),
+        radial-gradient(ellipse 100% 75% at 82% 88%, rgba(86,38,74,0.22) 0%, transparent 54%),
+        linear-gradient(160deg, #0a0a1a 0%, #130c22 42%, #090a1a 78%, #080818 100%);
     }
     .hero-canvas-wrap {
       position: absolute; inset: 0; z-index: 0; pointer-events: none;
@@ -130,6 +133,11 @@
     .hero-overlay {
       position: absolute; inset: 0; z-index: 1; pointer-events: none;
       background: radial-gradient(ellipse 85% 75% at 50% 45%, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.42) 100%);
+    }
+    .hero-container::after{
+      content:"";
+      position:absolute;left:0;right:0;bottom:0;height:140px;z-index:2;pointer-events:none;
+      background:linear-gradient(180deg,rgba(10,10,26,0) 0%, rgba(10,10,26,0.92) 100%);
     }
     .hero-content {
       position: relative; z-index: 2; flex: 1 1 auto;
@@ -151,22 +159,29 @@
     .home-hero__sub {
       font-family: var(--font-sans); font-size: var(--text-body-lg);
       font-weight: var(--font-weight-body, 400); line-height: var(--lh-body, 1.6);
-      color: var(--text-2); max-width: 40ch; margin-bottom: 28px;
+      color: var(--text-2); max-width: 40ch; margin-bottom: 24px; font-size: 1.02rem;
     }
     .hero-areas {
-      display: flex; gap: 28px; flex-wrap: wrap; margin: 0 0 32px;
+      display: flex; gap: 12px; flex-wrap: wrap; margin: 0 0 28px;
     }
     .hero-areas__item {
       display: flex; align-items: center; gap: 8px;
       font-family: var(--font-mono, 'DM Mono', monospace);
       font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-3);
+      border: 1px solid rgba(200,169,110,0.32);
+      border-radius: 999px;
+      padding: 7px 11px 7px 10px;
+      background: rgba(255,255,255,0.02);
     }
     .hero-areas__dot { width: 6px; height: 6px; border-radius: 50%; background: var(--gold-dim); flex-shrink: 0; }
-    .hero-actions { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; }
+    .hero-actions { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; margin-bottom: 20px; }
     .hero-meta {
       font-family: var(--font-mono, 'DM Mono', monospace);
       font-size: 9px; letter-spacing: 0.16em; text-transform: uppercase;
-      color: var(--text-3); opacity: 0.6;
+      color: var(--text-3); opacity: 0.9;
+      text-align: center;
+      width: 100%;
+      max-width: 242px;
     }
 
     /* ── Buttons ── */
@@ -182,42 +197,53 @@
       cursor: pointer;
     }
     .btn:hover { opacity: 0.88; border-color: rgba(244,237,224,0.38); background: rgba(244,237,224,0.04); }
-    .btn--pri { border-color: rgba(244,237,224,0.28); }
-    .btn--pri:hover { border-color: rgba(244,237,224,0.45); background: rgba(244,237,224,0.05); }
+    .btn--pri {
+      border-color: rgba(200,169,110,0.55);
+      background: linear-gradient(180deg, rgba(200,169,110,0.98) 0%, rgba(171,140,88,0.96) 100%);
+      color: #111225;
+      font-weight: 600;
+    }
+    .btn--pri:hover { border-color: rgba(200,169,110,0.8); background: linear-gradient(180deg, rgba(213,183,124,0.98) 0%, rgba(180,148,96,0.98) 100%); }
 
     /* ── Collapsible folds ── */
     .home-fold {
       border: none; border-radius: 0; background: transparent; margin: 0;
-      border-bottom: 1px solid rgba(244,237,224,0.06);
+      border-bottom: 1px solid rgba(244,237,224,0.07);
+      background: linear-gradient(180deg, rgba(255,255,255,0.02) 0%, rgba(255,255,255,0.01) 100%);
     }
     .home-fold:first-of-type { border-top: 1px solid rgba(244,237,224,0.06); }
 
     .home-fold summary {
-      display: flex; justify-content: space-between; align-items: center; gap: 16px;
-      padding: var(--sp-4, 32px) var(--container-pad-x, 24px);
+      display: flex; justify-content: center; align-items: center; gap: 16px;
+      padding: 34px var(--container-pad-x, 24px);
       cursor: pointer; list-style: none;
-      max-width: min(var(--prose-width, 720px), 100%); margin: 0 auto;
+      max-width: min(980px, 100%); margin: 0 auto;
       transition: opacity 0.2s ease;
+      position: relative;
     }
     .home-fold summary:hover { opacity: 0.8; }
     .home-fold summary::-webkit-details-marker { display: none; }
 
     .home-fold__title {
-      font-family: var(--font-serif, 'Playfair Display', Georgia, serif);
-      font-size: var(--text-h4, clamp(17px, 1.6vw, 20px));
-      font-weight: var(--font-weight-serif, 500);
-      letter-spacing: var(--letter-h, -0.02em); color: var(--text);
+      font-family: var(--font-mono, 'DM Mono', monospace);
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: rgba(200,169,110,0.88);
     }
     .home-fold__indicator {
       font-family: var(--font-mono, 'DM Mono', monospace);
       font-size: 11px; font-weight: 400; color: var(--text-3); opacity: 0.5;
       transition: transform 0.25s ease, opacity 0.2s ease; flex-shrink: 0;
+      position: absolute;
+      right: var(--container-pad-x, 24px);
     }
     .home-fold[open] .home-fold__indicator { transform: rotate(45deg); opacity: 0.7; }
 
     .home-fold__body {
-      max-width: min(var(--prose-width, 720px), 100%); margin: 0 auto;
-      padding: 0 var(--container-pad-x, 24px) var(--sp-5, 40px);
+      max-width: min(980px, 100%); margin: 0 auto;
+      padding: 0 var(--container-pad-x, 24px) 76px;
     }
     .home-fold__body p {
       font-size: var(--text-body, 1rem); font-weight: var(--font-weight-body, 400);
@@ -226,8 +252,19 @@
     .home-fold__body p + p { margin-top: 12px; }
 
     /* ── Area cards inside fold ── */
-    .area-card { padding: 20px 0; border-bottom: 1px solid rgba(244,237,224,0.04); }
-    .area-card:last-child { border-bottom: none; }
+    .home-fold__body { display:block; }
+    .home-fold:nth-of-type(1) .home-fold__body {
+      display:grid;
+      grid-template-columns:repeat(3,minmax(0,1fr));
+      gap:16px;
+    }
+    .area-card {
+      padding: 22px 18px;
+      border: 1px solid rgba(244,237,224,0.13);
+      background: rgba(255,255,255,0.035);
+      border-top: 1px solid rgba(200,169,110,0.36);
+      min-height: 230px;
+    }
     .area-card__label {
       font-family: var(--font-mono, 'DM Mono', monospace);
       font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase;
@@ -238,31 +275,103 @@
       font-size: clamp(17px, 1.6vw, 20px); font-weight: 500;
       color: var(--text); margin-bottom: 6px; letter-spacing: -0.015em;
     }
-    .area-card__body { font-size: 15px; line-height: 1.55; color: var(--text-3); max-width: 48ch; }
+    .area-card__body { font-size: 15px; line-height: 1.58; color: var(--text-2); max-width: 48ch; }
 
     /* ── How steps inside fold ── */
-    .how-steps { margin-top: 8px; }
-    .how-step { padding: 16px 0; border-bottom: 1px solid rgba(244,237,224,0.04); }
-    .how-step:last-child { border-bottom: none; }
+    .home-fold:nth-of-type(2) .home-fold__body {
+      background: linear-gradient(180deg, rgba(255,255,255,0.035) 0%, rgba(255,255,255,0.015) 100%);
+      border: 1px solid rgba(244,237,224,0.1);
+      padding-top: 18px;
+    }
+    .how-steps {
+      margin-top: 0;
+      display:grid;
+      grid-template-columns:repeat(3,minmax(0,1fr));
+      gap:16px;
+      position:relative;
+    }
+    .how-step {
+      padding: 18px 16px 16px;
+      border: 1px solid rgba(244,237,224,0.1);
+      background: rgba(255,255,255,0.025);
+      position:relative;
+      overflow:hidden;
+      min-height: 190px;
+    }
+    .how-step:not(:last-child)::after{
+      content:"";
+      position:absolute;
+      top:50%;
+      right:-16px;
+      width:16px;
+      border-top: 1px dotted rgba(200,169,110,0.5);
+      transform: translateY(-50%);
+    }
     .how-step__num {
       font-family: var(--font-mono, 'DM Mono', monospace);
       font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase;
-      color: var(--gold-dim); margin-bottom: 6px;
+      color: var(--gold-dim); margin-bottom: 8px;
+      position:relative; z-index:2;
+    }
+    .how-step::before{
+      content: attr(data-step);
+      position:absolute; right:12px; top:8px;
+      font-family: var(--font-serif, 'Playfair Display', Georgia, serif);
+      font-size: 72px;
+      line-height: 1;
+      color: rgba(200,169,110,0.12);
+      z-index:1;
     }
     .how-step__title {
       font-family: var(--font-serif, 'Playfair Display', Georgia, serif);
       font-size: clamp(16px, 1.4vw, 18px); font-weight: 500;
-      color: var(--text); margin-bottom: 4px; letter-spacing: -0.01em;
+      color: var(--text); margin-bottom: 6px; letter-spacing: -0.01em; position:relative; z-index:2;
     }
-    .how-step__desc { font-size: 15px; line-height: 1.55; color: var(--text-3); }
+    .how-step__desc { font-size: 15px; line-height: 1.55; color: var(--text-2); position:relative; z-index:2; }
+
+    .home-fold:nth-of-type(3) .home-fold__body{
+      border-top: 1px solid rgba(200,169,110,0.22);
+      border-bottom: 1px solid rgba(200,169,110,0.22);
+      padding-top: 22px;
+      padding-bottom: 30px;
+    }
+    .builder-stat {
+      display:flex;
+      align-items:flex-end;
+      gap:14px;
+      margin-bottom:16px;
+    }
+    .builder-stat__num{
+      font-family: var(--font-serif, 'Playfair Display', Georgia, serif);
+      font-size: clamp(54px, 7vw, 78px);
+      line-height: 0.9;
+      color: rgba(255,255,255,0.96);
+      letter-spacing: -0.03em;
+    }
+    .builder-stat__label{
+      font-family: var(--font-mono, 'DM Mono', monospace);
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--gold-dim);
+      margin-bottom: 6px;
+    }
+    .builder-copy{
+      max-width: 60ch;
+      color: var(--text-2);
+      line-height: 1.6;
+      column-count: 2;
+      column-gap: 28px;
+    }
 
     /* ── Final section ── */
     .home-final {
-      padding: var(--section-y-desktop, 96px) var(--container-pad-x, 24px);
+      padding: 84px var(--container-pad-x, 24px);
       border-top: 1px solid rgba(244,237,224,0.06);
       position: relative; z-index: 1;
+      background: linear-gradient(180deg, rgba(255,255,255,0.01) 0%, rgba(255,255,255,0.03) 100%);
     }
-    .home-final__inner { max-width: min(var(--prose-width, 720px), 100%); margin: 0 auto; }
+    .home-final__inner { max-width: min(980px, 100%); margin: 0 auto; }
     .home-final__title {
       font-family: var(--font-serif, 'Playfair Display', Georgia, serif);
       font-size: var(--text-h3); font-weight: var(--font-weight-serif, 500);
@@ -308,6 +417,10 @@
       .hero-container { min-height: min(100dvh, 760px); }
       .hero-content { padding: 88px 22px 40px; }
       .hero-areas { gap: 16px; }
+      .home-fold:nth-of-type(1) .home-fold__body,
+      .how-steps { grid-template-columns:1fr; gap:16px; }
+      .how-step:not(:last-child)::after{ display:none; }
+      .builder-copy { column-count:1; }
     }
     @media (max-width: 640px) {
       nav#main-nav { padding: var(--sp-2, 16px) var(--container-pad-x, 20px); }
@@ -365,17 +478,17 @@
 
               <h1 class="home-hero__title" id="hero-h1">You've been fixing the wrong thing.</h1>
 
-              <p class="home-hero__sub" id="hero-lead">Answer 15 questions. Get a score across clarity, positioning, and structure. See exactly where your offer is stalling and what to fix first.</p>
+              <p class="home-hero__sub" id="hero-lead">Answer 15 questions and get a score across clarity, positioning, and structure.<br />See exactly where your offer is stalling and what to fix first.</p>
+
+              <div class="hero-actions" id="hero-actions">
+                <a href="/capture" class="btn btn--pri home-diag-cta" id="hero-cta-primary">Start Diagnostic</a>
+                <span class="hero-meta">3 min · free · immediate results</span>
+              </div>
 
               <div class="hero-areas" id="hero-areas-list">
                 <div class="hero-areas__item"><span class="hero-areas__dot"></span> Clarity</div>
                 <div class="hero-areas__item"><span class="hero-areas__dot"></span> Positioning</div>
                 <div class="hero-areas__item"><span class="hero-areas__dot"></span> Structure</div>
-              </div>
-
-              <div class="hero-actions" id="hero-actions">
-                <a href="/capture" class="btn btn--pri home-diag-cta" id="hero-cta-primary">Start Diagnostic</a>
-                <span class="hero-meta">3 min · free · immediate results</span>
               </div>
 
             </div>
@@ -416,17 +529,17 @@
         </summary>
         <div class="home-fold__body">
           <div class="how-steps">
-            <div class="how-step">
+            <div class="how-step" data-step="01">
               <div class="how-step__num">01</div>
               <div class="how-step__title">Answer 15 questions</div>
               <div class="how-step__desc">Binary choices. No overthinking. About 3 minutes.</div>
             </div>
-            <div class="how-step">
+            <div class="how-step" data-step="02">
               <div class="how-step__num">02</div>
               <div class="how-step__title">Get your score</div>
               <div class="how-step__desc">One number across three areas, plus a read on where you're losing money or time.</div>
             </div>
-            <div class="how-step">
+            <div class="how-step" data-step="03">
               <div class="how-step__num">03</div>
               <div class="how-step__title">See your next move</div>
               <div class="how-step__desc">A specific recommendation based on your score. Not a generic plan.</div>
@@ -441,7 +554,11 @@
           <span class="home-fold__indicator">+</span>
         </summary>
         <div class="home-fold__body">
-          <p>20+ years in service and hospitality operations. The scoring comes from pattern recognition across real businesses. Not a framework someone licensed.</p>
+          <div class="builder-stat">
+            <div class="builder-stat__num">20+</div>
+            <div class="builder-stat__label">Years in service and hospitality operations</div>
+          </div>
+          <p class="builder-copy">The scoring comes from pattern recognition across real businesses. Not a framework someone licensed.</p>
         </div>
       </details>
 
@@ -605,8 +722,8 @@
       tlHero.from('.hero-inner',{opacity:0,y:14,duration:0.55},0);
       tlHero.from('#hero-h1',{opacity:0,y:14,duration:0.55},0.06);
       tlHero.from('#hero-lead',{opacity:0,y:10,duration:0.45},0.14);
-      tlHero.from('#hero-areas-list',{opacity:0,y:8,duration:0.4},0.2);
-      tlHero.from('#hero-actions',{opacity:0,y:8,duration:0.4},0.28);
+      tlHero.from('#hero-actions',{opacity:0,y:8,duration:0.4},0.2);
+      tlHero.from('#hero-areas-list',{opacity:0,y:8,duration:0.4},0.28);
 
       /* ── Scroll reveals ── */
       document.querySelectorAll('.home-reveal').forEach(function(el){
