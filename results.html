@@ -140,6 +140,89 @@
       margin: 0 auto;
     }
     #state-missing.visible { display: flex; }
+
+    #state-email-gate {
+      display: none;
+      min-height: 85vh;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 48px 28px 80px;
+      max-width: 480px;
+      margin: 0 auto;
+    }
+    #state-email-gate.visible { display: flex; }
+    .results-email-lead {
+      font-size: 15px;
+      color: var(--muted);
+      line-height: 1.65;
+      margin-bottom: 24px;
+      max-width: 38ch;
+    }
+    .results-email-form {
+      width: 100%;
+      max-width: 360px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      align-items: stretch;
+    }
+    .results-email-form label {
+      font-size: 9px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--faint);
+      text-align: left;
+    }
+    .results-email-form input[type="email"] {
+      width: 100%;
+      padding: 14px 16px;
+      border: 1px solid var(--line-blue);
+      background: rgba(13, 13, 11, 0.65);
+      color: var(--white);
+      font-size: 16px;
+      font-family: inherit;
+      border-radius: 2px;
+    }
+    .results-email-form input:focus {
+      outline: none;
+      border-color: rgba(43, 79, 212, 0.65);
+    }
+    .results-email-form .btn-primary { width: 100%; cursor: pointer; }
+
+    .results-share {
+      margin-top: 28px;
+      padding-top: 22px;
+      border-top: 1px solid var(--line-soft);
+      max-width: 560px;
+    }
+    .results-share__label {
+      font-size: 9px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--gold-dim);
+      margin-bottom: 12px;
+      font-family: 'Lato', sans-serif;
+    }
+    .results-share__actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 12px;
+      align-items: center;
+    }
+    .results-share__actions .btn-ghost {
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 10px 16px;
+    }
+    .results-share__note {
+      font-size: 12px;
+      color: var(--faint);
+      margin-top: 12px;
+      line-height: 1.5;
+    }
     .missing-kicker {
       font-size: 10px;
       letter-spacing: 0.32em;
@@ -994,6 +1077,17 @@
     <a href="/playbooks" class="btn btn-primary" id="results-missing-cta">Open playbooks</a>
   </div>
 
+  <div id="state-email-gate">
+    <p class="missing-kicker">Result</p>
+    <h1 class="missing-h1">Email to view your read</h1>
+    <p class="results-email-lead">Enter your email to unlock your full results. Same address works if you return on this device.</p>
+    <form class="results-email-form" id="results-email-form" novalidate>
+      <label for="results-email-input">Email</label>
+      <input type="email" id="results-email-input" name="email" autocomplete="email" required placeholder="you@example.com" />
+      <button type="submit" class="btn btn-primary">View results</button>
+    </form>
+  </div>
+
   <main id="state-result">
     <section class="results-score-reveal" id="results-score-reveal" aria-label="Score summary">
       <div class="results-score-reveal__grain" aria-hidden="true"></div>
@@ -1040,6 +1134,15 @@
         <div class="type-pill" id="typePill" aria-label="Detected types"></div>
         <div id="results-cei-strip" class="cei-node-strip" aria-label="Pressure map"></div>
         <p class="sys-lead-note" style="margin:0 auto 16px;max-width:52ch;text-align:left">The readout names the pattern. When the diagnostic is complete, one Room holds the next pressure point .  enter it and work the loop there.</p>
+        <div class="results-share" id="results-share" aria-label="Share snapshot">
+          <p class="results-share__label">Snapshot</p>
+          <div class="results-share__actions">
+            <button type="button" class="btn btn-ghost" id="results-snapshot-copy">Copy text</button>
+            <button type="button" class="btn btn-ghost" id="results-snapshot-share" hidden>Share</button>
+            <button type="button" class="btn btn-ghost" id="results-snapshot-download">Download</button>
+          </div>
+          <p class="results-share__note" id="results-snapshot-feedback" hidden>Copied.</p>
+        </div>
         <div class="results-hero-cta-row">
           <a class="results-cta-pri magnetic" id="results-primary-cta" href="#" data-sh-flow-primary>Enter Your Room</a>
           <p class="results-flow-links results-flow-links--quiet" id="results-flow-links" hidden>
@@ -1144,7 +1247,10 @@
   <script>
 (function () {
   var STORAGE_KEY = 'stephuary_result_v1';
+  var RESULTS_EMAIL_KEY = 'stephuary_results_email_v1';
   var LEGACY_KEYS = ['stephuary_diagnostic_result'];
+  var pageData = null;
+  var pageVersion = null;
 
   var PLAYBOOK_META = {
     'Execution': {
@@ -1536,11 +1642,15 @@
 
   function showMissing() {
     document.getElementById('state-missing').classList.add('visible');
+    document.getElementById('state-email-gate').classList.remove('visible');
     document.getElementById('state-result').classList.remove('visible');
   }
 
   function showResult(data, version) {
+    pageData = data;
+    pageVersion = version;
     document.getElementById('state-missing').classList.remove('visible');
+    document.getElementById('state-email-gate').classList.remove('visible');
     document.getElementById('state-result').classList.add('visible');
 
     var diag = data.diagnostic;
@@ -1808,6 +1918,127 @@
     } catch (fr) {}
   }
 
+  function buildSnapshotText() {
+    if (!pageData || !pageVersion) return '';
+    var d = pageData;
+    var diag = d.diagnostic;
+    var lines = ['Stephuary · diagnostic snapshot', ''];
+    try {
+      if (window.__resultsVisualScores && typeof window.__resultsVisualScores.total === 'number') {
+        lines.push('Score: ' + window.__resultsVisualScores.total + '/100');
+        lines.push('');
+      }
+    } catch (e) {}
+    var op =
+      diag && (diag.primary_issue || diag.main_problem)
+        ? (diag.primary_issue || diag.main_problem)
+        : pageVersion.opening;
+    lines.push('Pattern: ' + String(op || '').trim());
+    lines.push('');
+    if (diag && diag.fix_first) {
+      lines.push('Next move: ' + String(diag.fix_first).trim());
+    } else if (pageVersion.doThisNow && pageVersion.doThisNow[0]) {
+      lines.push('Next move: ' + pageVersion.doThisNow[0]);
+    }
+    lines.push('');
+    lines.push('https://stephuary.com');
+    return lines.join('\n');
+  }
+
+  function initSnapshotActions() {
+    var copyBtn = document.getElementById('results-snapshot-copy');
+    var shareBtn = document.getElementById('results-snapshot-share');
+    var dlBtn = document.getElementById('results-snapshot-download');
+    var fb = document.getElementById('results-snapshot-feedback');
+    if (shareBtn && typeof navigator.share === 'function') shareBtn.removeAttribute('hidden');
+
+    function flashFb() {
+      if (!fb) return;
+      fb.hidden = false;
+      fb.textContent = 'Copied.';
+      setTimeout(function () {
+        fb.hidden = true;
+      }, 2200);
+    }
+
+    if (copyBtn) {
+      copyBtn.addEventListener('click', function () {
+        var t = buildSnapshotText();
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(t).then(flashFb).catch(function () {});
+        } else {
+          var ta = Object.assign(document.createElement('textarea'), { value: t });
+          ta.style.cssText = 'position:fixed;opacity:0;';
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand('copy');
+          document.body.removeChild(ta);
+          flashFb();
+        }
+      });
+    }
+    if (shareBtn) {
+      shareBtn.addEventListener('click', function () {
+        if (typeof navigator.share !== 'function') return;
+        var t = buildSnapshotText();
+        navigator.share({ title: 'Stephuary snapshot', text: t }).catch(function () {});
+      });
+    }
+    if (dlBtn) {
+      dlBtn.addEventListener('click', function () {
+        var t = buildSnapshotText();
+        var blob = new Blob([t], { type: 'text/plain;charset=utf-8' });
+        var a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = 'stephuary-snapshot.txt';
+        a.click();
+        URL.revokeObjectURL(a.href);
+      });
+    }
+  }
+
+  function hasResultsEmail() {
+    try {
+      var v = localStorage.getItem(RESULTS_EMAIL_KEY);
+      return !!(v && String(v).trim().indexOf('@') > 0);
+    } catch (e) {
+      return false;
+    }
+  }
+
+  function showEmailGateUI(data) {
+    document.getElementById('state-missing').classList.remove('visible');
+    document.getElementById('state-email-gate').classList.add('visible');
+    document.getElementById('state-result').classList.remove('visible');
+    var form = document.getElementById('results-email-form');
+    if (!form) return;
+    form.addEventListener(
+      'submit',
+      function (ev) {
+        ev.preventDefault();
+        var input = document.getElementById('results-email-input');
+        if (!input || !input.checkValidity()) {
+          if (input) input.reportValidity();
+          return;
+        }
+        try {
+          localStorage.setItem(RESULTS_EMAIL_KEY, String(input.value).trim());
+        } catch (e) {}
+        document.getElementById('state-email-gate').classList.remove('visible');
+        var ver = resolveVersion(data);
+        showResult(data, ver);
+        try {
+          if (window.ResultsScoreReveal && typeof window.ResultsScoreReveal.init === 'function' && window.__resultsVisualScores) {
+            window.ResultsScoreReveal.init(window.__resultsVisualScores);
+          }
+        } catch (eSR) {}
+        initSnapshotActions();
+        scheduleMagneticRefresh();
+      },
+      { once: true }
+    );
+  }
+
   var loaded = loadResult();
   var data = normalizeData(loaded.data);
   if (!data) {
@@ -1825,6 +2056,11 @@
     } catch (e) {}
   }
 
+  if (!hasResultsEmail()) {
+    showEmailGateUI(data);
+    return;
+  }
+
   var version = resolveVersion(data);
   showResult(data, version);
 
@@ -1833,6 +2069,8 @@
       window.ResultsScoreReveal.init(window.__resultsVisualScores);
     }
   } catch (eSR) {}
+
+  initSnapshotActions();
 
   function scheduleMagneticRefresh() {
     var tries = 0;
