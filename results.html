@@ -153,6 +153,9 @@
       margin: 0 auto;
     }
     #state-email-gate.visible { display: flex; }
+    #state-email-gate {
+      display: none !important;
+    }
     .results-email-lead {
       font-size: 15px;
       color: var(--muted);
@@ -249,6 +252,44 @@
       padding-bottom: 72px;
     }
     #state-result.visible { display: block; animation: rise 0.55s ease forwards; }
+
+    /* Minimal results: score strip, one read, share, single CTA only */
+    body.results--minimal .hero-kicker,
+    body.results--minimal #results-dom-line,
+    body.results--minimal .results-conversion-soft,
+    body.results--minimal #typePill,
+    body.results--minimal #results-cei-strip,
+    body.results--minimal .hero-result > .sys-lead-note,
+    body.results--minimal #resultReadoutBlock,
+    body.results--minimal #results-recommended-room,
+    body.results--minimal .rule,
+    body.results--minimal section.results-sec,
+    body.results--minimal .foot-close,
+    body.results--minimal #results-flow-links,
+    body.results--minimal #results-diag-esc,
+    body.results--minimal #sh-results-routes,
+    body.results--minimal #results-primary-sub {
+      display: none !important;
+    }
+
+    .results-minimal-foot {
+      display: none;
+      text-align: center;
+      padding: 32px 0 8px;
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+    .results-minimal-foot a {
+      color: rgba(244, 237, 224, 0.45);
+      text-decoration: none;
+    }
+    .results-minimal-foot a:hover {
+      color: rgba(244, 237, 224, 0.72);
+    }
+    body.results--minimal .results-minimal-foot {
+      display: block;
+    }
 
     .hero-result {
       padding: 36px 0 48px;
@@ -1057,15 +1098,14 @@
     }
   </style>
 </head>
-<body data-sh-env="systems">
+<body data-sh-env="results">
 
   <header class="top-bar">
     <a href="/" class="logo">Stephuary</a>
     <nav id="main-nav" class="top-bar-nav sh-main-nav" aria-label="Primary">
       <a href="/pricing">Pricing</a>
       <a href="/access">.5% Club</a>
-      <a href="https://stephuary.substack.com" target="_blank" rel="noopener">Grown spaghetti</a>
-      <a href="https://onlysometimesclub.com" target="_blank" rel="noopener noreferrer">Only Sometimes Club</a>
+      <a href="https://stephuary.substack.com" target="_blank" rel="noopener">Substack</a>
       <button type="button" class="top-bar-nav__restart" id="results-nav-restart">Restart</button>
     </nav>
   </header>
@@ -1123,7 +1163,7 @@
 
     <section class="hero-result" data-sh-flow-section>
       <div class="wrap">
-        <p class="hero-kicker">Your pattern</p>
+        <p class="hero-kicker">Your result</p>
         <p class="results-dom-line" id="results-dom-line"></p>
         <p class="results-conversion-soft" hidden>
           Want this mapped to your actual business?
@@ -1133,7 +1173,7 @@
         <p class="hero-sub" id="results-hero-sub"></p>
         <div class="type-pill" id="typePill" aria-label="Detected types"></div>
         <div id="results-cei-strip" class="cei-node-strip" aria-label="Pressure map"></div>
-        <p class="sys-lead-note" style="margin:0 auto 16px;max-width:52ch;text-align:left">The readout names the pattern. When the diagnostic is complete, one Room holds the next pressure point .  enter it and work the loop there.</p>
+        <p class="sys-lead-note" style="margin:0 auto 16px;max-width:52ch;text-align:left"></p>
         <div class="results-share" id="results-share" aria-label="Share snapshot">
           <p class="results-share__label">Snapshot</p>
           <div class="results-share__actions">
@@ -1146,7 +1186,7 @@
           <p class="results-share__note" id="results-snapshot-feedback" hidden>Copied.</p>
         </div>
         <div class="results-hero-cta-row">
-          <a class="results-cta-pri magnetic" id="results-primary-cta" href="/snapshot" data-sh-flow-primary>Get the full breakdown</a>
+          <a class="results-cta-pri magnetic" id="results-primary-cta" href="/snapshot" data-sh-flow-primary>Get your Snapshot</a>
           <p class="results-flow-links results-flow-links--quiet" id="results-flow-links" hidden>
             <a href="/pricing">View pricing</a>
           </p>
@@ -1237,6 +1277,11 @@
         <a href="/pricing" class="foot-link">View pricing</a>
       </p>
     </footer>
+    <p class="results-minimal-foot" id="results-minimal-foot">
+      <a href="/">Home</a>
+      <span aria-hidden="true"> · </span>
+      <a href="/pricing">Pricing</a>
+    </p>
   </main>
 
   <script src="/stephuary-diagnostic-flow.js"></script>
@@ -1253,6 +1298,70 @@
   var LEGACY_KEYS = ['stephuary_diagnostic_result'];
   var pageData = null;
   var pageVersion = null;
+
+  function scheduleMagneticRefresh() {
+    var tries = 0;
+    function tick() {
+      if (window.StephuaryMagneticFlow && typeof window.StephuaryMagneticFlow.refresh === 'function') {
+        window.StephuaryMagneticFlow.refresh();
+        return;
+      }
+      if (++tries < 30) setTimeout(tick, 50);
+    }
+    tick();
+  }
+
+  function readDiagnosticResultsSeven() {
+    try {
+      var raw = localStorage.getItem('diagnosticResults');
+      if (!raw) return null;
+      var o = JSON.parse(raw);
+      if (!o || typeof o !== 'object') return null;
+      if (!o.scores || typeof o.scores !== 'object') return null;
+      return o;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function buildSevenQuestionVisualScores(dr) {
+    var maxC = 3;
+    var maxP = 2;
+    var maxS = 2;
+    var c = Math.min(maxC, Math.max(0, Number(dr.scores.clarity) || 0));
+    var p = Math.min(maxP, Math.max(0, Number(dr.scores.positioning) || 0));
+    var s = Math.min(maxS, Math.max(0, Number(dr.scores.structure) || 0));
+    var cPct = Math.round(100 * (1 - c / maxC));
+    var pPct = Math.round(100 * (1 - p / maxP));
+    var sPct = Math.round(100 * (1 - s / maxS));
+    var total = Math.round((cPct + pPct + sPct) / 3);
+    return { clarity: cPct, positioning: pPct, structure: sPct, total: total };
+  }
+
+  function renderSevenQuestionPage(dr) {
+    document.body.classList.add('results--minimal');
+    document.getElementById('state-missing').classList.remove('visible');
+    document.getElementById('state-email-gate').classList.remove('visible');
+    document.getElementById('state-result').classList.add('visible');
+
+    var headline = dr.result && dr.result.headline ? String(dr.result.headline).trim() : '';
+    var sub = dr.result && dr.result.nextStep ? String(dr.result.nextStep).trim() : '';
+    document.getElementById('openingRead').textContent = headline || 'Your diagnostic is complete.';
+    var subEl = document.getElementById('results-hero-sub');
+    if (subEl) subEl.textContent = sub || '';
+
+    var domLine = document.getElementById('results-dom-line');
+    if (domLine) domLine.textContent = '';
+
+    var pill = document.getElementById('typePill');
+    if (pill) pill.innerHTML = '';
+
+    var ctaPri = document.getElementById('results-primary-cta');
+    if (ctaPri) {
+      ctaPri.setAttribute('href', '/snapshot');
+      ctaPri.textContent = 'Get your Snapshot';
+    }
+  }
 
   var PLAYBOOK_META = {
     'Execution': {
@@ -1935,14 +2044,32 @@
     var names = data.playbooks && data.playbooks.length ? data.playbooks.slice(0, 1) : [(version.playbooks && version.playbooks[0]) || 'Execution'];
     renderPlaybooks(names);
 
+    (function forceMinimalPrimaryCta() {
+      var ctaPriEl = document.getElementById('results-primary-cta');
+      if (document.body.classList.contains('results--minimal') && ctaPriEl) {
+        ctaPriEl.setAttribute('href', '/snapshot');
+        ctaPriEl.textContent = 'Get your Snapshot';
+      }
+    })();
+
     try {
-      if (window.StephuaryCeiBridge && typeof window.StephuaryCeiBridge.applyResults === 'function') {
+      if (
+        document.body.classList.contains('results--minimal') &&
+        window.StephuaryCeiBridge &&
+        typeof window.StephuaryCeiBridge.applyResults === 'function'
+      ) {
+        /* CEI strip hidden in minimal layout; skip wiring */
+      } else if (window.StephuaryCeiBridge && typeof window.StephuaryCeiBridge.applyResults === 'function') {
         window.StephuaryCeiBridge.applyResults(document);
       }
     } catch (e2) {}
 
     try {
-      if (window.StephuaryFounderReveal && typeof window.StephuaryFounderReveal.scheduleDiagnostic === 'function') {
+      if (
+        !document.body.classList.contains('results--minimal') &&
+        window.StephuaryFounderReveal &&
+        typeof window.StephuaryFounderReveal.scheduleDiagnostic === 'function'
+      ) {
         window.StephuaryFounderReveal.scheduleDiagnostic();
       }
     } catch (fr) {}
@@ -1952,6 +2079,29 @@
     if (!pageData || !pageVersion) return '';
     var d = pageData;
     var diag = d.diagnostic;
+    if (diag && diag.seven_question) {
+      var lines7 = ['Stephuary · diagnostic snapshot', ''];
+      try {
+        if (window.__resultsVisualScores && typeof window.__resultsVisualScores.total === 'number') {
+          lines7.push('Overall: ' + window.__resultsVisualScores.total + '/100');
+          lines7.push(
+            'Clarity ' +
+              window.__resultsVisualScores.clarity +
+              ' · Positioning ' +
+              window.__resultsVisualScores.positioning +
+              ' · Structure ' +
+              window.__resultsVisualScores.structure
+          );
+          lines7.push('');
+        }
+      } catch (e7a) {}
+      var h7 = diag.main_problem ? String(diag.main_problem).trim() : '';
+      var n7 = diag.fix_first ? String(diag.fix_first).trim() : '';
+      if (h7) lines7.push(h7);
+      if (n7) lines7.push('', n7);
+      lines7.push('', 'https://stephuary.com/results');
+      return lines7.join('\n');
+    }
     var lines = ['Stephuary · diagnostic snapshot', ''];
     try {
       if (window.__resultsVisualScores && typeof window.__resultsVisualScores.total === 'number') {
@@ -2146,12 +2296,49 @@
     );
   }
 
+  var drSeven = readDiagnosticResultsSeven();
+
+  if (drSeven) {
+    window.__resultsVisualScores = buildSevenQuestionVisualScores(drSeven);
+    pageData = {
+      result_version: 'mixed_general',
+      type_primary: '',
+      type_secondary: '',
+      block: '',
+      environment: '',
+      playbooks: ['Execution'],
+      signals: {},
+      diagnostic: {
+        seven_question: true,
+        main_problem:
+          drSeven.result && drSeven.result.headline ? String(drSeven.result.headline) : '',
+        primary_issue:
+          drSeven.result && drSeven.result.headline ? String(drSeven.result.headline) : '',
+        synthesis_summary:
+          drSeven.result && drSeven.result.nextStep ? String(drSeven.result.nextStep) : '',
+        fix_first: drSeven.result && drSeven.result.nextStep ? String(drSeven.result.nextStep) : ''
+      }
+    };
+    pageVersion = RESULT_VERSIONS.mixed_general;
+    renderSevenQuestionPage(drSeven);
+    try {
+      if (window.ResultsScoreReveal && typeof window.ResultsScoreReveal.init === 'function' && window.__resultsVisualScores) {
+        window.ResultsScoreReveal.init(window.__resultsVisualScores);
+      }
+    } catch (eSR7) {}
+    initSnapshotActions();
+    scheduleMagneticRefresh();
+    return;
+  }
+
   var loaded = loadResult();
   var data = normalizeData(loaded.data);
   if (!data) {
     showMissing();
     return;
   }
+
+  document.body.classList.add('results--minimal');
   try {
     if (window.StephuaryResult && typeof window.StephuaryResult.computeResultsVisualScores === 'function') {
       window.__resultsVisualScores = window.StephuaryResult.computeResultsVisualScores();
@@ -2161,11 +2348,6 @@
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
     } catch (e) {}
-  }
-
-  if (!hasResultsEmail()) {
-    showEmailGateUI(data);
-    return;
   }
 
   var version = resolveVersion(data);
@@ -2178,18 +2360,6 @@
   } catch (eSR) {}
 
   initSnapshotActions();
-
-  function scheduleMagneticRefresh() {
-    var tries = 0;
-    function tick() {
-      if (window.StephuaryMagneticFlow && typeof window.StephuaryMagneticFlow.refresh === 'function') {
-        window.StephuaryMagneticFlow.refresh();
-        return;
-      }
-      if (++tries < 30) setTimeout(tick, 50);
-    }
-    tick();
-  }
   scheduleMagneticRefresh();
 })();
   </script>
