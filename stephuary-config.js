@@ -80,10 +80,11 @@
 
   function bypassStripeCheckoutAnchors() {
     if (!FREE_MODE) return;
+    var path = (global.location.pathname || '').toLowerCase();
+    if (path.indexOf('checkout') !== -1) return;
     global.document.querySelectorAll('a[href*="checkout.stripe.com"]').forEach(function (a) {
       if (a.getAttribute('data-paid-href')) return;
       a.setAttribute('data-paid-href', a.getAttribute('href') || '');
-      var path = (global.location.pathname || '').toLowerCase();
       if (path.indexOf('snapshot') >= 0) {
         a.setAttribute('href', '#free-flow');
       } else if (path.indexOf('focused-review') >= 0 || path.indexOf('focused') >= 0) {
