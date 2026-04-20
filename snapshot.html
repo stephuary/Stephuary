@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Snapshot | Stephuary</title>
-  <meta name="description" content="Snapshot: a focused breakdown tied to your diagnostic. Delivered within 48 hours." />
+  <meta name="description" content="Snapshot: written from your diagnostic answers. Delivered within 48 hours. No call required." />
   <link rel="stylesheet" href="/stephuary-interactive.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -145,12 +145,16 @@
       margin-bottom: 20px;
     }
 
+    .delivery-block {
+      margin-bottom: 56px;
+    }
+
     .delivery-line {
       font-size: 13px;
       letter-spacing: 0.08em;
       text-transform: uppercase;
       color: var(--text-muted);
-      margin-bottom: 56px;
+      margin-bottom: 10px;
       display: flex;
       align-items: center;
       gap: 10px;
@@ -164,6 +168,15 @@
       background: var(--gold);
       opacity: 0.5;
       flex-shrink: 0;
+    }
+
+    .delivery-sub {
+      font-size: 16px;
+      line-height: 1.6;
+      color: var(--text-2);
+      max-width: 40ch;
+      padding-left: 16px;
+      border-left: 2px solid var(--gold-line);
     }
 
     .section { margin-bottom: 64px; }
@@ -187,6 +200,14 @@
     }
 
     .section p + p { margin-top: 12px; }
+
+    .meaning-attribution {
+      margin-top: 16px;
+      font-size: 15px;
+      line-height: 1.65;
+      color: var(--text-muted);
+      max-width: 46ch;
+    }
 
     .bullet-list {
       list-style: none;
@@ -264,6 +285,22 @@
       letter-spacing: 0.08em;
       text-transform: uppercase;
       color: var(--text-muted);
+    }
+
+    .hero-price-sub {
+      font-size: 15px;
+      line-height: 1.55;
+      color: var(--text-2);
+      margin: 0 0 28px;
+      max-width: 44ch;
+    }
+
+    .pre-cta-line {
+      font-size: 15px;
+      line-height: 1.55;
+      color: var(--text-2);
+      margin: 0 0 16px;
+      max-width: 44ch;
     }
 
     .btn {
@@ -361,16 +398,20 @@
       <p class="diagnosis-strip" id="el-diagnosis" aria-live="polite"></p>
       <h1 id="el-headline"></h1>
       <p class="hero-sub" id="el-subhead"></p>
-      <p class="delivery-line">Delivered within 48 hours</p>
+      <div class="delivery-block">
+        <p class="delivery-line">Delivered within 48 hours</p>
+        <p class="delivery-sub">You’ll know exactly what to change within 48 hours.</p>
+      </div>
 
       <section class="section" aria-labelledby="meaning-heading">
         <h2 id="meaning-heading">What this usually means</h2>
         <p id="el-meaning"></p>
+        <p class="meaning-attribution" id="el-meaning-attribution" hidden></p>
       </section>
 
       <section class="section" aria-labelledby="what-you-get-heading">
         <h2 id="what-you-get-heading">What you get</h2>
-        <p>In 48 hours, you’ll receive a clear breakdown of:</p>
+        <p id="el-what-you-get-intro"></p>
         <ul class="bullet-list" id="list-what-you-get"></ul>
       </section>
 
@@ -379,8 +420,13 @@
         <ul class="bullet-list" id="list-emphasis"></ul>
       </section>
 
+      <section class="section" aria-labelledby="changes-heading">
+        <h2 id="changes-heading">What changes after this</h2>
+        <ul class="bullet-list" id="list-changes-after"></ul>
+      </section>
+
       <section class="section urgency-block" aria-labelledby="urgency-heading">
-        <h2 id="urgency-heading">Why this matters now</h2>
+        <h2 id="urgency-heading">If you leave this as-is</h2>
         <p id="el-urgency"></p>
       </section>
 
@@ -391,6 +437,8 @@
           <span class="hero-price-val" aria-hidden="true">$950</span>
           <span class="hero-price-note" id="cta-price-label">Snapshot</span>
         </div>
+        <p class="hero-price-sub" id="el-price-sub"></p>
+        <p class="pre-cta-line" id="el-pre-cta"></p>
         <a class="btn btn-primary" id="el-cta" href="https://checkout.stripe.com/snapshot-placeholder">Get your Snapshot</a>
         <p class="cta-support" id="el-cta-support"></p>
         <a class="fallback-link" id="el-fallback-diagnostic" href="/capture">Start Diagnostic</a>
@@ -408,73 +456,130 @@
   <script src="/stephuary-progress.js"></script>
   <script>
 (function () {
-  /* --- snapshotContent: single source of truth for copy variants --- */
+  /* --- snapshotContent: internal keys map to score buckets; UI copy never names those buckets --- */
   const snapshotContent = {
     clarity: {
-      diagnosisLabel: "Based on your result: Clarity is your current bottleneck",
-      headline: "Fix your clarity first. Everything else follows.",
-      subhead: "People are seeing your work, but they’re not understanding it fast enough to act.",
-      meaning: "The problem is not always the quality of the offer. It’s that the offer is not landing clearly enough for someone to make a decision quickly. When that happens, people hesitate, leave, or tell themselves they’ll come back later.",
-      emphasisTitle: "Your Snapshot will show:",
-      emphasisBullets: [
-        "where your message gets unclear",
-        "what people are not understanding fast enough",
-        "how to tighten the offer so the next step feels obvious"
+      diagnosisStrip: "Based on your result: people read your page and still cannot check out or book without messaging you first",
+      headline: "Fix what slows people from moving forward after they read you",
+      subhead: "They open your site, read, then ask what you sell, what it includes, or what it costs. The cart or calendar stays empty while your inbox fills with the same questions.",
+      meaning:
+        "They do not finish the purchase in the same sitting. They do not pick a time without a thread. What repeats is you typing the same sentences to different people who already saw your page.",
+      whatYouGetIntro: "You’ll get a clear correction of what is slowing this down.",
+      whatYouGetBullets: [
+        "the exact lines and blocks that keep sending people back to you with questions",
+        "the first rewrite order so a stranger can name the offer, the price, and the next click",
+        "what to leave untouched until those first edits are live",
+        "a dated delivery note inside 48 hours so you are not waiting on a call to start"
       ],
-      urgency: "More visibility will not fix a weak landing. If people don’t understand what they’re buying, more traffic just means more missed conversion.",
-      ctaSupport: "Get the exact breakdown of what to clarify, what to remove, and what to fix first."
+      emphasisTitle: "Where the page stops short of checkout or booking",
+      emphasisBullets: [
+        "where they stop scrolling before they pay or book",
+        "which missing detail makes them open email instead of the checkout link",
+        "what changes on the page so that next step does not depend on another message from you"
+      ],
+      changesAfterBullets: [
+        "You send the same short page instead of retyping the offer in DMs.",
+        "Interest turns into a paid booking or checkout, or the thread ends without another hour on your side.",
+        "Your week stops riding on the same five questions you thought the site already answered.",
+        "You work from one numbered list of edits instead of guessing which paragraph to touch first."
+      ],
+      urgency:
+        "If you keep publishing without that fix, traffic still arrives, people still read, and the bank deposit still does not move on the same day. You keep answering the same questions while the calendar stays patchy and you still cannot name which line paid for the leak."
     },
     positioning: {
-      diagnosisLabel: "Based on your result: Positioning is your current bottleneck",
-      headline: "Your offer is not wrong. It’s aimed wrong.",
-      subhead: "The work may be strong. The issue is who it’s reaching, how it’s framed, and what it’s being compared to.",
-      meaning: "Positioning problems show up when the right people are not locking in fast enough, while the wrong people keep circling. That usually leads to explaining too much, attracting mixed-fit buyers, and pricing that feels harder to defend than it should.",
-      emphasisTitle: "Your Snapshot will show:",
-      emphasisBullets: [
-        "who the offer is actually strongest for",
-        "where the framing is pulling in the wrong buyer",
-        "how to reposition without rebuilding everything"
+      diagnosisStrip: "Based on your result: interest shows up, checks land late, and the wrong buyers ask for a lower price before scope is settled",
+      headline: "Fix who gets your time and how price lands before you send another proposal",
+      subhead: "You get messages from people who want a discount before scope is written. The buyers you want wait on the proposal after they already said yes on the call.",
+      meaning:
+        "Wrong-fit leads keep booking calls. Right-fit leads stall when the invoice hits. What repeats is you defending price to people who were never going to pay it, while the good ones go quiet after the number is on the page.",
+      whatYouGetIntro: "You’ll get a clear correction of what is slowing this down.",
+      whatYouGetBullets: [
+        "who to stop sending a calendar link to so price talks only happen with qualified buyers",
+        "the first copy change so scope is agreed before the dollar amount is sent",
+        "what to delete from the page so you stop attracting buyers who will not pay your rate",
+        "a dated delivery note inside 48 hours so you are not waiting on a call to start"
       ],
-      urgency: "When positioning is off, even a strong offer feels weaker than it is. You end up competing on personality, trust, or availability instead of fit and value.",
-      ctaSupport: "Get the exact breakdown of what to reposition, what to stop saying, and where the offer should actually land."
+      emphasisTitle: "Where price hits before scope is on paper",
+      emphasisBullets: [
+        "where price questions hit before scope is locked on paper",
+        "which sentence pulls people who ask for a deal you will not accept",
+        "what to change so the next buyer sees the number only after fit is already settled"
+      ],
+      changesAfterBullets: [
+        "You stop cutting rate to keep a deal that was never a fit.",
+        "Proposals go to fewer people and more of them return a signed copy on the same terms you quoted.",
+        "Your pipeline shows fewer names but steadier deposits week to week.",
+        "You point to one ordered list of who to say no to and what to say before money comes up."
+      ],
+      urgency:
+        "If you leave this open, you still run calls, still send proposals, and still watch the wrong thread argue price while the right buyer goes cold. You still rebuild the deck for people who were never signing, and your income still swings even when the inbox looks full."
     },
     structure: {
-      diagnosisLabel: "Based on your result: Structure is your current bottleneck",
-      headline: "You are doing too much manually. That’s the leak.",
-      subhead: "The issue is not just what you sell. It’s what happens before, during, and after someone says yes.",
-      meaning: "Structure problems show up when delivery depends too heavily on you each time. That creates hidden friction, inconsistent follow-through, unnecessary labor, and revenue that feels harder to stabilize than it should.",
-      emphasisTitle: "Your Snapshot will show:",
-      emphasisBullets: [
-        "where your process is breaking down",
-        "what should be standardized, sequenced, or automated",
-        "how to reduce drag without losing quality"
+      diagnosisStrip: "Based on your result: after someone pays, delivery still depends on you rewriting steps by hand each time",
+      headline: "Fix the repeated hand work that starts right after the sale",
+      subhead: "You resend onboarding links, move dates, or answer the same question in a new thread for every buyer. No two deliveries look the same even when the product is the same.",
+      meaning:
+        "They paid, then they wait on you to remember a step. You ship late when sales spike because the checklist only lives in your head. What repeats is you rebuilding the same email chain instead of sending one sequence every time.",
+      whatYouGetIntro: "You’ll get a clear correction of what is slowing this down.",
+      whatYouGetBullets: [
+        "the exact hand-written step to turn into a saved message, doc, or template first",
+        "the order of links and dates every buyer should see from payment through delivery",
+        "what to stop improvising so quality stays even when you are tired",
+        "a dated delivery note inside 48 hours so you are not waiting on a call to start"
       ],
-      urgency: "A business that depends on constant manual adjustment becomes harder to grow, harder to price, and harder to trust at scale.",
-      ctaSupport: "Get the exact breakdown of what to systemize, what to simplify, and what to fix first."
+      emphasisTitle: "Where buyers wait on you after they already paid",
+      emphasisBullets: [
+        "where buyers pause because the next instruction was not ready when they expected it",
+        "which step still only exists in your memory",
+        "what becomes one fixed sequence you send after every payment so they never have to ping you for the basics"
+      ],
+      changesAfterBullets: [
+        "You send the same links and dates after every sale instead of drafting from scratch.",
+        "Clients stop getting different quality because you were fresher on Monday than on Friday.",
+        "You stop buying back time with late nights after a busy sales week.",
+        "You know the single process change to make before you take the next payment."
+      ],
+      urgency:
+        "If nothing changes, every new sale still adds another manual thread, deadlines still slip when you are busy, and you still cannot add volume without adding hours. Income still spikes and drops with your energy instead of with demand."
     },
     default: {
-      diagnosisLabel: "Find the real bottleneck first",
-      headline: "Fix the right thing first.",
-      subhead: "Snapshot turns your diagnostic into a clear correction plan.",
-      meaning: "You’ll get a focused breakdown of what is happening, what it’s costing, and what to fix first.",
-      emphasisTitle: "Your Snapshot will show:",
-      emphasisBullets: [
-        "why the problem is happening",
-        "where money or momentum is being lost",
-        "what to fix first"
+      diagnosisStrip: "Based on your result: your diagnostic answers are not on this browser yet",
+      headline: "Run the diagnostic here first, then return for your Snapshot",
+      subhead: "This page reads your saved answers to name what is happening, what it costs you, and what to change first. Without that save, the strip cannot match your business.",
+      meaning:
+        "You have not finished the flow on this device, or storage was cleared. Until the diagnostic is saved here, we cannot list the behaviors that repeat for you.",
+      whatYouGetIntro: "After your answers are saved, you’ll get a clear correction of what is slowing this down.",
+      whatYouGetBullets: [
+        "the situation your answers describe, written in plain language",
+        "the first change to make, in order",
+        "what to ignore until that first change is shipped",
+        "a dated delivery note inside 48 hours once checkout is complete"
       ],
-      urgency: "Most people waste time fixing the wrong layer first.",
-      ctaSupport: "Start with the diagnostic for a more precise breakdown."
+      emphasisTitle: "Why this page cannot load your situation yet",
+      emphasisBullets: [
+        "what is missing from the saved diagnostic on this device",
+        "why the strip cannot load your situation yet",
+        "the one step to take so this page can load your order of fixes"
+      ],
+      changesAfterBullets: [
+        "The strip will name a real situation instead of a placeholder line.",
+        "The Snapshot can tie to the same answers you already typed.",
+        "You will see what to change first without starting from a blank page.",
+        "You will still get the write-up inside 48 hours after purchase once answers exist."
+      ],
+      urgency:
+        "If you skip saving the diagnostic here, you keep guessing which lever to pull while traffic, DMs, and delivery work keep behaving the same way. You keep spending time on fixes that were never tied to what you already said in the diagnostic."
     }
   };
 
-  const WHAT_YOU_GET_BULLETS = [
-    "why this problem is happening",
-    "where money or momentum is being lost",
-    "what to fix first",
-    "what not to touch yet",
-    "the cleanest next-step path forward"
-  ];
+  const ATTRIBUTION_COPY =
+    "This comes directly from how you answered the diagnostic. It is not a general recommendation.";
+
+  const PRICE_SUB_COPY = "One focused correction. No ongoing commitment.";
+
+  const PRE_CTA_COPY = "No calls. No back and forth. Just the breakdown.";
+
+  const CTA_SUPPORT_COPY = "See exactly what is causing this and what to fix first";
 
   /* --- localStorage parsing: try keys in priority order, never throw --- */
   function safeParse(raw) {
@@ -608,34 +713,51 @@
     var elHeadline = document.getElementById("el-headline");
     var elSub = document.getElementById("el-subhead");
     var elMeaning = document.getElementById("el-meaning");
+    var elMeaningAttr = document.getElementById("el-meaning-attribution");
+    var elWhatIntro = document.getElementById("el-what-you-get-intro");
     var elEmphasisTitle = document.getElementById("emphasis-heading");
     var elUrgency = document.getElementById("el-urgency");
     var elClarifier = document.getElementById("el-clarifier");
     var elCtaSupport = document.getElementById("el-cta-support");
+    var elPriceSub = document.getElementById("el-price-sub");
+    var elPreCta = document.getElementById("el-pre-cta");
     var elFallback = document.getElementById("el-fallback-diagnostic");
 
     if (elDiagnosis) {
-      elDiagnosis.textContent = isDefault ? "Find the real bottleneck first" : content.diagnosisLabel;
+      elDiagnosis.textContent = content.diagnosisStrip || "";
       elDiagnosis.classList.toggle("diagnosis-strip--default", isDefault);
     }
     if (elHeadline) elHeadline.textContent = content.headline;
     if (elSub) elSub.textContent = content.subhead;
     if (elMeaning) elMeaning.textContent = content.meaning;
+    if (elMeaningAttr) {
+      if (isDefault) {
+        elMeaningAttr.textContent = "";
+        elMeaningAttr.setAttribute("hidden", "");
+      } else {
+        elMeaningAttr.textContent = ATTRIBUTION_COPY;
+        elMeaningAttr.removeAttribute("hidden");
+      }
+    }
+    if (elWhatIntro) elWhatIntro.textContent = content.whatYouGetIntro || "";
     if (elEmphasisTitle) elEmphasisTitle.textContent = content.emphasisTitle;
     if (elUrgency) elUrgency.textContent = content.urgency;
     if (elClarifier) {
       elClarifier.textContent = isDefault
-        ? "Start with the diagnostic for a more precise breakdown."
+        ? "Run the diagnostic on this device, then reload this page so the Snapshot matches the same answers."
         : "This is not a general audit. It is built directly from your diagnostic result.";
     }
-    if (elCtaSupport) elCtaSupport.textContent = content.ctaSupport;
+    if (elPriceSub) elPriceSub.textContent = PRICE_SUB_COPY;
+    if (elPreCta) elPreCta.textContent = PRE_CTA_COPY;
+    if (elCtaSupport) elCtaSupport.textContent = CTA_SUPPORT_COPY;
     if (elFallback) {
       if (isDefault) elFallback.removeAttribute("hidden");
       else elFallback.setAttribute("hidden", "");
     }
 
-    fillList(document.getElementById("list-what-you-get"), WHAT_YOU_GET_BULLETS);
+    fillList(document.getElementById("list-what-you-get"), content.whatYouGetBullets || []);
     fillList(document.getElementById("list-emphasis"), content.emphasisBullets || []);
+    fillList(document.getElementById("list-changes-after"), content.changesAfterBullets || []);
   }
 
   render();
