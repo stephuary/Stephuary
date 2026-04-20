@@ -908,62 +908,7 @@
         <div id="bridgeRows"></div>
       </section>
 
-      <div id="summary">
-        <p class="summary-phase-tag">Phase 3 · Structure</p>
-        <h2 class="summary-title sr-only">Done</h2>
-
-        <div class="p3-decision-block" id="p3-decision-block">
-          <p class="diag-h">Diagnosis</p>
-          <p class="p3-diagnosis" id="out-p3-diagnosis"></p>
-          <p class="diag-h">What this means</p>
-          <p class="p3-meaning" id="out-p3-meaning"></p>
-          <p class="diag-h">Primary move</p>
-          <p class="p3-action" id="out-p3-action"></p>
-          <div class="p3-route-actions">
-            <a href="/systems" class="btn btn-solid magnetic" id="out-p3-primary-cta">System map</a>
-            <a href="/snapshot" class="btn btn-ghost magnetic" id="out-p3-secondary-cta">Snapshot</a>
-          </div>
-        </div>
-
-        <div id="p3-supporting-export" hidden aria-hidden="true">
-        <div class="diag-section">
-          <div class="diag-body" id="out-1"></div>
-        </div>
-        <p class="position-line" id="out-2"></p>
-        <div class="diag-body" id="out-3"></div>
-        <div class="diag-body" id="out-4"></div>
-        <div class="diag-body" id="out-5"></div>
-        <div class="diag-body" id="out-6"></div>
-        <div class="diag-body" id="out-7"></div>
-        <div class="hard-truth-block" id="out-8"></div>
-        <div class="diag-body" id="out-9"></div>
-        </div>
-
-        <p class="capture-flow-saved">Progress is saved on this device.</p>
-        <div class="action-primary" id="p3-phase-continue-wrap">
-          <a href="/automation" class="btn btn-solid" id="p3-legacy-continue" data-sh-flow-primary>Continue</a>
-        </div>
-        <p class="phase-result-links">
-          <a href="/systems">Save and exit</a>
-        </p>
-        <div class="action-primary capture-flow-tools">
-          <button type="button" class="btn" id="btnCopy">Copy All</button>
-          <button type="button" class="btn" id="btnExport">Export</button>
-        </div>
-        <p class="copy-confirm" id="copyConfirm">Copied to clipboard.</p>
-
-        <div class="action-secondary">
-          <button type="button" class="btn btn-ghost" id="btnReset">Reset</button>
-        </div>
-
-        <footer class="capture-footer">
-          <a href="/">Home</a>
-          <a href="/pricing">Pricing</a>
-          <a href="/access" class="nav-club">.5% Club</a>
-          <a href="https://stephuary.substack.com" target="_blank" rel="noopener">Grown spaghetti</a>
-          <a href="https://onlysometimesclub.com" target="_blank" rel="noopener noreferrer">Only Sometimes Club</a>
-        </footer>
-      </div>
+      <div id="summary" aria-hidden="true"></div>
     </div>
 
     <aside class="live-panel live-panel--chrome" id="livePanel" aria-live="polite" hidden aria-hidden="true">
@@ -1732,6 +1677,7 @@
 
   function flash() {
     var el = document.getElementById('copyConfirm');
+    if (!el) return;
     el.classList.add('visible');
     setTimeout(function() { el.classList.remove('visible'); }, 2800);
   }
@@ -1778,9 +1724,12 @@
     document.getElementById('live-exec').textContent = '—';
   }
 
-  document.getElementById('btnCopy').addEventListener('click', copyAll);
-  document.getElementById('btnExport').addEventListener('click', doExport);
-  document.getElementById('btnReset').addEventListener('click', resetAll);
+  var btnCopy = document.getElementById('btnCopy');
+  if (btnCopy) btnCopy.addEventListener('click', copyAll);
+  var btnExport = document.getElementById('btnExport');
+  if (btnExport) btnExport.addEventListener('click', doExport);
+  var btnReset = document.getElementById('btnReset');
+  if (btnReset) btnReset.addEventListener('click', resetAll);
 
   window.addEventListener('keydown', function(e) {
     if (e.key === 'Enter' && e.target.classList && e.target.classList.contains('option-item')) {
