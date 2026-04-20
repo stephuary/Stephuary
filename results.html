@@ -1146,13 +1146,13 @@
           <p class="results-share__note" id="results-snapshot-feedback" hidden>Copied.</p>
         </div>
         <div class="results-hero-cta-row">
-          <a class="results-cta-pri magnetic" id="results-primary-cta" href="#" data-sh-flow-primary>Enter Your Room</a>
+          <a class="results-cta-pri magnetic" id="results-primary-cta" href="/snapshot" data-sh-flow-primary>Get the full breakdown</a>
           <p class="results-flow-links results-flow-links--quiet" id="results-flow-links" hidden>
             <a href="/pricing">View pricing</a>
           </p>
           <span class="results-cta-subnote" id="results-primary-sub" hidden></span>
           <p class="results-diag-esc" id="results-diag-esc">
-            <a href="/systems" class="sh-primary-flow__link">System map</a>
+            <a href="/access" class="sh-primary-flow__link">Apply for Private Access</a>
           </p>
         </div>
         <section class="sh-results-routes sh-results-routes--quiet" id="sh-results-routes" aria-label="Other directions" hidden>
@@ -1171,12 +1171,12 @@
 
     <section class="results-sec alt" id="results-recommended-room" data-sh-flow-section hidden>
       <div class="wrap-wide">
-        <p class="sec-label">Recommended Room</p>
+        <p class="sec-label">Recommended next step</p>
         <div class="results-sec__card">
           <p class="results-sec__lead" id="rec-room-name"></p>
           <p class="body-text" id="rec-room-reason" style="margin-top:8px"></p>
           <div style="margin-top:14px">
-            <a class="btn btn-ghost magnetic" id="rec-room-cta" href="/systems" data-sh-flow-secondary>System map</a>
+            <a class="btn btn-ghost magnetic" id="rec-room-cta" href="/snapshot" data-sh-flow-secondary>Get the full breakdown</a>
           </div>
         </div>
       </div>
@@ -1533,21 +1533,17 @@
     return null;
   }
 
-  /** Maps legacy result “playbook” names to Room routes. */
+  /** Legacy mapping kept for compatibility; routes now point to active offers only. */
   var PLAYBOOK_TO_ROOM = {
-    'Reset': '/systems',
-    'Execution': '/systems',
-    'Income Architecture': '/systems',
-    'Ownership': '/systems',
-    'AI Control': '/systems'
+    'Reset': '/snapshot',
+    'Execution': '/snapshot',
+    'Income Architecture': '/snapshot',
+    'Ownership': '/snapshot',
+    'AI Control': '/snapshot'
   };
 
   function playbookHref(name, mode) {
-    return PLAYBOOK_TO_ROOM[name] || '/systems';
-  }
-
-  function playbookDownloadPrice(name) {
-    return name === 'Ownership' ? '28' : '1';
+    return PLAYBOOK_TO_ROOM[name] || '/snapshot';
   }
 
   function renderPlaybooks(names) {
@@ -1563,8 +1559,8 @@
         '<div class="play-name">' + esc(name) + '</div>' +
         '<p class="play-desc">' + esc(meta.desc) + '</p>' +
         '<div class="play-actions">' +
-        '<a class="btn btn-ghost" data-sh-flow-secondary href="' + esc(playbookHref(name, 'open')) + '">Open</a>' +
-        '<a class="btn btn-ghost" data-sh-flow-secondary href="' + esc(playbookHref(name, 'download')) + '">Download ($' + playbookDownloadPrice(name) + ')</a>' +
+        '<a class="btn btn-ghost" data-sh-flow-secondary href="/snapshot">Get the full breakdown</a>' +
+        '<a class="btn btn-ghost" data-sh-flow-secondary href="/access">Apply for Private Access</a>' +
         '</div>';
       grid.appendChild(card);
     });
