@@ -1614,7 +1614,7 @@
           updateLivePanel();
           opts.forEach(function(o) { o.classList.add('dim'); });
           function advance() {
-            if (idx === TOTAL_Q - 1) showSummary();
+            if (idx === TOTAL_Q - 1) completePhase03AndContinue();
             else goTo(stepNum + 1);
           }
           if (window.StephuaryDiagnosticMotion && typeof window.StephuaryDiagnosticMotion.afterAnswer === 'function') {
@@ -1661,7 +1661,7 @@
     }
   }
 
-  function showSummary() {
+  function completePhase03AndContinue() {
     state.currentStep = 6;
     saveStorage();
     try {
@@ -1669,24 +1669,11 @@
         window.StephuaryDiagnosticFlow.markPhaseComplete(3);
       }
     } catch (eMark) {}
-    document.getElementById('flow').style.display = 'none';
-    document.getElementById('summary').style.display = 'flex';
-    var b = state.bits.map(function(x) { return x; });
-    buildDecisionOutput(b);
-    buildSummaryOutputs(b);
-    updateRail();
-    if (window.StephuaryDiagnosticMobile && typeof window.StephuaryDiagnosticMobile.scrollToSummary === 'function') {
-      window.requestAnimationFrame(function () {
-        window.StephuaryDiagnosticMobile.scrollToSummary({ behavior: 'auto' });
-      });
-    } else {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-    window.requestAnimationFrame(function() {
-      if (window.StephuaryDiagnosticMotion && typeof window.StephuaryDiagnosticMotion.revealSummary === 'function') {
-        window.StephuaryDiagnosticMotion.revealSummary();
-      }
-    });
+    var href =
+      window.StephuaryDiagnosticFlow && typeof window.StephuaryDiagnosticFlow.getNextPhaseHrefAfterComplete === 'function'
+        ? window.StephuaryDiagnosticFlow.getNextPhaseHrefAfterComplete(3)
+        : '/automation';
+    window.location.href = href || '/automation';
   }
 
   function exportText() {
@@ -1838,7 +1825,7 @@
       } catch (e) {}
       var fe = state.bits.indexOf(null);
       if (fe === -1) {
-        showSummary();
+        completePhase03AndContinue();
       } else {
         goTo(fe + 1);
       }

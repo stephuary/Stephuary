@@ -15,7 +15,7 @@
   }
 
   /**
-   * After user selects an answer: exit current step, then run callback (goTo / showSummary).
+   * After user selects an answer: exit current step, then run callback (goTo / phase completion).
    * @param {HTMLElement} stepEl - the .step element
    * @param {function} done
    */

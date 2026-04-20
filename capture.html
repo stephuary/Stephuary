@@ -1802,10 +1802,7 @@
       state.context = v;
       saveStorage();
       updateLivePanel();
-      document.getElementById('building-overlay').style.display = 'flex';
-      window.setTimeout(function() {
-        showSummary();
-      }, 320);
+      completePhase01AndContinue();
     });
     if (backCtx) {
       backCtx.addEventListener('click', function() {
@@ -1958,52 +1955,10 @@
     syncCaptureShFlowEnd();
   }
 
-  function showSummary() {
+  function completePhase01AndContinue() {
     state.currentStep = 11;
     saveStorage();
     document.getElementById('building-overlay').style.display = 'none';
-    document.getElementById('flow').style.display = 'none';
-    document.getElementById('summary').style.display = 'flex';
-    document.getElementById('live-status').textContent = 'Complete.';
-
-    var bits = state.bits.map(function(b) { return b == null ? 0 : b; });
-    var breakdown = scoreBreakdownFromResult(bits, state.context);
-    var diag = diagnosisLines(breakdown);
-    document.getElementById('out-diagnosis').textContent = diag.full;
-    document.getElementById('out-context-bridge').textContent =
-      'Based on what you\'re building: ' + String(state.context || '').trim();
-    document.getElementById('out-primary-action').textContent =
-      PRIMARY_ACTION_LINE[breakdown] || PRIMARY_ACTION_LINE.direction;
-
-    var arch = scoreArchetype(bits);
-    var block = COPY_BLOCKS[arch];
-
-    document.getElementById('out-archetype').textContent = arch;
-
-    document.getElementById('out-core').innerHTML = block.core(bits);
-
-    var ulLook = document.getElementById('out-look');
-    ulLook.innerHTML = '';
-    block.look(bits).forEach(function(line) {
-      var li = document.createElement('li');
-      li.textContent = line;
-      ulLook.appendChild(li);
-    });
-
-    document.getElementById('out-main').innerHTML = block.mainBlock(bits);
-
-    var cul = document.getElementById('out-cost');
-    cul.innerHTML = '';
-    block.cost(bits).forEach(function(line) {
-      var li = document.createElement('li');
-      li.textContent = line;
-      cul.appendChild(li);
-    });
-
-    document.getElementById('out-next').innerHTML = block.next(bits);
-
-    applyBreakdownRouting(breakdown);
-
     try {
       localStorage.setItem('diagnosticStarted', 'true');
       localStorage.setItem('capture_complete', 'true');
@@ -2019,26 +1974,11 @@
         } catch (ePersist) {}
       }
     } catch (e) {}
-
-    updateRail();
-    if (window.StephuaryDiagnosticMobile && typeof window.StephuaryDiagnosticMobile.scrollToSummary === 'function') {
-      window.requestAnimationFrame(function () {
-        window.StephuaryDiagnosticMobile.scrollToSummary({ behavior: 'auto' });
-      });
-    } else {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-    syncCaptureShFlowEnd();
-    window.requestAnimationFrame(function() {
-      if (window.StephuaryDiagnosticMotion && typeof window.StephuaryDiagnosticMotion.revealSummary === 'function') {
-        window.StephuaryDiagnosticMotion.revealSummary();
-      }
-    });
-    setTimeout(function () {
-      if (window.StephuaryMagneticFlow && typeof window.StephuaryMagneticFlow.refresh === 'function') {
-        window.StephuaryMagneticFlow.refresh();
-      }
-    }, 0);
+    var href =
+      window.StephuaryDiagnosticFlow && typeof window.StephuaryDiagnosticFlow.getNextPhaseHrefAfterComplete === 'function'
+        ? window.StephuaryDiagnosticFlow.getNextPhaseHrefAfterComplete(1)
+        : '/monetize';
+    window.location.href = href || '/monetize';
   }
 
   function exportText() {
@@ -2213,10 +2153,7 @@
     if (firstEmpty === -1) {
       if (ctxOk) {
         if (migratedFromV2Ten) saveStorage();
-        document.getElementById('building-overlay').style.display = 'flex';
-        setTimeout(function() {
-          showSummary();
-        }, 700);
+        completePhase01AndContinue();
         return true;
       }
       state.currentStep = 7;

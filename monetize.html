@@ -1330,7 +1330,7 @@
           updateLivePanel();
           opts.forEach(function(o) { o.classList.add('dim'); });
           function advance() {
-            if (idx === TOTAL_Q - 1) showSummary();
+            if (idx === TOTAL_Q - 1) completePhase02AndContinue();
             else goTo(stepNum + 1);
           }
           if (window.StephuaryDiagnosticMotion && typeof window.StephuaryDiagnosticMotion.afterAnswer === 'function') {
@@ -1529,7 +1529,7 @@
     document.getElementById('out-s7').innerHTML = s7;
   }
 
-  function showSummary() {
+  function completePhase02AndContinue() {
     state.currentStep = 6;
     saveStorage();
     try {
@@ -1537,28 +1537,11 @@
         window.StephuaryDiagnosticFlow.markPhaseComplete(2);
       }
     } catch (eMark) {}
-    document.getElementById('flow').style.display = 'none';
-    document.getElementById('summary').style.display = 'flex';
-
-    var b = state.bits.map(function(x) { return x; });
-    buildDecisionOutput(b);
-    buildOutputs(b, loadP01Profile());
-    updateLivePanel();
-    updateRail();
-    var m = document.getElementById('sys-output-mount-revenue');
-    if (m) m.innerHTML = '';
-    if (window.StephuaryDiagnosticMobile && typeof window.StephuaryDiagnosticMobile.scrollToSummary === 'function') {
-      window.requestAnimationFrame(function () {
-        window.StephuaryDiagnosticMobile.scrollToSummary({ behavior: 'auto' });
-      });
-    } else {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-    window.requestAnimationFrame(function() {
-      if (window.StephuaryDiagnosticMotion && typeof window.StephuaryDiagnosticMotion.revealSummary === 'function') {
-        window.StephuaryDiagnosticMotion.revealSummary();
-      }
-    });
+    var href =
+      window.StephuaryDiagnosticFlow && typeof window.StephuaryDiagnosticFlow.getNextPhaseHrefAfterComplete === 'function'
+        ? window.StephuaryDiagnosticFlow.getNextPhaseHrefAfterComplete(2)
+        : '/structure';
+    window.location.href = href || '/structure';
   }
 
   function exportText() {
@@ -1726,7 +1709,7 @@
         saveStorage();
         var fe = state.bits.indexOf(null);
         if (fe === -1) {
-          showSummary();
+          completePhase02AndContinue();
         } else {
           goTo(fe + 1);
         }

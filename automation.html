@@ -1311,7 +1311,7 @@
           updateLivePanel();
           opts.forEach(function(o) { o.classList.add('dim'); });
           function advance() {
-            if (idx === TOTAL_Q - 1) showSummary();
+            if (idx === TOTAL_Q - 1) completePhase04AndContinue();
             else goTo(stepNum + 1);
           }
           if (window.StephuaryDiagnosticMotion && typeof window.StephuaryDiagnosticMotion.afterAnswer === 'function') {
@@ -1391,7 +1391,7 @@
     el.hidden = true;
   }
 
-  function showSummary() {
+  function completePhase04AndContinue() {
     state.currentStep = 6;
     saveStorage();
     try {
@@ -1399,23 +1399,11 @@
         window.StephuaryDiagnosticFlow.markPhaseComplete(4);
       }
     } catch (eMark) {}
-    document.getElementById('flow').style.display = 'none';
-    document.getElementById('summary').style.display = 'flex';
-    buildSummaryOutputs(state.bits.map(function(x) { return x; }));
-    updateRail();
-    updateMidConversionVisibility();
-    if (window.StephuaryDiagnosticMobile && typeof window.StephuaryDiagnosticMobile.scrollToSummary === 'function') {
-      window.requestAnimationFrame(function () {
-        window.StephuaryDiagnosticMobile.scrollToSummary({ behavior: 'auto' });
-      });
-    } else {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-    window.requestAnimationFrame(function() {
-      if (window.StephuaryDiagnosticMotion && typeof window.StephuaryDiagnosticMotion.revealSummary === 'function') {
-        window.StephuaryDiagnosticMotion.revealSummary();
-      }
-    });
+    var href =
+      window.StephuaryDiagnosticFlow && typeof window.StephuaryDiagnosticFlow.getNextPhaseHrefAfterComplete === 'function'
+        ? window.StephuaryDiagnosticFlow.getNextPhaseHrefAfterComplete(4)
+        : '/sovereignty';
+    window.location.href = href || '/sovereignty';
   }
 
   function exportText() {
@@ -1544,7 +1532,7 @@
       saveStorage();
       var fe = state.bits.indexOf(null);
       if (fe === -1) {
-        showSummary();
+        completePhase04AndContinue();
       } else {
         goTo(fe + 1);
       }
