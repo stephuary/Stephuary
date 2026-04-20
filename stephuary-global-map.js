@@ -14,9 +14,9 @@
     },
     {
       id: 'rooms',
-      label: 'Playbooks',
-      path: '/playbooks',
-      tip: 'Next steps after your diagnostic'
+      label: 'Results',
+      path: '/results',
+      tip: 'Your read after the diagnostic'
     },
     {
       id: 'direction',
@@ -69,10 +69,9 @@
   var PATH_NODE = {
     '/': '',
     '/capture': 'diagnostic',
-    '/results': 'diagnostic',
     '/execution': 'diagnostic',
     '/rooms': 'rooms',
-    '/playbooks': 'rooms',
+    '/results': 'rooms',
     '/phases/direction': 'direction',
     '/direction-system': 'direction',
     '/monetize': 'revenue',
@@ -147,7 +146,7 @@
       done.revenue = true;
       done.direction = true;
     }
-    if (visited.indexOf('/playbooks') >= 0 || completed.indexOf('03') >= 0 || completed.indexOf('02') >= 0) {
+    if (visited.indexOf('/results') >= 0 || completed.indexOf('03') >= 0 || completed.indexOf('02') >= 0) {
       done.direction = true;
     }
     if (visited.indexOf('/focused-review') >= 0) done.lock = true;
@@ -248,7 +247,7 @@
     done.s_str = visited.indexOf('/structure') >= 0;
     done.s_aut = visited.indexOf('/automation') >= 0;
     done.s_sov = visited.indexOf('/sovereignty') >= 0;
-    done.s_pb = visited.indexOf('/playbooks') >= 0 || completed.length > 0;
+    done.s_pb = visited.indexOf('/results') >= 0 || completed.length > 0;
 
     var pathToCurrent = {
       '/capture': 's_cap',
@@ -256,7 +255,7 @@
       '/structure': 's_str',
       '/automation': 's_aut',
       '/sovereignty': 's_sov',
-      '/playbooks': 's_pb'
+      '/results': 's_pb'
     };
     var currentId = pathToCurrent[path] || '';
 
@@ -303,9 +302,9 @@
       },
       {
         id: 's_pb',
-        label: 'Playbooks',
-        path: '/playbooks',
-        tip: 'One problem. One system.'
+        label: 'Results',
+        path: '/results',
+        tip: 'Your read and next move.'
       }
     ];
 

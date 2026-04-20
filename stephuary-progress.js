@@ -21,9 +21,9 @@
     3: 'What to protect'
   };
   var ROOM_PATH = {
-    '01': '/playbooks',
-    '02': '/playbooks',
-    '03': '/playbooks'
+    '01': '/systems',
+    '02': '/systems',
+    '03': '/systems'
   };
 
   function defaultState() {

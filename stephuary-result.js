@@ -200,7 +200,7 @@
     switch (breakdown) {
       case 'execution':
         return {
-          primary: { href: '/playbooks', label: 'Open a Room' },
+          primary: { href: '/systems', label: 'System map' },
           secondary: { href: '/focused-review', label: 'Get Direction' }
         };
       case 'clarity':
@@ -211,12 +211,12 @@
       case 'structure':
         return {
           primary: { href: '/snapshot', label: 'Start Snapshot' },
-          secondary: { href: '/playbooks', label: 'Open Rooms' }
+          secondary: { href: '/systems', label: 'System map' }
         };
       case 'environment':
         return {
           primary: { href: '/private-access', label: 'Private Access' },
-          secondary: { href: '/playbooks', label: 'Open Rooms' }
+          secondary: { href: '/systems', label: 'System map' }
         };
       case 'direction':
       default:
@@ -239,11 +239,11 @@
   };
 
   var PLAYBOOK_ROOM = {
-    Reset: { room: 1, title: 'What you’re losing', path: '/playbooks' },
-    Execution: { room: 3, title: 'What to protect', path: '/playbooks' },
-    'Income Architecture': { room: 2, title: 'What you can sell', path: '/playbooks' },
-    Ownership: { room: 3, title: 'What to protect', path: '/playbooks' },
-    'AI Control': { room: 1, title: 'Playbooks · AI Rules', path: '/playbooks' }
+    Reset: { room: 1, title: 'What you’re losing', path: '/systems' },
+    Execution: { room: 3, title: 'What to protect', path: '/systems' },
+    'Income Architecture': { room: 2, title: 'What you can sell', path: '/systems' },
+    Ownership: { room: 3, title: 'What to protect', path: '/systems' },
+    'AI Control': { room: 1, title: 'System map · AI Rules', path: '/systems' }
   };
 
   var DIAGNOSTIC_BY_VERSION = {
@@ -587,12 +587,12 @@
     positioning: {
       display_name: 'Positioning Room',
       playbook: 'Income Architecture',
-      path: '/playbooks'
+      path: '/systems'
     },
-    demand: { display_name: 'Demand Room', playbook: 'Reset', path: '/playbooks' },
-    focus: { display_name: 'Focus Room', playbook: 'Ownership', path: '/playbooks' },
-    system: { display_name: 'System Room', playbook: 'Reset', path: '/playbooks' },
-    direction: { display_name: 'Direction Room', playbook: 'Execution', path: '/playbooks' }
+    demand: { display_name: 'Demand Room', playbook: 'Reset', path: '/systems' },
+    focus: { display_name: 'Focus Room', playbook: 'Ownership', path: '/systems' },
+    system: { display_name: 'System Room', playbook: 'Reset', path: '/systems' },
+    direction: { display_name: 'Direction Room', playbook: 'Execution', path: '/systems' }
   };
 
   function recommendedRoomRecord(key, reason) {
@@ -613,7 +613,7 @@
         key: 'fallback',
         display_name: 'System Room',
         playbook: 'AI Control',
-        path: '/playbooks',
+        path: '/systems',
         reason: nextReason(pb)
       };
     }
@@ -733,7 +733,7 @@
       var rec0 = diag && diag.recommended_room;
       return {
         label: 'Enter Your Room',
-        href: (rec0 && rec0.path) || '/playbooks',
+        href: (rec0 && rec0.path) || '/systems',
         kind: 'enter_room'
       };
     }
@@ -749,7 +749,7 @@
     var rec = diag && diag.recommended_room;
     return {
       label: 'Enter Your Room',
-      href: (rec && rec.path) || (diag.next_room && diag.next_room.path) || '/playbooks',
+      href: (rec && rec.path) || (diag.next_room && diag.next_room.path) || '/systems',
       kind: 'enter_room'
     };
   }

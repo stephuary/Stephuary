@@ -36,7 +36,7 @@
   if (typeof window.STEPHUARY_CONFIG === 'undefined') {
     var _PAID = {
       diagnostic: '/capture',
-      rooms: '/playbooks',
+      rooms: '/systems',
       'direction-system': '/direction-system',
       'revenue-system': '/revenue-system',
       'direction-lock': '/focused-review',
@@ -71,7 +71,7 @@
   var RESULT_STORE_KEY = 'stephuary_result_v1';
   var PROGRESS_KEY = 'stephuary_system_progress_v1';
   var OS_KEY = 'stephuary_os_v1';
-  var ROOM_CHAIN = ['/playbooks'];
+  var ROOM_CHAIN = ['/systems'];
   var PHASE_CHAIN = {
     '/capture': '/monetize',
     '/monetize': '/structure',
@@ -149,7 +149,7 @@
         if (localStorage.getItem('capture_complete') === 'true') return '/monetize';
         return '/capture';
       }
-      if (n === '/results') return '/playbooks';
+      if (n === '/results') return '/systems';
       if (PHASE_CHAIN[n]) return PHASE_CHAIN[n];
       for (var i = 0; i < ROOM_CHAIN.length; i++) {
         if (ROOM_CHAIN[i] === n) return i < ROOM_CHAIN.length - 1 ? ROOM_CHAIN[i + 1] : '/systems';
@@ -506,7 +506,7 @@
     var zone = 'default';
     if (path === '/systems' || path === '/') zone = 'cei';
     else if (path === '/pricing') zone = 'pricing';
-    else if (path === '/capture' || path === '/results' || path === '/execution' || path === '/playbooks') zone = 'cei';
+    else if (path === '/capture' || path === '/results' || path === '/execution' || path === '/systems') zone = 'cei';
 
     var mobileLight = isMobile;
     var body = document.body;
@@ -1193,7 +1193,7 @@
             ctx.stroke();
           }
         }
-        var pbHover = hoverId === 'playbooks';
+        var pbHover = hoverId === 'results';
         var pulseB = 0.55 + 0.45 * Math.sin(t * 0.7 + 2.1);
         ctx.beginPath();
         ctx.arc(pbX, pbY, pbHover ? 4.5 + pulseB * 0.7 : 3.2 + pulseB * 0.5, 0, Math.PI * 2);
@@ -1273,11 +1273,11 @@
     prev.setAttribute('title', idx === 0 ? 'Home' : 'Previous phase');
 
     var hub = document.createElement('a');
-    hub.href = '/playbooks';
+    hub.href = '/systems';
     hub.className = 'sys-phase-rail-nav__hub magnetic';
     hub.textContent = '◇';
-    hub.setAttribute('title', 'Playbooks');
-    hub.setAttribute('aria-label', 'Open playbooks');
+    hub.setAttribute('title', 'System map');
+    hub.setAttribute('aria-label', 'Open system map');
 
     var nextHref = idx === PHASE_PATHS.length - 1 ? '/results' : PHASE_PATHS[idx + 1];
     var next = document.createElement('a');
@@ -1471,7 +1471,6 @@
       { path: '/pricing', n: 0, name: 'Pricing', where: 'Pricing', cat: 'Entry choice', act: 'Pick one tier that matches how much help you want.' },
       { path: '/results', n: 0, name: 'Results', where: 'Results', cat: 'Readout', act: 'Do one thing from this page today.' },
       { path: '/execution', n: 0, name: 'Execution', where: 'Execution layer', cat: 'Next moves', act: 'Choose one action and schedule it.' },
-      { path: '/playbooks', n: 0, name: 'Playbooks', where: 'Playbooks', cat: 'Next steps', act: 'Use your results page for the primary move.' },
       { path: '/access', n: 0, name: 'Access', where: 'Club access', cat: 'Request', act: 'Request .5% Club access when you need it.' },
       {
         path: '/private-access',
@@ -1488,15 +1487,6 @@
       var p = normPath(window.location.pathname);
       for (var i = 0; i < PATH_PHASES.length; i++) {
         if (PATH_PHASES[i].path === p) return PATH_PHASES[i];
-      }
-      if (p === '/playbooks') {
-        return {
-          n: 0,
-          name: 'Playbooks',
-          where: 'Playbooks hub',
-          cat: 'Next steps',
-          act: 'Use your results and diagnostic for the primary move.'
-        };
       }
       return {
         n: 0,

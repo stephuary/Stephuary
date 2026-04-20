@@ -85,7 +85,7 @@
     }
     var m = {
       diagnostic: '/capture',
-      rooms: '/playbooks',
+      rooms: '/systems',
       'direction-system': '/direction-system',
       'revenue-system': '/revenue-system',
       'direction-lock': '/focused-review',

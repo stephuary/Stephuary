@@ -122,7 +122,7 @@
   }
 
   /**
-   * Next URL in the diagnostic chain, or /playbooks when Phases 01–05 are done.
+   * Next URL in the diagnostic chain, or /results when Phases 01–05 are done.
    */
   function getResumeHref() {
     migrateCompletionFlags();
@@ -133,7 +133,7 @@
     try {
       if (lsGet('diagnosticCompleted') !== 'true') return '/results';
     } catch (e1) {}
-    return '/playbooks';
+    return '/results';
   }
 
   function isFullyComplete() {

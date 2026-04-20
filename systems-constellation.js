@@ -12,12 +12,12 @@
   var STORAGE_DIASPORA = 'stephuary_diaspora_index';
 
   var REL = {
-    capture: ['monetize', 'playbooks'],
+    capture: ['monetize', 'results'],
     monetize: ['structure', 'capture'],
     structure: ['automation', 'monetize'],
     automation: ['sovereignty', 'structure'],
-    sovereignty: ['playbooks', 'automation'],
-    playbooks: ['capture', 'sovereignty']
+    sovereignty: ['results', 'automation'],
+    results: ['capture', 'sovereignty']
   };
 
   var svgNS = 'http://www.w3.org/2000/svg';
