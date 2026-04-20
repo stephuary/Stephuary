@@ -1139,7 +1139,9 @@
           <div class="results-share__actions">
             <button type="button" class="btn btn-ghost" id="results-snapshot-copy">Copy text</button>
             <button type="button" class="btn btn-ghost" id="results-snapshot-share" hidden>Share</button>
-            <button type="button" class="btn btn-ghost" id="results-snapshot-download">Download</button>
+            <button type="button" class="btn btn-ghost" id="results-snapshot-download">Download image</button>
+            <button type="button" class="btn btn-ghost" id="results-share-x">Share on X</button>
+            <button type="button" class="btn btn-ghost" id="results-share-linkedin">Share on LinkedIn</button>
           </div>
           <p class="results-share__note" id="results-snapshot-feedback" hidden>Copied.</p>
         </div>
@@ -1941,14 +1943,76 @@
       lines.push('Next move: ' + pageVersion.doThisNow[0]);
     }
     lines.push('');
+    if (d.structured) {
+      var st = d.structured;
+      if (st.phase01) lines.push('Phase 1: ' + String(st.phase01.friction_source || '').trim());
+      if (st.phase02) lines.push('Phase 2: ' + String(st.phase02.paid_problem || '').trim());
+      if (st.phase03) lines.push('Phase 3: ' + String(st.phase03.offer_definition || '').trim());
+      if (st.phase04) lines.push('Phase 4: ' + String(st.phase04.validation_status || '').trim());
+      if (st.phase05) lines.push('Phase 5: ' + String(st.phase05.control_model || '').trim());
+      lines.push('');
+    }
     lines.push('https://stephuary.com');
     return lines.join('\n');
+  }
+
+  function buildSnapshotImageBlob(text) {
+    var canvas = document.createElement('canvas');
+    canvas.width = 1200;
+    canvas.height = 1500;
+    var ctx = canvas.getContext('2d');
+    if (!ctx) return null;
+
+    ctx.fillStyle = '#06070d';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = '#d4b46a';
+    ctx.font = '600 40px Georgia, serif';
+    ctx.fillText('Stephuary diagnostic snapshot', 80, 110);
+
+    ctx.fillStyle = '#f4ede0';
+    ctx.font = '400 30px Georgia, serif';
+    var y = 180;
+    var maxWidth = canvas.width - 160;
+    var lineHeight = 46;
+    var rawLines = String(text || '').split('\n');
+    for (var i = 0; i < rawLines.length; i++) {
+      var line = rawLines[i];
+      if (!line) {
+        y += lineHeight * 0.55;
+        continue;
+      }
+      var words = line.split(' ');
+      var cur = '';
+      for (var j = 0; j < words.length; j++) {
+        var probe = cur ? cur + ' ' + words[j] : words[j];
+        if (ctx.measureText(probe).width > maxWidth && cur) {
+          ctx.fillText(cur, 80, y);
+          y += lineHeight;
+          cur = words[j];
+        } else {
+          cur = probe;
+        }
+      }
+      if (cur) {
+        ctx.fillText(cur, 80, y);
+        y += lineHeight;
+      }
+      if (y > canvas.height - 120) break;
+    }
+
+    return new Promise(function (resolve) {
+      canvas.toBlob(function (blob) {
+        resolve(blob);
+      }, 'image/png');
+    });
   }
 
   function initSnapshotActions() {
     var copyBtn = document.getElementById('results-snapshot-copy');
     var shareBtn = document.getElementById('results-snapshot-share');
     var dlBtn = document.getElementById('results-snapshot-download');
+    var shareXBtn = document.getElementById('results-share-x');
+    var shareLinkedInBtn = document.getElementById('results-share-linkedin');
     var fb = document.getElementById('results-snapshot-feedback');
     if (shareBtn && typeof navigator.share === 'function') shareBtn.removeAttribute('hidden');
 
@@ -1987,12 +2051,27 @@
     if (dlBtn) {
       dlBtn.addEventListener('click', function () {
         var t = buildSnapshotText();
-        var blob = new Blob([t], { type: 'text/plain;charset=utf-8' });
-        var a = document.createElement('a');
-        a.href = URL.createObjectURL(blob);
-        a.download = 'stephuary-snapshot.txt';
-        a.click();
-        URL.revokeObjectURL(a.href);
+        buildSnapshotImageBlob(t).then(function (blob) {
+          if (!blob) return;
+          var a = document.createElement('a');
+          a.href = URL.createObjectURL(blob);
+          a.download = 'stephuary-snapshot.png';
+          a.click();
+          URL.revokeObjectURL(a.href);
+        });
+      });
+    }
+    if (shareXBtn) {
+      shareXBtn.addEventListener('click', function () {
+        var t = buildSnapshotText();
+        var url = 'https://x.com/intent/tweet?text=' + encodeURIComponent(t);
+        window.open(url, '_blank', 'noopener');
+      });
+    }
+    if (shareLinkedInBtn) {
+      shareLinkedInBtn.addEventListener('click', function () {
+        var shareUrl = 'https://www.linkedin.com/sharing/share-offsite/?url=' + encodeURIComponent('https://stephuary.com/results');
+        window.open(shareUrl, '_blank', 'noopener');
       });
     }
   }
