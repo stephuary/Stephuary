@@ -1215,7 +1215,9 @@
     if (el) return el;
     el = document.querySelector('.tier-stack .tier-cta-primary');
     if (el) return el;
-    el = document.querySelector('main .btn--pri, .hero .btn--pri, .hero-inner .btn--pri');
+    el = document.querySelector(
+      '#hero-cta-primary, main .btn--pri, .hero .btn--pri, .hero-inner .btn--pri, #hero .btn-primary.home-diag-cta'
+    );
     return el;
   }
 
