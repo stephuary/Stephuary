@@ -18,6 +18,7 @@
   <link rel="stylesheet" href="/stephuary-free-mode.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -27,73 +28,223 @@
     }
 
     :root {
-      --bg: #0a0a1a;
-      --blue: #3A6BFF;
-      --blue-soft: rgba(58, 107, 255, 0.14);
-      --blue-glow: rgba(58, 107, 255, 0.35);
-      --oxblood: #3D0C2C;
-      --gold: #C8A96E;
+      --z-canvas: 0;
+      --z-content: 10;
+      --z-cards: 20;
+      --z-scanline: 30;
+      --z-cursor: 40;
+      --z-nav: 50;
+
+      --bg-void: #05050f;
+      --bg-deep: #080818;
+      --bg-surface: #0d0d22;
+      --bg-surface-2: #12122a;
+
+      --neon-plum: #8b2fc9;
+      --neon-violet: #bf5af2;
+      --neon-blue: #0a84ff;
+      --neon-gold: #c8a96e;
+      --neon-magenta: #ff2d78;
+
+      --text-primary: #ffffff;
+      --text-secondary: #a0a0c0;
+      --text-muted: #4a4a6a;
+      --text-label: #c8a96e;
+
+      --glow-plum: 0 0 20px rgba(139, 47, 201, 0.6), 0 0 60px rgba(139, 47, 201, 0.25);
+      --glow-blue: 0 0 20px rgba(10, 132, 255, 0.6), 0 0 60px rgba(10, 132, 255, 0.2);
+      --glow-gold: 0 0 12px rgba(200, 169, 110, 0.5);
+      --glow-cta: 0 0 30px rgba(255, 45, 120, 0.7), 0 0 80px rgba(255, 45, 120, 0.3);
+
+      --cursor-x: 50%;
+      --cursor-y: 50%;
+
+      --font-serif: 'Playfair Display', Georgia, serif;
+      --font-sans: 'Inter', system-ui, sans-serif;
+      --font-mono: 'JetBrains Mono', 'Courier New', monospace;
+
+      --bg: var(--bg-deep);
+      --blue: var(--neon-blue);
+      --blue-soft: rgba(10, 132, 255, 0.14);
+      --blue-glow: rgba(10, 132, 255, 0.35);
+      --oxblood: #3d0c2c;
+      --gold: var(--neon-gold);
       --gold-dim: rgba(200, 169, 110, 0.52);
-      --text: #f4ede0;
-      --text-2: #A0A0B0;
-      --text-3: rgba(160,160,176,0.72);
-      --line: rgba(244, 237, 224, 0.08);
+      --text: var(--text-primary);
+      --text-2: var(--text-secondary);
+      --text-3: rgba(160, 160, 192, 0.72);
+      --line: rgba(255, 255, 255, 0.08);
     }
 
-    html { scroll-behavior: smooth; overflow-x: hidden; }
+    html {
+      scroll-behavior: smooth;
+      overflow-x: hidden;
+    }
 
     body {
-      background: var(--bg); color: var(--text);
-      font-family: var(--font-sans, 'Inter', system-ui, sans-serif);
-      font-weight: var(--font-weight-body, 400);
-      font-size: var(--text-body-lg, 1.125rem);
-      line-height: var(--lh-body, 1.6);
+      background-color: var(--bg-void);
+      color: var(--text-primary);
+      font-family: var(--font-sans);
+      font-weight: 400;
+      font-size: 16px;
+      line-height: 1.6;
+      overflow-x: hidden;
+      min-height: 100vh;
+      margin: 0;
       -webkit-font-smoothing: antialiased;
-      overflow-x: hidden; min-height: 100vh; margin: 0;
     }
 
-    /* ── Ambient ── */
-    .ambient { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
-    .ambient__grad {
-      position: absolute; inset: 0;
-      background:
-        radial-gradient(ellipse 120% 75% at 20% 18%, rgba(61,12,44,0.34) 0%, transparent 52%),
-        radial-gradient(ellipse 95% 65% at 78% 62%, rgba(95,46,82,0.2) 0%, transparent 55%),
-        linear-gradient(168deg, #0a0a1a 0%, #120b20 44%, #09091a 100%);
-      background-size: 200% 200%; animation: gradDrift 24s ease-in-out infinite;
+    .container {
+      width: 100%;
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 0 24px;
     }
-    @keyframes gradDrift { 0%,100%{background-position:0% 40%} 50%{background-position:100% 60%} }
-    .ambient__noise {
-      position: absolute; inset: 0; opacity: 0.045;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-      background-size: 180px 180px;
-    }
-    .ambient__particles { position: absolute; inset: 0; overflow: hidden; }
-    .ambient__particles span {
-      position: absolute; width: 2px; height: 2px; border-radius: 50%;
-      background: rgba(244,237,224,0.15); animation: floatP 15.5s ease-in-out infinite;
-    }
-    .ambient__particles span:nth-child(1){left:12%;top:22%;animation-delay:0s}
-    .ambient__particles span:nth-child(2){left:78%;top:18%;animation-delay:-4s}
-    .ambient__particles span:nth-child(3){left:44%;top:65%;animation-delay:-8s}
-    .ambient__particles span:nth-child(4){left:88%;top:72%;animation-delay:-2s}
-    .ambient__particles span:nth-child(5){left:22%;top:80%;animation-delay:-11s}
-    @keyframes floatP { 0%,100%{transform:translate(0,0);opacity:.35} 50%{transform:translate(8px,-12px);opacity:.7} }
 
-    .page { position: relative; z-index: 1; }
+    @media (max-width: 768px) {
+      .container {
+        padding: 0 20px;
+      }
+    }
+
+    .home-starfield {
+      position: fixed;
+      inset: 0;
+      z-index: var(--z-canvas);
+      pointer-events: none;
+    }
+
+    .cursor-light {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: var(--z-cursor);
+      background: radial-gradient(
+        500px circle at var(--cursor-x) var(--cursor-y),
+        rgba(139, 47, 201, 0.07),
+        rgba(10, 132, 255, 0.03) 35%,
+        transparent 65%
+      );
+      transition: background 0.08s linear;
+    }
+
+    .scanlines {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: var(--z-scanline);
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 3px,
+        rgba(0, 0, 0, 0.025) 3px,
+        rgba(0, 0, 0, 0.025) 4px
+      );
+      mix-blend-mode: multiply;
+    }
+
+    @keyframes page-scan {
+      0% {
+        top: -2px;
+        opacity: 1;
+      }
+      90% {
+        opacity: 1;
+      }
+      100% {
+        top: 100vh;
+        opacity: 0;
+      }
+    }
+
+    .page-scan {
+      position: fixed;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(139, 47, 201, 0.6) 20%,
+        rgba(191, 90, 242, 0.9) 50%,
+        rgba(139, 47, 201, 0.6) 80%,
+        transparent
+      );
+      box-shadow: 0 0 12px rgba(191, 90, 242, 0.8);
+      z-index: var(--z-nav);
+      pointer-events: none;
+      animation: page-scan 1.4s ease-in forwards;
+      animation-delay: 0.2s;
+    }
+
+    .grid-floor {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 280px;
+      background-image:
+        linear-gradient(rgba(139, 47, 201, 0.12) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(139, 47, 201, 0.12) 1px, transparent 1px);
+      background-size: 44px 44px;
+      transform: perspective(380px) rotateX(62deg);
+      transform-origin: bottom center;
+      mask-image: linear-gradient(to top, rgba(0, 0, 0, 0.7) 0%, transparent 100%);
+      -webkit-mask-image: linear-gradient(to top, rgba(0, 0, 0, 0.7) 0%, transparent 100%);
+      pointer-events: none;
+      z-index: var(--z-content);
+    }
+
+    @media (max-width: 768px) {
+      .grid-floor {
+        height: 160px;
+      }
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(22px);
+      transition: opacity 0.65s ease, transform 0.65s ease;
+    }
+
+    .reveal-delay-1 {
+      transition-delay: 0.15s;
+    }
+    .reveal-delay-2 {
+      transition-delay: 0.3s;
+    }
+    .reveal-delay-3 {
+      transition-delay: 0.45s;
+    }
+
+    .reveal.is-visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .site-shell {
+      position: relative;
+      z-index: var(--z-content);
+    }
+
+    .page {
+      position: relative;
+      z-index: var(--z-content);
+    }
 
     /* ── Nav ── */
     nav#main-nav {
-      position: fixed; top: 0; left: 0; right: 0; z-index: 10000;
+      position: fixed; top: 0; left: 0; right: 0; z-index: var(--z-nav);
       display: flex; align-items: center; justify-content: space-between; gap: 16px;
       padding: 12px 36px;
-      background: rgba(192, 0, 42, 0.88);
+      background: rgba(8, 8, 24, 0.9);
       backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
       border-bottom: 1px solid transparent;
       transition: border-color 0.25s ease, background 0.25s ease;
     }
     nav#main-nav.is-scrolled {
-      border-bottom-color: rgba(244,237,224,0.18); background: rgba(192, 0, 42, 0.96);
+      border-bottom-color: rgba(139, 47, 201, 0.22);
+      background: rgba(13, 13, 34, 0.94);
     }
     .nav-mark {
       font-family: var(--font-sans); font-size: 12px; font-weight: 600;
@@ -103,7 +254,7 @@
     .nav-mark:hover { opacity: 1; }
     .nav-links { display: flex; flex-wrap: wrap; gap: 22px; align-items: center; justify-content: flex-end; }
     .nav-link {
-      font-family: var(--font-mono, 'DM Mono', monospace);
+      font-family: var(--font-mono);
       font-size: 10px; font-weight: 500; letter-spacing: 0.18em; text-transform: uppercase;
       color: rgba(255,255,255,0.92); text-decoration: none; padding-bottom: 1px;
       border-bottom: 1px solid transparent;
@@ -121,12 +272,12 @@
       min-height: min(100vh, 880px); min-height: min(100dvh, 880px);
       display: flex; flex-direction: column;
       background:
-        radial-gradient(ellipse 120% 85% at 50% 15%, rgba(61,12,44,0.5) 0%, transparent 58%),
-        radial-gradient(ellipse 100% 75% at 82% 88%, rgba(86,38,74,0.22) 0%, transparent 54%),
-        linear-gradient(160deg, #0a0a1a 0%, #130c22 42%, #090a1a 78%, #080818 100%);
+        radial-gradient(ellipse 120% 85% at 50% 12%, rgba(139, 47, 201, 0.22) 0%, transparent 58%),
+        radial-gradient(ellipse 100% 75% at 82% 88%, rgba(10, 132, 255, 0.12) 0%, transparent 54%),
+        linear-gradient(160deg, var(--bg-void) 0%, var(--bg-deep) 42%, #0a0a22 78%, var(--bg-surface) 100%);
     }
     .hero-canvas-wrap {
-      position: absolute; inset: 0; z-index: 0; pointer-events: none;
+      position: absolute; inset: 0; z-index: var(--z-canvas); pointer-events: none;
       min-height: 100%; min-height: 100vh; min-height: 100dvh;
     }
     #hero-canvas { display: block; width: 100%; height: 100%; vertical-align: top; }
@@ -150,7 +301,7 @@
       margin: 0 auto; width: 100%; position: relative; z-index: 2; text-align: left;
     }
     .home-hero__title {
-      font-family: var(--font-serif, 'Playfair Display', Georgia, serif);
+      font-family: var(--font-serif);
       font-weight: var(--font-weight-serif, 500);
       font-size: var(--text-h1); line-height: var(--lh-h1, 1.1);
       letter-spacing: var(--letter-h, -0.02em);
@@ -176,7 +327,7 @@
     }
     .hero-areas__item {
       display: flex; align-items: center; gap: 8px;
-      font-family: var(--font-mono, 'DM Mono', monospace);
+      font-family: var(--font-mono);
       font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-3);
       border: 1px solid rgba(200,169,110,0.32);
       border-radius: 999px;
@@ -186,7 +337,7 @@
     .hero-areas__dot { width: 6px; height: 6px; border-radius: 50%; background: var(--gold-dim); flex-shrink: 0; }
     .hero-actions { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; margin-bottom: 20px; }
     .hero-meta {
-      font-family: var(--font-mono, 'DM Mono', monospace);
+      font-family: var(--font-mono);
       font-size: 9px; letter-spacing: 0.16em; text-transform: uppercase;
       color: var(--text-3); opacity: 0.9;
       text-align: center;
@@ -235,7 +386,7 @@
     .home-fold summary::-webkit-details-marker { display: none; }
 
     .home-fold__title {
-      font-family: var(--font-mono, 'DM Mono', monospace);
+      font-family: var(--font-mono);
       font-size: 11px;
       font-weight: 500;
       letter-spacing: 0.18em;
@@ -243,7 +394,7 @@
       color: rgba(200,169,110,0.88);
     }
     .home-fold__indicator {
-      font-family: var(--font-mono, 'DM Mono', monospace);
+      font-family: var(--font-mono);
       font-size: 11px; font-weight: 400; color: var(--text-3); opacity: 0.5;
       transition: transform 0.25s ease, opacity 0.2s ease; flex-shrink: 0;
       position: absolute;
@@ -276,12 +427,12 @@
       min-height: 230px;
     }
     .area-card__label {
-      font-family: var(--font-mono, 'DM Mono', monospace);
+      font-family: var(--font-mono);
       font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase;
       color: var(--gold-dim); margin-bottom: 6px;
     }
     .area-card__title {
-      font-family: var(--font-serif, 'Playfair Display', Georgia, serif);
+      font-family: var(--font-serif);
       font-size: clamp(17px, 1.6vw, 20px); font-weight: 500;
       color: var(--text); margin-bottom: 6px; letter-spacing: -0.015em;
     }
@@ -318,7 +469,7 @@
       transform: translateY(-50%);
     }
     .how-step__num {
-      font-family: var(--font-mono, 'DM Mono', monospace);
+      font-family: var(--font-mono);
       font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase;
       color: var(--gold-dim); margin-bottom: 8px;
       position:relative; z-index:2;
@@ -326,14 +477,14 @@
     .how-step::before{
       content: attr(data-step);
       position:absolute; right:12px; top:8px;
-      font-family: var(--font-serif, 'Playfair Display', Georgia, serif);
+      font-family: var(--font-serif);
       font-size: 72px;
       line-height: 1;
       color: rgba(200,169,110,0.12);
       z-index:1;
     }
     .how-step__title {
-      font-family: var(--font-serif, 'Playfair Display', Georgia, serif);
+      font-family: var(--font-serif);
       font-size: clamp(16px, 1.4vw, 18px); font-weight: 500;
       color: var(--text); margin-bottom: 6px; letter-spacing: -0.01em; position:relative; z-index:2;
     }
@@ -352,14 +503,14 @@
       margin-bottom:16px;
     }
     .builder-stat__num{
-      font-family: var(--font-serif, 'Playfair Display', Georgia, serif);
+      font-family: var(--font-serif);
       font-size: clamp(54px, 7vw, 78px);
       line-height: 0.9;
       color: rgba(255,255,255,0.96);
       letter-spacing: -0.03em;
     }
     .builder-stat__label{
-      font-family: var(--font-mono, 'DM Mono', monospace);
+      font-family: var(--font-mono);
       font-size: 11px;
       letter-spacing: 0.14em;
       text-transform: uppercase;
@@ -383,7 +534,7 @@
     }
     .home-final__inner { max-width: min(980px, 100%); margin: 0 auto; }
     .home-final__title {
-      font-family: var(--font-serif, 'Playfair Display', Georgia, serif);
+      font-family: var(--font-serif);
       font-size: var(--text-h3); font-weight: var(--font-weight-serif, 500);
       letter-spacing: var(--letter-h); margin-bottom: 12px;
     }
@@ -406,22 +557,46 @@
     }
     .foot-links { display: flex; flex-wrap: wrap; gap: 20px; list-style: none; justify-content: center; }
     .foot-links a {
-      font-family: var(--font-mono, 'DM Mono', monospace);
+      font-family: var(--font-mono);
       font-size: 9px; letter-spacing: 0.16em; text-transform: uppercase;
       color: var(--text-3); text-decoration: none; opacity: 0.75;
       transition: opacity 0.2s ease, color 0.2s ease;
     }
     .foot-links a:hover { color: var(--text-2); opacity: 1; }
     .foot-micro-line {
-      font-family: var(--font-mono, 'DM Mono', monospace);
+      font-family: var(--font-mono);
       font-size: 7px; letter-spacing: 0.14em; text-transform: uppercase;
       color: rgba(110,101,88,0.55);
     }
 
-    .home-reveal { opacity: 0; transform: translateY(16px); }
-    .home-reveal.is-in { opacity: 1; transform: translateY(0); transition: opacity 0.45s ease, transform 0.45s ease; }
+    .home-reveal.reveal,
+    .home-reveal {
+      opacity: 0;
+      transform: translateY(22px);
+      transition: opacity 0.65s ease, transform 0.65s ease;
+    }
 
-    @media (prefers-reduced-motion: reduce) { .ambient__grad { animation: none; } }
+    .home-reveal.is-visible,
+    .home-reveal.is-in {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+      .page-scan {
+        display: none;
+      }
+      .cursor-light {
+        display: none;
+      }
+    }
     @media (max-width: 767px) {
       #hero { min-height: min(100dvh, 760px); }
       .hero-container { min-height: min(100dvh, 760px); }
@@ -443,27 +618,20 @@
     .btn.home-diag-cta.sh-home-results-cta { transform: none !important; filter: none !important; box-shadow: none !important; }
     .btn.home-diag-cta.sh-home-results-cta:hover { transform: none !important; filter: none !important; box-shadow: none !important; opacity: 0.9; }
     .btn.home-diag-cta.sh-home-results-cta::after { display: none !important; }
+
+    body[data-sh-env="home"] .early-private-slot {
+      z-index: var(--z-nav);
+    }
   </style>
   <link rel="stylesheet" href="/stephuary-early-mode.css" />
   <link rel="stylesheet" href="/stephuary-private-selection.css" />
   <link rel="stylesheet" href="/stephuary-home-finale.css" />
 </head>
 <body data-sh-env="home">
+  <canvas id="starfield" class="home-starfield" aria-hidden="true"></canvas>
 
   <!-- ═══ Site Shell ═══ -->
   <div id="site-shell" class="site-shell">
-
-  <div class="ambient" aria-hidden="true">
-    <div class="ambient__grad"></div>
-    <div class="ambient__noise"></div>
-    <div class="ambient__particles"><span></span><span></span><span></span><span></span><span></span></div>
-  </div>
-
-  <div id="cosmic-settled" aria-hidden="true">
-    <div class="cosmic-settled__grid" aria-hidden="true"></div>
-    <div class="cosmic-settled__particles" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
-  </div>
-
   <div class="page">
     <nav id="main-nav" aria-label="Site">
       <a href="/" class="nav-mark">Stephuary</a>
@@ -510,7 +678,7 @@
 
       <!-- ═══ COLLAPSED SECTIONS ═══ -->
 
-      <details class="home-fold home-reveal">
+      <details class="home-fold home-reveal reveal">
         <summary>
           <span class="home-fold__title">What gets measured</span>
           <span class="home-fold__indicator">+</span>
@@ -534,7 +702,7 @@
         </div>
       </details>
 
-      <details class="home-fold home-reveal">
+      <details class="home-fold home-reveal reveal">
         <summary>
           <span class="home-fold__title">How it works</span>
           <span class="home-fold__indicator">+</span>
@@ -560,7 +728,7 @@
         </div>
       </details>
 
-      <details class="home-fold home-reveal">
+      <details class="home-fold home-reveal reveal">
         <summary>
           <span class="home-fold__title">Who built this</span>
           <span class="home-fold__indicator">+</span>
@@ -575,7 +743,7 @@
       </details>
 
       <!-- ═══ START ═══ -->
-      <section class="home-final home-reveal" id="start">
+      <section class="home-final home-reveal reveal" id="start">
         <div class="home-final__inner">
           <h2 class="home-final__title">Find out where it's breaking.</h2>
           <p class="home-final__body">Seven questions. One score. A specific next step.</p>
@@ -597,8 +765,9 @@
       </div>
     </footer>
   </div>
+  </div>
 
-  <!-- ═══ Private Selection Overlay ═══ -->
+  <!-- ═══ Private Selection Overlay (outside site-shell for z-index stack) ═══ -->
   <div id="ps-overlay" class="ps-overlay" role="dialog" aria-modal="true" aria-label="One Free Spot" aria-hidden="true">
     <div class="ps-overlay__bg" data-ps-close tabindex="-1" aria-hidden="true"></div>
     <div class="ps-overlay__particles" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
@@ -648,9 +817,14 @@
     <a href="#" class="early-private-slot__link">One Free Spot</a>
   </div>
 
-  </div>
+  <div class="scanlines" aria-hidden="true"></div>
+  <div class="cursor-light" aria-hidden="true"></div>
+  <div class="page-scan" aria-hidden="true"></div>
 
   <!-- ═══ Scripts ═══ -->
+  <script src="/starfield.js" defer></script>
+  <script src="/cursor-light.js" defer></script>
+  <script src="/scroll-reveal.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
   <script src="/stephuary-os.js" defer></script>
@@ -738,10 +912,7 @@
       tlHero.from('#hero-actions',{opacity:0,y:8,duration:0.4},0.22);
       tlHero.from('#hero-areas-list',{opacity:0,y:8,duration:0.4},0.3);
 
-      /* ── Scroll reveals ── */
-      document.querySelectorAll('.home-reveal').forEach(function(el){
-        ScrollTrigger.create({trigger:el,start:'top 88%',once:true,onEnter:function(){el.classList.add('is-in');}});
-      });
+      /* ── Fold / final reveals: scroll-reveal.js (.reveal → .is-visible) ── */
 
       /* ── Load hooks ── */
       window.addEventListener('load',function(){
