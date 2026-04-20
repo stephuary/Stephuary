@@ -869,60 +869,7 @@
         <div class="instinct-rows" id="instinctRows"></div>
       </section>
 
-      <div id="summary">
-        <div id="sys-output-mount-revenue" class="sys-output-mount" hidden aria-hidden="true"></div>
-
-        <p class="summary-phase-tag">Phase 2 · Monetize</p>
-        <h2 class="summary-title sr-only">Done</h2>
-
-        <div class="m2-decision-block" id="m2-decision-block">
-          <p class="diag-h">Diagnosis</p>
-          <p class="m2-diagnosis" id="out-m2-diagnosis"></p>
-          <p class="diag-h">What this means</p>
-          <p class="m2-meaning" id="out-m2-meaning"></p>
-          <p class="diag-h">Primary move</p>
-          <p class="m2-action" id="out-m2-action"></p>
-          <div class="m2-route-actions">
-            <a href="/playbooks" class="btn btn-solid magnetic" id="out-m2-primary-cta">Open a Room</a>
-            <a href="/focused-review" class="btn btn-ghost magnetic" id="out-m2-secondary-cta">Get Direction</a>
-          </div>
-        </div>
-
-        <div id="m2-supporting-export" hidden aria-hidden="true">
-        <div class="diag-body" id="out-s1"></div>
-        <div class="diag-body" id="out-s2"></div>
-        <div class="diag-body" id="out-s3"></div>
-        <div class="diag-body" id="out-s4"></div>
-        <div class="diag-body" id="out-s5"></div>
-        <p class="position-line" id="out-s6"></p>
-        <div class="diag-body" id="out-s7"></div>
-        </div>
-
-        <p class="capture-flow-saved">Progress is saved on this device.</p>
-        <div class="action-primary" id="m2-phase-continue-wrap">
-          <a href="/structure" class="btn btn-solid" id="m2-legacy-continue" data-sh-flow-primary>Continue</a>
-        </div>
-        <p class="phase-result-links">
-          <a href="/systems">Save and exit</a>
-        </p>
-        <div class="action-primary capture-flow-tools">
-          <button type="button" class="btn" id="btnCopy">Copy All</button>
-          <button type="button" class="btn" id="btnExport">Export</button>
-        </div>
-        <p class="copy-confirm" id="copyConfirm">Copied to clipboard.</p>
-
-        <div class="action-secondary">
-          <button type="button" class="btn btn-ghost" id="btnReset">Reset</button>
-        </div>
-
-        <footer class="capture-footer">
-          <a href="/">Home</a>
-          <a href="/pricing">Pricing</a>
-          <a href="/access" class="nav-club">.5% Club</a>
-          <a href="https://stephuary.substack.com" target="_blank" rel="noopener">Grown spaghetti</a>
-          <a href="https://onlysometimesclub.com" target="_blank" rel="noopener noreferrer">Only Sometimes Club</a>
-        </footer>
-      </div>
+      <div id="summary" aria-hidden="true"></div>
     </div>
 
     <aside class="live-panel live-panel--chrome" id="livePanel" aria-live="polite" hidden aria-hidden="true">
@@ -1060,7 +1007,7 @@
       case 'paid_problem_failure':
       case 'demand_generation_failure':
         return {
-          primary: { href: '/playbooks', label: 'Open a Room' },
+          primary: { href: '/systems', label: 'System map' },
           secondary: { href: '/focused-review', label: 'Get Direction' }
         };
       case 'buyer_definition_failure':
@@ -1073,12 +1020,12 @@
       case 'proof_visibility_failure':
         return {
           primary: { href: '/snapshot', label: 'Start Snapshot' },
-          secondary: { href: '/playbooks', label: 'Open Rooms' }
+          secondary: { href: '/systems', label: 'System map' }
         };
       default:
         return {
           primary: { href: '/focused-review', label: 'Get Direction' },
-          secondary: { href: '/playbooks', label: 'Open Rooms' }
+          secondary: { href: '/systems', label: 'System map' }
         };
     }
   }
@@ -1330,7 +1277,7 @@
           updateLivePanel();
           opts.forEach(function(o) { o.classList.add('dim'); });
           function advance() {
-            if (idx === TOTAL_Q - 1) showSummary();
+            if (idx === TOTAL_Q - 1) completePhase02AndContinue();
             else goTo(stepNum + 1);
           }
           if (window.StephuaryDiagnosticMotion && typeof window.StephuaryDiagnosticMotion.afterAnswer === 'function') {
@@ -1529,7 +1476,7 @@
     document.getElementById('out-s7').innerHTML = s7;
   }
 
-  function showSummary() {
+  function completePhase02AndContinue() {
     state.currentStep = 6;
     saveStorage();
     try {
@@ -1537,28 +1484,11 @@
         window.StephuaryDiagnosticFlow.markPhaseComplete(2);
       }
     } catch (eMark) {}
-    document.getElementById('flow').style.display = 'none';
-    document.getElementById('summary').style.display = 'flex';
-
-    var b = state.bits.map(function(x) { return x; });
-    buildDecisionOutput(b);
-    buildOutputs(b, loadP01Profile());
-    updateLivePanel();
-    updateRail();
-    var m = document.getElementById('sys-output-mount-revenue');
-    if (m) m.innerHTML = '';
-    if (window.StephuaryDiagnosticMobile && typeof window.StephuaryDiagnosticMobile.scrollToSummary === 'function') {
-      window.requestAnimationFrame(function () {
-        window.StephuaryDiagnosticMobile.scrollToSummary({ behavior: 'auto' });
-      });
-    } else {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-    window.requestAnimationFrame(function() {
-      if (window.StephuaryDiagnosticMotion && typeof window.StephuaryDiagnosticMotion.revealSummary === 'function') {
-        window.StephuaryDiagnosticMotion.revealSummary();
-      }
-    });
+    var href =
+      window.StephuaryDiagnosticFlow && typeof window.StephuaryDiagnosticFlow.getNextPhaseHrefAfterComplete === 'function'
+        ? window.StephuaryDiagnosticFlow.getNextPhaseHrefAfterComplete(2)
+        : '/structure';
+    window.location.href = href || '/structure';
   }
 
   function exportText() {
@@ -1622,6 +1552,7 @@
 
   function flash() {
     var el = document.getElementById('copyConfirm');
+    if (!el) return;
     el.classList.add('visible');
     setTimeout(function() { el.classList.remove('visible'); }, 2800);
   }
@@ -1669,9 +1600,12 @@
     document.getElementById('live-buyer').textContent = '—';
   }
 
-  document.getElementById('btnCopy').addEventListener('click', copyAll);
-  document.getElementById('btnExport').addEventListener('click', doExport);
-  document.getElementById('btnReset').addEventListener('click', resetAll);
+  var btnCopy = document.getElementById('btnCopy');
+  if (btnCopy) btnCopy.addEventListener('click', copyAll);
+  var btnExport = document.getElementById('btnExport');
+  if (btnExport) btnExport.addEventListener('click', doExport);
+  var btnReset = document.getElementById('btnReset');
+  if (btnReset) btnReset.addEventListener('click', resetAll);
 
   window.addEventListener('keydown', function(e) {
     if (e.key === 'Enter' && e.target.classList && e.target.classList.contains('option-item')) {
@@ -1694,7 +1628,7 @@
         lr.textContent = 'Continue to Automation';
       } else if (href.indexOf('/sovereignty') !== -1) {
         lr.textContent = 'Continue to Sovereignty';
-      } else if (href.indexOf('/results') !== -1 || href.indexOf('/playbooks') !== -1) {
+      } else if (href.indexOf('/results') !== -1 || href.indexOf('/systems') !== -1) {
         lr.textContent = 'Continue';
       } else {
         lr.textContent = 'Continue';
@@ -1726,7 +1660,7 @@
         saveStorage();
         var fe = state.bits.indexOf(null);
         if (fe === -1) {
-          showSummary();
+          completePhase02AndContinue();
         } else {
           goTo(fe + 1);
         }

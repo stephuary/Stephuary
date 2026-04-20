@@ -978,97 +978,7 @@
 
       <div id="building-overlay" role="status" aria-live="assertive"><p class="sr-only">Loading.</p></div>
 
-      <div id="summary">
-        <p class="summary-phase-tag">Phase 1 · Capture</p>
-        <h2 class="summary-hit sr-only" id="summaryHitLine">Result</h2>
-
-        <div class="result-section result-decision" id="result-decision-block">
-          <p class="result-h">Diagnosis</p>
-          <p class="result-diagnosis" id="out-diagnosis"></p>
-          <p class="result-h">Your context</p>
-          <p class="result-context-bridge" id="out-context-bridge"></p>
-          <p class="result-h">Primary move</p>
-          <p class="result-primary-action" id="out-primary-action"></p>
-        </div>
-
-        <div class="result-breakdown-details result-breakdown-details--flat">
-          <div class="result-breakdown-inner">
-        <div class="result-section">
-          <p class="result-h result-h--supporting">Supporting insight</p>
-          <p class="result-h">1. Pattern name</p>
-          <p class="result-archetype" id="out-archetype"></p>
-        </div>
-
-        <div class="result-section">
-          <p class="result-h">2. Core read</p>
-          <div class="result-body" id="out-core"></div>
-        </div>
-
-        <div class="result-section">
-          <p class="result-h">3. What this looks like</p>
-          <ul class="result-list" id="out-look"></ul>
-        </div>
-
-        <div class="result-section">
-          <p class="result-h">4. Main block</p>
-          <div class="result-body" id="out-main"></div>
-        </div>
-
-        <div class="result-section">
-          <p class="result-h">5. What this costs</p>
-          <ul class="result-list" id="out-cost"></ul>
-        </div>
-
-        <div class="result-direction">
-          <p class="result-h" style="margin-bottom:10px">6. What happens next</p>
-          <div class="result-body" id="out-next"></div>
-        </div>
-
-        <div class="result-section result-router" id="result-router-wrap" hidden>
-          <p class="result-h">7. Your next move</p>
-          <div class="result-router-directive" id="out-router-directive"></div>
-          <div class="result-router-actions">
-            <a href="/snapshot" class="btn btn-terminal magnetic" id="out-router-primary">Start Snapshot</a>
-            <a href="/focused-review" class="btn btn-ghost magnetic" id="out-router-secondary">Get Direction</a>
-          </div>
-        </div>
-          </div>
-        </div>
-
-        <p class="capture-flow-saved">Your progress is saved automatically on this device.</p>
-        <div class="action-primary">
-          <a href="/monetize" class="btn btn-terminal" data-sh-flow-primary>Continue</a>
-        </div>
-        <p class="phase-result-links">
-          <a href="/systems">Save and exit</a>
-        </p>
-        <div class="action-primary capture-flow-tools">
-          <button type="button" class="btn" id="btnCopy">Copy All</button>
-          <button type="button" class="btn" id="btnExport">Export</button>
-        </div>
-        <p class="copy-confirm" id="copyConfirm">Copied to clipboard.</p>
-
-        <div class="action-secondary">
-          <button type="button" class="btn btn-ghost" id="btnReset">Reset</button>
-        </div>
-
-        <footer class="capture-footer">
-          <div class="capture-footer__links">
-            <a href="/">Home</a>
-            <a href="/pricing">Pricing</a>
-            <a href="/access" class="nav-club">.5% Club</a>
-            <span class="capture-footer__stack">
-              <a href="https://stephuary.substack.com" target="_blank" rel="noopener">Grown spaghetti</a>
-              <span class="identity-micro">I turn scattered ideas into structured income.</span>
-            </span>
-            <span class="capture-footer__stack">
-              <a href="https://onlysometimesclub.com" target="_blank" rel="noopener noreferrer">Only Sometimes Club</a>
-              <span class="identity-micro">Cultural Experience Intelligence</span>
-            </span>
-          </div>
-          <p class="capture-foot-micro">Built by Stephanie. Designed to work without you.</p>
-        </footer>
-      </div>
+      <div id="summary" aria-hidden="true"></div>
     </div>
 
     <aside class="live-panel live-panel--chrome" id="livePanel" aria-live="polite" hidden aria-hidden="true">
@@ -1802,10 +1712,7 @@
       state.context = v;
       saveStorage();
       updateLivePanel();
-      document.getElementById('building-overlay').style.display = 'flex';
-      window.setTimeout(function() {
-        showSummary();
-      }, 320);
+      completePhase01AndContinue();
     });
     if (backCtx) {
       backCtx.addEventListener('click', function() {
@@ -1958,52 +1865,10 @@
     syncCaptureShFlowEnd();
   }
 
-  function showSummary() {
+  function completePhase01AndContinue() {
     state.currentStep = 11;
     saveStorage();
     document.getElementById('building-overlay').style.display = 'none';
-    document.getElementById('flow').style.display = 'none';
-    document.getElementById('summary').style.display = 'flex';
-    document.getElementById('live-status').textContent = 'Complete.';
-
-    var bits = state.bits.map(function(b) { return b == null ? 0 : b; });
-    var breakdown = scoreBreakdownFromResult(bits, state.context);
-    var diag = diagnosisLines(breakdown);
-    document.getElementById('out-diagnosis').textContent = diag.full;
-    document.getElementById('out-context-bridge').textContent =
-      'Based on what you\'re building: ' + String(state.context || '').trim();
-    document.getElementById('out-primary-action').textContent =
-      PRIMARY_ACTION_LINE[breakdown] || PRIMARY_ACTION_LINE.direction;
-
-    var arch = scoreArchetype(bits);
-    var block = COPY_BLOCKS[arch];
-
-    document.getElementById('out-archetype').textContent = arch;
-
-    document.getElementById('out-core').innerHTML = block.core(bits);
-
-    var ulLook = document.getElementById('out-look');
-    ulLook.innerHTML = '';
-    block.look(bits).forEach(function(line) {
-      var li = document.createElement('li');
-      li.textContent = line;
-      ulLook.appendChild(li);
-    });
-
-    document.getElementById('out-main').innerHTML = block.mainBlock(bits);
-
-    var cul = document.getElementById('out-cost');
-    cul.innerHTML = '';
-    block.cost(bits).forEach(function(line) {
-      var li = document.createElement('li');
-      li.textContent = line;
-      cul.appendChild(li);
-    });
-
-    document.getElementById('out-next').innerHTML = block.next(bits);
-
-    applyBreakdownRouting(breakdown);
-
     try {
       localStorage.setItem('diagnosticStarted', 'true');
       localStorage.setItem('capture_complete', 'true');
@@ -2019,26 +1884,11 @@
         } catch (ePersist) {}
       }
     } catch (e) {}
-
-    updateRail();
-    if (window.StephuaryDiagnosticMobile && typeof window.StephuaryDiagnosticMobile.scrollToSummary === 'function') {
-      window.requestAnimationFrame(function () {
-        window.StephuaryDiagnosticMobile.scrollToSummary({ behavior: 'auto' });
-      });
-    } else {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-    syncCaptureShFlowEnd();
-    window.requestAnimationFrame(function() {
-      if (window.StephuaryDiagnosticMotion && typeof window.StephuaryDiagnosticMotion.revealSummary === 'function') {
-        window.StephuaryDiagnosticMotion.revealSummary();
-      }
-    });
-    setTimeout(function () {
-      if (window.StephuaryMagneticFlow && typeof window.StephuaryMagneticFlow.refresh === 'function') {
-        window.StephuaryMagneticFlow.refresh();
-      }
-    }, 0);
+    var href =
+      window.StephuaryDiagnosticFlow && typeof window.StephuaryDiagnosticFlow.getNextPhaseHrefAfterComplete === 'function'
+        ? window.StephuaryDiagnosticFlow.getNextPhaseHrefAfterComplete(1)
+        : '/monetize';
+    window.location.href = href || '/monetize';
   }
 
   function exportText() {
@@ -2113,6 +1963,7 @@
 
   function flash() {
     var el = document.getElementById('copyConfirm');
+    if (!el) return;
     el.classList.add('visible');
     setTimeout(function() { el.classList.remove('visible'); }, 2800);
   }
@@ -2213,10 +2064,7 @@
     if (firstEmpty === -1) {
       if (ctxOk) {
         if (migratedFromV2Ten) saveStorage();
-        document.getElementById('building-overlay').style.display = 'flex';
-        setTimeout(function() {
-          showSummary();
-        }, 700);
+        completePhase01AndContinue();
         return true;
       }
       state.currentStep = 7;
@@ -2252,9 +2100,12 @@
     startFlow(false);
   });
 
-  document.getElementById('btnCopy').addEventListener('click', copyAll);
-  document.getElementById('btnExport').addEventListener('click', doExport);
-  document.getElementById('btnReset').addEventListener('click', resetAll);
+  var btnCopy = document.getElementById('btnCopy');
+  if (btnCopy) btnCopy.addEventListener('click', copyAll);
+  var btnExport = document.getElementById('btnExport');
+  if (btnExport) btnExport.addEventListener('click', doExport);
+  var btnReset = document.getElementById('btnReset');
+  if (btnReset) btnReset.addEventListener('click', resetAll);
 
   window.addEventListener('keydown', function(e) {
     if (e.key === 'Enter' && e.target.classList && e.target.classList.contains('option-item')) {

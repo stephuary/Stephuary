@@ -122,7 +122,7 @@
   }
 
   /**
-   * Next URL in the diagnostic chain, or /playbooks when Phases 01–05 are done.
+   * Next URL in the diagnostic chain, or /results when Phases 01–05 are done.
    */
   function getResumeHref() {
     migrateCompletionFlags();
@@ -133,7 +133,7 @@
     try {
       if (lsGet('diagnosticCompleted') !== 'true') return '/results';
     } catch (e1) {}
-    return '/playbooks';
+    return '/results';
   }
 
   function isFullyComplete() {
@@ -145,6 +145,16 @@
     }
   }
 
+  /**
+   * After Phases 01–04, the next page in the linear chain (not used for Phase 05; that goes to /results via result builder).
+   */
+  function getNextPhaseHrefAfterComplete(completedPhase) {
+    if (typeof completedPhase !== 'number' || completedPhase < 1 || completedPhase >= 5) {
+      return null;
+    }
+    return PHASE_PATH[completedPhase + 1] || null;
+  }
+
   global.StephuaryDiagnosticFlow = {
     PHASE_PATH: PHASE_PATH,
     P01_STORAGE_KEYS: P01_STORAGE_KEYS,
@@ -154,6 +164,7 @@
     canEnterPhase: canEnterPhase,
     getResumeHref: getResumeHref,
     isFullyComplete: isFullyComplete,
-    migrateCompletionFlags: migrateCompletionFlags
+    migrateCompletionFlags: migrateCompletionFlags,
+    getNextPhaseHrefAfterComplete: getNextPhaseHrefAfterComplete
   };
 })(typeof window !== 'undefined' ? window : this);
