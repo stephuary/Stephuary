@@ -86,6 +86,14 @@
 
   function joinFields(e) {
     if (!e) return '';
+    if (e.email && (e.building != null || e.stuck != null) && !(e.q1 || e.q2 || e.q3)) {
+      return [e.email, e.building, e.stuck]
+        .map(function (x) {
+          return x != null ? String(x).trim() : '';
+        })
+        .filter(Boolean)
+        .join(' \n ');
+    }
     if (e.email && !(e.q1 || e.q2 || e.q3)) return String(e.email);
     if (e.q1 != null || e.q2 != null || e.q3 != null) {
       return [e.q1, e.q2, e.q3].filter(Boolean).join(' \n ');
@@ -424,7 +432,7 @@
     }
   }
 
-  function postMonthlyEmail(email) {
+  function postMonthlyEmail(email, building, stuck) {
     var action = getMonthlyFormAction();
     if (!action) {
       return Promise.resolve({ ok: true, skipped: true });
@@ -432,7 +440,9 @@
     var url = formsubmitAjaxUrl(action);
     var payload = {
       email: email,
-      _subject: 'Monthly free 1:1 concept + niche session (homepage)',
+      building: building,
+      stuck: stuck,
+      _subject: 'Monthly free 1:1 — homepage entry',
       _captcha: false,
       month_pool: monthKey()
     };
@@ -481,16 +491,28 @@
     if (!form || form.id !== 'home-mfs-form') return;
 
     var emailEl = form.querySelector('[name="email"]');
+    var buildEl = form.querySelector('[name="building"]');
+    var stuckEl = form.querySelector('[name="stuck"]');
     var email = emailEl ? String(emailEl.value || '').trim() : '';
+    var building = buildEl ? String(buildEl.value || '').trim() : '';
+    var stuck = stuckEl ? String(stuckEl.value || '').trim() : '';
     setFormError('');
 
     if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       setFormError('Enter a valid email address.');
       return;
     }
+    if (!building) {
+      setFormError('Add what you are building.');
+      return;
+    }
+    if (!stuck) {
+      setFormError('Add what is stuck.');
+      return;
+    }
 
     var btn = global.document.getElementById('home-mfs-submit');
-    var prevLabel = btn && btn.textContent ? btn.textContent : 'Enter monthly drawing';
+    var prevLabel = btn && btn.textContent ? btn.textContent : 'Enter to win';
     if (btn) {
       btn.disabled = true;
       btn.textContent = 'Submitting…';
@@ -502,7 +524,7 @@
       snap.dynamicKind = null;
     } catch (e) {}
 
-    postMonthlyEmail(email)
+    postMonthlyEmail(email, building, stuck)
       .then(function (result) {
         if (!result || !result.ok) {
           setFormError('Could not submit. Check your connection and try again.');
@@ -512,6 +534,8 @@
         var entry = {
           submittedAt: Date.now(),
           email: email,
+          building: building,
+          stuck: stuck,
           diagnosticSnapshot: snap
         };
         entry.internalSummary = buildInternalSummary(entry);
