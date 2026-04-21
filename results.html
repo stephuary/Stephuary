@@ -290,21 +290,31 @@
       color: rgba(248, 243, 234, 0.78);
       border-bottom-color: rgba(248, 243, 234, 0.22);
     }
-    body.results--minimal.results--diag-v2 .results-route-note {
-      text-align: center;
-      max-width: 42rem;
-      margin-left: auto;
-      margin-right: auto;
-      color: rgba(248, 243, 234, 0.9);
-      margin-bottom: 12px;
-    }
-    body.results--minimal.results--diag-v2 #results-hero-sub {
-      text-align: center;
+    body.results--minimal.results--diag-v2 .diag-v2-stack {
+      width: 100%;
       max-width: 40rem;
-      margin-left: auto;
-      margin-right: auto;
-      color: rgba(248, 243, 234, 0.86);
-      margin-bottom: 18px;
+      margin: 0 auto 18px;
+      text-align: left;
+    }
+    body.results--minimal.results--diag-v2 .diag-v2-label {
+      font-family: var(--font-mono, 'DM Mono', monospace);
+      font-size: 9px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: rgba(248, 243, 234, 0.52);
+      margin: 0 0 5px;
+    }
+    body.results--minimal.results--diag-v2 .diag-v2-body {
+      margin: 0 0 14px;
+      font-size: 15px;
+      line-height: 1.55;
+      color: rgba(248, 243, 234, 0.9);
+    }
+    body.results--minimal.results--diag-v2 .diag-v2-block:last-child .diag-v2-body {
+      margin-bottom: 0;
+    }
+    body.results--minimal.results--diag-v2 .results-observable-body {
+      margin-top: 8px;
     }
     body.results--minimal.results--diag-v2 #openingRead {
       font-size: clamp(32px, 5vw, 52px);
@@ -1570,9 +1580,20 @@
           <a href="/snapshot">View Snapshot</a>
         </p>
         <h1 class="hero-h1 hero-h1--support" id="openingRead"></h1>
-        <p class="hero-sub results-route-note" id="results-route-note" hidden></p>
-        <p class="hero-sub" id="results-hero-sub" hidden></p>
-        <div class="results-observable-body" id="results-observable-body" aria-live="polite"></div>
+        <div class="diag-v2-stack" id="results-v2-stack" hidden>
+          <div class="diag-v2-block">
+            <p class="diag-v2-label">What this means</p>
+            <p class="diag-v2-body" id="results-v2-means"></p>
+          </div>
+          <div class="diag-v2-block">
+            <p class="diag-v2-label">Where this shows up</p>
+            <p class="diag-v2-body" id="results-v2-shows"></p>
+          </div>
+          <div class="diag-v2-block">
+            <p class="diag-v2-label">First move</p>
+            <p class="diag-v2-body hero-sub" id="results-hero-sub"></p>
+          </div>
+        </div>
         <section class="results-archetype-upsell" id="results-archetype-upsell" hidden aria-label="Archetype report upsell"></section>
         <div class="type-pill" id="typePill" aria-label="Detected types"></div>
         <div id="results-cei-strip" class="cei-node-strip" aria-label="Pressure map"></div>
@@ -1598,6 +1619,7 @@
             <a href="/access" class="sh-primary-flow__link">Apply for Private Access</a>
           </p>
         </div>
+        <div class="results-observable-body" id="results-observable-body" aria-live="polite"></div>
         <section class="sh-results-routes sh-results-routes--quiet" id="sh-results-routes" aria-label="Other directions" hidden>
           <p class="sh-results-routes__label">If you need a different next step</p>
           <div class="sh-results-routes__grid">
@@ -1730,6 +1752,55 @@
 
   var STRIPE_FULL_REPORT_27 = 'https://buy.stripe.com/00wcN500E5imd5WeWv33W03';
 
+  function diagV2BundleFromType(resultType) {
+    var t = String(resultType || '');
+    var MAP = {
+      Breakdown: {
+        diagnosis: 'Your business is breaking at multiple points.',
+        means:
+          'Leads, positioning, and delivery are not aligned. Work is inconsistent because the system is not defined.',
+        shows: "Leads don't convert and delivery feels reactive.",
+        firstMove: 'Fix how your offer explains itself and how delivery runs.',
+        primaryHref: STRIPE_FULL_REPORT_27,
+        primaryLabel: 'Get full report $27',
+        secondaryHref: null,
+        secondaryLabel: null
+      },
+      Misalignment: {
+        diagnosis: 'You are getting interest, but losing deals before they close.',
+        means:
+          'Your offer does not hold when buyers compare options. Positioning and structure are not carrying the decision.',
+        shows: "Calls feel strong but don't convert.",
+        firstMove: 'Fix how your offer explains itself before price comes up.',
+        primaryHref: STRIPE_FULL_REPORT_27,
+        primaryLabel: 'Get full report $27',
+        secondaryHref: '/snapshot',
+        secondaryLabel: 'Get your Snapshot $950'
+      },
+      Constraint: {
+        diagnosis: 'Your business works, but depends on you to keep it working.',
+        means: 'Delivery and decisions rely on you directly. That limits growth and consistency.',
+        shows: 'Work slows when you step away.',
+        firstMove: 'Remove yourself from one repeatable step.',
+        primaryHref: '/snapshot',
+        primaryLabel: 'Get your Snapshot $950',
+        secondaryHref: null,
+        secondaryLabel: null
+      },
+      Ceiling: {
+        diagnosis: "You've reached the limit of your current structure.",
+        means: 'Growth requires changing how the business runs.',
+        shows: 'You are fully booked but revenue does not scale.',
+        firstMove: 'Replace one manual decision with a defined system.',
+        primaryHref: '/snapshot',
+        primaryLabel: 'Get your Snapshot $950',
+        secondaryHref: null,
+        secondaryLabel: null
+      }
+    };
+    return MAP[t] || MAP.Breakdown;
+  }
+
   function fillSevenV2Observable(dr) {
     var body = document.getElementById('results-observable-body');
     if (!body) return;
@@ -1769,20 +1840,22 @@
     document.getElementById('state-email-gate').classList.remove('visible');
     document.getElementById('state-result').classList.add('visible');
 
+    var bundle = diagV2BundleFromType(dr && dr.resultType);
+
     var h1 = document.getElementById('openingRead');
-    if (h1) h1.textContent = dr.diagnosisLine || '';
+    if (h1) h1.textContent = bundle.diagnosis;
 
-    var routeEl = document.getElementById('results-route-note');
-    if (routeEl) {
-      routeEl.textContent = dr.routeMessage || '';
-      routeEl.hidden = !String(dr.routeMessage || '').trim();
+    var meansEl = document.getElementById('results-v2-means');
+    var showsEl = document.getElementById('results-v2-shows');
+    var moveEl = document.getElementById('results-hero-sub');
+    var stack = document.getElementById('results-v2-stack');
+    if (meansEl) meansEl.textContent = bundle.means;
+    if (showsEl) showsEl.textContent = bundle.shows;
+    if (moveEl) {
+      moveEl.textContent = bundle.firstMove;
+      moveEl.removeAttribute('hidden');
     }
-
-    var sub = document.getElementById('results-hero-sub');
-    if (sub) {
-      sub.textContent = dr.firstMove || '';
-      sub.hidden = false;
-    }
+    if (stack) stack.hidden = false;
 
     fillSevenV2Observable(dr);
 
@@ -1801,28 +1874,21 @@
     var ctaPri = document.getElementById('results-primary-cta');
     var flowLinks = document.getElementById('results-flow-links');
     if (ctaPri) {
-      if (dr.route === 'report27') {
-        ctaPri.setAttribute('href', STRIPE_FULL_REPORT_27);
-        ctaPri.textContent = 'Get full report $27';
-        if (flowLinks) {
-          flowLinks.hidden = true;
-          flowLinks.innerHTML = '';
-        }
-      } else if (dr.route === 'snapshot950') {
-        ctaPri.setAttribute('href', '/snapshot');
-        ctaPri.textContent = 'Get your Snapshot $950';
-        if (flowLinks) {
-          flowLinks.hidden = true;
-          flowLinks.innerHTML = '';
-        }
+      ctaPri.setAttribute('href', bundle.primaryHref);
+      ctaPri.textContent = bundle.primaryLabel;
+    }
+    if (flowLinks) {
+      if (bundle.secondaryHref && bundle.secondaryLabel) {
+        flowLinks.hidden = false;
+        flowLinks.innerHTML =
+          '<a href="' +
+          esc(bundle.secondaryHref) +
+          '" class="magnetic" data-sh-flow-secondary>' +
+          esc(bundle.secondaryLabel) +
+          '</a>';
       } else {
-        ctaPri.setAttribute('href', STRIPE_FULL_REPORT_27);
-        ctaPri.textContent = 'Get full report $27';
-        if (flowLinks) {
-          flowLinks.hidden = false;
-          flowLinks.innerHTML =
-            '<a href="/snapshot" class="magnetic" data-sh-flow-secondary>Get your Snapshot $950</a>';
-        }
+        flowLinks.hidden = true;
+        flowLinks.innerHTML = '';
       }
     }
   }
@@ -2131,6 +2197,8 @@
       sub.textContent = '';
       sub.setAttribute('hidden', '');
     }
+    var v2s = document.getElementById('results-v2-stack');
+    if (v2s) v2s.hidden = true;
   }
 
   function applyObservableScoreLine() {
@@ -2145,10 +2213,18 @@
 
   function renderSevenQuestionPage(dr) {
     document.body.classList.remove('results--diag-v2');
-    var routeNote = document.getElementById('results-route-note');
-    if (routeNote) {
-      routeNote.textContent = '';
-      routeNote.hidden = true;
+    var v2stack = document.getElementById('results-v2-stack');
+    if (v2stack) {
+      v2stack.hidden = true;
+    }
+    var meansEl = document.getElementById('results-v2-means');
+    var showsEl = document.getElementById('results-v2-shows');
+    var moveEl = document.getElementById('results-hero-sub');
+    if (meansEl) meansEl.textContent = '';
+    if (showsEl) showsEl.textContent = '';
+    if (moveEl) {
+      moveEl.textContent = '';
+      moveEl.setAttribute('hidden', '');
     }
     if (dr && dr.schema === 'diag_v2') {
       renderSevenQuestionV2Page(dr);
@@ -3268,18 +3344,16 @@
 
   if (drSeven) {
     window.__resultsVisualScores = buildSevenQuestionVisualScores(drSeven);
-    var sevenHead =
-      drSeven.schema === 'diag_v2' && drSeven.diagnosisLine
-        ? String(drSeven.diagnosisLine)
-        : drSeven.result && drSeven.result.headline
-          ? String(drSeven.result.headline)
-          : '';
-    var sevenNext =
-      drSeven.schema === 'diag_v2' && drSeven.firstMove
-        ? String(drSeven.firstMove)
-        : drSeven.result && drSeven.result.nextStep
-          ? String(drSeven.result.nextStep)
-          : '';
+    var sevenHead = '';
+    var sevenNext = '';
+    if (drSeven.schema === 'diag_v2') {
+      var bun7 = diagV2BundleFromType(drSeven.resultType);
+      sevenHead = bun7.diagnosis;
+      sevenNext = bun7.firstMove;
+    } else if (drSeven.result && drSeven.result.headline) {
+      sevenHead = String(drSeven.result.headline);
+      sevenNext = drSeven.result.nextStep ? String(drSeven.result.nextStep) : '';
+    }
     pageData = {
       result_version: 'mixed_general',
       type_primary: '',

@@ -245,12 +245,6 @@
       }, ms);
     }
 
-    function countNo(ids, byId) {
-      return ids.filter(function (id) {
-        return byId[id] === "no";
-      }).length;
-    }
-
     function answersById() {
       const m = {};
       answers.forEach(function (a) {
@@ -266,44 +260,6 @@
       return "Ceiling";
     }
 
-    function diagnosisLine(type, noEarly, noLate) {
-      const earlyHeavy = noEarly >= noLate;
-      if (type === "Breakdown") {
-        return earlyHeavy
-          ? "Your offer requires explanation before it makes sense."
-          : "Your structure depends on you to function.";
-      }
-      if (type === "Misalignment") {
-        return earlyHeavy
-          ? "Your deals break at the point of comparison."
-          : "Your leads do not match the work you want paid for.";
-      }
-      if (type === "Constraint") {
-        return earlyHeavy
-          ? "Buyers still need you in the room to explain the edge."
-          : "Delivery varies because the steps live in your head.";
-      }
-      return "You are maxed on effort before the next revenue tier.";
-    }
-
-    function routeKey(noEarly, noLate) {
-      if (noEarly >= 3 && noLate < 3) return "report27";
-      if (noLate >= 3 && noEarly < 3) return "snapshot950";
-      return "mixed";
-    }
-
-    function routeMessage(key) {
-      if (key === "report27") return "Fix how your offer explains itself before price comes up.";
-      if (key === "snapshot950") return "Your structure is limiting revenue and consistency.";
-      return "You are solving problems manually instead of structurally.";
-    }
-
-    function firstMoveFromRoute(key) {
-      if (key === "report27") return "Rewrite your offer so it makes sense without explanation.";
-      if (key === "snapshot950") return "Map your delivery steps and remove variation.";
-      return "Rewrite your offer so it makes sense without explanation.";
-    }
-
     function buildPayload() {
       const byId = answersById();
       const points = answers.map(function (a) {
@@ -312,13 +268,7 @@
       const totalScore = points.reduce(function (s, n) {
         return s + n;
       }, 0);
-      const noEarly = countNo([1, 2, 3], byId);
-      const noLate = countNo([4, 5, 6, 7], byId);
       const resultType = resultTypeFromTotal(totalScore);
-      const route = routeKey(noEarly, noLate);
-      const diagnosis = diagnosisLine(resultType, noEarly, noLate);
-      const firstMove = firstMoveFromRoute(route);
-      const msg = routeMessage(route);
       const scores = {
         clarity: [1, 2, 7].filter(function (id) {
           return byId[id] === "no";
@@ -337,16 +287,10 @@
         points: points,
         totalScore: totalScore,
         resultType: resultType,
-        diagnosisLine: diagnosis,
-        firstMove: firstMove,
-        routeMessage: msg,
-        route: route,
-        noCountEarly: noEarly,
-        noCountLate: noLate,
         scores: scores,
         result: {
-          headline: diagnosis,
-          nextStep: firstMove
+          headline: "",
+          nextStep: ""
         }
       };
     }
