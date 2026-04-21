@@ -314,11 +314,14 @@
       margin-bottom: 6px;
     }
     .results-obs-static__p {
-      margin: 0;
+      margin: 0 0 8px;
       font-size: 16px;
       line-height: 1.55;
       color: rgba(244, 237, 224, 0.9);
       max-width: 52ch;
+    }
+    .results-obs-static__p:last-child {
+      margin-bottom: 0;
     }
     .results-accordion {
       border-top: 1px solid var(--line-soft);
@@ -1114,7 +1117,7 @@
       font-family: 'Lato', sans-serif;
     }
 
-    /* —— Visual score reveal (tokens: stephuary-design-tokens.css) —— */
+    /* Visual score reveal (tokens: stephuary-design-tokens.css) */
     .results-score-reveal {
       position: relative;
       z-index: 1;
@@ -1293,9 +1296,6 @@
       padding: 0 12px;
       line-height: 1.55;
     }
-    .results-archetype-upsell__locked-text::before {
-      content: '🔒 ';
-    }
     .results-archetype-upsell__cta-headline {
       font-family: var(--font-serif, 'Playfair Display', Georgia, serif);
       font-size: clamp(24px, 3vw, 32px);
@@ -1309,11 +1309,42 @@
       line-height: 1.55;
       margin-bottom: 10px;
     }
-    .results-archetype-upsell__preview {
-      margin: 0 0 14px;
+    .results-archetype-upsell__cta-kicker {
+      margin: 0 0 8px;
+      font-family: 'Lato', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: rgba(244, 237, 224, 0.88);
+    }
+    .results-archetype-upsell__cta-list {
+      list-style: none;
+      margin: 0 0 12px;
+      padding: 0;
+      display: grid;
+      gap: 8px;
+    }
+    .results-archetype-upsell__cta-list li {
+      position: relative;
+      padding-left: 14px;
       font-size: 14px;
-      line-height: 1.5;
-      color: rgba(244, 237, 224, 0.92);
+      line-height: 1.45;
+      color: rgba(244, 237, 224, 0.9);
+    }
+    .results-archetype-upsell__cta-list li::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0.55em;
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: rgba(196, 163, 90, 0.75);
+    }
+    .results-archetype-upsell__lock-list {
+      margin: 0;
+      padding: 0;
     }
     .results-archetype-upsell__pills {
       display: flex;
@@ -1640,19 +1671,31 @@
 
   var OBSERVABLE_PACKS = {
     steady: {
-      headline: 'People see your work, then stop before they buy.',
-      scoreLine: 'They get far enough to look, then nothing moves when it is time to pay or book.',
+      headline: "You're losing deals when money comes up.",
+      whereBreaks: [
+        'People take the call. They engage.',
+        'The drop happens when they decide if it is worth the price.',
+        "Your offer does not hold when they compare it."
+      ],
       looks: [
-        'They read the page and leave without starting checkout or booking.',
-        'They ask questions, then go quiet when you send the price or the link.',
-        'They say it sounds good, then do not pick a time and do not send the deposit.'
+        'They ask "how is this different?" before committing.',
+        'They stall after the proposal.',
+        'They focus on price instead of scope.',
+        'They go quiet after a call that felt like a yes.'
       ],
       leads: [
-        'Money comes in uneven weeks even when your inbox is busy.',
-        'You explain the same offer more than once and it still does not close.',
-        'You spend hours on people who never pay full price.'
+        'Deals that were already close.',
+        'Time spent explaining instead of closing.',
+        'Lower pricing to keep momentum.',
+        'Revenue that does not match demand.'
       ],
-      fix: 'Put what you sell, who it is for, the price, and the next step on the first screen they land on so buyers can decide without a long thread.'
+      why: [
+        'Your offer requires explanation.',
+        'Buyers pause to figure it out.',
+        'That pause delays the decision.'
+      ],
+      fix: "Your offer needs to stand on its own.\n\nIt should be clear what it is, who it is for, and why it wins.",
+      oneSign: "Your testimonials could sit on a competitor's page with minor edits."
     },
     firstread: {
       headline: 'People land on what you wrote and still do not know what to buy.',
@@ -1730,7 +1773,38 @@
         })
         .join('');
     }
+    function whereBreaksHtml(packData) {
+      if (packData.whereBreaks && packData.whereBreaks.length) {
+        return packData.whereBreaks
+          .map(function (line) {
+            return '<p class="results-obs-static__p">' + esc(line) + '</p>';
+          })
+          .join('');
+      }
+      return '<p class="results-obs-static__p">' + esc(packData.scoreLine || '') + '</p>';
+    }
+    function whyBlock(packData) {
+      if (packData.why && packData.why.length) {
+        return '<ul class="results-obs__ul">' + listHtml(packData.why) + '</ul>';
+      }
+      return '<p class="results-obs__p">' + esc(packData.scoreLine || '') + '</p>';
+    }
+    function fixHtml(packData) {
+      var raw = String(packData.fix || '');
+      if (raw.indexOf('\n\n') !== -1) {
+        var parts = raw.split('\n\n');
+        return (
+          '<p class="results-obs__p">' +
+          esc(parts[0]) +
+          '</p><p class="results-obs__p">' +
+          esc(parts.slice(1).join('\n\n')) +
+          '</p>'
+        );
+      }
+      return '<p class="results-obs__p">' + esc(raw) + '</p>';
+    }
     function oneSign(packData) {
+      if (packData.oneSign) return packData.oneSign;
       if (packData.looks && packData.looks[0]) return packData.looks[0];
       if (packData.leads && packData.leads[0]) return packData.leads[0];
       return 'This pattern keeps repeating even when you work harder.';
@@ -1738,7 +1812,7 @@
     return (
       '<section class="results-obs-static" aria-label="Where this breaks">' +
       '<h2 class="results-obs-static__h">Where this breaks</h2>' +
-      '<p class="results-obs-static__p">' + esc(pack.scoreLine) + '</p>' +
+      whereBreaksHtml(pack) +
       '</section>' +
       '<section class="results-accordion" aria-label="Result details">' +
       '<article class="results-accordion-item" data-acc-item>' +
@@ -1757,13 +1831,13 @@
       '<button class="results-accordion-trigger" type="button" aria-expanded="false">' +
       '<span>Why this is happening</span><span class="results-accordion-trigger__icon" aria-hidden="true">▾</span>' +
       '</button>' +
-      '<div class="results-accordion-panel"><div class="results-accordion-panel__inner"><p class="results-obs__p">' + esc(pack.scoreLine) + '</p></div></div>' +
+      '<div class="results-accordion-panel"><div class="results-accordion-panel__inner">' + whyBlock(pack) + '</div></div>' +
       '</article>' +
       '<article class="results-accordion-item" data-acc-item>' +
       '<button class="results-accordion-trigger" type="button" aria-expanded="false">' +
       '<span>What to fix first</span><span class="results-accordion-trigger__icon" aria-hidden="true">▾</span>' +
       '</button>' +
-      '<div class="results-accordion-panel"><div class="results-accordion-panel__inner"><p class="results-obs__p">' + esc(pack.fix) + '</p></div></div>' +
+      '<div class="results-accordion-panel"><div class="results-accordion-panel__inner">' + fixHtml(pack) + '</div></div>' +
       '</article>' +
       '<article class="results-accordion-item" data-acc-item>' +
       '<button class="results-accordion-trigger" type="button" aria-expanded="false">' +
@@ -1822,7 +1896,9 @@
       key = observablePackKeyFromLegacy(ctx.data.diagnostic);
     }
     var pack = OBSERVABLE_PACKS[key] || OBSERVABLE_PACKS.steady;
-    window.__observableScoreLine = pack.scoreLine;
+    window.__observableScoreLine =
+      pack.scoreLine ||
+      (pack.whereBreaks && pack.whereBreaks.length ? pack.whereBreaks.join(' ') : pack.headline);
     h1.textContent = pack.headline;
     body.innerHTML = observableHtmlFromPack(pack);
     initResultAccordions();
@@ -2155,7 +2231,7 @@
     mount.hidden = false;
     mount.innerHTML =
       '<div class="results-archetype-upsell__card">' +
-      '<p class="results-archetype-upsell__label">Three of seven tells for this archetype</p>' +
+      '<p class="results-archetype-upsell__label">You are showing 3 of 7 signs of this pattern</p>' +
       '<ul class="results-archetype-upsell__list">' +
       item.tells
         .map(function (tell) {
@@ -2165,22 +2241,26 @@
       '</ul>' +
       '</div>' +
       '<div class="results-archetype-upsell__locked">' +
-      '<p class="results-archetype-upsell__locked-text">You are missing 4 more signs, the root cause, what this is costing you, and the first move to stop the leak.</p>' +
+      '<p class="results-archetype-upsell__locked-text">The rest identifies:</p>' +
+      '<ul class="results-archetype-upsell__cta-list results-archetype-upsell__lock-list">' +
+      '<li>Where deals break</li>' +
+      '<li>What it is costing</li>' +
+      '<li>What to change first</li>' +
+      '</ul>' +
       '</div>' +
       '<div class="results-archetype-upsell__card">' +
-      '<h3 class="results-archetype-upsell__cta-headline">Get your full archetype report.</h3>' +
-      '<p class="results-archetype-upsell__cta-body">This is the missing part of your diagnosis.</p>' +
-      '<p class="results-archetype-upsell__preview">One of the remaining signs shows exactly where your last 3 deals likely broke, even if the conversations felt strong.</p>' +
-      '<div class="results-archetype-upsell__pills">' +
-      '<span class="results-archetype-upsell__pill">All 7 tells</span>' +
-      '<span class="results-archetype-upsell__pill">Root cause</span>' +
-      '<span class="results-archetype-upsell__pill">Leverage point</span>' +
-      '<span class="results-archetype-upsell__pill">Instant delivery</span>' +
-      '</div>' +
+      '<h3 class="results-archetype-upsell__cta-headline">Get the full diagnosis</h3>' +
+      '<p class="results-archetype-upsell__cta-kicker">Full breakdown</p>' +
+      '<ul class="results-archetype-upsell__cta-list">' +
+      '<li>All 7 signs</li>' +
+      '<li>Exact failure point</li>' +
+      '<li>What it is costing</li>' +
+      '<li>One move to fix this this week</li>' +
+      '</ul>' +
+      '<p class="results-archetype-upsell__cta-sub">Instant delivery</p>' +
       '<a class="results-archetype-upsell__cta-btn" href="' +
       esc(item.stripeLink) +
-      '">Get the full report — $27</a>' +
-      '<p class="results-archetype-upsell__cta-sub">Instant delivery. No subscription.</p>' +
+      '">Get the full report - $27</a>' +
       '</div>';
   }
 
