@@ -1,807 +1,877 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Snapshot | Stephuary</title>
-  <meta name="description" content="Snapshot: written from your diagnostic answers. Delivered within 48 hours. No call required." />
-  <link rel="stylesheet" href="/stephuary-interactive.css" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Lato:wght@300;400;600&display=swap" rel="stylesheet" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Snapshot — Stephuary</title>
+  <meta name="description" content="Business diagnostic read. Clarity, positioning, and structure scored and mapped. One direction. Queue-based delivery.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
+    /* ── Variables ── */
     :root {
-      --bg: #080807;
-      --bg-1: #0e0e0c;
-      --gold: #c4a35a;
-      --gold-line: rgba(196, 163, 90, 0.22);
-      --blue: #2b4fd4;
-      --blue-hi: #3560e8;
-      --text: #f4ede0;
-      --text-2: #d8d0c4;
-      --text-muted: #a89f92;
-      --line: rgba(244, 237, 224, 0.1);
-      --line-2: rgba(244, 237, 224, 0.06);
-      --serif: "Cormorant Garamond", Georgia, serif;
-      --sans: "Lato", system-ui, sans-serif;
-      --r: 2px;
-      --max: 640px;
+      --bg-void:       #05050F;
+      --bg-deep:       #080818;
+      --bg-surface:    #0D0D22;
+      --bg-surface-2:  #12122A;
+      --neon-plum:     #8B2FC9;
+      --neon-violet:   #BF5AF2;
+      --neon-blue:     #0A84FF;
+      --neon-gold:     #C8A96E;
+      --cta-royal-blue:#4169e1;
+      --text-primary:  #FFFFFF;
+      --text-secondary:#A0A0C0;
+      --text-muted:    #4A4A6A;
+      --text-label:    #C8A96E;
+      --glow-plum: 0 0 20px rgba(139,47,201,0.55), 0 0 60px rgba(139,47,201,0.2);
+      --glow-cta:  0 0 28px rgba(65,105,225,0.65), 0 0 80px rgba(65,105,225,0.28);
+      --glow-gold: 0 0 16px rgba(200,169,110,0.45);
+      --font-serif: 'Playfair Display', Georgia, serif;
+      --font-sans:  'Inter', system-ui, sans-serif;
+      --font-mono:  'JetBrains Mono', 'Courier New', monospace;
+      --z-canvas:   0;
+      --z-content:  10;
+      --z-scanline: 30;
+      --z-cursor:   40;
+      --z-nav:      50;
     }
 
-    html, body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: var(--sans);
-      font-weight: 300;
-      font-size: 17px;
-      line-height: 1.65;
-      min-height: 100%;
+    /* ── Reset ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: #05050F;
+      background-image:
+        radial-gradient(ellipse 80% 60% at 50% 0%, rgba(61,12,44,0.85) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 40% at 20% 100%, rgba(61,12,44,0.5) 0%, transparent 50%),
+        radial-gradient(ellipse 50% 40% at 80% 60%, rgba(139,47,201,0.12) 0%, transparent 50%);
+      color: var(--text-primary);
+      font-family: var(--font-sans);
+      font-size: 16px;
+      line-height: 1.6;
+      overflow-x: hidden;
       -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
     }
 
-    a { color: inherit; text-decoration: none; }
-
-    body::after {
-      content: "";
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      z-index: 100;
-      opacity: 0.022;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-      background-size: 200px 200px;
+    /* ── Scanlines ── */
+    .scanlines {
+      position: fixed; inset: 0; pointer-events: none;
+      z-index: var(--z-scanline);
+      background: repeating-linear-gradient(
+        0deg, transparent, transparent 3px,
+        rgba(0,0,0,0.022) 3px, rgba(0,0,0,0.022) 4px
+      );
     }
 
-    .page {
-      position: relative;
-      z-index: 1;
-      max-width: var(--max);
-      margin: 0 auto;
-      padding: 0 24px 120px;
+    /* ── Cursor light ── */
+    .cursor-light {
+      position: fixed; inset: 0; pointer-events: none;
+      z-index: var(--z-cursor);
+      background: radial-gradient(
+        600px circle at var(--cursor-x, 50%) var(--cursor-y, 50%),
+        rgba(139,47,201,0.14),
+        rgba(61,12,44,0.10) 30%,
+        rgba(10,132,255,0.05) 55%,
+        transparent 70%
+      );
+      transition: background 0.08s linear;
     }
 
-    .top-nav {
-      padding: 28px 0 0;
-      display: flex;
+    /* ── Canvas ── */
+    #starfield {
+      position: fixed !important; inset: 0 !important;
+      z-index: var(--z-canvas);
+      pointer-events: none !important;
+    }
+
+    /* ── Page scan ── */
+    @keyframes page-scan {
+      0%   { top: -2px; opacity: 1; }
+      90%  { opacity: 1; }
+      100% { top: 100vh; opacity: 0; }
+    }
+    .page-scan {
+      position: fixed; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, transparent, rgba(139,47,201,0.6) 20%,
+        rgba(191,90,242,0.9) 50%, rgba(139,47,201,0.6) 80%, transparent);
+      box-shadow: 0 0 12px rgba(191,90,242,0.8);
+      z-index: 999; pointer-events: none;
+      animation: page-scan 1.4s ease-in forwards;
+      animation-delay: 0.2s;
+    }
+
+    /* ── Nav ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0;
+      height: 60px; z-index: var(--z-nav);
+      background: rgba(5,5,15,0.85);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border-bottom: 1px solid rgba(139,47,201,0.18);
+      display: flex; align-items: center;
       justify-content: space-between;
-      align-items: center;
-      margin-bottom: 56px;
-      flex-wrap: wrap;
-      gap: 16px;
+      padding: 0 40px;
+    }
+    .nav-wordmark {
+      font-family: var(--font-sans); font-weight: 700;
+      font-size: 13px; letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--text-primary); text-decoration: none;
+      transition: color 0.2s ease;
+    }
+    .nav-wordmark:hover { color: var(--neon-violet); }
+    .nav-back {
+      font-family: var(--font-mono); font-size: 11px;
+      letter-spacing: 0.15em; text-transform: uppercase;
+      color: var(--text-secondary); text-decoration: none;
+      display: flex; align-items: center; gap: 6px;
+      transition: color 0.2s ease;
+    }
+    .nav-back:hover { color: var(--text-primary); }
+    .nav-back::before { content: '←'; font-size: 12px; }
+
+    /* ── Layout ── */
+    .container {
+      width: 100%; max-width: 960px;
+      margin: 0 auto; padding: 0 24px;
     }
 
-    .nav-logo {
-      font-family: var(--serif);
-      font-size: 13px;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      color: var(--gold);
-      font-weight: 300;
+    /* ── Page wrapper ── */
+    .page {
+      position: relative; z-index: var(--z-content);
+      min-height: 100vh;
+      padding: 120px 0 80px;
+      display: flex; flex-direction: column; align-items: center;
     }
 
-    .nav-links {
-      display: flex;
-      gap: 18px 20px;
-      align-items: center;
-      flex-wrap: wrap;
-    }
-
-    .nav-link {
-      font-size: 10px;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: var(--text-muted);
-      transition: color 150ms;
-    }
-
-    .nav-link:hover { color: var(--text-2); }
-    .nav-link--club { color: var(--gold); }
-
-    .kicker {
-      font-size: 10px;
-      letter-spacing: 0.22em;
-      text-transform: uppercase;
-      color: var(--gold);
-      font-weight: 400;
+    /* ── Header ── */
+    .page-label {
+      font-family: var(--font-mono);
+      font-size: 10px; letter-spacing: 0.35em; text-transform: uppercase;
+      color: var(--text-label);
+      display: flex; align-items: center; gap: 14px;
       margin-bottom: 20px;
     }
-
-    .diagnosis-strip {
-      font-size: 14px;
-      font-weight: 400;
-      line-height: 1.5;
-      color: var(--text-2);
-      padding: 14px 18px;
-      border: 1px solid var(--gold-line);
-      border-left: 3px solid var(--gold);
-      background: rgba(196, 163, 90, 0.06);
-      border-radius: var(--r);
-      margin-bottom: 36px;
-      max-width: 100%;
+    .page-label::before, .page-label::after {
+      content: ''; flex: none; width: 48px; height: 1px;
+      background: rgba(200,169,110,0.55);
     }
 
-    .diagnosis-strip--default {
-      border-left-color: var(--text-muted);
+    .page-headline {
+      font-family: var(--font-serif);
+      font-size: clamp(36px, 5vw, 56px);
+      font-weight: 900; line-height: 1.08;
+      text-align: center; color: var(--text-primary);
+      margin-bottom: 14px; letter-spacing: -0.01em;
     }
 
-    h1 {
-      font-family: var(--serif);
-      font-weight: 300;
-      font-size: clamp(36px, 7vw, 58px);
-      line-height: 1.06;
-      letter-spacing: -0.02em;
-      color: var(--text);
-      margin-bottom: 18px;
-      max-width: 18ch;
+    .page-sub {
+      font-family: var(--font-sans); font-size: 16px;
+      color: var(--text-secondary); text-align: center;
+      max-width: 520px; line-height: 1.75; margin-bottom: 32px;
     }
 
-    .hero-sub {
-      font-size: 17px;
-      line-height: 1.6;
-      color: var(--text-2);
-      max-width: 38ch;
-      margin-bottom: 20px;
-    }
-
-    .delivery-block {
+    /* ── Queue status bar ── */
+    .queue-status {
+      display: flex; align-items: center; gap: 12px;
+      background: rgba(200,169,110,0.07);
+      border: 1px solid rgba(200,169,110,0.25);
+      border-radius: 3px;
+      padding: 12px 20px;
       margin-bottom: 56px;
     }
-
-    .delivery-line {
-      font-size: 13px;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: var(--text-muted);
-      margin-bottom: 10px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .delivery-line::before {
-      content: "";
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background: var(--gold);
-      opacity: 0.5;
+    .queue-dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: var(--neon-gold);
+      box-shadow: 0 0 8px rgba(200,169,110,0.9);
       flex-shrink: 0;
+      animation: pulse-dot 2s ease infinite;
     }
-
-    .delivery-sub {
-      font-size: 16px;
-      line-height: 1.6;
-      color: var(--text-2);
-      max-width: 40ch;
-      padding-left: 16px;
-      border-left: 2px solid var(--gold-line);
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
     }
-
-    .section { margin-bottom: 64px; }
-
-    .section h2 {
-      font-family: var(--serif);
-      font-weight: 300;
-      font-size: clamp(22px, 3.5vw, 30px);
-      line-height: 1.15;
-      letter-spacing: -0.01em;
-      color: var(--text);
-      margin-bottom: 14px;
+    .queue-text {
+      font-family: var(--font-mono); font-size: 10px;
+      letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--neon-gold);
     }
-
-    .section p,
-    .section li {
-      font-size: 16px;
-      line-height: 1.65;
-      color: var(--text-2);
-      max-width: 46ch;
+    .queue-divider {
+      width: 1px; height: 14px;
+      background: rgba(200,169,110,0.25);
     }
-
-    .section p + p { margin-top: 12px; }
-
-    .meaning-attribution {
-      margin-top: 16px;
-      font-size: 15px;
-      line-height: 1.65;
-      color: var(--text-muted);
-      max-width: 46ch;
-    }
-
-    .bullet-list {
-      list-style: none;
-      margin-top: 16px;
-      display: flex;
-      flex-direction: column;
-      gap: 0;
-      border-top: 1px solid var(--line-2);
-    }
-
-    .bullet-list li {
-      padding: 14px 0 14px 20px;
-      border-bottom: 1px solid var(--line-2);
-      position: relative;
-      max-width: none;
-    }
-
-    .bullet-list li::before {
-      content: "";
-      position: absolute;
-      left: 0;
-      top: 1.15em;
-      width: 5px;
-      height: 5px;
-      border-radius: 50%;
-      background: var(--gold);
-      opacity: 0.45;
-    }
-
-    .emphasis-block {
-      background: var(--bg-1);
-      border: 1px solid var(--line);
-      border-top: 2px solid var(--gold);
-      border-radius: var(--r);
-      padding: 24px 22px;
-    }
-
-    .emphasis-block h2 { margin-bottom: 16px; }
-
-    .urgency-block p {
-      max-width: 46ch;
-    }
-
-    .clarifier {
-      font-size: 15px;
-      line-height: 1.6;
-      color: var(--text-2);
-      padding: 20px 0;
-      border-top: 1px solid var(--line);
-      border-bottom: 1px solid var(--line);
-      max-width: 46ch;
-    }
-
-    .cta-area {
-      margin-top: 48px;
-    }
-
-    .hero-price {
-      display: flex;
-      align-items: baseline;
-      gap: 10px;
-      margin-bottom: 20px;
-    }
-
-    .hero-price-val {
-      font-family: var(--serif);
-      font-size: clamp(30px, 5vw, 44px);
-      font-weight: 300;
-      color: var(--text);
-      letter-spacing: -0.02em;
-    }
-
-    .hero-price-note {
-      font-size: 12px;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
+    .queue-wait {
+      font-family: var(--font-mono); font-size: 10px;
+      letter-spacing: 0.15em; text-transform: uppercase;
       color: var(--text-muted);
     }
-
-    .hero-price-sub {
-      font-size: 15px;
-      line-height: 1.55;
-      color: var(--text-2);
-      margin: 0 0 28px;
-      max-width: 44ch;
+    .queue-wait strong {
+      color: var(--text-secondary);
     }
 
-    .pre-cta-line {
-      font-size: 15px;
-      line-height: 1.55;
-      color: var(--text-2);
-      margin: 0 0 16px;
-      max-width: 44ch;
+    /* ── What's included grid ── */
+    .deliverables-block {
+      width: 100%; max-width: 800px;
+      margin-bottom: 64px;
     }
-
-    .btn {
-      display: inline-flex;
-      align-items: center;
+    .deliverables-label {
+      font-family: var(--font-mono); font-size: 10px;
+      letter-spacing: 0.3em; text-transform: uppercase;
+      color: var(--text-label);
+      text-align: center; margin-bottom: 28px;
+      display: flex; align-items: center; gap: 14px;
       justify-content: center;
-      min-height: 54px;
-      padding: 16px 28px;
-      border-radius: var(--r);
-      font-size: 11px;
-      letter-spacing: 0.16em;
-      text-transform: uppercase;
-      font-family: var(--sans);
-      font-weight: 600;
-      cursor: pointer;
-      border: none;
-      transition: background 150ms ease, transform 120ms ease;
-      text-decoration: none;
-      width: 100%;
     }
-
-    .btn:active { transform: scale(0.98); }
-
-    .btn-primary {
-      background: var(--blue);
-      color: #fff;
+    .deliverables-label::before, .deliverables-label::after {
+      content: ''; width: 40px; height: 1px;
+      background: rgba(200,169,110,0.55);
     }
-
-    .btn-primary:hover { background: var(--blue-hi); }
-
-    .cta-buttons {
-      display: flex;
-      flex-direction: column;
+    .deliverables-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
       gap: 12px;
-      max-width: 420px;
+    }
+    .deliverable-item {
+      background: var(--bg-surface);
+      border: 1px solid rgba(139,47,201,0.18);
+      border-radius: 3px;
+      padding: 20px 18px;
+      position: relative;
+      overflow: hidden;
+    }
+    .deliverable-item::before {
+      content: ''; position: absolute;
+      top: 0; left: 0; right: 0; height: 1px;
+      background: linear-gradient(90deg, var(--neon-plum), transparent);
+      opacity: 0.6;
+    }
+    .deliverable-name {
+      font-family: var(--font-mono); font-size: 9px;
+      letter-spacing: 0.25em; text-transform: uppercase;
+      color: var(--neon-violet); margin-bottom: 8px; display: block;
+    }
+    .deliverable-desc {
+      font-family: var(--font-sans); font-size: 12px;
+      color: var(--text-secondary); line-height: 1.6;
+    }
+    .deliverable-item.highlight {
+      border-color: rgba(200,169,110,0.3);
+      grid-column: span 1;
+    }
+    .deliverable-item.highlight .deliverable-name {
+      color: var(--neon-gold);
     }
 
-    .btn-secondary {
+    /* ── Payment options ── */
+    .payment-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      width: 100%;
+      max-width: 800px;
+      margin: 0 auto 48px;
+    }
+
+    /* ── Card ── */
+    .payment-card {
+      position: relative;
+      background: var(--bg-surface);
+      border: 1px solid rgba(139,47,201,0.22);
+      border-radius: 4px;
+      padding: 40px 36px 36px;
+      display: flex; flex-direction: column;
+      overflow: hidden;
+      transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+    .payment-card::before {
+      content: ''; position: absolute;
+      top: 0; left: 36px; width: 40px; height: 2px;
+      background: var(--neon-gold);
+    }
+    .payment-card:hover {
+      transform: translateY(-5px);
+      border-color: rgba(191,90,242,0.55);
+      box-shadow: var(--glow-plum);
+    }
+
+    .payment-card.recommended {
+      border-color: rgba(200,169,110,0.4);
+    }
+    .payment-card.recommended::before {
+      background: var(--neon-gold);
+      box-shadow: var(--glow-gold);
+    }
+    .recommended-badge {
+      position: absolute; top: 16px; right: 16px;
+      font-family: var(--font-mono); font-size: 9px;
+      letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--bg-void);
+      background: var(--neon-gold);
+      padding: 4px 10px; border-radius: 2px;
+    }
+
+    .card-type {
+      font-family: var(--font-mono); font-size: 10px;
+      letter-spacing: 0.25em; text-transform: uppercase;
+      color: var(--neon-violet);
+      margin-bottom: 20px; display: block;
+    }
+
+    .card-price {
+      display: flex; align-items: baseline; gap: 6px;
+      margin-bottom: 8px;
+    }
+    .price-amount {
+      font-family: var(--font-serif); font-size: 52px;
+      font-weight: 900; color: var(--text-primary);
+      line-height: 1;
+    }
+    .price-currency {
+      font-family: var(--font-sans); font-size: 20px;
+      font-weight: 600; color: var(--text-secondary);
+      align-self: flex-start; margin-top: 8px;
+    }
+    .price-period {
+      font-family: var(--font-mono); font-size: 11px;
+      color: var(--text-muted); letter-spacing: 0.1em;
+    }
+
+    .price-note {
+      font-family: var(--font-mono); font-size: 10px;
+      color: var(--text-muted); letter-spacing: 0.1em;
+      margin-bottom: 28px; min-height: 18px;
+    }
+    .price-note.savings { color: var(--neon-gold); }
+
+    .card-divider {
+      width: 100%; height: 1px;
+      background: rgba(139,47,201,0.15);
+      margin-bottom: 24px;
+    }
+
+    .card-features {
+      list-style: none; margin-bottom: 36px; flex: 1;
+      display: flex; flex-direction: column; gap: 12px;
+    }
+    .card-features li {
+      font-family: var(--font-sans); font-size: 13px;
+      color: var(--text-secondary); line-height: 1.5;
+      display: flex; align-items: flex-start; gap: 10px;
+    }
+    .card-features li::before {
+      content: '';
+      flex-shrink: 0;
+      width: 5px; height: 5px;
+      background: var(--neon-plum);
+      border-radius: 50%;
+      margin-top: 6px;
+      box-shadow: 0 0 6px rgba(139,47,201,0.8);
+    }
+    .card-features li strong { color: var(--text-primary); font-weight: 600; }
+
+    /* ── CTA buttons ── */
+    .btn-full {
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-mono); font-size: 11px;
+      font-weight: 500; letter-spacing: 0.22em; text-transform: uppercase;
+      color: #fff; background: var(--cta-royal-blue);
+      border: none; border-radius: 2px;
+      padding: 15px 24px; text-decoration: none;
+      cursor: pointer; width: 100%;
+      box-shadow: var(--glow-cta);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      position: relative; overflow: hidden;
+    }
+    .btn-full::after {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,0.16), transparent 60%);
+      opacity: 0; transition: opacity 0.3s ease;
+    }
+    .btn-full:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 40px rgba(65,105,225,0.85), 0 0 100px rgba(65,105,225,0.35);
+    }
+    .btn-full:hover::after { opacity: 1; }
+    .btn-full:active { transform: translateY(0) scale(0.99); }
+
+    .btn-installment {
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-mono); font-size: 11px;
+      font-weight: 500; letter-spacing: 0.22em; text-transform: uppercase;
+      color: var(--neon-violet);
       background: transparent;
-      border: 1px solid var(--gold-line);
-      color: var(--text);
+      border: 1px solid rgba(191,90,242,0.5);
+      border-radius: 2px;
+      padding: 15px 24px; text-decoration: none;
+      cursor: pointer; width: 100%;
+      transition: border-color 0.25s ease, color 0.25s ease,
+                  background 0.25s ease, transform 0.2s ease;
+    }
+    .btn-installment:hover {
+      border-color: var(--neon-violet);
+      background: rgba(191,90,242,0.08);
+      color: #fff;
+      transform: translateY(-2px);
     }
 
-    .btn-secondary:hover {
-      background: rgba(196, 163, 90, 0.08);
-      border-color: rgba(196, 163, 90, 0.42);
+    /* ── Secure notice ── */
+    .secure-notice {
+      display: flex; align-items: center; justify-content: center;
+      gap: 10px; margin-top: 32px;
     }
-
-    .cta-support {
-      margin-top: 16px;
-      font-size: 15px;
-      line-height: 1.6;
-      color: var(--text-2);
-      max-width: 44ch;
-    }
-
-    .fallback-link {
-      display: inline-block;
-      margin-top: 22px;
-      font-size: 12px;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--gold);
-      border-bottom: 1px solid transparent;
-      padding-bottom: 2px;
-      transition: border-color 150ms;
-    }
-
-    .fallback-link:hover { border-bottom-color: var(--gold-line); }
-
-    .fallback-link[hidden] { display: none !important; }
-
-    .foot {
-      border-top: 1px solid var(--line-2);
-      padding-top: 24px;
-      margin-top: 72px;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px 18px;
-    }
-
-    .foot a {
-      font-size: 10px;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
+    .secure-icon {
+      width: 14px; height: 14px; opacity: 0.4;
       color: var(--text-muted);
-      transition: color 140ms;
+    }
+    .secure-text {
+      font-family: var(--font-mono); font-size: 10px;
+      letter-spacing: 0.18em; text-transform: uppercase;
+      color: var(--text-muted);
+    }
+    .stripe-badge {
+      font-family: var(--font-mono); font-size: 10px;
+      letter-spacing: 0.15em; color: var(--text-muted); opacity: 0.6;
     }
 
-    .foot a:hover { color: var(--text-2); }
-    .foot a.nav-club { color: var(--gold); }
+    /* ── Process steps ── */
+    .process-section {
+      width: 100%; max-width: 800px;
+      margin: 64px auto 0;
+    }
+    .process-label {
+      font-family: var(--font-mono); font-size: 10px;
+      letter-spacing: 0.3em; text-transform: uppercase;
+      color: var(--text-label);
+      text-align: center; margin-bottom: 32px;
+      display: flex; align-items: center; gap: 14px;
+      justify-content: center;
+    }
+    .process-label::before, .process-label::after {
+      content: ''; width: 40px; height: 1px;
+      background: rgba(200,169,110,0.55);
+    }
+    .process-steps {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: rgba(139,47,201,0.12);
+      border: 1px solid rgba(139,47,201,0.15);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    .process-step {
+      background: var(--bg-surface);
+      padding: 28px 24px;
+      position: relative;
+    }
+    .process-num {
+      font-family: var(--font-mono); font-size: 10px;
+      letter-spacing: 0.2em; color: var(--neon-violet);
+      margin-bottom: 12px; display: block;
+    }
+    .process-title {
+      font-family: var(--font-sans); font-size: 13px;
+      font-weight: 600; color: var(--text-primary);
+      margin-bottom: 8px;
+    }
+    .process-desc {
+      font-family: var(--font-sans); font-size: 12px;
+      color: var(--text-muted); line-height: 1.65;
+    }
 
-    @media (max-width: 560px) {
-      .page { padding: 0 18px 96px; }
-      h1 { max-width: none; }
-      .top-nav { margin-bottom: 44px; }
+    /* ── FAQ ── */
+    .faq-section {
+      width: 100%; max-width: 600px;
+      margin: 64px auto 0;
+    }
+    .faq-label {
+      font-family: var(--font-mono); font-size: 10px;
+      letter-spacing: 0.3em; text-transform: uppercase;
+      color: var(--text-label);
+      text-align: center; margin-bottom: 32px;
+      display: flex; align-items: center; gap: 14px;
+      justify-content: center;
+    }
+    .faq-label::before, .faq-label::after {
+      content: ''; width: 40px; height: 1px;
+      background: rgba(200,169,110,0.55);
+    }
+    .faq-item {
+      border-bottom: 1px solid rgba(139,47,201,0.12);
+      padding: 20px 0;
+    }
+    .faq-item:first-of-type { border-top: 1px solid rgba(139,47,201,0.12); }
+    .faq-q {
+      font-family: var(--font-sans); font-size: 14px;
+      font-weight: 600; color: var(--text-primary);
+      margin-bottom: 10px;
+    }
+    .faq-a {
+      font-family: var(--font-sans); font-size: 14px;
+      color: var(--text-secondary); line-height: 1.75;
+    }
+
+    /* ── Footer ── */
+    footer {
+      border-top: 1px solid rgba(139,47,201,0.1);
+      padding: 28px 0; text-align: center;
+      position: relative; z-index: var(--z-content);
+      margin-top: 80px;
+    }
+    .footer-text {
+      font-family: var(--font-mono); font-size: 10px;
+      letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    /* ── Reveal animations ── */
+    .reveal {
+      opacity: 0; transform: translateY(20px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    .reveal.is-visible { opacity: 1; transform: translateY(0); }
+    .reveal-delay-1 { transition-delay: 0.15s; }
+    .reveal-delay-2 { transition-delay: 0.30s; }
+
+    /* ── Mobile ── */
+    @media (max-width: 768px) {
+      nav { padding: 0 20px; height: 52px; }
+      .page { padding: 96px 0 64px; }
+      .container { padding: 0 20px; }
+      .payment-grid {
+        grid-template-columns: 1fr;
+        max-width: 420px;
+      }
+      .payment-card { padding: 32px 24px 28px; }
+      .payment-card:hover { transform: none; }
+      .price-amount { font-size: 44px; }
+      .page-headline { font-size: clamp(30px, 8vw, 40px); }
+      .deliverables-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+      .process-steps {
+        grid-template-columns: 1fr;
+      }
+      .queue-status {
+        flex-wrap: wrap; gap: 8px;
+      }
+    }
+
+    /* ── Reduced motion ── */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+      }
+      .page-scan, .cursor-light { display: none; }
+      .queue-dot { animation: none; }
+      .reveal { opacity: 1; transform: none; }
     }
   </style>
 </head>
 <body>
-  <div class="page">
-    <header class="top-nav">
-      <a href="/" class="nav-logo">Stephuary</a>
-      <nav class="nav-links" aria-label="Primary">
-        <a href="/pricing" class="nav-link">Pricing</a>
-        <a href="/access" class="nav-link nav-link--club">.5% Club</a>
-        <a href="https://stephuary.substack.com" class="nav-link" target="_blank" rel="noopener">Substack</a>
-      </nav>
-    </header>
 
-    <main id="snapshot-root">
-      <p class="kicker">Snapshot</p>
-      <p class="diagnosis-strip" id="el-diagnosis" aria-live="polite"></p>
-      <h1 id="el-headline"></h1>
-      <p class="hero-sub" id="el-subhead"></p>
-      <div class="delivery-block">
-        <p class="delivery-line">Delivered within 48 hours</p>
-        <p class="delivery-sub">You’ll know exactly what to change within 48 hours.</p>
+  <canvas id="starfield" aria-hidden="true"></canvas>
+  <div class="cursor-light" aria-hidden="true"></div>
+  <div class="scanlines" aria-hidden="true"></div>
+  <div class="page-scan" aria-hidden="true"></div>
+
+  <nav>
+    <a href="/" class="nav-wordmark">Stephuary</a>
+    <a href="/" class="nav-back">Back to site</a>
+  </nav>
+
+  <main class="page">
+    <div class="container" style="display:flex; flex-direction:column; align-items:center;">
+
+      <!-- Header -->
+      <div class="page-label reveal">The Snapshot</div>
+      <h1 class="page-headline reveal reveal-delay-1">One read. One direction.</h1>
+      <p class="page-sub reveal reveal-delay-2">
+        You submit the intake. I read your business against clarity, positioning, and structure. You get a scored breakdown and one specific direction — the exact lever with the highest return right now.
+      </p>
+
+      <!-- Queue status -->
+      <div class="queue-status reveal reveal-delay-2">
+        <span class="queue-dot"></span>
+        <span class="queue-text">Queue open</span>
+        <span class="queue-divider"></span>
+        <span class="queue-wait">Current wait: <strong>2–3 weeks</strong> from intake submission</span>
       </div>
 
-      <section class="section" aria-labelledby="meaning-heading">
-        <h2 id="meaning-heading">What this usually means</h2>
-        <p id="el-meaning"></p>
-        <p class="meaning-attribution" id="el-meaning-attribution" hidden></p>
-      </section>
-
-      <section class="section" aria-labelledby="what-you-get-heading">
-        <h2 id="what-you-get-heading">What you get</h2>
-        <p id="el-what-you-get-intro"></p>
-        <ul class="bullet-list" id="list-what-you-get"></ul>
-      </section>
-
-      <section class="section emphasis-block" aria-labelledby="emphasis-heading">
-        <h2 id="emphasis-heading"></h2>
-        <ul class="bullet-list" id="list-emphasis"></ul>
-      </section>
-
-      <section class="section" aria-labelledby="changes-heading">
-        <h2 id="changes-heading">What changes after this</h2>
-        <ul class="bullet-list" id="list-changes-after"></ul>
-      </section>
-
-      <section class="section urgency-block" aria-labelledby="urgency-heading">
-        <h2 id="urgency-heading">If you leave this as-is</h2>
-        <p id="el-urgency"></p>
-      </section>
-
-      <p class="clarifier" id="el-clarifier"></p>
-
-      <section class="cta-area" aria-labelledby="cta-price-label">
-        <div class="hero-price" id="cta-price-wrap">
-          <span class="hero-price-val" aria-hidden="true">$950</span>
-          <span class="hero-price-note" id="cta-price-label">Snapshot</span>
+      <!-- What you get -->
+      <div class="deliverables-block reveal">
+        <div class="deliverables-label">What the Snapshot covers</div>
+        <div class="deliverables-grid">
+          <div class="deliverable-item">
+            <span class="deliverable-name">Clarity Score</span>
+            <p class="deliverable-desc">How your message reads to a cold audience. Where it loses them. What's landing.</p>
+          </div>
+          <div class="deliverable-item">
+            <span class="deliverable-name">Positioning Audit</span>
+            <p class="deliverable-desc">Where you actually sit in the market versus where you think you sit.</p>
+          </div>
+          <div class="deliverable-item">
+            <span class="deliverable-name">Structure Read</span>
+            <p class="deliverable-desc">What's broken in the sequence from attention to conversion.</p>
+          </div>
+          <div class="deliverable-item highlight">
+            <span class="deliverable-name">One Direction</span>
+            <p class="deliverable-desc">The single lever with the highest return at this stage. Not a list. One thing.</p>
+          </div>
+          <div class="deliverable-item">
+            <span class="deliverable-name">Annotated Breakdown</span>
+            <p class="deliverable-desc">Written, section by section. Shows the reasoning behind every score.</p>
+          </div>
+          <div class="deliverable-item highlight">
+            <span class="deliverable-name">30-Min Delivery Call</span>
+            <p class="deliverable-desc">Walk through the findings together. Ask questions. Get specifics.</p>
+          </div>
         </div>
-        <p class="hero-price-sub" id="el-price-sub"></p>
-        <p class="pre-cta-line" id="el-pre-cta"></p>
-        <div class="cta-buttons">
-          <a
-            class="btn btn-primary"
-            id="el-cta"
-            href="https://buy.stripe.com/9B63cv4gUcKO0ja29J33W00"
-            >Get your Snapshot</a
-          >
-          <a
-            class="btn btn-secondary"
-            id="el-cta-installment"
-            href="https://buy.stripe.com/4gM5kDfZCh140ja8y733W01"
-            >Installment plan</a
-          >
+      </div>
+
+      <!-- Payment options -->
+      <div class="payment-grid reveal reveal-delay-2">
+
+        <!-- Option A: Pay in Full -->
+        <div class="payment-card recommended">
+          <span class="recommended-badge">Best Value</span>
+          <span class="card-type">Pay in Full</span>
+
+          <div class="card-price">
+            <span class="price-currency">$</span>
+            <span class="price-amount">950</span>
+          </div>
+          <p class="price-note savings">Save $100 vs. installments</p>
+
+          <div class="card-divider"></div>
+
+          <ul class="card-features">
+            <li><strong>Clarity Score</strong> — how your message reads cold</li>
+            <li><strong>Positioning Audit</strong> — actual vs. perceived market position</li>
+            <li><strong>Structure Read</strong> — what's breaking the conversion sequence</li>
+            <li><strong>One Direction</strong> — the highest-return lever right now</li>
+            <li><strong>Annotated Breakdown</strong> — written, section by section</li>
+            <li><strong>30-Min Delivery Call</strong> — walk through findings together</li>
+          </ul>
+
+          <a href="https://buy.stripe.com/9B63cv4gUcKO0ja29J33W00" class="btn-full">
+            Secure Your Spot — $950 →
+          </a>
         </div>
-        <p class="cta-support" id="el-cta-support"></p>
-        <a class="fallback-link" id="el-fallback-diagnostic" href="/capture">Start Diagnostic</a>
-      </section>
-    </main>
 
-    <footer class="foot">
-      <a href="/">Home</a>
-      <a href="/pricing">Pricing</a>
-      <a href="/access" class="nav-club">.5% Club</a>
-      <a href="https://stephuary.substack.com" target="_blank" rel="noopener">Substack</a>
-    </footer>
-  </div>
+        <!-- Option B: Installment Plan -->
+        <div class="payment-card">
+          <span class="card-type">3 Monthly Payments</span>
 
-  <script src="/stephuary-progress.js"></script>
+          <div class="card-price">
+            <span class="price-currency">$</span>
+            <span class="price-amount">350</span>
+            <span class="price-period">/mo</span>
+          </div>
+          <p class="price-note">$1,050 total · billed monthly for 3 months</p>
+
+          <div class="card-divider"></div>
+
+          <ul class="card-features">
+            <li><strong>Clarity Score</strong> — how your message reads cold</li>
+            <li><strong>Positioning Audit</strong> — actual vs. perceived market position</li>
+            <li><strong>Structure Read</strong> — what's breaking the conversion sequence</li>
+            <li><strong>One Direction</strong> — the highest-return lever right now</li>
+            <li><strong>Annotated Breakdown</strong> — written, section by section</li>
+            <li><strong>30-Min Delivery Call</strong> — walk through findings together</li>
+          </ul>
+
+          <a href="https://buy.stripe.com/4gM5kDfZCh140ja8y733W01" class="btn-installment">
+            Secure Your Spot — $350/mo →
+          </a>
+        </div>
+
+      </div>
+      <!-- Secure notice -->
+      <div class="secure-notice reveal">
+        <svg class="secure-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+        </svg>
+        <span class="secure-text">Secure checkout</span>
+        <span class="stripe-badge">· Powered by Stripe</span>
+      </div>
+
+      <!-- How it works -->
+      <div class="process-section reveal">
+        <div class="process-label">How the queue works</div>
+        <div class="process-steps">
+          <div class="process-step">
+            <span class="process-num">01</span>
+            <p class="process-title">Purchase secures your spot</p>
+            <p class="process-desc">Payment locks a position in the queue. You receive an intake form link immediately.</p>
+          </div>
+          <div class="process-step">
+            <span class="process-num">02</span>
+            <p class="process-title">Intake submission starts the clock</p>
+            <p class="process-desc">Submitting the intake moves you into active delivery. Queue position is based on intake order, not purchase order.</p>
+          </div>
+          <div class="process-step">
+            <span class="process-num">03</span>
+            <p class="process-title">Delivered in queue order</p>
+            <p class="process-desc">Current estimated wait is 2–3 weeks from intake submission. That window updates as volume changes.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- FAQ -->
+      <div class="faq-section">
+        <div class="faq-label reveal">Common questions</div>
+
+        <div class="faq-item reveal">
+          <p class="faq-q">What is the Snapshot?</p>
+          <p class="faq-a">A diagnostic read across your business. You submit the intake. I read it against clarity, positioning, and structure. You receive a score, an annotated breakdown, and one direction — the single lever with the highest return at this stage. Delivered in a written report followed by a 30-minute call to walk through the findings.</p>
+        </div>
+
+        <div class="faq-item reveal">
+          <p class="faq-q">How long does delivery take?</p>
+          <p class="faq-a">Snapshots are delivered in queue order. Current estimated wait is 2–3 weeks from intake submission. That window updates as volume changes. You can check the current wait at the top of this page before purchasing.</p>
+        </div>
+
+        <div class="faq-item reveal">
+          <p class="faq-q">How does the queue work?</p>
+          <p class="faq-a">You purchase. You receive an intake form link by email. You submit the intake. That submission locks your queue position. Delivery happens in the order intakes are received — not the order payments were made. Submit the intake promptly to move up in the queue.</p>
+        </div>
+
+        <div class="faq-item reveal">
+          <p class="faq-q">How does the installment plan work?</p>
+          <p class="faq-a">Your card is charged $350 today, $350 in 30 days, and $350 in 60 days. Queue access and intake form delivery happen immediately after the first payment. Total cost is $1,050.</p>
+        </div>
+
+        <div class="faq-item reveal">
+          <p class="faq-q">Can I cancel the installment plan?</p>
+          <p class="faq-a">The installment plan is a 3-payment commitment for a service already in delivery. Cancellation is not available once the intake has been submitted and delivery has begun.</p>
+        </div>
+
+        <div class="faq-item reveal">
+          <p class="faq-q">Questions before purchasing?</p>
+          <p class="faq-a">Email <a href="mailto:ecoluxconsulting@gmail.com" style="color:var(--neon-violet); text-decoration:none;">ecoluxconsulting@gmail.com</a> — response within 1 business day.</p>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <footer>
+    <div class="container">
+      <p class="footer-text">© 2026 Stephuary · All rights reserved</p>
+    </div>
+  </footer>
+
   <script>
-(function () {
-  /* --- snapshotContent: internal keys map to score buckets; UI copy never names those buckets --- */
-  const snapshotContent = {
-    clarity: {
-      diagnosisStrip: "Based on your result: people read your page and still cannot check out or book without messaging you first",
-      headline: "Fix what slows people from moving forward after they read you",
-      subhead: "They open your site, read, then ask what you sell, what it includes, or what it costs. The cart or calendar stays empty while your inbox fills with the same questions.",
-      meaning:
-        "They do not finish the purchase in the same sitting. They do not pick a time without a thread. What repeats is you typing the same sentences to different people who already saw your page.",
-      whatYouGetIntro: "You’ll get a clear correction of what is slowing this down.",
-      whatYouGetBullets: [
-        "the exact lines and blocks that keep sending people back to you with questions",
-        "the first rewrite order so a stranger can name the offer, the price, and the next click",
-        "what to leave untouched until those first edits are live",
-        "a dated delivery note inside 48 hours so you are not waiting on a call to start"
-      ],
-      emphasisTitle: "Where the page stops short of checkout or booking",
-      emphasisBullets: [
-        "where they stop scrolling before they pay or book",
-        "which missing detail makes them open email instead of the checkout link",
-        "what changes on the page so that next step does not depend on another message from you"
-      ],
-      changesAfterBullets: [
-        "You send the same short page instead of retyping the offer in DMs.",
-        "Interest turns into a paid booking or checkout, or the thread ends without another hour on your side.",
-        "Your week stops riding on the same five questions you thought the site already answered.",
-        "You work from one numbered list of edits instead of guessing which paragraph to touch first."
-      ],
-      urgency:
-        "If you keep publishing without that fix, traffic still arrives, people still read, and the bank deposit still does not move on the same day. You keep answering the same questions while the calendar stays patchy and you still cannot name which line paid for the leak."
-    },
-    positioning: {
-      diagnosisStrip: "Based on your result: interest shows up, checks land late, and the wrong buyers ask for a lower price before scope is settled",
-      headline: "Fix who gets your time and how price lands before you send another proposal",
-      subhead: "You get messages from people who want a discount before scope is written. The buyers you want wait on the proposal after they already said yes on the call.",
-      meaning:
-        "Wrong-fit leads keep booking calls. Right-fit leads stall when the invoice hits. What repeats is you defending price to people who were never going to pay it, while the good ones go quiet after the number is on the page.",
-      whatYouGetIntro: "You’ll get a clear correction of what is slowing this down.",
-      whatYouGetBullets: [
-        "who to stop sending a calendar link to so price talks only happen with qualified buyers",
-        "the first copy change so scope is agreed before the dollar amount is sent",
-        "what to delete from the page so you stop attracting buyers who will not pay your rate",
-        "a dated delivery note inside 48 hours so you are not waiting on a call to start"
-      ],
-      emphasisTitle: "Where price hits before scope is on paper",
-      emphasisBullets: [
-        "where price questions hit before scope is locked on paper",
-        "which sentence pulls people who ask for a deal you will not accept",
-        "what to change so the next buyer sees the number only after fit is already settled"
-      ],
-      changesAfterBullets: [
-        "You stop cutting rate to keep a deal that was never a fit.",
-        "Proposals go to fewer people and more of them return a signed copy on the same terms you quoted.",
-        "Your pipeline shows fewer names but steadier deposits week to week.",
-        "You point to one ordered list of who to say no to and what to say before money comes up."
-      ],
-      urgency:
-        "If you leave this open, you still run calls, still send proposals, and still watch the wrong thread argue price while the right buyer goes cold. You still rebuild the deck for people who were never signing, and your income still swings even when the inbox looks full."
-    },
-    structure: {
-      diagnosisStrip: "Based on your result: after someone pays, delivery still depends on you rewriting steps by hand each time",
-      headline: "Fix the repeated hand work that starts right after the sale",
-      subhead: "You resend onboarding links, move dates, or answer the same question in a new thread for every buyer. No two deliveries look the same even when the product is the same.",
-      meaning:
-        "They paid, then they wait on you to remember a step. You ship late when sales spike because the checklist only lives in your head. What repeats is you rebuilding the same email chain instead of sending one sequence every time.",
-      whatYouGetIntro: "You’ll get a clear correction of what is slowing this down.",
-      whatYouGetBullets: [
-        "the exact hand-written step to turn into a saved message, doc, or template first",
-        "the order of links and dates every buyer should see from payment through delivery",
-        "what to stop improvising so quality stays even when you are tired",
-        "a dated delivery note inside 48 hours so you are not waiting on a call to start"
-      ],
-      emphasisTitle: "Where buyers wait on you after they already paid",
-      emphasisBullets: [
-        "where buyers pause because the next instruction was not ready when they expected it",
-        "which step still only exists in your memory",
-        "what becomes one fixed sequence you send after every payment so they never have to ping you for the basics"
-      ],
-      changesAfterBullets: [
-        "You send the same links and dates after every sale instead of drafting from scratch.",
-        "Clients stop getting different quality because you were fresher on Monday than on Friday.",
-        "You stop buying back time with late nights after a busy sales week.",
-        "You know the single process change to make before you take the next payment."
-      ],
-      urgency:
-        "If nothing changes, every new sale still adds another manual thread, deadlines still slip when you are busy, and you still cannot add volume without adding hours. Income still spikes and drops with your energy instead of with demand."
-    },
-    default: {
-      diagnosisStrip: "Based on your result: your diagnostic answers are not on this browser yet",
-      headline: "Run the diagnostic here first, then return for your Snapshot",
-      subhead: "This page reads your saved answers to name what is happening, what it costs you, and what to change first. Without that save, the strip cannot match your business.",
-      meaning:
-        "You have not finished the flow on this device, or storage was cleared. Until the diagnostic is saved here, we cannot list the behaviors that repeat for you.",
-      whatYouGetIntro: "After your answers are saved, you’ll get a clear correction of what is slowing this down.",
-      whatYouGetBullets: [
-        "the situation your answers describe, written in plain language",
-        "the first change to make, in order",
-        "what to ignore until that first change is shipped",
-        "a dated delivery note inside 48 hours once checkout is complete"
-      ],
-      emphasisTitle: "Why this page cannot load your situation yet",
-      emphasisBullets: [
-        "what is missing from the saved diagnostic on this device",
-        "why the strip cannot load your situation yet",
-        "the one step to take so this page can load your order of fixes"
-      ],
-      changesAfterBullets: [
-        "The strip will name a real situation instead of a placeholder line.",
-        "The Snapshot can tie to the same answers you already typed.",
-        "You will see what to change first without starting from a blank page.",
-        "You will still get the write-up inside 48 hours after purchase once answers exist."
-      ],
-      urgency:
-        "If you skip saving the diagnostic here, you keep guessing which lever to pull while traffic, DMs, and delivery work keep behaving the same way. You keep spending time on fixes that were never tied to what you already said in the diagnostic."
-    }
-  };
-
-  const ATTRIBUTION_COPY =
-    "This comes directly from how you answered the diagnostic. It is not a general recommendation.";
-
-  const PRICE_SUB_COPY = "One focused correction. No ongoing commitment.";
-
-  const PRE_CTA_COPY = "No calls. No back and forth. Just the breakdown.";
-
-  const CTA_SUPPORT_COPY = "You'll receive your Snapshot within 48 hours.";
-
-  /* --- localStorage parsing: try keys in priority order, never throw --- */
-  function safeParse(raw) {
-    if (!raw || typeof raw !== "string") return null;
-    try {
-      return JSON.parse(raw);
-    } catch (e) {
-      return null;
-    }
-  }
-
-  function readDiagnosticResults() {
-    try {
-      return safeParse(localStorage.getItem("diagnosticResults"));
-    } catch (e) {
-      return null;
-    }
-  }
-
-  function readStephuaryResultV1() {
-    try {
-      return safeParse(localStorage.getItem("stephuary_result_v1"));
-    } catch (e) {
-      return null;
-    }
-  }
-
-  function normalizeArea(value) {
-    if (!value || typeof value !== "string") return null;
-    var v = value.trim().toLowerCase();
-    if (v === "clarity" || v === "positioning" || v === "structure") return v;
-    return null;
-  }
-
-  function bottleneckFromScores(scores) {
-    if (!scores || typeof scores !== "object") return null;
-    var c = Number(scores.clarity);
-    var p = Number(scores.positioning);
-    var s = Number(scores.structure);
-    if (isNaN(c)) c = 0;
-    if (isNaN(p)) p = 0;
-    if (isNaN(s)) s = 0;
-    var max = Math.max(c, p, s);
-    if (max === 0) return null;
-    var order = ["clarity", "positioning", "structure"];
-    var candidates = order.filter(function (k) {
-      return (Number(scores[k]) || 0) === max;
-    });
-    if (candidates.length === 0) return null;
-    if (candidates.length === 1) return candidates[0];
-    for (var i = 0; i < order.length; i++) {
-      if (candidates.indexOf(order[i]) !== -1) return order[i];
-    }
-    return null;
-  }
-
-  function keywordAreaFromMainProblem(text) {
-    if (!text || typeof text !== "string") return null;
-    var t = text.toLowerCase();
-    if (t.indexOf("clarity") !== -1) return "clarity";
-    if (t.indexOf("positioning") !== -1) return "positioning";
-    if (t.indexOf("structure") !== -1) return "structure";
-    return null;
-  }
-
-  /* --- primary issue detection: lowest_area → main_problem keywords → scores → default --- */
-  function detectPrimaryIssue() {
-    var dr = readDiagnosticResults();
-    var legacy = readStephuaryResultV1();
-
-    if (dr && typeof dr === "object") {
-      if (dr.result && normalizeArea(dr.result.topCategory)) {
-        return normalizeArea(dr.result.topCategory);
+    (function () {
+      if (!window.matchMedia('(hover: none)').matches) {
+        document.addEventListener('mousemove', function (e) {
+          document.documentElement.style.setProperty('--cursor-x', e.clientX + 'px');
+          document.documentElement.style.setProperty('--cursor-y', e.clientY + 'px');
+        }, { passive: true });
       }
-      var fromScores = bottleneckFromScores(dr.scores);
-      if (fromScores) return fromScores;
-      if (dr.diagnostic && typeof dr.diagnostic === "object") {
-        var dLow = normalizeArea(dr.diagnostic.lowest_area);
-        if (dLow) return dLow;
-        var dKw = keywordAreaFromMainProblem(String(dr.diagnostic.main_problem || dr.diagnostic.primary_issue || ""));
-        if (dKw) return dKw;
+
+      var pageScan = document.querySelector('.page-scan');
+      if (pageScan) {
+        pageScan.addEventListener('animationend', function (e) {
+          e.target.parentNode.removeChild(e.target);
+        });
       }
-    }
 
-    var diag = null;
-    if (legacy && typeof legacy === "object") {
-      if (legacy.diagnostic && typeof legacy.diagnostic === "object") {
-        diag = legacy.diagnostic;
-      } else {
-        diag = legacy;
+      function initStarfield() {
+        var canvas = document.getElementById('starfield');
+        if (!canvas || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+          if (canvas) canvas.remove();
+          return;
+        }
+        var ctx = canvas.getContext('2d');
+        if (!ctx) return;
+
+        var particles = [];
+        var raf;
+        var COLORS = [
+          'rgba(255,255,255,',
+          'rgba(255,255,255,',
+          'rgba(180,195,230,',
+          'rgba(191,90,242,',
+          'rgba(200,169,110,'
+        ];
+
+        function resize() {
+          canvas.width = window.innerWidth;
+          canvas.height = window.innerHeight;
+        }
+
+        function mkP() {
+          return {
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height,
+            r: Math.random() * 1.7 + 0.5,
+            opacity: Math.random() * 0.6 + 0.4,
+            speed: Math.random() * 0.14 + 0.03,
+            drift: (Math.random() - 0.5) * 0.07,
+            color: COLORS[Math.floor(Math.random() * COLORS.length)],
+            offset: Math.random() * Math.PI * 2
+          };
+        }
+
+        resize();
+        particles = Array.from({ length: 180 }, mkP);
+
+        function draw() {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          var t = Date.now() / 1000;
+          particles.forEach(function (p) {
+            var pulse = Math.sin(t + p.offset) * 0.3;
+            var opacity = Math.max(0, p.opacity + pulse);
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+            ctx.fillStyle = p.color + opacity + ')';
+            ctx.fill();
+            if (p.opacity > 0.6) {
+              ctx.beginPath();
+              ctx.arc(p.x, p.y, p.r * 2.5, 0, Math.PI * 2);
+              ctx.fillStyle = p.color + '0.06)';
+              ctx.fill();
+            }
+            p.y -= p.speed;
+            p.x += p.drift;
+            if (p.y < -5) {
+              p.y = canvas.height + 5;
+              p.x = Math.random() * canvas.width;
+            }
+            if (p.x < -5) p.x = canvas.width + 5;
+            if (p.x > canvas.width + 5) p.x = -5;
+          });
+          raf = requestAnimationFrame(draw);
+        }
+
+        document.addEventListener('visibilitychange', function () {
+          if (document.hidden) cancelAnimationFrame(raf);
+          else draw();
+        });
+        window.addEventListener('resize', resize, { passive: true });
+        draw();
       }
-    }
 
-    if (diag) {
-      var low = normalizeArea(diag.lowest_area);
-      if (low) return low;
-      var mp = diag.main_problem || diag.primary_issue || "";
-      var kw = keywordAreaFromMainProblem(String(mp));
-      if (kw) return kw;
-    }
+      initStarfield();
 
-    if (dr && typeof dr === "object" && dr.result && dr.result.headline) {
-      var hkw = keywordAreaFromMainProblem(String(dr.result.headline));
-      if (hkw) return hkw;
-    }
-
-    return "default";
-  }
-
-  /* --- content rendering + fallback handling --- */
-  function fillList(el, items) {
-    if (!el || !items) return;
-    el.innerHTML = "";
-    items.forEach(function (text) {
-      var li = document.createElement("li");
-      li.textContent = text;
-      el.appendChild(li);
-    });
-  }
-
-  function render() {
-    var key = detectPrimaryIssue();
-    if (key !== "clarity" && key !== "positioning" && key !== "structure") {
-      key = "default";
-    }
-
-    var content = snapshotContent[key] || snapshotContent.default;
-    var isDefault = key === "default";
-
-    var elDiagnosis = document.getElementById("el-diagnosis");
-    var elHeadline = document.getElementById("el-headline");
-    var elSub = document.getElementById("el-subhead");
-    var elMeaning = document.getElementById("el-meaning");
-    var elMeaningAttr = document.getElementById("el-meaning-attribution");
-    var elWhatIntro = document.getElementById("el-what-you-get-intro");
-    var elEmphasisTitle = document.getElementById("emphasis-heading");
-    var elUrgency = document.getElementById("el-urgency");
-    var elClarifier = document.getElementById("el-clarifier");
-    var elCtaSupport = document.getElementById("el-cta-support");
-    var elPriceSub = document.getElementById("el-price-sub");
-    var elPreCta = document.getElementById("el-pre-cta");
-    var elFallback = document.getElementById("el-fallback-diagnostic");
-
-    if (elDiagnosis) {
-      elDiagnosis.textContent = content.diagnosisStrip || "";
-      elDiagnosis.classList.toggle("diagnosis-strip--default", isDefault);
-    }
-    if (elHeadline) elHeadline.textContent = content.headline;
-    if (elSub) elSub.textContent = content.subhead;
-    if (elMeaning) elMeaning.textContent = content.meaning;
-    if (elMeaningAttr) {
-      if (isDefault) {
-        elMeaningAttr.textContent = "";
-        elMeaningAttr.setAttribute("hidden", "");
-      } else {
-        elMeaningAttr.textContent = ATTRIBUTION_COPY;
-        elMeaningAttr.removeAttribute("hidden");
-      }
-    }
-    if (elWhatIntro) elWhatIntro.textContent = content.whatYouGetIntro || "";
-    if (elEmphasisTitle) elEmphasisTitle.textContent = content.emphasisTitle;
-    if (elUrgency) elUrgency.textContent = content.urgency;
-    if (elClarifier) {
-      elClarifier.textContent = isDefault
-        ? "Run the diagnostic on this device, then reload this page so the Snapshot matches the same answers."
-        : "This is not a general audit. It is built directly from your diagnostic result.";
-    }
-    if (elPriceSub) elPriceSub.textContent = PRICE_SUB_COPY;
-    if (elPreCta) elPreCta.textContent = PRE_CTA_COPY;
-    if (elCtaSupport) elCtaSupport.textContent = CTA_SUPPORT_COPY;
-    if (elFallback) {
-      if (isDefault) elFallback.removeAttribute("hidden");
-      else elFallback.setAttribute("hidden", "");
-    }
-
-    fillList(document.getElementById("list-what-you-get"), content.whatYouGetBullets || []);
-    fillList(document.getElementById("list-emphasis"), content.emphasisBullets || []);
-    fillList(document.getElementById("list-changes-after"), content.changesAfterBullets || []);
-  }
-
-  render();
-
-  var elRestart = document.getElementById("snap-nav-restart");
-  if (elRestart) {
-    elRestart.addEventListener("click", function (e) {
-      e.preventDefault();
-      if (window.StephuaryProgress) window.StephuaryProgress.confirmRestart();
-    });
-  }
-})();
+      var observer = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (e.isIntersecting) {
+            e.target.classList.add('is-visible');
+            observer.unobserve(e.target);
+          }
+        });
+      }, { threshold: 0.08, rootMargin: '0px 0px -20px 0px' });
+      document.querySelectorAll('.reveal').forEach(function (el) {
+        observer.observe(el);
+      });
+    })();
   </script>
-  <script src="/stephuary-interactive.js" defer></script>
 </body>
 </html>
