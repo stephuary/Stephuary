@@ -18,24 +18,21 @@
       displayName: 'The Ceiling Builder',
       diagnosis: 'Capacity maxed. Structure missing.',
       impact: '',
-      reportCtaLead:
-        'You have motion. What you do not have yet is one documented path from yes to done.\nThat is what the Snapshot isolates first.',
+      reportCtaLead: '',
       immediateRead: [
-        'You are fully booked or close to it.',
-        'Revenue is not moving at the same rate.',
-        'Each new client adds work.',
-        'There is no fixed sequence that runs without you.',
-        'Most engagements start from scratch.',
-        'That resets time, margin, and consistency every time.'
+        'You are fully booked or close to it',
+        'Revenue is not increasing at the same rate',
+        'Each new client adds work',
+        'There is no fixed sequence behind delivery',
+        'Engagements start from scratch',
+        'Time, margin, and consistency reset every time'
       ],
       whatThisMeans: [
-        'Based on your answers:',
-        'You are handling every step of delivery directly.',
-        'Your workflow changes depending on the client.',
-        'You are spending 6–14 hours per week repeating setup and thinking work.',
-        'Your capacity is limiting how much you can earn.',
-        'At your current rate, this typically holds revenue between $5K–$20K/month depending on volume.',
-        'The next level requires a fixed structure.'
+        'You are handling delivery directly.',
+        'Each client changes the workflow.',
+        '6–14 hours per week go into repeat setup and thinking work.',
+        'Capacity sets the limit.',
+        'At this level, revenue typically sits between $5K–$20K/month depending on volume.'
       ],
       signs: [
         'You have been fully booked and still questioned the numbers.',
@@ -43,7 +40,7 @@
         'You start each engagement by figuring it out again.'
       ],
       previews: {
-        mean: 'Booked solid while revenue flatlines: every new yes still adds raw hours.',
+        mean: 'Booked solid. Revenue flatlines. Every new yes adds hours.',
         signs: 'Calendar full, math fuzzy, pricing trims load, each kickoff reinvents the path.',
         deals: 'They get the outcome, choke on the process, stall when value has to become a number.',
         costing: '1–2 stalled deals a month · 6–14 hours/week in repeat setup · $2K–$8K+ left on the table.',
@@ -64,14 +61,14 @@
           'That gap delays or kills the decision.'
         ],
         costing: {
-          impactLabel: 'Estimated monthly loss',
+          impactLabel: 'Estimated impact',
           bullets: [
-            '1–2 stalled or delayed deals per month',
+            '1–2 delayed or stalled deals per month',
             '6–14 hours lost weekly to repeat work',
-            'Lower pricing tolerance during conversations',
+            'Lower pricing tolerance in conversations',
             'Slower turnaround between clients'
           ],
-          band: '$2K–$8K+ in unrealized revenue (one missed deal covers this entire system)'
+          band: '$2K–$8K+ per month'
         },
         haveNot: {
           have: [
@@ -88,9 +85,9 @@
           ]
         },
         why: [
-          'Your delivery relies on your judgment in real time.',
-          'Each client requires interpretation, adjustment, and rebuilding steps.',
-          'That keeps quality high. It also keeps the system dependent on you.'
+          'Your delivery depends on real-time judgment.',
+          'Each client requires interpretation, adjustment, and rebuild.',
+          'The system runs through you.'
         ],
         sale: [
           'Buyers are making decisions without a clear sequence to trust.',
@@ -98,9 +95,9 @@
           'When that is unclear: confidence drops, questions increase, decisions slow.'
         ],
         leverage: [
-          'You repeat specific steps in every engagement.',
-          'One of those steps can be written once and reused.',
-          'That step becomes your first system asset, your first delegation point, and your first scale lever.'
+          'There is one step you repeat across every client.',
+          'That step can be written once.',
+          'That becomes your first system.'
         ],
         week: [
           'Pick one step you perform in every client engagement.',
@@ -110,10 +107,11 @@
           'This is the first piece of structure.'
         ],
         fixed: [
-          'Onboarding time drops',
-          'Delivery becomes consistent',
-          'Pricing holds more easily',
-          'Client capacity increases without adding hours'
+          'Delivery runs on a defined sequence.',
+          'Time per client drops.',
+          'Capacity expands.',
+          'Pricing holds.',
+          'Work compounds instead of resetting.'
         ],
         notfix: [
           'This does not increase demand.',
