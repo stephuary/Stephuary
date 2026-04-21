@@ -44,6 +44,12 @@
     PAID_TIER_HREF: PAID_TIER_HREF,
     FREE_TIER_HREF: FREE_TIER_HREF,
     shouldBypassPhasePaymentGate: shouldBypassPhasePaymentGate,
+    /**
+     * Homepage “monthly free 1:1” email capture. FormSubmit base URL, e.g.
+     * https://formsubmit.co/your@email.com — first use requires confirming that inbox with FormSubmit.
+     * Set to null to skip the network request (success UI only; not recommended for production).
+     */
+    MONTHLY_FREE_SESSION_FORM_ACTION: 'https://formsubmit.co/ecoluxconsulting@gmail.com',
     /** Cloudflare Stream — pricing staircase strip. */
     PRICING_STAIRCASE_VIDEO:
       'https://customer-vjyp7ff1wau3k7is.cloudflarestream.com/482fd025db674eaf7f1246937e0145b2/manifest/video.m3u8',
