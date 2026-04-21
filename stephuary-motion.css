@@ -1,0 +1,278 @@
+/**
+ * Stephuary motion layer: subtle transitions, prefers-reduced-motion safe.
+ * Prefer transform + opacity. Durations 150–220ms, ease-out.
+ */
+:root {
+  --sh-ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --sh-fast: 160ms;
+  --sh-mid: 200ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .capture-layout.sh-motion-q-enter,
+  .sh-motion-diag-reveal,
+  .sh-reveal-once,
+  .report-acc-panel,
+  .report-acc-icon {
+    animation: none !important;
+    transition-duration: 0.01ms !important;
+  }
+  .capture-layout.sh-motion-q-enter,
+  .sh-reveal-once.is-inview {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  body.results--diag-v2 .sh-motion-diag-reveal {
+    opacity: 1 !important;
+    animation: none !important;
+    transform: none !important;
+  }
+}
+
+/* --- Diagnostic question enter (capture) --- */
+@keyframes shCaptureQIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.capture-layout.sh-motion-q-enter {
+  animation: shCaptureQIn var(--sh-mid) var(--sh-ease-out) both;
+}
+
+/* --- Results diag v2 staggered reveal --- */
+@keyframes shDiagReveal {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+body.results--diag-v2 .sh-motion-diag-reveal {
+  opacity: 0;
+  animation: shDiagReveal 0.2s var(--sh-ease-out) forwards;
+  animation-delay: calc(var(--sh-reveal-i, 0) * 48ms);
+}
+
+/* --- Scroll reveal once (content-system, etc.) --- */
+.sh-reveal-once {
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity var(--sh-mid) var(--sh-ease-out), transform var(--sh-mid) var(--sh-ease-out);
+}
+
+.sh-reveal-once.is-inview {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* --- Primary CTAs (results, report, content-system) --- */
+.results-cta-pri,
+.report-cta-pri,
+.final-cta .btn {
+  transition:
+    transform var(--sh-fast) var(--sh-ease-out),
+    box-shadow var(--sh-fast) var(--sh-ease-out),
+    filter var(--sh-fast) var(--sh-ease-out),
+    border-color var(--sh-fast) var(--sh-ease-out);
+}
+
+.results-cta-pri:hover,
+.report-cta-pri:hover,
+.final-cta .btn:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.05);
+}
+
+.results-cta-pri:active,
+.report-cta-pri:active,
+.final-cta .btn:active {
+  transform: translateY(0);
+}
+
+.results-cta-pri:focus-visible,
+.report-cta-pri:focus-visible,
+.final-cta .btn:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.85);
+  outline-offset: 3px;
+}
+
+.results-flow-links a {
+  transition: color var(--sh-fast) var(--sh-ease-out), border-color var(--sh-fast) var(--sh-ease-out);
+}
+
+.results-flow-links a:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.8);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/* --- Results + report accordions --- */
+.results-accordion-panel,
+.report-acc-panel {
+  transition: max-height 0.2s var(--sh-ease-out), opacity 0.18s var(--sh-ease-out);
+}
+
+.results-accordion-item.is-open .results-accordion-panel__inner,
+.report-acc-item.is-open .report-acc-panel-inner {
+  animation: shAccInner 0.18s var(--sh-ease-out) both;
+}
+
+@keyframes shAccInner {
+  from {
+    opacity: 0.65;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.report-acc-item.is-open .report-acc-trigger {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.report-acc-icon {
+  transition: transform 0.2s var(--sh-ease-out);
+}
+
+/* --- Content-system cards --- */
+.content-system-page .card {
+  transition:
+    transform var(--sh-fast) var(--sh-ease-out),
+    border-color var(--sh-fast) var(--sh-ease-out),
+    box-shadow var(--sh-fast) var(--sh-ease-out);
+}
+
+.content-system-page .card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(242, 240, 236, 0.22);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.35);
+}
+
+.content-system-page .timeline-block {
+  transition:
+    transform var(--sh-fast) var(--sh-ease-out),
+    border-color var(--sh-fast) var(--sh-ease-out),
+    box-shadow var(--sh-fast) var(--sh-ease-out);
+}
+
+.content-system-page .timeline-block:hover {
+  transform: translateY(-1px);
+}
+
+/* --- Prompt copy control --- */
+.prompt-copy-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.65rem;
+  margin-bottom: 0.45rem;
+}
+
+.prompt-copy-btn {
+  flex-shrink: 0;
+  font-family: inherit;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.35rem 0.55rem;
+  border: 1px solid rgba(242, 240, 236, 0.2);
+  background: rgba(255, 255, 255, 0.06);
+  color: #f2f0ec;
+  cursor: pointer;
+  border-radius: 4px;
+  transition:
+    background var(--sh-fast) var(--sh-ease-out),
+    border-color var(--sh-fast) var(--sh-ease-out),
+    transform var(--sh-fast) var(--sh-ease-out);
+}
+
+.prompt-copy-btn:hover {
+  border-color: rgba(196, 163, 90, 0.45);
+  background: rgba(196, 163, 90, 0.1);
+}
+
+.prompt-copy-btn:active {
+  transform: translateY(1px);
+}
+
+.prompt-copy-btn:focus-visible {
+  outline: 2px solid #2b4fd4;
+  outline-offset: 2px;
+}
+
+/* --- Pricing page: button press only (tiers unchanged) --- */
+.pricing-page .btn {
+  transition: transform var(--sh-fast) var(--sh-ease-out), filter var(--sh-fast) var(--sh-ease-out);
+}
+
+.pricing-page .btn:hover {
+  transform: translateY(-1px);
+}
+
+.pricing-page .btn:active {
+  transform: translateY(0);
+}
+
+.pricing-page .btn:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.85);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pricing-page .hero,
+  .pricing-page .tier {
+    transition: none !important;
+  }
+  .pricing-page .tier {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
+
+/* --- Capture diagnostic answer buttons --- */
+.capture-page .answer-btn {
+  transition:
+    border-color var(--sh-fast) var(--sh-ease-out),
+    background var(--sh-fast) var(--sh-ease-out),
+    transform var(--sh-fast) var(--sh-ease-out),
+    box-shadow var(--sh-fast) var(--sh-ease-out);
+}
+
+.capture-page .answer-btn:hover:not(.is-locked):not(.is-selected) {
+  transform: translateY(-2px);
+  border-color: rgba(212, 184, 122, 0.55);
+}
+
+.capture-page .answer-btn.is-selected {
+  transform: scale(1.018);
+}
+
+.capture-page .answer-btn.is-locked.is-selected {
+  transform: scale(1.018);
+}
+
+.capture-page .answer-btn:focus-visible {
+  outline: 2px solid rgba(212, 184, 122, 0.85);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .capture-page .answer-btn {
+    transition: none !important;
+  }
+  .capture-page .answer-btn:hover,
+  .capture-page .answer-btn.is-selected {
+    transform: none !important;
+  }
+}

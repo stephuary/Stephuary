@@ -7,6 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/stephuary-motion.css" />
   <style>
     :root {
       --bg: #0a0a1a;
@@ -150,17 +151,11 @@
       font-weight: 600;
       line-height: 1.35;
       cursor: pointer;
-      transition: border-color 100ms ease, background 100ms ease, box-shadow 100ms ease;
       min-height: 56px;
     }
 
     .answer-btn:hover {
-      border-color: rgba(212, 184, 122, 0.55);
       background: var(--surface-2);
-    }
-
-    .answer-btn:active {
-      transform: translateY(0);
     }
 
     .answer-btn.is-selected {
@@ -231,7 +226,7 @@
     }
   </style>
 </head>
-<body>
+<body class="capture-page">
   <a href="/" class="back-home">Homepage</a>
   <main class="app" id="app" aria-live="polite"></main>
 
@@ -282,7 +277,7 @@
     const app = document.getElementById("app");
 
     function transition(callback, delay) {
-      const ms = delay == null ? 32 : delay;
+      const ms = delay == null ? 165 : delay;
       app.classList.add("is-transitioning");
       window.setTimeout(() => {
         callback();
@@ -369,6 +364,14 @@
         '<div class="answers">' +
         btns +
         "</div></div>";
+      const layout = app.querySelector(".capture-layout");
+      if (layout) {
+        layout.classList.remove("sh-motion-q-enter");
+        void layout.offsetWidth;
+        requestAnimationFrame(function () {
+          layout.classList.add("sh-motion-q-enter");
+        });
+      }
 
       Array.prototype.forEach.call(app.querySelectorAll(".answer-btn"), function (btn) {
         btn.addEventListener("click", function () {
@@ -382,7 +385,7 @@
           answers.push({ id: q.id, value: value });
           currentIndex++;
           if (currentIndex < QUESTIONS.length) {
-            transition(renderQuestion, 0);
+            transition(renderQuestion, 32);
           } else {
             renderAnalyzing();
           }

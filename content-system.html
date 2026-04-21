@@ -8,6 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/stephuary-motion.css" />
   <style>
     :root {
       --bg: #0a0a0a;
@@ -151,17 +152,20 @@
     .voice-steps li:last-child {
       border-bottom: 0;
     }
-    .prompt-box {
+    .prompt-wrap {
       border: 1px solid var(--line);
       background: var(--code-bg);
-      padding: 0.85rem;
+      padding: 0.65rem 0.85rem 0.85rem;
+    }
+    .prompt-box {
+      margin: 0;
       font-family: ui-monospace, "Cascadia Code", "Source Code Pro", Menlo, monospace;
       font-size: 0.72rem;
       line-height: 1.5;
       color: #d8d4cc;
       white-space: pre-wrap;
       word-break: break-word;
-      user-select: all;
+      user-select: text;
     }
     .prompt-hint {
       font-size: 0.7rem;
@@ -240,9 +244,6 @@
       text-decoration: none;
       border: 1px solid rgba(255, 255, 255, 0.12);
     }
-    .final-cta .btn:hover {
-      filter: brightness(1.06);
-    }
     .final-cta .sub {
       margin-top: 0.65rem;
       font-size: 0.82rem;
@@ -273,15 +274,15 @@
     }
   </style>
 </head>
-<body>
+<body class="content-system-page">
   <div class="shell">
-    <h1>Voice to Content System</h1>
+    <h1 class="sh-reveal-once">Voice to Content System</h1>
     <p class="lede">Publish the same day. Refine from signal. Do not over edit.</p>
 
     <section class="section" aria-labelledby="tl-head">
-      <h2 id="tl-head">Timeline</h2>
+      <h2 id="tl-head" class="sh-reveal-once">Timeline</h2>
       <div class="timeline">
-        <div class="timeline-track">
+        <div class="timeline-track sh-reveal-once">
           <div class="timeline-block timeline-block--lead">
             <h3>Day 1</h3>
             <p>Record a voice memo: problem, where it breaks, what to do first. Transcribe. Turn into a Substack article. Publish same day.</p>
@@ -303,8 +304,8 @@
     </section>
 
     <section class="section" aria-labelledby="voice-head">
-      <h2 id="voice-head">Voice input</h2>
-      <div class="voice-grid">
+      <h2 id="voice-head" class="sh-reveal-once">Voice input</h2>
+      <div class="voice-grid sh-reveal-once">
         <div>
           <ul class="voice-steps">
             <li>Record</li>
@@ -314,12 +315,18 @@
           </ul>
         </div>
         <div>
-          <div class="prompt-box" tabindex="0">Turn into Substack article with:
+          <div class="prompt-wrap">
+            <div class="prompt-copy-row">
+              <span></span>
+              <button type="button" class="prompt-copy-btn" id="prompt-copy-btn" aria-label="Copy prompt text">Copy</button>
+            </div>
+            <pre class="prompt-box" id="prompt-text">Turn into Substack article with:
 
 Title
 Problem
 Where it breaks
-What to do first</div>
+What to do first</pre>
+          </div>
           <p class="prompt-hint">600 to 1,000 words. Direct opening. Clear structure. Video: 30 to 60 seconds, problem first.</p>
         </div>
       </div>
@@ -327,8 +334,8 @@ What to do first</div>
     </section>
 
     <section class="section" aria-labelledby="mon-head">
-      <h2 id="mon-head">Turn this into paid opportunities</h2>
-      <div class="cards">
+      <h2 id="mon-head" class="sh-reveal-once">Turn this into paid opportunities</h2>
+      <div class="cards sh-reveal-once">
         <div class="card">
           <h3>Substack</h3>
           <p class="range">$50 to $500 early. $500 to $3K consistent. $3K to $10K+ strong.</p>
@@ -357,7 +364,7 @@ What to do first</div>
       <p class="lede" style="margin-top:1rem;margin-bottom:0">Add to every post: If this is your problem, I can break it down for your business.</p>
     </section>
 
-    <section class="final-cta" aria-labelledby="final-head">
+    <section class="final-cta sh-reveal-once" aria-labelledby="final-head">
       <h2 id="final-head">Fix the right step first</h2>
       <p>You get a clear read, one priority move, and delivery on a short clock. No open-ended thread.</p>
       <a class="btn" href="/snapshot">Get your Snapshot $950</a>
@@ -366,5 +373,75 @@ What to do first</div>
 
     <p class="foot"><a href="/">Home</a> · <a href="/report">Report</a> · <a href="/capture">Diagnostic</a></p>
   </div>
+  <script>
+    (function () {
+      var btn = document.getElementById('prompt-copy-btn');
+      var pre = document.getElementById('prompt-text');
+      if (btn && pre) {
+        btn.addEventListener('click', function () {
+          var text = pre.textContent || '';
+          function done() {
+            var prev = btn.textContent;
+            btn.textContent = 'Copied';
+            window.setTimeout(function () {
+              btn.textContent = prev;
+            }, 1200);
+          }
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(text).then(done).catch(function () {
+              try {
+                var r = document.createRange();
+                r.selectNodeContents(pre);
+                var sel = window.getSelection();
+                sel.removeAllRanges();
+                sel.addRange(r);
+                document.execCommand('copy');
+                sel.removeAllRanges();
+              } catch (e) {}
+              done();
+            });
+          } else {
+            try {
+              var r2 = document.createRange();
+              r2.selectNodeContents(pre);
+              var sel2 = window.getSelection();
+              sel2.removeAllRanges();
+              sel2.addRange(r2);
+              document.execCommand('copy');
+              sel2.removeAllRanges();
+            } catch (e2) {}
+            done();
+          }
+        });
+      }
+      if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        Array.prototype.forEach.call(document.querySelectorAll('.sh-reveal-once'), function (el) {
+          el.classList.add('is-inview');
+        });
+        return;
+      }
+      var els = document.querySelectorAll('.sh-reveal-once');
+      if (!els.length || !('IntersectionObserver' in window)) {
+        Array.prototype.forEach.call(els, function (el) {
+          el.classList.add('is-inview');
+        });
+        return;
+      }
+      var io = new IntersectionObserver(
+        function (entries) {
+          entries.forEach(function (entry) {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('is-inview');
+              io.unobserve(entry.target);
+            }
+          });
+        },
+        { threshold: 0.08, rootMargin: '0px 0px -8% 0px' }
+      );
+      Array.prototype.forEach.call(els, function (el) {
+        io.observe(el);
+      });
+    })();
+  </script>
 </body>
 </html>
