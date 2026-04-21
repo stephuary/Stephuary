@@ -370,18 +370,21 @@
     body.results--minimal.results--diag-v2 .diag-v2-preview__list li:last-child {
       margin-bottom: 0;
     }
-    .results-obs__p--teaser {
-      font-size: 14px;
-      color: rgba(248, 243, 234, 0.82);
-      margin-bottom: 10px !important;
+    body.results--minimal.results--diag-v2 .diag-v2-preview__list--report li {
+      padding-left: 0.85rem;
+      position: relative;
     }
-    body.results--minimal.results--diag-v2 .diag-v2-preview__q {
-      font-family: var(--font-mono, 'DM Mono', monospace);
-      font-size: 9px;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: rgba(196, 163, 90, 0.9);
-      margin-right: 6px;
+    body.results--minimal.results--diag-v2 .diag-v2-preview__list--report li::before {
+      content: '–';
+      position: absolute;
+      left: 0;
+      color: rgba(196, 163, 90, 0.75);
+    }
+    body.results--minimal.results--diag-v2 .diag-v2-preview__note {
+      margin: 8px 0 0;
+      font-size: 12px;
+      line-height: 1.4;
+      color: rgba(248, 243, 234, 0.68);
     }
     body.results--minimal.results--diag-v2 .results-hero-cta-row {
       align-items: center !important;
@@ -1653,7 +1656,7 @@
           <a href="/snapshot">View Snapshot</a>
         </p>
         <h1 class="hero-h1 hero-h1--support" id="openingRead"></h1>
-        <div class="diag-v2-preview" id="results-v2-preview" hidden aria-label="Two answer preview"></div>
+        <div class="diag-v2-preview" id="results-v2-preview" hidden aria-label="Full diagnosis preview"></div>
         <div class="diag-v2-stack" id="results-v2-stack" hidden>
           <div class="diag-v2-block">
             <p class="diag-v2-label">Where this shows up</p>
@@ -1907,44 +1910,10 @@
     move: 'Run your next deal through once and note the first stall.'
   };
 
-  var DIAG_V2_Q_SHORT = {
-    1: 'Clear in under 10 seconds',
-    2: 'Where last 3 deals break',
-    3: 'Buyer states why you win',
-    4: 'Last 5 leads match wanted work',
-    5: 'Delivery same every time',
-    6: 'Work continues without you',
-    7: 'Price clear before you explain'
-  };
-
-  function diagV2PreviewQuestionIds(dr) {
-    var worst = diagV2WorstIssueRows(dr);
-    var weakIds = worst
-      .filter(function (r) {
-        return r.score < 2;
-      })
-      .map(function (r) {
-        return r.id;
-      });
-    var a;
-    var b;
-    if (weakIds.length >= 2) {
-      a = weakIds[0];
-      b = weakIds[1];
-    } else if (weakIds.length === 1) {
-      a = weakIds[0];
-      b = a === 1 ? 2 : 1;
-    } else {
-      a = 1;
-      b = 2;
-    }
-    if (a === b) {
-      b = a < 7 ? a + 1 : a - 1;
-    }
-    return [a, b].sort(function (x, y) {
-      return x - y;
-    });
-  }
+  var DIAG_REPORT_LOCKED_PREVIEW = [
+    'You lowered your price to close',
+    'Buyers ask how this is different'
+  ];
 
   function diagV2AnswerWeight(v) {
     if (v === 'yes') return 2;
@@ -2062,26 +2031,14 @@
     return { diagnosis: diagnosis, whereLines: whereLines, firstMove: firstMove };
   }
 
-  function fillSevenV2Observable(dr, opts) {
-    opts = opts || {};
-    var previewIds = opts.previewIds || [];
-    var previewSet = {};
-    previewIds.forEach(function (id) {
-      previewSet[id] = true;
-    });
-    var gateFive = opts.gateFive === true;
+  function fillSevenV2Observable(dr) {
     var body = document.getElementById('results-observable-body');
     if (!body) return;
     var metrics = diagV2RecomputeFromAnswers(dr);
     var sorted = (dr.answers || []).slice().sort(function (a, b) {
       return a.id - b.id;
     });
-    var filtered = gateFive
-      ? sorted.filter(function (a) {
-          return !previewSet[a.id];
-        })
-      : sorted;
-    var rows = filtered
+    var rows = sorted
       .map(function (a) {
         return (
           '<li><span class="results-obs__tag">Q' +
@@ -2092,18 +2049,11 @@
         );
       })
       .join('');
-    var teaser =
-      gateFive && previewIds.length
-        ? '<p class="results-obs__p results-obs__p--teaser">The other five answers ship with the full report ($27).</p>'
-        : '';
-    var moreLabel = gateFive && previewIds.length ? 'Other answers' : 'More detail';
     body.innerHTML =
       '<section class="results-accordion" aria-label="More detail">' +
       '<article class="results-accordion-item" data-acc-item>' +
       '<button class="results-accordion-trigger" type="button" aria-expanded="false">' +
-      '<span>' +
-      esc(moreLabel) +
-      '</span><span class="results-accordion-trigger__icon" aria-hidden="true">▾</span>' +
+      '<span>More detail</span><span class="results-accordion-trigger__icon" aria-hidden="true">▾</span>' +
       '</button>' +
       '<div class="results-accordion-panel"><div class="results-accordion-panel__inner">' +
       '<p class="results-obs__p">' +
@@ -2111,7 +2061,6 @@
       '/14 · ' +
       esc(String(metrics.resultType || '')) +
       '</p>' +
-      teaser +
       '<ul class="results-obs__ul">' +
       rows +
       '</ul></div></div></article></section>';
@@ -2160,40 +2109,29 @@
     var metrics = diagV2RecomputeFromAnswers(dr);
     var bundle = diagV2BundleFromType(metrics.resultType);
     var v2copy = diagV2PersonalizedCopy(dr);
-    var previewIds = diagV2PreviewQuestionIds(dr);
-    var gateFive = metrics.resultType === 'Breakdown' || metrics.resultType === 'Misalignment';
+    var showLockedPreview =
+      metrics.resultType === 'Breakdown' || metrics.resultType === 'Misalignment';
 
     var h1 = document.getElementById('openingRead');
     if (h1) h1.textContent = v2copy.diagnosis;
 
     var previewEl = document.getElementById('results-v2-preview');
     if (previewEl) {
-      var byId = {};
-      (dr.answers || []).forEach(function (a) {
-        byId[a.id] = a.value;
-      });
-      var previewLines = previewIds
-        .map(function (id) {
-          var v = byId[id];
-          var vt = v === 'yes' ? 'Yes' : v === 'no' ? 'No' : 'Not sure';
-          var shortQ = DIAG_V2_Q_SHORT[id] || 'Question ' + id;
-          return (
-            '<li><span class="diag-v2-preview__q">Q' +
-            esc(String(id)) +
-            '</span> ' +
-            esc(shortQ) +
-            ': <strong>' +
-            esc(vt) +
-            '</strong></li>'
-          );
-        })
-        .join('');
-      previewEl.innerHTML =
-        '<p class="diag-v2-preview__label">Two of your answers</p>' +
-        '<ul class="diag-v2-preview__list">' +
-        previewLines +
-        '</ul>';
-      previewEl.hidden = false;
+      if (showLockedPreview) {
+        var previewLines = DIAG_REPORT_LOCKED_PREVIEW.map(function (line) {
+          return '<li>' + esc(line) + '</li>';
+        }).join('');
+        previewEl.innerHTML =
+          '<p class="diag-v2-preview__label">From full diagnosis (first two signals)</p>' +
+          '<ul class="diag-v2-preview__list diag-v2-preview__list--report">' +
+          previewLines +
+          '</ul>' +
+          '<p class="diag-v2-preview__note">Rest unlocks with the full report ($27).</p>';
+        previewEl.hidden = false;
+      } else {
+        previewEl.innerHTML = '';
+        previewEl.hidden = true;
+      }
     }
 
     var showsEl = document.getElementById('results-v2-shows');
@@ -2212,7 +2150,7 @@
     }
     if (stack) stack.hidden = false;
 
-    fillSevenV2Observable(dr, { previewIds: previewIds, gateFive: gateFive });
+    fillSevenV2Observable(dr);
 
     var upsell = document.getElementById('results-archetype-upsell');
     if (upsell) {
