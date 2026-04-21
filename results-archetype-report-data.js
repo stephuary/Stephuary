@@ -20,71 +20,105 @@
       impact: '',
       reportCtaLead:
         'You have motion. What you do not have yet is one documented path from yes to done.\nThat is what the Snapshot isolates first.',
+      immediateRead: [
+        'You are fully booked or close to it.',
+        'Revenue is not moving at the same rate.',
+        'Each new client adds work.',
+        'There is no fixed sequence that runs without you.',
+        'Most engagements start from scratch.',
+        'That resets time, margin, and consistency every time.'
+      ],
       whatThisMeans: [
-        'You solve each engagement as it arrives instead of using a defined sequence.',
-        'That keeps quality high, but it caps throughput, hides margin leaks, and ties delivery to you.',
-        'Until the first two weeks after payment are documented, every buyer re-buys trust from scratch.'
+        'Based on your answers:',
+        'You are handling every step of delivery directly.',
+        'Your workflow changes depending on the client.',
+        'You are spending 6–14 hours per week repeating setup and thinking work.',
+        'Your capacity is limiting how much you can earn.',
+        'At your current rate, this typically holds revenue between $5K–$20K/month depending on volume.',
+        'The next level requires a fixed structure.'
       ],
       signs: [
-        'Your calendar stays full while profit per hour stays flat or hard to read in your books.',
-        'You add custom steps to delivery because the written process does not match what you actually run.',
-        'Kickoff calls still reuse questions you already answered for the last three clients.'
+        'You have been fully booked and still questioned the numbers.',
+        'You adjust pricing to manage workload, not to reflect value.',
+        'You start each engagement by figuring it out again.'
       ],
       previews: {
-        mean: 'Being busy is not the same as having a repeatable machine.',
-        signs: 'If two or more read true, this pattern is active.',
-        deals: 'Deals stall when buyers cannot see the same delivery twice before they pay.',
-        costing: 'You are burning 6 to 14 hours a week rescoping, re-explaining, and patching handoffs.',
-        why: 'Delivery still depends on you to interpret scope instead of a fixed sequence everyone follows.',
-        sale: 'Confidence drops when the process, timeline, and owner of each step are not explicit.',
-        leverage: 'One written sequence for the first 14 days after yes removes half the back-and-forth.',
-        week: 'Pick the step you repeat on every client after payment. Write it once, then reuse it verbatim.',
-        fixed: 'Margin per project rises, cycle time drops, and you can onboard without inventing the path each time.',
-        notfix: 'This does not fix demand. It does not replace hiring if you are already past your hour cap.'
+        mean: 'Booked solid while revenue flatlines: every new yes still adds raw hours.',
+        signs: 'Calendar full, math fuzzy, pricing trims load, each kickoff reinvents the path.',
+        deals: 'They get the outcome, choke on the process, stall when value has to become a number.',
+        costing: '1–2 stalled deals a month · 6–14 hours/week in repeat setup · $2K–$8K+ left on the table.',
+        haveNot: 'Diagnosis is clear; the fixed sequence and 48-hour breakdown on your business are not installed yet.',
+        why: 'Quality lives in your real-time judgment, so every account needs interpretation and rebuild.',
+        sale: 'They evaluate how work runs, how long it takes, and how consistent it is—without a sequence they stall.',
+        leverage: 'One step you repeat every time, written once: order, inputs, outputs, timing—then reuse.',
+        week: 'Document one real post-yes step as it actually runs. Run it on the next client, refine once, reuse.',
+        fixed: 'Onboarding time drops, delivery steadies, pricing holds, capacity rises without more hours.',
+        notfix: 'Does not pull new demand; it organizes what already works so demand converts cleaner.'
       },
       blocks: {
         deals: [
-          'The break happens when the buyer tries to picture the same delivery twice and only sees your last custom run.',
-          'They compare you to cheaper operators who sell a repeatable box. You sell judgment on demand.',
-          'They pause because they cannot budget time or outcome the way they can with a fixed sequence.'
+          'From your inputs, the drop is happening here:',
+          'Buyer understands the outcome.',
+          'Buyer cannot clearly explain the process.',
+          'Buyer hesitates when translating value to price.',
+          'That gap delays or kills the decision.'
         ],
         costing: {
+          impactLabel: 'Estimated monthly loss',
           bullets: [
-            '6 to 14 hours per week lost to rescoping and re-explaining after verbal yes',
-            '1 to 2 extra weeks of cycle time per deal while you rebuild the path in your head',
-            '$4K to $18K per month in delayed or smaller closes when buyers need certainty you have not documented'
+            '1–2 stalled or delayed deals per month',
+            '6–14 hours lost weekly to repeat work',
+            'Lower pricing tolerance during conversations',
+            'Slower turnaround between clients'
           ],
-          band: '$4K to $18K delayed or lost monthly until the sequence is fixed'
+          band: '$2K–$8K+ in unrealized revenue (one missed deal covers this entire system)'
+        },
+        haveNot: {
+          have: [
+            'Clear pattern diagnosis',
+            'Where deals are breaking',
+            'A defined leverage point',
+            'A working execution system'
+          ],
+          notHave: [
+            'A fixed delivery sequence installed',
+            'A system running without you',
+            'A decision on what to standardize first',
+            'A 48-hour breakdown applied to your actual business'
+          ]
         },
         why: [
-          'Your offer, delivery, and QA still lean on manual judgment instead of a locked checklist and template pack.',
-          'That forces you to re-decide quality and scope on every account, which shows up as busy work, not growth.'
+          'Your delivery relies on your judgment in real time.',
+          'Each client requires interpretation, adjustment, and rebuilding steps.',
+          'That keeps quality high. It also keeps the system dependent on you.'
         ],
         sale: [
-          'Interest builds',
-          'You show past wins',
-          'They ask how it will run for them',
-          'You answer with nuance',
-          'They pause to compare',
-          'Decision slows until they get certainty'
+          'Buyers are making decisions without a clear sequence to trust.',
+          'They are evaluating how the work happens, how long it takes, and how consistent it is.',
+          'When that is unclear: confidence drops, questions increase, decisions slow.'
         ],
         leverage: [
-          'The leverage point is not more hours. It is one repeatable post-yes sequence that removes confusion, delay, and rework.',
-          'Ship it as a single doc or page clients see the day they pay.'
+          'You repeat specific steps in every engagement.',
+          'One of those steps can be written once and reused.',
+          'That step becomes your first system asset, your first delegation point, and your first scale lever.'
         ],
         week: [
-          'One action: list the five steps you always run in the first 14 days after payment. Put them in order with one owner and one artifact each. Send that list to your next prospect before they sign.'
+          'Pick one step you perform in every client engagement.',
+          'Write it exactly as you run it: order, inputs, outputs, timing.',
+          'Do not generalize. Document it as it actually happens.',
+          'Then: use it on your next client, refine it once, reuse it.',
+          'This is the first piece of structure.'
         ],
         fixed: [
-          'Faster decisions because buyers see a fixed path',
-          'Fewer scope fights because steps are named up front',
-          'Cleaner delivery because the team follows the same file',
-          'More margin because you stop rebuilding the plan per client'
+          'Onboarding time drops',
+          'Delivery becomes consistent',
+          'Pricing holds more easily',
+          'Client capacity increases without adding hours'
         ],
         notfix: [
-          'This does not fix demand if inbound is thin.',
-          'This does not replace a hire if you are already past physical hour limits.',
-          'This does not rewrite positioning if the wrong buyers are the ones saying yes.'
+          'This does not increase demand.',
+          'This organizes what already works.',
+          'Demand converts more consistently when structure is visible.'
         ]
       }
     },
@@ -94,6 +128,11 @@
       impact: '',
       reportCtaLead:
         'You are not short on interest. You are short on a line that survives price.\nThe Snapshot pressure-tests that line against your real pipeline.',
+      immediateRead: [
+        'Replies and demos look healthy until budget or comparison shows up.',
+        'You keep re-explaining the same edge because nothing on the page closes the justify-to-yourself gap.',
+        'Strong calls still end in think-about-it when the buyer has to defend the pick alone.'
+      ],
       whatThisMeans: [
         'Your offer creates interest but does not hold under comparison or self-justification.',
         'Once price or procurement shows up, the buyer cannot finish the sentence: why you, why now, why not the cheaper option.',
@@ -105,18 +144,33 @@
         'Pricing conversations reliably slow or reset momentum even when the discovery call felt strong.'
       ],
       previews: {
-        mean: 'Attention is earned. The decision is lost in the justify-to-yourself moment.',
-        signs: 'If two or more read true, this pattern is active.',
-        deals: 'Deals die when the buyer tries to defend your pick to themselves or a boss without a sharp replacement story.',
-        costing: 'You are losing 1 to 3 qualified opportunities a month to stall after interest, not to bad leads.',
-        why: 'The written and spoken offer still needs live translation instead of one comparison-proof line.',
-        sale: 'Interest builds, agreement feels close, money or comparison enters, momentum drops, follow-up piles up.',
-        leverage: 'Clarity under pressure. Your offer must survive comparison without explanation.',
-        week: 'Rewrite your offer into one sentence that answers: what it is, who it is for, why it wins. Put it above price on the next three outbound assets.',
-        fixed: 'Faster decisions at the money step, fewer stalls after verbal yes, higher win rate on the same lead volume.',
-        notfix: 'This does not fix cold traffic volume. It does not fix delivery scope creep after yes.'
+        mean: 'Interest is real; the money step still needs you live because the line is not comparison-proof.',
+        signs: 'Differentiation questions stretch · verbal yes dies at procurement · price email resets momentum.',
+        deals: 'They cannot repeat why you replace the alternative in one sentence their boss will accept.',
+        costing: '1–3 qualified stalls/month post-interest · 8–12 hours/week on late decks and chase · $2K–$12K delayed.',
+        haveNot: 'You have the story in calls; you do not have one packaged line and proof block that survives price alone.',
+        why: 'Proof lives in calls and decks instead of a line that survives two browser tabs and a spreadsheet.',
+        sale: 'Warm thread → budget or competitor named → buyer tries to self-justify → thread cools in email.',
+        leverage: 'One replacement sentence: what you replace, for whom, outcome—proven without you present.',
+        week: 'Ship one sentence + one proof block; put both above price on the next three outbound assets.',
+        fixed: 'Faster money-step decisions, fewer post-yes stalls, same lead volume closes harder.',
+        notfix: 'Does not fix cold volume or post-yes scope creep by itself.'
       },
       blocks: {
+        haveNot: {
+          have: [
+            'Clear pattern diagnosis',
+            'Where deals are breaking',
+            'A defined leverage point',
+            'A working execution system'
+          ],
+          notHave: [
+            'A comparison-proof line shipped everywhere buyers look',
+            'A stakeholder-ready justification asset',
+            'A fixed money-step talk track you do not improvise',
+            'A 48-hour breakdown applied to your live pipeline copy'
+          ]
+        },
         deals: [
           'The break happens when the buyer tries to map your offer to budget, timeline, or an alternative without a single plain differentiator.',
           'They stall because they cannot repeat your edge in one sentence to finance, legal, or a partner.',
@@ -168,6 +222,11 @@
       impact: '',
       reportCtaLead:
         'Filtering is not rejection. It is how you protect margin.\nThe Snapshot names the filter chain that matches your real economics.',
+      immediateRead: [
+        'The calendar looks full, but too many conversations are the wrong buyer or the wrong check size.',
+        'You keep rescoping or discounting to force a fit that your economics cannot carry.',
+        'The buyers you actually want are waiting behind a queue of maybes.'
+      ],
       whatThisMeans: [
         'Your messaging pulls in buyers who are not set up to buy what you actually sell.',
         'You spend selling cycles translating, rescoping, or discounting instead of closing the right fit.',
@@ -179,18 +238,33 @@
         'You keep adjusting the offer downward to make a bad fit fit instead of disqualifying early.'
       ],
       previews: {
-        mean: 'Volume without fit burns the same calendar as real demand.',
-        signs: 'If two or more read true, this pattern is active.',
-        deals: 'Deals break when you discover the prospect was never going to fund the work you want to sell.',
-        costing: 'You are spending 10 to 18 hours a week on calls and proposals that cannot fund your target model.',
-        why: 'The front door still optimizes for attention instead of fit, budget, and decision authority.',
-        sale: 'Inbound arrives, interest looks high, fit is weak, you negotiate scope or price down, margin dies or the deal vanishes.',
-        leverage: 'Filter before attraction.',
-        week: 'Define who you will not take money from: three disqualifiers you enforce before the first deep call.',
-        fixed: 'Cleaner pipeline, shorter calls, higher win rate on the same hours, better margin on wins.',
-        notfix: 'This does not fix offer clarity for the right buyer. It does not create net-new demand by itself.'
+        mean: 'Busy pipeline, weak fit: you burn the same hours on buyers who cannot fund the model you want.',
+        signs: 'Low-budget skew · scope fights before deposit · you shrink the offer to keep a bad lead alive.',
+        deals: 'Losses are fit masked as timing: they were never going to fund the work you want on your terms.',
+        costing: '10–18 hours/week on non-funding calls · 2–4 off-band proposals/month · $3K–$15K in discount drag.',
+        haveNot: 'You see the mismatch; you do not have enforced disqualifiers and a front door that screens before deep calls.',
+        why: 'Attention still beats fit at the top of the funnel, so the wrong buyers book first.',
+        sale: 'Inbound spikes, fit is weak, you negotiate down, margin dies or the deal evaporates after effort.',
+        leverage: 'Hard filters before attraction: who you are not for, stated where they click.',
+        week: 'Write three disqualifiers you enforce before the first deep call; put them on the booking path.',
+        fixed: 'Shorter calls, higher win rate on remaining volume, margin protected on wins.',
+        notfix: 'Does not fix offer clarity for the right buyer or create net-new demand alone.'
       },
       blocks: {
+        haveNot: {
+          have: [
+            'Clear pattern diagnosis',
+            'Where deals are breaking',
+            'A defined leverage point',
+            'A working execution system'
+          ],
+          notHave: [
+            'Three enforced disqualifiers on the booking path',
+            'A pricing band gate buyers see before they book',
+            'A script that ends bad fits in 10 minutes instead of 45',
+            'A 48-hour breakdown mapped to your real economics'
+          ]
+        },
         deals: [
           'The break happens when you realize the buyer cannot fund the work, cannot decide, or wanted a different product than you sell.',
           'You try to rescue the call because the pipeline looks empty, then you eat scope or discount to close anything.',
@@ -242,6 +316,11 @@
       impact: '',
       reportCtaLead:
         'Clarity is not a rebrand. It is one sentence buyers can repeat.\nThe Snapshot locks that sentence to your pipeline reality.',
+      immediateRead: [
+        'Every channel tells a slightly different story about what you own.',
+        'Cold buyers ask broad questions because they cannot repeat your lane after one skim.',
+        'Warm intros still outperform everything public, which means the written story is not doing its job.'
+      ],
       whatThisMeans: [
         'People do not know exactly what to come to you for.',
         'Warm relationships still convert faster than anything anonymous because the public story does not hold still.',
@@ -253,18 +332,33 @@
         'Referrals are inconsistent or you cannot predict who sends you work and why.'
       ],
       previews: {
-        mean: 'Drift reads as range. Buyers read range as risk.',
-        signs: 'If two or more read true, this pattern is active.',
-        deals: 'Deals stall when the buyer cannot name what you sell for them specifically after reading you.',
-        costing: 'You are spending 5 to 12 hours a week reframing who you are for on calls and in proposals.',
-        why: 'The public story still shifts by channel, week, or mood instead of repeating one owned problem.',
-        sale: 'Interest arrives, they browse, they ask broad questions, you improvise positioning, momentum leaks before price.',
-        leverage: 'Fix what you are known for.',
-        week: 'Define one problem you want to be known for solving repeatedly. Put it on the surface you send most before any other claim.',
-        fixed: 'Shorter calls, cleaner inbound questions, faster decisions from cold traffic that matches your lane.',
-        notfix: 'This does not fix wrong-room traffic. It does not fix delivery capacity after yes.'
+        mean: 'Range reads as risk: buyers cannot name the one problem you own after one pass.',
+        signs: 'Client mix all over the map · case studies do not stack · referrals have no repeatable sentence.',
+        deals: 'They like your credibility but cannot map it to one urgent purchase they can defend.',
+        costing: '5–12 hours/week reframing on calls · 1–2 deals/month lost to think while they shop narrower shops.',
+        haveNot: 'You have proof of skill; you do not have one repeated headline problem-outcome line everywhere.',
+        why: 'Multiple headline problems stay live in public, so every call becomes a custom positioning session.',
+        sale: 'Skim → broad questions → you broaden to keep the thread → momentum leaks before price.',
+        leverage: 'One owned lane: one problem, one buyer, one outcome, repeated across surfaces.',
+        week: 'Write the single problem-outcome line; delete any homepage block that does not prove it above the fold.',
+        fixed: 'Faster cold decisions, fewer positioning calls, better self-selection before they book.',
+        notfix: 'Does not fix wrong-room traffic or delivery load after yes.'
       },
       blocks: {
+        haveNot: {
+          have: [
+            'Clear pattern diagnosis',
+            'Where deals are breaking',
+            'A defined leverage point',
+            'A working execution system'
+          ],
+          notHave: [
+            'One headline problem-outcome line used everywhere',
+            'Channel copy deduped to that lane',
+            'A proof stack that only supports that lane',
+            'A 48-hour breakdown tied to your highest-traffic surface'
+          ]
+        },
         deals: [
           'The break happens when they like your credibility but cannot map it to a single urgent purchase.',
           'They ask for examples across multiple industries because your headline problem is not stable.',
@@ -316,6 +410,11 @@
       impact: '',
       reportCtaLead:
         'Capability without signal does not compound.\nThe Snapshot ties your first public proof lane to the economics you want.',
+      immediateRead: [
+        'Delivery is strong; inbound is thin or spiky.',
+        'Between calls buyers search you and find scraps instead of a clear proof ladder.',
+        'You still spend hours on intros and DMs because public artifacts do not carry the claim.'
+      ],
       whatThisMeans: [
         'Your ability is not translating into opportunity at the rate your skill deserves.',
         'Decisions still route through referrals or luck because the market cannot see how you think before they buy.',
@@ -327,18 +426,33 @@
         'You rely on referrals as the primary source of real opportunities.'
       ],
       previews: {
-        mean: 'If they cannot see how you think, they cannot justify premium before a call.',
-        signs: 'If two or more read true, this pattern is active.',
-        deals: 'Deals stall because buyers cannot point to public proof that matches the claim you make in conversation.',
-        costing: 'You are losing 6 to 14 hours a week to networking and one-off intros that do not scale into pipeline.',
-        why: 'You are waiting to be picked instead of publishing repeatable evidence of judgment.',
-        sale: 'A conversation goes well, they like you, they still need social proof they cannot find, the deal cools in research.',
-        leverage: 'Signal creation.',
-        week: 'Publish three pieces that show how you think: one thread, one article, one short. Same problem across all three.',
-        fixed: 'More inbound conversations, faster trust before calls, cleaner justification for premium pricing.',
-        notfix: 'This does not fix offer clarity if the product is still fuzzy. It does not fix wrong-room traffic.'
+        mean: 'Calls feel premium; your public trail does not show how you think before they pay.',
+        signs: 'Spiky inbound · no weekly cadence · referrals carry most real pipeline.',
+        deals: 'They like you live, then cool off when research turns up thin or scattered proof.',
+        costing: '6–14 hours/week on manual intros · 1–2 opportunities/month lost in the research gap.',
+        haveNot: 'You have judgment; you do not have three forwardable public pieces on one owned problem.',
+        why: 'Publishing stays optional while delivery stays mandatory, so buyers only see you in private.',
+        sale: 'Good call → they search → proof gap → they ask for references instead of moving.',
+        leverage: 'One owned problem on a weekly cadence with artifacts buyers can forward.',
+        week: 'Ship three pieces in seven days on the same problem; stop editing for perfect.',
+        fixed: 'More qualified inbound, shorter trust cycles, cleaner premium justification.',
+        notfix: 'Does not fix fuzzy offers, wrong-room traffic, or post-yes systems.'
       },
       blocks: {
+        haveNot: {
+          have: [
+            'Clear pattern diagnosis',
+            'Where deals are breaking',
+            'A defined leverage point',
+            'A working execution system'
+          ],
+          notHave: [
+            'Three public artifacts buyers can forward',
+            'A weekly cadence you actually hold',
+            'One channel where proof stacks instead of scattering',
+            'A 48-hour breakdown that names your first proof lane'
+          ]
+        },
         deals: [
           'The break happens when the buyer likes you in the room but cannot find three public artifacts that prove the claim.',
           'They delay because hiring you still feels like a leap instead of a logical next step.',
@@ -390,6 +504,11 @@
       impact: '',
       reportCtaLead:
         'More doors do not create more revenue. They create hesitation.\nThe Snapshot forces one primary path without guessing away revenue.',
+      immediateRead: [
+        'Buyers see multiple CTAs and pause because picking a path became its own project.',
+        'They default to the smallest buy to reduce risk, then never graduate to the work you want.',
+        'You rebuild the bridge between offers on every call instead of shipping one obvious first step.'
+      ],
       whatThisMeans: [
         'Buyers hesitate because the path is unclear.',
         'Every extra entry point becomes a second decision they have to make before they make the first decision.',
@@ -401,18 +520,33 @@
         'Sales conversations include confusion about what is included, what is next, or what to buy first.'
       ],
       previews: {
-        mean: 'Fragmentation reads as complexity. Complexity reads as risk.',
-        signs: 'If two or more read true, this pattern is active.',
-        deals: 'Deals stall when buyers compare your own offers against each other and pick the smallest safe buy.',
-        costing: 'You are losing 6 to 12 hours a week reframing and rebuilding pitches per inbound type.',
-        why: 'There is no single primary route repeated everywhere the buyer clicks.',
-        sale: 'Interest arrives, they browse, they see multiple doors, they freeze, they pick nothing or the micro-offer.',
-        leverage: 'Simplify entry.',
-        week: 'Define one clear entry offer. Point every public CTA to it for 30 days. Everything else becomes a manual exception.',
-        fixed: 'Higher first-ticket size, faster decisions, cleaner analytics, less proposal rework.',
-        notfix: 'This does not fix weak demand. It does not fix delivery systems after yes.'
+        mean: 'Too many doors: buyers freeze or buy the micro-offer and never level up.',
+        signs: 'Which one do I need? · pricing needs a call to parse · scope confusion on every thread.',
+        deals: 'They compare your SKUs against each other and pick the safe small buy or walk.',
+        costing: '6–12 hours/week rebuilding pitches · 1–2 deals/month lost to option paralysis · $2K–$9K in undersized first buys.',
+        haveNot: 'You have options; you do not have one primary route repeated on every public click.',
+        why: 'Every path carries its own copy and proof, so buyers debate your menu before they debate competitors.',
+        sale: 'Curiosity → browse → split messages → which should I pick? → delay or downsell.',
+        leverage: 'One primary offer, one landing page, one CTA for a fixed window; everything else manual.',
+        week: 'List every public CTA URL; point all to the single entry offer for 30 days or remove the link.',
+        fixed: 'Higher first ticket, faster decisions, cleaner analytics, less proposal rework.',
+        notfix: 'Does not fix weak demand, weak core offer, or delivery after yes.'
       },
       blocks: {
+        haveNot: {
+          have: [
+            'Clear pattern diagnosis',
+            'Where deals are breaking',
+            'A defined leverage point',
+            'A working execution system'
+          ],
+          notHave: [
+            'One declared primary offer for 30 days',
+            'All public CTAs pointed at that offer',
+            'A single landing path with one proof stack',
+            'A 48-hour breakdown that picks the surviving route'
+          ]
+        },
         deals: [
           'The break happens when they like your thinking but cannot pick which product to start with.',
           'They compare your own offers against each other and pick the cheapest entry to reduce risk.',
@@ -464,6 +598,11 @@
       impact: '',
       reportCtaLead:
         'The goal is not more hustle. It is removing one load-bearing step.\nThe Snapshot finds the step that unlocks the rest without breaking delivery.',
+      immediateRead: [
+        'Approvals, QA, and client pings still route through you on repeat.',
+        'Delegation exists on paper but snaps back the moment pressure hits.',
+        'Delivery timelines move when your calendar moves, which caps what you can promise next.'
+      ],
       whatThisMeans: [
         'Everything slows or breaks without your direct involvement.',
         'That caps growth because your calendar becomes the system of record for quality, speed, and decisions.',
@@ -475,18 +614,33 @@
         'Delivery quality or timelines swing when your availability swings.'
       ],
       previews: {
-        mean: 'Dependency is not a personality flaw. It is a missing step owner.',
-        signs: 'If two or more read true, this pattern is active.',
-        deals: 'Deals stall when buyers sense delivery cannot run reliably without your real-time involvement.',
-        costing: 'You are losing 8 to 16 hours a week to interrupts, rework, and status updates that should be asynchronous.',
-        why: 'Repeatable steps are still stored in your head instead of owned by a checklist, template, or delegate.',
-        sale: 'They want you, they buy you, timelines slip when you are saturated, renewals get brittle, growth feels unsafe.',
-        leverage: 'Remove yourself from one step.',
-        week: 'Identify and delegate one repeatable task: name the step, the owner, the artifact, and the quality bar.',
-        fixed: 'More stable delivery, fewer bottlenecks, cleaner capacity to sell, less burnout risk.',
-        notfix: 'This does not fix wrong positioning. It does not fix demand if you are not closing.'
+        mean: 'You are the system of record: throughput follows your inbox, not a checklist.',
+        signs: 'Constant pulls on delivery · delegation snaps back · timelines swing with your availability.',
+        deals: 'Buyers sense they are buying your queue, not a machine; expansion gets cautious.',
+        costing: '8–16 hours/week in interrupts and status ping-pong · growth bets skipped on capacity.',
+        haveNot: 'You know what repeats; you do not have one step fully owned, documented, and off your desk twice in a row.',
+        why: 'Repeatable work still lives in your head, so hiring cannot attach to a stable surface.',
+        sale: 'They buy you → delivery leans on you → delays show → renewals tighten.',
+        leverage: 'One repeatable weekly step: named owner, artifact, quality bar, off your thread twice.',
+        week: 'Pick one weekly repeat you still do; one-page SOP, assign owner, run two cycles without you in CC.',
+        fixed: 'Stable timelines, fewer bottlenecks, more sellable capacity, lower burnout risk.',
+        notfix: 'Does not fix broken offers, empty pipeline, or hiring when you are past physical limits.'
       },
       blocks: {
+        haveNot: {
+          have: [
+            'Clear pattern diagnosis',
+            'Where deals are breaking',
+            'A defined leverage point',
+            'A working execution system'
+          ],
+          notHave: [
+            'One step fully handed off with a written SOP and quality check',
+            'A delegate running that step twice without you in the thread',
+            'A capacity model you can quote honestly',
+            'A 48-hour breakdown that names the load-bearing step first'
+          ]
+        },
         deals: [
           'The break happens when buyers need certainty you can scale delivery and your calendar says otherwise.',
           'They stall because onboarding still feels like joining your private queue instead of entering a system.',
