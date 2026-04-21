@@ -20,7 +20,6 @@
       --text: #f2f0ec;
       --muted: #c9c4be;
       --line: rgba(242, 240, 236, 0.14);
-      --sticky-bg: rgba(10, 10, 10, 0.92);
       --accent: #c4a35a;
       --cta: #2b4fd4;
       --card: rgba(18, 18, 16, 0.92);
@@ -29,7 +28,17 @@
     }
     * { box-sizing: border-box; }
     /* Native report shell components — light DOM, no shadow (IDs + diagnostic JS unchanged) */
-    /* Hero shell: block in normal flow (no sticky overlay over main). */
+    /* Page shell — single vertical column, no overlay stacking. */
+    .report-page {
+      display: block;
+      width: 100%;
+      min-height: 0;
+      position: relative;
+      z-index: auto;
+      overflow: visible;
+      transform: none;
+      isolation: auto;
+    }
     report-hero-section,
     report-download-block,
     report-start-here-block,
@@ -39,6 +48,9 @@
     report-final-cta {
       display: block;
       width: 100%;
+      position: static;
+      z-index: auto;
+      transform: none;
     }
     body {
       margin: 0;
@@ -48,21 +60,39 @@
       font-size: 15px;
       line-height: 1.45;
       -webkit-font-smoothing: antialiased;
-    }
-    .report-sticky {
       position: static;
-      background: var(--sticky-bg);
-      backdrop-filter: blur(8px);
-      border-bottom: 1px solid var(--line);
-      padding: 1rem 1rem var(--rpt-space-section);
+      overflow-x: hidden;
+      overflow-y: auto;
     }
-    .report-sticky-inner {
+    /* Hero — plain static band (same bg as page; no sticky/fixed/backdrop stack). */
+    .report-page__hero {
+      position: static;
+      top: auto;
+      left: auto;
+      right: auto;
+      bottom: auto;
+      z-index: auto;
+      transform: none;
+      isolation: auto;
+      contain: none;
+      will-change: auto;
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+      background: var(--bg);
+      border-bottom: 1px solid var(--line);
+      padding: 1rem 0 var(--rpt-space-section);
+      overflow: visible;
+      max-height: none;
+      min-height: 0;
+    }
+    .report-page__hero-inner {
+      display: block;
       max-width: var(--max);
       margin: 0 auto;
-      display: flex;
-      flex-direction: column;
-      align-items: stretch;
-      gap: clamp(var(--rpt-space-block), 4vw, 48px);
+      padding: 0 1rem;
+      position: static;
+      z-index: auto;
+      overflow: visible;
     }
     /* H2 — section / kicker labels */
     .report-title {
@@ -74,17 +104,24 @@
       font-weight: 600;
     }
     /* H1 — archetype title (largest on page) */
-    .report-sticky h1 {
+    .report-page__hero h1 {
       font-size: clamp(1.65rem, 5.2vw, 2.5rem);
       font-weight: 800;
       margin: 0 0 var(--rpt-space-micro);
       letter-spacing: -0.035em;
       line-height: 1.08;
     }
-    /* Diagnosis: full height in document flow (page scrolls; nothing stacks under hero). */
-    .report-sticky__diagnosis {
+    .report-page__hero .rpt-hero-cta {
+      margin-top: var(--rpt-space-block);
+    }
+    .report-page__hero .rpt-download-asset {
+      margin-top: var(--rpt-space-block);
+    }
+    /* Diagnosis — full text in normal flow */
+    .report-page__hero-diagnosis {
       margin: 0 0 var(--rpt-space-block);
       overflow: visible;
+      position: static;
     }
     /* Body — diagnosis */
     .report-pattern {
@@ -223,9 +260,15 @@
       cursor: wait;
     }
     .report-main {
+      display: block;
+      position: static;
+      z-index: auto;
+      transform: none;
+      overflow: visible;
       max-width: var(--max);
       margin: 0 auto;
       padding: var(--rpt-space-micro) 1rem 2.1rem;
+      background: var(--bg);
     }
     .report-acc {
       margin-top: var(--rpt-space-block);
@@ -1124,13 +1167,14 @@
         color: #111;
         font-size: 11pt;
       }
-      .report-sticky {
+      .report-page__hero {
         position: static;
         background: #fff;
         border-bottom: 1px solid #ccc;
         backdrop-filter: none;
+        -webkit-backdrop-filter: none;
       }
-      .report-sticky__diagnosis {
+      .report-page__hero-diagnosis {
         max-height: none;
         overflow: visible;
         margin-bottom: 0.35rem;
@@ -1144,7 +1188,7 @@
       .rpt-prompt-hint {
         color: #333;
       }
-      .report-sticky h1,
+      .report-page__hero h1,
       .report-acc-trigger,
       .rpt-card h3,
       .rpt-nest-trigger__title {
@@ -1261,11 +1305,12 @@
   </style>
 </head>
 <body>
-  <report-hero-section class="report-sticky">
-    <div class="report-sticky-inner">
+  <div class="report-page">
+  <report-hero-section class="report-page__hero">
+    <div class="report-page__hero-inner">
       <p class="report-title">Diagnostic read · execution system</p>
       <h1 id="report-pattern-head">Your pattern</h1>
-      <div class="report-sticky__diagnosis">
+      <div class="report-page__hero-diagnosis">
         <p class="report-pattern" id="report-pattern-body"></p>
       </div>
       <div class="rpt-hero-cta" id="rpt-hero-cta" aria-label="Next step">
@@ -2003,6 +2048,7 @@ Back catalog depth:
   </main>
 
   <p class="foot"><a href="/">Home</a> · <a href="/capture">Diagnostic</a></p>
+  </div>
 
   <script src="/results-archetype-report-data.js"></script>
   <script>
