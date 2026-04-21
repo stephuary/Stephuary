@@ -29,6 +29,7 @@
     }
     * { box-sizing: border-box; }
     /* Native report shell components — light DOM, no shadow (IDs + diagnostic JS unchanged) */
+    /* Hero shell: block in normal flow (no sticky overlay over main). */
     report-hero-section,
     report-download-block,
     report-start-here-block,
@@ -37,6 +38,7 @@
     report-impact-block,
     report-final-cta {
       display: block;
+      width: 100%;
     }
     body {
       margin: 0;
@@ -48,19 +50,18 @@
       -webkit-font-smoothing: antialiased;
     }
     .report-sticky {
-      position: sticky;
-      top: 0;
-      z-index: 20;
+      position: static;
       background: var(--sticky-bg);
       backdrop-filter: blur(8px);
       border-bottom: 1px solid var(--line);
-      padding: 1rem 1rem 1.1rem;
+      padding: 1rem 1rem var(--rpt-space-section);
     }
     .report-sticky-inner {
       max-width: var(--max);
       margin: 0 auto;
       display: flex;
       flex-direction: column;
+      align-items: stretch;
       gap: clamp(var(--rpt-space-block), 4vw, 48px);
     }
     /* H2 — section / kicker labels */
@@ -80,18 +81,10 @@
       letter-spacing: -0.035em;
       line-height: 1.08;
     }
-    /* Diagnosis scroll: keeps Snapshot + Download in first viewport on typical laptops */
+    /* Diagnosis: full height in document flow (page scrolls; nothing stacks under hero). */
     .report-sticky__diagnosis {
-      flex: 1 1 auto;
-      min-height: 0;
-      max-height: min(34vh, 12.5rem);
-      overflow-y: auto;
       margin: 0 0 var(--rpt-space-block);
-      padding-right: 0.25rem;
-      -webkit-overflow-scrolling: touch;
-    }
-    .report-sticky__diagnosis:focus-within {
-      outline: none;
+      overflow: visible;
     }
     /* Body — diagnosis */
     .report-pattern {
@@ -232,10 +225,10 @@
     .report-main {
       max-width: var(--max);
       margin: 0 auto;
-      padding: 0.55rem 1rem 2.1rem;
+      padding: var(--rpt-space-micro) 1rem 2.1rem;
     }
     .report-acc {
-      margin-top: var(--rpt-space-section);
+      margin-top: var(--rpt-space-block);
       padding-top: var(--rpt-space-micro);
       border-top: 1px solid var(--line);
     }
