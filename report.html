@@ -7,154 +7,197 @@
   <meta name="description" content="Stephuary diagnostic report." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
   <style>
     :root {
       --bg: #0a0a0a;
-      --text: #e8e6e3;
-      --muted: #9a9690;
-      --rule: rgba(232, 230, 227, 0.12);
-      --font: "Inter", system-ui, sans-serif;
+      --text: #f2f0ec;
+      --muted: #b8b4ab;
+      --line: rgba(242, 240, 236, 0.14);
+      --sticky-bg: rgba(10, 10, 10, 0.92);
+      --accent: #c4a35a;
+      --cta: #2b4fd4;
+      --max: 40rem;
     }
     * { box-sizing: border-box; }
     body {
       margin: 0;
       background: var(--bg);
       color: var(--text);
-      font-family: var(--font);
-      font-size: 16px;
-      line-height: 1.55;
+      font-family: Inter, system-ui, sans-serif;
+      font-size: 15px;
+      line-height: 1.45;
       -webkit-font-smoothing: antialiased;
     }
-    main {
-      width: min(40rem, 100% - 2rem);
+    .report-sticky {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: var(--sticky-bg);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--line);
+      padding: 0.85rem 1rem 1rem;
+    }
+    .report-sticky-inner {
+      max-width: var(--max);
       margin: 0 auto;
-      padding: 2.5rem 0 3rem;
     }
-    section {
-      margin: 0 0 1.75rem;
-      padding: 0 0 1.75rem;
-      border-bottom: 1px solid var(--rule);
-    }
-    section:last-of-type {
-      border-bottom: 0;
-      padding-bottom: 0;
-      margin-bottom: 0;
-    }
-    h2 {
-      margin: 0 0 0.65rem;
-      font-size: 1rem;
+    .report-title {
+      font-size: 0.68rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin: 0 0 0.35rem;
       font-weight: 600;
+    }
+    .report-sticky h1 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      margin: 0 0 0.4rem;
+      letter-spacing: -0.02em;
+    }
+    .report-pattern {
+      font-size: 0.92rem;
       color: var(--text);
-    }
-    p {
-      margin: 0 0 0.65rem;
+      margin: 0 0 0.75rem;
       max-width: 36rem;
+      line-height: 1.4;
     }
-    p:last-child {
+    .report-cta-pri {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      max-width: 22rem;
+      padding: 0.85rem 1rem;
+      background: var(--cta);
+      color: #fff;
+      font-weight: 700;
+      font-size: 0.72rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      text-decoration: none;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+    }
+    .report-cta-pri:hover {
+      filter: brightness(1.06);
+    }
+    .report-main {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 0.5rem 1rem 2.5rem;
+    }
+    .report-acc {
+      border-top: 1px solid var(--line);
+    }
+    .report-acc-item {
+      border-bottom: 1px solid var(--line);
+    }
+    .report-acc-item--costing .report-acc-trigger {
+      font-size: 0.98rem;
+    }
+    .report-acc-trigger {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      padding: 0.65rem 0;
+      border: 0;
+      background: transparent;
+      color: var(--text);
+      font: inherit;
+      font-weight: 700;
+      font-size: 0.88rem;
+      text-align: left;
+      cursor: pointer;
+    }
+    .report-acc-trigger:focus-visible {
+      outline: 2px solid var(--cta);
+      outline-offset: 2px;
+    }
+    .report-acc-icon {
+      flex-shrink: 0;
+      font-size: 0.75rem;
+      color: var(--muted);
+      transition: transform 0.2s ease;
+    }
+    .report-acc-item.is-open .report-acc-icon {
+      transform: rotate(180deg);
+    }
+    .report-acc-panel {
+      max-height: 0;
+      overflow: hidden;
+      opacity: 0;
+      transition: max-height 0.28s ease, opacity 0.2s ease;
+    }
+    .report-acc-item.is-open .report-acc-panel {
+      opacity: 1;
+    }
+    .report-acc-panel-inner {
+      padding: 0 0 0.65rem;
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+    .report-acc-item--costing .report-acc-panel-inner {
+      font-size: 0.95rem;
+      color: var(--text);
+      background: rgba(196, 163, 90, 0.08);
+      border: 1px solid rgba(196, 163, 90, 0.28);
+      padding: 0.75rem 0.85rem;
+      margin-bottom: 0.35rem;
+    }
+    .report-acc-panel-inner p {
+      margin: 0 0 0.45rem;
+      max-width: none;
+    }
+    .report-acc-panel-inner p:last-child {
       margin-bottom: 0;
     }
-    ul {
+    .report-acc-panel-inner ul {
       margin: 0;
       padding: 0;
       list-style: none;
-      max-width: 36rem;
     }
-    li {
+    .report-acc-panel-inner li {
       position: relative;
-      padding-left: 1rem;
-      margin-bottom: 0.4rem;
+      padding-left: 0.85rem;
+      margin-bottom: 0.3rem;
     }
-    li::before {
+    .report-acc-panel-inner li::before {
       content: "–";
       position: absolute;
       left: 0;
       color: var(--muted);
     }
-    li:last-child {
-      margin-bottom: 0;
-    }
-    .block-lines p {
-      margin-bottom: 0.5rem;
-    }
-    .leverage-gap {
-      margin: 0.75rem 0 0.5rem;
-    }
     .foot {
-      margin-top: 2rem;
-      font-size: 0.875rem;
+      max-width: var(--max);
+      margin: 1.5rem auto 0;
+      padding: 0 1rem 2rem;
+      font-size: 0.85rem;
     }
     .foot a {
       color: var(--muted);
-      text-decoration: underline;
-      text-underline-offset: 3px;
-    }
-    .foot a:hover {
-      color: var(--text);
     }
   </style>
 </head>
 <body>
-  <main id="report-root"></main>
+  <header class="report-sticky">
+    <div class="report-sticky-inner">
+      <p class="report-title">Report</p>
+      <h1 id="report-pattern-head">Your pattern</h1>
+      <p class="report-pattern" id="report-pattern-body"></p>
+      <a class="report-cta-pri" id="report-sticky-cta" href="#">Get full report $27</a>
+    </div>
+  </header>
+
+  <main class="report-main">
+    <div class="report-acc" id="report-acc-root" aria-label="Report sections"></div>
+  </main>
+  <p class="foot"><a href="/">Home</a> · <a href="/content-system">Voice to content</a></p>
+
   <script>
-    var REPORT = {
-      patternTitle: 'Your pattern',
-      patternBody: 'Interest is not the issue. Decisions slow when price comes up.',
-      signsTitle: 'All 7 signs',
-      signs: [
-        'You lowered your price to close',
-        'Buyers ask how this is different',
-        'Proposals stall after agreement',
-        "You've rewritten your offer multiple times",
-        "Testimonials don't separate you",
-        "Calls don't convert consistently",
-        'Pricing comes up before value is clear'
-      ],
-      dealsTitle: 'Where your last 3 deals broke',
-      dealsParas: [
-        'The drop happened when the buyer tried to explain your offer to themselves.',
-        'This is where they compare, justify, and decide.',
-        'Your positioning had to carry that decision.',
-        "It didn't."
-      ],
-      costingTitle: 'What this is costing',
-      costingBullets: ['2-5 lost deals per month', '$2K-$10K per deal', '10-20 hours lost monthly'],
-      costingImpact: ['Estimated impact:', '$4K-$30K/month'],
-      whyTitle: 'Why this is happening',
-      whyParas: [
-        'Your offer requires explanation.',
-        'Buyers cannot understand or justify it quickly.',
-        'That delay slows decisions.'
-      ],
-      saleTitle: "What's happening in the sale",
-      saleLines: [
-        'Interest builds',
-        'Conversation is strong',
-        'Price enters',
-        'Buyer pauses',
-        'Comparison starts',
-        'Decision slows'
-      ],
-      saleClose: 'Loss happens at the pause.',
-      leverageTitle: 'Leverage point',
-      leverageParas: ['Your offer must answer:', 'Why this', 'Immediately.'],
-      weekTitle: 'What to do this week',
-      weekIntro: 'Write your offer in one sentence:',
-      weekBullets: ['What it is', "Who it's for", 'What result it creates'],
-      weekOutro: [
-        'Remove any step where explanation is needed.',
-        'Add one line that anchors comparison.'
-      ],
-      fixedTitle: 'What changes when fixed',
-      fixedLines: ['Faster decisions', 'Fewer objections', 'Higher close rate', 'Less time explaining'],
-      fixedImpact: '10-20% lift = $2K-$15K/month',
-      notFixTitle: 'What this does not fix',
-      notFixLines: ['Delivery structure', 'Scaling', 'Dependency'],
-      nextTitle: 'Next step',
-      nextCta: 'Get your Snapshot $950',
-      nextSub: ['48-hour delivery', 'Clear next move'],
-      nextHref: '/snapshot'
-    };
+    var STRIPE_FULL_REPORT_27 = 'https://buy.stripe.com/00wcN500E5imd5WeWv33W03';
 
     function esc(s) {
       if (s == null) return '';
@@ -163,144 +206,197 @@
       return d.innerHTML;
     }
 
+    var REPORT = {
+      patternTitle: 'Your pattern',
+      patternBody: 'Interest is not the issue. Decisions slow when price comes up.',
+      sections: [
+        {
+          key: 'signs',
+          title: 'All 7 signs',
+          html:
+            '<ul>' +
+            [
+              'You lowered your price to close',
+              'Buyers ask how this is different',
+              'Proposals stall after agreement',
+              "You've rewritten your offer multiple times",
+              "Testimonials don't separate you",
+              "Calls don't convert consistently",
+              'Pricing comes up before value is clear'
+            ]
+              .map(function (t) {
+                return '<li>' + esc(t) + '</li>';
+              })
+              .join('') +
+            '</ul>'
+        },
+        {
+          key: 'deals',
+          title: 'Where your last 3 deals broke',
+          html:
+            '<p>The drop happened when the buyer tried to explain your offer to themselves.</p>' +
+            '<p>This is where they compare, justify, and decide.</p>' +
+            '<p>Your positioning had to carry that decision.</p>' +
+            "<p>It didn't.</p>"
+        },
+        {
+          key: 'costing',
+          title: 'What this is costing',
+          costing: true,
+          html:
+            '<ul>' +
+            ['2-5 lost deals per month', '$2K-$10K per deal', '10-20 hours lost monthly']
+              .map(function (t) {
+                return '<li>' + esc(t) + '</li>';
+              })
+              .join('') +
+            '</ul>' +
+            '<p style="margin-top:0.55rem"><strong>Estimated impact:</strong> $4K-$30K/month</p>'
+        },
+        {
+          key: 'why',
+          title: "Why it's happening",
+          html:
+            '<p>Your offer requires explanation.</p>' +
+            '<p>Buyers cannot understand or justify it quickly.</p>' +
+            '<p>That delay slows decisions.</p>'
+        },
+        {
+          key: 'sale',
+          title: "What's happening in the sale",
+          html:
+            '<ul>' +
+            [
+              'Interest builds',
+              'Conversation is strong',
+              'Price enters',
+              'Buyer pauses',
+              'Comparison starts',
+              'Decision slows'
+            ]
+              .map(function (t) {
+                return '<li>' + esc(t) + '</li>';
+              })
+              .join('') +
+            '</ul>' +
+            '<p style="margin-top:0.5rem">Loss happens at the pause.</p>'
+        },
+        {
+          key: 'leverage',
+          title: 'Leverage point',
+          html:
+            '<p>Your offer must answer:</p>' +
+            '<p><strong>Why this</strong></p>' +
+            '<p>Immediately.</p>'
+        },
+        {
+          key: 'week',
+          title: 'What to do this week',
+          html:
+            '<p>Write your offer in one sentence:</p>' +
+            '<ul>' +
+            ['What it is', "Who it's for", 'What result it creates']
+              .map(function (t) {
+                return '<li>' + esc(t) + '</li>';
+              })
+              .join('') +
+            '</ul>' +
+            '<p>Remove any step where explanation is needed.</p>' +
+            '<p>Add one line that anchors comparison.</p>'
+        },
+        {
+          key: 'fixed',
+          title: 'What changes when fixed',
+          html:
+            '<ul>' +
+            ['Faster decisions', 'Fewer objections', 'Higher close rate', 'Less time explaining']
+              .map(function (t) {
+                return '<li>' + esc(t) + '</li>';
+              })
+              .join('') +
+            '</ul>' +
+            '<p style="margin-top:0.5rem">10-20% lift = $2K-$15K/month</p>'
+        },
+        {
+          key: 'notfix',
+          title: 'What this does not fix',
+          html:
+            '<ul>' +
+            ['Delivery structure', 'Scaling', 'Dependency']
+              .map(function (t) {
+                return '<li>' + esc(t) + '</li>';
+              })
+              .join('') +
+            '</ul>'
+        }
+      ]
+    };
+
     function renderReport() {
-      var d = REPORT;
-      var signs = d.signs
-        .map(function (line) {
-          return '<li>' + esc(line) + '</li>';
-        })
-        .join('');
-      var dealsParas = d.dealsParas
-        .map(function (line) {
-          return '<p>' + esc(line) + '</p>';
-        })
-        .join('');
-      var costing = d.costingBullets
-        .map(function (line) {
-          return '<li>' + esc(line) + '</li>';
-        })
-        .join('');
-      var costingImpact = d.costingImpact
-        .map(function (line) {
-          return '<p>' + esc(line) + '</p>';
-        })
-        .join('');
-      var whyParas = d.whyParas
-        .map(function (line) {
-          return '<p>' + esc(line) + '</p>';
-        })
-        .join('');
-      var saleLines = d.saleLines
-        .map(function (line) {
-          return '<li>' + esc(line) + '</li>';
-        })
-        .join('');
-      var weekBullets = d.weekBullets
-        .map(function (line) {
-          return '<li>' + esc(line) + '</li>';
-        })
-        .join('');
-      var weekOutro = d.weekOutro
-        .map(function (line) {
-          return '<p>' + esc(line) + '</p>';
-        })
-        .join('');
-      var leverageParas = d.leverageParas
-        .map(function (line, i) {
-          if (i === 1) {
-            return '<p class="leverage-gap">' + esc(line) + '</p>';
-          }
-          return '<p>' + esc(line) + '</p>';
-        })
-        .join('');
-      var fixedLines = d.fixedLines
-        .map(function (line) {
-          return '<li>' + esc(line) + '</li>';
-        })
-        .join('');
-      var notFix = d.notFixLines
-        .map(function (line) {
-          return '<li>' + esc(line) + '</li>';
-        })
-        .join('');
-      var nextSub = (d.nextSub || [])
-        .map(function (line) {
-          return '<p>' + esc(line) + '</p>';
+      document.getElementById('report-pattern-head').textContent = REPORT.patternTitle;
+      document.getElementById('report-pattern-body').textContent = REPORT.patternBody;
+      var cta = document.getElementById('report-sticky-cta');
+      cta.setAttribute('href', STRIPE_FULL_REPORT_27);
+
+      var root = document.getElementById('report-acc-root');
+      root.innerHTML = REPORT.sections
+        .map(function (sec) {
+          var extra = sec.costing ? ' report-acc-item--costing' : '';
+          return (
+            '<article class="report-acc-item' +
+            extra +
+            '" data-rpt-item>' +
+            '<button type="button" class="report-acc-trigger" data-rpt-trigger aria-expanded="false">' +
+            '<span>' +
+            esc(sec.title) +
+            '</span><span class="report-acc-icon" aria-hidden="true">▾</span>' +
+            '</button>' +
+            '<div class="report-acc-panel" data-rpt-panel><div class="report-acc-panel-inner">' +
+            sec.html +
+            '</div></div>' +
+            '</article>'
+          );
         })
         .join('');
 
-      var root = document.getElementById('report-root');
-      root.innerHTML =
-        '<section><h2>' +
-        esc(d.patternTitle) +
-        '</h2><p>' +
-        esc(d.patternBody) +
-        '</p></section>' +
-        '<section><h2>' +
-        esc(d.signsTitle) +
-        '</h2><ul>' +
-        signs +
-        '</ul></section>' +
-        '<section><h2>' +
-        esc(d.dealsTitle) +
-        '</h2><div class="block-lines">' +
-        dealsParas +
-        '</div></section>' +
-        '<section><h2>' +
-        esc(d.costingTitle) +
-        '</h2><ul>' +
-        costing +
-        '</ul>' +
-        costingImpact +
-        '</section>' +
-        '<section><h2>' +
-        esc(d.whyTitle) +
-        '</h2><div class="block-lines">' +
-        whyParas +
-        '</div></section>' +
-        '<section><h2>' +
-        esc(d.saleTitle) +
-        '</h2><ul>' +
-        saleLines +
-        '</ul><p>' +
-        esc(d.saleClose) +
-        '</p></section>' +
-        '<section><h2>' +
-        esc(d.leverageTitle) +
-        '</h2>' +
-        leverageParas +
-        '</section>' +
-        '<section><h2>' +
-        esc(d.weekTitle) +
-        '</h2><p>' +
-        esc(d.weekIntro) +
-        '</p><ul>' +
-        weekBullets +
-        '</ul>' +
-        weekOutro +
-        '</section>' +
-        '<section><h2>' +
-        esc(d.fixedTitle) +
-        '</h2><ul>' +
-        fixedLines +
-        '</ul><p>' +
-        esc(d.fixedImpact) +
-        '</p></section>' +
-        '<section><h2>' +
-        esc(d.notFixTitle) +
-        '</h2><ul>' +
-        notFix +
-        '</ul></section>' +
-        '<section><h2>' +
-        esc(d.nextTitle) +
-        '</h2><p><a href="' +
-        esc(d.nextHref) +
-        '">' +
-        esc(d.nextCta) +
-        '</a></p>' +
-        nextSub +
-        '</section>' +
-        '<p class="foot"><a href="/">Home</a></p>';
+      initReportAccordions();
+    }
+
+    function initReportAccordions() {
+      var root = document.getElementById('report-acc-root');
+      if (!root) return;
+      var items = Array.prototype.slice.call(root.querySelectorAll('[data-rpt-item]'));
+
+      function closeAll() {
+        items.forEach(function (item) {
+          item.classList.remove('is-open');
+          var tr = item.querySelector('[data-rpt-trigger]');
+          var panel = item.querySelector('[data-rpt-panel]');
+          if (tr) tr.setAttribute('aria-expanded', 'false');
+          if (panel) {
+            panel.style.maxHeight = '0px';
+            panel.style.opacity = '0';
+          }
+        });
+      }
+
+      items.forEach(function (item) {
+        var tr = item.querySelector('[data-rpt-trigger]');
+        var panel = item.querySelector('[data-rpt-panel]');
+        if (!tr || !panel) return;
+        tr.addEventListener('click', function () {
+          var willOpen = !item.classList.contains('is-open');
+          closeAll();
+          if (willOpen) {
+            item.classList.add('is-open');
+            tr.setAttribute('aria-expanded', 'true');
+            var inner = panel.querySelector('.report-acc-panel-inner');
+            var h = inner ? inner.scrollHeight + 24 : panel.scrollHeight;
+            panel.style.maxHeight = h + 'px';
+            panel.style.opacity = '1';
+          }
+        });
+      });
     }
 
     renderReport();
