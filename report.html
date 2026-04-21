@@ -930,45 +930,19 @@
     .rpt-next-block--conv1 .rpt-next-hero {
       color: #fffef8;
     }
-    .rpt-value-strip,
     .rpt-gap-strip {
       max-width: var(--max);
       margin: var(--rpt-space-section) auto 0;
       padding: var(--rpt-space-block) 0;
       border-top: 1px solid var(--line);
     }
-    .rpt-value-strip__h,
     .rpt-gap-strip__h {
       font-size: 0.72rem;
       font-weight: 700;
       letter-spacing: 0.1em;
       text-transform: uppercase;
       color: var(--accent);
-      margin: 0 0 0.35rem;
-    }
-    .rpt-value-strip__recap {
-      margin: 0 0 0.4rem;
-      font-size: 0.86rem;
-      line-height: 1.38;
-      color: rgba(242, 240, 236, 0.92);
-      font-weight: 600;
-    }
-    .rpt-value-strip__ul {
       margin: 0 0 0.45rem;
-      padding: 0 0 0 1rem;
-      font-size: 0.82rem;
-      line-height: 1.38;
-      color: rgba(242, 240, 236, 0.88);
-    }
-    .rpt-value-strip__anchor {
-      margin: 0;
-      font-size: 0.8rem;
-      font-weight: 600;
-      color: #faf8f4;
-      line-height: 1.35;
-    }
-    .rpt-gap-strip__h {
-      margin-bottom: 0.45rem;
       max-width: 22rem;
     }
     .rpt-gap-cols {
@@ -1229,6 +1203,10 @@
       color: var(--text-muted);
       margin: 0 0 40px;
     }
+    .rpt-score-cards-wrap {
+      max-width: 760px;
+      margin: 0 auto;
+    }
     .rpt-score-cards {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -1293,7 +1271,7 @@
     .rpt-chapter-header {
       width: 100%;
       background: var(--bg-chapter);
-      padding: 32px 24px;
+      padding: 56px 24px 32px;
       border-bottom: 1px solid var(--border-subtle);
     }
     .rpt-chapter-header__inner {
@@ -1330,14 +1308,23 @@
     .rpt-mirror {
       padding: 48px 0;
     }
-    .rpt-mirror p {
-      font-size: 18px;
-      line-height: 1.8;
-      color: var(--text-primary);
-      margin: 0 0 1em;
+    .rpt-mirror__kicker {
+      display: block;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      margin: 0 0 12px;
     }
-    .rpt-mirror p:last-child {
-      margin-bottom: 0;
+    .rpt-mirror__body {
+      font-size: 17px;
+      line-height: 1.75;
+      color: var(--text-primary);
+      margin: 0;
+    }
+    .rpt-mirror__revenue {
+      color: var(--archetype-accent);
+      font-weight: 600;
     }
     .rpt-pattern-callout {
       border-left: 4px solid var(--archetype-accent);
@@ -1346,7 +1333,7 @@
       margin-bottom: 40px;
     }
     .rpt-pattern-callout__name {
-      font-size: 13px;
+      font-size: 11px;
       font-weight: 600;
       letter-spacing: 0.08em;
       text-transform: uppercase;
@@ -1375,18 +1362,18 @@
     }
     .rpt-evidence-list li {
       display: flex;
-      gap: 16px;
-      align-items: flex-start;
-      margin-bottom: 24px;
+      gap: 20px;
+      align-items: center;
+      margin-bottom: 20px;
     }
     .rpt-evidence-list li:last-child {
       margin-bottom: 0;
     }
     .rpt-evidence-list__num {
-      font-size: 48px;
+      font-size: 44px;
       font-weight: 700;
       line-height: 1;
-      min-width: 40px;
+      min-width: 44px;
       color: var(--archetype-accent);
       flex-shrink: 0;
     }
@@ -1394,7 +1381,7 @@
       font-size: 16px;
       line-height: 1.6;
       color: var(--text-primary);
-      padding-top: 6px;
+      padding-top: 0;
     }
     .rpt-two-cards {
       display: grid;
@@ -1739,39 +1726,52 @@
       z-index: 100;
       display: flex;
       flex-direction: column;
+      align-items: center;
       gap: 20px;
     }
     .progress-nav__dot {
-      width: 8px;
-      height: 8px;
+      width: 7px;
+      height: 7px;
+      box-sizing: border-box;
       border-radius: 50%;
-      background: var(--border-subtle);
+      background: rgba(255, 255, 255, 0.15);
       border: none;
       padding: 0;
       cursor: pointer;
       position: relative;
-      transition: background 0.2s ease, transform 0.2s ease;
+      transition:
+        width 200ms ease,
+        height 200ms ease,
+        background 200ms ease,
+        box-shadow 200ms ease;
     }
     .progress-nav__dot[aria-current='true'] {
+      width: 10px;
+      height: 10px;
       background: var(--archetype-accent);
-      transform: scale(1.3);
+      box-shadow: 0 0 8px color-mix(in srgb, var(--archetype-accent) 60%, transparent);
     }
-    .progress-nav__dot::after {
-      content: attr(data-tip);
+    .progress-nav__dot .progress-nav__tip {
       position: absolute;
-      left: 16px;
+      left: 18px;
       top: 50%;
       transform: translateY(-50%);
       white-space: nowrap;
-      font-size: 11px;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      color: var(--text-muted);
+      font-size: 12px;
+      letter-spacing: normal;
+      text-transform: none;
+      font-weight: 400;
+      color: var(--text-primary);
+      background: var(--bg-secondary);
+      padding: 4px 10px;
+      border-radius: 4px;
       opacity: 0;
       pointer-events: none;
       transition: opacity 0.15s ease;
+      z-index: 2;
     }
-    .progress-nav__dot:hover::after {
+    .progress-nav__dot:hover .progress-nav__tip,
+    .progress-nav__dot:focus-visible .progress-nav__tip {
       opacity: 1;
     }
     .section-reveal {
@@ -1794,13 +1794,6 @@
       margin: 0;
       padding: 0;
       background: var(--bg-primary);
-    }
-    .rpt-value-strip {
-      max-width: 760px;
-      margin: 0 auto;
-      padding: 48px 20px;
-      border-top: none;
-      border-bottom: 1px solid var(--border-subtle);
     }
     .rpt-sys {
       margin-top: 0;
@@ -1841,7 +1834,7 @@
     }
     @media (max-width: 768px) {
       .rpt-chapter-header {
-        padding: 24px 20px;
+        padding: 56px 20px 24px;
       }
       .rpt-chapter-header__title {
         font-size: 22px;
@@ -2065,10 +2058,10 @@
     </header>
 
     <nav class="progress-nav" id="rpt-progress-nav" aria-label="Section progress">
-      <button type="button" class="progress-nav__dot" data-tip="Diagnosis" data-rpt-progress="0" aria-label="Diagnosis" aria-current="true"></button>
-      <button type="button" class="progress-nav__dot" data-tip="System" data-rpt-progress="1" aria-label="System"></button>
-      <button type="button" class="progress-nav__dot" data-tip="Opportunities" data-rpt-progress="2" aria-label="Opportunities"></button>
-      <button type="button" class="progress-nav__dot" data-tip="Monetization" data-rpt-progress="3" aria-label="Monetization"></button>
+      <button type="button" class="progress-nav__dot" data-rpt-progress="0" aria-label="Diagnosis" aria-current="true"><span class="progress-nav__tip">Diagnosis</span></button>
+      <button type="button" class="progress-nav__dot" data-rpt-progress="1" aria-label="System"><span class="progress-nav__tip">System</span></button>
+      <button type="button" class="progress-nav__dot" data-rpt-progress="2" aria-label="Opportunities"><span class="progress-nav__tip">Opportunities</span></button>
+      <button type="button" class="progress-nav__dot" data-rpt-progress="3" aria-label="Monetization"><span class="progress-nav__tip">Monetization</span></button>
     </nav>
 
     <report-hero-section class="rpt-hero-dash">
@@ -2077,20 +2070,9 @@
         <h1 class="rpt-hero-dash__name" id="report-pattern-head"></h1>
         <p class="rpt-hero-dash__tagline" id="rpt-hero-tagline"></p>
         <p class="rpt-hero-dash__date" id="rpt-hero-date"></p>
-        <div class="rpt-score-cards" id="rpt-score-cards"></div>
+        <div class="rpt-score-cards-wrap"><div class="rpt-score-cards" id="rpt-score-cards"></div></div>
       </div>
     </report-hero-section>
-
-    <section class="rpt-value-strip section-reveal" aria-labelledby="rpt-sixty-head">
-      <h2 id="rpt-sixty-head" class="rpt-value-strip__h">What you get in 60 seconds</h2>
-      <p class="rpt-value-strip__recap" id="rpt-sixty-recap"></p>
-      <ul class="rpt-value-strip__ul">
-        <li>Your archetype, one-line diagnosis, and the full diagnostic accordion (deals → costing → this week).</li>
-        <li>The same execution system for every pattern: protocol, 30-day loop, prompts, distribution, monetization, automation.</li>
-        <li>Download your full system in the header—PDF export, full page expanded.</li>
-      </ul>
-      <p class="rpt-value-strip__anchor">One missed deal covers this.</p>
-    </section>
 
     <main class="report-main">
       <div id="report-acc-core" hidden aria-hidden="true"></div>
@@ -2928,7 +2910,7 @@ Back catalog depth:
     var REPORT_SCORE_DASH = {
       'ceiling-builder': [
         { label: 'Clarity', value: 82, note: 'Message reads clean. Not the bottleneck.' },
-        { label: 'Positioning', value: 78, note: 'Offer is distinct. Recognized by right buyers.' },
+        { label: 'Positioning', value: 78, note: 'Offer is distinct. Right buyers recognize it.' },
         { label: 'Structure', value: 24, note: 'Delivery runs on you. No system behind it.' }
       ],
       commodity: [
@@ -2942,19 +2924,19 @@ Back catalog depth:
         { label: 'Structure', value: 68, note: 'Operations are solid. Lead source is not.' }
       ],
       untranslated: [
-        { label: 'Clarity', value: 18, note: 'Cold readers leave before they understand.' },
-        { label: 'Positioning', value: 60, note: 'The positioning exists inside your head.' },
+        { label: 'Clarity', value: 18, note: 'Cold readers leave before they understand the offer.' },
+        { label: 'Positioning', value: 60, note: 'The positioning exists. It lives inside your head.' },
         { label: 'Structure', value: 55, note: 'Delivery is real. The front door does not show it.' }
       ],
       underpriced: [
-        { label: 'Clarity', value: 88, note: 'Message is sharp. Price undercuts it.' },
+        { label: 'Clarity', value: 88, note: 'Message is sharp. The price undercuts it.' },
         { label: 'Positioning', value: 82, note: 'Specific, premium, correctly targeted.' },
         { label: 'Structure', value: 75, note: 'Delivery is documented. Pricing is not.' },
         { label: 'Price Signal', value: 20, note: 'The number signals less than the work delivers.' }
       ],
       scattered: [
-        { label: 'Clarity', value: 32, note: 'Five different messages reaching five audiences.' },
-        { label: 'Positioning', value: 18, note: 'No through-line a new buyer can read in ten seconds.' },
+        { label: 'Clarity', value: 32, note: 'Five messages reaching five different audiences.' },
+        { label: 'Positioning', value: 18, note: 'No through-line a cold buyer reads in ten seconds.' },
         { label: 'Structure', value: 45, note: 'Delivery exists. It does not repeat across clients.' }
       ],
       'foundation-first': [
@@ -3107,20 +3089,38 @@ Back catalog depth:
       ];
       var dots = Array.prototype.slice.call(nav.querySelectorAll('[data-rpt-progress]'));
       if (!dots.length) return;
-      function tick() {
-        var mark = window.innerHeight * 0.32;
+      function setActive(idx) {
+        dots.forEach(function (d, i) {
+          d.setAttribute('aria-current', i === idx ? 'true' : 'false');
+        });
+      }
+      function computeActiveIndex() {
+        var mark = window.innerHeight * 0.35;
         var best = 0;
         heads.forEach(function (h, i) {
           if (!h) return;
           var r = h.getBoundingClientRect();
           if (r.top <= mark) best = i;
         });
-        dots.forEach(function (d, i) {
-          d.setAttribute('aria-current', i === best ? 'true' : 'false');
-        });
+        return best;
       }
-      window.addEventListener('scroll', tick, { passive: true });
-      tick();
+      var sectionIo = new IntersectionObserver(
+        function () {
+          setActive(computeActiveIndex());
+        },
+        { root: null, threshold: [0, 0.02, 0.15, 0.5, 1] }
+      );
+      heads.forEach(function (h) {
+        if (h) sectionIo.observe(h);
+      });
+      window.addEventListener(
+        'scroll',
+        function () {
+          setActive(computeActiveIndex());
+        },
+        { passive: true }
+      );
+      setActive(computeActiveIndex());
       dots.forEach(function (d) {
         d.addEventListener('click', function () {
           var i = parseInt(d.getAttribute('data-rpt-progress'), 10);
@@ -3244,6 +3244,62 @@ Back catalog depth:
     function normalizePs(val) {
       if (val == null) return [];
       return Array.isArray(val) ? val : [val];
+    }
+
+    function derivePatternDesc(af) {
+      if (af && af.patternDesc) return af.patternDesc;
+      var w = af.blocks && af.blocks.why;
+      if (w && w.length) return w.join(' ');
+      return '';
+    }
+
+    function derivePatternName(af) {
+      if (af && af.patternName) return af.patternName;
+      var lv = af.previews && af.previews.leverage;
+      if (typeof lv === 'string' && lv.length) {
+        var head = lv.split(':')[0].trim();
+        if (head.length > 72) head = head.split(',')[0].trim();
+        return head;
+      }
+      var levb = af.blocks && af.blocks.leverage;
+      if (Array.isArray(levb) && levb[0]) {
+        var t = levb[0].replace(/^The leverage point is /i, '').replace(/\.$/, '');
+        if (t.length > 72) t = t.split(/[.;]/)[0].trim();
+        return t;
+      }
+      return '';
+    }
+
+    function highlightRevenueInText(s) {
+      if (!s) return '';
+      var re =
+        /\$[0-9][0-9Kk,.]*\s*[–\-—]\s*\$?[0-9][0-9Kk,.]*(?:\/month)?|\$[0-9][0-9Kk,.]*\s+to\s+\$?[0-9][0-9Kk,.]*(?:\s+in\s+monthly)?|\$[0-9][0-9Kk,.]*(?:\/month|\/yr)?/i;
+      var m = s.match(re);
+      if (!m || m.index == null) return esc(s);
+      var a = m.index;
+      var b = a + m[0].length;
+      return esc(s.slice(0, a)) + '<span class="rpt-mirror__revenue">' + esc(s.slice(a, b)) + '</span>' + esc(s.slice(b));
+    }
+
+    function buildMirrorHtml(af) {
+      var lines = normalizePs(af.whatThisMeans);
+      if (!lines.length) return '';
+      var rest = [];
+      lines.forEach(function (line) {
+        var t = String(line).trim();
+        if (!t) return;
+        if (/^based on your answers/i.test(t)) return;
+        rest.push(t);
+      });
+      if (!rest.length) return '';
+      var bodyText = rest.join(' ');
+      return (
+        '<span class="rpt-mirror__kicker">' +
+        esc('Based on your answers:') +
+        '</span><p class="rpt-mirror__body">' +
+        highlightRevenueInText(bodyText) +
+        '</p>'
+      );
     }
 
     function joinPs(arr) {
@@ -3421,15 +3477,15 @@ Back catalog depth:
         patternMount.className = 'rpt-pattern-callout section-reveal';
         patternMount.innerHTML =
           '<p class="rpt-pattern-callout__name">' +
-          esc(af.displayName || '') +
+          esc(derivePatternName(af)) +
           '</p>' +
           '<p class="rpt-pattern-callout__desc">' +
-          esc(af.diagnosis || '') +
+          esc(derivePatternDesc(af)) +
           '</p>';
       }
 
       var mirror = document.getElementById('rpt-mirror-mount');
-      if (mirror) mirror.innerHTML = joinPs(af.whatThisMeans || []);
+      if (mirror) mirror.innerHTML = buildMirrorHtml(af);
 
       var ev = document.getElementById('rpt-evidence-list');
       if (ev) {
@@ -3459,14 +3515,6 @@ Back catalog depth:
       mountScoreCards(key);
 
       document.title = 'Report · ' + (af.displayName || 'Stephuary') + ' · Stephuary';
-
-      var sixtyRec = document.getElementById('rpt-sixty-recap');
-      if (sixtyRec) {
-        var nm = af.displayName || '';
-        var dx = af.diagnosis || '';
-        sixtyRec.textContent =
-          nm && dx ? nm + ' — ' + dx : nm || dx || 'Your diagnostic output is loaded below.';
-      }
 
       mountGapListsFromArchetype(af);
 
