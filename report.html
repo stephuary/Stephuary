@@ -25,6 +25,17 @@
       --card: rgba(18, 18, 16, 0.92);
       --code-bg: #121210;
       --max: 40rem;
+      /* Premium report shell */
+      --bg-primary: #0d0a0a;
+      --bg-secondary: #141010;
+      --bg-chapter: #0a0808;
+      --text-primary: #f5f0eb;
+      --text-muted: #8a8580;
+      --archetype-accent: #c4a35a;
+      --border-subtle: rgba(255, 255, 255, 0.07);
+      --border-accent: var(--archetype-accent);
+      --danger: #c0392b;
+      --success: rgba(48, 209, 88, 0.15);
     }
     * { box-sizing: border-box; }
     /* Native report shell components — light DOM, no shadow (IDs + diagnostic JS unchanged) */
@@ -38,6 +49,7 @@
       overflow: visible;
       transform: none;
       isolation: auto;
+      padding-bottom: 96px;
     }
     report-hero-section,
     report-download-block,
@@ -1127,12 +1139,772 @@
 
     .foot {
       max-width: var(--max);
-      margin: 1.5rem auto 0;
-      padding: 0 1rem 2rem;
+      margin: 0.6rem auto 0;
+      padding: 0 1rem 0.8rem;
       font-size: 0.85rem;
     }
     .foot a {
       color: var(--muted);
+    }
+
+    /* ── Premium $27 report layout (visual only) ── */
+    body {
+      background: var(--bg-primary);
+      color: var(--text-primary);
+    }
+    .sticky-header {
+      position: sticky;
+      top: 0;
+      z-index: 200;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      height: 48px;
+      padding: 0 20px;
+      background: rgba(13, 10, 10, 0.95);
+      -webkit-backdrop-filter: blur(12px);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-subtle);
+      transition: border-color 0.25s ease;
+    }
+    .sticky-header.is-accent-border {
+      border-bottom-color: color-mix(in srgb, var(--archetype-accent) 40%, transparent);
+    }
+    .sticky-header__left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
+    .sticky-header__dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--archetype-accent);
+      flex-shrink: 0;
+    }
+    .sticky-header__meta {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      line-height: 1.2;
+    }
+    .sticky-header__ordinal {
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+    .sticky-header__name {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-primary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .sticky-header__actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+    .ghost-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 6px 12px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-primary);
+      background: transparent;
+      border: 1px solid var(--border-subtle);
+      border-radius: 4px;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .ghost-btn:hover {
+      border-color: color-mix(in srgb, var(--archetype-accent) 45%, var(--border-subtle));
+      color: var(--text-primary);
+    }
+    .rpt-hero-dash {
+      width: 100%;
+      padding: 80px 20px 60px;
+      background: var(--bg-primary);
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .rpt-hero-dash__inner {
+      max-width: 760px;
+      margin: 0 auto;
+    }
+    .rpt-hero-dash__ordinal {
+      font-size: 12px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin: 0 0 8px;
+    }
+    .rpt-hero-dash__name {
+      font-size: clamp(28px, 5vw, 42px);
+      font-weight: 600;
+      color: var(--text-primary);
+      margin: 0 0 12px;
+      letter-spacing: -0.02em;
+      line-height: 1.08;
+    }
+    .rpt-hero-dash__tagline {
+      font-size: 18px;
+      font-weight: 400;
+      color: var(--text-muted);
+      margin: 0 0 10px;
+      line-height: 1.45;
+      max-width: 42rem;
+    }
+    .rpt-hero-dash__date {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin: 0 0 40px;
+    }
+    .rpt-score-cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+    .rpt-score-cards--quad {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .rpt-score-card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 24px;
+    }
+    .rpt-score-card__label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin: 0 0 12px;
+    }
+    .rpt-score-card__value {
+      font-size: 48px;
+      font-weight: 700;
+      line-height: 1;
+      margin: 0 0 16px;
+      color: var(--text-primary);
+    }
+    .rpt-score-card__value--hi {
+      color: var(--archetype-accent);
+    }
+    .rpt-score-card__value--mid {
+      color: #e8c97a;
+    }
+    .rpt-score-card__value--lo {
+      color: #ff6b6b;
+    }
+    .rpt-score-bar {
+      height: 4px;
+      width: 100%;
+      background: var(--border-subtle);
+      border-radius: 2px;
+      overflow: hidden;
+      margin-bottom: 14px;
+    }
+    .score-bar-fill {
+      height: 100%;
+      width: 0%;
+      border-radius: 2px;
+      transition: width 1.2s ease-out;
+    }
+    body.rpt-scores-anim .score-bar-fill {
+      width: var(--fill-pct, 0%);
+    }
+    .rpt-score-card__note {
+      font-size: 13px;
+      line-height: 1.45;
+      color: var(--text-muted);
+      margin: 0;
+    }
+    .rpt-chapter-header {
+      width: 100%;
+      background: var(--bg-chapter);
+      padding: 32px 24px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .rpt-chapter-header__inner {
+      max-width: 760px;
+      margin: 0 auto;
+    }
+    .rpt-chapter-header__label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--archetype-accent);
+      margin: 0 0 8px;
+    }
+    .rpt-chapter-header__title {
+      font-size: 28px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin: 0 0 8px;
+      letter-spacing: -0.02em;
+    }
+    .rpt-chapter-header__sub {
+      font-size: 16px;
+      color: var(--text-muted);
+      margin: 0;
+      line-height: 1.45;
+      max-width: 40rem;
+    }
+    .rpt-chapter-body--narrow {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 0 20px 48px;
+    }
+    .rpt-mirror {
+      padding: 48px 0;
+    }
+    .rpt-mirror p {
+      font-size: 18px;
+      line-height: 1.8;
+      color: var(--text-primary);
+      margin: 0 0 1em;
+    }
+    .rpt-mirror p:last-child {
+      margin-bottom: 0;
+    }
+    .rpt-pattern-callout {
+      border-left: 4px solid var(--archetype-accent);
+      background: color-mix(in srgb, var(--archetype-accent) 6%, transparent);
+      padding: 28px 32px;
+      margin-bottom: 40px;
+    }
+    .rpt-pattern-callout__name {
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--archetype-accent);
+      margin: 0 0 10px;
+    }
+    .rpt-pattern-callout__desc {
+      font-size: 16px;
+      line-height: 1.7;
+      color: var(--text-primary);
+      margin: 0;
+    }
+    .rpt-evidence-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin: 0 0 24px;
+    }
+    .rpt-evidence-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      counter-reset: none;
+    }
+    .rpt-evidence-list li {
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+      margin-bottom: 24px;
+    }
+    .rpt-evidence-list li:last-child {
+      margin-bottom: 0;
+    }
+    .rpt-evidence-list__num {
+      font-size: 48px;
+      font-weight: 700;
+      line-height: 1;
+      min-width: 40px;
+      color: var(--archetype-accent);
+      flex-shrink: 0;
+    }
+    .rpt-evidence-list__text {
+      font-size: 16px;
+      line-height: 1.6;
+      color: var(--text-primary);
+      padding-top: 6px;
+    }
+    .rpt-two-cards {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin: 40px 0;
+    }
+    .rpt-root-card,
+    .rpt-cost-card {
+      padding: 24px;
+      border-radius: 8px;
+    }
+    .rpt-root-card {
+      background: var(--bg-secondary);
+      border-top: 2px solid var(--border-subtle);
+    }
+    .rpt-cost-card {
+      background: rgba(192, 57, 43, 0.08);
+      border-top: 2px solid rgba(192, 57, 43, 0.4);
+    }
+    .rpt-root-card__label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin: 0 0 12px;
+    }
+    .rpt-cost-card__label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #ff6b6b;
+      margin: 0 0 12px;
+    }
+    .rpt-root-card__body,
+    .rpt-cost-card__body {
+      font-size: 15px;
+      line-height: 1.7;
+      color: var(--text-primary);
+    }
+    .rpt-root-card__body p,
+    .rpt-cost-card__body p {
+      margin: 0 0 0.5em;
+    }
+    .rpt-root-card__body p:last-child,
+    .rpt-cost-card__body p:last-child {
+      margin-bottom: 0;
+    }
+    .rpt-root-card__body ul,
+    .rpt-cost-card__body ul {
+      margin: 0;
+      padding-left: 1rem;
+    }
+    .leverage-section {
+      width: 100%;
+      padding: 80px 40px;
+      background: color-mix(in srgb, var(--archetype-accent) 7%, transparent);
+      border-top: 1px solid color-mix(in srgb, var(--archetype-accent) 30%, transparent);
+      border-bottom: 1px solid color-mix(in srgb, var(--archetype-accent) 30%, transparent);
+    }
+    .leverage-section.is-pulse {
+      animation: rptLeveragePulse 2s ease-out 1 both;
+    }
+    @keyframes rptLeveragePulse {
+      0% {
+        box-shadow: 0 0 0 0 color-mix(in srgb, var(--archetype-accent) 40%, transparent);
+      }
+      100% {
+        box-shadow: 0 0 0 12px rgba(0, 0, 0, 0);
+      }
+    }
+    .rpt-leverage-inner {
+      max-width: 680px;
+      margin: 0 auto;
+    }
+    .rpt-leverage-kicker {
+      margin: 0 0 24px;
+    }
+    .accent-label {
+      color: var(--archetype-accent);
+    }
+    .rpt-leverage-body {
+      font-size: 22px;
+      line-height: 1.8;
+      font-weight: 400;
+      color: var(--text-primary);
+    }
+    .rpt-leverage-body p {
+      margin: 0 0 0.75em;
+    }
+    .rpt-leverage-body p:last-child {
+      margin-bottom: 0;
+    }
+    .rpt-chapter {
+      background: var(--bg-primary);
+    }
+    .rpt-card-grid-host {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 32px 20px 48px;
+    }
+    .rpt-card-grid-host report-accordion-group.rpt-nest-group {
+      display: contents;
+    }
+    .rpt-card-grid-host .rpt-nest-item {
+      display: flex;
+      flex-direction: column;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 0;
+      border-bottom: none;
+      overflow: hidden;
+      transition: border-color 0.2s ease, background 0.2s ease;
+    }
+    .rpt-card-grid-host .rpt-nest-item:hover {
+      border-color: color-mix(in srgb, var(--archetype-accent) 40%, var(--border-subtle));
+      background: color-mix(in srgb, var(--archetype-accent) 4%, var(--bg-secondary));
+    }
+    .rpt-card-grid-host .rpt-nest-trigger {
+      padding: 24px;
+      align-items: flex-start;
+    }
+    .rpt-card-grid-host .rpt-nest-trigger__title {
+      font-size: 15px;
+      font-weight: 600;
+      text-transform: none;
+      letter-spacing: -0.01em;
+    }
+    .rpt-card-grid-host .rpt-nest-trigger__pv {
+      -webkit-line-clamp: 3;
+      font-size: 13px;
+      white-space: normal;
+      display: block;
+    }
+    .rpt-card-grid-host .rpt-nest-icon {
+      font-size: 14px;
+      transform: rotate(-90deg);
+      color: var(--text-muted);
+    }
+    .rpt-card-grid-host .rpt-nest-item.is-open .rpt-nest-icon {
+      transform: rotate(90deg);
+    }
+    .rpt-card-grid-host .rpt-nest-panel__inner {
+      padding: 0 24px 24px;
+      font-size: 14px;
+      line-height: 1.7;
+      color: var(--text-primary);
+      border-top: 1px solid var(--border-subtle);
+      margin-top: 0;
+      padding-top: 16px;
+    }
+    .rpt-gap-premium {
+      background: var(--bg-secondary);
+      border-top: 1px solid var(--border-subtle);
+      padding: 80px 40px;
+    }
+    .rpt-gap-premium__inner {
+      max-width: 760px;
+      margin: 0 auto;
+    }
+    .rpt-gap-premium__label {
+      text-align: center;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--archetype-accent);
+      margin: 0 0 32px;
+    }
+    .rpt-gap-premium__cols {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
+      margin-bottom: 28px;
+    }
+    .rpt-gap-premium__col h3 {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin: 0 0 14px;
+    }
+    .rpt-gap-premium__col--have h3 {
+      color: var(--text-muted);
+    }
+    .rpt-gap-premium__col--not h3 {
+      color: #ff6b6b;
+    }
+    .rpt-gap-premium__col ul {
+      margin: 0;
+      padding-left: 1.1rem;
+      font-size: 15px;
+      line-height: 1.55;
+      color: var(--text-primary);
+    }
+    .rpt-gap-premium__col--have ul li::marker {
+      color: var(--archetype-accent);
+    }
+    .rpt-gap-premium__col--not ul li::marker {
+      color: #ff6b6b;
+    }
+    .rpt-gap-premium__bridge {
+      text-align: center;
+      font-size: 15px;
+      font-style: italic;
+      color: var(--text-muted);
+      margin: 0 auto;
+      max-width: 40rem;
+      line-height: 1.6;
+    }
+    .snapshot-cta-section {
+      background: var(--bg-chapter);
+      padding: 80px 40px;
+    }
+    .snapshot-cta-section .rpt-next-block {
+      max-width: 680px;
+      margin: 0 auto;
+      background: transparent;
+      border: none;
+      padding: 0;
+    }
+    .snapshot-cta-section .rpt-next-block--center {
+      max-width: 680px;
+    }
+    .snapshot-cta-section .rpt-next-micro {
+      color: #ff6b6b;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      margin-bottom: 16px;
+    }
+    .snapshot-cta-section .rpt-next-hero {
+      font-size: 36px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 16px;
+    }
+    .snapshot-cta-section .rpt-next-lead {
+      font-size: 18px;
+      line-height: 1.6;
+      color: var(--text-muted);
+      margin-bottom: 32px;
+    }
+    .snapshot-cta-section .rpt-next-cta {
+      min-width: 0;
+      width: 100%;
+      max-width: 420px;
+      margin: 0 auto;
+      padding: 18px 40px;
+      border-radius: 4px;
+      font-size: 17px;
+      font-weight: 600;
+      background: var(--archetype-accent) !important;
+      color: var(--bg-primary) !important;
+      border: none !important;
+      transition: opacity 0.15s ease, transform 0.15s ease;
+    }
+    .snapshot-cta-section .rpt-next-cta:hover {
+      opacity: 0.92;
+      transform: scale(1.01);
+      filter: none;
+    }
+    .snapshot-cta-section .rpt-next-cta--system {
+      background: transparent !important;
+      color: var(--text-primary) !important;
+      border: 1px solid color-mix(in srgb, var(--archetype-accent) 55%, transparent) !important;
+    }
+    .snapshot-cta-section .rpt-next-cta--system:hover {
+      background: color-mix(in srgb, var(--archetype-accent) 8%, transparent) !important;
+      transform: none;
+      opacity: 1;
+    }
+    .snapshot-cta-section .rpt-next-sub {
+      font-size: 13px;
+      color: var(--text-muted);
+      text-align: center;
+      margin-top: 16px;
+    }
+    .rpt-post-cta-bridge {
+      max-width: 560px;
+      margin: 28px auto 0;
+      text-align: center;
+      font-size: 16px;
+      line-height: 1.7;
+      color: var(--text-muted);
+    }
+    .sticky-cta-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 150;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 16px 24px;
+      background: rgba(13, 10, 10, 0.97);
+      -webkit-backdrop-filter: blur(8px);
+      backdrop-filter: blur(8px);
+      border-top: 1px solid var(--border-subtle);
+      opacity: 0;
+      transform: translateY(100%);
+      pointer-events: none;
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+    .sticky-cta-bar.is-visible {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+    .sticky-cta-bar__left {
+      min-width: 0;
+    }
+    .sticky-cta-bar__name {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+    .sticky-cta-bar__tag {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+    .sticky-cta-bar__btn {
+      flex-shrink: 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px 24px;
+      border-radius: 4px;
+      font-size: 14px;
+      font-weight: 600;
+      text-decoration: none;
+      background: var(--archetype-accent);
+      color: var(--bg-primary);
+      border: none;
+      white-space: nowrap;
+    }
+    .sticky-cta-bar__btn:hover {
+      opacity: 0.92;
+    }
+    .progress-nav {
+      position: fixed;
+      left: 32px;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .progress-nav__dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--border-subtle);
+      border: none;
+      padding: 0;
+      cursor: pointer;
+      position: relative;
+      transition: background 0.2s ease, transform 0.2s ease;
+    }
+    .progress-nav__dot[aria-current='true'] {
+      background: var(--archetype-accent);
+      transform: scale(1.3);
+    }
+    .progress-nav__dot::after {
+      content: attr(data-tip);
+      position: absolute;
+      left: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      white-space: nowrap;
+      font-size: 11px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.15s ease;
+    }
+    .progress-nav__dot:hover::after {
+      opacity: 1;
+    }
+    .section-reveal {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    .section-reveal.is-visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .rpt-hero-cta {
+      display: none !important;
+    }
+    report-download-block.rpt-download-asset {
+      display: none !important;
+    }
+    .report-main {
+      max-width: none;
+      margin: 0;
+      padding: 0;
+      background: var(--bg-primary);
+    }
+    .rpt-value-strip {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 48px 20px;
+      border-top: none;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .rpt-sys {
+      margin-top: 0;
+      border-top: none;
+      padding: 48px 20px 32px;
+      max-width: 960px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .rpt-sys-details--always-open .rpt-sys-details__inner {
+      border-top: none;
+      padding: 0;
+    }
+    @media (max-width: 1100px) {
+      .progress-nav {
+        display: none !important;
+      }
+    }
+    @media (max-width: 900px) {
+      .rpt-score-cards {
+        grid-template-columns: 1fr;
+      }
+      .rpt-score-cards--quad {
+        grid-template-columns: 1fr;
+      }
+      .rpt-two-cards {
+        grid-template-columns: 1fr;
+      }
+      .rpt-card-grid-host {
+        display: block;
+      }
+      .rpt-card-grid-host report-accordion-group.rpt-nest-group {
+        display: block;
+      }
+      .rpt-card-grid-host .rpt-nest-item {
+        margin-bottom: 16px;
+      }
+    }
+    @media (max-width: 768px) {
+      .rpt-chapter-header {
+        padding: 24px 20px;
+      }
+      .rpt-chapter-header__title {
+        font-size: 22px;
+      }
+      .rpt-evidence-list__text {
+        font-size: 15px;
+      }
+      .rpt-gap-premium__cols {
+        grid-template-columns: 1fr;
+      }
+      .sticky-cta-bar__tag {
+        display: none;
+      }
     }
 
     @media (max-width: 820px) {
@@ -1167,7 +1939,8 @@
         color: #111;
         font-size: 11pt;
       }
-      .report-page__hero {
+      .report-page__hero,
+      .rpt-hero-dash {
         position: static;
         background: #fff;
         border-bottom: 1px solid #ccc;
@@ -1301,39 +2074,116 @@
       .rpt-download-asset__line {
         color: #333;
       }
+      .sticky-header,
+      .sticky-cta-bar,
+      .progress-nav,
+      .snapshot-cta-section {
+        display: none !important;
+      }
+      .score-bar-fill {
+        transition: none !important;
+        width: var(--fill-pct, 0%) !important;
+      }
+      .accent-label {
+        color: #8b6914 !important;
+      }
+      #rpt-chapter-head-system,
+      #rpt-chapter-head-opportunities,
+      #rpt-chapter-head-monetization {
+        page-break-before: always;
+      }
+      .leverage-section {
+        page-break-inside: avoid;
+      }
     }
   </style>
 </head>
 <body>
   <div class="report-page">
-  <report-hero-section class="report-page__hero">
-    <div class="report-page__hero-inner">
-      <p class="report-title">Diagnostic read · execution system</p>
-      <h1 id="report-pattern-head">Your pattern</h1>
-      <div class="report-page__hero-diagnosis">
-        <p class="report-pattern" id="report-pattern-body"></p>
-      </div>
-      <div class="rpt-hero-cta" id="rpt-hero-cta" aria-label="Next step">
-        <h2 class="rpt-hero-cta__head" id="rpt-hero-head">Fix the exact step that's limiting you</h2>
-        <div class="rpt-hero-cta__actions" id="rpt-hero-actions">
-          <a class="rpt-hero-cta__pri" id="rpt-hero-cta-primary" href="/snapshot">Get your Snapshot — $950</a>
-          <a class="rpt-hero-cta__sec" id="rpt-hero-cta-secondary" href="/snapshot" hidden>Book precision pass · $950</a>
+    <header class="sticky-header" id="rpt-sticky-header">
+      <div class="sticky-header__left">
+        <span class="sticky-header__dot" aria-hidden="true"></span>
+        <div class="sticky-header__meta">
+          <span class="sticky-header__ordinal" id="rpt-header-ordinal"></span>
+          <span class="sticky-header__name" id="rpt-header-name"></span>
         </div>
-        <a class="rpt-hero-cta__defer" id="rpt-hero-cta-defer" href="/snapshot" hidden>Precision pass · $950 (after signal)</a>
-        <p class="rpt-hero-cta__sub" id="rpt-hero-sub">48-hour breakdown<br />Exact step to fix first</p>
       </div>
-      <report-download-block class="rpt-download-asset">
-        <h3 class="rpt-download-asset__title">Download your full system</h3>
-        <p class="rpt-download-asset__line">Everything on this page, structured to run and keep</p>
-        <div class="report-actions">
-          <button type="button" class="report-btn-download report-btn-download--asset" id="report-download-pdf">Download PDF</button>
-        </div>
-      </report-download-block>
-    </div>
-  </report-hero-section>
+      <div class="sticky-header__actions">
+        <button type="button" class="ghost-btn pdf-btn" id="report-download-pdf">Download PDF</button>
+        <button type="button" class="ghost-btn share-btn" id="report-share-btn">Share</button>
+      </div>
+    </header>
 
-  <main class="report-main">
-    <div class="report-acc" id="report-acc-core" aria-label="Diagnostic breakdown"></div>
+    <nav class="progress-nav" id="rpt-progress-nav" aria-label="Section progress">
+      <button type="button" class="progress-nav__dot" data-tip="Diagnosis" data-rpt-progress="0" aria-label="Diagnosis" aria-current="true"></button>
+      <button type="button" class="progress-nav__dot" data-tip="System" data-rpt-progress="1" aria-label="System"></button>
+      <button type="button" class="progress-nav__dot" data-tip="Opportunities" data-rpt-progress="2" aria-label="Opportunities"></button>
+      <button type="button" class="progress-nav__dot" data-tip="Monetization" data-rpt-progress="3" aria-label="Monetization"></button>
+    </nav>
+
+    <report-hero-section class="rpt-hero-dash">
+      <div class="rpt-hero-dash__inner">
+        <p class="rpt-hero-dash__ordinal" id="rpt-hero-ordinal"></p>
+        <h1 class="rpt-hero-dash__name" id="report-pattern-head"></h1>
+        <p class="rpt-hero-dash__tagline" id="rpt-hero-tagline"></p>
+        <p class="rpt-hero-dash__date" id="rpt-hero-date"></p>
+        <div class="rpt-score-cards" id="rpt-score-cards"></div>
+      </div>
+    </report-hero-section>
+
+    <section class="rpt-value-strip section-reveal" aria-labelledby="rpt-sixty-head">
+      <h2 id="rpt-sixty-head" class="rpt-value-strip__h">What you get in 60 seconds</h2>
+      <p class="rpt-value-strip__recap" id="rpt-sixty-recap"></p>
+      <ul class="rpt-value-strip__ul">
+        <li>Your archetype, one-line diagnosis, and the full diagnostic accordion (deals → costing → this week).</li>
+        <li>The same execution system for every pattern: protocol, 30-day loop, prompts, distribution, monetization, automation.</li>
+        <li>Download your full system in the header—PDF export, full page expanded.</li>
+      </ul>
+      <p class="rpt-value-strip__anchor">One missed deal covers this.</p>
+    </section>
+
+    <main class="report-main">
+      <div id="report-acc-core" hidden aria-hidden="true"></div>
+
+      <section id="report-chapter-01" class="rpt-chapter rpt-chapter--diagnosis">
+        <div class="rpt-chapter-header chapter-header section-reveal" id="rpt-chapter-head-diagnosis">
+          <div class="rpt-chapter-header__inner">
+            <p class="rpt-chapter-header__label accent-label">CHAPTER 01</p>
+            <h2 class="rpt-chapter-header__title">Your Pattern</h2>
+            <p class="rpt-chapter-header__sub">What the diagnostic found. Why it matters.</p>
+          </div>
+        </div>
+        <div class="rpt-chapter-body--narrow">
+          <div id="rpt-mirror-mount" class="rpt-mirror section-reveal"></div>
+          <div id="rpt-pattern-mount" class="section-reveal"></div>
+          <div class="section-reveal">
+            <p class="rpt-evidence-label">THE EVIDENCE TRAIL</p>
+            <ol class="rpt-evidence-list" id="rpt-evidence-list"></ol>
+          </div>
+          <div class="rpt-two-cards section-reveal">
+            <div class="rpt-root-card">
+              <p class="rpt-root-card__label">ROOT CAUSE</p>
+              <div class="rpt-root-card__body" id="rpt-root-body"></div>
+            </div>
+            <div class="rpt-cost-card">
+              <p class="rpt-cost-card__label">WHAT THIS IS COSTING</p>
+              <div class="rpt-cost-card__body" id="rpt-cost-body"></div>
+            </div>
+          </div>
+          <report-impact-block class="rpt-impact-block section-reveal" id="rpt-impact-block">
+            <p class="rpt-impact-block__kicker accent-label">This is already happening</p>
+            <p class="rpt-impact-block__line1">You are not missing effort</p>
+            <p class="rpt-impact-block__line2">You are missing structure</p>
+          </report-impact-block>
+        </div>
+      </section>
+
+      <section id="rpt-leverage-section" class="leverage-section section-reveal" aria-labelledby="rpt-leverage-kicker">
+        <div class="rpt-leverage-inner">
+          <p class="rpt-leverage-kicker accent-label" id="rpt-leverage-kicker">THE LEVERAGE POINT</p>
+          <div class="rpt-leverage-body" id="rpt-leverage-body"></div>
+        </div>
+      </section>
 
     <div id="rpt-exec-system" class="rpt-sys" aria-label="Execution system">
       <div class="rpt-sys-entry">
@@ -1352,12 +2202,20 @@
             <li>Come back on Day 7</li>
           </ol>
         </report-start-here-block>
-        <details class="rpt-sys-details" id="rpt-sys-details">
-          <summary class="rpt-sys-details__summary">Open system <span class="rpt-sys-details__arrow" aria-hidden="true">↓</span></summary>
+        <div class="rpt-sys-details rpt-sys-details--always-open" id="rpt-sys-details">
           <div class="rpt-sys-details__inner">
             <div class="rpt-nest-acc" id="rpt-nest-root" aria-label="System steps">
 
-              <report-accordion-group class="rpt-nest-group" data-rpt-nest-group group-label="System">
+              <section id="ch-system" class="rpt-chapter rpt-chapter--system">
+              <div class="rpt-chapter-header chapter-header section-reveal" id="rpt-chapter-head-system">
+                <div class="rpt-chapter-header__inner">
+                  <p class="rpt-chapter-header__label accent-label">CHAPTER 02</p>
+                  <h2 class="rpt-chapter-header__title">Your Execution System</h2>
+                  <p class="rpt-chapter-header__sub">The operating sequence for this archetype. Start here.</p>
+                </div>
+              </div>
+              <div class="rpt-card-grid-host">
+              <report-accordion-group class="rpt-nest-group" data-rpt-nest-group>
               <article class="rpt-nest-item" data-nest-item>
                 <button type="button" class="rpt-nest-trigger" data-nest-trigger aria-expanded="false">
                   <span class="rpt-nest-trigger__stack">
@@ -1515,8 +2373,19 @@ Target audience:
                 </div>
               </article>
               </report-accordion-group>
+              </div>
+              </section>
 
-              <report-accordion-group class="rpt-nest-group" data-rpt-nest-group group-label="Opportunities">
+              <section id="ch-opportunities" class="rpt-chapter rpt-chapter--opportunities">
+              <div class="rpt-chapter-header chapter-header section-reveal" id="rpt-chapter-head-opportunities">
+                <div class="rpt-chapter-header__inner">
+                  <p class="rpt-chapter-header__label accent-label">CHAPTER 03</p>
+                  <h2 class="rpt-chapter-header__title">Revenue Paths</h2>
+                  <p class="rpt-chapter-header__sub">Where the money comes from once the pattern is fixed.</p>
+                </div>
+              </div>
+              <div class="rpt-card-grid-host">
+              <report-accordion-group class="rpt-nest-group" data-rpt-nest-group>
               <article class="rpt-nest-item" data-nest-item>
                 <button type="button" class="rpt-nest-trigger" data-nest-trigger aria-expanded="false">
                   <span class="rpt-nest-trigger__stack">
@@ -1686,8 +2555,19 @@ Content themes:
                 </div>
               </article>
               </report-accordion-group>
+              </div>
+              </section>
 
-              <report-accordion-group class="rpt-nest-group" data-rpt-nest-group group-label="Monetization">
+              <section id="ch-monetization" class="rpt-chapter rpt-chapter--monetization">
+              <div class="rpt-chapter-header chapter-header section-reveal" id="rpt-chapter-head-monetization">
+                <div class="rpt-chapter-header__inner">
+                  <p class="rpt-chapter-header__label accent-label">CHAPTER 04</p>
+                  <h2 class="rpt-chapter-header__title">Monetization Architecture</h2>
+                  <p class="rpt-chapter-header__sub">Price, structure, and what this leads to.</p>
+                </div>
+              </div>
+              <div class="rpt-card-grid-host">
+              <report-accordion-group class="rpt-nest-group" data-rpt-nest-group>
               <article class="rpt-nest-item" data-nest-item>
                 <button type="button" class="rpt-nest-trigger" data-nest-trigger aria-expanded="false">
                   <span class="rpt-nest-trigger__stack">
@@ -1973,57 +2853,50 @@ Back catalog depth:
                 </div>
               </article>
               </report-accordion-group>
+              </div>
+              </section>
 
             </div>
           </div>
-        </details>
+        </div>
       </div>
     </div>
 
-    <section class="rpt-value-strip" aria-labelledby="rpt-sixty-head">
-      <h2 id="rpt-sixty-head" class="rpt-value-strip__h">What you get in 60 seconds</h2>
-      <p class="rpt-value-strip__recap" id="rpt-sixty-recap"></p>
-      <ul class="rpt-value-strip__ul">
-        <li>Your archetype, one-line diagnosis, and the full diagnostic accordion (deals → costing → this week).</li>
-        <li>The same execution system for every pattern: protocol, 30-day loop, prompts, distribution, monetization, automation.</li>
-        <li>Download your full system in the header—PDF export, full page expanded.</li>
-      </ul>
-      <p class="rpt-value-strip__anchor">One missed deal covers this.</p>
-    </section>
-
-    <section class="rpt-gap-strip" aria-labelledby="rpt-gap-head">
-      <h2 id="rpt-gap-head" class="rpt-gap-strip__h">You now have output. You do not have precision yet.</h2>
-      <div class="rpt-gap-cols">
-        <div class="rpt-gap-col">
-          <h3>You now have</h3>
-          <ul>
-            <li>Pattern read and numbers you can feel</li>
-            <li>Sale map, leverage line, and a weekly move</li>
-            <li>A publish-and-distribute engine you can run without buying anything else</li>
-          </ul>
+    <section class="rpt-gap-premium section-reveal" aria-labelledby="rpt-gap-premium-label">
+      <div class="rpt-gap-premium__inner">
+        <p id="rpt-gap-premium-label" class="rpt-gap-premium__label">YOU NOW HAVE OUTPUT. YOU DO NOT HAVE PRECISION YET.</p>
+        <div class="rpt-gap-premium__cols">
+          <div class="rpt-gap-premium__col rpt-gap-premium__col--have">
+            <h3>YOU NOW HAVE</h3>
+            <ul id="rpt-gap-have-ul">
+              <li>Pattern read and numbers you can feel</li>
+              <li>Sale map, leverage line, and a weekly move</li>
+              <li>A publish-and-distribute engine you can run without buying anything else</li>
+            </ul>
+          </div>
+          <div class="rpt-gap-premium__col rpt-gap-premium__col--not">
+            <h3>YOU DO NOT HAVE</h3>
+            <ul id="rpt-gap-not-ul">
+              <li>Which single change in your real pages or offer to make first</li>
+              <li>Written feedback on your live asset tied to your pipeline</li>
+              <li>A 48-hour decision on the exact step to fix first, plus a 30-minute walkthrough</li>
+            </ul>
+          </div>
         </div>
-        <div class="rpt-gap-col">
-          <h3>You do not have</h3>
-          <ul>
-            <li>Which single change in your real pages or offer to make first</li>
-            <li>Written feedback on your live asset tied to your pipeline</li>
-            <li>A 48-hour decision on the exact step to fix first, plus a 30-minute walkthrough</li>
-          </ul>
-        </div>
+        <p class="rpt-gap-premium__bridge">
+          The $27 surface is clarity plus a shared system. Snapshot is the paid precision layer on top—not a second opinion on the same PDF.
+        </p>
       </div>
-      <p class="rpt-gap-strip__bridge">
-        The $27 surface is clarity plus a shared system. Snapshot is the paid precision layer on top—not a second opinion on the same PDF.
-      </p>
     </section>
 
-    <report-final-cta>
+    <report-final-cta class="snapshot-cta-section" id="rpt-snapshot-cta-section">
     <div class="rpt-final-wrap">
       <div class="rpt-next-block rpt-next-block--center" id="rpt-next-block" aria-labelledby="rpt-next-head">
         <p class="rpt-next-micro" id="rpt-next-micro"></p>
         <h2 id="rpt-next-head" class="rpt-next-hero">Fix the exact step that's limiting you</h2>
         <p class="rpt-next-lead" id="rpt-next-lead">You now have output and signal.<br />Now you need precision.</p>
         <div class="rpt-next-actions" id="rpt-next-actions">
-          <a class="rpt-next-cta" id="rpt-next-cta-primary" href="/snapshot">Get your Snapshot — $950</a>
+          <a class="rpt-next-cta" id="rpt-next-cta-primary" href="/snapshot">Get your Snapshot — $950 →</a>
           <a class="rpt-next-cta rpt-next-cta--soft" id="rpt-next-cta-secondary" href="/snapshot" hidden>Snapshot — $950</a>
         </div>
         <a class="rpt-next-cta--defer" id="rpt-next-cta-defer" href="/snapshot" hidden>Snapshot ($950) after signal</a>
@@ -2042,10 +2915,29 @@ Back catalog depth:
           </p>
           <p class="rpt-next-spec__micro">Buy → intake → 48-hour clock starts on submit. No working session before purchase.</p>
         </div>
+        <p class="rpt-post-cta-bridge" id="rpt-post-cta-bridge"></p>
       </div>
     </div>
     </report-final-cta>
   </main>
+
+    <aside class="sticky-cta-bar" id="rpt-sticky-cta-bar" aria-hidden="true">
+      <div class="sticky-cta-bar__left">
+        <div class="sticky-cta-bar__name" id="rpt-sticky-name"></div>
+        <div class="sticky-cta-bar__tag" id="rpt-sticky-tag"></div>
+      </div>
+      <a class="sticky-cta-bar__btn" id="rpt-sticky-cta" href="/snapshot">Get your Snapshot — $950 →</a>
+    </aside>
+
+    <div class="rpt-hero-cta" id="rpt-hero-cta" aria-label="Next step" hidden>
+      <h2 class="rpt-hero-cta__head" id="rpt-hero-head">Fix the exact step that's limiting you</h2>
+      <div class="rpt-hero-cta__actions" id="rpt-hero-actions">
+        <a class="rpt-hero-cta__pri" id="rpt-hero-cta-primary" href="/snapshot">Get your Snapshot — $950 →</a>
+        <a class="rpt-hero-cta__sec" id="rpt-hero-cta-secondary" href="/snapshot" hidden>Book precision pass · $950</a>
+      </div>
+      <a class="rpt-hero-cta__defer" id="rpt-hero-cta-defer" href="/snapshot" hidden>Precision pass · $950 (after signal)</a>
+      <p class="rpt-hero-cta__sub" id="rpt-hero-sub">48-hour breakdown<br />Exact step to fix first</p>
+    </div>
 
   <p class="foot"><a href="/">Home</a> · <a href="/capture">Diagnostic</a></p>
   </div>
@@ -2084,6 +2976,278 @@ Back catalog depth:
       return 1;
     }
 
+    var ARCHETYPE_ORDER = [
+      'ceiling-builder',
+      'commodity',
+      'wrong-room',
+      'untranslated',
+      'underpriced',
+      'scattered',
+      'foundation-first'
+    ];
+    var ARCH_ACCENTS = {
+      'ceiling-builder': '#C8A96E',
+      commodity: '#0A84FF',
+      'wrong-room': '#BF5AF2',
+      untranslated: '#FF9F0A',
+      underpriced: '#30D158',
+      scattered: '#FF2D78',
+      'foundation-first': '#8B2FC9'
+    };
+    var REPORT_SCORE_DASH = {
+      'ceiling-builder': [
+        { label: 'Clarity', value: 82, note: 'Message reads clean. Not the bottleneck.' },
+        { label: 'Positioning', value: 78, note: 'Offer is distinct. Recognized by right buyers.' },
+        { label: 'Structure', value: 24, note: 'Delivery runs on you. No system behind it.' }
+      ],
+      commodity: [
+        { label: 'Clarity', value: 88, note: 'Offer is legible. Easy to understand and shop.' },
+        { label: 'Positioning', value: 20, note: 'Sounds like three competitors. Comparison is instant.' },
+        { label: 'Structure', value: 62, note: 'Delivery is consistent. The offer framing is not.' }
+      ],
+      'wrong-room': [
+        { label: 'Clarity', value: 74, note: 'Message holds. Wrong people are receiving it.' },
+        { label: 'Positioning', value: 55, note: 'Differentiation exists. Distribution does not match.' },
+        { label: 'Structure', value: 68, note: 'Operations are solid. Lead source is not.' }
+      ],
+      untranslated: [
+        { label: 'Clarity', value: 18, note: 'Cold readers leave before they understand.' },
+        { label: 'Positioning', value: 60, note: 'The positioning exists inside your head.' },
+        { label: 'Structure', value: 55, note: 'Delivery is real. The front door does not show it.' }
+      ],
+      underpriced: [
+        { label: 'Clarity', value: 88, note: 'Message is sharp. Price undercuts it.' },
+        { label: 'Positioning', value: 82, note: 'Specific, premium, correctly targeted.' },
+        { label: 'Structure', value: 75, note: 'Delivery is documented. Pricing is not.' },
+        { label: 'Price Signal', value: 20, note: 'The number signals less than the work delivers.' }
+      ],
+      scattered: [
+        { label: 'Clarity', value: 32, note: 'Five different messages reaching five audiences.' },
+        { label: 'Positioning', value: 18, note: 'No through-line a new buyer can read in ten seconds.' },
+        { label: 'Structure', value: 45, note: 'Delivery exists. It does not repeat across clients.' }
+      ],
+      'foundation-first': [
+        { label: 'Clarity', value: 26, note: 'Offer shifts when questioned. Not yet locked.' },
+        { label: 'Positioning', value: 22, note: 'Not positioned against anything specific.' },
+        { label: 'Structure', value: 28, note: 'Delivery varies. No documented sequence.' }
+      ]
+    };
+
+    function archetypeOrdinal(key) {
+      var idx = ARCHETYPE_ORDER.indexOf(key);
+      var n = idx >= 0 ? idx + 1 : 1;
+      return (n < 10 ? '0' : '') + n + ' / 07';
+    }
+
+    function scoreTierClass(v) {
+      if (v >= 70) return 'rpt-score-card__value--hi';
+      if (v >= 40) return 'rpt-score-card__value--mid';
+      return 'rpt-score-card__value--lo';
+    }
+
+    function scoreBarColor(v) {
+      if (v >= 70) return 'var(--archetype-accent)';
+      if (v >= 40) return '#E8C97A';
+      return '#FF6B6B';
+    }
+
+    function mountScoreCards(key) {
+      var cards = document.getElementById('rpt-score-cards');
+      if (!cards) return;
+      var spec = REPORT_SCORE_DASH[key] || REPORT_SCORE_DASH['ceiling-builder'];
+      cards.className = 'rpt-score-cards' + (spec.length === 4 ? ' rpt-score-cards--quad' : '');
+      cards.innerHTML = spec
+        .map(function (row) {
+          var cls = scoreTierClass(row.value);
+          var barC = scoreBarColor(row.value);
+          return (
+            '<div class="rpt-score-card">' +
+            '<p class="rpt-score-card__label">' +
+            esc(row.label) +
+            '</p>' +
+            '<p class="rpt-score-card__value ' +
+            cls +
+            '">' +
+            esc(String(row.value)) +
+            '</p>' +
+            '<div class="rpt-score-bar"><div class="score-bar-fill" style="--fill-pct:' +
+            row.value +
+            '%;background:' +
+            barC +
+            '"></div></div>' +
+            '<p class="rpt-score-card__note">' +
+            esc(row.note) +
+            '</p>' +
+            '</div>'
+          );
+        })
+        .join('');
+    }
+
+    function joinLiOnly(arr) {
+      return (arr || [])
+        .map(function (t) {
+          return '<li>' + esc(t) + '</li>';
+        })
+        .join('');
+    }
+
+    function mountGapListsFromArchetype(af) {
+      var HN = af.blocks && af.blocks.haveNot;
+      if (!HN) return;
+      var haveUl = document.getElementById('rpt-gap-have-ul');
+      var notUl = document.getElementById('rpt-gap-not-ul');
+      if (haveUl && HN.have && HN.have.length) {
+        haveUl.innerHTML = joinLiOnly(HN.have);
+      }
+      if (notUl && HN.notHave && HN.notHave.length) {
+        notUl.innerHTML = joinLiOnly(HN.notHave);
+      }
+    }
+
+    function syncStickyCtaFromPrimary(af) {
+      var nameEl = document.getElementById('rpt-sticky-name');
+      var tagEl = document.getElementById('rpt-sticky-tag');
+      var btn = document.getElementById('rpt-sticky-cta');
+      if (nameEl) nameEl.textContent = af.displayName || '';
+      if (tagEl) tagEl.textContent = (af.previews && af.previews.mean) || af.diagnosis || '';
+      if (btn) {
+        btn.setAttribute('href', '/snapshot');
+        btn.textContent = 'Get your Snapshot — $950 →';
+      }
+    }
+
+    function initStickyHeaderBorder() {
+      var hdr = document.getElementById('rpt-sticky-header');
+      if (!hdr || hdr.getAttribute('data-rpt-scroll-bound') === '1') return;
+      hdr.setAttribute('data-rpt-scroll-bound', '1');
+      window.addEventListener(
+        'scroll',
+        function () {
+          if (window.scrollY > 100) hdr.classList.add('is-accent-border');
+          else hdr.classList.remove('is-accent-border');
+        },
+        { passive: true }
+      );
+    }
+
+    function initReportShare() {
+      var btn = document.getElementById('report-share-btn');
+      if (!btn || btn.getAttribute('data-rpt-share-bound') === '1') return;
+      btn.setAttribute('data-rpt-share-bound', '1');
+      btn.addEventListener('click', function () {
+        var title = document.title;
+        var url = window.location.href;
+        if (navigator.share) {
+          navigator.share({ title: title, url: url }).catch(function () {});
+        } else if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(url).catch(function () {});
+        }
+      });
+    }
+
+    function initSectionRevealObserver() {
+      if (window.__rptRevealObs) return;
+      var els = document.querySelectorAll('.section-reveal');
+      if (!els.length) return;
+      var io = new IntersectionObserver(
+        function (entries) {
+          entries.forEach(function (en) {
+            if (en.isIntersecting) en.target.classList.add('is-visible');
+          });
+        },
+        { threshold: 0.15 }
+      );
+      Array.prototype.forEach.call(els, function (el) {
+        io.observe(el);
+      });
+      window.__rptRevealObs = io;
+    }
+
+    function initProgressRail() {
+      var nav = document.getElementById('rpt-progress-nav');
+      if (!nav || nav.getAttribute('data-rpt-bound') === '1') return;
+      nav.setAttribute('data-rpt-bound', '1');
+      var heads = [
+        document.getElementById('rpt-chapter-head-diagnosis'),
+        document.getElementById('rpt-chapter-head-system'),
+        document.getElementById('rpt-chapter-head-opportunities'),
+        document.getElementById('rpt-chapter-head-monetization')
+      ];
+      var dots = Array.prototype.slice.call(nav.querySelectorAll('[data-rpt-progress]'));
+      if (!dots.length) return;
+      function tick() {
+        var mark = window.innerHeight * 0.32;
+        var best = 0;
+        heads.forEach(function (h, i) {
+          if (!h) return;
+          var r = h.getBoundingClientRect();
+          if (r.top <= mark) best = i;
+        });
+        dots.forEach(function (d, i) {
+          d.setAttribute('aria-current', i === best ? 'true' : 'false');
+        });
+      }
+      window.addEventListener('scroll', tick, { passive: true });
+      tick();
+      dots.forEach(function (d) {
+        d.addEventListener('click', function () {
+          var i = parseInt(d.getAttribute('data-rpt-progress'), 10);
+          var t = heads[i];
+          if (t) t.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+      });
+    }
+
+    function initStickyBottomCtaBar() {
+      if (window.__rptStickyCtaObs) return;
+      window.__rptStickyCtaObs = true;
+      var bar = document.getElementById('rpt-sticky-cta-bar');
+      var snap = document.getElementById('rpt-snapshot-cta-section');
+      if (!bar) return;
+      function updateBar() {
+        var y = window.scrollY || window.pageYOffset;
+        var pastHero = y > 600;
+        var snapVis = false;
+        if (snap) {
+          var r = snap.getBoundingClientRect();
+          snapVis = r.top < window.innerHeight * 0.88 && r.bottom > 100;
+        }
+        if (pastHero && !snapVis) {
+          bar.classList.add('is-visible');
+          bar.setAttribute('aria-hidden', 'false');
+        } else {
+          bar.classList.remove('is-visible');
+          bar.setAttribute('aria-hidden', 'true');
+        }
+      }
+      window.addEventListener('scroll', updateBar, { passive: true });
+      if (snap) {
+        var io = new IntersectionObserver(updateBar, { threshold: [0, 0.05, 0.15, 0.3] });
+        io.observe(snap);
+      }
+      updateBar();
+    }
+
+    function initReportPremiumUi(af) {
+      document.body.classList.remove('rpt-scores-anim');
+      syncStickyCtaFromPrimary(af);
+      initStickyHeaderBorder();
+      initReportShare();
+      initSectionRevealObserver();
+      initProgressRail();
+      initStickyBottomCtaBar();
+      window.requestAnimationFrame(function () {
+        window.requestAnimationFrame(function () {
+          document.body.classList.add('rpt-scores-anim');
+        });
+      });
+      window.setTimeout(function () {
+        var le = document.getElementById('rpt-leverage-section');
+        if (le) le.classList.add('is-pulse');
+      }, 800);
+    }
+
     function applyReportNextCta(tier, af) {
       var microEl = document.getElementById('rpt-next-micro');
       var block = document.getElementById('rpt-next-block');
@@ -2118,8 +3282,8 @@ Back catalog depth:
         }
         pri.className = 'rpt-next-cta';
         pri.setAttribute('href', '/snapshot');
-        pri.textContent = 'Get your Snapshot — $950';
-        sub.innerHTML = '48-hour breakdown<br />Exact step to fix first';
+        pri.textContent = 'Get your Snapshot — $950 →';
+        sub.innerHTML = 'Queue · 2–3 week wait · One direction. Not a list.';
       } else if (tier === 2) {
         head.textContent = 'Run the system, then buy precision';
         lead.innerHTML = esc(
@@ -2196,6 +3360,12 @@ Back catalog depth:
           rein.textContent = '';
         }
       }
+      syncStickyCtaFromPrimary(af || {});
+    }
+
+    function normalizePs(val) {
+      if (val == null) return [];
+      return Array.isArray(val) ? val : [val];
     }
 
     function joinPs(arr) {
@@ -2340,8 +3510,76 @@ Back catalog depth:
       var key = archetypeKeyFromQuery();
       var F = fullReportPack();
       var af = F[key] || F['ceiling-builder'];
-      document.getElementById('report-pattern-head').textContent = af.displayName || 'Report';
-      document.getElementById('report-pattern-body').textContent = af.diagnosis || '';
+      var accent = ARCH_ACCENTS[key] || ARCH_ACCENTS['ceiling-builder'];
+      document.documentElement.style.setProperty('--archetype-accent', accent);
+
+      var ord = archetypeOrdinal(key);
+      var headEl = document.getElementById('report-pattern-head');
+      if (headEl) headEl.textContent = af.displayName || 'Report';
+      var ho = document.getElementById('rpt-hero-ordinal');
+      if (ho) ho.textContent = ord;
+      var hoH = document.getElementById('rpt-header-ordinal');
+      if (hoH) hoH.textContent = ord;
+      var hn = document.getElementById('rpt-header-name');
+      if (hn) hn.textContent = af.displayName || '';
+      var tag = document.getElementById('rpt-hero-tagline');
+      if (tag) {
+        tag.textContent =
+          (af.previews && af.previews.mean) || af.diagnosis || '';
+      }
+      var dt = document.getElementById('rpt-hero-date');
+      if (dt) {
+        dt.textContent =
+          'Generated ' +
+          new Date().toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+          });
+      }
+
+      var patternMount = document.getElementById('rpt-pattern-mount');
+      if (patternMount) {
+        patternMount.className = 'rpt-pattern-callout section-reveal';
+        patternMount.innerHTML =
+          '<p class="rpt-pattern-callout__name">' +
+          esc(af.displayName || '') +
+          '</p>' +
+          '<p class="rpt-pattern-callout__desc">' +
+          esc(af.diagnosis || '') +
+          '</p>';
+      }
+
+      var mirror = document.getElementById('rpt-mirror-mount');
+      if (mirror) mirror.innerHTML = joinPs(af.whatThisMeans || []);
+
+      var ev = document.getElementById('rpt-evidence-list');
+      if (ev) {
+        var tells = af.immediateRead || [];
+        ev.innerHTML = tells
+          .map(function (line, i) {
+            return (
+              '<li><span class="rpt-evidence-list__num">' +
+              (i + 1) +
+              '</span><span class="rpt-evidence-list__text">' +
+              esc(line) +
+              '</span></li>'
+            );
+          })
+          .join('');
+      }
+
+      var B = af.blocks || {};
+      var rootB = document.getElementById('rpt-root-body');
+      if (rootB) rootB.innerHTML = joinPs(normalizePs(B.why));
+      var costB = document.getElementById('rpt-cost-body');
+      if (costB) costB.innerHTML = costingHtml(B.costing);
+
+      var lev = document.getElementById('rpt-leverage-body');
+      if (lev) lev.innerHTML = joinPs(normalizePs(B.leverage));
+
+      mountScoreCards(key);
+
       document.title = 'Report · ' + (af.displayName || 'Stephuary') + ' · Stephuary';
 
       var sixtyRec = document.getElementById('rpt-sixty-recap');
@@ -2352,48 +3590,22 @@ Back catalog depth:
           nm && dx ? nm + ' — ' + dx : nm || dx || 'Your diagnostic output is loaded below.';
       }
 
-      var coreRoot = document.getElementById('report-acc-core');
-      if (coreRoot) coreRoot.innerHTML = renderAccordionHtml(buildCoreSectionsFromFull(af));
-      insertReportImpactAfterCosting();
+      mountGapListsFromArchetype(af);
 
       applyReportNextCta(conversionTierFromArchetypeKey(key), af);
 
-      initReportAccordions();
       initNestAccordions();
-      openFirstAccordion();
-    }
 
-    function insertReportImpactAfterCosting() {
-      var root = document.getElementById('report-acc-core');
-      if (!root) return;
-      var old = document.getElementById('rpt-impact-block');
-      if (old && old.parentNode) old.parentNode.removeChild(old);
-      var costing = root.querySelector('.report-acc-item--costing');
-      if (!costing) return;
-      var block = document.createElement('report-impact-block');
-      block.id = 'rpt-impact-block';
-      block.className = 'rpt-impact-block';
-      block.innerHTML =
-        '<p class="rpt-impact-block__kicker">This is already happening</p>' +
-        '<p class="rpt-impact-block__line1">You are not missing effort</p>' +
-        '<p class="rpt-impact-block__line2">You are missing structure</p>';
-      costing.parentNode.insertBefore(block, costing.nextSibling);
-    }
+      var bridge = document.getElementById('rpt-post-cta-bridge');
+      if (bridge) {
+        if (af.reportCtaLead) {
+          bridge.innerHTML = esc(af.reportCtaLead).replace(/\n/g, '<br />');
+        } else {
+          bridge.innerHTML = '';
+        }
+      }
 
-    function openFirstAccordion() {
-      var root = document.getElementById('report-acc-core');
-      if (!root) return;
-      var first = root.querySelector('[data-rpt-item]');
-      if (!first) return;
-      var tr = first.querySelector('[data-rpt-trigger]');
-      var panel = first.querySelector('[data-rpt-panel]');
-      if (!tr || !panel) return;
-      first.classList.add('is-open');
-      tr.setAttribute('aria-expanded', 'true');
-      var inner = panel.querySelector('.report-acc-panel-inner');
-      var h = inner ? inner.scrollHeight + 24 : panel.scrollHeight;
-      panel.style.maxHeight = h + 'px';
-      panel.style.opacity = '1';
+      initReportPremiumUi(af);
     }
 
     function initNestAccordions() {
@@ -2435,60 +3647,15 @@ Back catalog depth:
       });
     }
 
-    function initReportAccordions() {
-      var items = Array.prototype.slice.call(
-        document.querySelectorAll('#report-acc-core [data-rpt-item]')
-      );
-      if (!items.length) return;
-
-      function closeAll() {
-        items.forEach(function (item) {
-          item.classList.remove('is-open');
-          var tr = item.querySelector('[data-rpt-trigger]');
-          var panel = item.querySelector('[data-rpt-panel]');
-          if (tr) tr.setAttribute('aria-expanded', 'false');
-          if (panel) {
-            panel.style.maxHeight = '0px';
-            panel.style.opacity = '0';
-          }
-        });
-      }
-
-      items.forEach(function (item) {
-        var tr = item.querySelector('[data-rpt-trigger]');
-        var panel = item.querySelector('[data-rpt-panel]');
-        if (!tr || !panel) return;
-        if (tr.getAttribute('data-rpt-bound') === '1') return;
-        tr.setAttribute('data-rpt-bound', '1');
-        tr.addEventListener('click', function () {
-          var willOpen = !item.classList.contains('is-open');
-          closeAll();
-          if (willOpen) {
-            item.classList.add('is-open');
-            tr.setAttribute('aria-expanded', 'true');
-            var inner = panel.querySelector('.report-acc-panel-inner');
-            var h = inner ? inner.scrollHeight + 24 : panel.scrollHeight;
-            panel.style.maxHeight = h + 'px';
-            panel.style.opacity = '1';
-          }
-        });
-      });
-    }
-
     function snapshotReportPdfUi() {
       return {
-        detailsWasOpen: (function () {
-          var det = document.getElementById('rpt-sys-details');
-          return !!(det && det.open);
-        })(),
+        detailsWasOpen: false,
         nestOpen: document.querySelector('#rpt-nest-root [data-nest-item].is-open'),
-        accOpen: document.querySelector('#report-acc-core [data-rpt-item].is-open')
+        accOpen: null
       };
     }
 
     function expandAllReportPanelsForPdfExport() {
-      var det = document.getElementById('rpt-sys-details');
-      if (det) det.setAttribute('open', '');
       Array.prototype.forEach.call(document.querySelectorAll('#rpt-nest-root [data-nest-item]'), function (item) {
         item.classList.add('is-open');
         var tr = item.querySelector('[data-nest-trigger]');
@@ -2496,18 +3663,6 @@ Back catalog depth:
         if (tr) tr.setAttribute('aria-expanded', 'true');
         if (panel) {
           panel.style.maxHeight = 'none';
-          panel.style.opacity = '1';
-        }
-      });
-      Array.prototype.forEach.call(document.querySelectorAll('#report-acc-core [data-rpt-item]'), function (item) {
-        item.classList.add('is-open');
-        var tr = item.querySelector('[data-rpt-trigger]');
-        var panel = item.querySelector('[data-rpt-panel]');
-        if (tr) tr.setAttribute('aria-expanded', 'true');
-        if (panel) {
-          var inner = panel.querySelector('.report-acc-panel-inner');
-          var h = inner ? inner.scrollHeight + 24 : panel.scrollHeight;
-          panel.style.maxHeight = h + 'px';
           panel.style.opacity = '1';
         }
       });
@@ -2526,18 +3681,7 @@ Back catalog depth:
       });
     }
 
-    function closeAllAccPanelsForPdfRestore() {
-      Array.prototype.forEach.call(document.querySelectorAll('#report-acc-core [data-rpt-item]'), function (item) {
-        item.classList.remove('is-open');
-        var tr = item.querySelector('[data-rpt-trigger]');
-        var panel = item.querySelector('[data-rpt-panel]');
-        if (tr) tr.setAttribute('aria-expanded', 'false');
-        if (panel) {
-          panel.style.maxHeight = '0px';
-          panel.style.opacity = '0';
-        }
-      });
-    }
+    function closeAllAccPanelsForPdfRestore() {}
 
     function reopenNestItemForPdfRestore(item) {
       if (!item || !item.parentNode) return;
@@ -2552,26 +3696,10 @@ Back catalog depth:
       panel.style.opacity = '1';
     }
 
-    function reopenAccItemForPdfRestore(item) {
-      if (!item || !item.parentNode) return;
-      var tr = item.querySelector('[data-rpt-trigger]');
-      var panel = item.querySelector('[data-rpt-panel]');
-      if (!tr || !panel) return;
-      item.classList.add('is-open');
-      tr.setAttribute('aria-expanded', 'true');
-      var inner = panel.querySelector('.report-acc-panel-inner');
-      var h = inner ? inner.scrollHeight + 24 : panel.scrollHeight;
-      panel.style.maxHeight = h + 'px';
-      panel.style.opacity = '1';
-    }
-
     function restoreReportPdfUi(snap) {
-      var det = document.getElementById('rpt-sys-details');
-      if (det && snap && !snap.detailsWasOpen) det.removeAttribute('open');
       closeAllNestPanelsForPdfRestore();
       if (snap && snap.nestOpen && snap.nestOpen.parentNode) reopenNestItemForPdfRestore(snap.nestOpen);
       closeAllAccPanelsForPdfRestore();
-      if (snap && snap.accOpen && snap.accOpen.parentNode) reopenAccItemForPdfRestore(snap.accOpen);
     }
 
     function reportPdfFilename() {
@@ -2602,9 +3730,14 @@ Back catalog depth:
       if (el.tagName === 'SCRIPT') return true;
       if (el.tagName === 'NOSCRIPT') return true;
       if (el.closest && el.closest('.report-actions')) return true;
+      if (el.closest && el.closest('.sticky-header')) return true;
+      if (el.closest && el.closest('.sticky-cta-bar')) return true;
+      if (el.closest && el.closest('.progress-nav')) return true;
       if (el.classList && el.classList.contains('rpt-prompt-copy-btn')) return true;
       if (el.classList && el.classList.contains('rpt-nest-icon')) return true;
       if (el.classList && el.classList.contains('report-acc-icon')) return true;
+      if (el.classList && el.classList.contains('share-btn')) return true;
+      if (el.classList && el.classList.contains('pdf-btn')) return true;
       return false;
     }
 
@@ -2703,12 +3836,9 @@ Back catalog depth:
     (function bindReportPrintNest() {
       var rptPrintRestore = null;
       window.addEventListener('beforeprint', function () {
-        var det = document.getElementById('rpt-sys-details');
         rptPrintRestore = {
-          detailsWasOpen: !!(det && det.open),
           nestOpen: document.querySelector('#rpt-nest-root [data-nest-item].is-open')
         };
-        if (det) det.setAttribute('open', '');
         Array.prototype.forEach.call(document.querySelectorAll('#rpt-nest-root [data-nest-item]'), function (item) {
           item.classList.add('is-open');
           var tr = item.querySelector('[data-nest-trigger]');
@@ -2721,10 +3851,6 @@ Back catalog depth:
         });
       });
       window.addEventListener('afterprint', function () {
-        var det = document.getElementById('rpt-sys-details');
-        if (det && rptPrintRestore && !rptPrintRestore.detailsWasOpen) {
-          det.removeAttribute('open');
-        }
         Array.prototype.forEach.call(document.querySelectorAll('#rpt-nest-root [data-nest-item]'), function (item) {
           item.classList.remove('is-open');
           var tr = item.querySelector('[data-nest-trigger]');
