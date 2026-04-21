@@ -86,7 +86,23 @@
 
   function joinFields(e) {
     if (!e) return '';
-    if (e.email && (e.building != null || e.stuck != null) && !(e.q1 || e.q2 || e.q3)) {
+    if (e.email && e.building != null && e.come_for != null && e.offer_first != null) {
+      return [e.name, e.email, e.building, e.come_for, e.offer_first]
+        .map(function (x) {
+          return x != null ? String(x).trim() : '';
+        })
+        .filter(Boolean)
+        .join(' \n ');
+    }
+    if (e.email && (e.q1 != null || e.q2 != null || e.q3 != null)) {
+      return [e.name, e.email, e.q1, e.q2, e.q3]
+        .map(function (x) {
+          return x != null ? String(x).trim() : '';
+        })
+        .filter(Boolean)
+        .join(' \n ');
+    }
+    if (e.email && (e.building != null || e.stuck != null) && !(e.q1 || e.q2 || e.q3) && e.come_for == null && e.offer_first == null) {
       return [e.email, e.building, e.stuck]
         .map(function (x) {
           return x != null ? String(x).trim() : '';
@@ -432,7 +448,7 @@
     }
   }
 
-  function postMonthlyEmail(email, building, stuck) {
+  function postMonthlyEmail(email, name, building, comeFor, offerFirst) {
     var action = getMonthlyFormAction();
     if (!action) {
       return Promise.resolve({ ok: true, skipped: true });
@@ -440,9 +456,11 @@
     var url = formsubmitAjaxUrl(action);
     var payload = {
       email: email,
+      name: name,
       building: building,
-      stuck: stuck,
-      _subject: 'Monthly free 1:1 — homepage entry',
+      come_for: comeFor,
+      offer_first: offerFirst,
+      _subject: 'Monthly free 1:1 — homepage application',
       _captcha: false,
       month_pool: monthKey()
     };
@@ -476,7 +494,7 @@
     } catch (e) {
       el.scrollIntoView(true);
     }
-    var input = global.document.getElementById('home-mfs-email');
+    var input = global.document.getElementById('home-mfs-name') || global.document.getElementById('home-mfs-email');
     global.requestAnimationFrame(function () {
       if (input && !hasSubmittedThisMonth()) input.focus();
     });
@@ -490,14 +508,22 @@
     var form = ev.currentTarget;
     if (!form || form.id !== 'home-mfs-form') return;
 
+    var nameEl = form.querySelector('[name="name"]');
     var emailEl = form.querySelector('[name="email"]');
-    var buildEl = form.querySelector('[name="building"]');
-    var stuckEl = form.querySelector('[name="stuck"]');
+    var buildingEl = form.querySelector('[name="building"]');
+    var comeEl = form.querySelector('[name="come_for"]');
+    var offerEl = form.querySelector('[name="offer_first"]');
+    var name = nameEl ? String(nameEl.value || '').trim() : '';
     var email = emailEl ? String(emailEl.value || '').trim() : '';
-    var building = buildEl ? String(buildEl.value || '').trim() : '';
-    var stuck = stuckEl ? String(stuckEl.value || '').trim() : '';
+    var building = buildingEl ? String(buildingEl.value || '').trim() : '';
+    var comeFor = comeEl ? String(comeEl.value || '').trim() : '';
+    var offerFirst = offerEl ? String(offerEl.value || '').trim() : '';
     setFormError('');
 
+    if (!name) {
+      setFormError('Add your name.');
+      return;
+    }
     if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       setFormError('Enter a valid email address.');
       return;
@@ -506,13 +532,17 @@
       setFormError('Add what you are building.');
       return;
     }
-    if (!stuck) {
-      setFormError('Add what is stuck.');
+    if (!comeFor) {
+      setFormError('Add what people come to you for.');
+      return;
+    }
+    if (!offerFirst) {
+      setFormError('Add the offer you would shape first.');
       return;
     }
 
     var btn = global.document.getElementById('home-mfs-submit');
-    var prevLabel = btn && btn.textContent ? btn.textContent : 'Enter to win';
+    var prevLabel = btn && btn.textContent ? btn.textContent : 'Apply';
     if (btn) {
       btn.disabled = true;
       btn.textContent = 'Submitting…';
@@ -524,7 +554,7 @@
       snap.dynamicKind = null;
     } catch (e) {}
 
-    postMonthlyEmail(email, building, stuck)
+    postMonthlyEmail(email, name, building, comeFor, offerFirst)
       .then(function (result) {
         if (!result || !result.ok) {
           setFormError('Could not submit. Check your connection and try again.');
@@ -533,9 +563,11 @@
 
         var entry = {
           submittedAt: Date.now(),
+          name: name,
           email: email,
           building: building,
-          stuck: stuck,
+          come_for: comeFor,
+          offer_first: offerFirst,
           diagnosticSnapshot: snap
         };
         entry.internalSummary = buildInternalSummary(entry);
