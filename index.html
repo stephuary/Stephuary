@@ -1327,6 +1327,23 @@
     body[data-sh-env="home"].sh-page-ready.sh-has-env-depth > *:not(#sh-env-depth):not(#page-transition):not(#sh-live-panel):not(#sh-flow-end):not(.sys-phase-rail-wrap) {
       transform: none !important;
     }
+
+    /* GSAP override — force hero copy to natural position (beats ScrollTrigger inline y on #hero-parallax) */
+    body[data-sh-env="home"] #hero-parallax,
+    body[data-sh-env="home"] #hero .hero-content {
+      transform: none !important;
+      will-change: auto !important;
+    }
+    body[data-sh-env="home"] #hero.hero {
+      align-items: flex-start !important;
+      padding-top: calc(60px + 24px) !important;
+      min-height: 100svh !important;
+    }
+    @media (max-width: 768px) {
+      body[data-sh-env="home"] #hero.hero {
+        padding-top: calc(52px + 12px) !important;
+      }
+    }
   </style>
 </head>
 <body data-sh-env="home">
@@ -1578,8 +1595,6 @@
       var nav=document.getElementById('main-nav');
       function updateNavScroll(){if(nav)nav.classList.toggle('is-scrolled',window.scrollY>40);}
       window.addEventListener('scroll',updateNavScroll,{passive:true});updateNavScroll();
-
-      /* Hero parallax removed: ScrollTrigger scrub can leave y transform on #hero-parallax and reads as offset/gap */
 
       /* ── Hero + fold reveals: scroll-reveal.js (.reveal → .is-visible) ── */
 
