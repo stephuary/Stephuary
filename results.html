@@ -1582,10 +1582,6 @@
         <h1 class="hero-h1 hero-h1--support" id="openingRead"></h1>
         <div class="diag-v2-stack" id="results-v2-stack" hidden>
           <div class="diag-v2-block">
-            <p class="diag-v2-label">What this means</p>
-            <p class="diag-v2-body" id="results-v2-means"></p>
-          </div>
-          <div class="diag-v2-block">
             <p class="diag-v2-label">Where this shows up</p>
             <p class="diag-v2-body" id="results-v2-shows"></p>
           </div>
@@ -1756,42 +1752,24 @@
     var t = String(resultType || '');
     var MAP = {
       Breakdown: {
-        diagnosis: 'Your business is breaking at multiple points.',
-        means:
-          'Leads, positioning, and delivery are not aligned. Work is inconsistent because the system is not defined.',
-        shows: "Leads don't convert and delivery feels reactive.",
-        firstMove: 'Fix how your offer explains itself and how delivery runs.',
         primaryHref: STRIPE_FULL_REPORT_27,
         primaryLabel: 'Get full report $27',
         secondaryHref: null,
         secondaryLabel: null
       },
       Misalignment: {
-        diagnosis: 'You are getting interest, but losing deals before they close.',
-        means:
-          'Your offer does not hold when buyers compare options. Positioning and structure are not carrying the decision.',
-        shows: "Calls feel strong but don't convert.",
-        firstMove: 'Fix how your offer explains itself before price comes up.',
         primaryHref: STRIPE_FULL_REPORT_27,
         primaryLabel: 'Get full report $27',
         secondaryHref: '/snapshot',
         secondaryLabel: 'Get your Snapshot $950'
       },
       Constraint: {
-        diagnosis: 'Your business works, but depends on you to keep it working.',
-        means: 'Delivery and decisions rely on you directly. That limits growth and consistency.',
-        shows: 'Work slows when you step away.',
-        firstMove: 'Remove yourself from one repeatable step.',
         primaryHref: '/snapshot',
         primaryLabel: 'Get your Snapshot $950',
         secondaryHref: null,
         secondaryLabel: null
       },
       Ceiling: {
-        diagnosis: "You've reached the limit of your current structure.",
-        means: 'Growth requires changing how the business runs.',
-        shows: 'You are fully booked but revenue does not scale.',
-        firstMove: 'Replace one manual decision with a defined system.',
         primaryHref: '/snapshot',
         primaryLabel: 'Get your Snapshot $950',
         secondaryHref: null,
@@ -1801,9 +1779,181 @@
     return MAP[t] || MAP.Breakdown;
   }
 
+  var DIAG_V2_ISSUE_BY_ID = {
+    1: { key: 'clarity_issue' },
+    2: { key: 'conversion_issue' },
+    3: { key: 'positioning_issue' },
+    4: { key: 'lead_quality_issue' },
+    5: { key: 'delivery_issue' },
+    6: { key: 'dependency_issue' },
+    7: { key: 'pricing_issue' }
+  };
+
+  var DIAG_V2_PHRASES = {
+    1: {
+      diag: 'Your offer is not clear on the first read.',
+      where: 'People leave before they can name what they would buy.',
+      move: 'Rewrite the top so product, price, and buyer read in one pass.'
+    },
+    2: {
+      diag: 'Deals stall at the step before money or a firm yes.',
+      where: 'Talks fade when cost or commitment becomes real.',
+      move: 'Name the exact step where your last three deals stopped.'
+    },
+    3: {
+      diag: 'Buyers cannot repeat why you win without you in the room.',
+      where: 'You re-explain the difference every time price comes up.',
+      move: 'Write one line a buyer can repeat on why you beat the alternative.'
+    },
+    4: {
+      diag: 'The leads you get are not the work you want to book.',
+      where: 'Time goes to people who will not pay for the offer you want to sell.',
+      move: 'Say who gets a call and who does not. Send the rest to a lighter path.'
+    },
+    5: {
+      diag: 'Delivery runs a different path after each sale.',
+      where: 'Deadlines slip because the steps after yes change by client.',
+      move: 'Pick one delivery path and use the same steps for each job.'
+    },
+    6: {
+      diag: 'Work still waits on you for speed and quality.',
+      where: 'When you step away, progress stalls or quality swings.',
+      move: 'Hand off one repeat step with a short checklist someone else can run.'
+    },
+    7: {
+      diag: 'Your price does not read fair before you explain it.',
+      where: 'You defend the number after it lands instead of before.',
+      move: 'Put scope and proof next to the price before the call.'
+    }
+  };
+
+  var DIAG_V2_NEUTRAL = {
+    diag: 'Your answers skew strong across these seven checks.',
+    where: 'You did not mark many Nos on these items.',
+    move: 'Track your next deal and fix the first step where it slows.'
+  };
+
+  function diagV2AnswerWeight(v) {
+    if (v === 'yes') return 0;
+    if (v === 'not_sure') return 1;
+    if (v === 'no') return 2;
+    return 0;
+  }
+
+  function diagV2ResultTypeFromTotal(total) {
+    if (total <= 4) return 'Ceiling';
+    if (total <= 8) return 'Misalignment';
+    if (total <= 11) return 'Constraint';
+    return 'Breakdown';
+  }
+
+  function diagV2RecomputeFromAnswers(dr) {
+    var ans = dr && dr.answers;
+    if (!ans || !ans.length) {
+      return {
+        totalScore: dr && dr.totalScore != null ? dr.totalScore : 0,
+        resultType: dr && dr.resultType ? dr.resultType : 'Breakdown'
+      };
+    }
+    var byId = {};
+    ans.forEach(function (a) {
+      byId[a.id] = a.value;
+    });
+    var totalScore = 0;
+    for (var id = 1; id <= 7; id++) {
+      totalScore += diagV2AnswerWeight(byId[id]);
+    }
+    return {
+      totalScore: totalScore,
+      resultType: diagV2ResultTypeFromTotal(totalScore)
+    };
+  }
+
+  function diagV2SortedIssueRows(dr) {
+    var ans = dr && dr.answers;
+    var byId = {};
+    (ans || []).forEach(function (a) {
+      byId[a.id] = a.value;
+    });
+    var rows = [];
+    for (var id = 1; id <= 7; id++) {
+      var ph = DIAG_V2_PHRASES[id];
+      rows.push({
+        id: id,
+        key: DIAG_V2_ISSUE_BY_ID[id].key,
+        score: diagV2AnswerWeight(byId[id]),
+        ph: ph
+      });
+    }
+    rows.sort(function (a, b) {
+      if (b.score !== a.score) return b.score - a.score;
+      return a.id - b.id;
+    });
+    return rows;
+  }
+
+  function diagV2StripPeriod(s) {
+    var t = String(s || '').trim();
+    if (t.slice(-1) === '.') return t.slice(0, -1);
+    return t;
+  }
+
+  function diagV2LowerFirst(s) {
+    var t = String(s || '');
+    if (!t) return t;
+    return t.charAt(0).toLowerCase() + t.slice(1);
+  }
+
+  function diagV2WordCount(s) {
+    return String(s || '')
+      .trim()
+      .split(/\s+/)
+      .filter(Boolean).length;
+  }
+
+  function diagV2PersonalizedCopy(dr) {
+    var sorted = diagV2SortedIssueRows(dr);
+    var topForCopy = [];
+    if (sorted[0] && sorted[0].score > 0) {
+      topForCopy.push(sorted[0]);
+      if (sorted[1] && sorted[1].score > 0) topForCopy.push(sorted[1]);
+    }
+    var diagnosis;
+    var whereLines;
+    var firstMove;
+    if (!topForCopy.length) {
+      diagnosis = DIAG_V2_NEUTRAL.diag;
+      whereLines = [DIAG_V2_NEUTRAL.where];
+      firstMove = DIAG_V2_NEUTRAL.move;
+    } else if (topForCopy.length === 1) {
+      diagnosis = topForCopy[0].ph.diag;
+      whereLines = [topForCopy[0].ph.where];
+      firstMove = topForCopy[0].ph.move;
+    } else {
+      diagnosis =
+        diagV2StripPeriod(topForCopy[0].ph.diag) +
+        ' and ' +
+        diagV2LowerFirst(diagV2StripPeriod(topForCopy[1].ph.diag)) +
+        '.';
+      whereLines = [topForCopy[0].ph.where, topForCopy[1].ph.where];
+      firstMove = sorted[0].ph.move;
+    }
+    var bodyWords =
+      diagV2WordCount(diagnosis) +
+      whereLines.reduce(function (s, line) {
+        return s + diagV2WordCount(line);
+      }, 0) +
+      diagV2WordCount(firstMove);
+    if (bodyWords > 60 && whereLines.length > 1) {
+      whereLines = [whereLines[0]];
+    }
+    return { diagnosis: diagnosis, whereLines: whereLines, firstMove: firstMove };
+  }
+
   function fillSevenV2Observable(dr) {
     var body = document.getElementById('results-observable-body');
     if (!body) return;
+    var metrics = diagV2RecomputeFromAnswers(dr);
     var rows = (dr.answers || [])
       .map(function (a) {
         return (
@@ -1823,9 +1973,9 @@
       '</button>' +
       '<div class="results-accordion-panel"><div class="results-accordion-panel__inner">' +
       '<p class="results-obs__p">' +
-      esc(String(dr.totalScore)) +
+      esc(String(metrics.totalScore)) +
       '/14 · ' +
-      esc(String(dr.resultType || '')) +
+      esc(String(metrics.resultType || '')) +
       '</p>' +
       '<ul class="results-obs__ul">' +
       rows +
@@ -1840,19 +1990,25 @@
     document.getElementById('state-email-gate').classList.remove('visible');
     document.getElementById('state-result').classList.add('visible');
 
-    var bundle = diagV2BundleFromType(dr && dr.resultType);
+    var metrics = diagV2RecomputeFromAnswers(dr);
+    var bundle = diagV2BundleFromType(metrics.resultType);
+    var v2copy = diagV2PersonalizedCopy(dr);
 
     var h1 = document.getElementById('openingRead');
-    if (h1) h1.textContent = bundle.diagnosis;
+    if (h1) h1.textContent = v2copy.diagnosis;
 
-    var meansEl = document.getElementById('results-v2-means');
     var showsEl = document.getElementById('results-v2-shows');
     var moveEl = document.getElementById('results-hero-sub');
     var stack = document.getElementById('results-v2-stack');
-    if (meansEl) meansEl.textContent = bundle.means;
-    if (showsEl) showsEl.textContent = bundle.shows;
+    if (showsEl) {
+      showsEl.innerHTML = v2copy.whereLines
+        .map(function (line) {
+          return '<span class="diag-v2-where-line">' + esc(line) + '</span>';
+        })
+        .join('<br>');
+    }
     if (moveEl) {
-      moveEl.textContent = bundle.firstMove;
+      moveEl.textContent = v2copy.firstMove;
       moveEl.removeAttribute('hidden');
     }
     if (stack) stack.hidden = false;
@@ -1869,7 +2025,9 @@
     if (pill) pill.innerHTML = '';
 
     window.__observableScoreLine =
-      String(dr.totalScore != null ? dr.totalScore : '') + '/14 · ' + String(dr.resultType || '');
+      String(metrics.totalScore != null ? metrics.totalScore : '') +
+      '/14 · ' +
+      String(metrics.resultType || '');
 
     var ctaPri = document.getElementById('results-primary-cta');
     var flowLinks = document.getElementById('results-flow-links');
@@ -2217,11 +2375,9 @@
     if (v2stack) {
       v2stack.hidden = true;
     }
-    var meansEl = document.getElementById('results-v2-means');
     var showsEl = document.getElementById('results-v2-shows');
     var moveEl = document.getElementById('results-hero-sub');
-    if (meansEl) meansEl.textContent = '';
-    if (showsEl) showsEl.textContent = '';
+    if (showsEl) showsEl.innerHTML = '';
     if (moveEl) {
       moveEl.textContent = '';
       moveEl.setAttribute('hidden', '');
@@ -3347,9 +3503,9 @@
     var sevenHead = '';
     var sevenNext = '';
     if (drSeven.schema === 'diag_v2') {
-      var bun7 = diagV2BundleFromType(drSeven.resultType);
-      sevenHead = bun7.diagnosis;
-      sevenNext = bun7.firstMove;
+      var v2c = diagV2PersonalizedCopy(drSeven);
+      sevenHead = v2c.diagnosis;
+      sevenNext = v2c.firstMove;
     } else if (drSeven.result && drSeven.result.headline) {
       sevenHead = String(drSeven.result.headline);
       sevenNext = drSeven.result.nextStep ? String(drSeven.result.nextStep) : '';
