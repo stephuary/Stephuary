@@ -191,277 +191,224 @@
   <main class="app" id="app" aria-live="polite"></main>
 
   <script>
-    const questions = [
+    const QUESTIONS = [
       {
         id: 1,
-        category: "clarity",
-        question: "If someone lands on your page right now, would they know what to buy in under 10 seconds?",
-        answers: {
-          A: {
-            text: "Yes, it is obvious what I sell and who it is for",
-            feedback: "Clear offers convert faster and require less effort to sell."
-          },
-          B: {
-            text: "No, they would need to read or figure it out",
-            feedback: "Most people do not leave because they are not interested. They leave because they do not understand fast enough."
-          }
-        }
+        text:
+          "Can someone understand what you do, who it's for, and why it's worth the price in under 10 seconds?"
       },
       {
         id: 2,
-        category: "clarity",
-        question: "Can you explain your offer in one sentence without adding extra context?",
-        answers: {
-          A: {
-            text: "Yes, it is concise and repeatable",
-            feedback: "Simple language reduces friction and helps buyers self-qualify."
-          },
-          B: {
-            text: "No, I usually need to explain more",
-            feedback: "When explanation is required, trust drops and decision speed slows."
-          }
-        }
+        text: "At what exact step are your last 3 deals falling apart?"
       },
       {
         id: 3,
-        category: "positioning",
-        question: "Do you clearly differentiate your offer from alternatives your buyer already knows?",
-        answers: {
-          A: {
-            text: "Yes, the difference is obvious and valuable",
-            feedback: "Strong positioning gives buyers a reason to choose you now."
-          },
-          B: {
-            text: "No, it sounds similar to other options",
-            feedback: "If your offer feels replaceable, price pressure increases and close rates drop."
-          }
-        }
+        text: "Can a buyer explain why you're the better choice without you being there to explain it?"
       },
       {
         id: 4,
-        category: "positioning",
-        question: "Are you consistently attracting the exact type of buyer you want?",
-        answers: {
-          A: {
-            text: "Yes, most inbound fits my ideal client profile",
-            feedback: "Right-fit demand shortens sales cycles and improves retention."
-          },
-          B: {
-            text: "No, I get mixed leads or poor-fit inquiries",
-            feedback: "Misaligned demand is usually a positioning problem, not an effort problem."
-          }
-        }
+        text: "Do your last 5 leads match the work you want to be paid for?"
       },
       {
         id: 5,
-        category: "structure",
-        question: "After a client says yes, is delivery mapped and repeatable from start to finish?",
-        answers: {
-          A: {
-            text: "Yes, there is a clear system and timeline",
-            feedback: "Reliable delivery protects margin and improves client outcomes."
-          },
-          B: {
-            text: "No, it is mostly managed manually each time",
-            feedback: "Manual delivery introduces variability and hidden operational drag."
-          }
-        }
+        text: "Is your delivery process the same every time, without needing to figure it out again?"
       },
       {
         id: 6,
-        category: "structure",
-        question: "Could your offer run for a week without you touching every step?",
-        answers: {
-          A: {
-            text: "Yes, core steps continue without bottlenecks",
-            feedback: "Operational leverage creates capacity and stabilizes revenue."
-          },
-          B: {
-            text: "No, most steps still depend on me directly",
-            feedback: "Founder dependency is a common structural leak in growing businesses."
-          }
-        }
+        text: "If you step away for a week, does work continue without delays or drop in quality?"
       },
       {
         id: 7,
-        category: "clarity",
-        question: "Do your pricing and outcomes feel easy to justify at first glance?",
-        answers: {
-          A: {
-            text: "Yes, the value and price connection is clear",
-            feedback: "When price and promise align, conversion resistance decreases."
-          },
-          B: {
-            text: "No, buyers often need extra reassurance",
-            feedback: "If value is not instantly legible, objections appear earlier and more often."
-          }
-        }
+        text: "Does your price make sense before you explain it?"
       }
     ];
 
-    const patternInterstitials = {
-      2: "Early signal: This usually points to a clarity issue, not a traffic issue.",
-      4: "Pattern forming: This is starting to look more like a positioning gap.",
-      6: "This is typically where most businesses leak time and revenue."
-    };
+    const ANSWER_ORDER = [
+      { key: "yes", label: "Yes" },
+      { key: "not_sure", label: "Not sure" },
+      { key: "no", label: "No" }
+    ];
 
-    /** Time to read per-answer feedback before advancing (ms). */
-    const FEEDBACK_READ_MS = 3200;
-    /** Time to read pattern-recognition interstitial before next question (ms). */
-    const INTERSTITIAL_READ_MS = 4200;
+    const POINTS = { yes: 2, not_sure: 1, no: 0 };
 
     let currentIndex = 0;
-    let answers = [];
-    let scores = {
-      clarity: 0,
-      positioning: 0,
-      structure: 0
-    };
+    const answers = [];
 
     const app = document.getElementById("app");
 
-    function getResultSummary() {
-      const order = ["clarity", "positioning", "structure"];
-      const topCategory = order.reduce((worst, category) => {
-        return scores[category] > scores[worst] ? category : worst;
-      }, "clarity");
-
-      const topScore = scores[topCategory];
-      const balanced = Math.max(scores.clarity, scores.positioning, scores.structure) -
-        Math.min(scores.clarity, scores.positioning, scores.structure) <= 1;
-
-      let headline = "Your core friction point is " + topCategory + ".";
-      if (balanced && topScore > 0) headline = "Your gaps are distributed across clarity, positioning, and structure.";
-      if (topScore === 0) headline = "Your baseline is strong across all three categories.";
-
-      const nextStepByCategory = {
-        clarity: "Tighten offer language so a new visitor understands value in under 10 seconds.",
-        positioning: "Narrow the buyer frame and sharpen why this offer is the right fit now.",
-        structure: "Standardize delivery and remove manual bottlenecks that slow fulfillment."
-      };
-
-      return {
-        headline,
-        topCategory,
-        topScore,
-        nextStep: topScore === 0
-          ? "Keep offer and operations tight; test one conversion lever at a time."
-          : nextStepByCategory[topCategory]
-      };
-    }
-
-    function transition(callback, delay = 220) {
+    function transition(callback, delay) {
+      const ms = delay == null ? 120 : delay;
       app.classList.add("is-transitioning");
       window.setTimeout(() => {
         callback();
         app.classList.remove("is-transitioning");
-      }, delay);
+      }, ms);
+    }
+
+    function countNo(ids, byId) {
+      return ids.filter(function (id) {
+        return byId[id] === "no";
+      }).length;
+    }
+
+    function answersById() {
+      const m = {};
+      answers.forEach(function (a) {
+        m[a.id] = a.value;
+      });
+      return m;
+    }
+
+    function resultTypeFromTotal(total) {
+      if (total <= 4) return "Breakdown";
+      if (total <= 8) return "Misalignment";
+      if (total <= 11) return "Constraint";
+      return "Ceiling";
+    }
+
+    function diagnosisLine(type, noEarly, noLate) {
+      const earlyHeavy = noEarly >= noLate;
+      if (type === "Breakdown") {
+        return earlyHeavy
+          ? "Your offer requires explanation before it makes sense."
+          : "Your structure depends on you to function.";
+      }
+      if (type === "Misalignment") {
+        return earlyHeavy
+          ? "Your deals break at the point of comparison."
+          : "Your leads do not match the work you want paid for.";
+      }
+      if (type === "Constraint") {
+        return earlyHeavy
+          ? "Buyers still need you in the room to explain the edge."
+          : "Delivery varies because the steps live in your head.";
+      }
+      return "You are maxed on effort before the next revenue tier.";
+    }
+
+    function routeKey(noEarly, noLate) {
+      if (noEarly >= 3 && noLate < 3) return "report27";
+      if (noLate >= 3 && noEarly < 3) return "snapshot950";
+      return "mixed";
+    }
+
+    function routeMessage(key) {
+      if (key === "report27") return "Fix how your offer explains itself before price comes up.";
+      if (key === "snapshot950") return "Your structure is limiting revenue and consistency.";
+      return "You are solving problems manually instead of structurally.";
+    }
+
+    function firstMoveFromRoute(key) {
+      if (key === "report27") return "Rewrite your offer so it makes sense without explanation.";
+      if (key === "snapshot950") return "Map your delivery steps and remove variation.";
+      return "Rewrite your offer so it makes sense without explanation.";
+    }
+
+    function buildPayload() {
+      const byId = answersById();
+      const points = answers.map(function (a) {
+        return POINTS[a.value];
+      });
+      const totalScore = points.reduce(function (s, n) {
+        return s + n;
+      }, 0);
+      const noEarly = countNo([1, 2, 3], byId);
+      const noLate = countNo([4, 5, 6, 7], byId);
+      const resultType = resultTypeFromTotal(totalScore);
+      const route = routeKey(noEarly, noLate);
+      const diagnosis = diagnosisLine(resultType, noEarly, noLate);
+      const firstMove = firstMoveFromRoute(route);
+      const msg = routeMessage(route);
+      const scores = {
+        clarity: [1, 2, 7].filter(function (id) {
+          return byId[id] === "no";
+        }).length,
+        positioning: [3, 4].filter(function (id) {
+          return byId[id] === "no";
+        }).length,
+        structure: [5, 6].filter(function (id) {
+          return byId[id] === "no";
+        }).length
+      };
+      return {
+        schema: "diag_v2",
+        version: 2,
+        answers: answers.slice(),
+        points: points,
+        totalScore: totalScore,
+        resultType: resultType,
+        diagnosisLine: diagnosis,
+        firstMove: firstMove,
+        routeMessage: msg,
+        route: route,
+        noCountEarly: noEarly,
+        noCountLate: noLate,
+        scores: scores,
+        result: {
+          headline: diagnosis,
+          nextStep: firstMove
+        }
+      };
     }
 
     function renderQuestion() {
-      const q = questions[currentIndex];
-      const questionNumber = currentIndex + 1;
+      const q = QUESTIONS[currentIndex];
+      const n = currentIndex + 1;
+      const btns = ANSWER_ORDER.map(function (opt) {
+        return (
+          '<button type="button" class="answer-btn" data-value="' +
+          opt.key +
+          '">' +
+          opt.label +
+          "</button>"
+        );
+      }).join("");
+      app.innerHTML =
+        '<div class="progress">Question ' +
+        n +
+        " of 7</div>" +
+        '<h1 class="question">' +
+        q.text +
+        "</h1>" +
+        '<div class="answers">' +
+        btns +
+        "</div>";
 
-      app.innerHTML = `
-        <div class="progress">Question ${questionNumber} of 7</div>
-        <h1 class="question">${q.question}</h1>
-        <div class="answers">
-          <button class="answer-btn" data-key="A">${q.answers.A.text}</button>
-          <button class="answer-btn" data-key="B">${q.answers.B.text}</button>
-        </div>
-        <div class="feedback" id="feedback"></div>
-      `;
-
-      const buttons = Array.from(app.querySelectorAll(".answer-btn"));
-      const feedbackEl = document.getElementById("feedback");
-
-      buttons.forEach((button) => {
-        button.addEventListener("click", () => {
-          if (button.classList.contains("is-locked")) return;
-
-          const selected = button.dataset.key;
-          const category = q.category;
-          const selectedAnswer = q.answers[selected];
-
-          buttons.forEach((btn) => {
-            btn.classList.add("is-locked");
-            btn.classList.remove("is-selected");
+      Array.prototype.forEach.call(app.querySelectorAll(".answer-btn"), function (btn) {
+        btn.addEventListener("click", function () {
+          if (btn.classList.contains("is-locked")) return;
+          const value = btn.getAttribute("data-value");
+          Array.prototype.forEach.call(app.querySelectorAll(".answer-btn"), function (b) {
+            b.classList.add("is-locked");
+            b.classList.remove("is-selected");
           });
-          button.classList.add("is-selected");
-
-          if (selected === "B") {
-            scores[category]++;
+          btn.classList.add("is-selected");
+          answers.push({ id: q.id, value: value });
+          currentIndex++;
+          if (currentIndex < QUESTIONS.length) {
+            transition(renderQuestion, 100);
+          } else {
+            renderAnalyzing();
           }
-
-          answers.push({
-            id: q.id,
-            category: q.category,
-            selected,
-            answerText: selectedAnswer.text
-          });
-
-          feedbackEl.textContent = selectedAnswer.feedback;
-          feedbackEl.className = "feedback is-visible " + (selected === "A" ? "good" : "warn");
-
-          window.setTimeout(() => {
-            const justAnswered = questionNumber;
-            const interstitialMessage = patternInterstitials[justAnswered];
-
-            if (interstitialMessage) {
-              renderInterstitial(interstitialMessage);
-              return;
-            }
-
-            currentIndex++;
-            if (currentIndex < questions.length) {
-              transition(renderQuestion);
-            } else {
-              renderAnalyzing();
-            }
-          }, FEEDBACK_READ_MS);
         });
       });
     }
 
-    function renderInterstitial(message) {
-      transition(() => {
-        app.innerHTML = `
-          <section class="interstitial">
-            <div class="interstitial-tag">Pattern recognition</div>
-            <p class="interstitial-copy">${message}</p>
-          </section>
-        `;
-      });
-
-      window.setTimeout(() => {
-        currentIndex++;
-        if (currentIndex < questions.length) {
-          transition(renderQuestion);
-        } else {
-          renderAnalyzing();
-        }
-      }, INTERSTITIAL_READ_MS);
-    }
-
     function renderAnalyzing() {
-      transition(() => {
-        app.innerHTML = `
-          <section class="analyzing">
-            <div class="analyzing-tag">Finalizing diagnostic</div>
-            <p class="analyzing-copy">Analyzing your responses...</p>
-          </section>
-        `;
-      });
-
-      window.setTimeout(() => {
-        const result = getResultSummary();
-        localStorage.setItem("diagnosticResults", JSON.stringify({
-          scores,
-          answers,
-          result
-        }));
+      transition(function () {
+        app.innerHTML =
+          '<section class="analyzing">' +
+          '<div class="analyzing-tag">Result</div>' +
+          '<p class="analyzing-copy">Locking in your read.</p>' +
+          "</section>";
+      }, 100);
+      window.setTimeout(function () {
+        const payload = buildPayload();
+        try {
+          localStorage.setItem("diagnosticResults", JSON.stringify(payload));
+        } catch (e) {}
         window.location.href = "/results";
-      }, 1500);
+      }, 420);
     }
 
     renderQuestion();
