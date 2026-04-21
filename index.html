@@ -222,6 +222,12 @@
       transform: translateY(0);
     }
 
+    /* Hero is above the fold — do not rely on scroll-reveal (opacity:0 reads as a huge blank band) */
+    #hero.hero .reveal {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
     .site-shell {
       position: relative;
       z-index: var(--z-content);
@@ -331,16 +337,20 @@
       position: relative;
       min-height: 100svh;
       display: flex;
+      flex-direction: row;
+      flex-wrap: nowrap;
       align-items: flex-start;
+      align-content: flex-start;
       justify-content: center;
-      /* Fixed nav clears the top; do not vertically center — that left a full-viewport gap above copy */
-      padding-top: calc(60px + 24px);
+      /* Row flex: justify-content centers horizontally only. If flex-direction became column elsewhere, justify-content:center would vertically center in 100svh — avoid. */
+      /* Fixed nav clears the top */
+      padding-top: calc(60px + 16px);
       overflow: hidden;
       z-index: var(--z-content);
     }
     @media (max-width: 768px) {
       #hero.hero {
-        padding-top: calc(52px + 20px);
+        padding-top: calc(52px + 12px);
         min-height: 100svh;
         align-items: flex-start;
       }
@@ -1269,14 +1279,17 @@
   <!-- After bundled CSS: homepage hero/shell must not be vertically centered or padded by later sheets -->
   <style>
     body[data-sh-env="home"] #hero.hero {
+      flex-direction: row !important;
+      flex-wrap: nowrap !important;
       align-items: flex-start !important;
+      align-content: flex-start !important;
       justify-content: center !important;
-      padding-top: calc(60px + 24px) !important;
+      padding-top: calc(60px + 16px) !important;
       margin-top: 0 !important;
     }
     @media (max-width: 768px) {
       body[data-sh-env="home"] #hero.hero {
-        padding-top: calc(52px + 20px) !important;
+        padding-top: calc(52px + 12px) !important;
         align-items: flex-start !important;
       }
     }
@@ -1542,9 +1555,7 @@
       function updateNavScroll(){if(nav)nav.classList.toggle('is-scrolled',window.scrollY>40);}
       window.addEventListener('scroll',updateNavScroll,{passive:true});updateNavScroll();
 
-      /* ── Hero parallax ── */
-      var heroParallax=document.getElementById('hero-parallax');
-      if(heroParallax&&typeof gsap!=='undefined'){try{gsap.to(heroParallax,{y:44,ease:'none',scrollTrigger:{trigger:'#hero',start:'top top',end:'bottom top',scrub:0.5}});}catch(e){}}
+      /* Hero parallax removed: ScrollTrigger scrub can leave y transform on #hero-parallax and reads as offset/gap */
 
       /* ── Hero + fold reveals: scroll-reveal.js (.reveal → .is-visible) ── */
 

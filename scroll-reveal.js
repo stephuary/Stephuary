@@ -19,6 +19,11 @@
     );
 
     nodes.forEach(function (el) {
+      /* #hero is above the fold — mark visible immediately (no layout wait; matches CSS that skips hidden state) */
+      if (el.closest && el.closest('#hero')) {
+        el.classList.add('is-visible');
+        return;
+      }
       observer.observe(el);
     });
   }
