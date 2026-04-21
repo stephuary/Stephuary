@@ -640,7 +640,7 @@
         if (a > 0.08) a = 0.08;
         ctxBg.beginPath();
         ctxBg.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-        ctxBg.fillStyle = 'rgba(255,232,210,' + a + ')';
+        ctxBg.fillStyle = 'rgba(232,220,205,' + a + ')';
         ctxBg.fill();
       }
       var pulse = document.body.classList.contains('sh-env-pulse') ? 1.18 : 1;
@@ -650,10 +650,10 @@
         var cy = p.y;
         var ca = p.a * pulse;
         var grd = ctxMid.createRadialGradient(cx, cy, 0, cx, cy, p.rx * 1.15 * pulse);
-        grd.addColorStop(0, 'rgba(255,215,185,' + ca * 0.9 + ')');
-        grd.addColorStop(0.4, 'rgba(255,175,130,' + ca * 0.45 + ')');
-        grd.addColorStop(0.75, 'rgba(200,120,95,' + ca * 0.12 + ')');
-        grd.addColorStop(1, 'rgba(160,90,70,0)');
+        grd.addColorStop(0, 'rgba(230,205,165,' + ca * 0.9 + ')');
+        grd.addColorStop(0.4, 'rgba(195,155,105,' + ca * 0.45 + ')');
+        grd.addColorStop(0.75, 'rgba(155,110,75,' + ca * 0.12 + ')');
+        grd.addColorStop(1, 'rgba(120,85,60,0)');
         ctxMid.save();
         ctxMid.translate(cx, cy);
         ctxMid.scale(1, Math.max(0.35, p.ry / p.rx));
