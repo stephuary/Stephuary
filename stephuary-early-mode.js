@@ -55,7 +55,7 @@
     }
   }
 
-  /** #early-private-slot visibility is managed by stephuary-private-selection.js (One Free Spot). */
+  /** #early-private-slot visibility is managed by stephuary-private-selection.js (monthly free 1:1). */
   function bindEasterEgg() {}
 
   function init() {

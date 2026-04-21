@@ -1,8 +1,8 @@
 /**
- * One Free Spot — time-based free submission (3–7 AM local); modal overlay; monthly local storage.
+ * Homepage monthly drawing — email capture for one free 1:1 concept + niche session (FormSubmit / config).
  */
 (function (global) {
-  var STORAGE_KEY = 'stephuary_one_free_spot_v1';
+  var STORAGE_KEY = 'stephuary_monthly_free_session_v1';
   var STORAGE_LEGACY_V2 = 'stephuary_private_selection_v2';
   var STORAGE_LEGACY_V1 = 'stephuary_private_selection_v1';
 
@@ -12,16 +12,8 @@
     return d.getFullYear() + '-' + (m < 10 ? '0' : '') + m;
   }
 
-  function isEarlyMode() {
-    try {
-      return global.document.documentElement.classList.contains('early-mode');
-    } catch (e) {
-      return false;
-    }
-  }
-
   function shouldShowFeature() {
-    return isEarlyMode();
+    return true;
   }
 
   function loadStore() {
@@ -67,15 +59,6 @@
     return !!(e && e.submittedAt);
   }
 
-  function loadPersonalizationState() {
-    try {
-      var raw = global.localStorage.getItem('stephuary_user_state_v1');
-      return raw ? JSON.parse(raw) : null;
-    } catch (e) {
-      return null;
-    }
-  }
-
   function loadResult() {
     try {
       var raw = global.localStorage.getItem('stephuary_result_v1');
@@ -103,26 +86,11 @@
 
   function joinFields(e) {
     if (!e) return '';
+    if (e.email && !(e.q1 || e.q2 || e.q3)) return String(e.email);
     if (e.q1 != null || e.q2 != null || e.q3 != null) {
       return [e.q1, e.q2, e.q3].filter(Boolean).join(' \n ');
     }
     return [e.build, e.year, e.stuck, e.tried, e.why, e.dynamic].filter(Boolean).join(' \n ');
-  }
-
-  function entryToQFields(entry) {
-    if (!entry) return { q1: '', q2: '', q3: '' };
-    if (entry.q1 != null || entry.q2 != null || entry.q3 != null) {
-      return {
-        q1: String(entry.q1 != null ? entry.q1 : '').trim(),
-        q2: String(entry.q2 != null ? entry.q2 : '').trim(),
-        q3: String(entry.q3 != null ? entry.q3 : '').trim()
-      };
-    }
-    return {
-      q1: String(entry.build || '').trim(),
-      q2: String(entry.stuck || '').trim(),
-      q3: String(entry.why || entry.tried || '').trim()
-    };
   }
 
   function wordCount(s) {
@@ -386,50 +354,6 @@
     return getRankedSubmissions(filterTag);
   }
 
-  /**
-   * Returns { kind, label } or null. kind is internal key for storage.
-   */
-  function pickDynamicQuestion(state, result) {
-    state = state || {};
-    var tags = state.tags || {};
-    var scores = state.stageScores || {};
-    var rec = String(state.recommendedTier || '');
-    var bott = String(tags.bottleneck || '');
-    var stage = String(state.stage || '');
-
-    var snapScore = typeof scores.snapshot === 'number' ? scores.snapshot : 0;
-    if (bott === 'needs_full_review' || snapScore >= 4 || stage === 'snapshot') {
-      return { kind: 'snapshot', label: 'What feels unclear even after going through this?' };
-    }
-    if (
-      rec.indexOf('direction') >= 0 ||
-      bott === 'too_many_ideas' ||
-      bott === 'scattered_focus' ||
-      bott === 'no_offer' ||
-      tags.directionClarity === 'none'
-    ) {
-      return { kind: 'direction', label: 'What are you deciding between right now?' };
-    }
-    if (rec.indexOf('revenue') >= 0 || bott === 'no_money_path' || tags.goal === 'make_money' || tags.goal === 'get_clients') {
-      return { kind: 'revenue', label: 'How are you currently trying to make money from this?' };
-    }
-    if (
-      rec.indexOf('lock') >= 0 ||
-      bott === 'wrong_order' ||
-      bott === 'execution_breakdown' ||
-      (tags.executionIssue && tags.executionIssue !== 'none' && tags.executionIssue !== '')
-    ) {
-      return { kind: 'friction', label: 'What is slowing you down most day to day?' };
-    }
-    if (rec.indexOf('concept') >= 0 || bott === 'weak_positioning' || stage === 'concept') {
-      return { kind: 'concept', label: 'Who is this actually for?' };
-    }
-    if (state.diagnosticCompleted || (result && result.diagnostic)) {
-      return { kind: 'snapshot', label: 'What feels unclear even after going through this?' };
-    }
-    return null;
-  }
-
   function gatherDiagnosticSnapshot() {
     var snap = {
       diagnosticCompleted: false,
@@ -451,27 +375,6 @@
     return snap;
   }
 
-  function prefillFromSnapshot() {
-    var out = { q1: '', q2: '', q3: '' };
-    var r = loadResult();
-    var st = loadPersonalizationState();
-    try {
-      if (r && r.diagnostic) {
-        if (r.diagnostic.main_problem) out.q1 = String(r.diagnostic.main_problem).trim();
-        if (r.diagnostic.fix_first) out.q2 = String(r.diagnostic.fix_first).trim();
-      }
-      if (!out.q1 && r && r.type_primary) out.q1 = String(r.type_primary).trim();
-    } catch (e) {}
-    try {
-      if (st && st.outputs) {
-        if (!out.q1 && st.outputs.mainIssue) out.q1 = String(st.outputs.mainIssue).trim();
-        if (!out.q2 && st.outputs.nextMove) out.q2 = String(st.outputs.nextMove).trim();
-      }
-      if (st && st.stageReason && !out.q3) out.q3 = String(st.stageReason).trim();
-    } catch (e) {}
-    return out;
-  }
-
   function syncEarlySlot() {
     var slot = global.document.getElementById('early-private-slot');
     if (!slot) return;
@@ -483,26 +386,72 @@
     syncEarlySlot();
   }
 
+  function getMonthlyFormAction() {
+    try {
+      var c = global.STEPHUARY_CONFIG || {};
+      return c.MONTHLY_FREE_SESSION_FORM_ACTION || null;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function formsubmitAjaxUrl(base) {
+    if (!base || typeof base !== 'string') return null;
+    if (base.indexOf('formsubmit.co') === -1) return base;
+    if (base.indexOf('/ajax/') !== -1) return base;
+    return base.replace(/^https:\/\/formsubmit\.co\//i, 'https://formsubmit.co/ajax/');
+  }
+
+  function setFormError(msg) {
+    var err = global.document.getElementById('ps-form-error');
+    if (!err) return;
+    if (msg) {
+      err.textContent = msg;
+      err.hidden = false;
+    } else {
+      err.textContent = '';
+      err.hidden = true;
+    }
+  }
+
+  function postMonthlyEmail(email) {
+    var action = getMonthlyFormAction();
+    if (!action) {
+      return Promise.resolve({ ok: true, skipped: true });
+    }
+    var url = formsubmitAjaxUrl(action);
+    var payload = {
+      email: email,
+      _subject: 'Monthly free 1:1 concept + niche session (homepage)',
+      _captcha: false,
+      month_pool: monthKey()
+    };
+    try {
+      var r = loadResult();
+      if (r && r.type_primary) payload.diagnostic_hint = String(r.type_primary).slice(0, 200);
+    } catch (e2) {}
+
+    return fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+      body: JSON.stringify(payload)
+    }).then(function (res) {
+      if (!res.ok) return { ok: false, status: res.status };
+      return res
+        .json()
+        .then(function () {
+          return { ok: true };
+        })
+        .catch(function () {
+          return { ok: true };
+        });
+    });
+  }
+
   function populateFormFields(form) {
     if (!form) return;
     form.reset();
-    var entry = currentMonthEntry();
-    var pre = prefillFromSnapshot();
-    function setn(name, val) {
-      var el = form.querySelector('[name="' + name + '"]');
-      if (!el) return;
-      el.value = val != null && val !== undefined ? String(val) : '';
-    }
-    if (entry && entry.submittedAt) {
-      var q = entryToQFields(entry);
-      setn('q1', q.q1);
-      setn('q2', q.q2);
-      setn('q3', q.q3);
-    } else {
-      setn('q1', pre.q1);
-      setn('q2', pre.q2);
-      setn('q3', pre.q3);
-    }
+    setFormError('');
   }
 
   function openOverlay(opts) {
@@ -511,33 +460,21 @@
     var overlay = global.document.getElementById('ps-overlay');
     if (!overlay) return;
 
-    var locked = global.document.getElementById('ps-view-locked');
-    var intro = global.document.getElementById('ps-view-intro');
     var formView = global.document.getElementById('ps-view-form');
     var doneView = global.document.getElementById('ps-view-done');
     var form = global.document.getElementById('ps-form');
 
     function hideAll() {
-      if (locked) locked.hidden = true;
-      if (intro) intro.hidden = true;
       if (formView) formView.hidden = true;
       if (doneView) doneView.hidden = true;
     }
 
-    if (!isEarlyMode()) {
-      hideAll();
-      if (locked) locked.hidden = false;
-    } else if (hasSubmittedThisMonth() && opts.update !== true) {
+    if (hasSubmittedThisMonth() && opts.update !== true) {
       hideAll();
       if (doneView) doneView.hidden = false;
-    } else if (opts.showForm === true) {
-      hideAll();
-      if (formView) formView.hidden = false;
-      if (form) populateFormFields(form);
     } else {
       hideAll();
-      if (intro) intro.hidden = false;
-      if (formView) formView.hidden = true;
+      if (formView) formView.hidden = false;
       if (form) populateFormFields(form);
     }
 
@@ -557,6 +494,13 @@
 
     var closeBtn = global.document.getElementById('ps-close');
     if (closeBtn) closeBtn.focus();
+
+    if (!hasSubmittedThisMonth() || opts.update === true) {
+      var em = global.document.getElementById('ps-field-email');
+      global.requestAnimationFrame(function () {
+        if (em) em.focus();
+      });
+    }
   }
 
   function closeOverlay() {
@@ -570,54 +514,69 @@
 
   function submitForm(ev) {
     ev.preventDefault();
-    if (!isEarlyMode()) return;
 
     var form = global.document.getElementById('ps-form');
     if (!form) return;
 
+    var emailEl = global.document.getElementById('ps-field-email');
+    var email = emailEl ? String(emailEl.value || '').trim() : '';
+    setFormError('');
+
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      setFormError('Enter a valid email address.');
+      return;
+    }
+
+    var btn = global.document.getElementById('ps-submit-btn');
+    var prevLabel = btn && btn.textContent ? btn.textContent : 'Enter monthly drawing';
+    if (btn) {
+      btn.disabled = true;
+      btn.textContent = 'Submitting…';
+    }
+
     var mk = monthKey();
-    var fd = new FormData(form);
-    var q1 = (fd.get('q1') || '').toString().trim();
-    var q2 = (fd.get('q2') || '').toString().trim();
-    var q3 = (fd.get('q3') || '').toString().trim();
-
-    if (!q1 || !q2 || !q3) return;
-
     var snap = gatherDiagnosticSnapshot();
-    snap.dynamicKind = null;
+    try {
+      snap.dynamicKind = null;
+    } catch (e) {}
 
-    var entry = {
-      submittedAt: Date.now(),
-      q1: q1,
-      q2: q2,
-      q3: q3,
-      build: q1,
-      year: '',
-      stuck: q2,
-      tried: '',
-      why: q3,
-      dynamic: '',
-      dynamicKind: null,
-      diagnosticSnapshot: snap
-    };
+    postMonthlyEmail(email)
+      .then(function (result) {
+        if (!result || !result.ok) {
+          setFormError('Could not submit. Check your connection and try again.');
+          return;
+        }
 
-    entry.internalSummary = buildInternalSummary(entry);
+        var entry = {
+          submittedAt: Date.now(),
+          email: email,
+          diagnosticSnapshot: snap
+        };
+        entry.internalSummary = buildInternalSummary(entry);
 
-    saveStore({
-      v: 1,
-      month: mk,
-      entry: entry
-    });
+        saveStore({
+          v: 1,
+          month: mk,
+          entry: entry
+        });
 
-    appendLedgerRecord(mk, entry);
+        appendLedgerRecord(mk, entry);
 
-    var intro = global.document.getElementById('ps-view-intro');
-    var formView = global.document.getElementById('ps-view-form');
-    var doneView = global.document.getElementById('ps-view-done');
-    if (intro) intro.hidden = true;
-    if (formView) formView.hidden = true;
-    if (doneView) doneView.hidden = false;
-    tryMount();
+        var formView = global.document.getElementById('ps-view-form');
+        var doneView = global.document.getElementById('ps-view-done');
+        if (formView) formView.hidden = true;
+        if (doneView) doneView.hidden = false;
+        tryMount();
+      })
+      .catch(function () {
+        setFormError('Could not submit. Try again in a moment.');
+      })
+      .then(function () {
+        if (btn) {
+          btn.disabled = false;
+          btn.textContent = prevLabel;
+        }
+      });
   }
 
   function bindOverlay() {
@@ -651,19 +610,6 @@
     link.addEventListener('click', function (e) {
       e.preventDefault();
       openOverlay();
-    });
-  }
-
-  function bindGotoForm() {
-    var btn = global.document.getElementById('ps-goto-form');
-    if (!btn) return;
-    btn.addEventListener('click', function () {
-      if (!isEarlyMode()) return;
-      openOverlay({ showForm: true });
-      var q1 = global.document.getElementById('ps-field-q1');
-      global.requestAnimationFrame(function () {
-        if (q1) q1.focus();
-      });
     });
   }
 
