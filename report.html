@@ -13,7 +13,7 @@
     :root {
       --bg: #0a0a0a;
       --text: #f2f0ec;
-      --muted: #b8b4ab;
+      --muted: #c9c4be;
       --line: rgba(242, 240, 236, 0.14);
       --sticky-bg: rgba(10, 10, 10, 0.92);
       --accent: #c4a35a;
@@ -39,7 +39,7 @@
       background: var(--sticky-bg);
       backdrop-filter: blur(8px);
       border-bottom: 1px solid var(--line);
-      padding: 0.85rem 1rem 1rem;
+      padding: 0.65rem 1rem 0.78rem;
     }
     .report-sticky-inner {
       max-width: var(--max);
@@ -61,8 +61,8 @@
     }
     .report-pattern {
       font-size: 0.92rem;
-      color: var(--text);
-      margin: 0 0 0.85rem;
+      color: rgba(250, 248, 244, 0.96);
+      margin: 0 0 0.62rem;
       max-width: 36rem;
       line-height: 1.4;
     }
@@ -98,7 +98,7 @@
     .report-main {
       max-width: var(--max);
       margin: 0 auto;
-      padding: 0.5rem 1rem 2.5rem;
+      padding: 0.38rem 1rem 1.65rem;
     }
     .report-acc {
       border-top: 1px solid var(--line);
@@ -112,10 +112,10 @@
     .report-acc-trigger {
       width: 100%;
       display: flex;
-      align-items: center;
+      align-items: flex-start;
       justify-content: space-between;
-      gap: 0.75rem;
-      padding: 0.65rem 0;
+      gap: 0.65rem;
+      padding: 0.45rem 0;
       border: 0;
       background: transparent;
       color: var(--text);
@@ -124,6 +124,27 @@
       font-size: 0.88rem;
       text-align: left;
       cursor: pointer;
+    }
+    .report-acc-trigger__stack {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.12rem;
+      min-width: 0;
+      flex: 1;
+    }
+    .report-acc-trigger__title {
+      font-weight: 700;
+      font-size: 0.88rem;
+      color: #faf8f4;
+      line-height: 1.2;
+    }
+    .report-acc-trigger__pv {
+      font-size: 0.78rem;
+      font-weight: 500;
+      color: rgba(242, 240, 236, 0.82);
+      line-height: 1.3;
+      max-width: 36rem;
     }
     .report-acc-trigger:focus-visible {
       outline: 2px solid var(--cta);
@@ -148,9 +169,9 @@
       opacity: 1;
     }
     .report-acc-panel-inner {
-      padding: 0 0 0.65rem;
+      padding: 0 0 0.5rem;
       font-size: 0.9rem;
-      color: var(--muted);
+      color: rgba(242, 240, 236, 0.9);
     }
     .report-acc-item--costing .report-acc-panel-inner {
       font-size: 0.95rem;
@@ -184,187 +205,392 @@
       color: var(--muted);
     }
 
-    /* Execution system (between diagnostic accordions and engine) */
-    .rpt-exec {
-      margin-top: 1.35rem;
-      padding: 1.1rem 0 1.35rem;
-      border-top: 1px solid rgba(196, 163, 90, 0.35);
+    /* Execution system (2-layer entry + nested accordions) */
+    .rpt-sys {
+      margin-top: 0.75rem;
+      padding: 0.75rem 0 0.85rem;
+      border-top: 1px solid rgba(196, 163, 90, 0.28);
       border-bottom: 1px solid var(--line);
     }
-    .rpt-exec__hero {
-      font-size: clamp(1.05rem, 2.4vw, 1.28rem);
+    .rpt-sys-entry__title {
+      font-size: clamp(1.02rem, 2.2vw, 1.2rem);
       font-weight: 700;
       letter-spacing: -0.02em;
-      margin: 0 0 0.45rem;
-      color: var(--text);
+      margin: 0 0 0.32rem;
+      color: #faf8f4;
     }
-    .rpt-exec__sub {
-      font-size: 0.9rem;
-      color: var(--muted);
-      line-height: 1.45;
-      margin: 0 0 1.1rem;
+    .rpt-sys-entry__line {
+      font-size: 0.87rem;
+      line-height: 1.36;
+      color: rgba(242, 240, 236, 0.9);
+      margin: 0 0 0.4rem;
       max-width: 38rem;
     }
-    .rpt-exec-section {
-      margin-bottom: 1.15rem;
-      padding-bottom: 1.1rem;
-      border-bottom: 1px solid var(--line);
-    }
-    .rpt-exec-section:last-child {
-      border-bottom: 0;
-      margin-bottom: 0;
-      padding-bottom: 0;
-    }
-    .rpt-exec-section h3 {
-      font-size: 0.78rem;
-      font-weight: 700;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--accent);
-      margin: 0 0 0.55rem;
-    }
-    .rpt-exec-section p {
-      margin: 0 0 0.45rem;
-      font-size: 0.88rem;
-      line-height: 1.45;
-      color: var(--muted);
-      max-width: 40rem;
-    }
-    .rpt-exec-section p.rpt-exec--text {
-      color: var(--text);
-    }
-    .rpt-exec-section ul {
-      margin: 0.35rem 0 0.5rem;
-      padding: 0 0 0 1rem;
-      font-size: 0.86rem;
-      line-height: 1.42;
-      color: var(--muted);
-    }
-    .rpt-exec-section ul.rpt-exec-ul--tight {
+    .rpt-sys-entry__scan {
+      margin: 0 0 0.42rem;
+      padding: 0;
       list-style: none;
-      padding-left: 0;
+      font-size: 0.8rem;
+      line-height: 1.32;
+      color: rgba(242, 240, 236, 0.9);
     }
-    .rpt-exec-section ul.rpt-exec-ul--tight li {
+    .rpt-sys-entry__scan li {
       position: relative;
       padding-left: 0.85rem;
-      margin-bottom: 0.28rem;
+      margin-bottom: 0.18rem;
     }
-    .rpt-exec-section ul.rpt-exec-ul--tight li::before {
+    .rpt-sys-entry__scan li::before {
       content: "–";
       position: absolute;
       left: 0;
-      color: var(--muted);
+      color: var(--accent);
     }
+    .rpt-sys-details {
+      margin-top: 0.1rem;
+      border: 1px solid var(--line);
+      border-radius: 3px;
+      background: rgba(14, 14, 12, 0.65);
+    }
+    .rpt-sys-details__summary {
+      list-style: none;
+      cursor: pointer;
+      padding: 0.42rem 0.6rem;
+      font-size: 0.74rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--accent);
+      user-select: none;
+    }
+    .rpt-sys-details__summary::-webkit-details-marker {
+      display: none;
+    }
+    .rpt-sys-details__inner {
+      padding: 0 0.5rem 0.48rem;
+      border-top: 1px solid var(--line);
+    }
+
+    .rpt-nest-acc {
+      display: flex;
+      flex-direction: column;
+    }
+    .rpt-nest-item {
+      border-bottom: 1px solid var(--line);
+    }
+    .rpt-nest-item:last-child {
+      border-bottom: 0;
+    }
+    .rpt-nest-trigger {
+      width: 100%;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 0.55rem;
+      padding: 0.4rem 0;
+      border: 0;
+      background: transparent;
+      color: var(--text);
+      font: inherit;
+      text-align: left;
+      cursor: pointer;
+    }
+    .rpt-nest-trigger:focus-visible {
+      outline: 2px solid var(--cta);
+      outline-offset: 2px;
+    }
+    .rpt-nest-trigger__stack {
+      display: flex;
+      flex-direction: column;
+      gap: 0.1rem;
+      min-width: 0;
+      flex: 1;
+    }
+    .rpt-nest-trigger__title {
+      font-weight: 700;
+      font-size: 0.78rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #faf8f4;
+      line-height: 1.2;
+    }
+    .rpt-nest-trigger__pv {
+      font-size: 0.76rem;
+      font-weight: 500;
+      color: rgba(242, 240, 236, 0.82);
+      line-height: 1.28;
+      max-width: 34rem;
+    }
+    .rpt-nest-icon {
+      flex-shrink: 0;
+      font-size: 0.72rem;
+      color: rgba(201, 196, 190, 0.85);
+      transition: transform 0.2s ease;
+    }
+    .rpt-nest-item.is-open .rpt-nest-icon {
+      transform: rotate(180deg);
+    }
+    .rpt-nest-panel {
+      max-height: 0;
+      overflow: hidden;
+      opacity: 0;
+      transition: max-height 0.22s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.18s ease;
+    }
+    .rpt-nest-item.is-open .rpt-nest-panel {
+      opacity: 1;
+    }
+    .rpt-nest-panel__inner {
+      padding: 0 0 0.48rem;
+      font-size: 0.84rem;
+      color: rgba(242, 240, 236, 0.9);
+    }
+    .rpt-nest-lead {
+      margin: 0 0 0.4rem;
+      font-size: 0.82rem;
+      line-height: 1.35;
+      color: rgba(242, 240, 236, 0.88);
+    }
+    .rpt-nest-kicker {
+      margin: 0.42rem 0 0.2rem;
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+    .rpt-nest-ul {
+      margin: 0 0 0.32rem;
+      padding: 0 0 0 1rem;
+      font-size: 0.8rem;
+      line-height: 1.38;
+      color: rgba(242, 240, 236, 0.88);
+    }
+    .rpt-nest-ul--inline {
+      list-style: none;
+      padding-left: 0;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.25rem 0.75rem;
+    }
+    .rpt-nest-rule {
+      margin: 0 0 0.38rem;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: rgba(242, 240, 236, 0.78);
+    }
+
+    .rpt-day-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+    .rpt-day-block {
+      border: 1px solid var(--line);
+      background: var(--card);
+      padding: 0.48rem 0.55rem;
+    }
+    .rpt-day-block--lead {
+      padding: 0.58rem 0.6rem;
+      border-color: rgba(196, 163, 90, 0.42);
+      background: rgba(196, 163, 90, 0.07);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+    }
+    .rpt-day-block h4 {
+      margin: 0 0 0.3rem;
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #faf8f4;
+    }
+    .rpt-day-block ul {
+      margin: 0;
+      padding: 0 0 0 0.85rem;
+      font-size: 0.78rem;
+      line-height: 1.36;
+      color: rgba(242, 240, 236, 0.88);
+    }
+    .rpt-day-block li {
+      margin-bottom: 0.18rem;
+    }
+
+    .rpt-flow4 {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 0.38rem;
+      margin: 0 0 0.42rem;
+    }
+    .rpt-flow4__step {
+      border: 1px solid var(--line);
+      background: rgba(18, 18, 16, 0.85);
+      padding: 0.42rem 0.35rem;
+      font-size: 0.72rem;
+      line-height: 1.25;
+      text-align: center;
+      color: rgba(242, 240, 236, 0.9);
+    }
+    .rpt-flow4__step span {
+      display: block;
+      font-weight: 700;
+      font-size: 0.66rem;
+      color: var(--accent);
+      margin-bottom: 0.12rem;
+    }
+
+    .rpt-dist-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(9.25rem, 1fr));
+      gap: 0.38rem;
+    }
+    .rpt-dist-cell {
+      border: 1px solid var(--line);
+      background: var(--card);
+      padding: 0.45rem 0.5rem;
+      font-size: 0.74rem;
+      line-height: 1.28;
+      color: rgba(242, 240, 236, 0.88);
+    }
+    .rpt-dist-cell strong {
+      display: block;
+      margin-bottom: 0.18rem;
+      font-size: 0.68rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: #faf8f4;
+    }
+    .rpt-dist-cell span {
+      display: block;
+      font-size: 0.72rem;
+      color: rgba(242, 240, 236, 0.78);
+    }
+
     .rpt-xml-block {
-      margin: 0.45rem 0 0.65rem;
-      padding: 0.65rem 0.75rem;
+      margin: 0.38rem 0 0.55rem;
+      padding: 0.58rem 0.68rem;
       background: var(--code-bg);
       border: 1px solid var(--line);
       font-family: ui-monospace, "Cascadia Code", "Source Code Pro", Menlo, monospace;
-      font-size: 0.68rem;
-      line-height: 1.48;
-      color: #d8d4cc;
+      font-size: 0.66rem;
+      line-height: 1.46;
+      color: #e4e1d8;
       white-space: pre-wrap;
       word-break: break-word;
       overflow-x: auto;
+      max-height: min(52vh, 22rem);
+      overflow-y: auto;
+    }
+    .rpt-xml-block--premium {
+      border-color: rgba(196, 163, 90, 0.28);
+      border-radius: 3px;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04), 0 2px 12px rgba(0, 0, 0, 0.35);
     }
     .rpt-exec-precision {
-      font-size: 0.82rem;
+      font-size: 0.8rem;
       font-weight: 600;
       color: var(--text);
-      margin-top: 0.5rem;
+      margin-top: 0.42rem;
     }
     .rpt-exec-copy-row {
       display: flex;
       justify-content: flex-end;
-      margin-bottom: 0.3rem;
-    }
-    .rpt-day1-grid {
-      display: grid;
-      gap: 0.5rem;
-      margin: 0.45rem 0;
-    }
-    .rpt-day1-card {
-      border: 1px solid var(--line);
-      background: var(--card);
-      padding: 0.55rem 0.65rem;
-      font-size: 0.82rem;
-      line-height: 1.4;
-      color: var(--muted);
-    }
-    .rpt-day1-card strong {
-      color: var(--text);
-      display: block;
       margin-bottom: 0.25rem;
-      font-size: 0.72rem;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
     }
+
     .rpt-tier-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: 0.5rem;
-      margin-top: 0.45rem;
+      gap: 0.42rem;
+      margin-top: 0.35rem;
+    }
+    .rpt-tier-grid--nest {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
     }
     .rpt-tier-card {
       border: 1px solid var(--line);
-      background: rgba(18, 18, 16, 0.75);
-      padding: 0.55rem 0.6rem;
-      font-size: 0.8rem;
-      line-height: 1.38;
-      color: var(--muted);
+      background: rgba(18, 18, 16, 0.88);
+      padding: 0.48rem 0.52rem;
+      font-size: 0.76rem;
+      line-height: 1.34;
+      color: rgba(242, 240, 236, 0.86);
     }
     .rpt-tier-card h4 {
-      margin: 0 0 0.25rem;
-      font-size: 0.72rem;
+      margin: 0 0 0.22rem;
+      font-size: 0.68rem;
       font-weight: 700;
       letter-spacing: 0.06em;
       text-transform: uppercase;
-      color: var(--text);
+      color: #faf8f4;
     }
+    .rpt-tier-card p {
+      margin: 0 0 0.22rem;
+    }
+    .rpt-tier-card p:last-child {
+      margin-bottom: 0;
+    }
+
     .rpt-auto-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 0.65rem;
-      margin-top: 0.45rem;
+      gap: 0.48rem;
+      margin-top: 0.35rem;
     }
     .rpt-auto-col {
       border: 1px solid var(--line);
-      padding: 0.55rem 0.6rem;
-      font-size: 0.82rem;
+      padding: 0.48rem 0.52rem;
+      font-size: 0.8rem;
+      background: rgba(18, 18, 16, 0.55);
     }
     .rpt-auto-col h4 {
-      margin: 0 0 0.35rem;
-      font-size: 0.72rem;
+      margin: 0 0 0.3rem;
+      font-size: 0.68rem;
       text-transform: uppercase;
       letter-spacing: 0.08em;
       color: var(--accent);
     }
-    .rpt-next-block {
-      margin-top: 1.25rem;
-      padding: 1rem 0.85rem 1.1rem;
-      border: 1px solid rgba(196, 163, 90, 0.35);
-      background: rgba(196, 163, 90, 0.06);
+
+    .rpt-final-wrap {
+      margin-top: 0.85rem;
+      padding-top: 0.65rem;
     }
-    .rpt-next-block h2 {
-      font-size: clamp(1.05rem, 2.5vw, 1.25rem);
+    .rpt-next-block {
+      margin-top: 0;
+      padding: 0.85rem 0.75rem 0.95rem;
+      border: 1px solid rgba(196, 163, 90, 0.38);
+      background: rgba(196, 163, 90, 0.07);
+    }
+    .rpt-next-block--center {
+      text-align: center;
+      max-width: 22rem;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .rpt-next-hero {
+      font-size: clamp(1.02rem, 2.4vw, 1.18rem);
       letter-spacing: -0.02em;
       text-transform: none;
-      color: var(--text);
-      margin: 0 0 0.5rem;
+      color: #faf8f4;
+      margin: 0 0 0.38rem;
+      font-weight: 700;
+    }
+    .rpt-next-lead {
+      margin: 0 0 0.55rem;
+      font-size: 0.84rem;
+      line-height: 1.38;
+      color: rgba(242, 240, 236, 0.88);
     }
     .rpt-next-block .rpt-next-cta {
       display: inline-flex;
       align-items: center;
       justify-content: center;
       width: 100%;
-      max-width: 22rem;
-      margin-top: 0.65rem;
-      padding: 0.85rem 1rem;
+      max-width: 20rem;
+      margin-top: 0.15rem;
+      padding: 0.78rem 0.95rem;
       background: var(--cta);
       color: #fff;
       font-weight: 700;
-      font-size: 0.85rem;
+      font-size: 0.82rem;
       text-decoration: none;
       border: 1px solid rgba(255, 255, 255, 0.12);
     }
@@ -372,96 +598,10 @@
       filter: brightness(1.06);
     }
     .rpt-next-block .rpt-next-sub {
-      margin: 0.4rem 0 0;
-      font-size: 0.8rem;
-      color: var(--muted);
-    }
-
-    /* Voice-to-content (from content-system, scoped) */
-    .rpt-workflow {
-      margin-top: 2.5rem;
-      padding-top: 2rem;
-      border-top: 1px solid var(--line);
-    }
-    .rpt-workflow h2 {
-      font-size: 0.72rem;
-      letter-spacing: 0.16em;
-      text-transform: uppercase;
-      color: var(--accent);
-      margin: 0 0 0.85rem;
-      font-weight: 600;
-    }
-    .rpt-workflow .rpt-section {
-      margin-bottom: 2rem;
-      padding-bottom: 2rem;
-      border-bottom: 1px solid var(--line);
-    }
-    .rpt-workflow .rpt-section:last-of-type {
-      border-bottom: 0;
-      margin-bottom: 0;
-      padding-bottom: 0;
-    }
-    .rpt-workflow .rpt-lede {
-      color: var(--muted);
-      font-size: 0.95rem;
-      margin: 0 0 1.25rem;
-      max-width: 36rem;
-    }
-    .rpt-timeline-track {
-      display: flex;
-      flex-direction: row;
-      gap: 0.65rem;
-      width: 100%;
-    }
-    .rpt-timeline-block {
-      flex: 1;
-      min-width: 0;
-      border: 1px solid var(--line);
-      background: var(--card);
-      padding: 0.85rem 0.75rem;
-    }
-    .rpt-timeline-block--lead {
-      padding: 1rem 0.85rem;
-      border-color: rgba(196, 163, 90, 0.45);
-      box-shadow: 0 0 0 1px rgba(196, 163, 90, 0.12);
-    }
-    .rpt-timeline-block h3 {
-      margin: 0 0 0.4rem;
+      margin: 0.38rem 0 0;
       font-size: 0.78rem;
-      font-weight: 700;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-      color: var(--text);
-    }
-    .rpt-timeline-block--lead h3 {
-      font-size: 0.88rem;
-    }
-    .rpt-timeline-block p {
-      margin: 0;
-      font-size: 0.82rem;
-      color: var(--muted);
-      line-height: 1.4;
-    }
-    .rpt-voice-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1.25rem;
-      align-items: start;
-    }
-    .rpt-voice-steps {
-      margin: 0;
-      padding: 0;
-      list-style: none;
-    }
-    .rpt-voice-steps li {
-      padding: 0.45rem 0;
-      border-bottom: 1px solid var(--line);
-      font-size: 0.92rem;
-      font-weight: 600;
-      color: var(--text);
-    }
-    .rpt-voice-steps li:last-child {
-      border-bottom: 0;
+      line-height: 1.35;
+      color: rgba(201, 196, 190, 0.95);
     }
     .rpt-prompt-wrap {
       border: 1px solid var(--line);
@@ -532,8 +672,29 @@
       margin: 0;
       padding: 0 0 0 1rem;
       font-size: 0.8rem;
-      color: var(--muted);
+      color: rgba(242, 240, 236, 0.82);
       line-height: 1.35;
+    }
+    .rpt-cards--nest {
+      gap: 0.48rem;
+    }
+    .rpt-cards--nest .rpt-card {
+      min-height: 0;
+      padding: 0.62rem 0.55rem;
+    }
+    .rpt-cards--nest .rpt-card h3 {
+      font-size: 0.82rem;
+      margin-bottom: 0.35rem;
+    }
+    .rpt-cards--nest .rpt-range {
+      font-size: 0.8rem;
+    }
+    .rpt-prompt-wrap--nest {
+      margin-top: 0.42rem;
+      border-radius: 3px;
+      border-color: rgba(196, 163, 90, 0.24);
+      padding: 0.52rem 0.62rem 0.68rem;
+      background: linear-gradient(165deg, rgba(24, 24, 22, 0.95), rgba(14, 14, 12, 0.98));
     }
 
     .foot {
@@ -547,11 +708,8 @@
     }
 
     @media (max-width: 820px) {
-      .rpt-timeline-track {
-        flex-direction: column;
-      }
-      .rpt-voice-grid {
-        grid-template-columns: 1fr;
+      .rpt-flow4 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
       }
       .rpt-cards {
         grid-template-columns: 1fr;
@@ -559,7 +717,18 @@
       .rpt-tier-grid {
         grid-template-columns: 1fr;
       }
+      .rpt-tier-grid--nest {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
       .rpt-auto-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    @media (max-width: 520px) {
+      .rpt-flow4 {
+        grid-template-columns: 1fr;
+      }
+      .rpt-tier-grid--nest {
         grid-template-columns: 1fr;
       }
     }
@@ -579,45 +748,50 @@
       .report-title,
       .report-pattern,
       .report-acc-panel-inner,
-      .rpt-timeline-block p,
       .rpt-card ul,
-      .rpt-prompt-hint,
-      .rpt-lede {
+      .rpt-nest-panel__inner,
+      .rpt-nest-trigger__pv,
+      .rpt-prompt-hint {
         color: #333;
       }
       .report-sticky h1,
       .report-acc-trigger,
-      .rpt-timeline-block h3,
-      .rpt-voice-steps li,
-      .rpt-card h3 {
+      .rpt-card h3,
+      .rpt-nest-trigger__title {
         color: #111;
       }
       .report-actions,
       .report-acc-icon,
-      .rpt-prompt-copy-btn {
+      .rpt-prompt-copy-btn,
+      .rpt-nest-icon {
         display: none !important;
       }
       .report-acc-item,
-      .rpt-exec-section,
-      .rpt-next-block {
+      .rpt-next-block,
+      .rpt-nest-item,
+      .rpt-sys {
         break-inside: avoid;
       }
-      .report-acc-panel {
+      .report-acc-panel,
+      .rpt-nest-panel {
         max-height: none !important;
         opacity: 1 !important;
         overflow: visible !important;
       }
-      .report-acc-trigger {
-        padding: 0.35rem 0;
+      .report-acc-trigger,
+      .rpt-nest-trigger {
+        padding: 0.3rem 0;
         cursor: default;
       }
       .report-acc-item--costing .report-acc-panel-inner {
         background: #f9f6ef;
         border: 1px solid #d4c9a8;
       }
-      .rpt-timeline-block,
       .rpt-card,
-      .rpt-prompt-wrap {
+      .rpt-prompt-wrap,
+      .rpt-day-block,
+      .rpt-dist-cell,
+      .rpt-flow4__step {
         background: #fafafa;
         border-color: #ddd;
       }
@@ -627,20 +801,14 @@
       .foot a {
         color: #444;
       }
-      .rpt-exec-section p,
-      .rpt-exec-section ul,
-      .rpt-exec__sub {
-        color: #333;
-      }
-      .rpt-exec__hero,
-      .rpt-exec-section h3,
-      .rpt-next-block h2 {
+      .rpt-next-hero {
         color: #111;
       }
       .rpt-xml-block {
         color: #222;
         background: #f4f4f2;
         border-color: #ccc;
+        max-height: none;
       }
       .rpt-tier-card,
       .rpt-auto-col {
@@ -667,19 +835,36 @@
   </header>
 
   <main class="report-main">
-    <div class="report-acc" id="report-acc-pre" aria-label="Diagnostic sections"></div>
+    <div class="report-acc" id="report-acc-core" aria-label="Diagnostic breakdown"></div>
 
-    <div id="rpt-exec-system" class="rpt-exec" aria-label="Execution system">
-      <h2 class="rpt-exec__hero">Run this instead of guessing</h2>
-      <p class="rpt-exec__sub">This is the exact system to turn what you already know into published content, audience signal, and revenue direction within 30 days.</p>
+    <div id="rpt-exec-system" class="rpt-sys" aria-label="Execution system">
+      <div class="rpt-sys-entry">
+        <h2 class="rpt-sys-entry__title">Run this instead of guessing</h2>
+        <p class="rpt-sys-entry__line">This system turns one idea, voice note, or past asset into a published article, distribution content, and signal within 30 days.</p>
+        <ul class="rpt-sys-entry__scan">
+          <li>Capture → Convert → Publish</li>
+          <li>Validate → Adapt → Distribute</li>
+          <li>Review → Refine → Monetize</li>
+        </ul>
+        <details class="rpt-sys-details" id="rpt-sys-details">
+          <summary class="rpt-sys-details__summary">Open system <span class="rpt-sys-details__arrow" aria-hidden="true">↓</span></summary>
+          <div class="rpt-sys-details__inner">
+            <div class="rpt-nest-acc" id="rpt-nest-root" aria-label="System steps">
 
-      <section class="rpt-exec-section" aria-labelledby="rpt-ai-head">
-        <h3 id="rpt-ai-head">How to run AI without guesswork</h3>
-        <p>Use this exact structure every time:</p>
-        <div class="rpt-exec-copy-row">
-          <button type="button" class="rpt-prompt-copy-btn" data-copy-of="rpt-xml-ai" aria-label="Copy AI protocol">Copy</button>
-        </div>
-        <pre class="rpt-xml-block" id="rpt-xml-ai">&lt;role&gt;
+              <article class="rpt-nest-item" data-nest-item>
+                <button type="button" class="rpt-nest-trigger" data-nest-trigger aria-expanded="false">
+                  <span class="rpt-nest-trigger__stack">
+                    <span class="rpt-nest-trigger__title">AI execution protocol</span>
+                    <span class="rpt-nest-trigger__pv">Structured input. Controlled output. No guessing.</span>
+                  </span>
+                  <span class="rpt-nest-icon" aria-hidden="true">▾</span>
+                </button>
+                <div class="rpt-nest-panel" data-nest-panel>
+                  <div class="rpt-nest-panel__inner">
+                    <div class="rpt-exec-copy-row">
+                      <button type="button" class="rpt-prompt-copy-btn" data-copy-of="rpt-xml-ai" aria-label="Copy AI protocol">Copy</button>
+                    </div>
+                    <pre class="rpt-xml-block rpt-xml-block--premium" id="rpt-xml-ai">&lt;role&gt;
 Define the expertise required
 &lt;/role&gt;
 
@@ -704,53 +889,87 @@ Break task into steps and execute sequentially
 &lt;output_format&gt;
 Define exact structure of final output
 &lt;/output_format&gt;</pre>
-        <p><strong>Run this after every output:</strong></p>
-        <ul class="rpt-exec-ul--tight">
-          <li>list all claims</li>
-          <li>verify each one</li>
-          <li>remove anything not supported</li>
-          <li>revise</li>
-        </ul>
-        <p class="rpt-exec-precision">This is your precision layer. Do not soften it.</p>
-      </section>
+                    <p class="rpt-nest-kicker">After output:</p>
+                    <ul class="rpt-nest-ul">
+                      <li>list all claims</li>
+                      <li>verify each one</li>
+                      <li>remove anything not supported</li>
+                      <li>revise</li>
+                    </ul>
+                    <p class="rpt-nest-kicker">Failure conditions:</p>
+                    <ul class="rpt-nest-ul">
+                      <li><strong>Unsourced stat</strong> — cut or add a primary source</li>
+                      <li><strong>Soft claim</strong> — replace with a testable line or delete</li>
+                      <li><strong>Scope creep in copy</strong> — strip promises delivery cannot support</li>
+                    </ul>
+                    <p class="rpt-exec-precision">Precision layer. Do not soften it.</p>
+                  </div>
+                </div>
+              </article>
 
-      <section class="rpt-exec-section" aria-labelledby="rpt-d30-head">
-        <h3 id="rpt-d30-head">What to do from today to Day 30</h3>
-        <p class="rpt-exec--text"><strong>Day 1</strong></p>
-        <ul>
-          <li>Take one: voice memo, podcast, past writing, or video.</li>
-          <li>Transcribe it.</li>
-          <li>Run through Claude using the structure above.</li>
-          <li>Use Perplexity to: validate facts, refine phrasing, pull examples.</li>
-          <li>Publish: Substack article and 1 YouTube script.</li>
-          <li>Create in Canva: 1 quote visual and 1 carousel or short-form asset.</li>
-        </ul>
-        <p class="rpt-exec--text" style="margin-top:0.65rem"><strong>Day 7</strong></p>
-        <ul>
-          <li>Review: saves, replies, shares.</li>
-          <li>Identify: strongest topic, weakest topic.</li>
-        </ul>
-        <p class="rpt-exec--text" style="margin-top:0.65rem"><strong>Day 14</strong></p>
-        <ul>
-          <li>Define: main problem you are speaking on, who responds, what outcome they care about.</li>
-        </ul>
-        <p class="rpt-exec--text" style="margin-top:0.65rem"><strong>Day 30</strong></p>
-        <p>You should have:</p>
-        <ul>
-          <li>8 to 12 articles</li>
-          <li>8 to 20 short-form outputs</li>
-          <li>repeated audience signals</li>
-          <li>clear topic direction</li>
-        </ul>
-      </section>
+              <article class="rpt-nest-item" data-nest-item>
+                <button type="button" class="rpt-nest-trigger" data-nest-trigger aria-expanded="false">
+                  <span class="rpt-nest-trigger__stack">
+                    <span class="rpt-nest-trigger__title">Day 1 to Day 30</span>
+                    <span class="rpt-nest-trigger__pv">Exact actions from today to signal and direction in 30 days</span>
+                  </span>
+                  <span class="rpt-nest-icon" aria-hidden="true">▾</span>
+                </button>
+                <div class="rpt-nest-panel" data-nest-panel>
+                  <div class="rpt-nest-panel__inner">
+                    <div class="rpt-day-stack">
+                      <div class="rpt-day-block rpt-day-block--lead">
+                        <h4>Day 1</h4>
+                        <ul>
+                          <li>One input: voice memo, podcast, writing, or video</li>
+                          <li>Transcribe → Claude (protocol above)</li>
+                          <li>Perplexity: validate facts, tighten phrasing, pull examples</li>
+                          <li>Ship: Substack article + 1 YouTube script</li>
+                          <li>Canva: 1 quote + 1 carousel or short asset</li>
+                        </ul>
+                      </div>
+                      <div class="rpt-day-block">
+                        <h4>Day 7</h4>
+                        <ul>
+                          <li>Review saves, replies, shares</li>
+                          <li>Tag strongest vs weakest topic</li>
+                        </ul>
+                      </div>
+                      <div class="rpt-day-block">
+                        <h4>Day 14</h4>
+                        <ul>
+                          <li>Name problem, who responds, outcome they buy</li>
+                        </ul>
+                      </div>
+                      <div class="rpt-day-block">
+                        <h4>Day 30</h4>
+                        <ul>
+                          <li>8–12 articles</li>
+                          <li>8–20 short-form outputs</li>
+                          <li>Repeated signals</li>
+                          <li>Clear topic direction</li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </article>
 
-      <section class="rpt-exec-section" aria-labelledby="rpt-niche-head">
-        <h3 id="rpt-niche-head">Define your niche and first 12 topics</h3>
-        <p>Use Claude:</p>
-        <div class="rpt-exec-copy-row">
-          <button type="button" class="rpt-prompt-copy-btn" data-copy-of="rpt-xml-niche" aria-label="Copy niche prompt">Copy</button>
-        </div>
-        <pre class="rpt-xml-block" id="rpt-xml-niche">&lt;role&gt;
+              <article class="rpt-nest-item" data-nest-item>
+                <button type="button" class="rpt-nest-trigger" data-nest-trigger aria-expanded="false">
+                  <span class="rpt-nest-trigger__stack">
+                    <span class="rpt-nest-trigger__title">Niche + 12 topic engine</span>
+                    <span class="rpt-nest-trigger__pv">Define your niche and generate your first 12 articles</span>
+                  </span>
+                  <span class="rpt-nest-icon" aria-hidden="true">▾</span>
+                </button>
+                <div class="rpt-nest-panel" data-nest-panel>
+                  <div class="rpt-nest-panel__inner">
+                    <p class="rpt-nest-lead">Paste your real inputs. Run once. Edit only from the output list.</p>
+                    <div class="rpt-exec-copy-row">
+                      <button type="button" class="rpt-prompt-copy-btn" data-copy-of="rpt-xml-niche" aria-label="Copy niche prompt">Copy</button>
+                    </div>
+                    <pre class="rpt-xml-block rpt-xml-block--premium" id="rpt-xml-niche">&lt;role&gt;
 You are an editorial strategist defining a niche and content system
 &lt;/role&gt;
 
@@ -785,145 +1004,213 @@ Target audience:
     - why it matters
     - platform fit
 &lt;/output_format&gt;</pre>
-      </section>
-    </div>
+                  </div>
+                </div>
+              </article>
 
-    <div class="report-acc" id="report-acc-post" aria-label="Follow-on sections"></div>
-
-    <div class="rpt-workflow" id="rpt-workflow" aria-labelledby="rpt-workflow-head">
-      <h2 id="rpt-workflow-head">Voice to content engine</h2>
-      <p class="rpt-lede">Same page as the read above. Run in order after the Day 30 block.</p>
-
-      <section class="rpt-section" aria-labelledby="rpt-have-head">
-        <h2 id="rpt-have-head">Use what you already have</h2>
-        <p class="rpt-lede" style="margin-bottom:0.75rem">You do not need new ideas.</p>
-        <p class="rpt-lede" style="margin-top:0">Use: voice notes, past writing, podcasts, videos.</p>
-        <p class="rpt-lede" style="margin-top:0.85rem;margin-bottom:0.35rem"><strong>Process</strong></p>
-        <ol style="margin:0;padding-left:1.15rem;font-size:0.9rem;line-height:1.5;color:var(--muted);max-width:36rem">
-          <li>input</li>
-          <li>convert</li>
-          <li>structure</li>
-          <li>publish</li>
-          <li>extract clips</li>
-        </ol>
-        <div class="rpt-voice-grid" style="margin-top:1rem">
-          <div>
-            <ul class="rpt-voice-steps">
-              <li>Record</li>
-              <li>Transcribe</li>
-              <li>Convert</li>
-              <li>Publish</li>
-            </ul>
-          </div>
-          <div>
-            <div class="rpt-prompt-wrap">
-              <div class="rpt-prompt-copy-row">
-                <button type="button" class="rpt-prompt-copy-btn" data-copy-of="rpt-prompt-text" aria-label="Copy article prompt">Copy</button>
-              </div>
-              <pre class="rpt-prompt-box" id="rpt-prompt-text">Turn into Substack article with:
+              <article class="rpt-nest-item" data-nest-item>
+                <button type="button" class="rpt-nest-trigger" data-nest-trigger aria-expanded="false">
+                  <span class="rpt-nest-trigger__stack">
+                    <span class="rpt-nest-trigger__title">Voice + recycling</span>
+                    <span class="rpt-nest-trigger__pv">Use what you already have instead of creating from scratch</span>
+                  </span>
+                  <span class="rpt-nest-icon" aria-hidden="true">▾</span>
+                </button>
+                <div class="rpt-nest-panel" data-nest-panel>
+                  <div class="rpt-nest-panel__inner">
+                    <div class="rpt-flow4">
+                      <div class="rpt-flow4__step"><span>1</span> Record or select</div>
+                      <div class="rpt-flow4__step"><span>2</span> Transcribe</div>
+                      <div class="rpt-flow4__step"><span>3</span> Convert</div>
+                      <div class="rpt-flow4__step"><span>4</span> Publish</div>
+                    </div>
+                    <p class="rpt-nest-kicker">Use these inputs:</p>
+                    <ul class="rpt-nest-ul rpt-nest-ul--inline">
+                      <li>voice notes</li>
+                      <li>podcasts</li>
+                      <li>videos</li>
+                      <li>past writing</li>
+                    </ul>
+                    <div class="rpt-prompt-wrap rpt-prompt-wrap--nest">
+                      <div class="rpt-prompt-copy-row">
+                        <button type="button" class="rpt-prompt-copy-btn" data-copy-of="rpt-prompt-text" aria-label="Copy article prompt">Copy</button>
+                      </div>
+                      <pre class="rpt-prompt-box" id="rpt-prompt-text">Turn into Substack article with:
 
 Title
 Problem
 Where it breaks
 What to do first</pre>
+                    </div>
+                  </div>
+                </div>
+              </article>
+
+              <article class="rpt-nest-item" data-nest-item>
+                <button type="button" class="rpt-nest-trigger" data-nest-trigger aria-expanded="false">
+                  <span class="rpt-nest-trigger__stack">
+                    <span class="rpt-nest-trigger__title">Distribution</span>
+                    <span class="rpt-nest-trigger__pv">Turn one article into full platform coverage</span>
+                  </span>
+                  <span class="rpt-nest-icon" aria-hidden="true">▾</span>
+                </button>
+                <div class="rpt-nest-panel" data-nest-panel>
+                  <div class="rpt-nest-panel__inner">
+                    <p class="rpt-nest-rule">Do not repost. Adapt.</p>
+                    <div class="rpt-dist-grid">
+                      <div class="rpt-dist-cell"><strong>YouTube</strong><span>Long or short script · search + depth</span></div>
+                      <div class="rpt-dist-cell"><strong>TikTok / IG</strong><span>Hook-first vertical · pattern interrupt</span></div>
+                      <div class="rpt-dist-cell"><strong>LinkedIn</strong><span>Opinion + proof line · B2B skim</span></div>
+                      <div class="rpt-dist-cell"><strong>Pinterest</strong><span>Static visual + keyword title · discovery</span></div>
+                      <div class="rpt-dist-cell"><strong>Reddit</strong><span>Discussion frame · no naked promo</span></div>
+                    </div>
+                  </div>
+                </div>
+              </article>
+
+              <article class="rpt-nest-item" data-nest-item>
+                <button type="button" class="rpt-nest-trigger" data-nest-trigger aria-expanded="false">
+                  <span class="rpt-nest-trigger__stack">
+                    <span class="rpt-nest-trigger__title">Paid tier decision</span>
+                    <span class="rpt-nest-trigger__pv">Choose the right Substack model based on signal</span>
+                  </span>
+                  <span class="rpt-nest-icon" aria-hidden="true">▾</span>
+                </button>
+                <div class="rpt-nest-panel" data-nest-panel>
+                  <div class="rpt-nest-panel__inner">
+                    <div class="rpt-tier-grid rpt-tier-grid--nest">
+                      <div class="rpt-tier-card">
+                        <h4>Support</h4>
+                        <p><strong>When:</strong> early list, light lift</p>
+                        <p><strong>Requires:</strong> steady posting, clear CTA</p>
+                      </div>
+                      <div class="rpt-tier-card">
+                        <h4>Archive</h4>
+                        <p><strong>When:</strong> deep back catalog readers want</p>
+                        <p><strong>Requires:</strong> tagged library, onboarding copy</p>
+                      </div>
+                      <div class="rpt-tier-card">
+                        <h4>Premium</h4>
+                        <p><strong>When:</strong> demand for deeper work</p>
+                        <p><strong>Requires:</strong> delivery boundary, refund rule</p>
+                      </div>
+                      <div class="rpt-tier-card">
+                        <h4>Wait</h4>
+                        <p><strong>When:</strong> low signal or fuzzy niche</p>
+                        <p><strong>Requires:</strong> more publishes before paywall</p>
+                      </div>
+                    </div>
+                    <div class="rpt-exec-copy-row" style="margin-top:0.65rem">
+                      <button type="button" class="rpt-prompt-copy-btn" data-copy-of="rpt-xml-tier" aria-label="Copy tier decision prompt">Copy</button>
+                    </div>
+                    <pre class="rpt-xml-block rpt-xml-block--premium" id="rpt-xml-tier">&lt;role&gt;
+You advise on Substack paid tier selection only
+&lt;/role&gt;
+
+&lt;task&gt;
+Given my audience size, posting cadence, and topic clarity, pick Support, Archive, Premium, or Wait and list 3 reasons
+&lt;/task&gt;
+
+&lt;context&gt;
+Audience:
+Cadence:
+Topic clarity:
+Back catalog depth:
+&lt;/context&gt;
+
+&lt;constraints&gt;
+- Pick exactly one tier or Wait
+- No generic advice
+&lt;/constraints&gt;
+
+&lt;output_format&gt;
+- Choice
+- 3 bullets why
+- Next action in 7 days
+&lt;/output_format&gt;</pre>
+                  </div>
+                </div>
+              </article>
+
+              <article class="rpt-nest-item" data-nest-item>
+                <button type="button" class="rpt-nest-trigger" data-nest-trigger aria-expanded="false">
+                  <span class="rpt-nest-trigger__stack">
+                    <span class="rpt-nest-trigger__title">Monetization</span>
+                    <span class="rpt-nest-trigger__pv">How this turns into revenue</span>
+                  </span>
+                  <span class="rpt-nest-icon" aria-hidden="true">▾</span>
+                </button>
+                <div class="rpt-nest-panel" data-nest-panel>
+                  <div class="rpt-nest-panel__inner">
+                    <div class="rpt-cards rpt-cards--nest">
+                      <div class="rpt-card">
+                        <h3>Substack</h3>
+                        <p class="rpt-range">$50–$500 early · $500–$3K consistent · $3K–$10K+ strong</p>
+                        <ul><li>Ship on a schedule</li><li>One CTA per post</li></ul>
+                      </div>
+                      <div class="rpt-card">
+                        <h3>Writing</h3>
+                        <p class="rpt-range">$150–$800 per article · $1K–$5K retainers</p>
+                        <ul><li>Portfolio matches pitch</li><li>Turnaround SLA</li></ul>
+                      </div>
+                      <div class="rpt-card">
+                        <h3>Consulting</h3>
+                        <p class="rpt-range">$500–$10K+ per engagement</p>
+                        <ul><li>Named outcome</li><li>Cap clients / month</li></ul>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </article>
+
+              <article class="rpt-nest-item" data-nest-item>
+                <button type="button" class="rpt-nest-trigger" data-nest-trigger aria-expanded="false">
+                  <span class="rpt-nest-trigger__stack">
+                    <span class="rpt-nest-trigger__title">Automation</span>
+                    <span class="rpt-nest-trigger__pv">What to automate after 30 days</span>
+                  </span>
+                  <span class="rpt-nest-icon" aria-hidden="true">▾</span>
+                </button>
+                <div class="rpt-nest-panel" data-nest-panel>
+                  <div class="rpt-nest-panel__inner">
+                    <div class="rpt-auto-grid">
+                      <div class="rpt-auto-col">
+                        <h4>Automate</h4>
+                        <ul class="rpt-nest-ul">
+                          <li>transcription</li>
+                          <li>formatting</li>
+                          <li>distribution prep</li>
+                        </ul>
+                      </div>
+                      <div class="rpt-auto-col">
+                        <h4>Keep manual</h4>
+                        <ul class="rpt-nest-ul">
+                          <li>positioning</li>
+                          <li>topic selection</li>
+                          <li>client work</li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </article>
+
             </div>
-            <p class="rpt-prompt-hint">600 to 1,000 words. Direct opening. Clear structure.</p>
           </div>
-        </div>
-      </section>
+        </details>
+      </div>
+    </div>
 
-      <section class="rpt-section" aria-labelledby="rpt-dist-head">
-        <h2 id="rpt-dist-head">Turn one article into full distribution</h2>
-        <p class="rpt-lede">For each article, create adapted versions (do not repost the same file):</p>
-        <ul class="rpt-exec-ul--tight" style="max-width:38rem;margin-top:0.5rem">
-          <li>YouTube (script or video)</li>
-          <li>TikTok / IG short-form</li>
-          <li>IG carousel</li>
-          <li>LinkedIn post</li>
-          <li>Pinterest pin</li>
-          <li>Reddit discussion</li>
-        </ul>
-        <p class="rpt-lede" style="margin-top:0.75rem;margin-bottom:0"><strong>Rule:</strong> Do not repost. Adapt.</p>
-      </section>
-
-      <section class="rpt-section" aria-labelledby="rpt-tier-head">
-        <h2 id="rpt-tier-head">Choose the right paid model</h2>
-        <div class="rpt-tier-grid">
-          <div class="rpt-tier-card">
-            <h4>Support tier</h4>
-            <p>Low effort. Early audience.</p>
-          </div>
-          <div class="rpt-tier-card">
-            <h4>Archive tier</h4>
-            <p>Strong past content.</p>
-          </div>
-          <div class="rpt-tier-card">
-            <h4>Premium</h4>
-            <p>High demand for deeper work.</p>
-          </div>
-          <div class="rpt-tier-card">
-            <h4>No paid</h4>
-            <p>Low signal or unclear niche.</p>
-          </div>
-        </div>
-      </section>
-
-      <section class="rpt-section" aria-labelledby="rpt-mon-head">
-        <h2 id="rpt-mon-head">Monetization</h2>
-        <div class="rpt-cards">
-          <div class="rpt-card">
-            <h3>Substack</h3>
-            <p class="rpt-range">$50 to $500 early · $500 to $3K consistent · $3K to $10K+ strong</p>
-          </div>
-          <div class="rpt-card">
-            <h3>Paid writing</h3>
-            <p class="rpt-range">$150 to $800 per article · $1K to $5K retainers</p>
-          </div>
-          <div class="rpt-card">
-            <h3>Consulting</h3>
-            <p class="rpt-range">$500 to $10K+ per engagement</p>
-          </div>
-        </div>
-        <p class="rpt-lede" style="margin-top:1rem;margin-bottom:0">End each post with: If this is your problem, I can break it down for your business.</p>
-      </section>
-
-      <section class="rpt-section" aria-labelledby="rpt-auto-head">
-        <h2 id="rpt-auto-head">After Day 30</h2>
-        <div class="rpt-auto-grid">
-          <div class="rpt-auto-col">
-            <h4>Automate</h4>
-            <ul style="margin:0;padding-left:1rem;font-size:0.85rem;line-height:1.42;color:var(--muted)">
-              <li>transcription</li>
-              <li>formatting</li>
-              <li>distribution prep</li>
-            </ul>
-          </div>
-          <div class="rpt-auto-col">
-            <h4>Keep manual</h4>
-            <ul style="margin:0;padding-left:1rem;font-size:0.85rem;line-height:1.42;color:var(--muted)">
-              <li>positioning</li>
-              <li>topic selection</li>
-              <li>client work</li>
-            </ul>
-          </div>
-        </div>
-      </section>
-
-      <div class="rpt-next-block" aria-labelledby="rpt-next-head">
-        <h2 id="rpt-next-head">What this leads to next</h2>
-        <p class="rpt-lede" style="margin-bottom:0.5rem">You now have: content, signal, direction.</p>
-        <p class="rpt-lede" style="margin-top:0;margin-bottom:0.35rem"><strong>What you don&apos;t have yet</strong></p>
-        <ul class="rpt-exec-ul--tight" style="margin-top:0.25rem">
-          <li>which step to fix first</li>
-          <li>what to change without breaking delivery</li>
-          <li>how to remove yourself from the wrong parts</li>
-          <li>how to scale this cleanly</li>
-        </ul>
-        <a class="rpt-next-cta" href="/snapshot">Get your Snapshot ($950)</a>
-        <p class="rpt-next-sub">48-hour breakdown · Exact step to fix first</p>
+    <div class="rpt-final-wrap">
+      <div class="rpt-next-block rpt-next-block--center" aria-labelledby="rpt-next-head">
+        <h2 id="rpt-next-head" class="rpt-next-hero">Fix the right step next</h2>
+        <p class="rpt-next-lead">You now have output and signal.<br />Now you need precision.</p>
+        <a class="rpt-next-cta" href="/snapshot">Get your Snapshot — $950</a>
+        <p class="rpt-next-sub">48-hour breakdown<br />Exact step to fix first</p>
       </div>
     </div>
   </main>
+
   <p class="foot"><a href="/">Home</a> · <a href="/capture">Diagnostic</a></p>
 
   <script>
@@ -1011,6 +1298,7 @@ What to do first</pre>
       {
         key: 'deals',
         title: 'Where your last 3 deals broke',
+        preview: 'The moment buyers try to justify your offer to themselves — alone.',
         html:
           '<p>The drop happened when the buyer tried to explain your offer to themselves.</p>' +
           '<p>This is where they compare, justify, and decide.</p>' +
@@ -1020,6 +1308,7 @@ What to do first</pre>
       {
         key: 'costing',
         title: 'What this is costing',
+        preview: 'Hours and revenue in ranges you can feel monthly.',
         costing: true,
         html:
           '<ul>' +
@@ -1034,6 +1323,7 @@ What to do first</pre>
       {
         key: 'why',
         title: "Why it's happening",
+        preview: 'The structural reason decisions slow or stall.',
         html:
           '<p>Your offer requires explanation.</p>' +
           '<p>Buyers cannot understand or justify it quickly.</p>' +
@@ -1042,6 +1332,7 @@ What to do first</pre>
       {
         key: 'sale',
         title: "What's happening in the sale",
+        preview: 'The sequence from interest to pause — mapped.',
         html:
           '<ul>' +
           [
@@ -1062,6 +1353,7 @@ What to do first</pre>
       {
         key: 'leverage',
         title: 'Leverage point',
+        preview: 'The single line your offer must answer immediately.',
         html:
           '<p>Your offer must answer:</p>' +
           '<p><strong>Why this</strong></p>' +
@@ -1070,6 +1362,7 @@ What to do first</pre>
       {
         key: 'week',
         title: 'What to do this week',
+        preview: 'Concrete edits you can ship in seven days.',
         html:
           '<p>Write your offer in one sentence:</p>' +
           '<ul>' +
@@ -1088,6 +1381,7 @@ What to do first</pre>
       {
         key: 'fixed',
         title: 'What changes when fixed',
+        preview: 'What improves once positioning carries the comparison moment.',
         html:
           '<ul>' +
           ['Faster decisions', 'Fewer objections', 'Higher close rate', 'Less time explaining']
@@ -1101,6 +1395,7 @@ What to do first</pre>
       {
         key: 'notfix',
         title: 'What this does not fix',
+        preview: 'Scope boundaries so expectations stay realistic.',
         html:
           '<ul>' +
           ['Delivery structure', 'Scaling', 'Dependency']
@@ -1131,22 +1426,29 @@ What to do first</pre>
       var signs = {
         key: 'signs',
         title: 'Three clearest signs',
+        preview: 'If two or more read true, this pattern is active.',
         html: signsHtml
       };
-      return [signs].concat(REPORT_SECTIONS_DIAG);
+      return [signs].concat(REPORT_SECTIONS_DIAG, REPORT_SECTIONS_POST);
     }
 
     function renderAccordionHtml(sections) {
       return sections
         .map(function (sec) {
           var extra = sec.costing ? ' report-acc-item--costing' : '';
+          var pv = sec.preview
+            ? '<span class="report-acc-trigger__pv">' + esc(sec.preview) + '</span>'
+            : '';
           return (
             '<article class="report-acc-item' +
             extra +
             '" data-rpt-item>' +
             '<button type="button" class="report-acc-trigger" data-rpt-trigger aria-expanded="false">' +
-            '<span>' +
+            '<span class="report-acc-trigger__stack">' +
+            '<span class="report-acc-trigger__title">' +
             esc(sec.title) +
+            '</span>' +
+            pv +
             '</span><span class="report-acc-icon" aria-hidden="true">▾</span>' +
             '</button>' +
             '<div class="report-acc-panel" data-rpt-panel><div class="report-acc-panel-inner">' +
@@ -1165,17 +1467,16 @@ What to do first</pre>
       document.getElementById('report-pattern-body').textContent = A.patternBody;
       document.title = 'Report · ' + A.patternTitle + ' · Stephuary';
 
-      var preRoot = document.getElementById('report-acc-pre');
-      var postRoot = document.getElementById('report-acc-post');
-      if (preRoot) preRoot.innerHTML = renderAccordionHtml(buildSectionsPre(A.tells));
-      if (postRoot) postRoot.innerHTML = renderAccordionHtml(REPORT_SECTIONS_POST);
+      var coreRoot = document.getElementById('report-acc-core');
+      if (coreRoot) coreRoot.innerHTML = renderAccordionHtml(buildSectionsPre(A.tells));
 
       initReportAccordions();
+      initNestAccordions();
       openFirstAccordion();
     }
 
     function openFirstAccordion() {
-      var root = document.getElementById('report-acc-pre');
+      var root = document.getElementById('report-acc-core');
       if (!root) return;
       var first = root.querySelector('[data-rpt-item]');
       if (!first) return;
@@ -1190,9 +1491,48 @@ What to do first</pre>
       panel.style.opacity = '1';
     }
 
+    function initNestAccordions() {
+      var root = document.getElementById('rpt-nest-root');
+      if (!root || root.getAttribute('data-nest-bound') === '1') return;
+      root.setAttribute('data-nest-bound', '1');
+      var items = Array.prototype.slice.call(root.querySelectorAll('[data-nest-item]'));
+      if (!items.length) return;
+
+      function closeAll() {
+        items.forEach(function (item) {
+          item.classList.remove('is-open');
+          var tr = item.querySelector('[data-nest-trigger]');
+          var panel = item.querySelector('[data-nest-panel]');
+          if (tr) tr.setAttribute('aria-expanded', 'false');
+          if (panel) {
+            panel.style.maxHeight = '0px';
+            panel.style.opacity = '0';
+          }
+        });
+      }
+
+      items.forEach(function (item) {
+        var tr = item.querySelector('[data-nest-trigger]');
+        var panel = item.querySelector('[data-nest-panel]');
+        if (!tr || !panel) return;
+        tr.addEventListener('click', function () {
+          var willOpen = !item.classList.contains('is-open');
+          closeAll();
+          if (willOpen) {
+            item.classList.add('is-open');
+            tr.setAttribute('aria-expanded', 'true');
+            var inner = panel.querySelector('.rpt-nest-panel__inner');
+            var h = inner ? inner.scrollHeight + 18 : panel.scrollHeight;
+            panel.style.maxHeight = h + 'px';
+            panel.style.opacity = '1';
+          }
+        });
+      });
+    }
+
     function initReportAccordions() {
       var items = Array.prototype.slice.call(
-        document.querySelectorAll('#report-acc-pre [data-rpt-item], #report-acc-post [data-rpt-item]')
+        document.querySelectorAll('#report-acc-core [data-rpt-item]')
       );
       if (!items.length) return;
 
@@ -1277,6 +1617,58 @@ What to do first</pre>
           } catch (e2) {}
           done();
         }
+      });
+    })();
+
+    (function bindReportPrintNest() {
+      var rptPrintRestore = null;
+      window.addEventListener('beforeprint', function () {
+        var det = document.getElementById('rpt-sys-details');
+        rptPrintRestore = {
+          detailsWasOpen: !!(det && det.open),
+          nestOpen: document.querySelector('#rpt-nest-root [data-nest-item].is-open')
+        };
+        if (det) det.setAttribute('open', '');
+        Array.prototype.forEach.call(document.querySelectorAll('#rpt-nest-root [data-nest-item]'), function (item) {
+          item.classList.add('is-open');
+          var tr = item.querySelector('[data-nest-trigger]');
+          var panel = item.querySelector('[data-nest-panel]');
+          if (tr) tr.setAttribute('aria-expanded', 'true');
+          if (panel) {
+            panel.style.maxHeight = 'none';
+            panel.style.opacity = '1';
+          }
+        });
+      });
+      window.addEventListener('afterprint', function () {
+        var det = document.getElementById('rpt-sys-details');
+        if (det && rptPrintRestore && !rptPrintRestore.detailsWasOpen) {
+          det.removeAttribute('open');
+        }
+        Array.prototype.forEach.call(document.querySelectorAll('#rpt-nest-root [data-nest-item]'), function (item) {
+          item.classList.remove('is-open');
+          var tr = item.querySelector('[data-nest-trigger]');
+          var panel = item.querySelector('[data-nest-panel]');
+          if (tr) tr.setAttribute('aria-expanded', 'false');
+          if (panel) {
+            panel.style.maxHeight = '0px';
+            panel.style.opacity = '0';
+          }
+        });
+        if (rptPrintRestore && rptPrintRestore.nestOpen && rptPrintRestore.nestOpen.parentNode) {
+          var prev = rptPrintRestore.nestOpen;
+          var tr2 = prev.querySelector('[data-nest-trigger]');
+          var panel2 = prev.querySelector('[data-nest-panel]');
+          if (tr2 && panel2) {
+            prev.classList.add('is-open');
+            tr2.setAttribute('aria-expanded', 'true');
+            var inner2 = panel2.querySelector('.rpt-nest-panel__inner');
+            var h2 = inner2 ? inner2.scrollHeight + 18 : panel2.scrollHeight;
+            panel2.style.maxHeight = h2 + 'px';
+            panel2.style.opacity = '1';
+          }
+        }
+        rptPrintRestore = null;
       });
     })();
 
