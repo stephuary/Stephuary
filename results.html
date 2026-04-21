@@ -357,31 +357,6 @@
       margin: 0 auto 4px;
       text-align: left;
     }
-    .results-obs-static {
-      border: 1px solid var(--line-soft);
-      background: rgba(12, 12, 10, 0.5);
-      padding: 9px 9px;
-      margin-bottom: 6px;
-    }
-    .results-obs-static__h {
-      font-family: 'Lato', sans-serif;
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      color: rgba(248, 243, 234, 0.94);
-      margin-bottom: 4px;
-    }
-    .results-obs-static__p {
-      margin: 0 0 5px;
-      font-size: 16px;
-      line-height: 1.5;
-      color: rgba(248, 243, 234, 0.98);
-      max-width: 52ch;
-    }
-    .results-obs-static__p:last-child {
-      margin-bottom: 0;
-    }
     .results-accordion {
       border-top: 1px solid var(--line-soft);
     }
@@ -478,8 +453,7 @@
       .results-observable-body,
       .results-accordion-panel__inner,
       .results-obs__ul li,
-      .results-obs__p,
-      .results-obs-static__p {
+      .results-obs__p {
         max-width: 100%;
       }
       .results-accordion-trigger {
@@ -2090,12 +2064,15 @@
         'Buyers pause to figure it out.',
         'That pause delays the decision.'
       ],
-      fix: "Your offer needs to stand on its own.\n\nIt should be clear what it is, who it is for, and why it wins.",
-      oneSign: "Your testimonials could sit on a competitor's page with minor edits."
+      fix: "Your offer needs to stand on its own.\n\nIt should be clear what it is, who it is for, and why it wins."
     },
     firstread: {
       headline: 'People land on what you wrote and still do not know what to buy.',
       scoreLine: 'They read, then they ask basic questions you thought you already answered in writing.',
+      why: [
+        'The page buries what they can buy, for how much, and what to do next.',
+        'Skimming does not surface the one decision they need before they pay.'
+      ],
       looks: [
         'They ask what you actually sell after they already scrolled.',
         'They ask how much it costs before they understand what they are buying.',
@@ -2111,6 +2088,10 @@
     buyers: {
       headline: 'The wrong people take your time, or the right people freeze when money comes up.',
       scoreLine: 'You get attention, but checks do not line up with the effort you put in.',
+      why: [
+        'Who can buy is not defined before they reach you.',
+        'The difference you sell is not obvious before price lands.'
+      ],
       looks: [
         'You get leads that do not match the work you want to do.',
         'They push on price before they agree on scope.',
@@ -2126,6 +2107,10 @@
     afteryes: {
       headline: 'After someone pays, too much still depends on you redoing steps by hand each time.',
       scoreLine: 'Delivery looks different every time because the checklist lives in your head.',
+      why: [
+        'After payment, the sequence is not the same file, links, and dates every time.',
+        'Only you know which step comes next, so buyers wait on you to move work forward.'
+      ],
       looks: [
         'You re-send instructions because the first version was incomplete.',
         'You move deadlines because a step was not ready when the client expected it.',
@@ -2169,22 +2154,6 @@
         })
         .join('');
     }
-    function whereBreaksHtml(packData) {
-      if (packData.whereBreaks && packData.whereBreaks.length) {
-        return packData.whereBreaks
-          .map(function (line) {
-            return '<p class="results-obs-static__p">' + esc(line) + '</p>';
-          })
-          .join('');
-      }
-      return '<p class="results-obs-static__p">' + esc(packData.scoreLine || '') + '</p>';
-    }
-    function whyBlock(packData) {
-      if (packData.why && packData.why.length) {
-        return '<ul class="results-obs__ul">' + listHtml(packData.why) + '</ul>';
-      }
-      return '<p class="results-obs__p">' + esc(packData.scoreLine || '') + '</p>';
-    }
     function fixHtml(packData) {
       var raw = String(packData.fix || '');
       if (raw.indexOf('\n\n') !== -1) {
@@ -2199,17 +2168,20 @@
       }
       return '<p class="results-obs__p">' + esc(raw) + '</p>';
     }
-    function oneSign(packData) {
-      if (packData.oneSign) return packData.oneSign;
-      if (packData.looks && packData.looks[0]) return packData.looks[0];
-      if (packData.leads && packData.leads[0]) return packData.leads[0];
-      return 'This pattern keeps repeating even when you work harder.';
+    var whyArticle = '';
+    if (pack.why && pack.why.length) {
+      whyArticle =
+        '<article class="results-accordion-item" data-acc-item>' +
+        '<button class="results-accordion-trigger" type="button" aria-expanded="false">' +
+        '<span>Why this is happening</span><span class="results-accordion-trigger__icon" aria-hidden="true">▾</span>' +
+        '</button>' +
+        '<div class="results-accordion-panel"><div class="results-accordion-panel__inner">' +
+        '<ul class="results-obs__ul">' +
+        listHtml(pack.why) +
+        '</ul></div></div>' +
+        '</article>';
     }
     return (
-      '<section class="results-obs-static" aria-label="Where this breaks">' +
-      '<h2 class="results-obs-static__h">Where this breaks</h2>' +
-      whereBreaksHtml(pack) +
-      '</section>' +
       '<section class="results-accordion" aria-label="Result details">' +
       '<article class="results-accordion-item" data-acc-item>' +
       '<button class="results-accordion-trigger" type="button" aria-expanded="false">' +
@@ -2223,23 +2195,12 @@
       '</button>' +
       '<div class="results-accordion-panel"><div class="results-accordion-panel__inner"><ul class="results-obs__ul">' + listHtml(pack.leads) + '</ul></div></div>' +
       '</article>' +
-      '<article class="results-accordion-item" data-acc-item>' +
-      '<button class="results-accordion-trigger" type="button" aria-expanded="false">' +
-      '<span>Why this is happening</span><span class="results-accordion-trigger__icon" aria-hidden="true">▾</span>' +
-      '</button>' +
-      '<div class="results-accordion-panel"><div class="results-accordion-panel__inner">' + whyBlock(pack) + '</div></div>' +
-      '</article>' +
+      whyArticle +
       '<article class="results-accordion-item" data-acc-item>' +
       '<button class="results-accordion-trigger" type="button" aria-expanded="false">' +
       '<span>What to fix first</span><span class="results-accordion-trigger__icon" aria-hidden="true">▾</span>' +
       '</button>' +
       '<div class="results-accordion-panel"><div class="results-accordion-panel__inner">' + fixHtml(pack) + '</div></div>' +
-      '</article>' +
-      '<article class="results-accordion-item" data-acc-item>' +
-      '<button class="results-accordion-trigger" type="button" aria-expanded="false">' +
-      '<span>One sign this is true</span><span class="results-accordion-trigger__icon" aria-hidden="true">▾</span>' +
-      '</button>' +
-      '<div class="results-accordion-panel"><div class="results-accordion-panel__inner"><p class="results-obs__p">' + esc(oneSign(pack)) + '</p></div></div>' +
       '</article>' +
       '</section>'
     );
