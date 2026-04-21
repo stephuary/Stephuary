@@ -1317,138 +1317,172 @@
       display: none !important;
     }
 
-    /* ── Monthly free 1:1 (bottom of page, inline email) ── */
+    /* ── Monthly free 1:1 — one-screen, placeholder-only flow ── */
     .home-mfs {
       position: relative;
       z-index: var(--z-content);
       background: var(--bg-deep);
       border-top: 1px solid rgba(139, 47, 201, 0.14);
-      padding: 32px 0 40px;
-      text-align: left;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px 0 16px;
+      box-sizing: border-box;
+      text-align: center;
     }
     @media (max-width: 768px) {
       .home-mfs {
-        padding: 28px 0 36px;
+        min-height: min(100dvh, 100svh);
+        padding: max(6px, env(safe-area-inset-top)) 0 max(8px, env(safe-area-inset-bottom));
+        align-items: center;
+      }
+      .home-mfs__inner {
+        max-height: calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 20px);
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior: contain;
       }
     }
     .home-mfs__inner {
+      width: 100%;
       max-width: 480px;
       margin: 0 auto;
-      padding: 0 4px;
+      padding: 0 14px;
     }
     .home-mfs__form-card .home-mfs__title {
       font-family: var(--font-serif);
-      font-size: clamp(1.35rem, 3.2vw, 1.65rem);
+      font-size: clamp(1.12rem, 3.8vw, 1.42rem);
       font-weight: 700;
-      line-height: 1.18;
+      line-height: 1.12;
       color: var(--text-primary);
-      margin: 0 0 6px;
+      margin: 0 0 2px;
       letter-spacing: -0.02em;
-      text-align: left;
+      text-align: center;
     }
     .home-mfs__form-card {
       max-width: 480px;
-      margin: 0;
-      padding: clamp(22px, 4vw, 30px);
-      background: rgba(8, 8, 24, 0.55);
+      margin: 0 auto;
+      padding: 12px 14px 14px;
+      background: rgba(8, 8, 24, 0.5);
       border: 1px solid rgba(255, 255, 255, 0.06);
       border-radius: 6px;
     }
     .home-mfs__form-card .home-mfs__copy {
       font-family: var(--font-sans);
-      font-size: 15px;
-      line-height: 1.45;
-      color: var(--text-secondary);
+      font-size: 12px;
+      line-height: 1.35;
+      color: var(--text-3);
       margin: 0 0 12px;
-      text-align: left;
-    }
-    .home-mfs__field-label {
-      display: block;
-      font-family: var(--font-mono);
-      font-size: 9px;
-      font-weight: 500;
-      letter-spacing: 0.16em;
-      text-transform: uppercase;
-      color: rgba(200, 169, 110, 0.55);
-      margin: 0 0 6px;
-      text-align: left;
-    }
-    .home-mfs__field-label:not(:first-of-type) {
-      margin-top: 10px;
+      text-align: center;
     }
     .home-mfs__micro {
       font-family: var(--font-sans);
-      font-size: 11px;
+      font-size: 10px;
       line-height: 1.35;
       color: var(--text-muted);
-      opacity: 0.78;
-      margin: 8px 0 0;
-      text-align: left;
+      opacity: 0.88;
+      margin: 5px 0 0;
+      text-align: center;
     }
     .home-mfs__form {
       display: flex;
       flex-direction: column;
       align-items: stretch;
-      gap: 0;
+      gap: 12px;
       width: 100%;
     }
-    .home-mfs__input {
+    .home-mfs__input,
+    .home-mfs__textarea {
       width: 100%;
-      padding: 12px 14px;
+      padding: 8px 10px;
+      min-height: 36px;
       font-family: var(--font-sans);
       font-size: 14px;
+      line-height: 1.35;
       color: var(--text-primary);
-      background: rgba(0, 0, 0, 0.45);
-      border: 1px solid rgba(255, 255, 255, 0.055);
+      background: rgba(0, 0, 0, 0.42);
+      border: 1px solid rgba(255, 255, 255, 0.06);
       border-radius: 4px;
       text-align: left;
-      transition: border-color 0.15s ease, background 0.15s ease;
+      transition:
+        border-color 0.15s ease,
+        background 0.15s ease,
+        box-shadow 0.15s ease,
+        min-height 0.18s ease,
+        max-height 0.18s ease;
+    }
+    .home-mfs__textarea {
+      display: block;
+      min-height: 72px;
+      max-height: 90px;
+      resize: none;
+      overflow-y: auto;
+    }
+    .home-mfs__textarea:focus {
+      min-height: 82px;
+      max-height: 104px;
     }
     .home-mfs__input::placeholder {
-      color: rgba(160, 160, 192, 0.55);
+      color: rgba(160, 160, 192, 0.58);
+      font-size: 14px;
     }
-    .home-mfs__input:hover {
-      border-color: rgba(255, 255, 255, 0.08);
+    .home-mfs__textarea::placeholder {
+      color: rgba(160, 160, 192, 0.52);
+      font-size: 12px;
+      line-height: 1.4;
     }
-    .home-mfs__input:focus {
+    .home-mfs__input:hover,
+    .home-mfs__textarea:hover {
+      border-color: rgba(255, 255, 255, 0.1);
+    }
+    .home-mfs__input:focus,
+    .home-mfs__textarea:focus {
       outline: none;
-      border-color: rgba(200, 169, 110, 0.22);
+      border-color: rgba(200, 169, 110, 0.42);
       background: rgba(0, 0, 0, 0.5);
-      box-shadow: none;
+      box-shadow: 0 0 0 1px rgba(200, 169, 110, 0.18), 0 0 16px rgba(65, 105, 225, 0.16);
     }
-    .home-mfs__input:focus-visible {
+    .home-mfs__input:focus-visible,
+    .home-mfs__textarea:focus-visible {
       outline: 2px solid rgba(65, 105, 225, 0.5);
-      outline-offset: 2px;
+      outline-offset: 1px;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .home-mfs__textarea:focus {
+        min-height: 72px;
+        max-height: 90px;
+      }
     }
     .home-mfs__error {
       font-family: var(--font-sans);
-      font-size: 13px;
+      font-size: 11px;
       color: rgba(232, 160, 140, 0.95);
-      margin: 8px 0 0;
+      margin: -4px 0 0;
       line-height: 1.35;
       text-align: left;
     }
     .home-mfs__form-card .home-mfs__submit {
       width: 100%;
       max-width: none;
-      min-height: 56px;
-      margin-top: 10px;
-      padding-top: 16px;
-      padding-bottom: 16px;
-      font-size: 15px;
+      min-height: 48px;
+      margin-top: 6px;
+      padding-top: 12px;
+      padding-bottom: 12px;
+      font-size: 13px;
       font-weight: 700;
-      letter-spacing: 0.11em;
+      letter-spacing: 0.1em;
       justify-content: center;
-      border-color: rgba(200, 169, 110, 0.65);
-      background: linear-gradient(180deg, rgba(213, 183, 124, 1) 0%, rgba(171, 140, 88, 0.98) 100%);
-      color: #0a0a12;
-      box-shadow: 0 1px 0 rgba(255, 255, 255, 0.12) inset;
-      transition: transform 0.18s ease, filter 0.18s ease, border-color 0.18s ease;
+      border-color: rgba(200, 169, 110, 0.7);
+      background: linear-gradient(180deg, rgba(220, 192, 132, 1) 0%, rgba(168, 138, 86, 1) 100%);
+      color: #07070f;
+      box-shadow: 0 1px 0 rgba(255, 255, 255, 0.14) inset;
+      transition: transform 0.18s ease, filter 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
     }
     .home-mfs__form-card .home-mfs__submit:hover:not(:disabled) {
-      transform: scale(1.02);
-      filter: brightness(1.05);
-      border-color: rgba(212, 184, 140, 0.9);
+      transform: scale(1.015);
+      filter: brightness(1.06);
+      border-color: rgba(212, 184, 140, 0.95);
+      box-shadow: 0 1px 0 rgba(255, 255, 255, 0.14) inset, 0 0 22px rgba(200, 169, 110, 0.22);
     }
     .home-mfs__form-card .home-mfs__submit:active:not(:disabled) {
       transform: scale(1);
@@ -1460,23 +1494,23 @@
     }
     .home-mfs__done-title {
       font-family: var(--font-serif);
-      font-size: clamp(1.4rem, 3.5vw, 1.75rem);
+      font-size: clamp(1.25rem, 3.2vw, 1.5rem);
       font-weight: 700;
       color: var(--text-primary);
-      margin: 0 0 8px;
-      text-align: left;
+      margin: 0 0 6px;
+      text-align: center;
     }
     .home-mfs__done-copy {
       font-family: var(--font-sans);
-      font-size: 15px;
-      line-height: 1.55;
+      font-size: 13px;
+      line-height: 1.45;
       color: var(--text-secondary);
       margin: 0;
-      text-align: left;
+      text-align: center;
     }
     #home-mfs-done {
-      margin-top: 10px;
-      text-align: left;
+      margin-top: 8px;
+      text-align: center;
     }
     @media (prefers-reduced-motion: reduce) {
       .home-mfs__form-card .home-mfs__submit:hover:not(:disabled),
@@ -1705,59 +1739,80 @@
         <div class="grid-floor" aria-hidden="true"></div>
       </section>
 
-      <!-- ═══ Monthly free 1:1 — inline email (bottom of page) ═══ -->
+      <!-- ═══ Monthly free 1:1 — one-screen capture ═══ -->
       <section class="home-mfs" id="home-mfs" aria-labelledby="home-mfs-heading">
-        <div class="container">
-          <div class="home-mfs__inner">
-            <div id="home-mfs-form-wrap">
-              <div class="home-mfs__form-card">
-              <h2 class="home-mfs__title" id="home-mfs-heading">Free 1:1 concept + niche session</h2>
-              <p class="home-mfs__copy">One person each month.<br />Enter in 10 seconds.</p>
+        <div class="home-mfs__inner">
+          <div id="home-mfs-form-wrap">
+            <div class="home-mfs__form-card">
+              <h2 class="home-mfs__title" id="home-mfs-heading">Free 1:1 concept + positioning session</h2>
+              <p class="home-mfs__copy">One person each month. 10 seconds.</p>
               <form id="home-mfs-form" class="home-mfs__form" autocomplete="on" novalidate>
-                <label class="home-mfs__field-label" for="home-mfs-email">Email</label>
+                <input
+                  type="text"
+                  id="home-mfs-name"
+                  class="home-mfs__input"
+                  name="name"
+                  required
+                  maxlength="120"
+                  autocomplete="name"
+                  spellcheck="false"
+                  placeholder="Name"
+                  aria-label="Name"
+                />
                 <input
                   type="email"
                   id="home-mfs-email"
                   class="home-mfs__input"
                   name="email"
                   required
-                  placeholder="you@example.com"
+                  placeholder="Email"
                   inputmode="email"
                   autocapitalize="off"
                   spellcheck="false"
+                  aria-label="Email"
                 />
-                <label class="home-mfs__field-label" for="home-mfs-building">What are you building</label>
-                <input
-                  type="text"
-                  id="home-mfs-building"
-                  class="home-mfs__input"
-                  name="building"
+                <textarea
+                  id="home-mfs-q1"
+                  class="home-mfs__textarea"
+                  name="q1"
                   required
-                  maxlength="240"
-                  autocomplete="off"
+                  rows="2"
+                  maxlength="600"
                   spellcheck="true"
-                />
-                <label class="home-mfs__field-label" for="home-mfs-stuck">What’s stuck</label>
-                <input
-                  type="text"
-                  id="home-mfs-stuck"
-                  class="home-mfs__input"
-                  name="stuck"
+                  placeholder="What do you believe that most people don&apos;t?"
+                  aria-label="What do you believe that most people don&apos;t?"
+                ></textarea>
+                <textarea
+                  id="home-mfs-q2"
+                  class="home-mfs__textarea"
+                  name="q2"
                   required
-                  maxlength="240"
-                  autocomplete="off"
+                  rows="2"
+                  maxlength="600"
                   spellcheck="true"
-                />
+                  placeholder="What do you go deep on without being asked?"
+                  aria-label="What do you go deep on without being asked?"
+                ></textarea>
+                <textarea
+                  id="home-mfs-q3"
+                  class="home-mfs__textarea"
+                  name="q3"
+                  required
+                  rows="2"
+                  maxlength="600"
+                  spellcheck="true"
+                  placeholder="Where do people already rely on you?"
+                  aria-label="Where do people already rely on you?"
+                ></textarea>
                 <p id="home-mfs-form-error" class="home-mfs__error" role="alert" hidden></p>
-                <button type="submit" class="btn btn--pri home-mfs__submit" id="home-mfs-submit">Enter to win</button>
-                <p class="home-mfs__micro">No spam. One email if selected.</p>
+                <button type="submit" class="btn btn--pri home-mfs__submit" id="home-mfs-submit">Apply for selection</button>
+                <p class="home-mfs__micro">Most people answer this poorly. Don&apos;t.</p>
               </form>
-              </div>
             </div>
-            <div id="home-mfs-done" class="home-mfs__done" hidden aria-live="polite">
-              <p class="home-mfs__done-title">You’re entered.</p>
-              <p class="home-mfs__done-copy">We’ll email you if you’re selected.</p>
-            </div>
+          </div>
+          <div id="home-mfs-done" class="home-mfs__done" hidden aria-live="polite">
+            <p class="home-mfs__done-title">You’re entered.</p>
+            <p class="home-mfs__done-copy">We’ll email you if you’re selected.</p>
           </div>
         </div>
       </section>
