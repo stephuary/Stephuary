@@ -55,7 +55,7 @@
     }
   }
 
-  /** #early-private-slot visibility is managed by stephuary-private-selection.js (monthly free 1:1). */
+  /** Monthly free 1:1 email strip lives at bottom of index.html (stephuary-private-selection.js). */
   function bindEasterEgg() {}
 
   function init() {

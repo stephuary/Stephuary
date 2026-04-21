@@ -1317,12 +1317,105 @@
       display: none !important;
     }
 
-    body[data-sh-env="home"] .early-private-slot {
-      z-index: var(--z-nav);
+    /* ── Monthly free 1:1 (bottom of page, inline email) ── */
+    .home-mfs {
+      position: relative;
+      z-index: var(--z-content);
+      background: var(--bg-deep);
+      border-top: 1px solid rgba(139, 47, 201, 0.14);
+      padding: 56px 0 64px;
+      text-align: center;
+    }
+    @media (max-width: 768px) {
+      .home-mfs {
+        padding: 44px 0 52px;
+      }
+    }
+    .home-mfs__inner {
+      max-width: 28rem;
+      margin: 0 auto;
+    }
+    .home-mfs__eyebrow {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold-dim);
+      margin: 0 0 10px;
+    }
+    .home-mfs__title {
+      font-family: var(--font-serif);
+      font-size: clamp(1.35rem, 3.2vw, 1.65rem);
+      font-weight: 700;
+      line-height: 1.2;
+      color: var(--text-primary);
+      margin: 0 0 14px;
+      letter-spacing: -0.02em;
+    }
+    .home-mfs__copy {
+      font-family: var(--font-sans);
+      font-size: 15px;
+      line-height: 1.55;
+      color: var(--text-secondary);
+      margin: 0 0 22px;
+      text-align: center;
+    }
+    .home-mfs__form {
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 12px;
+      width: 100%;
+    }
+    .home-mfs__input {
+      width: 100%;
+      padding: 14px 16px;
+      font-family: var(--font-sans);
+      font-size: 15px;
+      color: var(--text-primary);
+      background: rgba(0, 0, 0, 0.35);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 4px;
+      text-align: center;
+    }
+    .home-mfs__input::placeholder {
+      color: var(--text-muted);
+    }
+    .home-mfs__input:focus {
+      outline: none;
+      border-color: rgba(200, 169, 110, 0.45);
+      box-shadow: 0 0 0 1px rgba(200, 169, 110, 0.12);
+    }
+    .home-mfs__error {
+      font-family: var(--font-sans);
+      font-size: 13px;
+      color: rgba(232, 160, 140, 0.95);
+      margin: 0;
+      line-height: 1.4;
+      text-align: center;
+    }
+    .home-mfs__submit {
+      width: 100%;
+      max-width: 20rem;
+      margin: 4px auto 0;
+      justify-content: center;
+    }
+    .home-mfs__done-title {
+      font-family: var(--font-serif);
+      font-size: clamp(1.4rem, 3.5vw, 1.75rem);
+      font-weight: 700;
+      color: var(--text-primary);
+      margin: 0 0 10px;
+    }
+    .home-mfs__done-copy {
+      font-family: var(--font-sans);
+      font-size: 15px;
+      line-height: 1.55;
+      color: var(--text-secondary);
+      margin: 0;
     }
   </style>
   <link rel="stylesheet" href="/stephuary-early-mode.css" />
-  <link rel="stylesheet" href="/stephuary-private-selection.css" />
   <link rel="stylesheet" href="/stephuary-home-finale.css" />
   <!-- After bundled CSS: homepage hero/shell must not be vertically centered or padded by later sheets -->
   <style>
@@ -1541,6 +1634,43 @@
         <div class="grid-floor" aria-hidden="true"></div>
       </section>
 
+      <!-- ═══ Monthly free 1:1 — inline email (bottom of page) ═══ -->
+      <section class="home-mfs" id="home-mfs" aria-labelledby="home-mfs-heading">
+        <div class="container">
+          <div class="home-mfs__inner">
+            <p class="home-mfs__eyebrow">Monthly drawing</p>
+            <h2 class="home-mfs__title" id="home-mfs-heading">Free 1:1 concept + niche session</h2>
+            <div id="home-mfs-form-wrap">
+              <p class="home-mfs__copy">
+                One person each month. Enter your email to be considered. We’ll only email if you’re selected.
+              </p>
+              <form id="home-mfs-form" class="home-mfs__form" autocomplete="email" novalidate>
+                <label class="sr-only" for="home-mfs-email">Email</label>
+                <input
+                  type="email"
+                  id="home-mfs-email"
+                  class="home-mfs__input"
+                  name="email"
+                  required
+                  placeholder="you@example.com"
+                  inputmode="email"
+                  autocapitalize="off"
+                  spellcheck="false"
+                />
+                <p id="home-mfs-form-error" class="home-mfs__error" role="alert" hidden></p>
+                <button type="submit" class="btn btn--pri home-mfs__submit" id="home-mfs-submit">Enter monthly drawing</button>
+              </form>
+            </div>
+            <div id="home-mfs-done" class="home-mfs__done" hidden aria-live="polite">
+              <p class="home-mfs__done-title">You’re entered.</p>
+              <p class="home-mfs__done-copy">
+                You’re in this month’s pool for one free 1:1 concept + niche session. If you’re selected, we’ll email you—no spam.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
     </main>
 
     <footer class="home-footer">
@@ -1557,47 +1687,6 @@
       </div>
     </footer>
   </div>
-  </div>
-
-  <!-- ═══ Private Selection Overlay (outside site-shell for z-index stack) ═══ -->
-  <div id="ps-overlay" class="ps-overlay" role="dialog" aria-modal="true" aria-label="Monthly free 1:1 session" aria-hidden="true">
-    <div class="ps-overlay__bg" data-ps-close tabindex="-1" aria-hidden="true"></div>
-    <div class="ps-overlay__particles" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
-    <div class="ps-panel">
-      <div class="ps-panel__accent" aria-hidden="true"></div>
-      <button type="button" class="ps-close" id="ps-close" aria-label="Close">×</button>
-      <div id="ps-view-form" class="ps-view ps-view-form" hidden>
-        <h2 class="ps-title">Free 1:1 concept + niche session</h2>
-        <div class="ps-intro">
-          <p class="ps-intro-lead">Monthly drawing.</p>
-          <p>One person each month gets a free 1:1 concept and niche session. Add your email below to enter. If you’re selected, you’ll hear from us by email.</p>
-        </div>
-        <form id="ps-form" autocomplete="email" novalidate>
-          <label class="ps-label" for="ps-field-email">Email</label>
-          <input
-            type="email"
-            id="ps-field-email"
-            class="ps-input ps-input--email"
-            name="email"
-            required
-            placeholder="you@example.com"
-            inputmode="email"
-            autocapitalize="off"
-            spellcheck="false"
-          />
-          <p id="ps-form-error" class="ps-form-error" role="alert" hidden></p>
-          <button type="submit" class="btn btn--pri ps-submit" id="ps-submit-btn">Enter monthly drawing</button>
-        </form>
-      </div>
-      <div id="ps-view-done" class="ps-view" hidden>
-        <p class="ps-done">You’re entered.</p>
-        <p class="ps-done-sub">You’re in this month’s pool for one free 1:1 concept + niche session. If you’re selected, we’ll email you—no spam.</p>
-      </div>
-    </div>
-  </div>
-
-  <div id="early-private-slot" class="early-private-slot" hidden>
-    <a href="#" class="early-private-slot__link">Free monthly 1:1</a>
   </div>
 
   <div class="scanlines" aria-hidden="true"></div>

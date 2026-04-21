@@ -375,15 +375,25 @@
     return snap;
   }
 
-  function syncEarlySlot() {
-    var slot = global.document.getElementById('early-private-slot');
-    if (!slot) return;
-    slot.classList.add('early-private-slot--visible');
-    slot.removeAttribute('hidden');
+  function updateHomeMfsState() {
+    var wrap = global.document.getElementById('home-mfs-form-wrap');
+    var done = global.document.getElementById('home-mfs-done');
+    if (!wrap || !done) return;
+    if (hasSubmittedThisMonth()) {
+      wrap.hidden = true;
+      done.hidden = false;
+    } else {
+      wrap.hidden = false;
+      done.hidden = true;
+    }
+  }
+
+  function syncHomeMfsStrip() {
+    updateHomeMfsState();
   }
 
   function tryMount() {
-    syncEarlySlot();
+    syncHomeMfsStrip();
   }
 
   function getMonthlyFormAction() {
@@ -403,7 +413,7 @@
   }
 
   function setFormError(msg) {
-    var err = global.document.getElementById('ps-form-error');
+    var err = global.document.getElementById('home-mfs-form-error');
     if (!err) return;
     if (msg) {
       err.textContent = msg;
@@ -448,77 +458,29 @@
     });
   }
 
-  function populateFormFields(form) {
-    if (!form) return;
-    form.reset();
-    setFormError('');
+  function openOverlay() {
+    var el = global.document.getElementById('home-mfs');
+    if (!el) return;
+    try {
+      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    } catch (e) {
+      el.scrollIntoView(true);
+    }
+    var input = global.document.getElementById('home-mfs-email');
+    global.requestAnimationFrame(function () {
+      if (input && !hasSubmittedThisMonth()) input.focus();
+    });
   }
 
-  function openOverlay(opts) {
-    opts = opts || {};
-
-    var overlay = global.document.getElementById('ps-overlay');
-    if (!overlay) return;
-
-    var formView = global.document.getElementById('ps-view-form');
-    var doneView = global.document.getElementById('ps-view-done');
-    var form = global.document.getElementById('ps-form');
-
-    function hideAll() {
-      if (formView) formView.hidden = true;
-      if (doneView) doneView.hidden = true;
-    }
-
-    if (hasSubmittedThisMonth() && opts.update !== true) {
-      hideAll();
-      if (doneView) doneView.hidden = false;
-    } else {
-      hideAll();
-      if (formView) formView.hidden = false;
-      if (form) populateFormFields(form);
-    }
-
-    overlay.classList.add('is-open');
-    overlay.setAttribute('aria-hidden', 'false');
-    global.document.body.classList.add('ps-open');
-
-    var reduceMotion =
-      global.matchMedia && global.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (reduceMotion) {
-      overlay.classList.add('is-open--ready');
-    } else {
-      global.requestAnimationFrame(function () {
-        overlay.classList.add('is-open--ready');
-      });
-    }
-
-    var closeBtn = global.document.getElementById('ps-close');
-    if (closeBtn) closeBtn.focus();
-
-    if (!hasSubmittedThisMonth() || opts.update === true) {
-      var em = global.document.getElementById('ps-field-email');
-      global.requestAnimationFrame(function () {
-        if (em) em.focus();
-      });
-    }
-  }
-
-  function closeOverlay() {
-    var overlay = global.document.getElementById('ps-overlay');
-    if (!overlay) return;
-    overlay.classList.remove('is-open--ready');
-    overlay.classList.remove('is-open');
-    overlay.setAttribute('aria-hidden', 'true');
-    global.document.body.classList.remove('ps-open');
-  }
+  function closeOverlay() {}
 
   function submitForm(ev) {
     ev.preventDefault();
 
-    var form = global.document.getElementById('ps-form');
-    if (!form) return;
+    var form = ev.currentTarget;
+    if (!form || form.id !== 'home-mfs-form') return;
 
-    var emailEl = global.document.getElementById('ps-field-email');
+    var emailEl = form.querySelector('[name="email"]');
     var email = emailEl ? String(emailEl.value || '').trim() : '';
     setFormError('');
 
@@ -527,7 +489,7 @@
       return;
     }
 
-    var btn = global.document.getElementById('ps-submit-btn');
+    var btn = global.document.getElementById('home-mfs-submit');
     var prevLabel = btn && btn.textContent ? btn.textContent : 'Enter monthly drawing';
     if (btn) {
       btn.disabled = true;
@@ -562,10 +524,6 @@
 
         appendLedgerRecord(mk, entry);
 
-        var formView = global.document.getElementById('ps-view-form');
-        var doneView = global.document.getElementById('ps-view-done');
-        if (formView) formView.hidden = true;
-        if (doneView) doneView.hidden = false;
         tryMount();
       })
       .catch(function () {
@@ -579,43 +537,14 @@
       });
   }
 
-  function bindOverlay() {
-    var overlay = global.document.getElementById('ps-overlay');
-    if (!overlay) return;
-
-    var bg = overlay.querySelector('[data-ps-close]');
-    if (bg) bg.addEventListener('click', closeOverlay);
-
-    var closeBtn = global.document.getElementById('ps-close');
-    if (closeBtn) closeBtn.addEventListener('click', closeOverlay);
-
-    var form = global.document.getElementById('ps-form');
-    if (form) form.addEventListener('submit', submitForm);
-
-    global.document.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape' && overlay.classList.contains('is-open')) {
-        e.preventDefault();
-        closeOverlay();
-      }
-    });
-  }
-
-  function bindEarlySlot() {
-    var slot = global.document.getElementById('early-private-slot');
-    if (!slot) return;
-    var link = slot.querySelector('a');
-    if (!link) return;
-    link.setAttribute('href', '#');
-    link.setAttribute('role', 'button');
-    link.addEventListener('click', function (e) {
-      e.preventDefault();
-      openOverlay();
-    });
+  function bindHomeMfsForm() {
+    var form = global.document.getElementById('home-mfs-form');
+    if (!form) return;
+    form.addEventListener('submit', submitForm);
   }
 
   function init() {
-    bindOverlay();
-    bindEarlySlot();
+    bindHomeMfsForm();
     tryMount();
     global.addEventListener('earlymodechange', function () {
       tryMount();
@@ -634,7 +563,7 @@
   var api = {
     shouldShowFeature: shouldShowFeature,
     tryMount: tryMount,
-    syncEarlySlot: syncEarlySlot,
+    syncEarlySlot: syncHomeMfsStrip,
     openOverlay: openOverlay,
     closeOverlay: closeOverlay,
     hasSubmittedThisMonth: hasSubmittedThisMonth,
