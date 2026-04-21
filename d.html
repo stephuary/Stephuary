@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Custom Builds | Stephuary</title>
+  <meta name="description" content="Apply for a custom interactive website build: Experience Build, System Build, or Full Environment." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg-void: #05050f;
+      --bg-surface: #0d0d22;
+      --bg-surface-2: #12122a;
+      --neon-plum: #8b2fc9;
+      --neon-violet: #bf5af2;
+      --neon-gold: #c8a96e;
+      --cta-royal-blue: #4169e1;
+      --text-primary: #fff;
+      --text-secondary: #a0a0c0;
+      --text-muted: #62628a;
+      --font-serif: 'Playfair Display', Georgia, serif;
+      --font-sans: 'Inter', system-ui, sans-serif;
+      --font-mono: 'JetBrains Mono', 'Courier New', monospace;
+      --glow-cta: 0 0 30px rgba(65, 105, 225, 0.65), 0 0 80px rgba(65, 105, 225, 0.32);
+    }
+    html, body { overflow-x: hidden; }
+    body {
+      min-height: 100vh;
+      background: #05050f;
+      background-image:
+        radial-gradient(ellipse 80% 60% at 50% 0%, rgba(61, 12, 44, 0.95) 0%, transparent 60%),
+        radial-gradient(ellipse 55% 40% at 18% 100%, rgba(61, 12, 44, 0.55) 0%, transparent 50%),
+        radial-gradient(ellipse 45% 35% at 86% 65%, rgba(139, 47, 201, 0.11) 0%, transparent 50%);
+      color: var(--text-primary);
+      font-family: var(--font-sans);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+    .container {
+      width: 100%;
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      background: rgba(5, 5, 15, 0.84);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(139, 47, 201, 0.18);
+    }
+    .wordmark {
+      font-family: var(--font-mono);
+      text-transform: uppercase;
+      letter-spacing: 0.22em;
+      font-size: 10px;
+      color: var(--text-secondary);
+      text-decoration: none;
+    }
+    main { padding: 80px 0 88px; }
+    .hero-kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--neon-gold);
+      margin-bottom: 16px;
+    }
+    .hero-kicker::before, .hero-kicker::after {
+      content: "";
+      width: 26px;
+      height: 1px;
+      background: rgba(200, 169, 110, 0.55);
+    }
+    h1 {
+      font-family: var(--font-serif);
+      font-size: clamp(34px, 5.4vw, 58px);
+      line-height: 1.04;
+      margin-bottom: 14px;
+      letter-spacing: 0.01em;
+    }
+    .hero-sub {
+      max-width: 70ch;
+      color: var(--text-secondary);
+      font-size: 16px;
+      margin-bottom: 34px;
+    }
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-bottom: 40px;
+    }
+    .card {
+      background: linear-gradient(180deg, rgba(18, 18, 42, 0.92), rgba(13, 13, 34, 0.92));
+      border: 1px solid rgba(139, 47, 201, 0.2);
+      border-radius: 4px;
+      padding: 24px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .card h2 {
+      font-family: var(--font-serif);
+      font-size: 24px;
+      line-height: 1.15;
+    }
+    .price {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--neon-gold);
+    }
+    .list-title {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+    ul { list-style: none; display: grid; gap: 8px; }
+    li {
+      position: relative;
+      padding-left: 14px;
+      color: var(--text-secondary);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+    li::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0.58em;
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--neon-violet);
+      box-shadow: 0 0 8px rgba(191, 90, 242, 0.7);
+    }
+    .full-env {
+      background: var(--bg-surface);
+      border: 1px solid rgba(200, 169, 110, 0.26);
+      border-radius: 4px;
+      padding: 30px 24px;
+      margin-bottom: 40px;
+    }
+    .full-env h2 {
+      font-family: var(--font-serif);
+      font-size: clamp(28px, 4.2vw, 40px);
+      margin-bottom: 8px;
+    }
+    .full-env h3 {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--neon-gold);
+      margin: 20px 0 10px;
+    }
+    .full-env p {
+      color: var(--text-secondary);
+      font-size: 15px;
+      line-height: 1.7;
+    }
+    .concept-list li {
+      color: var(--text-primary);
+      font-size: 14px;
+    }
+    .concept-list li span {
+      color: var(--text-secondary);
+      display: inline-block;
+      margin-left: 4px;
+    }
+    .cta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+      justify-content: space-between;
+      border-top: 1px solid rgba(139, 47, 201, 0.16);
+      padding-top: 22px;
+      margin-top: 28px;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 44px;
+      border-radius: 2px;
+      padding: 0 20px;
+      text-decoration: none;
+      background: var(--cta-royal-blue);
+      color: #fff;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      box-shadow: var(--glow-cta);
+    }
+    .limited {
+      font-family: var(--font-mono);
+      color: var(--text-muted);
+      font-size: 10px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+    footer {
+      padding: 22px 0 34px;
+      border-top: 1px solid rgba(139, 47, 201, 0.14);
+    }
+    .foot-note {
+      font-family: var(--font-mono);
+      color: var(--text-muted);
+      font-size: 10px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      text-align: center;
+    }
+    @media (max-width: 900px) {
+      .cards { grid-template-columns: 1fr; }
+      main { padding-top: 64px; }
+      .container { padding: 0 20px; }
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="container">
+      <a class="wordmark" href="/">Stephuary</a>
+    </div>
+  </nav>
+
+  <main>
+    <div class="container">
+      <div class="hero-kicker">Custom Builds</div>
+      <h1>Experience Build, System Build, and Full Environment — three levels of scope.</h1>
+      <p class="hero-sub">Apply for the level that matches where you are now. Each build is custom, interactive, and designed to make your business easier to understand, trust, and choose.</p>
+
+      <section class="cards" aria-label="Custom build options">
+        <article class="card">
+          <h2>Experience Build</h2>
+          <p class="price">Starting at $7,500</p>
+          <p>A custom interactive website designed to improve how your business is perceived and understood.</p>
+          <p class="list-title">Includes</p>
+          <ul>
+            <li>bespoke design</li>
+            <li>interaction and motion system</li>
+            <li>conversion-aware layout</li>
+            <li>visual positioning upgrade</li>
+          </ul>
+        </article>
+
+        <article class="card">
+          <h2>System Build</h2>
+          <p class="price">Starting at $12,000</p>
+          <p>A structured business system that turns your offer into clear pathways, decisions, and outputs.</p>
+          <p class="list-title">Includes</p>
+          <ul>
+            <li>diagnostic logic</li>
+            <li>structured outputs</li>
+            <li>user flow design</li>
+            <li>decision architecture</li>
+          </ul>
+        </article>
+
+        <article class="card">
+          <h2>Full Environment</h2>
+          <p class="price">Starting at $22,000</p>
+          <p>A complete interactive environment with business system logic, conversion architecture, and positioning design.</p>
+          <p class="list-title">Includes</p>
+          <ul>
+            <li>full interactive experience layer</li>
+            <li>system architecture and outputs</li>
+            <li>perception and positioning design</li>
+            <li>SEO and discovery foundation</li>
+          </ul>
+        </article>
+      </section>
+
+      <section class="full-env" aria-label="Full Environment details">
+        <h2>Full Environment</h2>
+        <p>What this is</p>
+        <p>A custom-built, interactive system designed to control how people understand, move through, and decide on your business.</p>
+        <p style="margin-top:10px;">This is not a template or standard build.</p>
+
+        <h3>It combines</h3>
+        <ul class="concept-list">
+          <li>Cultural Experience Intelligence (CEI)<span>→ how the environment shapes perception, behavior, and memory</span></li>
+          <li>Conversion Architecture<span>→ how users move, decide, and take action</span></li>
+          <li>System Logic + Structured Outputs<span>→ turning your offer into a working system, not just pages</span></li>
+          <li>Interaction Design<span>→ responsive, intentional motion that guides attention</span></li>
+          <li>Positioning + Perception Design<span>→ making your value clear immediately</span></li>
+          <li>SEO + Discovery Layer<span>→ ensuring the right people can find you</span></li>
+        </ul>
+
+        <h3>What you receive</h3>
+        <ul>
+          <li>a fully custom, interactive experience</li>
+          <li>a structured system behind the interface</li>
+          <li>clear user pathways and decision flow</li>
+          <li>a site that communicates value instantly</li>
+          <li>a foundation designed to scale and evolve</li>
+        </ul>
+
+        <h3>What it changes</h3>
+        <ul>
+          <li>removes confusion in how people understand your offer</li>
+          <li>increases perceived value immediately</li>
+          <li>attracts better-fit clients</li>
+          <li>reduces drop-off and hesitation</li>
+          <li>replaces static browsing with guided experience</li>
+        </ul>
+
+        <h3>Who this is for</h3>
+        <ul>
+          <li>businesses ready to move beyond standard websites</li>
+          <li>founders with strong offers that are not translating clearly</li>
+          <li>brands that need to shift perception and attract higher-level clients</li>
+        </ul>
+
+        <p style="margin-top:20px;">This is a custom-built experience system, not a standard website.</p>
+        <p style="margin-top:10px;">This is likely what you are actually looking for.</p>
+
+        <div class="cta-row">
+          <p class="limited">Limited builds per quarter</p>
+          <a class="btn" href="/capture">Apply for Custom Build</a>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer>
+    <div class="container">
+      <p class="foot-note">© 2026 Stephuary · All rights reserved</p>
+    </div>
+  </footer>
+</body>
+</html>
