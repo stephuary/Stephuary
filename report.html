@@ -95,6 +95,10 @@
       outline: 2px solid var(--cta);
       outline-offset: 2px;
     }
+    .report-btn-download:disabled {
+      opacity: 0.72;
+      cursor: wait;
+    }
     .report-main {
       max-width: var(--max);
       margin: 0 auto;
@@ -1656,7 +1660,7 @@ Back catalog depth:
       <ul class="rpt-value-strip__ul">
         <li>Your archetype, one-line diagnosis, and the full diagnostic accordion (deals → costing → this week).</li>
         <li>The same execution system for every pattern: protocol, 30-day loop, prompts, distribution, monetization, automation.</li>
-        <li>Print / Save as PDF from your browser.</li>
+        <li>Download PDF saves a file to your device (full report expanded for export).</li>
       </ul>
       <p class="rpt-value-strip__anchor">One missed deal covers this.</p>
     </section>
@@ -2066,8 +2070,183 @@ Back catalog depth:
       });
     }
 
+    function snapshotReportPdfUi() {
+      return {
+        detailsWasOpen: (function () {
+          var det = document.getElementById('rpt-sys-details');
+          return !!(det && det.open);
+        })(),
+        nestOpen: document.querySelector('#rpt-nest-root [data-nest-item].is-open'),
+        accOpen: document.querySelector('#report-acc-core [data-rpt-item].is-open')
+      };
+    }
+
+    function expandAllReportPanelsForPdfExport() {
+      var det = document.getElementById('rpt-sys-details');
+      if (det) det.setAttribute('open', '');
+      Array.prototype.forEach.call(document.querySelectorAll('#rpt-nest-root [data-nest-item]'), function (item) {
+        item.classList.add('is-open');
+        var tr = item.querySelector('[data-nest-trigger]');
+        var panel = item.querySelector('[data-nest-panel]');
+        if (tr) tr.setAttribute('aria-expanded', 'true');
+        if (panel) {
+          panel.style.maxHeight = 'none';
+          panel.style.opacity = '1';
+        }
+      });
+      Array.prototype.forEach.call(document.querySelectorAll('#report-acc-core [data-rpt-item]'), function (item) {
+        item.classList.add('is-open');
+        var tr = item.querySelector('[data-rpt-trigger]');
+        var panel = item.querySelector('[data-rpt-panel]');
+        if (tr) tr.setAttribute('aria-expanded', 'true');
+        if (panel) {
+          var inner = panel.querySelector('.report-acc-panel-inner');
+          var h = inner ? inner.scrollHeight + 24 : panel.scrollHeight;
+          panel.style.maxHeight = h + 'px';
+          panel.style.opacity = '1';
+        }
+      });
+    }
+
+    function closeAllNestPanelsForPdfRestore() {
+      Array.prototype.forEach.call(document.querySelectorAll('#rpt-nest-root [data-nest-item]'), function (item) {
+        item.classList.remove('is-open');
+        var tr = item.querySelector('[data-nest-trigger]');
+        var panel = item.querySelector('[data-nest-panel]');
+        if (tr) tr.setAttribute('aria-expanded', 'false');
+        if (panel) {
+          panel.style.maxHeight = '0px';
+          panel.style.opacity = '0';
+        }
+      });
+    }
+
+    function closeAllAccPanelsForPdfRestore() {
+      Array.prototype.forEach.call(document.querySelectorAll('#report-acc-core [data-rpt-item]'), function (item) {
+        item.classList.remove('is-open');
+        var tr = item.querySelector('[data-rpt-trigger]');
+        var panel = item.querySelector('[data-rpt-panel]');
+        if (tr) tr.setAttribute('aria-expanded', 'false');
+        if (panel) {
+          panel.style.maxHeight = '0px';
+          panel.style.opacity = '0';
+        }
+      });
+    }
+
+    function reopenNestItemForPdfRestore(item) {
+      if (!item || !item.parentNode) return;
+      var tr = item.querySelector('[data-nest-trigger]');
+      var panel = item.querySelector('[data-nest-panel]');
+      if (!tr || !panel) return;
+      item.classList.add('is-open');
+      tr.setAttribute('aria-expanded', 'true');
+      var inner = panel.querySelector('.rpt-nest-panel__inner');
+      var h = inner ? inner.scrollHeight + 18 : panel.scrollHeight;
+      panel.style.maxHeight = h + 'px';
+      panel.style.opacity = '1';
+    }
+
+    function reopenAccItemForPdfRestore(item) {
+      if (!item || !item.parentNode) return;
+      var tr = item.querySelector('[data-rpt-trigger]');
+      var panel = item.querySelector('[data-rpt-panel]');
+      if (!tr || !panel) return;
+      item.classList.add('is-open');
+      tr.setAttribute('aria-expanded', 'true');
+      var inner = panel.querySelector('.report-acc-panel-inner');
+      var h = inner ? inner.scrollHeight + 24 : panel.scrollHeight;
+      panel.style.maxHeight = h + 'px';
+      panel.style.opacity = '1';
+    }
+
+    function restoreReportPdfUi(snap) {
+      var det = document.getElementById('rpt-sys-details');
+      if (det && snap && !snap.detailsWasOpen) det.removeAttribute('open');
+      closeAllNestPanelsForPdfRestore();
+      if (snap && snap.nestOpen && snap.nestOpen.parentNode) reopenNestItemForPdfRestore(snap.nestOpen);
+      closeAllAccPanelsForPdfRestore();
+      if (snap && snap.accOpen && snap.accOpen.parentNode) reopenAccItemForPdfRestore(snap.accOpen);
+    }
+
+    function reportPdfFilename() {
+      var h = document.getElementById('report-pattern-head');
+      var raw = h && h.textContent ? h.textContent.trim() : 'stephuary-report';
+      var safe = raw.replace(/[^a-zA-Z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'stephuary-report';
+      return safe + '.pdf';
+    }
+
+    function loadHtml2PdfOnce() {
+      if (window.html2pdf) return Promise.resolve();
+      return new Promise(function (resolve, reject) {
+        var s = document.createElement('script');
+        s.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js';
+        s.async = true;
+        s.onload = function () {
+          resolve();
+        };
+        s.onerror = function () {
+          reject(new Error('html2pdf load failed'));
+        };
+        document.head.appendChild(s);
+      });
+    }
+
+    function html2PdfIgnoreEl(el) {
+      if (!el || el.nodeType !== 1) return false;
+      if (el.tagName === 'SCRIPT') return true;
+      if (el.tagName === 'NOSCRIPT') return true;
+      if (el.closest && el.closest('.report-actions')) return true;
+      if (el.classList && el.classList.contains('rpt-prompt-copy-btn')) return true;
+      if (el.classList && el.classList.contains('rpt-nest-icon')) return true;
+      if (el.classList && el.classList.contains('report-acc-icon')) return true;
+      return false;
+    }
+
     document.getElementById('report-download-pdf').addEventListener('click', function () {
-      window.print();
+      var btn = this;
+      var prevLabel = btn.textContent;
+      var snap = snapshotReportPdfUi();
+      btn.disabled = true;
+      btn.textContent = 'Generating…';
+      window.scrollTo(0, 0);
+      expandAllReportPanelsForPdfExport();
+      loadHtml2PdfOnce()
+        .then(function () {
+          return new Promise(function (resolve) {
+            requestAnimationFrame(function () {
+              window.setTimeout(resolve, 200);
+            });
+          });
+        })
+        .then(function () {
+          var opt = {
+            margin: [0.45, 0.45, 0.45, 0.45],
+            filename: reportPdfFilename(),
+            image: { type: 'jpeg', quality: 0.92 },
+            html2canvas: {
+              scale: window.devicePixelRatio > 1 ? 1.45 : 1.85,
+              useCORS: true,
+              logging: false,
+              ignoreElements: html2PdfIgnoreEl,
+              windowWidth: document.documentElement.scrollWidth
+            },
+            jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' },
+            pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+          };
+          return window.html2pdf().set(opt).from(document.body).save();
+        })
+        .then(function () {
+          restoreReportPdfUi(snap);
+          btn.disabled = false;
+          btn.textContent = prevLabel;
+        })
+        .catch(function () {
+          restoreReportPdfUi(snap);
+          btn.disabled = false;
+          btn.textContent = prevLabel;
+          window.print();
+        });
     });
 
     (function bindReportCopyButtons() {
