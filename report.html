@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Archetype Report · Stephuary</title>
+  <meta name="description" content="Stephuary archetype report." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg-void: #05050f;
+      --bg-surface: #0d0d22;
+      --text-primary: #fff;
+      --text-secondary: #a0a0c0;
+      --text-muted: #6f6f92;
+      --line: rgba(139, 47, 201, 0.2);
+      --font-serif: "Playfair Display", Georgia, serif;
+      --font-sans: "Inter", system-ui, sans-serif;
+      --font-mono: "JetBrains Mono", "Courier New", monospace;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: #05050f;
+      background-image:
+        radial-gradient(ellipse 80% 60% at 50% 0%, rgba(61, 12, 44, 1) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 40% at 20% 100%, rgba(61, 12, 44, 0.6) 0%, transparent 50%),
+        radial-gradient(ellipse 50% 40% at 80% 60%, rgba(139, 47, 201, 0.12) 0%, transparent 50%);
+      color: var(--text-primary);
+      font-family: var(--font-sans);
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+    }
+    .wrap {
+      width: min(920px, 100% - 40px);
+      margin: 0 auto;
+      padding: 72px 0 80px;
+    }
+    .head {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 28px;
+      background: rgba(13, 13, 34, 0.72);
+      margin-bottom: 26px;
+    }
+    .head-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+    .mono {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+    h1 {
+      margin: 0 0 4px;
+      font-family: var(--font-serif);
+      font-size: clamp(30px, 5vw, 50px);
+      line-height: 1.08;
+    }
+    .tagline {
+      margin: 0;
+      color: var(--text-secondary);
+      font-size: 18px;
+    }
+    .card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(13, 13, 34, 0.72);
+      padding: 24px;
+      margin-bottom: 18px;
+    }
+    .card h2 {
+      margin: 0 0 12px;
+      font-family: var(--font-serif);
+      font-size: clamp(22px, 3.5vw, 30px);
+      line-height: 1.1;
+    }
+    .score-row { margin-bottom: 14px; }
+    .score-meta {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 6px;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+    }
+    .bar {
+      height: 8px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+    .bar > span {
+      display: block;
+      height: 100%;
+      width: 0%;
+      border-radius: 999px;
+      transition: width 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .callout {
+      border: 1px solid rgba(200, 169, 110, 0.35);
+      background: rgba(200, 169, 110, 0.08);
+      border-radius: 6px;
+      padding: 16px;
+      margin-top: 12px;
+    }
+    .evidence-list {
+      margin: 0;
+      padding-left: 22px;
+      display: grid;
+      gap: 10px;
+      color: var(--text-secondary);
+    }
+    .next-cta {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 46px;
+      padding: 12px 18px;
+      border-radius: 2px;
+      border: 1px solid rgba(58, 107, 255, 0.45);
+      background: linear-gradient(180deg, rgba(65, 105, 225, 0.95), rgba(43, 79, 212, 0.95));
+      color: #fff;
+      text-decoration: none;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      box-shadow: 0 0 20px rgba(65, 105, 225, 0.3);
+    }
+    .missing {
+      min-height: 60vh;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      padding: 24px;
+    }
+    .missing a { color: #c8a96e; }
+    @media (max-width: 680px) {
+      .wrap { width: min(920px, 100% - 24px); padding-top: 56px; }
+      .card, .head { padding: 18px; }
+    }
+  </style>
+</head>
+<body>
+  <main id="report-root"></main>
+  <script>
+    const ARCHETYPES = {
+      'ceiling-builder': {
+        name: 'The Ceiling Builder',
+        tagline: 'Built to your limit.',
+        number: '01 / 07',
+        accent: '#C8A96E',
+        scores: [
+          { label: 'Clarity', value: 82 },
+          { label: 'Positioning', value: 78 },
+          { label: 'Structure', value: 24 }
+        ],
+        mirror: 'The front end of your business works. Leads come in that fit. The offer closes. Clients get results. By every visible measure the business is succeeding — and it has been long enough that you have hit the ceiling on what success looks like from here. Delivery is entirely dependent on you. Every new client means more personal hours. You have been fully booked and still felt like revenue should be higher, and the reason you do not raise prices aggressively is that you would still be trading time, just at a better rate. The ceiling is not the market. It is you.',
+        patternName: 'Built to Your Limit',
+        patternDesc: 'You are the system. Not by accident — by necessity, because the business grew faster than the infrastructure to support it and you solved every problem with intelligence and effort rather than process. That worked until it did not. Now the business can only grow as fast as you can work, and you are already at capacity.',
+        evidence: [
+          'You have been fully booked and still felt like something was not adding up financially.',
+          'You have considered raising prices specifically to reduce client volume, not because the value increased.',
+          'Every client engagement starts with some version of figuring it out rather than running a documented sequence.',
+          'You have thought about hiring but cannot isolate what to hand off without explaining it from scratch each time.',
+          'A client experience was inconsistent because it depended on which week you were having.',
+          'You have missed an opportunity because you were too deep in current delivery to respond in time.',
+          'You took a week off and either worked through it or came back to a pile that had grown without you.'
+        ],
+        rootCause: 'Delivery was never systematized because it never had to be. Each client was solved as it arrived. What worked got repeated manually. The founder\'s judgment became the product — and judgment is not transferable without the founder in the room. This is not a capacity problem. It is an architecture problem.',
+        cost: 'The gap between what the business earns and what it could earn at equivalent effort is almost entirely structural. You are doing the work of a business that earns twice what you make, because the difference requires a system that does not exist yet. That gap is not a market limit. It was built by operational choices, and it can be closed.',
+        leverage: 'Pick one step you do personally in every client engagement — the most repeatable one. Write it down in the exact sequence you run it, as if explaining it to someone who has never seen it. That document is the first delegation artifact. Delegate or automate that one step this week. Do not build the full system. Build proof that one step can run without you. Then use that as the template for every step that follows.',
+        bridge: 'The Ceiling Builder usually knows structure is the problem. What they do not know is which step to systematize first — which one creates the most operational relief with the least disruption to current delivery. That sequencing decision is what the Snapshot makes specific to your business.'
+      },
+      'commodity': {
+        name: 'The Commodity',
+        tagline: 'Legible, not distinctive.',
+        number: '02 / 07',
+        accent: '#0A84FF',
+        scores: [
+          { label: 'Clarity', value: 88 },
+          { label: 'Positioning', value: 20 },
+          { label: 'Structure', value: 62 }
+        ],
+        mirror: 'The offer is legible. Someone lands on your page and within ten seconds they understand what you sell. You can say it in one sentence without needing to add context. The problem is not communication. It is that what you are communicating sounds exactly like what three other people in your space are communicating. Buyers understand the offer and immediately start comparing. The comparison almost always comes down to price. You close deals — but the negotiation overhead is high, the wrong clients keep showing up, and the right clients occasionally go somewhere cheaper.',
+        patternName: 'Clear Enough to Be Compared',
+        patternDesc: 'Clarity without distinction is a lower-friction path to a price war. You solved the wrong problem first. The offer is easy to understand and easy to shop. Every competitor who charges less is a direct and credible threat because there is no specific reason to choose you over them that does not require you to explain it.',
+        evidence: [
+          'You have lowered your price at least once to close a deal you felt you deserved at full rate.',
+          'Buyers regularly ask how this is different from X, and your answer takes longer than it should.',
+          'Your best testimonials could appear on a competitor\'s page with minor editing.',
+          'You attract a wide range of leads with no consistent profile.',
+          'Content performs best with people who will never buy.',
+          'Referrals work better than any other lead source because the referring person does the differentiation work for you.',
+          'You have described what you do differently depending on who was in the room, and both descriptions were accurate.'
+        ],
+        rootCause: 'The offer is positioned at the category level, not the outcome level. Categories compete on price. Outcomes compete on value. Until the offer is built around a specific, named result for a specific, named buyer with a specific, named problem, it will always be evaluated against the cheapest version of the category it belongs to.',
+        cost: 'Every client you have lost to someone who charged less is a client you did not lose on quality. You lost on positioning. The work you do is likely better than what they got. But positioning did not make that case before the decision was made. That is a recoverable loss — and it compounds in your favor the moment the positioning changes.',
+        leverage: 'Rewrite your positioning sentence using this structure: "I help [specific buyer] who [specific situation] get [specific outcome] without [specific tradeoff they expect to make]." Every word must be specific enough that the wrong person reads it and immediately self-selects out. If a competitor could use the same sentence without changing anything, it is not specific enough yet. Rewrite it until they cannot.',
+        bridge: 'Knowing you are a Commodity tells you the category of the problem. The Snapshot reads your actual offer language — the page, the positioning, the pitch — and maps exactly which words are collapsing into generic and what specific language separates you from the alternatives your buyer already knows.'
+      },
+      'wrong-room': {
+        name: 'The Wrong Room',
+        tagline: 'Right offer. Wrong audience.',
+        number: '03 / 07',
+        accent: '#BF5AF2',
+        scores: [
+          { label: 'Clarity', value: 74 },
+          { label: 'Positioning', value: 55 },
+          { label: 'Structure', value: 68 }
+        ],
+        mirror: 'The offer is specific. You know who you help and what makes you different. When the right person finds you, it clicks fast — they get it, they buy, they get results without heavy hand-holding. The problem is the right person is not finding you at any reliable rate. Most inbound inquiries do not fit. Discovery calls feel like explaining why the problem you solve is actually a problem. The offer is right. The room is wrong.',
+        patternName: 'Right Signal, Wrong Channel',
+        patternDesc: 'Differentiation without distribution is a precise offer that nobody sees. The positioning is correct — it is just being broadcast to people who are not the buyer. You are showing up in places your ideal client does not use, talking about entry points that do not match how your buyer actually arrives at the problem you solve.',
+        evidence: [
+          'You get consistent engagement from people who say this is so good and never buy.',
+          'Discovery calls regularly include a version of convincing the prospect they have the problem you solve.',
+          'Referrals close faster and easier than any other lead source by a significant margin.',
+          'Content specifically targeted at your ideal buyer gets responses from everyone except them.',
+          'Lead quality varies so widely it feels random rather than patterned.',
+          'Someone has told you they did not know you did that after following you for months.',
+          'Paid advertising has been tested and quietly abandoned.'
+        ],
+        rootCause: 'The entry point is misaligned. The way your ideal buyer enters awareness of the problem you solve does not match where or how you are showing up. Your content may be calibrated to someone who already understands they have the problem — but your actual buyer is entering at an earlier or different stage and using different language to describe what they are looking for.',
+        cost: 'Time on non-converting leads. Long sales cycles. Discovery call volume that should be a fraction of what it is. Every wrong-fit inquiry has a direct cost: your time, your energy, and your availability to pursue the right-fit buyer who showed up the same week and found someone else instead.',
+        leverage: 'Find the last three clients who closed fastest — shortest time from first contact to signed. Ask each one two questions: what problem were you trying to solve the week you first found me, and what words were you using to search for or talk about that problem? Write down their exact words without editing. That language is your entry point — the words your buyer uses before they know they need you specifically. Put it at the top of every page and every piece of content.',
+        bridge: 'The Wrong Room archetype knows leads are the problem. What they have not isolated is exactly which part of the signal is pulling the wrong audience — which word, which platform, which entry point — and what the right buyer\'s actual path to finding you looks like. That is the mapping the Snapshot does.'
+      },
+      'untranslated': {
+        name: 'The Untranslated',
+        tagline: 'The value is real. The page does not show it.',
+        number: '04 / 07',
+        accent: '#FF9F0A',
+        scores: [
+          { label: 'Clarity', value: 18 },
+          { label: 'Positioning', value: 60 },
+          { label: 'Structure', value: 55 }
+        ],
+        mirror: 'The work is real. The results clients get are real. The people who have worked with you know exactly what you do and will refer you without hesitation. But ask them to describe your work to someone new and they will say something like "you just have to talk to her" or "I cannot really explain it, you just have to experience it." That is not a compliment. That is a diagnosis. The value of what you do has never been translated into language that works without you in the room. Your page, your bio, your one-line intro — none of them do what a ten-minute conversation does. So the business runs on conversations.',
+        patternName: 'The Offer Exists. The Translation Does Not.',
+        patternDesc: 'Every sale you have made required some version of you explaining the work directly — on a call, at an event, through a recommendation from someone who already understood you. Cold audiences land, cannot decode the offer fast enough, and leave. This is not a content problem or a website problem. It is a translation problem. The expertise is real. The packaging of it into language that works without you being present does not exist yet.',
+        evidence: [
+          'Your website makes sense to people who already know you and reads like noise to people who do not.',
+          'You have been told your work is hard to explain by clients who love it.',
+          'When someone asks what you do, your answer changes depending on who is asking and what context you are in.',
+          'A buyer has said they have been following you for months but did not understand what you sold until the call.',
+          'Every version of your bio you have written has felt either too broad or too narrow.',
+          'Content that explains your thinking performs significantly better than content that promotes your offer.',
+          'You could write a book about the work more easily than you could write a homepage that sells it.'
+        ],
+        rootCause: 'The value lives in tacit knowledge — your ability to read a situation, apply judgment, and produce an outcome. Tacit knowledge is the hardest thing to translate into positioning language. You have never been forced to externalize it because the warm network did not require it. Referrals came. Conversations converted. The translation gap never cost you enough to force you to close it. Until now.',
+        cost: 'The business is capped at the size of your warm network. Every potential client who finds you cold and cannot understand what they are looking at within ten seconds is a sale that does not happen — and that you will never know about. The size of that invisible audience is almost certainly a multiple of your current client base.',
+        leverage: 'Call three current or recent clients and ask one question: "If someone asked you what I do and why it is worth it, what would you say?" Record or transcribe the answers verbatim. Do not edit them. Do not improve them. The language your best clients use to describe your work to others is almost certainly better than anything you have written about yourself — because they describe the outcome, not the process. Put that language at the top of your page this week.',
+        bridge: 'The Untranslated archetype has the hardest time self-diagnosing because the gap is in the external representation, not the internal reality of the work. You cannot read your own page the way a cold stranger reads it. The Snapshot reads it as a cold audience would — identifying exactly where the translation breaks and what specific language shift makes the front door work without you standing in it.'
+      },
+      'underpriced': {
+        name: 'The Underpriced',
+        tagline: 'The work is there. The number is not.',
+        number: '05 / 07',
+        accent: '#30D158',
+        scores: [
+          { label: 'Clarity', value: 88 },
+          { label: 'Positioning', value: 82 },
+          { label: 'Structure', value: 75 },
+          { label: 'Price Signal', value: 20 }
+        ],
+        mirror: 'The offer is clear. The positioning is specific. The right people find you and understand what you do. The problem is at the price. Not that the price is wrong relative to the market — but that when you say the number, something shifts. The buyer hesitates in a way they do not hesitate over the offer itself. You find yourself explaining the value after the price rather than before it. You know the work is worth more than you are charging. Your best clients know it too — they tell you. But something keeps the number lower than it should be, and the downstream effect is a business working harder than it needs to for every dollar it produces.',
+        patternName: 'The Price Undercuts the Positioning',
+        patternDesc: 'Pricing is not just revenue math. It is a signal. When price is misaligned with the quality and specificity of the offer, it creates doubt before the conversation even starts. A price that is too low for a premium, specific offer signals that something is off — that maybe the work is not as good as the positioning suggests, or that the seller does not fully believe in what they are charging.',
+        evidence: [
+          'You have privately thought "I should be charging more" more than once in the last 90 days.',
+          'Clients have said something to the effect of "this was worth so much more than I paid."',
+          'You have added scope to a project without adjusting the price because it felt easier than the conversation.',
+          'You have discounted to close a deal you felt you deserved at the full rate.',
+          'New clients occasionally seem surprised by how much they get relative to what they paid.',
+          'When someone pushes back on price, your instinct is to justify or reduce rather than hold and reframe.',
+          'You have avoided raising prices because you are not sure the market will support it — despite evidence it already does.'
+        ],
+        rootCause: 'The price was set at a point that felt achievable rather than a point that reflects the actual outcome delivered. It has been raised incrementally rather than restructured to match the positioning. Because it has never been set at the right level, there is no data confirming the market would pay more — which makes the raise feel like a risk rather than a correction. It is not a risk. It is the correction.',
+        cost: 'The delta between your current price and what the offer actually warrants is pure margin left on the table. If you close ten clients a year and each one is underpriced by $2,000, that is $20,000 in annual revenue that requires no new clients, no new marketing, and no new work. It requires one decision made once.',
+        leverage: 'Set the next price before you have the next inquiry — not as an experiment, as a policy. Calculate what the outcome you deliver is worth to the client in revenue saved, revenue generated, or time recovered over 12 months. Price at 10% of that number. If the math surprises you, that gap is exactly the distance between what you charge and what you are worth. The next client pays the new number. You hold it without explanation.',
+        bridge: 'The Underpriced archetype usually knows the price is wrong. What they have not mapped is exactly where the price-value disconnect shows up in the buyer experience — at what point in the conversation or page the buyer\'s confidence breaks, and what specific framing change before the price appears would change that. That is the read the Snapshot makes.'
+      },
+      'scattered': {
+        name: 'The Scattered',
+        tagline: 'Everything serves someone. Nothing compounds.',
+        number: '06 / 07',
+        accent: '#FF2D78',
+        scores: [
+          { label: 'Clarity', value: 32 },
+          { label: 'Positioning', value: 18 },
+          { label: 'Structure', value: 45 }
+        ],
+        mirror: 'The business has motion. You are creating content, taking calls, delivering work, building things. Revenue exists. The problem is that none of it compounds. Each month looks different from the last — not because the market changed, but because the offer, the audience, and the positioning have not locked in. You serve different types of clients with different types of work. Some of it you love. Some of it you took because it paid. The through-line that would make someone look at your business and immediately know exactly who it is for and what it does — that through-line is not there yet.',
+        patternName: 'Building Without a Center',
+        patternDesc: 'A business that serves everyone signals to no one. Every piece of content you create has to work across multiple audiences. Every offer you build has to be explained in context. Every client relationship starts from scratch because there is no consistent positioning that pre-frames what you do before the first conversation. The business is spending energy that should be building momentum on work that resets instead of stacks.',
+        evidence: [
+          'Your last five clients had notably different profiles, problems, or industries.',
+          'You have two or more offers running in parallel without a clear relationship between them.',
+          'Someone has asked what exactly you do after seeing your content for months.',
+          'You have described your work differently in different contexts and both descriptions were accurate.',
+          'Content created for one audience confuses or fails to reach another.',
+          'Clients refer people who do not fit because they do not have a precise picture of who does.',
+          'When asked what you are building, the honest answer is longer than one sentence.'
+        ],
+        rootCause: 'The business was built responsively — offer by offer, client by client, opportunity by opportunity — rather than from a defined center outward. Each decision made sense at the time. Cumulatively they created a business that reflects everything you can do rather than the specific thing you are building. That is a natural result of early-stage momentum without a constraint applied early enough.',
+        cost: 'Diffusion compounds in the wrong direction. The more varied the offer and audience, the harder every marketing effort works for every lead it produces. A focused business generates referrals that are pre-screened. A scattered business generates referrals that are approximate. Every month of continued diffusion is a month of compounding in the direction you do not want to go.',
+        leverage: 'Choose one. One type of buyer. One problem. One outcome. Not permanently — for the next 90 days. Build every piece of content, every offer, every conversation around that one combination. At the end of 90 days you will have either confirmed it works or ruled it out with evidence. Either result is more useful than another 90 days of building in five directions at once. The constraint is the strategy.',
+        bridge: 'The Scattered archetype\'s challenge is not finding the right focus — it is choosing one when several seem viable. The Snapshot reads the existing business — what is converting, who is actually buying, where the strongest signal is already showing up — and identifies which direction you are already moving in has the highest probability of becoming the through-line.'
+      },
+      'foundation-first': {
+        name: 'The Foundation First',
+        tagline: 'The gaps are not separate. They are sequential.',
+        number: '07 / 07',
+        accent: '#8B2FC9',
+        scores: [
+          { label: 'Clarity', value: 26 },
+          { label: 'Positioning', value: 22 },
+          { label: 'Structure', value: 28 }
+        ],
+        mirror: 'There is activity. Revenue exists — maybe inconsistently, maybe not at the level it should be. You have tried things. Some worked. Most produced modest results and then plateaued. The common thread across everything you have tried — better content, new offers, different pricing, more outreach — is that none of it created compounding momentum. Each effort started fresh instead of building on the last. That is not a strategy problem or an execution problem. It is a sequence problem. The foundation was never built in order, so everything built on top of it is working against partial infrastructure.',
+        patternName: 'Treating Symptoms as Separate Problems',
+        patternDesc: 'Low revenue is not a revenue problem. Mixed leads are not a marketing problem. Manual delivery is not an operations problem. They are all downstream of the same root: clarity, positioning, and structure were never built in sequence from the ground up. So every fix applied to one symptom runs into the absence of another foundation piece. The problems are not separate. They are compounding.',
+        evidence: [
+          'You have changed your offer or repositioned more than once in the last 18 months without a clear step-change in results.',
+          'Revenue is inconsistent month to month without a cause you can reliably identify.',
+          'You have invested in coaching, courses, or strategy that produced insight but not sustained traction.',
+          'When asked what you want the business to look like in 12 months, the answer involves feelings more than numbers.',
+          'Hard weeks do not produce materially different results from lighter weeks.',
+          'Referrals come in but inconsistently, and you do not fully understand why some clients refer and others do not.',
+          'You have searched a version of "how to get more clients" or "why is my content not working" in the last 60 days.'
+        ],
+        rootCause: 'The business was built laterally — adding pieces as they seemed needed — rather than vertically from a foundation up. Clarity was not established before positioning was attempted. Positioning was not clear before delivery was built. Because each piece was built without the previous one in place, none of them are fully functional. The compounding effect of partial foundations is that effort produces effort, not momentum.',
+        cost: 'Not calculable in the current state — because there is no stable baseline to measure against. Every month without a clear foundation is a month building on shifting ground. The cost is not just revenue. It is the version of the business that exists on the other side of the foundation being built correctly and in the right order.',
+        leverage: 'Clarity before everything else. Not because it is the most exciting problem to solve — but because every other gap becomes easier to close once the offer is clear. Positioning becomes easier when you know exactly what you are positioning. Delivery becomes easier when you know exactly what you are promising to deliver. Pricing becomes easier when the outcome is specific enough to anchor value to. This sequence is not optional. Clarity is the first domino. Fix that one thing before touching anything else.',
+        bridge: 'The Foundation First archetype needs a map before tactics. The Snapshot is the map — a read of what is actually present in the business, where the strongest existing signal is, which gap is costing the most right now, and what the first move is. Not a list of everything to fix. One direction. That is the only output that is useful at this stage.'
+      }
+    };
+
+    function esc(s) {
+      if (s == null) return '';
+      var d = document.createElement('div');
+      d.textContent = String(s);
+      return d.innerHTML;
+    }
+
+    function renderMissing() {
+      var root = document.getElementById('report-root');
+      root.innerHTML =
+        '<section class="missing"><div><p>Report not found. <a href="/">Return to Stephuary.</a></p></div></section>';
+    }
+
+    function renderReport(key) {
+      var d = ARCHETYPES[key];
+      if (!d) {
+        renderMissing();
+        return;
+      }
+      var now = new Date();
+      var dateText = now.toLocaleDateString(undefined, {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric'
+      });
+      var scoreRows = d.scores
+        .map(function (s, i) {
+          return (
+            '<div class="score-row">' +
+            '<div class="score-meta"><span>' + esc(s.label) + '</span><span>' + esc(s.value) + '</span></div>' +
+            '<div class="bar"><span data-score="' + esc(String(s.value)) + '" style="background:' + esc(d.accent) + ';transition-delay:' + (i * 90) + 'ms"></span></div>' +
+            '</div>'
+          );
+        })
+        .join('');
+      var evidence = d.evidence
+        .map(function (line) {
+          return '<li>' + esc(line) + '</li>';
+        })
+        .join('');
+
+      var root = document.getElementById('report-root');
+      root.innerHTML =
+        '<div class="wrap">' +
+        '<section class="head">' +
+        '<div class="head-top"><span class="mono">' + esc(d.number) + '</span><span class="mono">' + esc(dateText) + '</span></div>' +
+        '<h1 style="color:' + esc(d.accent) + '">' + esc(d.name) + '</h1>' +
+        '<p class="tagline">' + esc(d.tagline) + '</p>' +
+        '</section>' +
+
+        '<section class="card"><h2>Dimension score bars</h2>' + scoreRows + '</section>' +
+
+        '<section class="card"><h2>Your pattern</h2><p>' + esc(d.mirror) + '</p>' +
+        '<div class="callout"><strong>' + esc(d.patternName) + '</strong><p style="margin:8px 0 0">' + esc(d.patternDesc) + '</p></div></section>' +
+
+        '<section class="card"><h2>The evidence trail</h2><ol class="evidence-list">' + evidence + '</ol></section>' +
+        '<section class="card"><h2>Root cause</h2><p>' + esc(d.rootCause) + '</p></section>' +
+        '<section class="card"><h2>What it is costing</h2><p>' + esc(d.cost) + '</p></section>' +
+        '<section class="card"><h2>The leverage point</h2><div class="callout"><p style="margin:0">' + esc(d.leverage) + '</p></div></section>' +
+        '<section class="card"><h2>What\'s next</h2><p>' + esc(d.bridge) + '</p><a class="next-cta" href="/snapshot/payment">Continue to Snapshot Payment</a></section>' +
+        '</div>';
+
+      requestAnimationFrame(function () {
+        root.querySelectorAll('[data-score]').forEach(function (el) {
+          el.style.width = String(el.getAttribute('data-score')) + '%';
+        });
+      });
+    }
+
+    var params = new URLSearchParams(window.location.search);
+    var key = params.get('a');
+    if (!key || !ARCHETYPES[key]) {
+      renderMissing();
+    } else {
+      renderReport(key);
+    }
+  </script>
+</body>
+</html>
