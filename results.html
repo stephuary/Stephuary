@@ -1734,8 +1734,8 @@
       Misalignment: {
         primaryHref: STRIPE_FULL_REPORT_27,
         primaryLabel: 'Get full report $27',
-        secondaryHref: '/snapshot',
-        secondaryLabel: 'Get your Snapshot $950'
+        secondaryHref: null,
+        secondaryLabel: null
       },
       Constraint: {
         primaryHref: '/snapshot',
@@ -1765,60 +1765,60 @@
 
   var DIAG_V2_PHRASES = {
     1: {
-      diag: 'Your offer is not clear on the first read.',
-      where: 'People leave before they can name what they would buy.',
-      move: 'Rewrite the top so product, price, and buyer read in one pass.'
+      diag: 'Your offer does not make sense fast enough.',
+      where: 'People ask what you do before deciding.',
+      move: "Rewrite your offer so it's clear in one sentence."
     },
     2: {
-      diag: 'Deals stall at the step before money or a firm yes.',
-      where: 'Talks fade when cost or commitment becomes real.',
-      move: 'Name the exact step where your last three deals stopped.'
+      diag: 'Your deals are breaking before the decision is made.',
+      where: "Calls feel strong but don't convert.",
+      move: 'Identify where deals stall and remove that step.'
     },
     3: {
-      diag: 'Buyers cannot repeat why you win without you in the room.',
-      where: 'You re-explain the difference every time price comes up.',
-      move: 'Write one line a buyer can repeat on why you beat the alternative.'
+      diag: 'Your offer does not hold when compared to other options.',
+      where: 'Buyers compare you to cheaper options.',
+      move: 'Define what your offer replaces.'
     },
     4: {
-      diag: 'The leads you get are not the work you want to book.',
-      where: 'Time goes to people who will not pay for the offer you want to sell.',
-      move: 'Say who gets a call and who does not. Send the rest to a lighter path.'
+      diag: 'You are attracting work you do not want.',
+      where: "Leads don't match the work you want.",
+      move: 'Tighten who your offer is for.'
     },
     5: {
-      diag: 'Delivery runs a different path after each sale.',
-      where: 'Deadlines slip because the steps after yes change by client.',
-      move: 'Pick one delivery path and use the same steps for each job.'
+      diag: 'Your delivery process changes from client to client.',
+      where: 'Work feels different every time.',
+      move: 'Standardize your delivery steps.'
     },
     6: {
-      diag: 'Work still waits on you for speed and quality.',
-      where: 'When you step away, progress stalls or quality swings.',
-      move: 'Hand off one repeat step with a short checklist someone else can run.'
+      diag: 'Your business depends on you to function.',
+      where: 'Everything slows when you step away.',
+      move: 'Remove yourself from one repeatable task.'
     },
     7: {
-      diag: 'Your price does not read fair before you explain it.',
-      where: 'You defend the number after it lands instead of before.',
-      move: 'Put scope and proof next to the price before the call.'
+      diag: 'Your price needs explanation before it makes sense.',
+      where: 'Pricing conversations stall.',
+      move: 'Make value clear before price appears.'
     }
   };
 
   var DIAG_V2_NEUTRAL = {
-    diag: 'Your answers skew strong across these seven checks.',
-    where: 'You did not mark many Nos on these items.',
-    move: 'Track your next deal and fix the first step where it slows.'
+    diag: 'Your answers do not flag a clear weak point on this pass.',
+    where: 'You marked mostly Yes on these seven checks.',
+    move: 'Run your next deal through once and note the first stall.'
   };
 
   function diagV2AnswerWeight(v) {
-    if (v === 'yes') return 0;
+    if (v === 'yes') return 2;
     if (v === 'not_sure') return 1;
-    if (v === 'no') return 2;
+    if (v === 'no') return 0;
     return 0;
   }
 
   function diagV2ResultTypeFromTotal(total) {
-    if (total <= 4) return 'Ceiling';
+    if (total <= 4) return 'Breakdown';
     if (total <= 8) return 'Misalignment';
     if (total <= 11) return 'Constraint';
-    return 'Breakdown';
+    return 'Ceiling';
   }
 
   function diagV2RecomputeFromAnswers(dr) {
@@ -1843,7 +1843,7 @@
     };
   }
 
-  function diagV2SortedIssueRows(dr) {
+  function diagV2WorstIssueRows(dr) {
     var ans = dr && dr.answers;
     var byId = {};
     (ans || []).forEach(function (a) {
@@ -1851,16 +1851,15 @@
     });
     var rows = [];
     for (var id = 1; id <= 7; id++) {
-      var ph = DIAG_V2_PHRASES[id];
       rows.push({
         id: id,
         key: DIAG_V2_ISSUE_BY_ID[id].key,
         score: diagV2AnswerWeight(byId[id]),
-        ph: ph
+        ph: DIAG_V2_PHRASES[id]
       });
     }
     rows.sort(function (a, b) {
-      if (b.score !== a.score) return b.score - a.score;
+      if (a.score !== b.score) return a.score - b.score;
       return a.id - b.id;
     });
     return rows;
@@ -1886,12 +1885,12 @@
   }
 
   function diagV2PersonalizedCopy(dr) {
-    var sorted = diagV2SortedIssueRows(dr);
-    var topForCopy = [];
-    if (sorted[0] && sorted[0].score > 0) {
-      topForCopy.push(sorted[0]);
-      if (sorted[1] && sorted[1].score > 0) topForCopy.push(sorted[1]);
-    }
+    var worstFirst = diagV2WorstIssueRows(dr);
+    var topForCopy = worstFirst
+      .filter(function (r) {
+        return r.score < 2;
+      })
+      .slice(0, 2);
     var diagnosis;
     var whereLines;
     var firstMove;
@@ -1910,7 +1909,7 @@
         diagV2LowerFirst(diagV2StripPeriod(topForCopy[1].ph.diag)) +
         '.';
       whereLines = [topForCopy[0].ph.where, topForCopy[1].ph.where];
-      firstMove = sorted[0].ph.move;
+      firstMove = topForCopy[0].ph.move;
     }
     var bodyWords =
       diagV2WordCount(diagnosis) +
@@ -2687,7 +2686,7 @@
       '<p class="results-archetype-upsell__cta-preview">One of the remaining signs shows where your last 3 deals broke.</p>' +
       '<a class="results-archetype-upsell__cta-btn" href="' +
       esc(item.stripeLink) +
-      '">Get the full report — $27</a>' +
+      '">Get full report $27</a>' +
       '<p class="results-archetype-upsell__cta-sub">Instant delivery. No subscription.</p>' +
       '</div>';
   }

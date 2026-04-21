@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Report · Stephuary</title>
-  <meta name="description" content="Stephuary report." />
+  <meta name="description" content="Stephuary diagnostic report." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
@@ -30,10 +30,6 @@
       width: min(40rem, 100% - 2rem);
       margin: 0 auto;
       padding: 2.5rem 0 3rem;
-    }
-    .lede {
-      margin: 0 0 1.75rem;
-      font-size: 1.05rem;
     }
     section {
       margin: 0 0 1.75rem;
@@ -102,7 +98,9 @@
   <main id="report-root"></main>
   <script>
     var REPORT = {
-      lede: 'This pattern shows up when interest is high and decisions slow when price comes up.',
+      patternTitle: 'Your pattern',
+      patternBody: 'Interest is not the issue. Decisions slow when price comes up.',
+      signsTitle: 'All 7 signs',
       signs: [
         'You lowered your price to close',
         'Buyers ask how this is different',
@@ -112,15 +110,50 @@
         "Calls don't convert consistently",
         'Pricing comes up before value is clear'
       ],
-      dealsLead: 'The drop happened when the buyer tried to explain your offer to themselves.',
-      dealsRest: ['Your positioning had to carry the decision.', "It didn't."],
-      costing: ['Deals that were close', 'Time spent explaining', 'Lower pricing', 'Inconsistent revenue'],
-      rootCause: 'Your offer depends on explanation.',
-      leverageIntro: 'Your offer needs to answer:',
-      leverageQuestion: 'Why this',
-      leverageClose: 'That answer needs to be immediate.',
-      weekIntro: "Rewrite your offer so it's clear in under 10 seconds:",
-      weekBullets: ["What it is", "Who it's for", 'Why it wins']
+      dealsTitle: 'Where your last 3 deals broke',
+      dealsParas: [
+        'The drop happened when the buyer tried to explain your offer to themselves.',
+        'This is where they compare, justify, and decide.',
+        'Your positioning had to carry that decision.',
+        "It didn't."
+      ],
+      costingTitle: 'What this is costing',
+      costingBullets: ['2-5 lost deals per month', '$2K-$10K per deal', '10-20 hours lost monthly'],
+      costingImpact: ['Estimated impact:', '$4K-$30K/month'],
+      whyTitle: 'Why this is happening',
+      whyParas: [
+        'Your offer requires explanation.',
+        'Buyers cannot understand or justify it quickly.',
+        'That delay slows decisions.'
+      ],
+      saleTitle: "What's happening in the sale",
+      saleLines: [
+        'Interest builds',
+        'Conversation is strong',
+        'Price enters',
+        'Buyer pauses',
+        'Comparison starts',
+        'Decision slows'
+      ],
+      saleClose: 'Loss happens at the pause.',
+      leverageTitle: 'Leverage point',
+      leverageParas: ['Your offer must answer:', 'Why this', 'Immediately.'],
+      weekTitle: 'What to do this week',
+      weekIntro: 'Write your offer in one sentence:',
+      weekBullets: ['What it is', "Who it's for", 'What result it creates'],
+      weekOutro: [
+        'Remove any step where explanation is needed.',
+        'Add one line that anchors comparison.'
+      ],
+      fixedTitle: 'What changes when fixed',
+      fixedLines: ['Faster decisions', 'Fewer objections', 'Higher close rate', 'Less time explaining'],
+      fixedImpact: '10-20% lift = $2K-$15K/month',
+      notFixTitle: 'What this does not fix',
+      notFixLines: ['Delivery structure', 'Scaling', 'Dependency'],
+      nextTitle: 'Next step',
+      nextCta: 'Get your Snapshot $950',
+      nextSub: ['48-hour delivery', 'Clear next move'],
+      nextHref: '/snapshot'
     };
 
     function esc(s) {
@@ -137,35 +170,136 @@
           return '<li>' + esc(line) + '</li>';
         })
         .join('');
-      var dealsParas =
-        '<p>' + esc(d.dealsLead) + '</p>' +
-        d.dealsRest
-          .map(function (line) {
-            return '<p>' + esc(line) + '</p>';
-          })
-          .join('');
-      var costing = d.costing
+      var dealsParas = d.dealsParas
+        .map(function (line) {
+          return '<p>' + esc(line) + '</p>';
+        })
+        .join('');
+      var costing = d.costingBullets
         .map(function (line) {
           return '<li>' + esc(line) + '</li>';
         })
         .join('');
-      var week = d.weekBullets
+      var costingImpact = d.costingImpact
+        .map(function (line) {
+          return '<p>' + esc(line) + '</p>';
+        })
+        .join('');
+      var whyParas = d.whyParas
+        .map(function (line) {
+          return '<p>' + esc(line) + '</p>';
+        })
+        .join('');
+      var saleLines = d.saleLines
         .map(function (line) {
           return '<li>' + esc(line) + '</li>';
+        })
+        .join('');
+      var weekBullets = d.weekBullets
+        .map(function (line) {
+          return '<li>' + esc(line) + '</li>';
+        })
+        .join('');
+      var weekOutro = d.weekOutro
+        .map(function (line) {
+          return '<p>' + esc(line) + '</p>';
+        })
+        .join('');
+      var leverageParas = d.leverageParas
+        .map(function (line, i) {
+          if (i === 1) {
+            return '<p class="leverage-gap">' + esc(line) + '</p>';
+          }
+          return '<p>' + esc(line) + '</p>';
+        })
+        .join('');
+      var fixedLines = d.fixedLines
+        .map(function (line) {
+          return '<li>' + esc(line) + '</li>';
+        })
+        .join('');
+      var notFix = d.notFixLines
+        .map(function (line) {
+          return '<li>' + esc(line) + '</li>';
+        })
+        .join('');
+      var nextSub = (d.nextSub || [])
+        .map(function (line) {
+          return '<p>' + esc(line) + '</p>';
         })
         .join('');
 
       var root = document.getElementById('report-root');
       root.innerHTML =
-        '<p class="lede">' + esc(d.lede) + '</p>' +
-        '<section><h2>All 7 signs</h2><ul>' + signs + '</ul></section>' +
-        '<section><h2>Where your last 3 deals broke</h2><div class="block-lines">' + dealsParas + '</div></section>' +
-        '<section><h2>What this is costing</h2><ul>' + costing + '</ul></section>' +
-        '<section><h2>Root cause</h2><p>' + esc(d.rootCause) + '</p></section>' +
-        '<section><h2>Leverage point</h2><p>' + esc(d.leverageIntro) + '</p>' +
-        '<p class="leverage-gap">' + esc(d.leverageQuestion) + '</p>' +
-        '<p>' + esc(d.leverageClose) + '</p></section>' +
-        '<section><h2>What to do this week</h2><p>' + esc(d.weekIntro) + '</p><ul>' + week + '</ul></section>' +
+        '<section><h2>' +
+        esc(d.patternTitle) +
+        '</h2><p>' +
+        esc(d.patternBody) +
+        '</p></section>' +
+        '<section><h2>' +
+        esc(d.signsTitle) +
+        '</h2><ul>' +
+        signs +
+        '</ul></section>' +
+        '<section><h2>' +
+        esc(d.dealsTitle) +
+        '</h2><div class="block-lines">' +
+        dealsParas +
+        '</div></section>' +
+        '<section><h2>' +
+        esc(d.costingTitle) +
+        '</h2><ul>' +
+        costing +
+        '</ul>' +
+        costingImpact +
+        '</section>' +
+        '<section><h2>' +
+        esc(d.whyTitle) +
+        '</h2><div class="block-lines">' +
+        whyParas +
+        '</div></section>' +
+        '<section><h2>' +
+        esc(d.saleTitle) +
+        '</h2><ul>' +
+        saleLines +
+        '</ul><p>' +
+        esc(d.saleClose) +
+        '</p></section>' +
+        '<section><h2>' +
+        esc(d.leverageTitle) +
+        '</h2>' +
+        leverageParas +
+        '</section>' +
+        '<section><h2>' +
+        esc(d.weekTitle) +
+        '</h2><p>' +
+        esc(d.weekIntro) +
+        '</p><ul>' +
+        weekBullets +
+        '</ul>' +
+        weekOutro +
+        '</section>' +
+        '<section><h2>' +
+        esc(d.fixedTitle) +
+        '</h2><ul>' +
+        fixedLines +
+        '</ul><p>' +
+        esc(d.fixedImpact) +
+        '</p></section>' +
+        '<section><h2>' +
+        esc(d.notFixTitle) +
+        '</h2><ul>' +
+        notFix +
+        '</ul></section>' +
+        '<section><h2>' +
+        esc(d.nextTitle) +
+        '</h2><p><a href="' +
+        esc(d.nextHref) +
+        '">' +
+        esc(d.nextCta) +
+        '</a></p>' +
+        nextSub +
+        '</section>' +
         '<p class="foot"><a href="/">Home</a></p>';
     }
 
