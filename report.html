@@ -9,8 +9,13 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/stephuary-motion.css" />
+  <script src="/js/report-components.js"></script>
   <style>
     :root {
+      /* Spacing scale — section / block / micro */
+      --rpt-space-section: 64px;
+      --rpt-space-block: 32px;
+      --rpt-space-micro: 16px;
       --bg: #0a0a0a;
       --text: #f2f0ec;
       --muted: #c9c4be;
@@ -23,6 +28,16 @@
       --max: 40rem;
     }
     * { box-sizing: border-box; }
+    /* Native report shell components — light DOM, no shadow (IDs + diagnostic JS unchanged) */
+    report-hero-section,
+    report-download-block,
+    report-start-here-block,
+    report-accordion-group,
+    report-accordion-item,
+    report-impact-block,
+    report-final-cta {
+      display: block;
+    }
     body {
       margin: 0;
       background: var(--bg);
@@ -46,34 +61,50 @@
       margin: 0 auto;
       display: flex;
       flex-direction: column;
-      gap: 0.72rem;
+      gap: clamp(var(--rpt-space-block), 4vw, 48px);
     }
+    /* H2 — section / kicker labels */
     .report-title {
       font-size: 0.68rem;
       letter-spacing: 0.18em;
       text-transform: uppercase;
       color: var(--muted);
-      margin: 0 0 0.35rem;
+      margin: 0 0 var(--rpt-space-micro);
       font-weight: 600;
     }
+    /* H1 — archetype title (largest on page) */
     .report-sticky h1 {
-      font-size: clamp(1.2rem, 3.4vw, 1.55rem);
+      font-size: clamp(1.65rem, 5.2vw, 2.5rem);
       font-weight: 800;
-      margin: 0 0 0.35rem;
-      letter-spacing: -0.03em;
-      line-height: 1.12;
+      margin: 0 0 var(--rpt-space-micro);
+      letter-spacing: -0.035em;
+      line-height: 1.08;
     }
+    /* Diagnosis scroll: keeps Snapshot + Download in first viewport on typical laptops */
+    .report-sticky__diagnosis {
+      flex: 1 1 auto;
+      min-height: 0;
+      max-height: min(34vh, 12.5rem);
+      overflow-y: auto;
+      margin: 0 0 var(--rpt-space-block);
+      padding-right: 0.25rem;
+      -webkit-overflow-scrolling: touch;
+    }
+    .report-sticky__diagnosis:focus-within {
+      outline: none;
+    }
+    /* Body — diagnosis */
     .report-pattern {
-      font-size: 0.94rem;
+      font-size: 0.96rem;
       color: rgba(250, 248, 244, 0.96);
       margin: 0;
       max-width: 36rem;
-      line-height: 1.48;
+      line-height: 1.52;
     }
     .rpt-hero-cta {
-      padding: 0.55rem 0 0.15rem;
+      padding: var(--rpt-space-micro) 0 0;
       border-top: 1px solid rgba(242, 240, 236, 0.1);
-      margin-top: 0.15rem;
+      margin-top: var(--rpt-space-micro);
     }
     .rpt-hero-cta__head {
       margin: 0 0 0.42rem;
@@ -139,8 +170,8 @@
       color: rgba(201, 196, 190, 0.95);
     }
     .rpt-download-asset {
-      margin-top: 0.35rem;
-      padding: 0.85rem 0 0.35rem;
+      margin-top: var(--rpt-space-micro);
+      padding: var(--rpt-space-block) 0 var(--rpt-space-micro);
       border-top: 1px solid rgba(242, 240, 236, 0.1);
     }
     .rpt-download-asset__title {
@@ -204,7 +235,8 @@
       padding: 0.55rem 1rem 2.1rem;
     }
     .report-acc {
-      margin-top: 0.35rem;
+      margin-top: var(--rpt-space-section);
+      padding-top: var(--rpt-space-micro);
       border-top: 1px solid var(--line);
     }
     .report-acc-item {
@@ -237,9 +269,10 @@
       min-width: 0;
       flex: 1;
     }
+    /* H3 — diagnostic accordion row title */
     .report-acc-trigger__title {
       font-weight: 700;
-      font-size: 0.88rem;
+      font-size: 0.93rem;
       color: #faf8f4;
       line-height: 1.2;
     }
@@ -315,8 +348,8 @@
     }
 
     .rpt-impact-block {
-      margin: 1.15rem 0 1.25rem;
-      padding: 0.85rem 0 0.2rem;
+      margin: var(--rpt-space-block) 0;
+      padding: clamp(40px, 6vw, 64px) 0;
     }
     .rpt-impact-block__kicker {
       margin: 0 0 0.45rem;
@@ -343,16 +376,17 @@
 
     /* Execution system (2-layer entry + nested accordions) */
     .rpt-sys {
-      margin-top: 1.05rem;
-      padding: 1rem 0 1.05rem;
+      margin-top: var(--rpt-space-section);
+      padding: var(--rpt-space-block) 0;
       border-top: 1px solid rgba(196, 163, 90, 0.28);
       border-bottom: 1px solid var(--line);
     }
+    /* H2 — major section title */
     .rpt-sys-entry__title {
-      font-size: clamp(1.02rem, 2.2vw, 1.2rem);
+      font-size: clamp(1.08rem, 2.4vw, 1.28rem);
       font-weight: 700;
       letter-spacing: -0.02em;
-      margin: 0 0 0.32rem;
+      margin: 0 0 var(--rpt-space-micro);
       color: #faf8f4;
     }
     .rpt-sys-entry__line {
@@ -406,9 +440,8 @@
       border-top: 1px solid var(--line);
     }
     .rpt-sys-start {
-      margin: 0.65rem 0 0.75rem;
-      padding: 0.55rem 0 0.65rem;
-      border-top: 1px solid rgba(242, 240, 236, 0.1);
+      margin: var(--rpt-space-block) 0 var(--rpt-space-micro);
+      padding: var(--rpt-space-micro) 0;
     }
     .rpt-sys-start__label {
       margin: 0 0 0.38rem;
@@ -421,7 +454,7 @@
     .rpt-sys-start__steps {
       margin: 0;
       padding: 0 0 0 1.1rem;
-      font-size: 0.84rem;
+      font-size: 0.9rem;
       line-height: 1.55;
       color: rgba(242, 240, 236, 0.92);
     }
@@ -433,10 +466,10 @@
       display: flex;
       flex-direction: column;
     }
-    .rpt-nest-group {
-      margin-bottom: 1.35rem;
+    report-accordion-group.rpt-nest-group {
+      margin-bottom: calc(var(--rpt-space-block) * 2);
     }
-    .rpt-nest-group:last-child {
+    report-accordion-group.rpt-nest-group:last-child {
       margin-bottom: 0;
     }
     .rpt-nest-group__label {
@@ -478,13 +511,14 @@
       min-width: 0;
       flex: 1;
     }
+    /* H3 — nested accordion row title */
     .rpt-nest-trigger__title {
       font-weight: 700;
-      font-size: 0.78rem;
-      letter-spacing: 0.06em;
+      font-size: 0.8rem;
+      letter-spacing: 0.07em;
       text-transform: uppercase;
       color: #faf8f4;
-      line-height: 1.2;
+      line-height: 1.22;
     }
     .rpt-nest-trigger__pv {
       font-size: 0.76rem;
@@ -726,9 +760,12 @@
       color: var(--accent);
     }
 
+    report-final-cta {
+      margin-top: var(--rpt-space-section);
+    }
     .rpt-final-wrap {
-      margin-top: 1.35rem;
-      padding-top: 1rem;
+      margin-top: 0;
+      padding-top: 0;
     }
     .rpt-next-block {
       margin-top: 0;
@@ -848,8 +885,8 @@
     .rpt-value-strip,
     .rpt-gap-strip {
       max-width: var(--max);
-      margin: 1.1rem auto 0;
-      padding: 0.95rem 0 0.75rem;
+      margin: var(--rpt-space-section) auto 0;
+      padding: var(--rpt-space-block) 0;
       border-top: 1px solid var(--line);
     }
     .rpt-value-strip__h,
@@ -1100,6 +1137,11 @@
         border-bottom: 1px solid #ccc;
         backdrop-filter: none;
       }
+      .report-sticky__diagnosis {
+        max-height: none;
+        overflow: visible;
+        margin-bottom: 0.35rem;
+      }
       .report-title,
       .report-pattern,
       .report-acc-panel-inner,
@@ -1122,11 +1164,12 @@
         display: none !important;
       }
       .report-acc-item,
+      report-accordion-item,
       .rpt-next-block,
       .rpt-nest-item,
       .rpt-sys,
       .rpt-impact-block,
-      .rpt-nest-group {
+      report-accordion-group {
         break-inside: avoid;
       }
       .report-acc-panel,
@@ -1225,11 +1268,13 @@
   </style>
 </head>
 <body>
-  <header class="report-sticky">
+  <report-hero-section class="report-sticky">
     <div class="report-sticky-inner">
       <p class="report-title">Diagnostic read · execution system</p>
       <h1 id="report-pattern-head">Your pattern</h1>
-      <p class="report-pattern" id="report-pattern-body"></p>
+      <div class="report-sticky__diagnosis">
+        <p class="report-pattern" id="report-pattern-body"></p>
+      </div>
       <div class="rpt-hero-cta" id="rpt-hero-cta" aria-label="Next step">
         <h2 class="rpt-hero-cta__head" id="rpt-hero-head">Fix the exact step that's limiting you</h2>
         <div class="rpt-hero-cta__actions" id="rpt-hero-actions">
@@ -1239,15 +1284,15 @@
         <a class="rpt-hero-cta__defer" id="rpt-hero-cta-defer" href="/snapshot" hidden>Precision pass · $950 (after signal)</a>
         <p class="rpt-hero-cta__sub" id="rpt-hero-sub">48-hour breakdown<br />Exact step to fix first</p>
       </div>
-      <div class="rpt-download-asset">
+      <report-download-block class="rpt-download-asset">
         <h3 class="rpt-download-asset__title">Download your full system</h3>
         <p class="rpt-download-asset__line">Everything on this page, structured to run and keep</p>
         <div class="report-actions">
           <button type="button" class="report-btn-download report-btn-download--asset" id="report-download-pdf">Download PDF</button>
         </div>
-      </div>
+      </report-download-block>
     </div>
-  </header>
+  </report-hero-section>
 
   <main class="report-main">
     <div class="report-acc" id="report-acc-core" aria-label="Diagnostic breakdown"></div>
@@ -1261,21 +1306,20 @@
           <li>Validate → Adapt → Distribute</li>
           <li>Review → Refine → Monetize</li>
         </ul>
-        <div class="rpt-sys-start">
+        <report-start-here-block class="rpt-sys-start">
           <p class="rpt-sys-start__label">Start here</p>
           <ol class="rpt-sys-start__steps">
             <li>Open Day 1</li>
             <li>Execute</li>
             <li>Come back on Day 7</li>
           </ol>
-        </div>
+        </report-start-here-block>
         <details class="rpt-sys-details" id="rpt-sys-details">
           <summary class="rpt-sys-details__summary">Open system <span class="rpt-sys-details__arrow" aria-hidden="true">↓</span></summary>
           <div class="rpt-sys-details__inner">
             <div class="rpt-nest-acc" id="rpt-nest-root" aria-label="System steps">
 
-              <div class="rpt-nest-group" data-rpt-nest-group>
-                <p class="rpt-nest-group__label">System</p>
+              <report-accordion-group class="rpt-nest-group" data-rpt-nest-group group-label="System">
               <article class="rpt-nest-item" data-nest-item>
                 <button type="button" class="rpt-nest-trigger" data-nest-trigger aria-expanded="false">
                   <span class="rpt-nest-trigger__stack">
@@ -1432,10 +1476,9 @@ Target audience:
                   </div>
                 </div>
               </article>
-              </div>
+              </report-accordion-group>
 
-              <div class="rpt-nest-group" data-rpt-nest-group>
-                <p class="rpt-nest-group__label">Opportunities</p>
+              <report-accordion-group class="rpt-nest-group" data-rpt-nest-group group-label="Opportunities">
               <article class="rpt-nest-item" data-nest-item>
                 <button type="button" class="rpt-nest-trigger" data-nest-trigger aria-expanded="false">
                   <span class="rpt-nest-trigger__stack">
@@ -1604,10 +1647,9 @@ Content themes:
                   </div>
                 </div>
               </article>
-              </div>
+              </report-accordion-group>
 
-              <div class="rpt-nest-group" data-rpt-nest-group>
-                <p class="rpt-nest-group__label">Monetization</p>
+              <report-accordion-group class="rpt-nest-group" data-rpt-nest-group group-label="Monetization">
               <article class="rpt-nest-item" data-nest-item>
                 <button type="button" class="rpt-nest-trigger" data-nest-trigger aria-expanded="false">
                   <span class="rpt-nest-trigger__stack">
@@ -1892,7 +1934,7 @@ Back catalog depth:
                   </div>
                 </div>
               </article>
-              </div>
+              </report-accordion-group>
 
             </div>
           </div>
@@ -1936,6 +1978,7 @@ Back catalog depth:
       </p>
     </section>
 
+    <report-final-cta>
     <div class="rpt-final-wrap">
       <div class="rpt-next-block rpt-next-block--center" id="rpt-next-block" aria-labelledby="rpt-next-head">
         <p class="rpt-next-micro" id="rpt-next-micro"></p>
@@ -1963,6 +2006,7 @@ Back catalog depth:
         </div>
       </div>
     </div>
+    </report-final-cta>
   </main>
 
   <p class="foot"><a href="/">Home</a> · <a href="/capture">Diagnostic</a></p>
@@ -2219,10 +2263,10 @@ Back catalog depth:
     function compressReportPreview(s) {
       if (s == null || s === '') return '';
       var t = String(s).replace(/\s+/g, ' ').trim();
-      if (t.length <= 58) return t;
-      var cut = t.slice(0, 58);
+      if (t.length <= 48) return t;
+      var cut = t.slice(0, 48);
       var sp = cut.lastIndexOf(' ');
-      return (sp > 28 ? cut.slice(0, sp) : cut) + '…';
+      return (sp > 22 ? cut.slice(0, sp) : cut) + '…';
     }
 
     function renderAccordionHtml(sections) {
@@ -2233,7 +2277,7 @@ Back catalog depth:
             ? '<span class="report-acc-trigger__pv">' + esc(compressReportPreview(sec.preview)) + '</span>'
             : '';
           return (
-            '<article class="report-acc-item' +
+            '<report-accordion-item class="report-acc-item' +
             extra +
             '" data-rpt-item>' +
             '<button type="button" class="report-acc-trigger" data-rpt-trigger aria-expanded="false">' +
@@ -2247,7 +2291,7 @@ Back catalog depth:
             '<div class="report-acc-panel" data-rpt-panel><div class="report-acc-panel-inner">' +
             sec.html +
             '</div></div>' +
-            '</article>'
+            '</report-accordion-item>'
           );
         })
         .join('');
@@ -2287,7 +2331,7 @@ Back catalog depth:
       if (old && old.parentNode) old.parentNode.removeChild(old);
       var costing = root.querySelector('.report-acc-item--costing');
       if (!costing) return;
-      var block = document.createElement('div');
+      var block = document.createElement('report-impact-block');
       block.id = 'rpt-impact-block';
       block.className = 'rpt-impact-block';
       block.innerHTML =
