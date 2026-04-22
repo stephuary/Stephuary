@@ -2835,7 +2835,14 @@
     var ctaPri = document.getElementById('results-primary-cta');
     var flowLinks = document.getElementById('results-flow-links');
     if (ctaPri) {
-      ctaPri.setAttribute('href', bundle.primaryHref);
+      /* diag-v2: when the bundle points at the generic $27 link, substitute the
+         archetype-specific Stripe Payment Link so each pattern gets its own
+         product for attribution + per-archetype fulfillment. */
+      var ctaHref = bundle.primaryHref;
+      if (ctaHref === STRIPE_FULL_REPORT_27) {
+        ctaHref = stripeReportHref(ak);
+      }
+      ctaPri.setAttribute('href', ctaHref);
       ctaPri.textContent = bundle.primaryLabel;
     }
     if (flowLinks) {
