@@ -408,3 +408,54 @@ button.btn:hover {
    .hero-eyebrow) are intentionally avoided — those use 9-11px
    micro type and bumping them to --fs-caption (14px) would
    shout on the hero. */
+
+/* =============================================================
+   §7  Sitewide identity unification (Prompt 5)
+   ── The homepage is the visual source of truth. Its stack:
+      serif Playfair Display · sans Inter · mono JetBrains Mono
+      bg #05050f with plum/oxblood radial atmosphere
+      gold #c8a96e, text #ffffff
+   These utilities let any page opt-in to the canonical identity
+   with one class, without rewriting page-specific CSS.
+============================================================= */
+
+/* Canonical font stacks — pages that ship their own :root can
+   simply re-point their --serif / --sans / --mono aliases to these
+   names. Google Fonts import for the three families lives on every
+   page's <head> (kept in-page so each page can add subsets/weights). */
+:root {
+  --sh-font-serif: 'Playfair Display', Georgia, 'Times New Roman', serif;
+  --sh-font-sans:  'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --sh-font-mono:  'JetBrains Mono', ui-monospace, 'Menlo', monospace;
+
+  /* Canonical body atmosphere — the exact gradient the homepage paints.
+     Exposed as a token so outlier pages can reference it from their
+     own body {} rule without duplicating the literal gradient string. */
+  --sh-atmosphere:
+    radial-gradient(ellipse 80% 60% at 50% 0%,   rgba(61, 12, 44, 1)     0%, transparent 60%),
+    radial-gradient(ellipse 60% 40% at 20% 100%, rgba(61, 12, 44, 0.6)   0%, transparent 50%),
+    radial-gradient(ellipse 50% 40% at 80% 60%,  rgba(139, 47, 201, 0.12) 0%, transparent 50%);
+  --sh-bg-base: #05050f;
+  --sh-text-primary: #ffffff;
+  --sh-text-secondary: #a0a0c0;   /* 8.3:1 on #05050f — AAA */
+  --sh-text-muted: #8b8ba5;       /* 5.4:1 — AA */
+  --sh-gold: #c8a96e;             /* canonical brand gold */
+  --sh-line: rgba(255, 255, 255, 0.08);
+}
+
+/* Single-class opt-in: pages that want the canonical look without
+   editing their body declaration add `class="sh-atmosphere"` to
+   <body>. Pages that already set their own bg/font-family inline
+   are aligned via targeted swaps in the page itself. */
+body.sh-atmosphere {
+  background: var(--sh-bg-base);
+  background-image: var(--sh-atmosphere);
+  color: var(--sh-text-primary);
+  font-family: var(--sh-font-sans);
+}
+
+/* Helper classes pages can use on headings that don't already pass
+   through the token system. Matches index.html's serif voice. */
+.sh-type-serif { font-family: var(--sh-font-serif) !important; }
+.sh-type-sans  { font-family: var(--sh-font-sans)  !important; }
+.sh-type-mono  { font-family: var(--sh-font-mono)  !important; }
