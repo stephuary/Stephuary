@@ -459,11 +459,29 @@
       color: var(--text-primary);
       margin-bottom: 14px;
       letter-spacing: var(--letter-h, -0.02em);
-      max-width: 36ch;
+      max-width: none;
     }
-    /* On phones the explicit <br> becomes a soft wrap so the two
-       sentences still fit without creating a tall orphan line. */
-    @media (max-width: 560px) {
+    /* Desktop: widen the hero container and cap the headline size so
+       "Most business stalls are structural." sits on one line. The
+       explicit <br> puts the second sentence on line 2. */
+    @media (min-width: 769px) {
+      #hero.hero > .container {
+        max-width: 1180px;
+      }
+      #hero.hero .hero-headline,
+      #hero.hero .home-hero__title {
+        font-size: clamp(2rem, 3.15vw, 3rem);
+        letter-spacing: -0.015em;
+        white-space: nowrap;
+      }
+      #hero.hero .hero-headline br,
+      #hero.hero .home-hero__title br {
+        white-space: normal;
+      }
+    }
+    /* Phones: drop the <br> so the two sentences reflow naturally and
+       we don't force nowrap past the viewport. */
+    @media (max-width: 768px) {
       #hero.hero .hero-headline br,
       #hero.hero .home-hero__title br {
         display: none;
