@@ -36,7 +36,7 @@
   <link rel="stylesheet" href="/stephuary-free-mode.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800;900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -65,8 +65,8 @@
       --cta-royal-blue: #4169e1;
 
       --text-primary: #ffffff;
-      --text-secondary: #a0a0c0;
-      --text-muted: #4a4a6a;
+      --text-secondary: #a0a0c0; /* 8.3:1 on #05050F (AAA) */
+      --text-muted: #8b8ba5;     /* before #4a4a6a (2.25:1 FAIL); after 5.4:1 (AA) */
       --text-label: #c8a96e;
 
       --glow-plum: 0 0 20px rgba(139, 47, 201, 0.6), 0 0 60px rgba(139, 47, 201, 0.25);
@@ -261,119 +261,23 @@
       z-index: var(--z-content);
     }
 
-    /* ── Nav (Prompt 2) ── */
-    nav#main-nav {
+    /* ── Nav (Prompt 2) ── canonical site-nav chrome is layered on top of /stephuary-a11y.css.
+       We only keep the fixed-position + blur background that's specific to home. */
+    nav#main-nav.site-nav {
       position: fixed;
       top: 0;
       left: 0;
       right: 0;
-      height: 60px;
       z-index: var(--z-nav);
       background: rgba(5, 5, 15, 0.85);
       backdrop-filter: blur(24px);
       -webkit-backdrop-filter: blur(24px);
       border-bottom: 1px solid rgba(139, 47, 201, 0.18);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 40px;
       transition: border-color 0.25s ease, background 0.25s ease;
     }
     nav#main-nav.is-scrolled {
       border-bottom-color: rgba(139, 47, 201, 0.28);
       background: rgba(5, 5, 15, 0.92);
-    }
-    @media (max-width: 768px) {
-      nav#main-nav {
-        height: 52px;
-        padding: 0 20px;
-      }
-    }
-
-    .nav-brand {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      min-width: 0;
-    }
-    .nav-mark.nav-wordmark {
-      font-family: var(--font-sans);
-      font-weight: 700;
-      font-size: 14px;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      color: var(--text-primary);
-      text-decoration: none;
-      transition: color 0.2s ease;
-    }
-    .nav-mark.nav-wordmark:hover {
-      color: var(--neon-violet);
-    }
-    .nav-tagline {
-      font-family: var(--font-mono);
-      font-size: 9px;
-      letter-spacing: 0.11em;
-      text-transform: uppercase;
-      color: var(--text-muted);
-      white-space: nowrap;
-      opacity: 0.86;
-    }
-
-    nav#main-nav .nav-links {
-      display: flex;
-      align-items: center;
-      gap: 32px;
-      list-style: none;
-      margin: 0;
-      padding: 0;
-    }
-    nav#main-nav .nav-links li {
-      list-style: none;
-      margin: 0;
-      padding: 0;
-    }
-    nav#main-nav .nav-links a {
-      font-family: var(--font-mono);
-      font-size: 11px;
-      font-weight: 500;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--text-secondary);
-      text-decoration: none;
-      position: relative;
-      padding-bottom: 2px;
-      transition: color 0.2s ease;
-    }
-    nav#main-nav .nav-links a::after {
-      content: '';
-      position: absolute;
-      bottom: -2px;
-      left: 0;
-      width: 0;
-      height: 1px;
-      background: var(--neon-violet);
-      transition: width 0.25s ease;
-    }
-    nav#main-nav .nav-links a:hover {
-      color: var(--text-primary);
-    }
-    nav#main-nav .nav-links a:hover::after {
-      width: 100%;
-    }
-    @media (max-width: 768px) {
-      .nav-brand {
-        gap: 0;
-      }
-      .nav-tagline {
-        display: none;
-      }
-      nav#main-nav .nav-links {
-        gap: 20px;
-      }
-      nav#main-nav .nav-links a {
-        font-size: 10px;
-        letter-spacing: 0.15em;
-      }
     }
 
     /* ── Hero (Prompt 2) ── */
@@ -388,8 +292,8 @@
       align-content: flex-start;
       /* Main-axis = horizontal: flex-start; .container uses margin:0 auto for horizontal centering */
       justify-content: flex-start;
-      /* Fixed nav clears the top */
-      padding-top: calc(60px + 12px);
+      /* Fixed nav clears the top (canonical .site-nav ≈ 72px tall) */
+      padding-top: calc(72px + 12px);
       padding-bottom: 21px;
       overflow: hidden;
       z-index: var(--z-content);
@@ -401,7 +305,7 @@
     }
     @media (max-width: 768px) {
       #hero.hero {
-        padding-top: calc(52px + 8px);
+        padding-top: calc(64px + 8px);
         min-height: min(69svh, 510px);
         align-items: flex-start;
       }
@@ -494,12 +398,12 @@
     #hero.hero .hero-headline,
     #hero.hero .home-hero__title {
       font-family: var(--font-serif);
-      font-size: clamp(32px, 5.2vw, 52px);
+      font-size: var(--fs-h1);
       font-weight: 800;
-      line-height: 1.1;
+      line-height: var(--lh-h1, 1.1);
       color: var(--text-primary);
       margin-bottom: 14px;
-      letter-spacing: -0.02em;
+      letter-spacing: var(--letter-h, -0.02em);
       max-width: 22ch;
     }
     .headline-accent {
@@ -510,7 +414,7 @@
     @media (max-width: 768px) {
       #hero.hero .hero-headline,
       #hero.hero .home-hero__title {
-        font-size: clamp(26px, 7.5vw, 36px);
+        /* var(--fs-h1) mobile override handled by stephuary-design-tokens.css */
         margin-bottom: 12px;
         max-width: 100%;
       }
@@ -1298,12 +1202,7 @@
         min-height: min(69svh, 510px);
       }
     }
-    @media (max-width: 640px) {
-      nav#main-nav {
-        height: 52px;
-        padding: 0 20px;
-      }
-    }
+    /* mobile nav sizing handled by .site-nav in /stephuary-a11y.css */
 
     .btn-primary.home-diag-cta.sh-home-results-cta {
       transform: none !important;
@@ -1409,7 +1308,8 @@
       border-color: rgba(255, 255, 255, 0.1);
     }
     .home-mfs__input:focus {
-      outline: none;
+      outline: 2px solid #C9A24A;
+      outline-offset: 2px;
       border-color: rgba(200, 169, 110, 0.42);
       background: rgba(0, 0, 0, 0.5);
       box-shadow: 0 0 0 1px rgba(200, 169, 110, 0.18), 0 0 16px rgba(65, 105, 225, 0.16);
@@ -1420,11 +1320,37 @@
     }
     .home-mfs__error {
       font-family: var(--font-sans);
-      font-size: 11px;
-      color: rgba(232, 160, 140, 0.95);
+      font-size: 12px;
+      color: #f4a19a; /* ~6.2:1 on deep navy (AA body) */
       margin: -4px 0 0;
-      line-height: 1.35;
+      line-height: 1.4;
       text-align: left;
+    }
+    .home-mfs__field {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .home-mfs__label {
+      /* Visually hidden; placeholder acts as the visual cue, but label
+         is read by assistive tech and wired via `for`. */
+      position: absolute !important;
+      width: 1px; height: 1px;
+      margin: -1px; padding: 0;
+      overflow: hidden; clip: rect(0 0 0 0);
+      white-space: nowrap; border: 0;
+    }
+    .home-mfs__field-error {
+      font-family: var(--font-sans);
+      font-size: 12px;
+      color: #f4a19a;
+      line-height: 1.4;
+      letter-spacing: 0.01em;
+      min-height: 0;
+    }
+    .home-mfs__input[aria-invalid="true"] {
+      border-color: rgba(220, 80, 80, 0.65);
+      box-shadow: 0 0 0 1px rgba(220, 80, 80, 0.35);
     }
     .home-mfs__form-card .home-mfs__submit {
       width: 100%;
@@ -1513,7 +1439,7 @@
     }
     /* Prevent any utility/shell stylesheet from turning .page/main into flex columns that vertically center #hero */
     body[data-sh-env="home"] #site-shell .page,
-    body[data-sh-env="home"] #main-content {
+    body[data-sh-env="home"] #main {
       display: block !important;
       flex-direction: unset !important;
       flex-wrap: unset !important;
@@ -1524,7 +1450,7 @@
     }
     body[data-sh-env="home"] #site-shell,
     body[data-sh-env="home"] #site-shell .page,
-    body[data-sh-env="home"] #main-content {
+    body[data-sh-env="home"] #main {
       padding-top: 0 !important;
       margin-top: 0 !important;
     }
@@ -1547,42 +1473,45 @@
     }
     @media (max-width: 768px) {
       body[data-sh-env="home"] #hero.hero {
-        padding-top: calc(52px + 12px) !important;
+        padding-top: calc(64px + 12px) !important;
       }
     }
   </style>
+  <link rel="stylesheet" href="/stephuary-a11y.css">
+  <link rel="stylesheet" href="/stephuary-brand-polish.css">
+  <link rel="manifest" href="/site.webmanifest">
 </head>
 <body data-sh-env="home">
+  <a href="#main" class="skip-link">Skip to content</a>
   <canvas id="starfield" class="home-starfield" aria-hidden="true"></canvas>
 
   <!-- ═══ Site Shell ═══ -->
   <div id="site-shell" class="site-shell">
   <div class="page">
-    <nav id="main-nav" aria-label="Site">
-      <div class="nav-brand">
-        <a href="/" class="nav-mark nav-wordmark">Stephuary</a>
-        <span class="nav-tagline">turn scattered ideas into structured revenue</span>
+    <nav class="site-nav" id="main-nav" aria-label="Primary">
+      <div class="site-nav__brand">
+        <a href="/" class="site-nav__wordmark" aria-label="Stephuary — home">Stephuary</a>
       </div>
-      <ul class="nav-links">
-        <li><a href="/pricing" class="nav-link">Pricing</a></li>
-        <li><a href="/access" class="nav-link">.5% Club</a></li>
-        <li>
-          <a href="https://stephuary.substack.com" class="nav-link" target="_blank" rel="noopener">Substack</a>
-        </li>
+      <ul class="site-nav__list">
+        <li><a href="/" class="site-nav__link" aria-current="page">Home</a></li>
+        <li><a href="/pricing" class="site-nav__link">Pricing</a></li>
+        <li><a href="/access" class="site-nav__link">Access</a></li>
+        <li><a href="/only-sometimes" class="site-nav__link">Only Sometimes</a></li>
+        <li><a href="https://stephuary.substack.com" class="site-nav__link" target="_blank" rel="noopener">Substack</a></li>
       </ul>
     </nav>
 
-    <main id="main-content">
+    <main id="main">
 
       <!-- ═══ HERO ═══ -->
-      <section id="hero" class="hero" data-sh-flow-section>
+      <section id="hero" class="hero" data-sh-flow-section data-sh-hero-intro>
         <div class="grid-floor" aria-hidden="true"></div>
         <div class="container">
           <div id="hero-parallax" class="hero-content">
             <h1 class="hero-headline home-hero__title reveal" id="hero-h1">Your positioning, scored.</h1>
             <p class="hero-sub home-hero__sub reveal reveal-delay-1" id="hero-lead">Answer seven questions. Get a 0–2 clarity score, your weakest positioning lever, and the one move to tighten this week.</p>
             <div class="hero-actions reveal reveal-delay-1" id="hero-actions">
-              <a href="/capture" class="btn-primary home-diag-cta" id="hero-cta-primary">Get your score →</a>
+              <a href="/capture" class="btn btn--primary home-diag-cta" id="hero-cta-primary">Get your score →</a>
             </div>
             <div class="hero-meta reveal reveal-delay-2" id="hero-meta-display">3 minutes • free • immediate result</div>
             <p class="home-hero__authority reveal reveal-delay-2" id="hero-authority">Built from 20+ years inside real operations</p>
@@ -1665,67 +1594,87 @@
             <div class="home-mfs__form-card">
               <h2 class="home-mfs__title" id="home-mfs-heading">Work with me 1:1 — monthly cohort</h2>
               <p class="home-mfs__copy">One person selected each month</p>
-              <form id="home-mfs-form" class="home-mfs__form" autocomplete="on" novalidate>
-                <input
-                  type="text"
-                  id="home-mfs-name"
-                  class="home-mfs__input"
-                  name="name"
-                  required
-                  maxlength="120"
-                  autocomplete="name"
-                  spellcheck="false"
-                  placeholder="Name"
-                  aria-label="Name"
-                />
-                <input
-                  type="email"
-                  id="home-mfs-email"
-                  class="home-mfs__input"
-                  name="email"
-                  required
-                  placeholder="Email"
-                  inputmode="email"
-                  autocapitalize="off"
-                  spellcheck="false"
-                  aria-label="Email"
-                />
-                <input
-                  type="text"
-                  id="home-mfs-building"
-                  class="home-mfs__input"
-                  name="building"
-                  required
-                  maxlength="280"
-                  autocomplete="off"
-                  spellcheck="true"
-                  placeholder="What are you building?"
-                  aria-label="What are you building?"
-                />
-                <input
-                  type="text"
-                  id="home-mfs-come-for"
-                  class="home-mfs__input"
-                  name="come_for"
-                  required
-                  maxlength="280"
-                  autocomplete="off"
-                  spellcheck="true"
-                  placeholder="What do people already come to you for?"
-                  aria-label="What do people already come to you for?"
-                />
-                <input
-                  type="text"
-                  id="home-mfs-offer-first"
-                  class="home-mfs__input"
-                  name="offer_first"
-                  required
-                  maxlength="280"
-                  autocomplete="off"
-                  spellcheck="true"
-                  placeholder="What would you turn into a high-value offer first?"
-                  aria-label="What would you turn into a high-value offer first?"
-                />
+              <form id="home-mfs-form" class="home-mfs__form" autocomplete="on">
+                <div class="home-mfs__field">
+                  <label for="home-mfs-name" class="home-mfs__label">Name</label>
+                  <input
+                    type="text"
+                    id="home-mfs-name"
+                    class="home-mfs__input"
+                    name="name"
+                    required
+                    maxlength="120"
+                    autocomplete="name"
+                    spellcheck="false"
+                    placeholder="Name"
+                    aria-describedby="home-mfs-name-error"
+                  />
+                  <span id="home-mfs-name-error" class="home-mfs__field-error" role="alert" hidden></span>
+                </div>
+                <div class="home-mfs__field">
+                  <label for="home-mfs-email" class="home-mfs__label">Email</label>
+                  <input
+                    type="email"
+                    id="home-mfs-email"
+                    class="home-mfs__input"
+                    name="email"
+                    required
+                    placeholder="Email"
+                    inputmode="email"
+                    autocapitalize="off"
+                    spellcheck="false"
+                    aria-describedby="home-mfs-email-error"
+                  />
+                  <span id="home-mfs-email-error" class="home-mfs__field-error" role="alert" hidden></span>
+                </div>
+                <div class="home-mfs__field">
+                  <label for="home-mfs-building" class="home-mfs__label">What are you building?</label>
+                  <input
+                    type="text"
+                    id="home-mfs-building"
+                    class="home-mfs__input"
+                    name="building"
+                    required
+                    maxlength="280"
+                    autocomplete="off"
+                    spellcheck="true"
+                    placeholder="What are you building?"
+                    aria-describedby="home-mfs-building-error"
+                  />
+                  <span id="home-mfs-building-error" class="home-mfs__field-error" role="alert" hidden></span>
+                </div>
+                <div class="home-mfs__field">
+                  <label for="home-mfs-come-for" class="home-mfs__label">What do people already come to you for?</label>
+                  <input
+                    type="text"
+                    id="home-mfs-come-for"
+                    class="home-mfs__input"
+                    name="come_for"
+                    required
+                    maxlength="280"
+                    autocomplete="off"
+                    spellcheck="true"
+                    placeholder="What do people already come to you for?"
+                    aria-describedby="home-mfs-come-for-error"
+                  />
+                  <span id="home-mfs-come-for-error" class="home-mfs__field-error" role="alert" hidden></span>
+                </div>
+                <div class="home-mfs__field">
+                  <label for="home-mfs-offer-first" class="home-mfs__label">What would you turn into a high-value offer first?</label>
+                  <input
+                    type="text"
+                    id="home-mfs-offer-first"
+                    class="home-mfs__input"
+                    name="offer_first"
+                    required
+                    maxlength="280"
+                    autocomplete="off"
+                    spellcheck="true"
+                    placeholder="What would you turn into a high-value offer first?"
+                    aria-describedby="home-mfs-offer-first-error"
+                  />
+                  <span id="home-mfs-offer-first-error" class="home-mfs__field-error" role="alert" hidden></span>
+                </div>
                 <p id="home-mfs-form-error" class="home-mfs__error" role="alert" hidden></p>
                 <button type="submit" class="btn btn--pri home-mfs__submit" id="home-mfs-submit">Apply</button>
               </form>
@@ -1740,17 +1689,31 @@
 
     </main>
 
-    <footer class="home-footer">
-      <div class="container">
-        <div class="foot-inner">
-          <p class="footer-inner">© 2026 Stephuary · All rights reserved</p>
-          <ul class="foot-links">
-            <li><a href="/pricing">Pricing</a></li>
-            <li><a href="/access">.5% Club</a></li>
-            <li><a href="https://stephuary.substack.com" target="_blank" rel="noopener">Substack</a></li>
-          </ul>
-          <p class="foot-custom-line"><a href="/d">Apply for a custom interactive website build</a></p>
+    <!-- Canonical site footer — identical markup on every page (Prompt 4, §5) -->
+    <footer class="sh-footer" role="contentinfo" aria-labelledby="sh-foot-mark">
+      <div class="sh-footer__inner">
+        <div class="sh-footer__cols">
+          <div class="sh-footer__col" aria-labelledby="sh-foot-offerings">
+            <h2 id="sh-foot-offerings">Offerings</h2>
+            <ul class="sh-footer__list">
+              <li><a href="/snapshot">Snapshot</a></li>
+              <li><a href="/access">Access</a></li>
+              <li><a href="/only-sometimes">Only Sometimes</a></li>
+            </ul>
+          </div>
+          <div class="sh-footer__col" aria-labelledby="sh-foot-writing">
+            <h2 id="sh-foot-writing">Writing</h2>
+            <ul class="sh-footer__list">
+              <li><a href="https://stephuary.substack.com" target="_blank" rel="noopener">Substack</a></li>
+            </ul>
+          </div>
+          <div class="sh-footer__col" aria-labelledby="sh-foot-contact">
+            <h2 id="sh-foot-contact">Contact</h2>
+            <p class="sh-footer__contact"><a href="mailto:hello@stephuary.com">hello@stephuary.com</a></p>
+          </div>
         </div>
+        <a class="sh-footer__mark" id="sh-foot-mark" href="/" aria-label="Stephuary home">Stephuary</a>
+        <p class="sh-footer__copy">© 2026 Stephuary · All rights reserved</p>
       </div>
     </footer>
   </div>
@@ -1765,8 +1728,8 @@
   <script src="/cursor-light.js" defer></script>
   <script src="/scroll-reveal.js" defer></script>
   <script src="/stat-counter.js" defer></script>
-  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js" defer></script>
   <script src="/stephuary-os.js" defer></script>
   <script src="/stephuary-progress.js" defer></script>
   <script src="/stephuary-config.js" defer></script>
@@ -1777,24 +1740,31 @@
   <script src="/stephuary-home-finale.js" defer></script>
   <script>
     (function () {
-      gsap.registerPlugin(ScrollTrigger);
+      function start() {
+        try { if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') gsap.registerPlugin(ScrollTrigger); } catch (e) {}
 
-      window.addEventListener('pageshow', function (ev) {
-        try { if (ev.persisted && typeof ScrollTrigger !== 'undefined') ScrollTrigger.refresh(true); } catch (e) {}
-      }, false);
+        window.addEventListener('pageshow', function (ev) {
+          try { if (ev.persisted && typeof ScrollTrigger !== 'undefined') ScrollTrigger.refresh(true); } catch (e) {}
+        }, false);
 
-      /* ── Nav scroll ── */
-      var nav=document.getElementById('main-nav');
-      function updateNavScroll(){if(nav)nav.classList.toggle('is-scrolled',window.scrollY>40);}
-      window.addEventListener('scroll',updateNavScroll,{passive:true});updateNavScroll();
+        /* ── Nav scroll ── */
+        var nav=document.getElementById('main-nav');
+        function updateNavScroll(){if(nav)nav.classList.toggle('is-scrolled',window.scrollY>40);}
+        window.addEventListener('scroll',updateNavScroll,{passive:true});updateNavScroll();
 
-      /* ── Hero + fold reveals: scroll-reveal.js (.reveal → .is-visible) ── */
+        /* ── Hero + fold reveals: scroll-reveal.js (.reveal → .is-visible) ── */
 
-      /* ── Load hooks ── */
-      window.addEventListener('load',function(){
-        ScrollTrigger.refresh();
-        try{if(window.StephuaryPersonalize&&typeof window.StephuaryPersonalize.applyHomeHero==='function')window.StephuaryPersonalize.applyHomeHero();if(window.StephuaryHomeFinale&&typeof window.StephuaryHomeFinale.refreshCtas==='function')window.StephuaryHomeFinale.refreshCtas();}catch(e2){}
-      });
+        /* ── Load hooks ── */
+        window.addEventListener('load',function(){
+          try { if (typeof ScrollTrigger !== 'undefined') ScrollTrigger.refresh(); } catch (e) {}
+          try{if(window.StephuaryPersonalize&&typeof window.StephuaryPersonalize.applyHomeHero==='function')window.StephuaryPersonalize.applyHomeHero();if(window.StephuaryHomeFinale&&typeof window.StephuaryHomeFinale.refreshCtas==='function')window.StephuaryHomeFinale.refreshCtas();}catch(e2){}
+        });
+      }
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', start);
+      } else {
+        start();
+      }
     })();
   </script>
 

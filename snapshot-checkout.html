@@ -172,39 +172,43 @@
       color: var(--text-muted);
       margin-bottom: 4px;
     }
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
+    /* Checkout-specific button sizing only; canonical colors
+       live in /stephuary-brand-polish.css (.btn.btn--primary /
+       .btn.btn--secondary). */
+    .checkout-actions .btn {
+      width: 100%;
       min-height: 54px;
-      padding: 16px 28px;
-      border-radius: var(--r);
-      font-size: 11px;
+      font-size: 12px;
       letter-spacing: 0.16em;
       text-transform: uppercase;
-      font-family: var(--sans);
-      font-weight: 600;
-      cursor: pointer;
-      border: none;
-      width: 100%;
-      background: var(--blue);
-      color: #fff;
-      transition: background 150ms ease, border-color 150ms ease;
     }
-    .btn:hover { background: var(--blue-hi); }
-    .btn--secondary {
-      background: transparent;
-      border: 1px solid var(--gold-line);
-      color: var(--text);
-    }
-    .btn--secondary:hover {
-      background: rgba(196, 163, 90, 0.08);
-      border-color: rgba(196, 163, 90, 0.42);
-    }
+    /*
+      Contrast fixes (before / after) on #080807 background:
+      --text-muted #a89f92 = 8.2:1 (passes AA body).
+      --text-2    #d8d0c4 = 12.7:1 (AAA).
+      --text      #f4ede0 = 15.6:1 (AAA).
+      No additional contrast fixes required on this page.
+    */
   </style>
+  <link rel="stylesheet" href="/stephuary-a11y.css">
+  <link rel="stylesheet" href="/stephuary-brand-polish.css">
+  <link rel="manifest" href="/site.webmanifest">
 </head>
 <body>
-  <div class="page">
+  <a href="#main" class="skip-link">Skip to content</a>
+  <nav class="site-nav" aria-label="Primary">
+    <div class="site-nav__brand">
+      <a href="/" class="site-nav__wordmark" aria-label="Stephuary — home">Stephuary</a>
+    </div>
+    <ul class="site-nav__list">
+      <li><a href="/" class="site-nav__link">Home</a></li>
+      <li><a href="/pricing" class="site-nav__link">Pricing</a></li>
+      <li><a href="/access" class="site-nav__link">Access</a></li>
+      <li><a href="/only-sometimes" class="site-nav__link">Only Sometimes</a></li>
+      <li><a href="https://stephuary.substack.com" class="site-nav__link" target="_blank" rel="noopener">Substack</a></li>
+    </ul>
+  </nav>
+  <main id="main" class="page">
     <p class="kicker">Checkout</p>
     <h1>Snapshot</h1>
 
@@ -232,10 +236,37 @@
 
     <div class="checkout-actions" role="group" aria-labelledby="checkout-options-heading">
       <p id="checkout-options-heading" class="checkout-actions__hint">Payment</p>
-      <a class="btn" id="checkout-pay" href="https://buy.stripe.com/9B63cv4gUcKO0ja29J33W00">Pay in full</a>
+      <a class="btn btn--primary" id="checkout-pay" href="https://buy.stripe.com/9B63cv4gUcKO0ja29J33W00">Pay in full</a>
       <a class="btn btn--secondary" id="checkout-installment" href="https://buy.stripe.com/4gM5kDfZCh140ja8y733W01">Installment plan</a>
     </div>
-  </div>
+  </main>
+  <!-- Canonical site footer — identical markup on every page (Prompt 4, §5) -->
+  <footer class="sh-footer" role="contentinfo" aria-labelledby="sh-foot-mark">
+    <div class="sh-footer__inner">
+      <div class="sh-footer__cols">
+        <div class="sh-footer__col" aria-labelledby="sh-foot-offerings">
+          <h2 id="sh-foot-offerings">Offerings</h2>
+          <ul class="sh-footer__list">
+            <li><a href="/snapshot">Snapshot</a></li>
+            <li><a href="/access">Access</a></li>
+            <li><a href="/only-sometimes">Only Sometimes</a></li>
+          </ul>
+        </div>
+        <div class="sh-footer__col" aria-labelledby="sh-foot-writing">
+          <h2 id="sh-foot-writing">Writing</h2>
+          <ul class="sh-footer__list">
+            <li><a href="https://stephuary.substack.com" target="_blank" rel="noopener">Substack</a></li>
+          </ul>
+        </div>
+        <div class="sh-footer__col" aria-labelledby="sh-foot-contact">
+          <h2 id="sh-foot-contact">Contact</h2>
+          <p class="sh-footer__contact"><a href="mailto:hello@stephuary.com">hello@stephuary.com</a></p>
+        </div>
+      </div>
+      <a class="sh-footer__mark" id="sh-foot-mark" href="/" aria-label="Stephuary home">Stephuary</a>
+      <p class="sh-footer__copy">© 2026 Stephuary · All rights reserved</p>
+    </div>
+  </footer>
   <!--
     Stripe: set Checkout success_url to https://stephuary.com/thank-you
       (queue confirmation + next steps). Alias: https://stephuary.com/snapshot/thank-you

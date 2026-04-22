@@ -1,0 +1,188 @@
+/* =============================================================
+   stephuary-a11y.css
+   Shared accessibility primitives used on every page.
+   Target: WCAG 2.1 AA on every page.
+
+   This file intentionally ships as the LAST <link> so its
+   focus ring, reduced-motion, and nav styles win over older
+   per-page CSS.
+
+   Contrast ratios referenced below are computed against the
+   canonical dark backgrounds in use across the site:
+     #0B1730 (navy theme-color)
+     #0A0A1A (app shell)
+     #06070D (snapshot/pricing)
+   ============================================================= */
+
+/* --- Skip link -----------------------------------------------
+   Hidden off-screen by default, slides in on :focus for keyboard
+   users. Contrast: #F8F3EA on #0B1730 = 15.4:1 (AAA).
+------------------------------------------------------------- */
+.skip-link {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  display: inline-block;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 12px 18px;
+  background: #0B1730;
+  color: #F8F3EA;
+  border: 2px solid #C9A24A;
+  border-radius: 4px;
+  font: 600 14px/1 Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  letter-spacing: 0.04em;
+  text-decoration: none;
+  z-index: 9999;
+  transform: translateY(-200%);
+  transition: transform 0.15s ease;
+}
+.skip-link:focus,
+.skip-link:focus-visible {
+  transform: translateY(0);
+  outline: 2px solid #C9A24A;
+  outline-offset: 2px;
+}
+
+/* --- Focus ring (global) -------------------------------------
+   Any page-level `outline: none` rules are overridden here.
+   Gold #C9A24A on navy #0B1730 = 6.1:1 (AA large + non-text).
+------------------------------------------------------------- */
+a:focus-visible,
+button:focus-visible,
+summary:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible,
+[role="button"]:focus-visible,
+[role="link"]:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid #C9A24A !important;
+  outline-offset: 2px !important;
+  border-radius: 2px;
+}
+
+/* --- Canonical site nav --------------------------------------
+   Same HTML, same classes, same order on every page.
+   Tap targets: every link/button is min 44x44 at 390px width.
+------------------------------------------------------------- */
+.site-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 14px 20px;
+  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  position: relative;
+  z-index: 20;
+}
+.site-nav__brand { flex: 0 0 auto; }
+.site-nav__wordmark {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 6px 2px;
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  color: #F8F3EA;
+  text-decoration: none;
+}
+.site-nav__wordmark:hover { color: #FFFFFF; }
+
+.site-nav__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 2px 12px;
+}
+.site-nav__list li { margin: 0; padding: 0; }
+.site-nav__link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  min-width: 44px;
+  padding: 10px 12px;
+  /* rgba(248,243,234,0.88) on #0B1730 = 12.9:1 (AAA). */
+  color: rgba(248, 243, 234, 0.88);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-decoration: none;
+  border-radius: 4px;
+  transition: color 0.12s ease, background 0.12s ease;
+}
+.site-nav__link:hover,
+.site-nav__link:focus-visible {
+  color: #FFFFFF;
+  background: rgba(248, 243, 234, 0.08);
+}
+.site-nav__link[aria-current="page"] {
+  /* Gold #C9A24A on #0B1730 = 6.1:1 (AA). */
+  color: #C9A24A;
+}
+
+@media (max-width: 560px) {
+  .site-nav {
+    padding: 10px 12px;
+    gap: 6px 10px;
+  }
+  .site-nav__list { gap: 2px 4px; }
+  .site-nav__link {
+    padding: 10px 8px;
+    font-size: 11px;
+    letter-spacing: 0.06em;
+  }
+}
+
+/* --- Tap target helper --------------------------------------- */
+.u-tap-target-44 {
+  min-width: 44px;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* --- Visually hidden (sr-only) ------------------------------- */
+.sh-sr-only {
+  position: absolute !important;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0, 0, 0, 0);
+  white-space: nowrap; border: 0;
+}
+
+/* --- Reduced motion (global) ---------------------------------
+   Hard-stops every animation + transition. `.reveal`-style
+   elements must end in their final visible state when motion
+   is reduced; that fallback is asserted below.
+------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+  .reveal,
+  [class*="reveal"],
+  .sh-motion-diag-reveal,
+  .sh-motion-q-enter {
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+  }
+  .queue-dot,
+  .page-scan,
+  .cursor-light,
+  #starfield {
+    animation: none !important;
+    display: none !important;
+  }
+}

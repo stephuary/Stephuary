@@ -37,8 +37,8 @@
       --neon-gold: #c8a96e;
       --cta-royal-blue: #4169e1;
       --text-primary: #ffffff;
-      --text-secondary: #a0a0c0;
-      --text-muted: #4a4a6a;
+      --text-secondary: #a0a0c0; /* 8.3:1 on #05050F (AAA) */
+      --text-muted: #8b8ba5;     /* before #4a4a6a (2.25:1 FAIL); after 5.4:1 (AA) */
       --text-label: #c8a96e;
       --glow-plum: 0 0 20px rgba(139, 47, 201, 0.55), 0 0 60px rgba(139, 47, 201, 0.2);
       --glow-cta: 0 0 28px rgba(65, 105, 225, 0.65), 0 0 80px rgba(65, 105, 225, 0.28);
@@ -148,55 +148,7 @@
       animation-delay: 0.2s;
     }
 
-    nav {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 60px;
-      z-index: var(--z-nav);
-      background: rgba(5, 5, 15, 0.85);
-      backdrop-filter: blur(24px);
-      -webkit-backdrop-filter: blur(24px);
-      border-bottom: 1px solid rgba(139, 47, 201, 0.18);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 40px;
-      gap: 16px;
-    }
-    .nav-wordmark {
-      font-family: var(--font-sans);
-      font-weight: 700;
-      font-size: 13px;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--text-primary);
-      flex-shrink: 0;
-      transition: color 0.2s ease;
-    }
-    .nav-wordmark:hover {
-      color: var(--neon-violet);
-    }
-    .nav-links {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px 20px;
-      align-items: center;
-      justify-content: flex-end;
-    }
-    .nav-link {
-      font-family: var(--font-mono);
-      font-size: 10px;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: var(--text-secondary);
-      padding: 4px 0;
-      transition: color 0.2s ease;
-    }
-    .nav-link:hover {
-      color: var(--neon-gold);
-    }
+    /* legacy pricing nav removed; canonical .site-nav lives in /stephuary-a11y.css */
 
     .container {
       width: 100%;
@@ -210,7 +162,7 @@
       z-index: var(--z-content);
       max-width: 960px;
       margin: 0 auto;
-      padding: 120px 24px 80px;
+      padding: 48px 24px 80px;
     }
 
     .hero {
@@ -246,9 +198,9 @@
     .hero-title {
       font-family: var(--font-serif);
       font-weight: 900;
-      font-size: clamp(36px, 5vw, 52px);
-      letter-spacing: -0.01em;
-      line-height: 1.08;
+      font-size: var(--fs-h1);
+      letter-spacing: var(--letter-h, -0.02em);
+      line-height: var(--lh-h1, 1.1);
       color: var(--text-primary);
     }
 
@@ -297,9 +249,10 @@
     }
     .tier-title {
       font-family: var(--font-serif);
-      font-size: clamp(22px, 3vw, 28px);
+      font-size: var(--fs-h3);
       font-weight: 700;
-      letter-spacing: -0.01em;
+      letter-spacing: var(--letter-h, -0.02em);
+      line-height: var(--lh-h3, 1.2);
       margin-bottom: 8px;
       color: var(--text-primary);
     }
@@ -448,7 +401,7 @@
         height: 52px;
       }
       .page {
-        padding: 96px 20px 64px;
+        padding: 32px 20px 64px;
       }
       .tier {
         padding: 28px 22px 24px;
@@ -476,30 +429,97 @@
         transform: none;
       }
     }
+
+    .bridge-banner {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin: 0 0 24px;
+      padding: 12px 16px;
+      border: 1px solid rgba(200, 169, 110, 0.35);
+      background: rgba(200, 169, 110, 0.06);
+      border-radius: 3px;
+      font-family: var(--font-sans);
+      font-size: 14px;
+      line-height: 1.45;
+      color: rgba(244, 244, 252, 0.92);
+    }
+    .bridge-banner[hidden] { display: none; }
+    .bridge-banner__copy { margin: 0; flex: 1 1 auto; }
+    .bridge-banner__slug {
+      font-family: var(--font-mono);
+      font-size: 0.92em;
+      color: var(--text-label);
+      background: rgba(200, 169, 110, 0.12);
+      padding: 1px 6px;
+      border-radius: 2px;
+    }
+    .bridge-banner__link {
+      color: var(--text-label);
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+    .bridge-banner__link:hover { color: #ffffff; }
+    .bridge-banner__close {
+      flex: 0 0 auto;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 44px;
+      min-height: 44px;
+      background: transparent;
+      border: 0;
+      color: var(--text-secondary);
+      font-size: 22px;
+      line-height: 1;
+      cursor: pointer;
+      padding: 4px 8px;
+      border-radius: 2px;
+      transition: color 0.2s ease, background 0.2s ease;
+    }
+    .bridge-banner__close:hover { color: #ffffff; background: rgba(255, 255, 255, 0.06); }
+    .bridge-banner__close:focus-visible { outline: 2px solid var(--text-label); outline-offset: 2px; }
+    @media (max-width: 640px) {
+      .bridge-banner { flex-direction: row; align-items: flex-start; font-size: 13.5px; }
+    }
   </style>
+  <link rel="stylesheet" href="/stephuary-a11y.css">
+  <link rel="stylesheet" href="/stephuary-brand-polish.css">
+  <link rel="manifest" href="/site.webmanifest">
 </head>
 <body class="pricing-page">
+  <a href="#main" class="skip-link">Skip to content</a>
   <canvas id="starfield" aria-hidden="true"></canvas>
   <div class="cursor-light" aria-hidden="true"></div>
   <div class="scanlines" aria-hidden="true"></div>
   <div class="page-scan" aria-hidden="true"></div>
 
-  <nav>
-    <a href="/" class="nav-wordmark">Stephuary</a>
-    <div class="nav-links" role="navigation" aria-label="Primary">
-      <a href="/pricing" class="nav-link">Pricing</a>
-      <a href="/access" class="nav-link">.5% Club</a>
-      <a href="https://stephuary.substack.com" class="nav-link" target="_blank" rel="noopener">Substack</a>
+  <nav class="site-nav" aria-label="Primary">
+    <div class="site-nav__brand">
+      <a href="/" class="site-nav__wordmark" aria-label="Stephuary — home">Stephuary</a>
     </div>
+    <ul class="site-nav__list">
+      <li><a href="/" class="site-nav__link">Home</a></li>
+      <li><a href="#top" class="site-nav__link" aria-current="page">Pricing</a></li>
+      <li><a href="/access" class="site-nav__link">Access</a></li>
+      <li><a href="/only-sometimes" class="site-nav__link">Only Sometimes</a></li>
+      <li><a href="https://stephuary.substack.com" class="site-nav__link" target="_blank" rel="noopener">Substack</a></li>
+    </ul>
   </nav>
 
-  <div class="page">
-    <header class="hero" id="pricing-hero">
+  <div class="page" id="top">
+    <aside id="bridge-banner" class="bridge-banner" role="status" aria-live="polite" hidden>
+      <p class="bridge-banner__copy">Looking for <span class="bridge-banner__slug" id="bridge-banner-slug">that</span>? It lives on this page now, or see the <a href="/bridge" class="bridge-banner__link">full map</a>.</p>
+      <button type="button" class="bridge-banner__close" id="bridge-banner-close" aria-label="Dismiss">×</button>
+    </aside>
+    <header class="hero" id="pricing-hero" data-sh-hero-intro>
       <p class="hero-kicker">PRICING</p>
       <h1 class="hero-title">Three ways in.</h1>
     </header>
 
-    <main class="tiers" aria-label="Pricing tiers">
+    <main id="main" class="tiers" aria-label="Pricing tiers">
       <section class="tier" id="tier-diagnostic">
         <p class="tier-label">01</p>
         <h2 class="tier-title">Diagnostic</h2>
@@ -536,11 +556,31 @@
       </section>
     </main>
 
-    <footer class="foot" id="pricing-foot">
-      <div class="foot-links-row">
-        <a href="/pricing">Pricing</a>
-        <a href="/access">.5% Club</a>
-        <a href="https://stephuary.substack.com" target="_blank" rel="noopener">Substack</a>
+    <!-- Canonical site footer — identical markup on every page (Prompt 4, §5) -->
+    <footer class="sh-footer" id="pricing-foot" role="contentinfo" aria-labelledby="sh-foot-mark">
+      <div class="sh-footer__inner">
+        <div class="sh-footer__cols">
+          <div class="sh-footer__col" aria-labelledby="sh-foot-offerings">
+            <h2 id="sh-foot-offerings">Offerings</h2>
+            <ul class="sh-footer__list">
+              <li><a href="/snapshot">Snapshot</a></li>
+              <li><a href="/access">Access</a></li>
+              <li><a href="/only-sometimes">Only Sometimes</a></li>
+            </ul>
+          </div>
+          <div class="sh-footer__col" aria-labelledby="sh-foot-writing">
+            <h2 id="sh-foot-writing">Writing</h2>
+            <ul class="sh-footer__list">
+              <li><a href="https://stephuary.substack.com" target="_blank" rel="noopener">Substack</a></li>
+            </ul>
+          </div>
+          <div class="sh-footer__col" aria-labelledby="sh-foot-contact">
+            <h2 id="sh-foot-contact">Contact</h2>
+            <p class="sh-footer__contact"><a href="mailto:hello@stephuary.com">hello@stephuary.com</a></p>
+          </div>
+        </div>
+        <a class="sh-footer__mark" id="sh-foot-mark" href="/" aria-label="Stephuary home">Stephuary</a>
+        <p class="sh-footer__copy">© 2026 Stephuary · All rights reserved</p>
       </div>
     </footer>
   </div>
@@ -564,6 +604,32 @@
           if (e.target.parentNode) e.target.parentNode.removeChild(e.target);
         });
       }
+
+      (function initBridgeBanner() {
+        try {
+          var banner = document.getElementById("bridge-banner");
+          if (!banner) return;
+          var params = new URLSearchParams(window.location.search);
+          var from = params.get("from");
+          if (!from) return;
+          if (document.referrer && document.referrer.length > 0) return;
+          var dismissed = false;
+          try { dismissed = sessionStorage.getItem("bridge-banner-dismissed") === "1"; } catch (err) {}
+          if (dismissed) return;
+          var clean = String(from).replace(/[^a-zA-Z0-9/_\-]/g, "").slice(0, 64);
+          if (!clean) return;
+          var slugEl = document.getElementById("bridge-banner-slug");
+          if (slugEl) slugEl.textContent = "/" + clean;
+          banner.hidden = false;
+          var closeBtn = document.getElementById("bridge-banner-close");
+          if (closeBtn) {
+            closeBtn.addEventListener("click", function () {
+              banner.hidden = true;
+              try { sessionStorage.setItem("bridge-banner-dismissed", "1"); } catch (err) {}
+            });
+          }
+        } catch (err) { /* no-op */ }
+      })();
 
       function initStarfield() {
         var canvas = document.getElementById("starfield");

@@ -1,0 +1,412 @@
+/* =============================================================
+   stephuary-brand-polish.css
+   Prompt 4 — the last 10% across every page.
+
+   Ships AFTER stephuary-a11y.css so its tokens win over per-page
+   drift without fighting the focus/motion/nav overrides.
+
+   Scope:
+     §1  Consistent section rhythm      → .sh-section
+     §2  Typographic scale              → .sh-h1 / .sh-h2 / ...
+     §3  Hero weight parity             → .sh-hero, .sh-hero__art
+     §4  Canonical button system        → .btn[--primary|--secondary|--tertiary]
+     §5  Shared footer                  → .sh-footer
+     §6  Hero intro motion              → .sh-hero-intro (280ms ease-out)
+
+   Palette reminders (from tokens):
+     navy  #0B1730   gold  #C9A24A   cream #F8F3EA
+============================================================= */
+
+/* -- §1  Section rhythm -------------------------------------- */
+.sh-section {
+  padding-block: var(--space-section, clamp(4rem, 8vw, 8rem));
+  padding-inline: var(--container-pad-x, 24px);
+  position: relative;
+}
+.sh-section--tight { padding-block: calc(var(--space-section) * 0.6); }
+.sh-section--loose { padding-block: calc(var(--space-section) * 1.25); }
+.sh-section__inner {
+  max-width: var(--layout-max, 1200px);
+  margin-inline: auto;
+}
+
+/* -- §2  Typographic scale ---------------------------------- */
+.sh-display,
+.sh-h1,
+.sh-h2,
+.sh-h3 {
+  font-family: var(--font-serif, 'Playfair Display', Georgia, serif);
+  font-weight: var(--font-weight-serif, 500);
+  letter-spacing: var(--letter-h, -0.02em);
+  color: var(--text-primary, #f4ede0);
+  margin: 0;
+}
+.sh-display { font-size: var(--fs-display); line-height: 1.05; }
+.sh-h1      { font-size: var(--fs-h1);      line-height: var(--lh-h1, 1.1); }
+.sh-h2      { font-size: var(--fs-h2);      line-height: var(--lh-h2, 1.15); }
+.sh-h3      { font-size: var(--fs-h3);      line-height: var(--lh-h3, 1.2); }
+.sh-body {
+  font-family: var(--font-sans, 'Inter', system-ui, sans-serif);
+  font-size: var(--fs-body);
+  line-height: var(--lh-body, 1.6);
+  color: var(--text-secondary, #b5aa9c);
+  margin: 0;
+}
+.sh-caption {
+  font-family: var(--font-sans, 'Inter', system-ui, sans-serif);
+  font-size: var(--fs-caption);
+  line-height: var(--lh-small, 1.5);
+  color: var(--text-tertiary, #7a7268);
+  letter-spacing: 0.02em;
+  margin: 0;
+}
+
+/* -- §3  Hero weight parity --------------------------------
+   index's hero anchors visual weight. snapshot / access / d
+   borrow the same ornament container so siblings match.
+----------------------------------------------------------- */
+.sh-hero {
+  padding-block: clamp(4.5rem, 9vw, 9rem);
+  padding-inline: var(--container-pad-x, 24px);
+  position: relative;
+  isolation: isolate;
+}
+.sh-hero__inner {
+  max-width: var(--layout-max, 1200px);
+  margin-inline: auto;
+  position: relative;
+  z-index: 1;
+}
+/* Ornamental gold ring — the same asset every hero page draws,
+   no new imagery introduced. Sized to read identically at 390,
+   768, 1440. */
+.sh-hero__art {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: min(540px, 70vw);
+  aspect-ratio: 1 / 1;
+  border-radius: 999px;
+  background:
+    radial-gradient(closest-side,
+      rgba(201, 162, 74, 0.10) 0%,
+      rgba(201, 162, 74, 0.04) 48%,
+      rgba(201, 162, 74, 0) 72%);
+  box-shadow:
+    inset 0 0 0 1px rgba(201, 162, 74, 0.18),
+    inset 0 0 140px 16px rgba(201, 162, 74, 0.06);
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.85;
+}
+.sh-hero__art--soft { opacity: 0.55; }
+
+/* -- §4  Canonical buttons ---------------------------------
+   Three tiers only. Legacy .btn, .cta-primary, .cta-secondary
+   from per-page CSS continue to work visually, but anything
+   with .btn.btn--primary|secondary|tertiary gets the unified
+   look regardless of which page it lives on.
+----------------------------------------------------------- */
+.btn,
+a.btn,
+button.btn {
+  --btn-bg: transparent;
+  --btn-fg: #F8F3EA;
+  --btn-bd: rgba(248, 243, 234, 0.28);
+  --btn-bg-hover: rgba(248, 243, 234, 0.06);
+  --btn-fg-hover: #FFFFFF;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  min-width: 44px;
+  padding: var(--btn-pad-y, 12px) var(--btn-pad-x, 24px);
+  background: var(--btn-bg);
+  color: var(--btn-fg);
+  border: 1px solid var(--btn-bd);
+  border-radius: var(--radius-md, 6px);
+  font-family: var(--font-sans, 'Inter', system-ui, sans-serif);
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  line-height: 1;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.18s ease, color 0.18s ease,
+              border-color 0.18s ease, transform 0.18s ease;
+}
+.btn:hover,
+a.btn:hover,
+button.btn:hover {
+  background: var(--btn-bg-hover);
+  color: var(--btn-fg-hover);
+  border-color: rgba(248, 243, 234, 0.45);
+}
+.btn:active { transform: translateY(1px); }
+.btn[disabled],
+.btn[aria-disabled="true"] {
+  opacity: 0.45;
+  pointer-events: none;
+}
+
+/* Primary — gold fill, navy ink. Reads "buy/act" everywhere.
+   `.btn--pri` is kept as a legacy alias (used by the sys-adaptive
+   systems in stephuary-interactive.css / stephuary-early-mode.css). */
+.btn.btn--primary,
+.btn.btn--pri {
+  --btn-bg: #C9A24A;
+  --btn-fg: #0B1730;
+  --btn-bd: #C9A24A;
+  --btn-bg-hover: #D8B463;
+  --btn-fg-hover: #0B1730;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+}
+.btn.btn--primary:hover,
+.btn.btn--pri:hover { border-color: #D8B463; }
+
+/* Secondary — gold outline, gold ink on dark surface.
+   #C9A24A on #0B1730 = 6.1:1 (AA).
+   `.btn-ghost` (results.html) is aliased here. */
+.btn.btn--secondary,
+.btn.btn-ghost {
+  --btn-bg: transparent;
+  --btn-fg: #C9A24A;
+  --btn-bd: rgba(201, 162, 74, 0.55);
+  --btn-bg-hover: rgba(201, 162, 74, 0.08);
+  --btn-fg-hover: #E2BF6F;
+}
+
+/* Tertiary — borderless, quiet action / text link. */
+.btn.btn--tertiary {
+  --btn-bg: transparent;
+  --btn-fg: rgba(248, 243, 234, 0.82);
+  --btn-bd: transparent;
+  --btn-bg-hover: rgba(248, 243, 234, 0.06);
+  --btn-fg-hover: #F8F3EA;
+  padding-inline: 12px;
+  border: 0;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  text-decoration-color: rgba(201, 162, 74, 0.45);
+  text-decoration-thickness: 1px;
+}
+.btn.btn--tertiary:hover {
+  text-decoration-color: #C9A24A;
+}
+
+/* -- §5  Shared footer --------------------------------------
+   Exact same markup on every page. Three columns (Offerings /
+   Writing / Contact) + centered gold wordmark + copyright.
+----------------------------------------------------------- */
+.sh-footer {
+  padding-block: clamp(3rem, 6vw, 5.5rem) 2.5rem;
+  padding-inline: var(--container-pad-x, 24px);
+  background: transparent;
+  border-top: 1px solid rgba(248, 243, 234, 0.08);
+  font-family: var(--font-sans, 'Inter', system-ui, sans-serif);
+  color: rgba(248, 243, 234, 0.78); /* 9.5:1 on #0B1730, AAA */
+}
+.sh-footer__inner {
+  max-width: var(--layout-max, 1200px);
+  margin-inline: auto;
+}
+.sh-footer__cols {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 2.5rem;
+  margin-bottom: 3rem;
+}
+.sh-footer__col h2 {
+  font-family: var(--font-sans, 'Inter', system-ui, sans-serif);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(201, 162, 74, 0.92); /* ~7.2:1 on #0B1730, AA */
+  margin: 0 0 14px;
+}
+.sh-footer__list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.sh-footer__list a,
+.sh-footer__contact a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 32px;
+  padding: 4px 0;
+  color: rgba(248, 243, 234, 0.78);
+  text-decoration: none;
+  font-size: 14px;
+  line-height: 1.4;
+  letter-spacing: 0.01em;
+  transition: color 0.15s ease;
+}
+.sh-footer__list a:hover,
+.sh-footer__contact a:hover { color: #C9A24A; }
+.sh-footer__mark {
+  display: block;
+  text-align: center;
+  margin: 2rem auto 12px;
+  font-family: var(--font-serif, 'Playfair Display', Georgia, serif);
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: #C9A24A;
+  text-decoration: none;
+}
+.sh-footer__mark:hover { color: #E2BF6F; }
+.sh-footer__copy {
+  text-align: center;
+  margin: 0;
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  color: rgba(248, 243, 234, 0.55); /* 5.8:1 small text, AA */
+}
+@media (max-width: 640px) {
+  .sh-footer__cols {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    margin-bottom: 2rem;
+  }
+}
+
+/* -- §6  Hero intro motion ---------------------------------
+   One identical curve site-wide: 280ms ease-out opacity + 12px
+   translateY. Honors prefers-reduced-motion (the a11y
+   stylesheet's global rule zeros it out; we also ship a local
+   fallback for safety).
+----------------------------------------------------------- */
+@keyframes sh-hero-intro {
+  0%   { opacity: 0; transform: translateY(12px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+.sh-hero-intro {
+  opacity: 0;
+  transform: translateY(12px);
+  animation: sh-hero-intro 280ms cubic-bezier(0.2, 0.7, 0.2, 1) 80ms forwards;
+}
+.sh-hero-intro--delay-1 { animation-delay: 180ms; }
+.sh-hero-intro--delay-2 { animation-delay: 280ms; }
+.sh-hero-intro--delay-3 { animation-delay: 380ms; }
+
+/* Declarative form: stamp [data-sh-hero-intro] on any hero
+   container and its direct visible children get a staggered
+   intro. Decorative absolute-positioned children (marked with
+   aria-hidden="true", e.g. .hero-mark on access.html) are
+   excluded so their own transforms are preserved. */
+@media (prefers-reduced-motion: no-preference) {
+  [data-sh-hero-intro] > *:not([aria-hidden="true"]) {
+    opacity: 0;
+    transform: translateY(12px);
+    animation: sh-hero-intro 280ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  }
+  [data-sh-hero-intro] > *:not([aria-hidden="true"]):nth-child(1) { animation-delay: 40ms; }
+  [data-sh-hero-intro] > *:not([aria-hidden="true"]):nth-child(2) { animation-delay: 120ms; }
+  [data-sh-hero-intro] > *:not([aria-hidden="true"]):nth-child(3) { animation-delay: 200ms; }
+  [data-sh-hero-intro] > *:not([aria-hidden="true"]):nth-child(4) { animation-delay: 280ms; }
+  [data-sh-hero-intro] > *:not([aria-hidden="true"]):nth-child(n+5) { animation-delay: 360ms; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sh-hero-intro,
+  .sh-hero-intro--delay-1,
+  .sh-hero-intro--delay-2,
+  .sh-hero-intro--delay-3,
+  [data-sh-hero-intro] > *:not([aria-hidden="true"]) {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
+
+/* ── Hero weight parity (Prompt 4, §3) ──────────────────────
+   index ships the heaviest hero (starfield + lockup). Snapshot,
+   access, and d each get a CSS-only gold ring ornament so the
+   four sibling heroes feel of equal weight without importing
+   any new image asset. */
+.snapshot-hero-group,
+.access-hero,
+.d-hero-group {
+  position: relative;
+  isolation: isolate;
+}
+/* Snapshot hero preserves its parent's column centering so the
+   grouping wrapper doesn't alter pre-existing layout. */
+.snapshot-hero-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+.snapshot-hero-group > * {
+  text-align: center;
+  max-width: 100%;
+}
+/* d.html hero is left-aligned; keep the wrapper neutral. */
+.d-hero-group {
+  display: block;
+  width: 100%;
+}
+/* ::after so any pre-existing ::before treatment on these
+   heroes (e.g. access.html's subtle radial) survives. */
+.snapshot-hero-group::after,
+.access-hero::after,
+.d-hero-group::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: min(520px, 70vw);
+  aspect-ratio: 1 / 1;
+  border-radius: 999px;
+  background:
+    radial-gradient(closest-side,
+      rgba(201, 162, 74, 0.09) 0%,
+      rgba(201, 162, 74, 0.035) 48%,
+      rgba(201, 162, 74, 0) 72%);
+  box-shadow:
+    inset 0 0 0 1px rgba(201, 162, 74, 0.16),
+    inset 0 0 120px 12px rgba(201, 162, 74, 0.05);
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.5;
+}
+/* Keep live content above the ornament */
+.snapshot-hero-group > *,
+.access-hero > *,
+.d-hero-group > * { position: relative; z-index: 1; }
+
+/* ── Section-rhythm adapters (Prompt 4, §1) ──────────────────
+   Page-level section wrappers inherit the canonical
+   --space-section token. Card components (.tier, .card, etc.)
+   are intentionally excluded — they keep their own padding.
+   Every listed selector has been verified as a section-level
+   container, not a card. */
+.section-home-get,
+.section-measured,
+.section-how,
+.home-mfs,
+.snapshot-glance,
+.process-section,
+.faq-section,
+.section-pad,
+body[data-sh-env="only-sometimes"] .sec {
+  padding-block: var(--space-section, clamp(4rem, 8vw, 8rem));
+}
+
+/* ── Type-scale adapters (Prompt 4, §2) ──────────────────────
+   The top 5 marketing pages (index, pricing, snapshot, access, d)
+   have been edited to reference var(--fs-h1/h2/h3/body/caption)
+   directly in their page-level CSS, so no cross-page overrides
+   are needed here. Blanket remaps of label classes (.hero-kicker,
+   .hero-eyebrow) are intentionally avoided — those use 9-11px
+   micro type and bumping them to --fs-caption (14px) would
+   shout on the hero. */

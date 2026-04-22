@@ -26,6 +26,9 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/stephuary-motion.css" />
+  <link rel="stylesheet" href="/stephuary-a11y.css" />
+  <link rel="stylesheet" href="/stephuary-brand-polish.css" />
+  <link rel="manifest" href="/site.webmanifest" />
   <style>
     :root {
       --bg: #0a0a1a;
@@ -180,11 +183,51 @@
       border-color: var(--gold);
       background: var(--gold-soft);
       box-shadow: 0 0 0 1px rgba(212, 184, 122, 0.35);
+      position: relative;
     }
 
+    .answer-btn[disabled],
     .answer-btn.is-locked {
       pointer-events: none;
       opacity: 0.55;
+      cursor: default;
+    }
+
+    .answer-btn.is-selected[disabled],
+    .answer-btn.is-selected.is-locked {
+      opacity: 1;
+    }
+
+    .answer-btn.is-pending::after {
+      content: "";
+      position: absolute;
+      right: 16px;
+      top: 50%;
+      width: 14px;
+      height: 14px;
+      margin-top: -7px;
+      border-radius: 50%;
+      border: 2px solid rgba(212, 184, 122, 0.35);
+      border-top-color: var(--gold);
+      animation: capture-spin 620ms linear infinite;
+    }
+
+    .answer-btn.is-pending {
+      animation: capture-pulse 900ms ease-in-out infinite;
+    }
+
+    @keyframes capture-spin {
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes capture-pulse {
+      0%, 100% { box-shadow: 0 0 0 1px rgba(212, 184, 122, 0.35); }
+      50%      { box-shadow: 0 0 0 1px rgba(212, 184, 122, 0.65), 0 0 0 6px rgba(212, 184, 122, 0.08); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .answer-btn.is-pending { animation: none; }
+      .answer-btn.is-pending::after { animation: none; border-top-color: var(--gold); }
     }
 
     .feedback {
@@ -245,8 +288,48 @@
   </style>
 </head>
 <body class="capture-page">
-  <a href="/" class="back-home">Homepage</a>
-  <main class="app" id="app" aria-live="polite"></main>
+  <a href="#main" class="skip-link">Skip to content</a>
+  <nav class="site-nav" aria-label="Primary">
+    <div class="site-nav__brand">
+      <a href="/" class="site-nav__wordmark" aria-label="Stephuary — home">Stephuary</a>
+    </div>
+    <ul class="site-nav__list">
+      <li><a href="/" class="site-nav__link">Home</a></li>
+      <li><a href="/pricing" class="site-nav__link">Pricing</a></li>
+      <li><a href="/access" class="site-nav__link">Access</a></li>
+      <li><a href="/only-sometimes" class="site-nav__link">Only Sometimes</a></li>
+      <li><a href="https://stephuary.substack.com" class="site-nav__link" target="_blank" rel="noopener">Substack</a></li>
+    </ul>
+  </nav>
+  <main class="app" id="main" aria-live="polite"></main>
+
+  <!-- Canonical site footer — identical markup on every page (Prompt 4, §5) -->
+  <footer class="sh-footer" role="contentinfo" aria-labelledby="sh-foot-mark">
+    <div class="sh-footer__inner">
+      <div class="sh-footer__cols">
+        <div class="sh-footer__col" aria-labelledby="sh-foot-offerings">
+          <h2 id="sh-foot-offerings">Offerings</h2>
+          <ul class="sh-footer__list">
+            <li><a href="/snapshot">Snapshot</a></li>
+            <li><a href="/access">Access</a></li>
+            <li><a href="/only-sometimes">Only Sometimes</a></li>
+          </ul>
+        </div>
+        <div class="sh-footer__col" aria-labelledby="sh-foot-writing">
+          <h2 id="sh-foot-writing">Writing</h2>
+          <ul class="sh-footer__list">
+            <li><a href="https://stephuary.substack.com" target="_blank" rel="noopener">Substack</a></li>
+          </ul>
+        </div>
+        <div class="sh-footer__col" aria-labelledby="sh-foot-contact">
+          <h2 id="sh-foot-contact">Contact</h2>
+          <p class="sh-footer__contact"><a href="mailto:hello@stephuary.com">hello@stephuary.com</a></p>
+        </div>
+      </div>
+      <a class="sh-footer__mark" id="sh-foot-mark" href="/" aria-label="Stephuary home">Stephuary</a>
+      <p class="sh-footer__copy">© 2026 Stephuary · All rights reserved</p>
+    </div>
+  </footer>
 
   <script>
     const QUESTIONS = [
@@ -292,7 +375,7 @@
     let currentIndex = 0;
     const answers = [];
 
-    const app = document.getElementById("app");
+    const app = document.getElementById("main");
 
     function transition(callback, delay) {
       const ms = delay == null ? 165 : delay;
@@ -368,18 +451,22 @@
       }).join("");
       app.innerHTML =
         '<div class="capture-layout">' +
-        '<div>' +
+        '<div aria-live="polite">' +
         '<div class="capture-progress-meta">Question ' +
         n +
         " of 7</div>" +
-        '<div class="capture-progress-track" aria-hidden="true">' +
+        '<div class="capture-progress-track" role="progressbar" aria-valuemin="0" aria-valuemax="7" aria-valuenow="' +
+        n +
+        '" aria-valuetext="Question ' +
+        n +
+        ' of 7">' +
         '<div class="capture-progress-fill" style="width:' +
         pct +
         '%"></div></div></div>' +
         '<div class="capture-question-zone"><h1 class="question">' +
         q.text +
         "</h1></div>" +
-        '<div class="answers">' +
+        '<div class="answers" role="group" aria-label="Answer options">' +
         btns +
         "</div></div>";
       const layout = app.querySelector(".capture-layout");
@@ -393,20 +480,24 @@
 
       Array.prototype.forEach.call(app.querySelectorAll(".answer-btn"), function (btn) {
         btn.addEventListener("click", function () {
-          if (btn.classList.contains("is-locked")) return;
+          if (btn.disabled || btn.classList.contains("is-locked")) return;
           const value = btn.getAttribute("data-value");
           Array.prototype.forEach.call(app.querySelectorAll(".answer-btn"), function (b) {
+            b.disabled = true;
+            b.setAttribute("aria-disabled", "true");
             b.classList.add("is-locked");
             b.classList.remove("is-selected");
           });
-          btn.classList.add("is-selected");
+          btn.classList.add("is-selected", "is-pending");
           answers.push({ id: q.id, value: value });
           currentIndex++;
-          if (currentIndex < QUESTIONS.length) {
-            transition(renderQuestion, 32);
-          } else {
-            renderAnalyzing();
-          }
+          window.setTimeout(function () {
+            if (currentIndex < QUESTIONS.length) {
+              transition(renderQuestion, 32);
+            } else {
+              renderAnalyzing();
+            }
+          }, 180);
         });
       });
     }

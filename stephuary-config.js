@@ -1,9 +1,13 @@
 /**
- * Global site config. Set FREE_MODE = false for production (paid / Stripe flows).
+ * Global site config. FREE_MODE defaults to false (production / Stripe on).
+ * To enable free-flow testing, set window.__STEPHUARY_FREE__ = true before this script loads.
  * Load before stephuary-interactive.js and other Stephuary bundles.
  */
 (function (global) {
-  var FREE_MODE = true;
+  // FREE_MODE: when true the site bypasses Stripe checkouts and Pricing/Snapshot CTAs
+  // route to free-flow placeholders. Flip via window.__STEPHUARY_FREE__ before this file
+  // loads (e.g. from a build script or env-injected inline snippet). Default = false (prod).
+  var FREE_MODE = (typeof global !== 'undefined' && global.__STEPHUARY_FREE__) === true;
 
   var PAID_TIER_HREF = {
     diagnostic: '/capture',

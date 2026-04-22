@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>You're in the Queue — Stephuary</title>
+  <title>Thank you · Stephuary</title>
   <meta name="robots" content="noindex">
   <meta name="theme-color" content="#0B1730">
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
@@ -13,14 +13,14 @@
   <meta name="description" content="Thanks. Your next step is inside.">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="Stephuary">
-  <meta property="og:title" content="You're in the Queue — Stephuary">
+  <meta property="og:title" content="Thank you · Stephuary">
   <meta property="og:description" content="Thanks. Your next step is inside.">
   <meta property="og:url" content="https://stephuary.com/thank-you">
   <meta property="og:image" content="https://stephuary.com/og-default.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="You're in the Queue — Stephuary">
+  <meta name="twitter:title" content="Thank you · Stephuary">
   <meta name="twitter:description" content="Thanks. Your next step is inside.">
   <meta name="twitter:image" content="https://stephuary.com/og-default.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -37,8 +37,8 @@
       --neon-gold:     #C8A96E;
       --neon-green:    #30D158;
       --text-primary:  #FFFFFF;
-      --text-secondary:#A0A0C0;
-      --text-muted:    #4A4A6A;
+      --text-secondary:#A0A0C0; /* 8.3:1 on #05050F (AAA) */
+      --text-muted:    #8B8BA5; /* before: #4A4A6A (2.25:1, FAIL). after: 5.4:1 on #05050F (AA body). */
       --text-label:    #C8A96E;
       --glow-gold: 0 0 20px rgba(200,169,110,0.5), 0 0 60px rgba(200,169,110,0.2);
       --glow-plum: 0 0 20px rgba(139,47,201,0.55), 0 0 60px rgba(139,47,201,0.2);
@@ -164,55 +164,42 @@
       font-family: var(--font-serif); font-size: clamp(32px, 5vw, 48px);
       font-weight: 900; line-height: 1.1;
       text-align: center; color: var(--text-primary);
-      margin-bottom: 16px; letter-spacing: -0.01em;
+      margin-bottom: 10px; letter-spacing: -0.01em;
       opacity: 0; animation: fade-up 0.6s ease 1.4s forwards;
     }
-    .confirm-sub {
-      font-family: var(--font-sans); font-size: 16px;
-      color: var(--text-secondary); text-align: center;
-      max-width: 460px; line-height: 1.75; margin-bottom: 40px;
-      opacity: 0; animation: fade-up 0.6s ease 1.6s forwards;
+    .confirm-product {
+      font-family: var(--font-serif); font-size: clamp(18px, 2.4vw, 22px);
+      font-weight: 700; color: var(--text-label); text-align: center;
+      letter-spacing: 0.02em; margin-bottom: 28px;
+      opacity: 0; animation: fade-up 0.6s ease 1.5s forwards;
     }
+    .confirm-product[hidden] { display: none; }
 
-    /* ── Queue position card ── */
-    .queue-card {
+    .receipt-line {
       width: 100%; max-width: 560px;
       background: rgba(200,169,110,0.05);
       border: 1px solid rgba(200,169,110,0.25);
-      border-radius: 4px; padding: 24px 32px;
-      display: flex; align-items: center; gap: 20px;
-      margin-bottom: 24px;
-      position: relative; overflow: hidden;
+      border-radius: 4px; padding: 14px 20px;
+      font-family: var(--font-mono); font-size: 12px;
+      letter-spacing: 0.04em; color: var(--text-secondary);
+      text-align: center; line-height: 1.55;
+      margin-bottom: 32px; position: relative; overflow: hidden;
       opacity: 0; animation: fade-up 0.6s ease 1.7s forwards;
     }
-    .queue-card::before {
+    .receipt-line[hidden] { display: none; }
+    .receipt-line::before {
       content: ''; position: absolute;
       top: 0; left: 0; right: 0; height: 1px;
       background: linear-gradient(90deg, transparent, rgba(200,169,110,0.6), transparent);
     }
-    .queue-icon { font-size: 26px; flex-shrink: 0; line-height: 1; }
-    .queue-card-text { flex: 1; }
-    .queue-card-label {
-      font-family: var(--font-mono); font-size: 9px;
-      letter-spacing: 0.3em; text-transform: uppercase;
-      color: var(--neon-gold); margin-bottom: 4px; display: block;
-    }
-    .queue-card-value {
-      font-family: var(--font-sans); font-size: 14px;
-      color: var(--text-primary); font-weight: 600; line-height: 1.5;
-    }
-    .queue-card-note {
-      font-family: var(--font-mono); font-size: 10px;
-      color: var(--text-muted); letter-spacing: 0.1em;
-      margin-top: 4px; display: block;
-    }
+    .receipt-line strong { color: var(--text-primary); font-weight: 600; }
+    .th-mono { font-family: var(--font-mono); color: var(--text-primary); }
 
-    /* ── Next steps card ── */
     .next-steps-card {
       width: 100%; max-width: 560px;
       background: var(--bg-surface);
       border: 1px solid rgba(139,47,201,0.22);
-      border-radius: 4px; padding: 40px 36px;
+      border-radius: 4px; padding: 32px 36px;
       position: relative; overflow: hidden;
       opacity: 0; animation: fade-up 0.6s ease 1.9s forwards;
     }
@@ -221,59 +208,25 @@
       top: 0; left: 36px; width: 40px; height: 2px;
       background: var(--neon-gold);
     }
-
     .steps-label {
       font-family: var(--font-mono); font-size: 10px;
       letter-spacing: 0.3em; text-transform: uppercase;
-      color: var(--text-label); margin-bottom: 28px; display: block;
+      color: var(--text-label); margin-bottom: 18px; display: block;
     }
-
-    .steps-list {
-      display: flex; flex-direction: column; gap: 20px;
-      list-style: none; margin-bottom: 36px;
-    }
-    .step-item { display: flex; gap: 18px; align-items: flex-start; }
-    .step-num {
-      font-family: var(--font-mono); font-size: 10px;
-      letter-spacing: 0.15em; color: var(--neon-violet);
-      padding: 4px 10px;
-      border: 1px solid rgba(191,90,242,0.3);
-      border-radius: 2px; background: rgba(191,90,242,0.06);
-      flex-shrink: 0; margin-top: 1px;
-    }
-    .step-text {
-      font-family: var(--font-sans); font-size: 14px;
+    .next-body {
+      font-family: var(--font-sans); font-size: 15px;
       color: var(--text-secondary); line-height: 1.7;
     }
-    .step-text strong { color: var(--text-primary); font-weight: 600; }
-    .step-note {
-      display: block; margin-top: 5px;
-      font-size: 12px; color: var(--text-muted); line-height: 1.6;
-    }
+    .next-body strong { color: var(--text-primary); font-weight: 600; }
+    .next-body a { color: var(--neon-violet); text-decoration: none; }
+    .next-body a:hover { text-decoration: underline; }
 
-    .card-divider {
-      width: 100%; height: 1px;
-      background: rgba(139,47,201,0.12); margin-bottom: 28px;
+    .cta-row {
+      display: flex; gap: 12px; flex-wrap: wrap; justify-content: center;
+      margin-top: 32px;
+      opacity: 0; animation: fade-up 0.5s ease 2.1s forwards;
     }
-
-    .contact-note {
-      font-family: var(--font-sans); font-size: 13px;
-      color: var(--text-muted); line-height: 1.7;
-    }
-    .contact-note a { color: var(--neon-violet); text-decoration: none; }
-    .contact-note a:hover { text-decoration: underline; }
-
-    .back-link {
-      display: inline-flex; align-items: center; gap: 8px;
-      font-family: var(--font-mono); font-size: 11px;
-      letter-spacing: 0.18em; text-transform: uppercase;
-      color: var(--text-muted); text-decoration: none;
-      margin-top: 40px;
-      transition: color 0.2s ease;
-      opacity: 0; animation: fade-up 0.5s ease 2.2s forwards;
-    }
-    .back-link:hover { color: var(--text-primary); }
-    .back-link::before { content: '←'; }
+    /* .btn-secondary removed (one-off class). Canonical .btn.btn--secondary lives in /stephuary-brand-polish.css */
 
     footer {
       border-top: 1px solid rgba(139,47,201,0.1);
@@ -289,107 +242,223 @@
       nav { padding: 0 20px; height: 52px; }
       .page { padding: 96px 0 64px; }
       .container { padding: 0 20px; }
-      .next-steps-card { padding: 32px 24px; }
-      .queue-card { padding: 20px; flex-direction: column; gap: 10px; text-align: center; }
+      .next-steps-card { padding: 28px 24px; }
+      .receipt-line { padding: 12px 16px; font-size: 11.5px; }
       .confirm-headline { font-size: clamp(28px, 8vw, 36px); }
     }
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
       .cursor-light { display: none; }
       .confirm-icon-wrap, .status-tag, .confirm-headline,
-      .confirm-sub, .queue-card, .next-steps-card, .back-link { opacity: 1; animation: none; }
+      .confirm-product, .receipt-line, .next-steps-card, .cta-row { opacity: 1; animation: none; }
       .check-path { stroke-dashoffset: 0; }
       .status-dot { animation: none; }
     }
   </style>
+  <link rel="stylesheet" href="/stephuary-a11y.css">
+  <link rel="stylesheet" href="/stephuary-brand-polish.css">
+  <link rel="manifest" href="/site.webmanifest">
 </head>
 <body>
+  <a href="#main" class="skip-link">Skip to content</a>
 
   <canvas id="starfield" aria-hidden="true"></canvas>
   <div class="cursor-light" aria-hidden="true"></div>
   <div class="scanlines" aria-hidden="true"></div>
 
-  <nav>
-    <a href="/" class="nav-wordmark">Stephuary</a>
+  <nav class="site-nav" aria-label="Primary">
+    <div class="site-nav__brand">
+      <a href="/" class="site-nav__wordmark" aria-label="Stephuary — home">Stephuary</a>
+    </div>
+    <ul class="site-nav__list">
+      <li><a href="/" class="site-nav__link">Home</a></li>
+      <li><a href="/pricing" class="site-nav__link">Pricing</a></li>
+      <li><a href="/access" class="site-nav__link">Access</a></li>
+      <li><a href="/only-sometimes" class="site-nav__link">Only Sometimes</a></li>
+      <li><a href="https://stephuary.substack.com" class="site-nav__link" target="_blank" rel="noopener">Substack</a></li>
+    </ul>
   </nav>
 
-  <main class="page">
+  <main id="main" class="page">
     <div class="container" style="display:flex; flex-direction:column; align-items:center;">
 
-      <!-- Animated check -->
-      <div class="confirm-icon-wrap" role="img" aria-label="Payment confirmed">
+      <div class="confirm-icon-wrap" role="img" aria-label="Confirmed">
         <svg viewBox="0 0 40 40" aria-hidden="true">
           <polyline class="check-path" points="8,21 17,30 32,12"/>
         </svg>
       </div>
 
-      <!-- Status -->
       <div class="status-tag">
         <span class="status-dot"></span>
-        Payment confirmed · Queue position secured
+        <span id="th-status">Confirmed</span>
       </div>
 
-      <!-- Headline -->
-      <h1 class="confirm-headline">You're in the queue.</h1>
-      <p class="confirm-sub">
-        Payment is confirmed. Your spot is locked. The intake form link is in your email — submitting it moves you into active delivery.
-      </p>
+      <h1 class="confirm-headline" id="th-headline">You're in.</h1>
+      <p class="confirm-product" id="th-product" hidden></p>
 
-      <!-- Queue wait -->
-      <div class="queue-card" role="status">
-        <div class="queue-icon" aria-hidden="true">⏱</div>
-        <div class="queue-card-text">
-          <span class="queue-card-label">Current estimated wait</span>
-          <span class="queue-card-value">2–3 weeks from intake submission</span>
-          <span class="queue-card-note">Queue position is based on intake order. Submit promptly to move up.</span>
-        </div>
-      </div>
+      <p class="receipt-line" id="th-receipt" role="status" aria-live="polite" hidden></p>
 
-      <!-- Next steps -->
       <div class="next-steps-card">
-        <span class="steps-label">Your next moves</span>
-
-        <ul class="steps-list">
-          <li class="step-item">
-            <span class="step-num">01</span>
-            <p class="step-text">
-              <strong>Check your email.</strong> You'll receive a receipt from Stripe and your intake form link from Stephuary within a few minutes.
-              <span class="step-note">Check spam if it doesn't appear within 10 minutes.</span>
-            </p>
-          </li>
-          <li class="step-item">
-            <span class="step-num">02</span>
-            <p class="step-text">
-              <strong>Submit the intake.</strong> This locks your queue position. The form takes 10–15 minutes. Be specific — the quality of the Snapshot depends on the detail you put in. Do not skip questions.
-            </p>
-          </li>
-          <li class="step-item">
-            <span class="step-num">03</span>
-            <p class="step-text">
-              <strong>Receive your Snapshot.</strong> Delivered in queue order after intake submission. You'll get a clarity score, positioning audit, structure read, annotated written breakdown, and one specific direction. A calendar link for your 30-minute delivery call follows with the report.
-            </p>
-          </li>
-        </ul>
-
-        <div class="card-divider"></div>
-
-        <p class="contact-note">
-          Questions or didn't receive your intake form?
-          Email <a href="mailto:ecoluxconsulting@gmail.com">ecoluxconsulting@gmail.com</a>
-          — response within 1 business day.
+        <span class="steps-label">What happens next</span>
+        <p class="next-body" id="th-next">
+          Thanks for reaching out. You'll hear back shortly.
         </p>
       </div>
 
-      <a href="/" class="back-link">Back to Stephuary</a>
+      <div class="cta-row">
+        <a href="/" class="btn btn--secondary" id="th-back">Back to Stephuary →</a>
+      </div>
 
     </div>
   </main>
 
-  <footer>
-    <div class="container">
-      <p class="footer-text">© 2026 Stephuary · All rights reserved</p>
+  <!-- Canonical site footer — identical markup on every page (Prompt 4, §5) -->
+  <footer class="sh-footer" role="contentinfo" aria-labelledby="sh-foot-mark">
+    <div class="sh-footer__inner">
+      <div class="sh-footer__cols">
+        <div class="sh-footer__col" aria-labelledby="sh-foot-offerings">
+          <h2 id="sh-foot-offerings">Offerings</h2>
+          <ul class="sh-footer__list">
+            <li><a href="/snapshot">Snapshot</a></li>
+            <li><a href="/access">Access</a></li>
+            <li><a href="/only-sometimes">Only Sometimes</a></li>
+          </ul>
+        </div>
+        <div class="sh-footer__col" aria-labelledby="sh-foot-writing">
+          <h2 id="sh-foot-writing">Writing</h2>
+          <ul class="sh-footer__list">
+            <li><a href="https://stephuary.substack.com" target="_blank" rel="noopener">Substack</a></li>
+          </ul>
+        </div>
+        <div class="sh-footer__col" aria-labelledby="sh-foot-contact">
+          <h2 id="sh-foot-contact">Contact</h2>
+          <p class="sh-footer__contact"><a href="mailto:hello@stephuary.com">hello@stephuary.com</a></p>
+        </div>
+      </div>
+      <a class="sh-footer__mark" id="sh-foot-mark" href="/" aria-label="Stephuary home">Stephuary</a>
+      <p class="sh-footer__copy">© 2026 Stephuary · All rights reserved</p>
     </div>
   </footer>
+
+  <script>
+    (function () {
+      var params = new URLSearchParams(window.location.search);
+      var sessionId = params.get('session_id');
+      var fallbackAmount = params.get('amount');
+      var fallbackProduct = params.get('product');
+      var paramType = (params.get('type') || '').toLowerCase();
+
+      var state = {
+        type: paramType,
+        product: fallbackProduct,
+        amount: fallbackAmount && !isNaN(parseInt(fallbackAmount, 10)) ? parseInt(fallbackAmount, 10) : null,
+        currency: 'usd',
+        email: null,
+        shortId: sessionId ? String(sessionId).slice(-8) : null
+      };
+
+      function productLabel(t, raw) {
+        if (raw && String(raw).trim()) return String(raw).trim();
+        if (t === 'snapshot') return 'Snapshot';
+        if (t === 'snapshot-plus' || t === 'snapshot+') return 'Snapshot+';
+        if (t === 'access') return '.5% Club · Access';
+        return '';
+      }
+
+      function formatMoney(cents, currency) {
+        if (cents == null || isNaN(cents)) return null;
+        var ccy = (currency || 'usd').toUpperCase();
+        try {
+          return new Intl.NumberFormat('en-US', { style: 'currency', currency: ccy }).format(cents / 100);
+        } catch (e) {
+          return '$' + (cents / 100).toFixed(2);
+        }
+      }
+
+      function escapeHtml(s) {
+        return String(s).replace(/[&<>"']/g, function (c) {
+          return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+        });
+      }
+
+      function renderHeadline() {
+        var headline = document.getElementById('th-headline');
+        var productEl = document.getElementById('th-product');
+        var label = productLabel(state.type, state.product);
+        headline.textContent = "You're in.";
+        if (label) {
+          productEl.textContent = label;
+          productEl.hidden = false;
+        } else {
+          productEl.textContent = '';
+          productEl.hidden = true;
+        }
+      }
+
+      function renderReceipt() {
+        var wrap = document.getElementById('th-receipt');
+        if (!wrap) return;
+        var parts = [];
+        var money = formatMoney(state.amount, state.currency);
+        if (money) parts.push('<strong>' + money + ' charged</strong>');
+        if (state.shortId) parts.push('Order <span class="th-mono">' + escapeHtml(state.shortId) + '</span>');
+        if (state.email) {
+          parts.push('Receipt emailed to <span class="th-mono">' + escapeHtml(state.email) + '</span>');
+        } else if (money || state.shortId) {
+          parts.push('Receipt emailed if provided');
+        }
+        if (parts.length === 0) { wrap.hidden = true; return; }
+        wrap.innerHTML = parts.join(' · ');
+        wrap.hidden = false;
+      }
+
+      function renderNextSteps() {
+        var el = document.getElementById('th-next');
+        if (!el) return;
+        var msg;
+        switch (state.type) {
+          case 'snapshot':
+          case 'snapshot-plus':
+          case 'snapshot+':
+            msg = 'Your Snapshot kicks off within one business day. Watch for an email from <a href="mailto:hello@stephuary.com">hello@stephuary.com</a> with your intake link.';
+            break;
+          case 'access':
+            msg = 'Application received. Review takes up to 5 business days. You\'ll hear back from Stephanie directly.';
+            break;
+          default:
+            msg = 'Thanks for reaching out. You\'ll hear back from <a href="mailto:hello@stephuary.com">hello@stephuary.com</a> shortly.';
+        }
+        el.innerHTML = msg;
+      }
+
+      function render() {
+        renderHeadline();
+        renderReceipt();
+        renderNextSteps();
+      }
+
+      render();
+
+      if (sessionId) {
+        fetch('/api/stripe-session?id=' + encodeURIComponent(sessionId), {
+          headers: { 'Accept': 'application/json' },
+          credentials: 'same-origin'
+        })
+          .then(function (r) { return r && r.ok ? r.json() : null; })
+          .then(function (data) {
+            if (!data || typeof data !== 'object') return;
+            if (typeof data.amount_total === 'number') state.amount = data.amount_total;
+            if (data.currency) state.currency = String(data.currency);
+            if (data.customer_email) state.email = String(data.customer_email);
+            if (data.type) state.type = String(data.type).toLowerCase();
+            if (data.product) state.product = String(data.product);
+            if (data.id) state.shortId = String(data.id).slice(-8);
+            render();
+          })
+          .catch(function () { /* silent fallback to URL params */ });
+      }
+    })();
+  </script>
 
   <script>
     (function () {

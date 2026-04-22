@@ -1228,13 +1228,47 @@
     save(state);
   }
 
+  /**
+   * Selectors this script touches. If none are present we bail early instead of
+   * paying the DOM-walk + localStorage cost on pages that do not need it.
+   */
+  var EXPECTED_SELECTORS = [
+    '#hero-personal-line',
+    '#hero-tier-hint',
+    '#pricing-hero-personal',
+    '#sh-live-panel',
+    '.sh-system-map',
+    '.price-group',
+    '.home-os-discover'
+  ];
+
+  function hasAnyExpectedSelector() {
+    try {
+      var doc = global.document;
+      if (!doc || typeof doc.querySelector !== 'function') return false;
+      for (var i = 0; i < EXPECTED_SELECTORS.length; i++) {
+        if (doc.querySelector(EXPECTED_SELECTORS[i])) return true;
+      }
+      return false;
+    } catch (e) {
+      return false;
+    }
+  }
+
   function boot() {
-    state = refresh();
-    initTracking();
-    applyHomeHero();
-    applyPricingPage();
-    applySystemMap();
-    tryLivePanel();
+    try {
+      if (!hasAnyExpectedSelector()) return;
+      state = refresh();
+      initTracking();
+      applyHomeHero();
+      applyPricingPage();
+      applySystemMap();
+      tryLivePanel();
+    } catch (err) {
+      if (global.console && typeof global.console.warn === 'function') {
+        global.console.warn('[personalization] init skipped:', err && err.message ? err.message : err);
+      }
+    }
   }
 
   if (global.document.readyState === 'loading') {

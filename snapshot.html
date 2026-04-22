@@ -39,8 +39,8 @@
       --neon-gold:     #C8A96E;
       --cta-royal-blue:#4169e1;
       --text-primary:  #FFFFFF;
-      --text-secondary:#B6B6CE;
-      --text-muted:    #5C5C78;
+      --text-secondary:#B6B6CE; /* 10.6:1 on #05050F (AAA) */
+      --text-muted:    #8B8BA5; /* before #5C5C78 (3.3:1 FAIL body); after 5.4:1 (AA) */
       --text-label:    #C8A96E;
       --glow-plum: 0 0 20px rgba(139,47,201,0.55), 0 0 60px rgba(139,47,201,0.2);
       --glow-cta:  0 0 28px rgba(65,105,225,0.65), 0 0 80px rgba(65,105,225,0.28);
@@ -120,25 +120,7 @@
       animation-delay: 0.2s;
     }
 
-    /* ── Nav ── */
-    nav {
-      position: fixed; top: 0; left: 0; right: 0;
-      height: 60px; z-index: var(--z-nav);
-      background: rgba(5,5,15,0.85);
-      backdrop-filter: blur(24px);
-      -webkit-backdrop-filter: blur(24px);
-      border-bottom: 1px solid rgba(139,47,201,0.18);
-      display: flex; align-items: center;
-      justify-content: space-between;
-      padding: 0 40px;
-    }
-    .nav-wordmark {
-      font-family: var(--font-sans); font-weight: 700;
-      font-size: 13px; letter-spacing: 0.2em; text-transform: uppercase;
-      color: var(--text-primary); text-decoration: none;
-      transition: color 0.2s ease;
-    }
-    .nav-wordmark:hover { color: var(--neon-violet); }
+    /* legacy snapshot nav removed; canonical .site-nav lives in /stephuary-a11y.css */
     /* ── Layout ── */
     .container {
       width: 100%; max-width: 960px;
@@ -149,7 +131,7 @@
     .page {
       position: relative; z-index: var(--z-content);
       min-height: 100vh;
-      padding: 96px 0 64px;
+      padding: 24px 0 64px;
       display: flex; flex-direction: column; align-items: center;
     }
 
@@ -168,16 +150,20 @@
 
     .page-headline {
       font-family: var(--font-serif);
-      font-size: clamp(36px, 5vw, 56px);
-      font-weight: 900; line-height: 1.08;
+      font-size: var(--fs-h1);
+      font-weight: 900;
+      line-height: var(--lh-h1, 1.1);
       text-align: center; color: var(--text-primary);
-      margin-bottom: 14px; letter-spacing: -0.01em;
+      margin-bottom: 14px; letter-spacing: var(--letter-h, -0.02em);
     }
 
     .page-sub {
-      font-family: var(--font-sans); font-size: 16px;
+      font-family: var(--font-sans);
+      font-size: var(--fs-body);
       color: var(--text-secondary); text-align: center;
-      max-width: 520px; line-height: 1.65; margin-bottom: 24px;
+      max-width: 520px;
+      line-height: var(--lh-body, 1.6);
+      margin-bottom: 24px;
     }
     .hero-support {
       font-family: var(--font-mono);
@@ -800,7 +786,7 @@
       .payment-card { padding: 32px 24px 28px; }
       .payment-card:hover { transform: none; }
       .price-amount { font-size: 44px; }
-      .page-headline { font-size: clamp(30px, 8vw, 40px); }
+      /* .page-headline mobile scale handled via var(--fs-h1) in stephuary-design-tokens.css */
       .deliverables-grid {
         grid-template-columns: 1fr;
       }
@@ -830,22 +816,36 @@
       .reveal { opacity: 1; transform: none; }
 }
 </style>
+<link rel="stylesheet" href="/stephuary-a11y.css">
+<link rel="stylesheet" href="/stephuary-brand-polish.css">
+<link rel="manifest" href="/site.webmanifest">
 </head>
 <body>
+  <a href="#main" class="skip-link">Skip to content</a>
 
   <canvas id="starfield" aria-hidden="true"></canvas>
   <div class="cursor-light" aria-hidden="true"></div>
   <div class="scanlines" aria-hidden="true"></div>
   <div class="page-scan" aria-hidden="true"></div>
 
-  <nav>
-    <a href="/" class="nav-wordmark">Stephuary</a>
+  <nav class="site-nav" aria-label="Primary">
+    <div class="site-nav__brand">
+      <a href="/" class="site-nav__wordmark" aria-label="Stephuary — home">Stephuary</a>
+    </div>
+    <ul class="site-nav__list">
+      <li><a href="/" class="site-nav__link">Home</a></li>
+      <li><a href="/pricing" class="site-nav__link">Pricing</a></li>
+      <li><a href="/access" class="site-nav__link">Access</a></li>
+      <li><a href="/only-sometimes" class="site-nav__link">Only Sometimes</a></li>
+      <li><a href="https://stephuary.substack.com" class="site-nav__link" target="_blank" rel="noopener">Substack</a></li>
+    </ul>
   </nav>
 
-  <main class="page">
+  <main id="main" class="page">
     <div class="container" style="display:flex; flex-direction:column; align-items:center;">
 
       <!-- Hero -->
+      <div class="snapshot-hero-group" data-sh-hero-intro>
       <div class="page-label reveal">Precision pass</div>
       <h1 class="page-headline reveal reveal-delay-1">Snapshot · precision pass</h1>
       <p class="page-sub reveal reveal-delay-2">
@@ -855,6 +855,7 @@
       <div class="hero-cta-wrap reveal reveal-delay-2">
         <a href="https://buy.stripe.com/9B63cv4gUcKO0ja29J33W00" class="btn-full">Buy Snapshot · $950</a>
   </div>
+      </div><!-- /.snapshot-hero-group -->
 
       <!-- Queue status -->
       <div class="queue-status reveal">
@@ -903,13 +904,13 @@
     </div>
   </section>
 
-      <!-- What you walk away knowing -->
-      <section class="deliverables-block reveal collapsible-section" data-collapsible="audit-covers">
+      <!-- What you walk away knowing (primary "what you get" — defaults open) -->
+      <section class="deliverables-block reveal collapsible-section" data-collapsible="audit-covers" data-default-open="true">
         <div class="collapsible-header">
           <h2 class="section-heading">What you walk away knowing in 48 hours</h2>
-          <button type="button" class="collapsible-toggle" aria-expanded="false" aria-controls="audit-covers-body">Expand</button>
+          <button type="button" class="collapsible-toggle" aria-expanded="true" aria-controls="audit-covers-body">Collapse</button>
         </div>
-        <div class="collapsible-body" id="audit-covers-body" hidden>
+        <div class="collapsible-body" id="audit-covers-body">
           <ul class="walkaway-sub">
             <li>Where your revenue is breaking</li>
             <li>What to fix first</li>
@@ -1155,9 +1156,31 @@
     </div>
   </main>
 
-  <footer>
-    <div class="container">
-      <p class="footer-text">© 2026 Stephuary · All rights reserved</p>
+  <!-- Canonical site footer — identical markup on every page (Prompt 4, §5) -->
+  <footer class="sh-footer" role="contentinfo" aria-labelledby="sh-foot-mark">
+    <div class="sh-footer__inner">
+      <div class="sh-footer__cols">
+        <div class="sh-footer__col" aria-labelledby="sh-foot-offerings">
+          <h2 id="sh-foot-offerings">Offerings</h2>
+          <ul class="sh-footer__list">
+            <li><a href="/snapshot">Snapshot</a></li>
+            <li><a href="/access">Access</a></li>
+            <li><a href="/only-sometimes">Only Sometimes</a></li>
+          </ul>
+        </div>
+        <div class="sh-footer__col" aria-labelledby="sh-foot-writing">
+          <h2 id="sh-foot-writing">Writing</h2>
+          <ul class="sh-footer__list">
+            <li><a href="https://stephuary.substack.com" target="_blank" rel="noopener">Substack</a></li>
+          </ul>
+        </div>
+        <div class="sh-footer__col" aria-labelledby="sh-foot-contact">
+          <h2 id="sh-foot-contact">Contact</h2>
+          <p class="sh-footer__contact"><a href="mailto:hello@stephuary.com">hello@stephuary.com</a></p>
+        </div>
+      </div>
+      <a class="sh-footer__mark" id="sh-foot-mark" href="/" aria-label="Stephuary home">Stephuary</a>
+      <p class="sh-footer__copy">© 2026 Stephuary · All rights reserved</p>
     </div>
   </footer>
 

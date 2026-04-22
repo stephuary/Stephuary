@@ -36,8 +36,8 @@
       --neon-gold: #c8a96e;
       --cta-royal-blue: #4169e1;
       --text-primary: #fff;
-      --text-secondary: #a0a0c0;
-      --text-muted: #62628a;
+      --text-secondary: #a0a0c0; /* 8.3:1 on body (AAA) */
+      --text-muted: #8b8ba5;     /* before #62628a (3.85:1 FAIL body). after 5.4:1 (AA body). */
       --font-serif: 'Playfair Display', Georgia, serif;
       --font-sans: 'Inter', system-ui, sans-serif;
       --font-mono: 'JetBrains Mono', 'Courier New', monospace;
@@ -62,26 +62,8 @@
       margin: 0 auto;
       padding: 0 24px;
     }
-    nav {
-      position: sticky;
-      top: 0;
-      z-index: 50;
-      height: 60px;
-      display: flex;
-      align-items: center;
-      background: rgba(5, 5, 15, 0.84);
-      backdrop-filter: blur(20px);
-      border-bottom: 1px solid rgba(139, 47, 201, 0.18);
-    }
-    .wordmark {
-      font-family: var(--font-mono);
-      text-transform: uppercase;
-      letter-spacing: 0.22em;
-      font-size: 10px;
-      color: var(--text-secondary);
-      text-decoration: none;
-    }
-    main { padding: 80px 0 88px; }
+    /* legacy nav styles removed; canonical site-nav now lives in /stephuary-a11y.css */
+    main { padding: 24px 0 88px; }
     .hero-kicker {
       display: inline-flex;
       align-items: center;
@@ -101,15 +83,16 @@
     }
     h1 {
       font-family: var(--font-serif);
-      font-size: clamp(34px, 5.4vw, 58px);
-      line-height: 1.04;
+      font-size: var(--fs-h1);
+      line-height: var(--lh-h1, 1.1);
       margin-bottom: 14px;
-      letter-spacing: 0.01em;
+      letter-spacing: var(--letter-h, -0.02em);
     }
     .hero-sub {
       max-width: 70ch;
       color: var(--text-secondary);
-      font-size: 16px;
+      font-size: var(--fs-body);
+      line-height: var(--lh-body, 1.6);
       margin-bottom: 34px;
     }
     .cards {
@@ -175,7 +158,9 @@
     }
     .full-env h2 {
       font-family: var(--font-serif);
-      font-size: clamp(28px, 4.2vw, 40px);
+      font-size: var(--fs-h2);
+      line-height: var(--lh-h2, 1.15);
+      letter-spacing: var(--letter-h, -0.02em);
       margin-bottom: 8px;
     }
     .full-env h3 {
@@ -247,23 +232,36 @@
     }
     @media (max-width: 900px) {
       .cards { grid-template-columns: 1fr; }
-      main { padding-top: 64px; }
+      main { padding-top: 24px; }
       .container { padding: 0 20px; }
     }
   </style>
+  <link rel="stylesheet" href="/stephuary-a11y.css">
+  <link rel="stylesheet" href="/stephuary-brand-polish.css">
+  <link rel="manifest" href="/site.webmanifest">
 </head>
 <body>
-  <nav>
-    <div class="container">
-      <a class="wordmark" href="/">Stephuary</a>
+  <a href="#main" class="skip-link">Skip to content</a>
+  <nav class="site-nav" aria-label="Primary">
+    <div class="site-nav__brand">
+      <a href="/" class="site-nav__wordmark" aria-label="Stephuary — home">Stephuary</a>
     </div>
+    <ul class="site-nav__list">
+      <li><a href="/" class="site-nav__link">Home</a></li>
+      <li><a href="/pricing" class="site-nav__link">Pricing</a></li>
+      <li><a href="/access" class="site-nav__link">Access</a></li>
+      <li><a href="/only-sometimes" class="site-nav__link">Only Sometimes</a></li>
+      <li><a href="https://stephuary.substack.com" class="site-nav__link" target="_blank" rel="noopener">Substack</a></li>
+    </ul>
   </nav>
 
-  <main>
+  <main id="main">
     <div class="container">
-      <div class="hero-kicker">Custom Builds</div>
-      <h1>Experience Build, System Build, and Full Environment — three levels of scope.</h1>
-      <p class="hero-sub">Apply for the level that matches where you are now. Each build is custom, interactive, and designed to make your business easier to understand, trust, and choose.</p>
+      <div class="d-hero-group" data-sh-hero-intro>
+        <div class="hero-kicker">Custom Builds</div>
+        <h1>Experience Build, System Build, and Full Environment — three levels of scope.</h1>
+        <p class="hero-sub">Apply for the level that matches where you are now. Each build is custom, interactive, and designed to make your business easier to understand, trust, and choose.</p>
+      </div>
 
       <section class="cards" aria-label="Custom build options">
         <article class="card">
@@ -358,9 +356,31 @@
     </div>
   </main>
 
-  <footer>
-    <div class="container">
-      <p class="foot-note">© 2026 Stephuary · All rights reserved</p>
+  <!-- Canonical site footer — identical markup on every page (Prompt 4, §5) -->
+  <footer class="sh-footer" role="contentinfo" aria-labelledby="sh-foot-mark">
+    <div class="sh-footer__inner">
+      <div class="sh-footer__cols">
+        <div class="sh-footer__col" aria-labelledby="sh-foot-offerings">
+          <h2 id="sh-foot-offerings">Offerings</h2>
+          <ul class="sh-footer__list">
+            <li><a href="/snapshot">Snapshot</a></li>
+            <li><a href="/access">Access</a></li>
+            <li><a href="/only-sometimes">Only Sometimes</a></li>
+          </ul>
+        </div>
+        <div class="sh-footer__col" aria-labelledby="sh-foot-writing">
+          <h2 id="sh-foot-writing">Writing</h2>
+          <ul class="sh-footer__list">
+            <li><a href="https://stephuary.substack.com" target="_blank" rel="noopener">Substack</a></li>
+          </ul>
+        </div>
+        <div class="sh-footer__col" aria-labelledby="sh-foot-contact">
+          <h2 id="sh-foot-contact">Contact</h2>
+          <p class="sh-footer__contact"><a href="mailto:hello@stephuary.com">hello@stephuary.com</a></p>
+        </div>
+      </div>
+      <a class="sh-footer__mark" id="sh-foot-mark" href="/" aria-label="Stephuary home">Stephuary</a>
+      <p class="sh-footer__copy">© 2026 Stephuary · All rights reserved</p>
     </div>
   </footer>
 </body>

@@ -1,5 +1,10 @@
 /**
  * Homepage monthly drawing — email capture for one free 1:1 concept + niche session (FormSubmit / config).
+ *
+ * TODO: still referenced; do not delete without sweeping these call sites first:
+ *   - index.html (loads this script via <script src="/stephuary-private-selection.js" defer>)
+ *   - stephuary-early-mode.js (doc comment, line ~58)
+ *   - stephuary-early-mode.css (doc comment, line ~154)
  */
 (function (global) {
   var STORAGE_KEY = 'stephuary_monthly_free_session_v1';
@@ -448,6 +453,31 @@
     }
   }
 
+  function setFieldError(fieldId, msg) {
+    var err = global.document.getElementById(fieldId + '-error');
+    var input = global.document.getElementById(fieldId);
+    if (input) {
+      if (msg) {
+        input.setAttribute('aria-invalid', 'true');
+      } else {
+        input.removeAttribute('aria-invalid');
+      }
+    }
+    if (!err) return;
+    if (msg) {
+      err.textContent = msg;
+      err.hidden = false;
+    } else {
+      err.textContent = '';
+      err.hidden = true;
+    }
+  }
+
+  function clearAllFieldErrors() {
+    var ids = ['home-mfs-name', 'home-mfs-email', 'home-mfs-building', 'home-mfs-come-for', 'home-mfs-offer-first'];
+    for (var i = 0; i < ids.length; i++) setFieldError(ids[i], '');
+  }
+
   function postMonthlyEmail(email, name, building, comeFor, offerFirst) {
     var action = getMonthlyFormAction();
     if (!action) {
@@ -519,25 +549,31 @@
     var comeFor = comeEl ? String(comeEl.value || '').trim() : '';
     var offerFirst = offerEl ? String(offerEl.value || '').trim() : '';
     setFormError('');
+    clearAllFieldErrors();
 
+    var firstInvalid = null;
     if (!name) {
-      setFormError('Add your name.');
-      return;
+      setFieldError('home-mfs-name', 'Add your name.');
+      if (!firstInvalid) firstInvalid = nameEl;
     }
     if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      setFormError('Enter a valid email address.');
-      return;
+      setFieldError('home-mfs-email', 'Enter a valid email address.');
+      if (!firstInvalid) firstInvalid = emailEl;
     }
     if (!building) {
-      setFormError('Add what you are building.');
-      return;
+      setFieldError('home-mfs-building', 'Add what you are building.');
+      if (!firstInvalid) firstInvalid = buildingEl;
     }
     if (!comeFor) {
-      setFormError('Add what people come to you for.');
-      return;
+      setFieldError('home-mfs-come-for', 'Add what people come to you for.');
+      if (!firstInvalid) firstInvalid = comeEl;
     }
     if (!offerFirst) {
-      setFormError('Add the offer you would shape first.');
+      setFieldError('home-mfs-offer-first', 'Add the offer you would shape first.');
+      if (!firstInvalid) firstInvalid = offerEl;
+    }
+    if (firstInvalid) {
+      try { firstInvalid.focus(); } catch (e) {}
       return;
     }
 
