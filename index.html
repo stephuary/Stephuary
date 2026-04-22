@@ -1772,13 +1772,82 @@
     }
     body[data-sh-env="home"] .page-scan { display: none !important; }
     body[data-sh-env="home"] #sh-intro { display: none !important; }
-    body[data-sh-env="home"] #hero.hero::before { display: none; }
 
     /* Injected fixed overlay (#sh-env-depth) paints blue + warm radial
        gradients at z-index 0 and was covering the body's oxblood wash.
        Remove it on the home route so the atmosphere is owned by the
        body gradient + the scoped starfield canvas only. */
     body[data-sh-env="home"] #sh-env-depth { display: none !important; }
+
+    /* ── Hero aura stack ──────────────────────────────────────────────
+       Four layered radial gradients sitting over the body's oxblood
+       wash. The rgba() stops are low-alpha so every layer reads as
+       atmosphere rather than colour-blocking. Order (back -> front):
+
+       1. oxblood reinforce (top-center)       — carries body bg
+       2. plum low-center                      — depth glow
+       3. burnt orange aura (upper-right)      — warm accent
+       4. royal blue aura (lower-left)         — cool counterweight
+       ----------------------------------------------------------------- */
+    body[data-sh-env="home"] #hero.hero {
+      background-image:
+        radial-gradient(ellipse 90% 65% at 50% 0%,
+          rgba(61, 12, 44, 0.38) 0%, transparent 70%),
+        radial-gradient(ellipse 70% 55% at 50% 70%,
+          rgba(139, 47, 201, 0.14) 0%, transparent 62%),
+        radial-gradient(ellipse 58% 48% at 82% 22%,
+          rgba(201, 96, 38, 0.22) 0%,
+          rgba(201, 96, 38, 0.08) 35%,
+          transparent 62%),
+        radial-gradient(ellipse 52% 44% at 14% 82%,
+          rgba(65, 105, 225, 0.22) 0%,
+          rgba(65, 105, 225, 0.08) 35%,
+          transparent 62%) !important;
+      background-repeat: no-repeat !important;
+      background-size: auto, auto, auto, auto !important;
+      background-color: transparent !important;
+    }
+
+    /* Restore the hero's glow ellipse as a soft plum-on-gold halo
+       sitting between the aura stack and the copy column. */
+    body[data-sh-env="home"] #hero.hero::before {
+      content: '' !important;
+      display: block !important;
+      position: absolute;
+      top: 46%;
+      left: 50%;
+      width: min(880px, 90vw);
+      height: min(560px, 56vh);
+      transform: translate(-50%, -50%);
+      background:
+        radial-gradient(ellipse at center,
+          rgba(200, 169, 110, 0.08) 0%,
+          rgba(139, 47, 201, 0.06) 30%,
+          transparent 65%);
+      pointer-events: none;
+      z-index: 1;
+      mix-blend-mode: screen;
+    }
+    @media (max-width: 768px) {
+      body[data-sh-env="home"] #hero.hero {
+        /* tighten the offsets so the burnt-orange + royal-blue auras
+           still sit off-axis on narrow phones without bleeding past
+           the content column */
+        background-image:
+          radial-gradient(ellipse 120% 70% at 50% 0%,
+            rgba(61, 12, 44, 0.42) 0%, transparent 72%),
+          radial-gradient(ellipse 90% 60% at 50% 72%,
+            rgba(139, 47, 201, 0.16) 0%, transparent 64%),
+          radial-gradient(ellipse 80% 55% at 88% 18%,
+            rgba(201, 96, 38, 0.22) 0%,
+            rgba(201, 96, 38, 0.08) 35%,
+            transparent 64%),
+          radial-gradient(ellipse 80% 55% at 12% 86%,
+            rgba(65, 105, 225, 0.22) 0%,
+            rgba(65, 105, 225, 0.08) 35%,
+            transparent 64%) !important;
+      }
+    }
 
     /* Section rhythm — 120 desktop / 72 mobile. Flat dark middle. */
     body[data-sh-env="home"] #main > section {
