@@ -55,7 +55,6 @@
     }
   }
 
-  /** Monthly free 1:1 email strip lives at bottom of index.html (stephuary-private-selection.js). */
   function bindEasterEgg() {}
 
   function init() {
