@@ -2680,6 +2680,655 @@
       .hr-divider { transition: none !important; opacity: 0.4 !important; }
     }
 
+    /* ============================================================
+       RHYTHM REDESIGN — varied section shapes, visual anchors,
+       accordion chapters, horizontal rail, icon clusters, price
+       anchor card, pull quote, staircase ladder, progress bar.
+       Appended last so all rules win against legacy declarations.
+       ============================================================ */
+
+    /* Thin top scroll progress bar. */
+    .hr-progress {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 2px;
+      background: rgba(200, 169, 110, 0.08);
+      z-index: 1000;
+      pointer-events: none;
+    }
+    .hr-progress__bar {
+      width: 0%;
+      height: 100%;
+      background: var(--hr-gold);
+      transform-origin: left center;
+      transition: width 0.08s linear;
+      box-shadow: 0 0 10px rgba(200, 169, 110, 0.5);
+    }
+
+    /* Unify all homepage CTAs to gold-fill primary (kill the legacy
+       royal blue). Higher specificity + !important wins the cascade. */
+    body[data-sh-env="home"] .btn.btn--primary.home-diag-cta,
+    body[data-sh-env="home"] a.btn.btn--primary.home-diag-cta,
+    body[data-sh-env="home"] #hero.hero .btn.btn--primary.home-diag-cta {
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      gap: 8px !important;
+      padding: 16px 32px !important;
+      min-height: 54px !important;
+      background: var(--hr-gold) !important;
+      color: var(--hr-gold-ink) !important;
+      font-family: var(--font-sans) !important;
+      font-size: 15px !important;
+      font-weight: 700 !important;
+      letter-spacing: 0.04em !important;
+      text-transform: none !important;
+      border: 1px solid var(--hr-gold) !important;
+      border-radius: 999px !important;
+      text-decoration: none !important;
+      box-shadow: 0 0 28px rgba(200, 169, 110, 0.22) !important;
+      transition: background 0.18s ease, transform 0.15s ease,
+                  box-shadow 0.18s ease, border-color 0.18s ease !important;
+    }
+    body[data-sh-env="home"] .btn.btn--primary.home-diag-cta:hover,
+    body[data-sh-env="home"] .btn.btn--primary.home-diag-cta:focus {
+      background: #ffe9b8 !important;
+      border-color: #ffe9b8 !important;
+      transform: translateY(-1px) !important;
+      box-shadow: 0 0 34px rgba(200, 169, 110, 0.36) !important;
+    }
+    body[data-sh-env="home"] .btn.btn--primary.home-diag-cta::after {
+      display: none !important;
+    }
+
+    /* Hero scroll hint — gold mono + down arrow below meta. */
+    .hero-scroll-hint {
+      margin: 18px auto 0;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--font-mono);
+      font-size: 10.5px;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--hr-gold);
+      opacity: 0.82;
+      text-decoration: none;
+    }
+    .hero-scroll-hint__arrow {
+      display: inline-block;
+      width: 10px; height: 10px;
+      border-right: 1.5px solid var(--hr-gold);
+      border-bottom: 1.5px solid var(--hr-gold);
+      transform: rotate(45deg) translate(-1px, -1px);
+    }
+
+    /* If this feels familiar — numbered diagnostic rows. */
+    body[data-sh-env="home"] .fits-list {
+      list-style: none;
+      padding: 0;
+      margin: 0 auto;
+      max-width: 720px;
+      display: block;
+      gap: 0;
+    }
+    body[data-sh-env="home"] .fits-list li {
+      display: grid;
+      grid-template-columns: 56px 1fr;
+      align-items: baseline;
+      gap: 18px;
+      padding: 18px 4px 18px 4px !important;
+      background: transparent !important;
+      border: 0 !important;
+      border-top: 1px solid rgba(200, 169, 110, 0.22) !important;
+      border-radius: 0 !important;
+    }
+    body[data-sh-env="home"] .fits-list li:last-child {
+      border-bottom: 1px solid rgba(200, 169, 110, 0.22) !important;
+    }
+    body[data-sh-env="home"] .fits-list li::before {
+      content: counter(fits, decimal-leading-zero);
+      counter-increment: fits;
+      position: static;
+      display: block;
+      width: auto; height: auto;
+      background: transparent;
+      font: 600 11px/1 var(--font-mono);
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--hr-gold);
+      margin-top: 4px;
+    }
+    body[data-sh-env="home"] .fits-list { counter-reset: fits; }
+
+    /* Founder — pure pull quote, gold frame, no card, no avatar. */
+    body[data-sh-env="home"] .home-founder .home-founder__card {
+      display: block !important;
+      padding: clamp(36px, 5vw, 60px) clamp(24px, 4vw, 56px) !important;
+      background: transparent !important;
+      border: 1px solid rgba(200, 169, 110, 0.35) !important;
+      border-radius: 0 !important;
+      box-shadow: none !important;
+      max-width: 820px;
+      margin: 0 auto;
+      text-align: center;
+    }
+    body[data-sh-env="home"] .home-founder .home-founder__avatar,
+    body[data-sh-env="home"] .home-founder .home-founder__cred,
+    body[data-sh-env="home"] .home-founder .home-founder__substack {
+      display: none !important;
+    }
+    body[data-sh-env="home"] .home-founder .home-founder__line {
+      font-family: var(--font-serif) !important;
+      font-style: italic !important;
+      font-weight: 500 !important;
+      font-size: clamp(20px, 2.4vw, 28px) !important;
+      line-height: 1.45 !important;
+      color: #f7f1e1 !important;
+      margin: 0 auto 18px !important;
+      max-width: 38ch;
+    }
+    body[data-sh-env="home"] .home-founder .home-founder__sig {
+      font-family: var(--font-mono) !important;
+      font-size: 11px !important;
+      letter-spacing: 0.28em !important;
+      text-transform: uppercase !important;
+      color: var(--hr-gold) !important;
+      margin: 0 !important;
+    }
+
+    /* How it works — visible staircase, each step offset right + down,
+       connected by thin gold dotted line. Price chip remains on the right. */
+    body[data-sh-env="home"] .section-how .step-flow {
+      display: flex !important;
+      flex-direction: column !important;
+      gap: 0 !important;
+      max-width: 860px;
+      margin: 0 auto;
+      position: relative;
+    }
+    body[data-sh-env="home"] .section-how .step-panel {
+      display: grid !important;
+      grid-template-columns: 64px 1fr auto !important;
+      align-items: center !important;
+      gap: 24px !important;
+      padding: 26px 28px !important;
+      border: 1px solid rgba(200, 169, 110, 0.22) !important;
+      border-radius: 12px !important;
+      background: #0d0d22 !important;
+      text-align: left !important;
+      position: relative;
+      margin-bottom: 36px;
+    }
+    body[data-sh-env="home"] .section-how .step-panel:nth-child(1) {
+      margin-left: 0 !important; width: min(100%, 720px) !important;
+    }
+    body[data-sh-env="home"] .section-how .step-panel:nth-child(2) {
+      margin-left: auto !important; margin-right: auto !important;
+      width: min(100%, 720px) !important;
+    }
+    body[data-sh-env="home"] .section-how .step-panel:nth-child(3) {
+      margin-left: auto !important; margin-right: 0 !important;
+      width: min(100%, 720px) !important;
+    }
+    body[data-sh-env="home"] .section-how .step-panel:last-child {
+      margin-bottom: 0;
+    }
+    body[data-sh-env="home"] .section-how .step-panel::after {
+      content: '';
+      position: absolute;
+      left: 50%; top: 100%;
+      width: 2px; height: 36px;
+      background-image: radial-gradient(circle, var(--hr-gold) 1px, transparent 1.6px);
+      background-size: 2px 6px;
+      background-repeat: repeat-y;
+      opacity: 0.55;
+    }
+    body[data-sh-env="home"] .section-how .step-panel:last-child::after {
+      display: none;
+    }
+    body[data-sh-env="home"] .section-how .step-number {
+      font: 700 22px/1 var(--font-serif) !important;
+      color: var(--hr-gold) !important;
+      align-self: center !important;
+    }
+    body[data-sh-env="home"] .section-how .step-title {
+      font: 700 clamp(18px, 1.9vw, 22px)/1.25 var(--font-serif) !important;
+      color: #f7f1e1 !important;
+      margin: 0 0 4px !important;
+    }
+    body[data-sh-env="home"] .section-how .step-body {
+      font: 400 clamp(13.5px, 1.25vw, 15px)/1.5 var(--font-sans) !important;
+      color: rgba(232, 232, 245, 0.86) !important;
+      margin: 0 !important;
+      max-width: none !important;
+      text-align: left !important;
+    }
+    body[data-sh-env="home"] .section-how .step-chip {
+      justify-self: end !important;
+      font: 600 10.5px/1 var(--font-mono) !important;
+      letter-spacing: 0.22em !important;
+      color: var(--hr-gold) !important;
+      border: 1px solid var(--hr-gold) !important;
+      background: transparent !important;
+      padding: 8px 12px !important;
+      border-radius: 4px !important;
+    }
+    @media (max-width: 720px) {
+      body[data-sh-env="home"] .section-how .step-panel {
+        grid-template-columns: 1fr !important;
+        gap: 10px !important;
+        padding: 22px 20px !important;
+      }
+      body[data-sh-env="home"] .section-how .step-panel:nth-child(n) {
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        width: 100% !important;
+      }
+      body[data-sh-env="home"] .section-how .step-chip {
+        justify-self: start !important;
+      }
+      body[data-sh-env="home"] .section-how .step-panel::after {
+        left: 24px;
+      }
+    }
+
+    /* Chapter cards — accordion style preview + See all. */
+    .hr-chap-card[data-collapsed="true"] .hr-chap-card__list > li:nth-child(n+4) {
+      display: none;
+    }
+    .hr-chap-card__toggle {
+      align-self: flex-start;
+      margin-top: 8px;
+      padding: 6px 0;
+      background: transparent;
+      border: 0;
+      border-bottom: 1px solid rgba(200, 169, 110, 0.4);
+      color: var(--hr-gold);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: color 0.15s ease, border-color 0.15s ease;
+    }
+    .hr-chap-card__toggle:hover {
+      color: #ffe9b8;
+      border-color: #ffe9b8;
+    }
+    .hr-chap-card__toggle__caret {
+      display: inline-block;
+      transition: transform 0.2s ease;
+      font-size: 10px;
+    }
+    .hr-chap-card[data-collapsed="false"] .hr-chap-card__toggle__caret {
+      transform: rotate(180deg);
+    }
+    .hr-chap-card__preview {
+      margin: 10px 0 2px;
+      padding: 10px 12px;
+      border-left: 2px solid var(--hr-gold);
+      background: rgba(200, 169, 110, 0.06);
+    }
+    .hr-chap-card__preview-label {
+      margin: 0 0 4px;
+      font: 600 9.5px/1 var(--font-mono);
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--hr-gold);
+      opacity: 0.92;
+    }
+    .hr-chap-card__preview-body {
+      margin: 0;
+      font: 400 13px/1.45 var(--font-sans);
+      font-style: italic;
+      color: rgba(244, 244, 252, 0.85);
+    }
+
+    /* Horizontal 90-day rail — full-width, 4 nodes. */
+    .hr-rail {
+      position: relative;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 72px 20px 32px;
+    }
+    .hr-rail__line {
+      position: absolute;
+      top: 96px;
+      left: 8%;
+      right: 8%;
+      height: 1px;
+      background: linear-gradient(
+        90deg,
+        rgba(200, 169, 110, 0) 0%,
+        rgba(200, 169, 110, 0.55) 12%,
+        rgba(200, 169, 110, 0.55) 88%,
+        rgba(200, 169, 110, 0) 100%
+      );
+      pointer-events: none;
+    }
+    .hr-rail__track {
+      list-style: none;
+      margin: 0; padding: 0;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+    }
+    .hr-rail__node {
+      position: relative;
+      text-align: center;
+      padding: 0 12px;
+      min-width: 0;
+    }
+    .hr-rail__phase {
+      font: 600 10.5px/1 var(--font-mono);
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      color: var(--hr-gold);
+      margin: 0 0 14px;
+    }
+    .hr-rail__dot {
+      width: 14px; height: 14px;
+      border-radius: 50%;
+      background: var(--hr-bg);
+      border: 1.5px solid var(--hr-gold);
+      box-shadow: 0 0 0 6px var(--hr-bg), 0 0 14px rgba(200, 169, 110, 0.25);
+      margin: 0 auto 16px;
+      position: relative;
+      z-index: 1;
+      transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+    }
+    .hr-rail__node:hover .hr-rail__dot,
+    .hr-rail__node:focus-within .hr-rail__dot {
+      background: var(--hr-gold);
+      transform: scale(1.15);
+      box-shadow: 0 0 0 6px var(--hr-bg), 0 0 22px rgba(200, 169, 110, 0.55);
+    }
+    .hr-rail__label {
+      font: 700 clamp(15px, 1.55vw, 18px)/1.25 var(--font-serif);
+      color: #f7f1e1;
+      margin: 0 0 6px;
+    }
+    .hr-rail__body {
+      font: 400 13px/1.5 var(--font-sans);
+      color: rgba(232, 232, 245, 0.82);
+      margin: 0;
+    }
+    .hr-rail__checkpoint {
+      margin-top: 10px;
+      font: 400 12px/1.45 var(--font-sans);
+      font-style: italic;
+      color: var(--hr-gold);
+      opacity: 0;
+      transform: translateY(-4px);
+      transition: opacity 0.2s ease, transform 0.2s ease;
+      min-height: 1.45em;
+    }
+    .hr-rail__node:hover .hr-rail__checkpoint,
+    .hr-rail__node:focus-within .hr-rail__checkpoint {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    @media (max-width: 720px) {
+      .hr-rail { padding: 20px 0 0; }
+      .hr-rail__track {
+        grid-template-columns: 1fr;
+        gap: 24px;
+        max-width: 420px;
+        margin: 0 auto;
+      }
+      .hr-rail__line {
+        top: 0; bottom: 0;
+        left: 24px; right: auto;
+        width: 1px; height: auto;
+        background: linear-gradient(
+          180deg,
+          rgba(200, 169, 110, 0) 0%,
+          rgba(200, 169, 110, 0.55) 10%,
+          rgba(200, 169, 110, 0.55) 90%,
+          rgba(200, 169, 110, 0) 100%
+        );
+      }
+      .hr-rail__node {
+        text-align: left;
+        padding: 8px 0 0 48px;
+      }
+      .hr-rail__dot {
+        position: absolute;
+        top: 14px; left: 17px;
+        margin: 0;
+      }
+      .hr-rail__checkpoint {
+        opacity: 1;
+        transform: none;
+      }
+    }
+
+    /* Assets — 4 tinted clusters with 32px gold icons. */
+    .hr-assets-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 22px;
+      max-width: 1080px;
+      margin: 0 auto;
+    }
+    @media (max-width: 720px) {
+      .hr-assets-grid { grid-template-columns: 1fr; gap: 16px; }
+    }
+    .hr-cluster {
+      background: rgba(200, 169, 110, 0.04);
+      border: 1px solid rgba(200, 169, 110, 0.18);
+      border-radius: 12px;
+      padding: 22px 22px 16px;
+    }
+    .hr-cluster__label {
+      font: 600 10.5px/1 var(--font-mono);
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--hr-gold);
+      margin: 0 0 14px;
+    }
+    .hr-cluster__list {
+      list-style: none;
+      margin: 0; padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .hr-cluster__item {
+      display: grid;
+      grid-template-columns: 36px 1fr;
+      align-items: start;
+      gap: 14px;
+    }
+    .hr-cluster__icon {
+      width: 32px; height: 32px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid rgba(200, 169, 110, 0.4);
+      border-radius: 6px;
+      color: var(--hr-gold);
+    }
+    .hr-cluster__icon svg {
+      width: 18px; height: 18px;
+      stroke: var(--hr-gold);
+      stroke-width: 1.6;
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    .hr-cluster__name {
+      font: 600 14px/1.3 var(--font-sans);
+      color: #f7f1e1;
+      margin: 0;
+    }
+    .hr-cluster__desc {
+      font: 400 12.5px/1.45 var(--font-sans);
+      color: rgba(232, 232, 245, 0.6);
+      margin: 2px 0 0;
+    }
+
+    /* Price anchor card — centered, plum fill, gold border. */
+    .hr-price-card {
+      max-width: 520px;
+      margin: 48px auto 0;
+      padding: 28px 30px 24px;
+      border: 1px solid rgba(200, 169, 110, 0.55);
+      border-radius: 14px;
+      background: linear-gradient(
+        180deg,
+        var(--hr-plum-deep) 0%,
+        #2a0f3a 100%
+      );
+      text-align: center;
+      box-shadow: 0 18px 60px rgba(61, 12, 76, 0.45);
+    }
+    .hr-price-card__label {
+      font: 600 10.5px/1 var(--font-mono);
+      letter-spacing: 0.32em;
+      text-transform: uppercase;
+      color: var(--hr-gold);
+      margin: 0 0 10px;
+    }
+    .hr-price-card__amount {
+      font-family: var(--font-serif);
+      font-weight: 700;
+      font-size: clamp(44px, 6vw, 60px);
+      line-height: 1;
+      color: #f7f1e1;
+      margin: 0 0 12px;
+    }
+    .hr-price-card__inclusions {
+      font: 400 13.5px/1.55 var(--font-sans);
+      color: rgba(244, 244, 252, 0.8);
+      margin: 0 auto 18px;
+      max-width: 34ch;
+    }
+    .hr-price-card .hero-actions { display: flex !important; justify-content: center !important; }
+
+    /* ALTERNATIVELY fork label between report price card and snapshot. */
+    .hr-fork {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      margin: 44px auto;
+      max-width: 480px;
+    }
+    .hr-fork::before,
+    .hr-fork::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: rgba(200, 169, 110, 0.35);
+    }
+    .hr-fork__label {
+      font: 600 10.5px/1 var(--font-mono);
+      letter-spacing: 0.32em;
+      text-transform: uppercase;
+      color: var(--hr-gold);
+    }
+
+    /* Archetype cards — hover brighten + symbol rotate. */
+    body[data-sh-env="home"] .section-measured .measure-card {
+      transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+    }
+    body[data-sh-env="home"] .section-measured .measure-card:hover,
+    body[data-sh-env="home"] .section-measured .measure-card:focus-within {
+      background: rgba(200, 169, 110, 0.05);
+      border-color: rgba(200, 169, 110, 0.45);
+    }
+    body[data-sh-env="home"] .section-measured .hr-arch-icon {
+      display: inline-flex;
+      transition: transform 0.25s ease, color 0.25s ease;
+      color: var(--hr-gold);
+    }
+    body[data-sh-env="home"] .section-measured .hr-arch-icon svg {
+      width: 28px; height: 28px;
+      stroke: var(--hr-gold);
+      stroke-width: 1.6;
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    body[data-sh-env="home"] .section-measured .measure-card:hover .hr-arch-icon {
+      transform: rotate(5deg);
+      color: #ffe9b8;
+    }
+
+    /* Credibility — quiet signature (drop the box background). */
+    body[data-sh-env="home"] .section-credibility {
+      padding-top: clamp(72px, 10vw, 120px) !important;
+      padding-bottom: clamp(72px, 10vw, 120px) !important;
+      background: var(--hr-bg) !important;
+    }
+    body[data-sh-env="home"] .hr-credibility {
+      color: rgba(232, 232, 245, 0.72) !important;
+      max-width: 52ch !important;
+      letter-spacing: 0.005em !important;
+    }
+
+    /* Final CTA — closing panel feel. */
+    body[data-sh-env="home"] #repeat-cta {
+      min-height: 80vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: clamp(96px, 14vw, 180px) 20px !important;
+    }
+    body[data-sh-env="home"] #repeat-cta .container {
+      text-align: center;
+    }
+    body[data-sh-env="home"] #repeat-cta .home-section-title {
+      font-size: clamp(34px, 5vw, 56px);
+      max-width: 18ch;
+    }
+    body[data-sh-env="home"] #repeat-cta .repeat-cta__anchor {
+      margin-top: 22px;
+      font: 600 11px/1 var(--font-mono);
+      letter-spacing: 0.28em;
+      color: var(--hr-gold);
+      opacity: 0.85;
+    }
+
+    /* Access strip — dark plum tint instead of near-black. */
+    body[data-sh-env="home"] .hr-access-strip.hr-access-strip--slim {
+      background: linear-gradient(
+        90deg,
+        #1a0b2a 0%, #23102f 50%, #1a0b2a 100%
+      ) !important;
+      border-top: 1px solid rgba(200, 169, 110, 0.18) !important;
+      border-bottom: 1px solid rgba(200, 169, 110, 0.18) !important;
+    }
+
+    /* Price bar strip is replaced by the price anchor card. Hide any
+       residual .hr-price-bar element inside the report section. */
+    body[data-sh-env="home"] .section-ninety .hr-price-bar { display: none !important; }
+
+    /* Static archetype preview caption above chapter grid. */
+    .hr-preview-caption {
+      max-width: 520px;
+      margin: 8px auto 28px;
+      text-align: center;
+      font: 600 10.5px/1 var(--font-mono);
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--hr-gold);
+      opacity: 0.78;
+    }
+
+    /* Chapter card spacing — ensure toggle sits tight to list end. */
+    .hr-chap-card { display: flex; flex-direction: column; }
+    .hr-chap-card__list { margin-top: 6px; }
+
+    /* Italic guard — only founder quote, fits-close, credibility are italic. */
+    body[data-sh-env="home"] .fits-close { font-style: italic !important; }
+    body[data-sh-env="home"] .hr-credibility { font-style: italic !important; }
+
   </style>
   <link rel="stylesheet" href="/stephuary-a11y.css">
   <link rel="stylesheet" href="/stephuary-brand-polish.css">
@@ -2887,6 +3536,9 @@
   <!-- ═══ Site Shell ═══ -->
   <div id="site-shell" class="site-shell">
   <div class="page">
+    <div class="hr-progress" role="progressbar" aria-label="Page scroll progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+      <div class="hr-progress__bar" id="hr-progress-bar"></div>
+    </div>
     <nav class="site-nav" id="main-nav" aria-label="Primary">
       <div class="site-nav__brand">
         <a href="/" class="site-nav__wordmark" aria-label="Stephuary — home">Stephuary</a>
@@ -2907,6 +3559,10 @@
               <a href="/capture" class="btn btn--primary home-diag-cta" id="hero-cta-primary">Run the Diagnostic &rarr;</a>
             </div>
             <p class="hero-meta" id="hero-meta">7 QUESTIONS &middot; 3 MINUTES &middot; FREE</p>
+            <a href="#fits" class="hero-scroll-hint" aria-label="Scroll to see what's inside">
+              <span>WHAT&rsquo;S INSIDE</span>
+              <span class="hero-scroll-hint__arrow" aria-hidden="true"></span>
+            </a>
           </div>
         </div>
       </section>
@@ -2996,11 +3652,17 @@
             <p class="hr-prechap__body">You get your archetype name, your diagnosis paragraph, and your Leverage Point pulled forward as a standalone read.</p>
           </div>
 
+          <p class="hr-preview-caption">PREVIEW FOR CEILING BUILDER &middot; YOUR VERSION DIFFERS</p>
+
           <div class="hr-chap-grid">
-            <article class="hr-chap-card">
+            <article class="hr-chap-card" data-collapsed="true">
               <p class="hr-chap-card__label">Chapter 01</p>
               <h3 class="hr-chap-card__title">Your Pattern</h3>
-              <p class="hr-chap-card__meta">10 items. The live mechanic behind your stall.</p>
+              <p class="hr-chap-card__meta">9 items. The live mechanic behind your stall.</p>
+              <div class="hr-chap-card__preview">
+                <p class="hr-chap-card__preview-label">Ceiling Builder preview</p>
+                <p class="hr-chap-card__preview-body">Capacity full. Pricing trims each load. Every kickoff reinvents the sequence.</p>
+              </div>
               <ul class="hr-chap-card__list">
                 <li>What this means</li>
                 <li>Three clearest signs</li>
@@ -3012,12 +3674,21 @@
                 <li>What changes when fixed</li>
                 <li>What this does not fix</li>
               </ul>
+              <button type="button" class="hr-chap-card__toggle" aria-expanded="false"
+                      data-target-count="9">
+                <span class="hr-chap-card__toggle__text">See all 9 items</span>
+                <span class="hr-chap-card__toggle__caret" aria-hidden="true">&#9662;</span>
+              </button>
             </article>
 
-            <article class="hr-chap-card">
+            <article class="hr-chap-card" data-collapsed="true">
               <p class="hr-chap-card__label">Chapter 02</p>
               <h3 class="hr-chap-card__title">Your Execution System</h3>
               <p class="hr-chap-card__meta">7 layers. Structured input, verifiable output.</p>
+              <div class="hr-chap-card__preview">
+                <p class="hr-chap-card__preview-label">Ceiling Builder preview</p>
+                <p class="hr-chap-card__preview-body">A fixed delivery sequence. Tools in your hand by Day 7. No more reinventing every kickoff.</p>
+              </div>
               <ul class="hr-chap-card__list">
                 <li>AI execution protocol plus archetype prompt library</li>
                 <li>Day 1 to 30 sequence with weekly cadence</li>
@@ -3027,12 +3698,21 @@
                 <li>Measurement and review system</li>
                 <li>Decision trees and escalation triggers</li>
               </ul>
+              <button type="button" class="hr-chap-card__toggle" aria-expanded="false"
+                      data-target-count="7">
+                <span class="hr-chap-card__toggle__text">See all 7 items</span>
+                <span class="hr-chap-card__toggle__caret" aria-hidden="true">&#9662;</span>
+              </button>
             </article>
 
-            <article class="hr-chap-card">
+            <article class="hr-chap-card" data-collapsed="true">
               <p class="hr-chap-card__label">Chapter 03</p>
               <h3 class="hr-chap-card__title">Revenue Paths</h3>
               <p class="hr-chap-card__meta">5 paths with scripts and worksheets.</p>
+              <div class="hr-chap-card__preview">
+                <p class="hr-chap-card__preview-label">Ceiling Builder preview</p>
+                <p class="hr-chap-card__preview-body">Stop trading hours for deals. Productize the delivery that already converts.</p>
+              </div>
               <ul class="hr-chap-card__list">
                 <li>Turn content into paid opportunities</li>
                 <li>Find real demand in your niche</li>
@@ -3040,12 +3720,21 @@
                 <li>How people find and reach out to you</li>
                 <li>When to reach out</li>
               </ul>
+              <button type="button" class="hr-chap-card__toggle" aria-expanded="false"
+                      data-target-count="5">
+                <span class="hr-chap-card__toggle__text">See all 5 items</span>
+                <span class="hr-chap-card__toggle__caret" aria-hidden="true">&#9662;</span>
+              </button>
             </article>
 
-            <article class="hr-chap-card">
+            <article class="hr-chap-card" data-collapsed="true">
               <p class="hr-chap-card__label">Chapter 04</p>
               <h3 class="hr-chap-card__title">Monetization Architecture</h3>
               <p class="hr-chap-card__meta">9 components with templates.</p>
+              <div class="hr-chap-card__preview">
+                <p class="hr-chap-card__preview-label">Ceiling Builder preview</p>
+                <p class="hr-chap-card__preview-body">Price the sequence, not the seat. Every proposal references the fixed path.</p>
+              </div>
               <ul class="hr-chap-card__list">
                 <li>Price based on positioning, not volume</li>
                 <li>Recommended structure</li>
@@ -3057,68 +3746,232 @@
                 <li>Pricing calculator</li>
                 <li>Proposal template</li>
               </ul>
+              <button type="button" class="hr-chap-card__toggle" aria-expanded="false"
+                      data-target-count="9">
+                <span class="hr-chap-card__toggle__text">See all 9 items</span>
+                <span class="hr-chap-card__toggle__caret" aria-hidden="true">&#9662;</span>
+              </button>
             </article>
           </div>
 
-          <!-- Your 90-Day Sequence -->
+          <!-- Your 90-Day Sequence — horizontal rail -->
           <div class="hr-subsection">
             <p class="home-section-kicker" style="text-align:center;">Sequence</p>
             <h3 class="hr-subsection__title">Your 90-Day Sequence</h3>
-            <p class="hr-subsection__sub">Not a promise. A structured path with weekly checkpoints, decision trees, and measurement at every phase.</p>
-            <ol class="hr-seq">
-              <li class="hr-seq__step">
-                <span class="hr-seq__range">Days 1&ndash;30</span>
-                <p class="hr-seq__label">Read and rebuild</p>
-                <p class="hr-seq__body">Name the stall. Rebuild the offer. Run the first outreach cycle.</p>
-              </li>
-              <li class="hr-seq__step">
-                <span class="hr-seq__range">Days 31&ndash;60</span>
-                <p class="hr-seq__label">Validate and recalibrate</p>
-                <p class="hr-seq__body">What closed, what stalled, what priced out. Adjust positioning. Raise the floor.</p>
-              </li>
-              <li class="hr-seq__step">
-                <span class="hr-seq__range">Days 61&ndash;90</span>
-                <p class="hr-seq__label">Compound and cut</p>
-                <p class="hr-seq__body">Double what's working. Cut what isn't. Automate the repeatable. First ceiling-raise.</p>
-              </li>
-              <li class="hr-seq__step">
-                <span class="hr-seq__range">Day 91</span>
-                <p class="hr-seq__label">Graduation</p>
-                <p class="hr-seq__body">Clear criteria for what maintains past 90 and where to go next.</p>
-              </li>
-            </ol>
+            <p class="hr-subsection__sub">Four phases. Weekly checkpoints. Decision trees and measurement at every phase.</p>
+            <div class="hr-rail" role="list" aria-label="90-day sequence">
+              <span class="hr-rail__line" aria-hidden="true"></span>
+              <ol class="hr-rail__track">
+                <li class="hr-rail__node" tabindex="0" role="listitem">
+                  <p class="hr-rail__phase">Days 1&ndash;30</p>
+                  <span class="hr-rail__dot" aria-hidden="true"></span>
+                  <p class="hr-rail__label">Read and rebuild</p>
+                  <p class="hr-rail__body">Name the stall. Rebuild the offer. Run the first outreach cycle.</p>
+                  <p class="hr-rail__checkpoint">Checkpoint: first proposal sent in your new positioning.</p>
+                </li>
+                <li class="hr-rail__node" tabindex="0" role="listitem">
+                  <p class="hr-rail__phase">Days 31&ndash;60</p>
+                  <span class="hr-rail__dot" aria-hidden="true"></span>
+                  <p class="hr-rail__label">Validate and recalibrate</p>
+                  <p class="hr-rail__body">What closed. What stalled. What priced out. Adjust. Raise the floor.</p>
+                  <p class="hr-rail__checkpoint">Checkpoint: revised price, validated by one close or one walk.</p>
+                </li>
+                <li class="hr-rail__node" tabindex="0" role="listitem">
+                  <p class="hr-rail__phase">Days 61&ndash;90</p>
+                  <span class="hr-rail__dot" aria-hidden="true"></span>
+                  <p class="hr-rail__label">Compound and cut</p>
+                  <p class="hr-rail__body">Double what's working. Cut what isn't. Automate the repeatable.</p>
+                  <p class="hr-rail__checkpoint">Checkpoint: one recurring channel, one automated asset, one ceiling raised.</p>
+                </li>
+                <li class="hr-rail__node" tabindex="0" role="listitem">
+                  <p class="hr-rail__phase">Day 91</p>
+                  <span class="hr-rail__dot" aria-hidden="true"></span>
+                  <p class="hr-rail__label">Graduation</p>
+                  <p class="hr-rail__body">Clear criteria for what maintains past 90. Where to go next.</p>
+                  <p class="hr-rail__checkpoint">Checkpoint: a written maintenance protocol and the next 90-day target.</p>
+                </li>
+              </ol>
+            </div>
           </div>
 
-          <!-- What comes with it -->
+          <!-- What comes with it — four tinted clusters with 32px gold line icons -->
           <div class="hr-subsection">
             <p class="home-section-kicker" style="text-align:center;">Assets</p>
             <h3 class="hr-subsection__title">What comes with it</h3>
-            <p class="hr-subsection__sub">The report is the system. The assets below are how you actually execute it.</p>
-            <ul class="hr-assets">
-              <li>Archetype-tuned prompt library (15&ndash;25 prompts per archetype)</li>
-              <li>Positioning statement generator</li>
-              <li>Offer architecture diagram</li>
-              <li>Pricing calculator tied to positioning</li>
-              <li>Outreach scripts (cold, warm, referral, re-engagement)</li>
-              <li>Sales call framework</li>
-              <li>Proposal template</li>
-              <li>Day 0 baseline worksheet</li>
-              <li>Weekly metrics card</li>
-              <li>30-day review template</li>
-              <li>90-day closing audit</li>
-              <li>Worked example pack per archetype</li>
-              <li>90-day email sequence tied to the execution phases</li>
-              <li>Progress tracker</li>
-            </ul>
+            <p class="hr-subsection__sub">Four deliverable categories. Fourteen assets. The report is the system; these are how you execute it.</p>
+
+            <div class="hr-assets-grid">
+              <!-- PROMPTS -->
+              <div class="hr-cluster">
+                <p class="hr-cluster__label">Prompts</p>
+                <ul class="hr-cluster__list">
+                  <li class="hr-cluster__item">
+                    <span class="hr-cluster__icon" aria-hidden="true">
+                      <svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h10M4 18h16"/><path d="M18 10l4 3-4 3"/></svg>
+                    </span>
+                    <div>
+                      <p class="hr-cluster__name">Archetype-tuned prompt library</p>
+                      <p class="hr-cluster__desc">15 to 25 prompts written for your archetype.</p>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+
+              <!-- TEMPLATES -->
+              <div class="hr-cluster">
+                <p class="hr-cluster__label">Templates</p>
+                <ul class="hr-cluster__list">
+                  <li class="hr-cluster__item">
+                    <span class="hr-cluster__icon" aria-hidden="true">
+                      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 7v5l3 2"/></svg>
+                    </span>
+                    <div>
+                      <p class="hr-cluster__name">Positioning generator</p>
+                      <p class="hr-cluster__desc">One sentence that maps what you do, for whom, why it matters.</p>
+                    </div>
+                  </li>
+                  <li class="hr-cluster__item">
+                    <span class="hr-cluster__icon" aria-hidden="true">
+                      <svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M4 10h16M10 4v16"/></svg>
+                    </span>
+                    <div>
+                      <p class="hr-cluster__name">Offer architecture</p>
+                      <p class="hr-cluster__desc">Structure the delivery so it is understandable and priceable.</p>
+                    </div>
+                  </li>
+                  <li class="hr-cluster__item">
+                    <span class="hr-cluster__icon" aria-hidden="true">
+                      <svg viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>
+                    </span>
+                    <div>
+                      <p class="hr-cluster__name">Pricing calculator</p>
+                      <p class="hr-cluster__desc">Price the sequence, not the seat. Tied to positioning.</p>
+                    </div>
+                  </li>
+                  <li class="hr-cluster__item">
+                    <span class="hr-cluster__icon" aria-hidden="true">
+                      <svg viewBox="0 0 24 24"><path d="M6 3h9l4 4v14H6z"/><path d="M15 3v4h4"/><path d="M9 13h6M9 17h4"/></svg>
+                    </span>
+                    <div>
+                      <p class="hr-cluster__name">Proposal template</p>
+                      <p class="hr-cluster__desc">Referenced from one fixed structure. Repeatable at scale.</p>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+
+              <!-- SCRIPTS -->
+              <div class="hr-cluster">
+                <p class="hr-cluster__label">Scripts</p>
+                <ul class="hr-cluster__list">
+                  <li class="hr-cluster__item">
+                    <span class="hr-cluster__icon" aria-hidden="true">
+                      <svg viewBox="0 0 24 24"><path d="M4 9a5 5 0 0 1 9-3l8 8"/><path d="M21 14a5 5 0 0 1-9 3l-8-8"/></svg>
+                    </span>
+                    <div>
+                      <p class="hr-cluster__name">Outreach scripts</p>
+                      <p class="hr-cluster__desc">Cold, warm, referral, re-engagement. Short. Specific.</p>
+                    </div>
+                  </li>
+                  <li class="hr-cluster__item">
+                    <span class="hr-cluster__icon" aria-hidden="true">
+                      <svg viewBox="0 0 24 24"><path d="M5 6a2 2 0 0 1 2-2h3l2 3-2 2a12 12 0 0 0 5 5l2-2 3 2v3a2 2 0 0 1-2 2A14 14 0 0 1 5 6z"/></svg>
+                    </span>
+                    <div>
+                      <p class="hr-cluster__name">Sales call framework</p>
+                      <p class="hr-cluster__desc">Open, diagnose, scope, price, close. Same frame every call.</p>
+                    </div>
+                  </li>
+                  <li class="hr-cluster__item">
+                    <span class="hr-cluster__icon" aria-hidden="true">
+                      <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>
+                    </span>
+                    <div>
+                      <p class="hr-cluster__name">90-day email sequence</p>
+                      <p class="hr-cluster__desc">Wired to the execution phases so you never lose the thread.</p>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+
+              <!-- MEASUREMENT -->
+              <div class="hr-cluster">
+                <p class="hr-cluster__label">Measurement</p>
+                <ul class="hr-cluster__list">
+                  <li class="hr-cluster__item">
+                    <span class="hr-cluster__icon" aria-hidden="true">
+                      <svg viewBox="0 0 24 24"><path d="M4 20h16M7 16V9m5 7V6m5 10v-4"/></svg>
+                    </span>
+                    <div>
+                      <p class="hr-cluster__name">Day 0 baseline</p>
+                      <p class="hr-cluster__desc">What is true today. Signed, dated, honest.</p>
+                    </div>
+                  </li>
+                  <li class="hr-cluster__item">
+                    <span class="hr-cluster__icon" aria-hidden="true">
+                      <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18M8 4V2m8 2V2"/></svg>
+                    </span>
+                    <div>
+                      <p class="hr-cluster__name">Weekly metrics card</p>
+                      <p class="hr-cluster__desc">Five numbers. Every Friday. Tracked across 12 weeks.</p>
+                    </div>
+                  </li>
+                  <li class="hr-cluster__item">
+                    <span class="hr-cluster__icon" aria-hidden="true">
+                      <svg viewBox="0 0 24 24"><path d="M12 4v4M12 20v-4M4 12h4M20 12h-4"/><circle cx="12" cy="12" r="4"/></svg>
+                    </span>
+                    <div>
+                      <p class="hr-cluster__name">30-day review</p>
+                      <p class="hr-cluster__desc">What closed, what stalled, what the numbers say to cut.</p>
+                    </div>
+                  </li>
+                  <li class="hr-cluster__item">
+                    <span class="hr-cluster__icon" aria-hidden="true">
+                      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12l3 3 5-5"/></svg>
+                    </span>
+                    <div>
+                      <p class="hr-cluster__name">90-day audit</p>
+                      <p class="hr-cluster__desc">Closing audit: what to keep, what to kill, where the next leverage is.</p>
+                    </div>
+                  </li>
+                  <li class="hr-cluster__item">
+                    <span class="hr-cluster__icon" aria-hidden="true">
+                      <svg viewBox="0 0 24 24"><path d="M4 7h16v13H4zM8 7V4h8v3"/><path d="M8 12h8M8 16h5"/></svg>
+                    </span>
+                    <div>
+                      <p class="hr-cluster__name">Worked example pack</p>
+                      <p class="hr-cluster__desc">Your archetype, fixed. Step by step. Numbers attached.</p>
+                    </div>
+                  </li>
+                  <li class="hr-cluster__item">
+                    <span class="hr-cluster__icon" aria-hidden="true">
+                      <svg viewBox="0 0 24 24"><path d="M4 18L10 12l4 4 6-8"/><path d="M14 6h6v6"/></svg>
+                    </span>
+                    <div>
+                      <p class="hr-cluster__name">Progress tracker</p>
+                      <p class="hr-cluster__desc">Checkpoint board across the full 90 days. One page.</p>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+            </div>
           </div>
 
-          <div class="hr-price-bar" role="note">$27. ONE TIME. FULL UNLOCK. WEB REPORT + PDF + WORKSHEET PACK. NO SUBSCRIPTION.</div>
-          <div class="hero-actions" style="display:flex; justify-content:center; margin-top:4px;">
-            <a href="/capture" class="btn btn--primary home-diag-cta">Unlock the Report &ndash; $27</a>
-          </div>
+          <!-- Price anchor card — centered, gold border, plum fill -->
+          <aside class="hr-price-card" aria-label="Price anchor">
+            <p class="hr-price-card__label">Your unlock</p>
+            <p class="hr-price-card__amount">$27</p>
+            <p class="hr-price-card__inclusions">Report + PDF + Worksheet Pack + 90-day email sequence. One time. No subscription.</p>
+            <div class="hero-actions">
+              <a href="/capture" class="btn btn--primary home-diag-cta">Unlock the Report</a>
+            </div>
+          </aside>
         </div>
       </section>
       <hr class="hr-divider" aria-hidden="true">
+
+      <!-- Fork divider: alternate path to Snapshot -->
+      <div class="hr-fork" aria-hidden="true"><span class="hr-fork__label">Alternatively</span></div>
 
       <!-- ═══ Snapshot — bordered card with APPLICATION chip ═══ -->
       <section class="section-repeat-cta" id="snapshot-offer" aria-labelledby="home-snapshot-heading">
@@ -3424,6 +4277,69 @@
         document.addEventListener('DOMContentLoaded', init);
       } else {
         init();
+      }
+    })();
+  </script>
+
+  <!-- Scroll progress bar + chapter accordion -->
+  <script>
+    (function () {
+      function initProgress() {
+        var bar = document.getElementById('hr-progress-bar');
+        var wrap = bar && bar.parentElement;
+        if (!bar) return;
+        var ticking = false;
+        function update() {
+          ticking = false;
+          var doc = document.documentElement;
+          var scrolled = window.scrollY || window.pageYOffset;
+          var max = (doc.scrollHeight - window.innerHeight) || 1;
+          var pct = Math.max(0, Math.min(100, (scrolled / max) * 100));
+          bar.style.width = pct.toFixed(2) + '%';
+          if (wrap && wrap.setAttribute) {
+            wrap.setAttribute('aria-valuenow', Math.round(pct));
+          }
+        }
+        function onScroll() {
+          if (!ticking) {
+            window.requestAnimationFrame(update);
+            ticking = true;
+          }
+        }
+        window.addEventListener('scroll', onScroll, { passive: true });
+        window.addEventListener('resize', onScroll);
+        update();
+      }
+
+      function initChapters() {
+        var cards = document.querySelectorAll('.hr-chap-card');
+        cards.forEach(function (card) {
+          var btn = card.querySelector('.hr-chap-card__toggle');
+          if (!btn) return;
+          var textEl = btn.querySelector('.hr-chap-card__toggle__text');
+          var count = btn.getAttribute('data-target-count') || '';
+          btn.addEventListener('click', function () {
+            var collapsed = card.getAttribute('data-collapsed') !== 'false';
+            var next = collapsed ? 'false' : 'true';
+            card.setAttribute('data-collapsed', next);
+            btn.setAttribute('aria-expanded', collapsed ? 'true' : 'false');
+            if (textEl) {
+              textEl.textContent = collapsed
+                ? 'Hide items'
+                : 'See all ' + count + ' items';
+            }
+          });
+        });
+      }
+
+      function boot() {
+        initProgress();
+        initChapters();
+      }
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', boot);
+      } else {
+        boot();
       }
     })();
   </script>
