@@ -358,6 +358,12 @@
       -webkit-box-orient: vertical;
       overflow: hidden;
     }
+    /* Hide the preview line once the panel opens — the expanded body
+       replaces it, and leaving the preview visible creates redundancy. */
+    [aria-expanded="true"] .report-acc-trigger__pv,
+    [aria-expanded="true"] .rpt-nest-trigger__pv {
+      display: none;
+    }
     .report-acc-trigger:focus-visible {
       outline: 2px solid var(--cta);
       outline-offset: 2px;
@@ -2123,10 +2129,6 @@
         <div class="rpt-chapter-body--narrow">
           <div id="rpt-mirror-mount" class="rpt-mirror section-reveal"></div>
           <div id="rpt-pattern-mount" class="section-reveal"></div>
-          <div class="section-reveal">
-            <p class="rpt-evidence-label">THE EVIDENCE TRAIL</p>
-            <ol class="rpt-evidence-list" id="rpt-evidence-list"></ol>
-          </div>
           <div class="rpt-two-cards section-reveal">
             <div class="rpt-root-card">
               <p class="rpt-root-card__label">ROOT CAUSE</p>
@@ -3522,21 +3524,8 @@ Back catalog depth:
       var mirror = document.getElementById('rpt-mirror-mount');
       if (mirror) mirror.innerHTML = buildMirrorHtml(af);
 
-      var ev = document.getElementById('rpt-evidence-list');
-      if (ev) {
-        var tells = af.immediateRead || [];
-        ev.innerHTML = tells
-          .map(function (line, i) {
-            return (
-              '<li><span class="rpt-evidence-list__num">' +
-              (i + 1) +
-              '</span><span class="rpt-evidence-list__text">' +
-              esc(line) +
-              '</span></li>'
-            );
-          })
-          .join('');
-      }
+      /* immediateRead deleted from archetype data — evidence list now
+         populated (if ever reintroduced) from a different source. */
 
       var B = af.blocks || {};
       var rootB = document.getElementById('rpt-root-body');

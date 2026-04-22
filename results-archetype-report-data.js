@@ -20,14 +20,6 @@
       impact: 'Capacity ceiling = $5K–$20K/month without a fixed sequence.',
       reportCtaLead:
         'Capacity is not the problem. The missing sequence behind delivery is.\nThe Snapshot names the first step to write down, and the sequence that follows.',
-      immediateRead: [
-        'You are fully booked or close to it',
-        'Revenue is not increasing at the same rate',
-        'Each new client adds work',
-        'There is no fixed sequence behind delivery',
-        'Engagements start from scratch',
-        'Time, margin, and consistency reset every time'
-      ],
       whatThisMeans: [
         'You are handling delivery directly.',
         'Each client changes the workflow.',
@@ -71,20 +63,6 @@
           ],
           band: '$2K to $8K+ per month while capacity scales without a fixed sequence'
         },
-        haveNot: {
-          have: [
-            'Clear pattern diagnosis',
-            'Where deals are breaking',
-            'A defined leverage point',
-            'A working execution system'
-          ],
-          notHave: [
-            'A fixed delivery sequence installed',
-            'A system running without you',
-            'A decision on what to standardize first',
-            'A 48-hour breakdown applied to your actual business'
-          ]
-        },
         why: [
           'Your delivery depends on real-time judgment.',
           'Each client requires interpretation, adjustment, and rebuild.',
@@ -123,11 +101,6 @@
       impact: '',
       reportCtaLead:
         'You are not short on interest. You are short on a line that survives price.\nThe Snapshot pressure-tests that line against your real pipeline.',
-      immediateRead: [
-        'Replies and demos look healthy until budget or comparison shows up.',
-        'You keep re-explaining the same edge because nothing on the page closes the justify-to-yourself gap.',
-        'Strong calls still end in think-about-it when the buyer has to defend the pick alone.'
-      ],
       whatThisMeans: [
         'Your offer creates interest but does not hold under comparison or self-justification.',
         'Once price or procurement shows up, the buyer cannot finish the sentence: why you, why now, why not the cheaper option.',
@@ -152,20 +125,6 @@
         notfix: 'Does not fix cold volume or post-yes scope creep by itself.'
       },
       blocks: {
-        haveNot: {
-          have: [
-            'Clear pattern diagnosis',
-            'Where deals are breaking',
-            'A defined leverage point',
-            'A working execution system'
-          ],
-          notHave: [
-            'A comparison-proof line shipped everywhere buyers look',
-            'A stakeholder-ready justification asset',
-            'A fixed money-step talk track you do not improvise',
-            'A 48-hour breakdown applied to your live pipeline copy'
-          ]
-        },
         deals: [
           'The break happens when the buyer tries to map your offer to budget, timeline, or an alternative without a single plain differentiator.',
           'They stall because they cannot repeat your edge in one sentence to finance, legal, or a partner.',
@@ -217,11 +176,6 @@
       impact: '',
       reportCtaLead:
         'Filtering is not rejection. It is how you protect margin.\nThe Snapshot names the filter chain that matches your real economics.',
-      immediateRead: [
-        'The calendar looks full, but too many conversations are the wrong buyer or the wrong check size.',
-        'You keep rescoping or discounting to force a fit that your economics cannot carry.',
-        'The buyers you actually want are waiting behind a queue of maybes.'
-      ],
       whatThisMeans: [
         'Your messaging pulls in buyers who are not set up to buy what you actually sell.',
         'You spend selling cycles translating, rescoping, or discounting instead of closing the right fit.',
@@ -246,20 +200,6 @@
         notfix: 'Does not fix offer clarity for the right buyer or create net-new demand alone.'
       },
       blocks: {
-        haveNot: {
-          have: [
-            'Clear pattern diagnosis',
-            'Where deals are breaking',
-            'A defined leverage point',
-            'A working execution system'
-          ],
-          notHave: [
-            'Three enforced disqualifiers on the booking path',
-            'A pricing band gate buyers see before they book',
-            'A script that ends bad fits in 10 minutes instead of 45',
-            'A 48-hour breakdown mapped to your real economics'
-          ]
-        },
         deals: [
           'The break happens when you realize the buyer cannot fund the work, cannot decide, or wanted a different product than you sell.',
           'You try to rescue the call because the pipeline looks empty, then you eat scope or discount to close anything.',
@@ -311,11 +251,6 @@
       impact: '',
       reportCtaLead:
         'Clarity is not a rebrand. It is one sentence buyers can repeat.\nThe Snapshot locks that sentence to your pipeline reality.',
-      immediateRead: [
-        'Every channel tells a slightly different story about what you own.',
-        'Cold buyers ask broad questions because they cannot repeat your lane after one skim.',
-        'Warm intros still outperform everything public, which means the written story is not doing its job.'
-      ],
       whatThisMeans: [
         'People do not know exactly what to come to you for.',
         'Warm relationships still convert faster than anything anonymous because the public story does not hold still.',
@@ -340,20 +275,6 @@
         notfix: 'Does not fix wrong-room traffic or delivery load after yes.'
       },
       blocks: {
-        haveNot: {
-          have: [
-            'Clear pattern diagnosis',
-            'Where deals are breaking',
-            'A defined leverage point',
-            'A working execution system'
-          ],
-          notHave: [
-            'One headline problem-outcome line used everywhere',
-            'Channel copy deduped to that lane',
-            'A proof stack that only supports that lane',
-            'A 48-hour breakdown tied to your highest-traffic surface'
-          ]
-        },
         deals: [
           'The break happens when they like your credibility but cannot map it to a single urgent purchase.',
           'They ask for examples across multiple industries because your headline problem is not stable.',
@@ -405,11 +326,6 @@
       impact: '',
       reportCtaLead:
         'Capability without signal does not compound.\nThe Snapshot ties your first public proof lane to the economics you want.',
-      immediateRead: [
-        'Delivery is strong; inbound is thin or spiky.',
-        'Between calls buyers search you and find scraps instead of a clear proof ladder.',
-        'You still spend hours on intros and DMs because public artifacts do not carry the claim.'
-      ],
       whatThisMeans: [
         'Your ability is not translating into opportunity at the rate your skill deserves.',
         'Decisions still route through referrals or luck because the market cannot see how you think before they buy.',
@@ -434,20 +350,6 @@
         notfix: 'Does not fix fuzzy offers, wrong-room traffic, or post-yes systems.'
       },
       blocks: {
-        haveNot: {
-          have: [
-            'Clear pattern diagnosis',
-            'Where deals are breaking',
-            'A defined leverage point',
-            'A working execution system'
-          ],
-          notHave: [
-            'Three public artifacts buyers can forward',
-            'A weekly cadence you actually hold',
-            'One channel where proof stacks instead of scattering',
-            'A 48-hour breakdown that names your first proof lane'
-          ]
-        },
         deals: [
           'The break happens when the buyer likes you in the room but cannot find three public artifacts that prove the claim.',
           'They delay because hiring you still feels like a leap instead of a logical next step.',
@@ -499,11 +401,6 @@
       impact: '',
       reportCtaLead:
         'More doors do not create more revenue. They create hesitation.\nThe Snapshot forces one primary path without guessing away revenue.',
-      immediateRead: [
-        'Buyers see multiple CTAs and pause because picking a path became its own project.',
-        'They default to the smallest buy to reduce risk, then never graduate to the work you want.',
-        'You rebuild the bridge between offers on every call instead of shipping one obvious first step.'
-      ],
       whatThisMeans: [
         'Buyers hesitate because the path is unclear.',
         'Every extra entry point becomes a second decision they have to make before they make the first decision.',
@@ -528,20 +425,6 @@
         notfix: 'Does not fix weak demand, weak core offer, or delivery after yes.'
       },
       blocks: {
-        haveNot: {
-          have: [
-            'Clear pattern diagnosis',
-            'Where deals are breaking',
-            'A defined leverage point',
-            'A working execution system'
-          ],
-          notHave: [
-            'One declared primary offer for 30 days',
-            'All public CTAs pointed at that offer',
-            'A single landing path with one proof stack',
-            'A 48-hour breakdown that picks the surviving route'
-          ]
-        },
         deals: [
           'The break happens when they like your thinking but cannot pick which product to start with.',
           'They compare your own offers against each other and pick the cheapest entry to reduce risk.',
@@ -594,11 +477,6 @@
       impact: '',
       reportCtaLead:
         'The goal is not more hustle. It is removing one load-bearing step.\nThe Snapshot finds the step that unlocks the rest without breaking delivery.',
-      immediateRead: [
-        'Approvals, QA, and client pings still route through you on repeat.',
-        'Delegation exists on paper but snaps back the moment pressure hits.',
-        'Delivery timelines move when your calendar moves, which caps what you can promise next.'
-      ],
       whatThisMeans: [
         'Everything slows or breaks without your direct involvement.',
         'That caps growth because your calendar becomes the system of record for quality, speed, and decisions.',
@@ -623,20 +501,6 @@
         notfix: 'Does not fix broken offers, empty pipeline, or hiring when you are past physical limits.'
       },
       blocks: {
-        haveNot: {
-          have: [
-            'Clear pattern diagnosis',
-            'Where deals are breaking',
-            'A defined leverage point',
-            'A working execution system'
-          ],
-          notHave: [
-            'One step fully handed off with a written SOP and quality check',
-            'A delegate running that step twice without you in the thread',
-            'A capacity model you can quote honestly',
-            'A 48-hour breakdown that names the load-bearing step first'
-          ]
-        },
         deals: [
           'The break happens when buyers need certainty you can scale delivery and your calendar says otherwise.',
           'They stall because onboarding still feels like joining your private queue instead of entering a system.',
