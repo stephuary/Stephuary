@@ -2163,6 +2163,7 @@
       <li><a href="/" class="site-nav__link">Home</a></li>
       <li><a href="/pricing" class="site-nav__link">Pricing</a></li>
       <li><a href="/access" class="site-nav__link">Access</a></li>
+      <li><a href="/only-sometimes" class="site-nav__link">Only Sometimes</a></li>
       <li><a href="https://stephuary.substack.com" class="site-nav__link" target="_blank" rel="noopener">Substack</a></li>
     </ul>
     <button type="button" class="top-bar-nav__restart" id="results-nav-restart">Restart</button>
@@ -2236,7 +2237,6 @@
             <li>Archetype label, one-line diagnosis, and the same execution system every pattern uses (protocol, 30-day loop, prompts, distribution, monetization, automation).</li>
             <li>Download PDF on the report page saves a file (full report expanded for export).</li>
           </ul>
-          <p class="results-pack-strip__anchor">One missed deal covers this.</p>
           <h3 class="results-pack-strip__gap-h">You now have output. You do not have precision yet.</h3>
           <div class="results-pack-strip__cols">
             <div class="results-pack-strip__col">
@@ -2254,9 +2254,6 @@
               </ul>
             </div>
           </div>
-          <p class="results-pack-strip__bridge">
-            The $27 layer is clarity plus a shared system. Snapshot is the paid precision pass on top—not a second read of the same PDF.
-          </p>
         </section>
         <section class="results-snapshot-teaser" id="results-snapshot-teaser" hidden aria-label="What ships after intake">
           <h2 class="results-snapshot-teaser__h">What ships after intake</h2>
@@ -2286,40 +2283,11 @@
           <p class="results-share__note" id="results-snapshot-feedback" hidden>Copied.</p>
         </div>
         <div class="results-hero-cta-row">
-          <a class="results-cta-pri magnetic" id="results-primary-cta" href="/snapshot" data-sh-flow-primary>48-hour precision read · $950</a>
-          <p class="results-flow-links results-flow-links--quiet" id="results-flow-links" hidden>
-            <a href="/pricing">View pricing</a>
-          </p>
+          <a class="results-cta-pri magnetic" id="results-primary-cta" href="/snapshot" data-sh-flow-primary>Get your Snapshot — $950</a>
           <span class="results-cta-subnote" id="results-primary-sub" hidden></span>
-          <p class="results-diag-esc" id="results-diag-esc">
-            <a href="/access" class="sh-primary-flow__link">Apply for Private Access</a>
-          </p>
         </div>
         <div class="results-observable-body" id="results-observable-body" aria-live="polite"></div>
-        <section class="sh-results-routes sh-results-routes--quiet" id="sh-results-routes" aria-label="Other directions" hidden>
-          <p class="sh-results-routes__label">If you need a different next step</p>
-          <div class="sh-results-routes__grid">
-            <a class="sh-results-route" href="/snapshot">
-              <p class="sh-results-route__kicker">Compressed pass</p>
-              <p class="sh-results-route__title">Book a snapshot</p>
-              <p class="sh-results-route__body">When you need decisions named on a clear deadline, not another open-ended thread.</p>
-            </a>
-          </div>
-        </section>
         <dl class="result-readout" id="resultReadoutBlock" hidden></dl>
-      </div>
-    </section>
-
-    <section class="results-sec alt" id="results-recommended-room" data-sh-flow-section hidden>
-      <div class="wrap-wide">
-        <p class="sec-label">Recommended next step</p>
-        <div class="results-sec__card">
-          <p class="results-sec__lead" id="rec-room-name"></p>
-          <p class="body-text" id="rec-room-reason" style="margin-top:8px"></p>
-          <div style="margin-top:14px">
-            <a class="btn btn-ghost magnetic" id="rec-room-cta" href="/snapshot" data-sh-flow-secondary>Get the full breakdown</a>
-          </div>
-        </div>
       </div>
     </section>
 
@@ -2390,6 +2358,7 @@
           <ul class="sh-footer__list">
             <li><a href="/snapshot">Snapshot</a></li>
             <li><a href="/access">Access</a></li>
+            <li><a href="/only-sometimes">Only Sometimes</a></li>
           </ul>
         </div>
         <div class="sh-footer__col" aria-labelledby="sh-foot-writing">
@@ -2478,42 +2447,12 @@
   var STRIPE_FULL_REPORT_27 = 'https://buy.stripe.com/00wcN500E5imd5WeWv33W03';
 
   function diagV2BundleFromType(resultType) {
-    if (isFullReportUnlocked()) {
-      return {
-        primaryHref: '/snapshot',
-        primaryLabel: '48-hour precision read · $950',
-        secondaryHref: null,
-        secondaryLabel: null
-      };
-    }
-    var t = String(resultType || '');
-    var MAP = {
-      Breakdown: {
-        primaryHref: STRIPE_FULL_REPORT_27,
-        primaryLabel: 'Get pattern + system + PDF · $27',
-        secondaryHref: null,
-        secondaryLabel: null
-      },
-      Misalignment: {
-        primaryHref: STRIPE_FULL_REPORT_27,
-        primaryLabel: 'Get pattern + system + PDF · $27',
-        secondaryHref: null,
-        secondaryLabel: null
-      },
-      Constraint: {
-        primaryHref: '/snapshot',
-        primaryLabel: '48-hour precision read · $950',
-        secondaryHref: null,
-        secondaryLabel: null
-      },
-      Ceiling: {
-        primaryHref: '/snapshot',
-        primaryLabel: '48-hour precision read · $950',
-        secondaryHref: null,
-        secondaryLabel: null
-      }
+    return {
+      primaryHref: '/snapshot',
+      primaryLabel: 'Get your Snapshot — $950',
+      secondaryHref: null,
+      secondaryLabel: null
     };
-    return MAP[t] || MAP.Breakdown;
   }
 
   var DIAG_V2_ISSUE_BY_ID = {
@@ -2800,24 +2739,8 @@
 
     var packStrip = document.getElementById('results-pack-strip');
     var snapTeaser = document.getElementById('results-snapshot-teaser');
-    var packRecap = document.getElementById('results-pack-sixty-recap');
-    if (packStrip && snapTeaser) {
-      if (isFullReportUnlocked()) {
-        packStrip.hidden = true;
-        snapTeaser.hidden = true;
-      } else if (bundle.primaryHref === STRIPE_FULL_REPORT_27) {
-        packStrip.hidden = false;
-        snapTeaser.hidden = true;
-        if (packRecap && AF) {
-          var pn = AF.displayName || '';
-          var pd = AF.diagnosis || '';
-          packRecap.textContent = pn && pd ? pn + ' — ' + pd : pn || pd || '';
-        }
-      } else {
-        packStrip.hidden = true;
-        snapTeaser.hidden = false;
-      }
-    }
+    if (packStrip) packStrip.hidden = true;
+    if (snapTeaser) snapTeaser.hidden = true;
 
     var heroCtaRow = document.querySelector('.results-hero-cta-row');
     if (heroCtaRow) heroCtaRow.hidden = isFullReportUnlocked();
@@ -2833,14 +2756,7 @@
     var ctaPri = document.getElementById('results-primary-cta');
     var flowLinks = document.getElementById('results-flow-links');
     if (ctaPri) {
-      /* diag-v2: when the bundle points at the generic $27 link, substitute the
-         archetype-specific Stripe Payment Link so each pattern gets its own
-         product for attribution + per-archetype fulfillment. */
-      var ctaHref = bundle.primaryHref;
-      if (ctaHref === STRIPE_FULL_REPORT_27) {
-        ctaHref = stripeReportHref(ak);
-      }
-      ctaPri.setAttribute('href', ctaHref);
+      ctaPri.setAttribute('href', bundle.primaryHref);
       ctaPri.textContent = bundle.primaryLabel;
     }
     if (flowLinks) {
@@ -3334,22 +3250,8 @@
 
     var ctaPri = document.getElementById('results-primary-cta');
     if (ctaPri) {
-      if (isFullReportUnlocked()) {
-        var convT = conversionTierFromArchetypeKey(archKey);
-        if (convT === 3) {
-          ctaPri.setAttribute('href', '/report?a=' + encodeURIComponent(archKey) + '#rpt-sys-details');
-          ctaPri.textContent = 'Open report · execution system';
-        } else if (convT === 2) {
-          ctaPri.setAttribute('href', '/snapshot');
-          ctaPri.textContent = 'Book precision pass · $950';
-        } else {
-          ctaPri.setAttribute('href', '/snapshot');
-          ctaPri.textContent = '48-hour precision read · $950';
-        }
-      } else {
-        ctaPri.setAttribute('href', stripeReportHref(archKey));
-        ctaPri.textContent = 'Get pattern + system + PDF · $27';
-      }
+      ctaPri.setAttribute('href', '/snapshot');
+      ctaPri.textContent = 'Get your Snapshot — $950';
     }
   }
 
@@ -3720,15 +3622,7 @@
   }
 
   function archMidSnapshotCtaHtml() {
-    return (
-      '<div class="results-archetype-mid-cta" data-arch-mid-cta>' +
-      '<p class="results-archetype__h3" style="margin-top:0">Precision pass</p>' +
-      '<h3 class="results-archetype-mid-cta__head">Fix the step that is holding your revenue</h3>' +
-      '<p class="results-archetype__mean" style="margin-bottom:2px"><strong>Get your Snapshot — $950</strong></p>' +
-      '<p class="results-archetype__mean">48-hour breakdown. Exact step to fix first. Applied to your business, not a general system.</p>' +
-      '<a class="results-archetype-mid-cta__btn" href="/snapshot">Get your Snapshot — $950</a>' +
-      '</div>'
-    );
+    return '';
   }
 
   /** Tier 1: ceiling-builder, commodity, scattered. Tier 2: foundation-first, untranslated, wrong-room. Tier 3: underpriced. */
@@ -3775,56 +3669,13 @@
       '<li>How to remove yourself from the wrong parts</li>' +
       '<li>How to scale this cleanly</li>' +
       '</ul>';
-    if (t === 1) {
-      return (
-        '<div class="results-archetype-next results-archetype-next--t1">' +
-        '<h3 class="results-archetype-next__head-prim">Fix the step that is holding your revenue</h3>' +
-        '<p class="results-archetype-next__lead-strong">Get your Snapshot — $950</p>' +
-        '<ul class="results-archetype-next__checklist">' +
-        '<li>48-hour breakdown</li>' +
-        '<li>Exact step to fix first</li>' +
-        '<li>Applied to your business, not a general system</li>' +
-        '</ul>' +
-        '<a class="results-archetype-next__cta results-archetype-next__cta--strong" href="/snapshot">Get your Snapshot — $950</a>' +
-        '<p class="results-archetype-next__sub">One missed deal covers this.</p>' +
-        '<div class="results-archetype-next__split"></div>' +
-        '<h3 class="results-archetype-next__head-sec">Download your full system</h3>' +
-        '<p class="results-archetype__mean">Everything on this page, structured to run and reuse.</p>' +
-        '<a class="results-archetype-next__cta results-archetype-next__cta--system" href="' +
-        esc(reportExecHref) +
-        '">Open report · export PDF</a>' +
-        archSnapshotSpecHtml() +
-        '</div>'
-      );
-    }
-    if (t === 2) {
-      return (
-        '<div class="results-archetype-next results-archetype-next--t2">' +
-        '<p class="results-archetype-next__micro">' +
-        esc(micro) +
-        '</p>' +
-        '<h3>What this leads to next</h3>' +
-        '<p class="results-archetype__mean">Run the execution system in your full report until you have replies, saves, or booked calls from the first loop. Then buy line-level precision.</p>' +
-        '<p class="results-archetype__h3">What you do not know yet</p>' +
-        list +
-        '<div class="results-archetype-next__actions">' +
-        '<a class="results-archetype-next__cta results-archetype-next__cta--system" href="' +
-        esc(reportExecHref) +
-        '">Open the execution system in your report</a>' +
-        '<a class="results-archetype-next__cta results-archetype-next__cta--soft" href="/snapshot">Book precision pass · $950</a>' +
-        '</div>' +
-        '<p class="results-archetype-next__sub">Snapshot is not a second read of the PDF—it is a 48-hour pass on your live copy after signal exists.</p>' +
-        archSnapshotSpecHtml() +
-        '</div>'
-      );
-    }
     return (
-      '<div class="results-archetype-next results-archetype-next--t3">' +
+      '<div class="results-archetype-next results-archetype-next--t' + t + '">' +
       '<p class="results-archetype-next__micro">' +
       esc(micro) +
       '</p>' +
       '<h3>What this leads to next</h3>' +
-      '<p class="results-archetype__mean">Ship three public pieces and watch for response. Visibility before optimization.</p>' +
+      '<p class="results-archetype__mean">Run the execution system in your full report until you have replies, saves, or booked calls from the first loop.</p>' +
       '<p class="results-archetype__h3">What you do not know yet</p>' +
       list +
       '<div class="results-archetype-next__actions">' +
@@ -3832,9 +3683,6 @@
       esc(reportExecHref) +
       '">Open the execution system in your report</a>' +
       '</div>' +
-      '<p class="results-archetype-next__defer">After signal: <a href="/snapshot">48-hour precision read · $950</a></p>' +
-      '<p class="results-archetype-next__sub">Snapshot tightens which line to change first once the market has something to react to.</p>' +
-      archSnapshotSpecHtml() +
       '</div>'
     );
   }
@@ -3867,7 +3715,6 @@
       '<li>The first step to systemize this week</li>' +
       '<li>A 30-day execution system you can run immediately</li>' +
       '</ul>' +
-      '<p class="results-archetype-recycle">One missed deal covers this.</p>' +
       '<p class="results-archetype__mean">Recycle podcasts, videos, voice memos, and past writing with the same conversion prompt.</p>' +
       '<div class="results-archetype-prompt-wrap">' +
       '<div class="results-archetype-prompt-row">' +
@@ -4196,8 +4043,6 @@
         '<div class="play-name">' + esc(name) + '</div>' +
         '<p class="play-desc">' + esc(meta.desc) + '</p>' +
         '<div class="play-actions">' +
-        '<a class="btn btn-ghost" data-sh-flow-secondary href="/snapshot">Get the full breakdown</a>' +
-        '<a class="btn btn-ghost" data-sh-flow-secondary href="/access">Apply for Private Access</a>' +
         '</div>';
       grid.appendChild(card);
     });
@@ -4574,24 +4419,8 @@
     (function forceCanonicalPrimaryCta() {
       var ctaPriEl = document.getElementById('results-primary-cta');
       if (!ctaPriEl) return;
-      if (isFullReportUnlocked()) {
-        var lkPay = normalizeArchetypeKeyFromLegacy(data);
-        var convTp = conversionTierFromArchetypeKey(lkPay);
-        if (convTp === 3) {
-          ctaPriEl.setAttribute('href', '/report?a=' + encodeURIComponent(lkPay) + '#rpt-sys-details');
-          ctaPriEl.textContent = 'Open report · execution system';
-        } else if (convTp === 2) {
-          ctaPriEl.setAttribute('href', '/snapshot');
-          ctaPriEl.textContent = 'Book precision pass · $950';
-        } else {
-          ctaPriEl.setAttribute('href', '/snapshot');
-          ctaPriEl.textContent = '48-hour precision read · $950';
-        }
-        return;
-      }
-      var lk = normalizeArchetypeKeyFromLegacy(data);
-      ctaPriEl.setAttribute('href', stripeReportHref(lk));
-      ctaPriEl.textContent = 'Get pattern + system + PDF · $27';
+      ctaPriEl.setAttribute('href', '/snapshot');
+      ctaPriEl.textContent = 'Get your Snapshot — $950';
     })();
 
     /* CEI strip is always hidden in the canonical diag-v2 layout; skip wiring. */
