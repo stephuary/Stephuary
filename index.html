@@ -3273,6 +3273,96 @@
        residual .hr-price-bar element inside the report section. */
     body[data-sh-env="home"] .section-ninety .hr-price-bar { display: none !important; }
 
+    /* Cluster peer-height floor (PROMPTS + SCRIPTS carry more content). */
+    body[data-sh-env="home"] .hr-cluster {
+      min-height: 380px;
+      display: flex;
+      flex-direction: column;
+    }
+    body[data-sh-env="home"] .hr-cluster__list { flex: 1 1 auto; }
+
+    /* PROMPTS cluster — hero numeral + stack chip row. */
+    body[data-sh-env="home"] .hr-cluster__name--solo {
+      font: 600 20px/1.3 var(--font-sans);
+      color: #f7f1e1;
+      margin: 0 0 8px;
+    }
+    .hr-prompt-hero {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin: 16px 0;
+    }
+    .hr-prompt-hero__num {
+      font-family: var(--font-serif);
+      font-weight: 700;
+      font-size: clamp(40px, 5vw, 60px);
+      line-height: 1;
+      color: var(--hr-gold);
+    }
+    .hr-prompt-hero__meta {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .hr-prompt-hero__unit {
+      font: 500 15px/1 var(--font-sans);
+      color: rgba(244, 244, 252, 0.92);
+    }
+    .hr-prompt-hero__sub {
+      font: 600 10px/1 var(--font-mono);
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: rgba(200, 169, 110, 0.6);
+    }
+    .hr-prompt-chips {
+      list-style: none;
+      margin: 0 0 16px;
+      padding: 0;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px 6px;
+    }
+    @media (min-width: 721px) {
+      .hr-prompt-chips { row-gap: 8px; }
+    }
+
+    /* Small-caps gold pill (stack chips + inline count chips). */
+    .hr-pill,
+    .hr-count-chip {
+      display: inline-flex;
+      align-items: center;
+      height: 20px;
+      padding: 0 8px;
+      border: 1px solid rgba(200, 169, 110, 0.55);
+      border-radius: 3px;
+      background: transparent;
+      font: 600 11px/1 var(--font-mono);
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--hr-gold);
+      white-space: nowrap;
+    }
+
+    /* SCRIPTS cluster — title row with inline count chip. */
+    .hr-cluster__name-row {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 2px;
+    }
+    .hr-cluster__name-row .hr-cluster__name { margin: 0; }
+
+    /* PROMPTS italic closing line. */
+    .hr-cluster__italic {
+      margin: auto 0 0;
+      padding-top: 12px;
+      font: 400 13px/1.45 var(--font-serif);
+      font-style: italic;
+      color: rgba(244, 244, 252, 0.7);
+    }
+
     /* Static archetype preview caption above chapter grid. */
     .hr-preview-caption {
       max-width: 520px;
@@ -3766,19 +3856,29 @@
 
             <div class="hr-assets-grid">
               <!-- PROMPTS -->
-              <div class="hr-cluster">
+              <div class="hr-cluster hr-cluster--prompts">
                 <p class="hr-cluster__label">Prompts</p>
-                <ul class="hr-cluster__list">
-                  <li class="hr-cluster__item">
-                    <span class="hr-cluster__icon" aria-hidden="true">
-                      <svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h10M4 18h16"/><path d="M18 10l4 3-4 3"/></svg>
-                    </span>
-                    <div>
-                      <p class="hr-cluster__name">Archetype-tuned prompt library</p>
-                      <p class="hr-cluster__desc">15 to 25 prompts written for your archetype.</p>
-                    </div>
-                  </li>
+                <p class="hr-cluster__name hr-cluster__name--solo">Archetype-tuned prompt library</p>
+
+                <div class="hr-prompt-hero">
+                  <span class="hr-prompt-hero__num">24</span>
+                  <span class="hr-prompt-hero__meta">
+                    <span class="hr-prompt-hero__unit">prompts</span>
+                    <span class="hr-prompt-hero__sub">7 stacks, rewritten per archetype</span>
+                  </span>
+                </div>
+
+                <ul class="hr-prompt-chips" aria-label="Prompt stacks">
+                  <li class="hr-pill">Positioning</li>
+                  <li class="hr-pill">Offer</li>
+                  <li class="hr-pill">Pricing</li>
+                  <li class="hr-pill">Content</li>
+                  <li class="hr-pill">Outreach</li>
+                  <li class="hr-pill">Sales</li>
+                  <li class="hr-pill">Strategic</li>
                 </ul>
+
+                <p class="hr-cluster__italic">Every prompt takes specific input and returns a verifiable output. One page each.</p>
               </div>
 
               <!-- TEMPLATES -->
@@ -3833,8 +3933,11 @@
                       <svg viewBox="0 0 24 24"><path d="M4 9a5 5 0 0 1 9-3l8 8"/><path d="M21 14a5 5 0 0 1-9 3l-8-8"/></svg>
                     </span>
                     <div>
-                      <p class="hr-cluster__name">Outreach scripts</p>
-                      <p class="hr-cluster__desc">Cold, warm, referral, re-engagement. Short. Specific.</p>
+                      <div class="hr-cluster__name-row">
+                        <p class="hr-cluster__name">Outreach scripts</p>
+                        <span class="hr-count-chip">7 Variations</span>
+                      </div>
+                      <p class="hr-cluster__desc">Cold, warm, referral, post-content, conference, ghosted, rejected-proposal. Each under one page.</p>
                     </div>
                   </li>
                   <li class="hr-cluster__item">
@@ -3842,8 +3945,11 @@
                       <svg viewBox="0 0 24 24"><path d="M5 6a2 2 0 0 1 2-2h3l2 3-2 2a12 12 0 0 0 5 5l2-2 3 2v3a2 2 0 0 1-2 2A14 14 0 0 1 5 6z"/></svg>
                     </span>
                     <div>
-                      <p class="hr-cluster__name">Sales call framework</p>
-                      <p class="hr-cluster__desc">Open, diagnose, scope, price, close. Same frame every call.</p>
+                      <div class="hr-cluster__name-row">
+                        <p class="hr-cluster__name">Sales call framework</p>
+                        <span class="hr-count-chip">8 Segments</span>
+                      </div>
+                      <p class="hr-cluster__desc">Opening, qualifying, diagnosis, scope, price, objections, close, follow-up email. Scripted.</p>
                     </div>
                   </li>
                   <li class="hr-cluster__item">
@@ -3851,8 +3957,11 @@
                       <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>
                     </span>
                     <div>
-                      <p class="hr-cluster__name">90-day email sequence</p>
-                      <p class="hr-cluster__desc">Wired to the execution phases so you never lose the thread.</p>
+                      <div class="hr-cluster__name-row">
+                        <p class="hr-cluster__name">90-day email sequence</p>
+                        <span class="hr-count-chip">10 Emails</span>
+                      </div>
+                      <p class="hr-cluster__desc">Wired to the execution phases. Day 1 through Day 90. Automated from unlock.</p>
                     </div>
                   </li>
                 </ul>
