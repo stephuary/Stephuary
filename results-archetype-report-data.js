@@ -17,8 +17,9 @@
     'ceiling-builder': {
       displayName: 'The Ceiling Builder',
       diagnosis: 'Capacity maxed. Structure missing.',
-      impact: '',
-      reportCtaLead: '',
+      impact: 'Capacity ceiling = $5K–$20K/month without a fixed sequence.',
+      reportCtaLead:
+        'Capacity is not the problem. The missing sequence behind delivery is.\nThe Snapshot names the first step to write down, and the sequence that follows.',
       immediateRead: [
         'You are fully booked or close to it',
         'Revenue is not increasing at the same rate',
@@ -41,7 +42,7 @@
       ],
       previews: {
         mean: 'Booked solid. Revenue flatlines. Every new yes adds hours.',
-        signs: 'Calendar full, math fuzzy, pricing trims load, each kickoff reinvents the path.',
+        signs: 'Calendar full · pricing trims load · each kickoff rebuilt from scratch.',
         deals: 'They get the outcome, choke on the process, stall when value has to become a number.',
         costing: '1–2 stalled deals a month · 6–14 hours/week in repeat setup · $2K–$8K+ left on the table.',
         haveNot: 'Diagnosis is clear; the fixed sequence and 48-hour breakdown on your business are not installed yet.',
@@ -63,12 +64,12 @@
         costing: {
           impactLabel: 'Estimated impact',
           bullets: [
-            '1–2 delayed or stalled deals per month',
-            '6–14 hours lost weekly to repeat work',
+            '1 to 2 delayed or stalled deals per month',
+            '6 to 14 hours per week lost to repeat work',
             'Lower pricing tolerance in conversations',
             'Slower turnaround between clients'
           ],
-          band: '$2K–$8K+ per month'
+          band: '$2K to $8K+ per month while capacity scales without a fixed sequence'
         },
         haveNot: {
           have: [
@@ -100,11 +101,7 @@
           'That becomes your first system.'
         ],
         week: [
-          'Pick one step you perform in every client engagement.',
-          'Write it exactly as you run it: order, inputs, outputs, timing.',
-          'Do not generalize. Document it as it actually happens.',
-          'Then: use it on your next client, refine it once, reuse it.',
-          'This is the first piece of structure.'
+          'One action: pick one step you run in every client engagement. Write it exactly as you run it — order, inputs, outputs, timing. Run it on the next client, refine once, reuse. This is the first piece of structure.'
         ],
         fixed: [
           'Delivery runs on a defined sequence.',
@@ -239,7 +236,7 @@
         mean: 'Busy pipeline, weak fit: you burn the same hours on buyers who cannot fund the model you want.',
         signs: 'Low-budget skew · scope fights before deposit · you shrink the offer to keep a bad lead alive.',
         deals: 'Losses are fit masked as timing: they were never going to fund the work you want on your terms.',
-        costing: '10–18 hours/week on non-funding calls · 2–4 off-band proposals/month · $3K–$15K in discount drag.',
+        costing: '10–18 hours/week on non-funding calls · 2–4 off-band proposals/month · $3K–$15K monthly left on the table while the wrong buyers keep booking.',
         haveNot: 'You see the mismatch; you do not have enforced disqualifiers and a front door that screens before deep calls.',
         why: 'Attention still beats fit at the top of the funnel, so the wrong buyers book first.',
         sale: 'Inbound spikes, fit is weak, you negotiate down, margin dies or the deal evaporates after effort.',
@@ -332,7 +329,7 @@
       previews: {
         mean: 'Range reads as risk: buyers cannot name the one problem you own after one pass.',
         signs: 'Client mix all over the map · case studies do not stack · referrals have no repeatable sentence.',
-        deals: 'They like your credibility but cannot map it to one urgent purchase they can defend.',
+        deals: 'They like your credibility but cannot map it to one buy their boss will sign off on.',
         costing: '5–12 hours/week reframing on calls · 1–2 deals/month lost to think while they shop narrower shops.',
         haveNot: 'You have proof of skill; you do not have one repeated headline problem-outcome line everywhere.',
         why: 'Multiple headline problems stay live in public, so every call becomes a custom positioning session.',
@@ -403,7 +400,7 @@
       }
     },
     underpriced: {
-      displayName: 'The Invisible Operator',
+      displayName: 'The Visibility Gap',
       diagnosis: 'You are capable, but not visible where it matters.',
       impact: '',
       reportCtaLead:
@@ -481,7 +478,7 @@
           'Stop polishing private decks until there are three public pieces that prove the claim you make on calls.'
         ],
         week: [
-          'One action: ship three pieces in seven days on the same problem. Stop editing for perfect. Publish for proof.'
+          'One action: ship three pieces in seven days on the same problem. Publish for proof, not polish.'
         ],
         fixed: [
           'More qualified inbound',
@@ -560,14 +557,15 @@
         },
         why: [
           'You still list multiple products, lead magnets, and tiers in public without a single recommended first buy.',
-          'Each path has its own copy and proof, so buyers compare your offers against each other before they compare you to competitors.'
+          'Each path has its own copy and proof, so buyers compare your offers against each other before they compare you to competitors.',
+          'You improvise a custom bridge on every call, which keeps hesitation attached to your calendar instead of a fixed first step.'
         ],
         sale: [
           'Curiosity builds',
           'They explore',
           'They see split messages',
           'They ask which to pick',
-          'You improvise bridges',
+          'They see no recommended first step',
           'They delay or downsize'
         ],
         leverage: [
@@ -592,7 +590,7 @@
     },
     'foundation-first': {
       displayName: 'The Dependency Trap',
-      diagnosis: 'Your business depends too heavily on you to function.',
+      diagnosis: 'You are the system of record. Every delivery routes through your calendar.',
       impact: '',
       reportCtaLead:
         'The goal is not more hustle. It is removing one load-bearing step.\nThe Snapshot finds the step that unlocks the rest without breaking delivery.',
@@ -616,7 +614,7 @@
         signs: 'Constant pulls on delivery · delegation snaps back · timelines swing with your availability.',
         deals: 'Buyers sense they are buying your queue, not a machine; expansion gets cautious.',
         costing: '8–16 hours/week in interrupts and status ping-pong · growth bets skipped on capacity.',
-        haveNot: 'You know what repeats; you do not have one step fully owned, documented, and off your desk twice in a row.',
+        haveNot: 'You know what repeats; you do not have one step fully handed off with a written SOP and quality check.',
         why: 'Repeatable work still lives in your head, so hiring cannot attach to a stable surface.',
         sale: 'They buy you → delivery leans on you → delays show → renewals tighten.',
         leverage: 'One repeatable weekly step: named owner, artifact, quality bar, off your thread twice.',
