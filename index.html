@@ -1693,6 +1693,201 @@
 </head>
 <body data-sh-env="home">
   <a href="#main" class="skip-link">Skip to content</a>
+
+  <!-- ═══ Pre-load entry transition (homepage only, first visit per session) ═══
+       No text. No loading spinner. A scattered field of points converges into a
+       subtle grid while a plum/gold glow rises underneath, then cross-fades into
+       the homepage atmosphere. Skipped entirely on reduced-motion, on any
+       interaction (click / key / touch), and on repeat visits in the same tab
+       session. All styles and logic are self-contained here so the overlay
+       paints before any deferred script loads. -->
+  <style id="sh-intro-critical">
+    .sh-intro {
+      position: fixed;
+      inset: 0;
+      z-index: 99999;
+      background: #05050f;
+      overflow: hidden;
+      isolation: isolate;
+      pointer-events: auto;
+      cursor: pointer;
+      /* Prevent any FOUC from scrollbar width shifts. */
+      overscroll-behavior: contain;
+    }
+    .sh-intro.is-done {
+      opacity: 0;
+      transition: opacity 620ms cubic-bezier(0.22, 1, 0.36, 1);
+      pointer-events: none;
+    }
+    /* Subtle film grain — a tiny SVG noise tile masked to a very low opacity
+       and drifted by 1% in each direction to avoid a static look. */
+    .sh-intro__noise {
+      position: absolute; inset: -2%;
+      opacity: 0.05;
+      mix-blend-mode: screen;
+      background-image:
+        url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)' opacity='0.8'/></svg>");
+      background-size: 160px 160px;
+      animation: sh-intro-grain 1.6s steps(4, end) infinite;
+      pointer-events: none;
+    }
+    @keyframes sh-intro-grain {
+      0%, 100% { transform: translate3d(0, 0, 0); }
+      25%      { transform: translate3d(-1%,  1%, 0); }
+      50%      { transform: translate3d( 1%, -1%, 0); }
+      75%      { transform: translate3d(-1%, -1%, 0); }
+    }
+    /* Plum + gold atmosphere blooming in behind the stars — matches the
+       canonical homepage background exactly so the cross-fade is seamless. */
+    .sh-intro__glow {
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 50% 0%,   rgba(61, 12, 44, 1)     0%, transparent 60%),
+        radial-gradient(ellipse 60% 40% at 20% 100%, rgba(61, 12, 44, 0.6)   0%, transparent 50%),
+        radial-gradient(ellipse 50% 40% at 80% 60%,  rgba(139, 47, 201, 0.12) 0%, transparent 50%),
+        radial-gradient(circle  at 50% 55%,          rgba(200, 169, 110, 0.10) 0%, transparent 45%);
+      opacity: 0;
+      animation: sh-intro-glow 1.8s ease-out 0.25s forwards;
+      pointer-events: none;
+    }
+    @keyframes sh-intro-glow {
+      0%   { opacity: 0; }
+      100% { opacity: 1; }
+    }
+    /* Field of convergent points. Each .sh-star starts at a randomised offset
+       (--dx / --dy) and travels to its final grid cell (--x / --y). */
+    .sh-intro__field {
+      position: absolute; inset: 0;
+      pointer-events: none;
+    }
+    .sh-star {
+      position: absolute;
+      left: var(--x);
+      top: var(--y);
+      width: 2px; height: 2px;
+      margin: -1px 0 0 -1px;
+      background: #f8f3ea;
+      border-radius: 50%;
+      box-shadow: 0 0 4px 1px rgba(248, 243, 234, 0.35);
+      opacity: 0;
+      transform: translate3d(var(--dx), var(--dy), 0) scale(0.4);
+      animation: sh-intro-star 1.6s cubic-bezier(0.22, 1, 0.36, 1) var(--d) forwards;
+      will-change: transform, opacity;
+    }
+    @keyframes sh-intro-star {
+      0%   { opacity: 0;    transform: translate3d(var(--dx), var(--dy), 0) scale(0.4); }
+      40%  { opacity: 0.85; }
+      100% { opacity: 0.9;  transform: translate3d(0, 0, 0) scale(1); }
+    }
+    /* A fine horizon line that breathes into view as the stars settle — gives
+       the final frame a sense of "structure has formed" without any text. */
+    .sh-intro__horizon {
+      position: absolute;
+      left: 10%; right: 10%;
+      bottom: 42%;
+      height: 1px;
+      background: linear-gradient(90deg,
+        transparent 0%,
+        rgba(200, 169, 110, 0.45) 50%,
+        transparent 100%);
+      transform: scaleX(0.2);
+      transform-origin: 50% 50%;
+      opacity: 0;
+      animation: sh-intro-horizon 1.4s cubic-bezier(0.22, 1, 0.36, 1) 0.7s forwards;
+      pointer-events: none;
+    }
+    @keyframes sh-intro-horizon {
+      0%   { opacity: 0; transform: scaleX(0.2); }
+      100% { opacity: 1; transform: scaleX(1); }
+    }
+    /* Prevent the overlay from ever running for reduced-motion users or when
+       JS sets the hard opt-out class (cached / returning). */
+    .sh-intro.is-hidden { display: none !important; }
+    @media (prefers-reduced-motion: reduce) {
+      .sh-intro { display: none !important; }
+    }
+  </style>
+  <div id="sh-intro" class="sh-intro" aria-hidden="true" role="presentation">
+    <div class="sh-intro__glow"></div>
+    <div class="sh-intro__field" id="sh-intro-field"></div>
+    <div class="sh-intro__horizon"></div>
+    <div class="sh-intro__noise"></div>
+  </div>
+  <script>
+    (function () {
+      var intro = document.getElementById('sh-intro');
+      if (!intro) return;
+
+      /* Skip conditions: reduced-motion, already-played-this-session, or bfcache
+         restore. In all three cases the overlay is destroyed before first paint
+         of any meaningful content. */
+      var KEY = 'sh-intro-shown-v1';
+      var reduce = false;
+      try { reduce = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches); } catch (e) {}
+      var seen = false;
+      try { seen = sessionStorage.getItem(KEY) === '1'; } catch (e) {}
+
+      function removeNow() {
+        try { intro.parentNode && intro.parentNode.removeChild(intro); } catch (e) {}
+      }
+      if (reduce || seen) { removeNow(); return; }
+
+      /* Build the point field. 6 cols × 4 rows = 24 points. Each point gets a
+         final grid position (--x, --y) and a randomised start offset (--dx,
+         --dy) up to ±40vw / ±30vh, plus a small stagger (--d). */
+      var field = document.getElementById('sh-intro-field');
+      var cols = 6, rows = 4;
+      var frag = document.createDocumentFragment();
+      for (var r = 0; r < rows; r++) {
+        for (var c = 0; c < cols; c++) {
+          var x = ((c + 0.5) / cols) * 100;
+          var y = (((r + 0.5) / rows) * 60) + 18; /* vertical band 18%–78% */
+          var dx = ((Math.random() * 2) - 1) * 28; /* ±28vw */
+          var dy = ((Math.random() * 2) - 1) * 18; /* ±18vh */
+          var delay = (Math.random() * 0.35 + 0.05).toFixed(2);
+          var s = document.createElement('span');
+          s.className = 'sh-star';
+          s.style.setProperty('--x',  x  + '%');
+          s.style.setProperty('--y',  y  + '%');
+          s.style.setProperty('--dx', dx + 'vw');
+          s.style.setProperty('--dy', dy + 'vh');
+          s.style.setProperty('--d',  delay + 's');
+          frag.appendChild(s);
+        }
+      }
+      field.appendChild(frag);
+
+      /* Dismiss timeline — the overlay self-destructs after ~2.2s of play, and
+         any interaction (click / pointer / key / touch / wheel) cuts it short
+         instantly. Fade-out takes 620ms, overlapping with the homepage that is
+         already rendered behind, so the crossfade feels continuous. */
+      var dismissed = false;
+      function finish() {
+        if (dismissed) return;
+        dismissed = true;
+        try { sessionStorage.setItem(KEY, '1'); } catch (e) {}
+        intro.classList.add('is-done');
+        setTimeout(removeNow, 700);
+      }
+
+      /* Skip on any interaction — immediate short-circuit. */
+      var opts = { once: true, passive: true };
+      intro.addEventListener('click',       finish, opts);
+      intro.addEventListener('pointerdown', finish, opts);
+      intro.addEventListener('touchstart',  finish, opts);
+      window.addEventListener('keydown',    finish, { once: true });
+      window.addEventListener('wheel',      finish, { once: true, passive: true });
+
+      /* Auto-finish after the timeline. */
+      setTimeout(finish, 2100);
+
+      /* bfcache restore: re-entering via back button should never replay. */
+      window.addEventListener('pageshow', function (ev) {
+        if (ev.persisted) { try { sessionStorage.setItem(KEY, '1'); } catch (e) {} removeNow(); }
+      });
+    })();
+  </script>
+
   <canvas id="starfield" class="home-starfield" aria-hidden="true"></canvas>
 
   <!-- ═══ Site Shell ═══ -->
