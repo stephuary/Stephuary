@@ -3717,11 +3717,17 @@
     );
   }
 
+  /* Cohesion rule (deletion, not rewrite):
+     Results = diagnosis + 3 signs + cost band. Nothing else.
+     No immediateRead, no whatThisMeans, no personalization strip, no
+     accordion, no "Open execution system" CTA. The two CTAs live in
+     the score-reveal above this panel ($27 full breakdown + Snapshot
+     when unpaid; Open report + Snapshot when paid). The full accordion
+     has one home: /report. */
   function renderArchetypePanel(archetypeKey) {
     var mount = document.getElementById('results-archetype-upsell');
     if (!mount) return;
     var A = getArchetypeReportSpec(archetypeKey);
-    var paid = isFullReportUnlocked();
     if (!A) {
       mount.hidden = true;
       mount.innerHTML = '';
@@ -3729,165 +3735,27 @@
     }
     mount.hidden = false;
     var prev = A.previews || {};
-    var B = A.blocks || {};
     var signsHtml = (A.signs || [])
       .map(function (s) {
         return '<li>' + esc(s) + '</li>';
       })
       .join('');
-    var top =
+    var band = (A.impact && String(A.impact).trim()) || (prev && prev.costing) || '';
+
+    mount.innerHTML =
       '<div class="results-archetype-root">' +
       '<p class="results-archetype__diagnosis">' +
       esc(A.diagnosis) +
       '</p>' +
-      (A.impact
-        ? '<p class="results-archetype__impact">' + esc(A.impact) + '</p>'
+      '<p class="results-archetype__h3 results-archetype__signs-intro">Three clearest signs this is happening</p>' +
+      '<ul class="results-archetype__list">' +
+      signsHtml +
+      '</ul>' +
+      '<p class="results-archetype__signs-note">If these match, this pattern is active.</p>' +
+      (band
+        ? '<p class="results-archetype__impact">' + esc(band) + '</p>'
         : '') +
-      archImmediateReadHtml(A) +
-      (paid
-        ? ''
-        : '<p class="results-archetype__h3">What this means</p>' +
-          (A.whatThisMeans || [])
-            .map(function (m) {
-              return '<p class="results-archetype__mean">' + esc(m) + '</p>';
-            })
-            .join('') +
-          buildArchPersonalizationStripHtml() +
-          '<div class="results-archetype-section-divider" role="presentation"></div>' +
-          '<p class="results-archetype__h3 results-archetype__signs-intro">Three clearest signs this is happening</p>' +
-          '<ul class="results-archetype__list">' +
-          signsHtml +
-          '</ul>' +
-          '<p class="results-archetype__signs-note">If these match, this pattern is active.</p>');
-
-    if (!paid) {
-      mount.innerHTML = top + '</div>';
-      return;
-    }
-
-    var accItems = [
-      {
-        k: 'mean',
-        title: 'What this means for you',
-        costing: false,
-        inner: archJoinPs(A.whatThisMeans) + buildArchPersonalizationStripHtml(),
-        pv: prev.mean
-      },
-      {
-        k: 'signs',
-        title: 'Three clearest signs',
-        costing: false,
-        inner: archSignsAccordionInner(A),
-        pv: prev.signs
-      },
-      {
-        k: 'deals',
-        title: 'Where your last 3 deals broke',
-        costing: false,
-        inner: archJoinPs(B.deals),
-        pv: prev.deals
-      },
-      {
-        k: 'costing',
-        title: 'What this is costing',
-        costing: true,
-        inner: archCostingInner(B.costing),
-        pv: prev.costing
-      },
-      {
-        k: 'haveNot',
-        title: 'You now have / You do not have',
-        costing: false,
-        inner: archHaveNotInner(B.haveNot),
-        pv: prev.haveNot
-      },
-      {
-        k: 'why',
-        title: 'Why this is happening',
-        costing: false,
-        inner: archJoinPs(B.why),
-        pv: prev.why
-      },
-      {
-        k: 'sale',
-        title: "What's happening in the sale",
-        costing: false,
-        inner: archJoinUl(B.sale),
-        pv: prev.sale
-      },
-      {
-        k: 'leverage',
-        title: 'Leverage point',
-        costing: false,
-        inner: archJoinPs(B.leverage),
-        pv: prev.leverage
-      },
-      {
-        k: 'week',
-        title: 'What to do this week',
-        costing: false,
-        inner: archJoinPs(B.week),
-        pv: prev.week
-      },
-      {
-        k: 'fixed',
-        title: 'What changes when fixed',
-        costing: false,
-        inner: archJoinUl(B.fixed),
-        pv: prev.fixed
-      },
-      {
-        k: 'notfix',
-        title: 'What this does not fix',
-        costing: false,
-        inner: archJoinPs(B.notfix),
-        pv: prev.notfix
-      }
-    ];
-
-    function renderOneArchAccordionItem(it) {
-      var extra = it.costing ? ' results-accordion-item--arch-costing' : '';
-      return (
-        '<article class="results-accordion-item' +
-        extra +
-        '" data-arch-item>' +
-        '<button type="button" class="results-accordion-trigger results-arch-trigger" aria-expanded="false">' +
-        '<span class="results-arch-trigger__stack">' +
-        '<span class="results-arch-trigger__title">' +
-        esc(it.title) +
-        '</span>' +
-        '<span class="results-arch-trigger__preview">' +
-        esc(it.pv || '') +
-        '</span></span>' +
-        '<span class="results-accordion-trigger__icon" aria-hidden="true">▾</span>' +
-        '</button>' +
-        '<div class="results-accordion-panel"><div class="results-accordion-panel__inner">' +
-        it.inner +
-        '</div></div>' +
-        '</article>'
-      );
-    }
-
-    var accParts = [];
-    for (var ai = 0; ai < accItems.length; ai++) {
-      accParts.push(renderOneArchAccordionItem(accItems[ai]));
-      if (accItems[ai].k === 'week') {
-        accParts.push(archMidSnapshotCtaHtml());
-      }
-    }
-    var accHtml = accParts.join('');
-
-    mount.innerHTML =
-      top +
-      '<div class="results-archetype-section-divider" role="presentation"></div>' +
-      '<section class="results-accordion results-archetype-acc" aria-label="Full report">' +
-      accHtml +
-      '</section>' +
-      archVoiceMonNextHtml(archetypeKey) +
       '</div>';
-
-    initArchetypeReportAccordions();
-    bindArchReportPromptCopyOnce();
   }
 
   function renderBlocks(container, blocks) {
