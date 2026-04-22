@@ -303,7 +303,10 @@ footer{padding:16px 52px;display:flex;flex-direction:column;gap:8px;background:l
     </div>
 
     <div id="apply-form-shell">
-    <form class="form-grid reveal reveal-d2" id="access-form" novalidate>
+    <form class="form-grid reveal reveal-d2" id="access-form" action="https://formsubmit.co/hello@stephuary.com" method="POST" novalidate>
+      <input type="hidden" name="_subject" value="New Access application">
+      <input type="hidden" name="_captcha" value="false">
+      <input type="hidden" name="_next" value="/thank-you?type=access">
       <div class="field-group">
         <label class="field-label" for="applicant-name">Name</label>
         <input class="field-input" type="text" id="applicant-name" name="applicant_name" autocomplete="name" placeholder="Full name" required>
@@ -424,7 +427,40 @@ amYes.addEventListener('change', syncNeedState);
 amNo.addEventListener('change', syncNeedState);
 syncNeedState();
 
-form.addEventListener('submit', function(e) {
+var formError = document.getElementById('form-error');
+if (!formError) {
+  formError = document.createElement('div');
+  formError.id = 'form-error';
+  formError.className = 'form-status';
+  formError.setAttribute('role', 'alert');
+  formError.setAttribute('aria-live', 'assertive');
+  formError.style.display = 'none';
+  formError.style.marginTop = '12px';
+  formError.innerHTML = 'Something went wrong sending your application. <button type="button" id="form-retry" class="field-input" style="margin-top:8px;cursor:pointer;">Retry</button>';
+  formShell.appendChild(formError);
+}
+
+function showFormError() {
+  formError.style.display = 'block';
+  submitBtn.disabled = false;
+}
+
+function hideFormError() {
+  formError.style.display = 'none';
+}
+
+formError.addEventListener('click', function(ev) {
+  if (ev.target && ev.target.id === 'form-retry') {
+    hideFormError();
+    if (typeof form.requestSubmit === 'function') {
+      form.requestSubmit();
+    } else {
+      form.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
+    }
+  }
+});
+
+form.addEventListener('submit', async function(e) {
   e.preventDefault();
   if (!amYes.checked) {
     syncNeedState();
@@ -434,9 +470,23 @@ form.addEventListener('submit', function(e) {
     form.reportValidity();
     return;
   }
-  formShell.classList.add('hidden');
-  formSuccess.classList.add('visible');
-  formSuccess.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  hideFormError();
+  submitBtn.disabled = true;
+  try {
+    var response = await fetch(form.action, {
+      method: form.method || 'POST',
+      body: new FormData(form),
+      headers: { 'Accept': 'application/json' }
+    });
+    if (!response.ok) {
+      throw new Error('Submit failed with status ' + response.status);
+    }
+    formShell.classList.add('hidden');
+    formSuccess.classList.add('visible');
+    formSuccess.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  } catch (err) {
+    showFormError();
+  }
 });
 </script>
   <script src="/stephuary-early-mode.js" defer></script>
