@@ -1140,6 +1140,29 @@
       box-shadow: 0 6px 24px rgba(43, 79, 212, 0.35);
       filter: brightness(1.04);
     }
+    /* Secondary CTA — quiet text link styled to pair with the primary
+       without competing with it. Uses a slim gold underline instead of
+       a button shell. */
+    .results-cta-sec {
+      display: inline-flex;
+      align-items: center;
+      gap: 2px;
+      padding: 4px 0;
+      color: rgba(244, 237, 224, 0.78);
+      font-family: 'Lato', sans-serif;
+      font-size: 13px;
+      letter-spacing: 0.02em;
+      text-decoration: none;
+      border-bottom: 1px solid rgba(201, 162, 74, 0.45);
+      line-height: 1.4;
+      transition: color 0.2s ease, border-color 0.2s ease;
+      margin-top: -2px;
+    }
+    .results-cta-sec:hover,
+    .results-cta-sec:focus-visible {
+      color: #F8F3EA;
+      border-bottom-color: #C9A24A;
+    }
     .results-cta-subnote {
       font-size: 11px;
       color: var(--faint);
@@ -2284,6 +2307,7 @@
         </div>
         <div class="results-hero-cta-row">
           <a class="results-cta-pri magnetic" id="results-primary-cta" href="/snapshot" data-sh-flow-primary>Get your Snapshot — $950</a>
+          <a class="results-cta-sec" id="results-secondary-cta" href="/snapshot" data-sh-flow-secondary hidden>Ready to fix it? See Snapshot →</a>
           <span class="results-cta-subnote" id="results-primary-sub" hidden></span>
         </div>
         <div class="results-observable-body" id="results-observable-body" aria-live="polite"></div>
@@ -2446,12 +2470,26 @@
 
   var STRIPE_FULL_REPORT_27 = 'https://buy.stripe.com/00wcN500E5imd5WeWv33W03';
 
+  /* Two-button score-reveal CTA block:
+     - Unpaid default: primary = $27 full breakdown (archetype-specific
+       Stripe Payment Link, substituted at render time); secondary =
+       quiet "See Snapshot →" link.
+     - Unlocked/paid: primary swaps to "Open the execution system in
+       your report"; secondary remains the Snapshot link. */
   function diagV2BundleFromType(resultType) {
+    if (isFullReportUnlocked()) {
+      return {
+        primaryHref: '/report',
+        primaryLabel: 'Open the execution system in your report',
+        secondaryHref: '/snapshot',
+        secondaryLabel: 'Ready to fix it? See Snapshot →'
+      };
+    }
     return {
-      primaryHref: '/snapshot',
-      primaryLabel: 'Get your Snapshot — $950',
-      secondaryHref: null,
-      secondaryLabel: null
+      primaryHref: STRIPE_FULL_REPORT_27,
+      primaryLabel: 'Get the full breakdown — $27',
+      secondaryHref: '/snapshot',
+      secondaryLabel: 'Ready to fix it? See Snapshot →'
     };
   }
 
@@ -2743,7 +2781,7 @@
     if (snapTeaser) snapTeaser.hidden = true;
 
     var heroCtaRow = document.querySelector('.results-hero-cta-row');
-    if (heroCtaRow) heroCtaRow.hidden = isFullReportUnlocked();
+    if (heroCtaRow) heroCtaRow.hidden = false;
 
     var pill = document.getElementById('typePill');
     if (pill) pill.innerHTML = '';
@@ -2754,23 +2792,27 @@
       String(metrics.resultType || '');
 
     var ctaPri = document.getElementById('results-primary-cta');
-    var flowLinks = document.getElementById('results-flow-links');
+    var ctaSec = document.getElementById('results-secondary-cta');
     if (ctaPri) {
-      ctaPri.setAttribute('href', bundle.primaryHref);
+      /* Sub the archetype-specific Stripe Payment Link in for the
+         generic $27 link so each pattern gets its own product for
+         attribution + per-archetype fulfillment. */
+      var ctaHref = bundle.primaryHref;
+      if (ctaHref === STRIPE_FULL_REPORT_27) {
+        ctaHref = stripeReportHref(ak);
+      } else if (ctaHref === '/report') {
+        ctaHref = '/report?a=' + encodeURIComponent(ak) + '#rpt-sys-details';
+      }
+      ctaPri.setAttribute('href', ctaHref);
       ctaPri.textContent = bundle.primaryLabel;
     }
-    if (flowLinks) {
+    if (ctaSec) {
       if (bundle.secondaryHref && bundle.secondaryLabel) {
-        flowLinks.hidden = false;
-        flowLinks.innerHTML =
-          '<a href="' +
-          esc(bundle.secondaryHref) +
-          '" class="magnetic" data-sh-flow-secondary>' +
-          esc(bundle.secondaryLabel) +
-          '</a>';
+        ctaSec.setAttribute('href', bundle.secondaryHref);
+        ctaSec.textContent = bundle.secondaryLabel;
+        ctaSec.hidden = false;
       } else {
-        flowLinks.hidden = true;
-        flowLinks.innerHTML = '';
+        ctaSec.hidden = true;
       }
     }
     diagV2RunReveal();
@@ -3246,12 +3288,23 @@
     if (pill) pill.innerHTML = '';
 
     var heroCtaRow7 = document.querySelector('.results-hero-cta-row');
-    if (heroCtaRow7) heroCtaRow7.hidden = isFullReportUnlocked();
+    if (heroCtaRow7) heroCtaRow7.hidden = false;
 
     var ctaPri = document.getElementById('results-primary-cta');
+    var ctaSec = document.getElementById('results-secondary-cta');
     if (ctaPri) {
-      ctaPri.setAttribute('href', '/snapshot');
-      ctaPri.textContent = 'Get your Snapshot — $950';
+      if (isFullReportUnlocked()) {
+        ctaPri.setAttribute('href', '/report?a=' + encodeURIComponent(archKey) + '#rpt-sys-details');
+        ctaPri.textContent = 'Open the execution system in your report';
+      } else {
+        ctaPri.setAttribute('href', stripeReportHref(archKey));
+        ctaPri.textContent = 'Get the full breakdown — $27';
+      }
+    }
+    if (ctaSec) {
+      ctaSec.setAttribute('href', '/snapshot');
+      ctaSec.textContent = 'Ready to fix it? See Snapshot →';
+      ctaSec.hidden = false;
     }
   }
 
@@ -4099,7 +4152,7 @@
     renderArchetypePanel(legacyArch);
     window.__observableScoreLine = legacyAf.diagnosis;
     var heroCtaLegacy = document.querySelector('.results-hero-cta-row');
-    if (heroCtaLegacy) heroCtaLegacy.hidden = isFullReportUnlocked();
+    if (heroCtaLegacy) heroCtaLegacy.hidden = false;
 
     var subEl = document.getElementById('results-hero-sub');
     if (subEl) {
@@ -4363,9 +4416,22 @@
 
     (function forceCanonicalPrimaryCta() {
       var ctaPriEl = document.getElementById('results-primary-cta');
-      if (!ctaPriEl) return;
-      ctaPriEl.setAttribute('href', '/snapshot');
-      ctaPriEl.textContent = 'Get your Snapshot — $950';
+      var ctaSecEl = document.getElementById('results-secondary-cta');
+      if (ctaPriEl) {
+        var lk = normalizeArchetypeKeyFromLegacy(data);
+        if (isFullReportUnlocked()) {
+          ctaPriEl.setAttribute('href', '/report?a=' + encodeURIComponent(lk) + '#rpt-sys-details');
+          ctaPriEl.textContent = 'Open the execution system in your report';
+        } else {
+          ctaPriEl.setAttribute('href', stripeReportHref(lk));
+          ctaPriEl.textContent = 'Get the full breakdown — $27';
+        }
+      }
+      if (ctaSecEl) {
+        ctaSecEl.setAttribute('href', '/snapshot');
+        ctaSecEl.textContent = 'Ready to fix it? See Snapshot →';
+        ctaSecEl.hidden = false;
+      }
     })();
 
     /* CEI strip is always hidden in the canonical diag-v2 layout; skip wiring. */
