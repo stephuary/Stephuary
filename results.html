@@ -223,6 +223,130 @@
     }
     #state-result.visible { display: block; animation: rise 0.22s ease forwards; }
 
+    /* ── Diagnostic lead gate (name + email before results render) ── */
+    #diag-lead-gate {
+      position: fixed;
+      inset: 0;
+      z-index: 9000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background: radial-gradient(
+        circle at 50% 30%,
+        rgba(17, 14, 35, 0.92) 0%,
+        rgba(5, 5, 15, 0.98) 70%
+      );
+      -webkit-backdrop-filter: blur(8px);
+      backdrop-filter: blur(8px);
+    }
+    #diag-lead-gate.visible { display: flex; }
+    .diag-gate__card {
+      width: 100%;
+      max-width: 440px;
+      padding: 36px 32px 30px;
+      border: 1px solid rgba(200, 169, 110, 0.28);
+      border-radius: 14px;
+      background: linear-gradient(
+        180deg,
+        rgba(17, 14, 35, 0.9) 0%,
+        rgba(5, 5, 15, 0.95) 100%
+      );
+      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5);
+      color: var(--sh-text-primary, #e9e4d3);
+      text-align: left;
+    }
+    .diag-gate__kicker {
+      font-family: var(--sh-font-sans, 'Inter', system-ui, sans-serif);
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--sh-gold, #c8a96e);
+      margin: 0 0 12px;
+    }
+    .diag-gate__h {
+      font-family: var(--sh-font-serif, 'Playfair Display', Georgia, serif);
+      font-size: clamp(1.3rem, 2.4vw, 1.6rem);
+      font-weight: 600;
+      line-height: 1.25;
+      color: #f7f1e1;
+      margin: 0 0 10px;
+    }
+    .diag-gate__p {
+      font-family: var(--sh-font-sans, 'Inter', system-ui, sans-serif);
+      font-size: 0.92rem;
+      line-height: 1.5;
+      color: var(--sh-text-secondary, #c9c4b7);
+      margin: 0 0 22px;
+    }
+    .diag-gate__field { margin-bottom: 14px; }
+    .diag-gate__label {
+      display: block;
+      font-family: var(--sh-font-sans, 'Inter', system-ui, sans-serif);
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--sh-text-muted, #8a8577);
+      margin-bottom: 6px;
+    }
+    .diag-gate__input {
+      width: 100%;
+      padding: 12px 14px;
+      font: 400 0.98rem/1.3 var(--sh-font-sans, 'Inter', system-ui, sans-serif);
+      color: var(--sh-text-primary, #e9e4d3);
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--sh-line, rgba(255, 255, 255, 0.12));
+      border-radius: 8px;
+      outline: none;
+      transition: border-color 0.18s ease, background 0.18s ease;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+    .diag-gate__input:focus {
+      border-color: var(--sh-gold, #c8a96e);
+      background: rgba(255, 255, 255, 0.07);
+    }
+    .diag-gate__input::placeholder { color: rgba(233, 228, 211, 0.35); }
+    .diag-gate__submit {
+      display: block;
+      width: 100%;
+      margin-top: 12px;
+      padding: 14px 18px;
+      font: 600 0.95rem/1 var(--sh-font-sans, 'Inter', system-ui, sans-serif);
+      letter-spacing: 0.04em;
+      color: #0b0b1a;
+      background: var(--sh-gold, #c8a96e);
+      border: 0;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: transform 0.14s ease, background 0.18s ease;
+    }
+    .diag-gate__submit:hover { background: #d4b988; }
+    .diag-gate__submit:active { transform: translateY(1px); }
+    .diag-gate__submit[disabled] { opacity: 0.7; cursor: wait; }
+    .diag-gate__fine {
+      margin: 14px 0 0;
+      font-size: 0.78rem;
+      line-height: 1.5;
+      color: var(--sh-text-muted, #8a8577);
+    }
+    .diag-gate__error {
+      margin: 10px 0 0;
+      font-size: 0.82rem;
+      color: #e9a27f;
+      display: none;
+    }
+    .diag-gate__error.show { display: block; }
+    body.diag-locked #state-result,
+    body.diag-locked #state-missing { display: none !important; }
+    body.diag-locked { overflow: hidden; }
+    @media (max-width: 480px) {
+      #diag-lead-gate { padding: 16px; }
+      .diag-gate__card { padding: 28px 22px 22px; }
+    }
+
     /* Canonical diag-v2 layout: score strip, one read, single CTA. */
     body.results--diag-v2 .hero-kicker,
     body.results--diag-v2 .results-conversion-soft,
@@ -2092,6 +2216,32 @@
   </nav>
 
   <main id="main">
+  <div id="diag-lead-gate" role="dialog" aria-modal="true" aria-labelledby="diag-gate-h" aria-hidden="true">
+    <form class="diag-gate__card" id="diag-gate-form" action="https://formsubmit.co/ajax/hello@stephuary.com" method="POST" novalidate>
+      <p class="diag-gate__kicker">One step</p>
+      <h1 class="diag-gate__h" id="diag-gate-h">Where should we send your read?</h1>
+      <p class="diag-gate__p">Enter your name and email to see your archetype. We'll also send a copy to your inbox so you can reopen it later.</p>
+
+      <div class="diag-gate__field">
+        <label class="diag-gate__label" for="diag-gate-name">Name</label>
+        <input class="diag-gate__input" id="diag-gate-name" name="name" type="text" autocomplete="name" placeholder="First name" required>
+      </div>
+
+      <div class="diag-gate__field">
+        <label class="diag-gate__label" for="diag-gate-email">Email</label>
+        <input class="diag-gate__input" id="diag-gate-email" name="email" type="email" autocomplete="email" inputmode="email" placeholder="you@example.com" required>
+      </div>
+
+      <input type="hidden" name="_subject" value="New diagnostic result">
+      <input type="hidden" name="_template" value="table">
+      <input type="hidden" name="_captcha" value="false">
+
+      <button class="diag-gate__submit" id="diag-gate-submit" type="submit">Show my archetype &rarr;</button>
+      <p class="diag-gate__fine">No spam. We use your email once to send you the read.</p>
+      <p class="diag-gate__error" id="diag-gate-error" role="alert">Enter a valid name and email to continue.</p>
+    </form>
+  </div>
+
   <div id="state-missing">
     <p class="missing-kicker">Result</p>
     <h1 class="missing-h1">No diagnostic result on file.</h1>
@@ -4442,6 +4592,126 @@
         window.open(shareUrl, '_blank', 'noopener');
       });
     }
+  }
+
+  var LEAD_LS_KEY = 'stephuary_diag_lead_v1';
+  function hasDiagLead() {
+    try {
+      var raw = localStorage.getItem(LEAD_LS_KEY);
+      if (!raw) return false;
+      var obj = JSON.parse(raw);
+      return !!(obj && obj.email);
+    } catch (eH) { return false; }
+  }
+  function persistDiagLead(name, email) {
+    try {
+      localStorage.setItem(LEAD_LS_KEY, JSON.stringify({
+        name: String(name || '').trim(),
+        email: String(email || '').trim().toLowerCase(),
+        ts: Date.now()
+      }));
+    } catch (eP) {}
+  }
+  function readLeadArchetypeSummary() {
+    try {
+      var dr = readDiagnosticResultsSeven();
+      if (!dr) return {};
+      var ak = '';
+      try {
+        if (typeof archetypeFromSevenResult === 'function') ak = archetypeFromSevenResult(dr) || '';
+      } catch (eA) {}
+      var metrics = {};
+      try {
+        if (typeof diagV2RecomputeFromAnswers === 'function') metrics = diagV2RecomputeFromAnswers(dr) || {};
+      } catch (eM) {}
+      return {
+        archetype: ak,
+        archetype_name: (ak && typeof getArchetypeReportSpec === 'function')
+          ? (getArchetypeReportSpec(ak) || {}).displayName || ''
+          : '',
+        result_type: metrics.resultType || '',
+        score: (metrics.totalScore != null ? String(metrics.totalScore) + '/14' : '')
+      };
+    } catch (eR) { return {}; }
+  }
+  function fireDiagLead(form, name, email, summary) {
+    var endpoint = (form && form.getAttribute && form.getAttribute('action')) ||
+      'https://formsubmit.co/ajax/hello@stephuary.com';
+    var body = {
+      name: name,
+      email: email,
+      archetype: (summary && summary.archetype) || '',
+      archetype_name: (summary && summary.archetype_name) || '',
+      result_type: (summary && summary.result_type) || '',
+      score: (summary && summary.score) || '',
+      source: 'diagnostic-results',
+      referrer: document.referrer || '',
+      page: window.location.href,
+      _subject: 'New diagnostic result' + ((summary && summary.archetype_name) ? ' — ' + summary.archetype_name : '')
+    };
+    try {
+      return fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify(body)
+      });
+    } catch (eF) { return Promise.resolve(null); }
+  }
+  function showDiagLeadGate() {
+    var gate = document.getElementById('diag-lead-gate');
+    if (!gate) return false;
+    document.body.classList.add('diag-locked');
+    gate.classList.add('visible');
+    gate.setAttribute('aria-hidden', 'false');
+    var form = document.getElementById('diag-gate-form');
+    var nameI = document.getElementById('diag-gate-name');
+    var emailI = document.getElementById('diag-gate-email');
+    var errEl = document.getElementById('diag-gate-error');
+    var submitBtn = document.getElementById('diag-gate-submit');
+    try { if (nameI) nameI.focus(); } catch (eFc) {}
+    if (!form || form.__bound) return true;
+    form.__bound = true;
+    form.addEventListener('submit', function (ev) {
+      ev.preventDefault();
+      var name = (nameI && nameI.value || '').trim();
+      var email = (emailI && emailI.value || '').trim();
+      var emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+      if (!name || !emailOk) {
+        if (errEl) errEl.classList.add('show');
+        try { if (!name && nameI) nameI.focus(); else if (emailI) emailI.focus(); } catch (eFE) {}
+        return;
+      }
+      if (errEl) errEl.classList.remove('show');
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Unlocking…';
+      }
+      persistDiagLead(name, email);
+      var summary = readLeadArchetypeSummary();
+      var done = function () {
+        try { window.location.reload(); }
+        catch (eRl) { window.location.href = window.location.href; }
+      };
+      var settled = false;
+      var finish = function () { if (settled) return; settled = true; done(); };
+      var p = fireDiagLead(form, name, email, summary);
+      if (p && typeof p.then === 'function') {
+        p.then(finish, finish);
+        setTimeout(finish, 3500);
+      } else {
+        done();
+      }
+    });
+    return true;
+  }
+
+  /* Lead gate: require name + email before results render. */
+  if (!hasDiagLead()) {
+    var __drProbe = readDiagnosticResultsSeven();
+    var __legacyProbe = null;
+    try { __legacyProbe = loadResult(); } catch (eLp) {}
+    var __hasAnyDiag = !!__drProbe || !!(__legacyProbe && __legacyProbe.data);
+    if (__hasAnyDiag && showDiagLeadGate()) return;
   }
 
   var drSeven = readDiagnosticResultsSeven();
