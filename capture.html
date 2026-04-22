@@ -115,6 +115,28 @@
       margin: 0 auto;
     }
 
+    .capture-save-reassure {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      line-height: 1.45;
+      color: var(--text-muted);
+      margin: 0 0 14px;
+    }
+    .capture-save-reassure__dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--ok, #88d39c);
+      flex: 0 0 auto;
+      box-shadow: 0 0 0 3px rgba(136, 211, 156, 0.15);
+    }
+    .capture-save-reassure__text strong {
+      color: var(--text);
+      font-weight: 600;
+    }
+
     .capture-progress-meta {
       font-size: 11px;
       letter-spacing: 0.16em;
@@ -297,6 +319,7 @@
       <li><a href="/" class="site-nav__link">Home</a></li>
       <li><a href="/pricing" class="site-nav__link">Pricing</a></li>
       <li><a href="/access" class="site-nav__link">Access</a></li>
+      <li><a href="/only-sometimes" class="site-nav__link">Only Sometimes</a></li>
       <li><a href="https://stephuary.substack.com" class="site-nav__link" target="_blank" rel="noopener">Substack</a></li>
     </ul>
   </nav>
@@ -311,6 +334,7 @@
           <ul class="sh-footer__list">
             <li><a href="/snapshot">Snapshot</a></li>
             <li><a href="/access">Access</a></li>
+            <li><a href="/only-sometimes">Only Sometimes</a></li>
           </ul>
         </div>
         <div class="sh-footer__col" aria-labelledby="sh-foot-writing">
@@ -370,8 +394,64 @@
 
     const POINTS = { yes: 2, not_sure: 1, no: 0 };
 
+    const PROGRESS_KEY = "stephuary_diag_progress_v1";
+
     let currentIndex = 0;
-    const answers = [];
+    let answers = [];
+
+    function loadSavedProgress() {
+      try {
+        const raw = localStorage.getItem(PROGRESS_KEY);
+        if (!raw) return null;
+        const parsed = JSON.parse(raw);
+        if (
+          !parsed ||
+          typeof parsed !== "object" ||
+          !Array.isArray(parsed.answers) ||
+          typeof parsed.currentIndex !== "number"
+        ) {
+          return null;
+        }
+        const valid = parsed.answers.every(function (a) {
+          return (
+            a &&
+            typeof a.id === "number" &&
+            a.id >= 1 &&
+            a.id <= QUESTIONS.length &&
+            (a.value === "yes" || a.value === "no" || a.value === "not_sure")
+          );
+        });
+        if (!valid) return null;
+        const idx = Math.max(0, Math.min(QUESTIONS.length, parsed.currentIndex));
+        if (idx >= QUESTIONS.length) return null;
+        return { currentIndex: idx, answers: parsed.answers.slice(0, idx) };
+      } catch (e) {
+        return null;
+      }
+    }
+
+    function saveProgress() {
+      try {
+        localStorage.setItem(
+          PROGRESS_KEY,
+          JSON.stringify({ currentIndex: currentIndex, answers: answers })
+        );
+      } catch (e) {}
+    }
+
+    function clearProgress() {
+      try {
+        localStorage.removeItem(PROGRESS_KEY);
+      } catch (e) {}
+    }
+
+    (function restoreProgress() {
+      const saved = loadSavedProgress();
+      if (saved) {
+        answers = saved.answers.slice();
+        currentIndex = saved.currentIndex;
+      }
+    })();
 
     const app = document.getElementById("main");
 
@@ -449,6 +529,10 @@
       }).join("");
       app.innerHTML =
         '<div class="capture-layout">' +
+        '<p class="capture-save-reassure" role="status">' +
+        '<span class="capture-save-reassure__dot" aria-hidden="true"></span>' +
+        '<span class="capture-save-reassure__text"><strong>Your progress saves automatically.</strong> Come back any time.</span>' +
+        '</p>' +
         '<div aria-live="polite">' +
         '<div class="capture-progress-meta">Question ' +
         n +
@@ -489,6 +573,7 @@
           btn.classList.add("is-selected", "is-pending");
           answers.push({ id: q.id, value: value });
           currentIndex++;
+          saveProgress();
           window.setTimeout(function () {
             if (currentIndex < QUESTIONS.length) {
               transition(renderQuestion, 32);
@@ -513,6 +598,7 @@
         try {
           localStorage.setItem("diagnosticResults", JSON.stringify(payload));
         } catch (e) {}
+        clearProgress();
         window.location.href = "/results";
       }, 260);
     }
