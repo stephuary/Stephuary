@@ -2005,14 +2005,24 @@
     @media (max-width: 960px) {
       body[data-sh-env="home"] #archetypes .card-grid {
         grid-template-columns: repeat(2, 1fr) !important;
+        max-width: 100% !important;
       }
-      body[data-sh-env="home"] #archetypes .card-grid > .measure-card {
+      /* Specificity tie with the desktop nth-child rules so source order
+         wins and every card collapses to a single auto-placed cell. */
+      body[data-sh-env="home"] #archetypes .card-grid > .measure-card:nth-child(1),
+      body[data-sh-env="home"] #archetypes .card-grid > .measure-card:nth-child(2),
+      body[data-sh-env="home"] #archetypes .card-grid > .measure-card:nth-child(3),
+      body[data-sh-env="home"] #archetypes .card-grid > .measure-card:nth-child(4),
+      body[data-sh-env="home"] #archetypes .card-grid > .measure-card:nth-child(5),
+      body[data-sh-env="home"] #archetypes .card-grid > .measure-card:nth-child(6),
+      body[data-sh-env="home"] #archetypes .card-grid > .measure-card:nth-child(7) {
         grid-column: auto / span 1 !important;
       }
     }
-    @media (max-width: 480px) {
+    @media (max-width: 560px) {
       body[data-sh-env="home"] #archetypes .card-grid {
         grid-template-columns: 1fr !important;
+        gap: 14px !important;
       }
     }
     body[data-sh-env="home"] #archetypes .measure-card {
@@ -2023,6 +2033,15 @@
       background: #0d0d22 !important;
       box-shadow: none !important;
       transform: none !important;
+      /* Without min-width: 0, long titles force each grid item wider
+         than its 1fr track and the whole row overflows the viewport. */
+      min-width: 0 !important;
+      overflow-wrap: break-word;
+    }
+    @media (max-width: 560px) {
+      body[data-sh-env="home"] #archetypes .measure-card {
+        padding: 20px 18px 18px !important;
+      }
     }
     body[data-sh-env="home"] #archetypes .measure-card::before,
     body[data-sh-env="home"] #archetypes .measure-card::after {
