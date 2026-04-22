@@ -312,6 +312,29 @@
       }
     }
 
+    /* ── Section parallax (Prompt 6) ────────────────────────────────
+       Each major section on the homepage scrolls through a subtle
+       vertical drift to give the page a luxury, layered feel. Effect
+       is driven by GSAP ScrollTrigger + scrub (see IIFE at bottom of
+       this file). We flag sections with [data-sh-parallax], set
+       will-change so the browser can accelerate them, and hard-opt-out
+       for users who prefer reduced motion. */
+    [data-sh-parallax] { position: relative; }
+    [data-sh-parallax] > .container,
+    [data-sh-parallax] > .sh-parallax-layer {
+      will-change: transform;
+    }
+    [data-sh-parallax].is-parallax-in > .container {
+      transition: opacity 0.8s ease, filter 0.8s ease;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      [data-sh-parallax] > .container,
+      [data-sh-parallax] > .sh-parallax-layer {
+        transform: none !important;
+        will-change: auto;
+      }
+    }
+
     /* ── Hero (Prompt 2) ── */
     #hero.hero {
       position: relative;
@@ -1704,7 +1727,7 @@
       </section>
 
       <!-- ═══ Founder strip ═══ -->
-      <section class="home-founder" aria-labelledby="home-founder-heading">
+      <section class="home-founder" aria-labelledby="home-founder-heading" data-sh-parallax>
         <div class="container">
           <h2 class="sr-only" id="home-founder-heading">Who built this</h2>
           <figure class="home-founder__card reveal">
@@ -1723,7 +1746,7 @@
       </section>
 
       <!-- ═══ What you leave with ═══ -->
-      <section class="section-measured" id="walk-away" aria-labelledby="home-walkaway-heading">
+      <section class="section-measured" id="walk-away" aria-labelledby="home-walkaway-heading" data-sh-parallax>
         <div class="container">
           <p class="home-section-kicker reveal">What you leave with</p>
           <h2 class="home-section-title reveal" id="home-walkaway-heading">What you leave with</h2>
@@ -1753,7 +1776,7 @@
       </section>
 
       <!-- ═══ What this fixes ═══ -->
-      <section class="section-fits" id="fits" aria-labelledby="home-fits-heading">
+      <section class="section-fits" id="fits" aria-labelledby="home-fits-heading" data-sh-parallax>
         <div class="container">
           <p class="home-section-kicker reveal">What this fixes</p>
           <h2 class="home-section-title reveal" id="home-fits-heading">If this feels familiar</h2>
@@ -1769,7 +1792,7 @@
       </section>
 
       <!-- ═══ How it works ═══ -->
-      <section class="section-how" id="how">
+      <section class="section-how" id="how" data-sh-parallax>
         <div class="container">
           <div class="section-label reveal">How it works</div>
           <div class="step-flow">
@@ -1803,7 +1826,7 @@
       </section>
 
       <!-- ═══ What happens in 90 days ═══ -->
-      <section class="section-ninety" id="ninety" aria-labelledby="home-ninety-heading">
+      <section class="section-ninety" id="ninety" aria-labelledby="home-ninety-heading" data-sh-parallax>
         <div class="container">
           <p class="home-section-kicker reveal">The 90-day arc</p>
           <h2 class="home-section-title reveal" id="home-ninety-heading">What happens over the next 90 days</h2>
@@ -1829,7 +1852,7 @@
       </section>
 
       <!-- ═══ Repeat CTA ═══ -->
-      <section class="section-repeat-cta" id="repeat-cta" aria-labelledby="home-repeat-heading">
+      <section class="section-repeat-cta" id="repeat-cta" aria-labelledby="home-repeat-heading" data-sh-parallax>
         <div class="container">
           <h2 class="home-section-title reveal" id="home-repeat-heading">Start with clarity</h2>
           <p class="repeat-cta__sub reveal reveal-delay-1">It takes 3 minutes to see what's working and what's not.</p>
@@ -1908,6 +1931,67 @@
         window.addEventListener('scroll',updateNavScroll,{passive:true});updateNavScroll();
 
         /* ── Hero + fold reveals: scroll-reveal.js (.reveal → .is-visible) ── */
+
+        /* ── Section parallax ──
+           Subtle scrub-based vertical drift on every [data-sh-parallax]
+           section. The inner .container translates from +34px to −34px
+           as the section travels through the viewport. Combined with
+           a one-shot entrance fade on the section itself, this delivers
+           a luxury, layered scroll without stealing attention from the
+           content. Fully opt-out under prefers-reduced-motion. */
+        (function initHomeParallax(){
+          try {
+            var reduce = false;
+            try { reduce = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches); } catch (e) {}
+            if (reduce) return;
+            if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') return;
+
+            var sections = document.querySelectorAll('[data-sh-parallax]');
+            if (!sections || !sections.length) return;
+
+            sections.forEach(function (sec) {
+              var inner = sec.querySelector('.container') || sec.firstElementChild;
+              if (!inner) return;
+
+              /* Entrance: soft fade + tiny lift the first time a section
+                 enters the viewport. One-shot — we do not reverse on
+                 scroll-up so returning to a section reads as stable. */
+              gsap.fromTo(sec,
+                { autoAlpha: 0.0 },
+                {
+                  autoAlpha: 1.0,
+                  duration: 0.9,
+                  ease: 'power2.out',
+                  scrollTrigger: {
+                    trigger: sec,
+                    start: 'top 88%',
+                    toggleActions: 'play none none none'
+                  }
+                }
+              );
+
+              /* Scrubbed drift on the inner content — runs for the full
+                 time the section is on screen. Amount is intentionally
+                 small (≈68px total) so copy never feels "slidy". */
+              gsap.fromTo(inner,
+                { y: 34 },
+                {
+                  y: -34,
+                  ease: 'none',
+                  scrollTrigger: {
+                    trigger: sec,
+                    start: 'top bottom',
+                    end: 'bottom top',
+                    scrub: 0.6
+                  }
+                }
+              );
+            });
+
+            /* Make sure triggers recompute after fonts / images settle. */
+            try { ScrollTrigger.refresh(); } catch (e2) {}
+          } catch (err) { /* silent */ }
+        })();
 
         /* ── Load hooks ── */
         window.addEventListener('load',function(){
