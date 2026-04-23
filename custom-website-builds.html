@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Custom Website Builds &middot; Stephuary</title>
+  <meta name="description" content="Custom-built websites and operator systems. Built on the same structural discipline as the Stephuary diagnostic.">
+  <meta name="theme-color" content="#0B1730">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="icon" type="image/png" href="/favicon.png">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="canonical" href="https://stephuary.com/custom-website-builds">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Stephuary">
+  <meta property="og:title" content="Custom Website Builds &middot; Stephuary">
+  <meta property="og:description" content="Custom-built websites and operator systems. Built on the same structural discipline as the Stephuary diagnostic.">
+  <meta property="og:url" content="https://stephuary.com/custom-website-builds">
+  <meta property="og:image" content="https://stephuary.com/og-default.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Custom Website Builds &middot; Stephuary">
+  <meta name="twitter:description" content="Custom-built websites and operator systems.">
+  <meta name="twitter:image" content="https://stephuary.com/og-default.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg-void:       #05050F;
+      --bg-deep:       #080818;
+      --bg-surface:    #0D0D22;
+      --neon-plum:     #8B2FC9;
+      --neon-violet:   #BF5AF2;
+      --neon-gold:     #C8A96E;
+      --text-primary:  #FFFFFF;
+      --text-secondary:#A0A0C0;
+      --text-muted:    #8B8BA5;
+      --text-label:    #C8A96E;
+      --glow-gold: 0 0 20px rgba(200,169,110,0.5), 0 0 60px rgba(200,169,110,0.2);
+      --font-serif: 'Playfair Display', Georgia, serif;
+      --font-sans:  'Inter', system-ui, sans-serif;
+      --font-mono:  'JetBrains Mono', 'Courier New', monospace;
+      --z-canvas: 0; --z-content: 10; --z-scanline: 30; --z-cursor: 40; --z-nav: 50;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: #05050F;
+      background-image:
+        radial-gradient(ellipse 80% 60% at 50% 0%, rgba(61,12,44,0.85) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 40% at 20% 100%, rgba(61,12,44,0.5) 0%, transparent 50%),
+        radial-gradient(ellipse 50% 40% at 80% 60%, rgba(139,47,201,0.12) 0%, transparent 50%);
+      color: var(--text-primary);
+      font-family: var(--font-sans); font-size: 16px; line-height: 1.6;
+      overflow-x: hidden; -webkit-font-smoothing: antialiased; min-height: 100vh;
+    }
+
+    .scanlines {
+      position: fixed; inset: 0; pointer-events: none; z-index: var(--z-scanline);
+      background: repeating-linear-gradient(0deg, transparent, transparent 3px,
+        rgba(0,0,0,0.022) 3px, rgba(0,0,0,0.022) 4px);
+    }
+    .cursor-light {
+      position: fixed; inset: 0; pointer-events: none; z-index: var(--z-cursor);
+      background: radial-gradient(
+        600px circle at var(--cursor-x, 50%) var(--cursor-y, 50%),
+        rgba(139,47,201,0.14),
+        rgba(61,12,44,0.10) 30%,
+        rgba(10,132,255,0.05) 55%,
+        transparent 70%
+      );
+      transition: background 0.08s linear;
+    }
+    #starfield {
+      position: fixed !important; inset: 0 !important;
+      z-index: var(--z-canvas); pointer-events: none !important;
+    }
+
+    .container { width: 100%; max-width: 760px; margin: 0 auto; padding: 0 24px; }
+
+    @keyframes fade-up {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .page {
+      position: relative; z-index: var(--z-content);
+      min-height: 100vh; padding: 120px 0 80px;
+    }
+
+    .build-kicker {
+      font-family: var(--font-mono); font-size: 11px;
+      letter-spacing: 0.28em; text-transform: uppercase;
+      color: var(--neon-gold);
+      text-align: center; margin-bottom: 18px;
+      opacity: 0; animation: fade-up 0.5s ease 0.2s forwards;
+    }
+
+    .build-headline {
+      font-family: var(--font-serif); font-size: clamp(32px, 5vw, 52px);
+      font-weight: 900; line-height: 1.1;
+      text-align: center; color: var(--text-primary);
+      margin-bottom: 18px; letter-spacing: -0.01em;
+      opacity: 0; animation: fade-up 0.6s ease 0.3s forwards;
+    }
+
+    .build-lede {
+      font-family: var(--font-sans); font-size: clamp(15px, 1.5vw, 17px);
+      line-height: 1.6; color: var(--text-secondary);
+      text-align: center; max-width: 58ch; margin: 0 auto 56px;
+      opacity: 0; animation: fade-up 0.6s ease 0.45s forwards;
+    }
+
+    .build-grid {
+      display: grid; gap: 18px;
+      grid-template-columns: 1fr;
+      max-width: 640px; margin: 0 auto 48px;
+      opacity: 0; animation: fade-up 0.6s ease 0.6s forwards;
+    }
+
+    .build-card {
+      background: var(--bg-surface);
+      border: 1px solid rgba(200, 169, 110, 0.22);
+      border-radius: 6px;
+      padding: 26px 28px;
+      position: relative;
+    }
+    .build-card::before {
+      content: ''; position: absolute;
+      top: 0; left: 28px; width: 36px; height: 2px;
+      background: var(--neon-gold);
+    }
+    .build-card__label {
+      font-family: var(--font-mono); font-size: 10.5px;
+      letter-spacing: 0.26em; text-transform: uppercase;
+      color: var(--text-label); margin-bottom: 10px;
+    }
+    .build-card__title {
+      font-family: var(--font-serif); font-size: clamp(20px, 2.2vw, 24px);
+      font-weight: 700; color: var(--text-primary);
+      line-height: 1.25; margin-bottom: 8px;
+      letter-spacing: -0.01em;
+    }
+    .build-card__body {
+      font-family: var(--font-sans); font-size: 14.5px;
+      line-height: 1.6; color: var(--text-secondary);
+    }
+
+    .build-cta {
+      display: flex; flex-direction: column; align-items: center;
+      gap: 14px; margin-top: 8px;
+      opacity: 0; animation: fade-up 0.6s ease 0.75s forwards;
+    }
+    .build-cta__note {
+      font-family: var(--font-mono); font-size: 11px;
+      letter-spacing: 0.22em; text-transform: uppercase;
+      color: var(--text-muted);
+    }
+    .build-cta__btn {
+      display: inline-flex; align-items: center; gap: 10px;
+      padding: 14px 26px;
+      font-family: var(--font-sans); font-size: 14.5px;
+      font-weight: 600; letter-spacing: 0.02em;
+      color: #0B0B1E;
+      background: var(--neon-gold);
+      border: 1px solid var(--neon-gold);
+      border-radius: 4px;
+      text-decoration: none;
+      transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.12s ease;
+    }
+    .build-cta__btn:hover,
+    .build-cta__btn:focus-visible {
+      background: #d8b983;
+      box-shadow: var(--glow-gold);
+      outline: none;
+    }
+    .build-cta__btn:active { transform: translateY(1px); }
+
+    .build-back {
+      display: block; text-align: center; margin-top: 40px;
+      font-family: var(--font-mono); font-size: 11px;
+      letter-spacing: 0.22em; text-transform: uppercase;
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: color 0.12s ease;
+    }
+    .build-back:hover,
+    .build-back:focus-visible { color: var(--neon-gold); outline: none; }
+
+    @media (max-width: 520px) {
+      .page { padding: 96px 0 64px; }
+      .container { padding: 0 20px; }
+      .build-card { padding: 22px 20px; }
+      .build-card::before { left: 20px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+      .cursor-light { display: none; }
+      .build-kicker, .build-headline, .build-lede, .build-grid, .build-cta { opacity: 1; animation: none; }
+    }
+  </style>
+  <link rel="stylesheet" href="/stephuary-a11y.css">
+  <link rel="stylesheet" href="/stephuary-brand-polish.css">
+  <link rel="manifest" href="/site.webmanifest">
+</head>
+<body>
+  <a href="#main" class="skip-link">Skip to content</a>
+
+  <canvas id="starfield" aria-hidden="true"></canvas>
+  <div class="cursor-light" aria-hidden="true"></div>
+  <div class="scanlines" aria-hidden="true"></div>
+
+  <nav class="site-nav" aria-label="Primary">
+    <div class="site-nav__brand">
+      <a href="/" class="site-nav__wordmark" aria-label="Stephuary &mdash; home">Stephuary</a>
+    </div>
+    <ul class="site-nav__list">
+      <li><a href="/pricing" class="site-nav__link">Pricing</a></li>
+      <li><a href="/access" class="site-nav__link">Access</a></li>
+    </ul>
+  </nav>
+
+  <main id="main" class="page">
+    <div class="container">
+
+      <p class="build-kicker">Custom-built systems</p>
+      <h1 class="build-headline">Custom Website Builds</h1>
+      <p class="build-lede">Sites and operator systems built on the same structural discipline as the Stephuary diagnostic. Positioning, architecture, and pipeline, wired into one build.</p>
+
+      <div class="build-grid">
+        <article class="build-card">
+          <p class="build-card__label">Build option 01</p>
+          <h2 class="build-card__title">Operator site</h2>
+          <p class="build-card__body">Single-scroll site tuned to one offer. Positioning, proof, pricing, and a clear next step. Built to convert cold traffic into qualified inbound.</p>
+        </article>
+
+        <article class="build-card">
+          <p class="build-card__label">Build option 02</p>
+          <h2 class="build-card__title">Full brand site</h2>
+          <p class="build-card__body">Multi-page structure for operators running several offers, a portfolio, or a writing practice. Shared design system across every page.</p>
+        </article>
+
+        <article class="build-card">
+          <p class="build-card__label">Build option 03</p>
+          <h2 class="build-card__title">Operator dashboard</h2>
+          <p class="build-card__body">Notion-integrated or custom-coded dashboard for membership, content pipeline, measurement, and delivery. Built to run the business, not just describe it.</p>
+        </article>
+      </div>
+
+      <div class="build-cta">
+        <p class="build-cta__note">Inquire for scope and pricing</p>
+        <a class="build-cta__btn" href="mailto:hello@stephuary.com?subject=Custom%20website%20build%20inquiry">Email hello@stephuary.com &rarr;</a>
+        <a class="build-back" href="/">&larr; Back to Stephuary</a>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Canonical site footer — identical markup on every page -->
+  <footer class="sh-footer" role="contentinfo" aria-labelledby="sh-foot-mark">
+    <div class="sh-footer__inner">
+      <a class="sh-footer__mark" id="sh-foot-mark" href="/" aria-label="Stephuary home">Stephuary</a>
+      <p class="sh-footer__copy">&copy; 2026 Stephuary &middot; All rights reserved</p>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      if (!window.matchMedia('(hover: none)').matches) {
+        document.addEventListener('mousemove', function (e) {
+          document.documentElement.style.setProperty('--cursor-x', e.clientX + 'px');
+          document.documentElement.style.setProperty('--cursor-y', e.clientY + 'px');
+        }, { passive: true });
+      }
+
+      var canvas = document.getElementById('starfield');
+      if (!canvas || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        if (canvas) canvas.remove();
+        return;
+      }
+      var ctx = canvas.getContext('2d');
+      if (!ctx) return;
+
+      var particles = [];
+      var raf;
+      var COLORS = [
+        'rgba(255,255,255,',
+        'rgba(255,255,255,',
+        'rgba(180,195,230,',
+        'rgba(191,90,242,',
+        'rgba(200,169,110,'
+      ];
+      function resize() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      }
+      function mkP() {
+        return {
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          r: Math.random() * 1.7 + 0.5,
+          opacity: Math.random() * 0.6 + 0.4,
+          speed: Math.random() * 0.14 + 0.03,
+          drift: (Math.random() - 0.5) * 0.07,
+          color: COLORS[Math.floor(Math.random() * COLORS.length)],
+          offset: Math.random() * Math.PI * 2
+        };
+      }
+      resize();
+      particles = Array.from({ length: 160 }, mkP);
+
+      function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        var t = Date.now() / 1000;
+        particles.forEach(function (p) {
+          var pulse = Math.sin(t + p.offset) * 0.3;
+          var opacity = Math.max(0, p.opacity + pulse);
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+          ctx.fillStyle = p.color + opacity + ')';
+          ctx.fill();
+          if (p.opacity > 0.6) {
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.r * 2.5, 0, Math.PI * 2);
+            ctx.fillStyle = p.color + '0.06)';
+            ctx.fill();
+          }
+          p.y -= p.speed;
+          p.x += p.drift;
+          if (p.y < -5) {
+            p.y = canvas.height + 5;
+            p.x = Math.random() * canvas.width;
+          }
+          if (p.x < -5) p.x = canvas.width + 5;
+          if (p.x > canvas.width + 5) p.x = -5;
+        });
+        raf = requestAnimationFrame(draw);
+      }
+
+      document.addEventListener('visibilitychange', function () {
+        if (document.hidden) cancelAnimationFrame(raf);
+        else draw();
+      });
+      window.addEventListener('resize', resize, { passive: true });
+      draw();
+    })();
+  </script>
+</body>
+</html>
