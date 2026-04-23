@@ -480,60 +480,6 @@
       }
     }
 
-    .bridge-banner {
-      position: relative;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
-      margin: 0 0 24px;
-      padding: 12px 16px;
-      border: 1px solid rgba(200, 169, 110, 0.35);
-      background: rgba(200, 169, 110, 0.06);
-      border-radius: 3px;
-      font-family: var(--font-sans);
-      font-size: 14px;
-      line-height: 1.45;
-      color: rgba(244, 244, 252, 0.92);
-    }
-    .bridge-banner[hidden] { display: none; }
-    .bridge-banner__copy { margin: 0; flex: 1 1 auto; }
-    .bridge-banner__slug {
-      font-family: var(--font-mono);
-      font-size: 0.92em;
-      color: var(--text-label);
-      background: rgba(200, 169, 110, 0.12);
-      padding: 1px 6px;
-      border-radius: 2px;
-    }
-    .bridge-banner__link {
-      color: var(--text-label);
-      text-decoration: underline;
-      text-underline-offset: 2px;
-    }
-    .bridge-banner__link:hover { color: #ffffff; }
-    .bridge-banner__close {
-      flex: 0 0 auto;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      min-width: 44px;
-      min-height: 44px;
-      background: transparent;
-      border: 0;
-      color: var(--text-secondary);
-      font-size: 22px;
-      line-height: 1;
-      cursor: pointer;
-      padding: 4px 8px;
-      border-radius: 2px;
-      transition: color 0.2s ease, background 0.2s ease;
-    }
-    .bridge-banner__close:hover { color: #ffffff; background: rgba(255, 255, 255, 0.06); }
-    .bridge-banner__close:focus-visible { outline: 2px solid var(--text-label); outline-offset: 2px; }
-    @media (max-width: 640px) {
-      .bridge-banner { flex-direction: row; align-items: flex-start; font-size: 13.5px; }
-    }
   </style>
   <link rel="stylesheet" href="/stephuary-a11y.css">
   <link rel="stylesheet" href="/stephuary-brand-polish.css">
@@ -557,10 +503,6 @@
   </nav>
 
   <div class="page" id="top">
-    <aside id="bridge-banner" class="bridge-banner" role="status" aria-live="polite" hidden>
-      <p class="bridge-banner__copy">Looking for <span class="bridge-banner__slug" id="bridge-banner-slug">that</span>? It lives on this page now, or see the <a href="/bridge" class="bridge-banner__link">full map</a>.</p>
-      <button type="button" class="bridge-banner__close" id="bridge-banner-close" aria-label="Dismiss">×</button>
-    </aside>
     <header class="hero" id="pricing-hero" data-sh-hero-intro>
       <p class="hero-kicker">PRICING</p>
       <h1 class="hero-title">Three ways in.</h1>
@@ -644,32 +586,6 @@
           if (e.target.parentNode) e.target.parentNode.removeChild(e.target);
         });
       }
-
-      (function initBridgeBanner() {
-        try {
-          var banner = document.getElementById("bridge-banner");
-          if (!banner) return;
-          var params = new URLSearchParams(window.location.search);
-          var from = params.get("from");
-          if (!from) return;
-          if (document.referrer && document.referrer.length > 0) return;
-          var dismissed = false;
-          try { dismissed = sessionStorage.getItem("bridge-banner-dismissed") === "1"; } catch (err) {}
-          if (dismissed) return;
-          var clean = String(from).replace(/[^a-zA-Z0-9/_\-]/g, "").slice(0, 64);
-          if (!clean) return;
-          var slugEl = document.getElementById("bridge-banner-slug");
-          if (slugEl) slugEl.textContent = "/" + clean;
-          banner.hidden = false;
-          var closeBtn = document.getElementById("bridge-banner-close");
-          if (closeBtn) {
-            closeBtn.addEventListener("click", function () {
-              banner.hidden = true;
-              try { sessionStorage.setItem("bridge-banner-dismissed", "1"); } catch (err) {}
-            });
-          }
-        } catch (err) { /* no-op */ }
-      })();
 
       function initStarfield() {
         var canvas = document.getElementById("starfield");
