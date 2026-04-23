@@ -295,6 +295,24 @@
       color: var(--text);
     }
 
+    .analyzing-fallback {
+      margin: 18px 0 0;
+      font-size: 13px;
+      letter-spacing: 0.04em;
+      color: var(--text-muted);
+    }
+    .analyzing-fallback a {
+      color: var(--gold);
+      text-decoration: none;
+      border-bottom: 1px solid rgba(200, 169, 110, 0.35);
+      padding-bottom: 1px;
+    }
+    .analyzing-fallback a:hover,
+    .analyzing-fallback a:focus-visible {
+      color: #e8d4a8;
+      border-bottom-color: rgba(232, 212, 168, 0.7);
+    }
+
     @media (max-width: 768px) {
       .app { padding: 16px 14px 18px; }
       .answers { gap: 8px; }
@@ -564,21 +582,39 @@
     }
 
     function renderAnalyzing() {
+      /* Persist the read immediately so we never depend on a timer firing
+         before the redirect. If buildPayload or setItem throws, we still
+         attempt to route the user to /results. */
+      try {
+        const payload = buildPayload();
+        try {
+          localStorage.setItem("diagnosticResults", JSON.stringify(payload));
+        } catch (eLs) {}
+      } catch (ePl) {}
+      try { clearProgress(); } catch (eCp) {}
+
       transition(function () {
         app.innerHTML =
           '<section class="analyzing">' +
           '<div class="analyzing-tag">Result</div>' +
           '<p class="analyzing-copy">Locking in your read.</p>' +
+          '<p class="analyzing-fallback"><a href="/results" id="analyzing-fallback-link">Continue to your read &rarr;</a></p>' +
           "</section>";
       }, 32);
+
+      /* Fire the redirect on the next tick so the paint can flush, then
+         schedule a safety-net retry in case the first call is blocked by
+         a background/throttled tab or a slow network. */
+      var goToResults = function () {
+        try { window.location.assign("/results"); }
+        catch (eA) { window.location.href = "/results"; }
+      };
+      window.setTimeout(goToResults, 120);
       window.setTimeout(function () {
-        const payload = buildPayload();
-        try {
-          localStorage.setItem("diagnosticResults", JSON.stringify(payload));
-        } catch (e) {}
-        clearProgress();
-        window.location.href = "/results";
-      }, 260);
+        if (/\/capture(?:\.html)?\/?$/.test(window.location.pathname)) {
+          goToResults();
+        }
+      }, 1500);
     }
 
     renderQuestion();
