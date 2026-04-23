@@ -74,12 +74,12 @@ body.sh-spatial-from-nav.sh-page-entry--reveal > *:not(#page-transition):not(#sh
     transform 0.52s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-body.sh-page-soft-entry > *:not(#page-transition):not(#sh-env-depth):not(#sh-live-panel):not(#sh-flow-end):not(.sys-phase-rail-wrap) {
+body.sh-page-soft-entry > *:not(#page-transition):not(#sh-env-depth):not(#sh-live-panel):not(#sh-flow-end):not(.sys-phase-rail-wrap):not(#diag-lead-gate) {
   opacity: 0;
   transform: translateY(12px);
   transition: none;
 }
-body.sh-page-soft-entry.sh-page-soft-entry--on > *:not(#page-transition):not(#sh-env-depth):not(#sh-live-panel):not(#sh-flow-end):not(.sys-phase-rail-wrap) {
+body.sh-page-soft-entry.sh-page-soft-entry--on > *:not(#page-transition):not(#sh-env-depth):not(#sh-live-panel):not(#sh-flow-end):not(.sys-phase-rail-wrap):not(#diag-lead-gate) {
   opacity: 1;
   transform: translateY(0);
   transition:
@@ -87,15 +87,19 @@ body.sh-page-soft-entry.sh-page-soft-entry--on > *:not(#page-transition):not(#sh
     transform 0.48s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-body.sh-page-ready.sh-has-env-depth > *:not(#sh-env-depth):not(#page-transition):not(#sh-live-panel):not(#sh-flow-end):not(.sys-phase-rail-wrap) {
+/* #diag-lead-gate (results.html lead capture) is excluded from the
+   entry-scoped transforms because a `transform` on a direct body child
+   establishes a containing block that breaks `position: fixed` on its
+   descendants — collapsing the gate into a thin sliver. */
+body.sh-page-ready.sh-has-env-depth > *:not(#sh-env-depth):not(#page-transition):not(#sh-live-panel):not(#sh-flow-end):not(.sys-phase-rail-wrap):not(#diag-lead-gate) {
   transform: translateY(var(--sh-scroll-fg, 0px)) scale(var(--sh-scroll-scale, 1)) translateZ(0);
 }
 /* Homepage: #site-shell must not be a transform ancestor — it breaks viewport-fixed #main-nav and reads as a huge top gap */
-body[data-sh-env="home"].sh-page-ready.sh-has-env-depth > *:not(#sh-env-depth):not(#page-transition):not(#sh-live-panel):not(#sh-flow-end):not(.sys-phase-rail-wrap) {
+body[data-sh-env="home"].sh-page-ready.sh-has-env-depth > *:not(#sh-env-depth):not(#page-transition):not(#sh-live-panel):not(#sh-flow-end):not(.sys-phase-rail-wrap):not(#diag-lead-gate) {
   transform: none;
 }
-body.sh-page-entry:not(.sh-page-entry--reveal) > *:not(#page-transition):not(#sh-env-depth):not(#sh-live-panel):not(#sh-flow-end):not(.sys-phase-rail-wrap),
-body.sh-page-soft-entry:not(.sh-page-soft-entry--on) > *:not(#page-transition):not(#sh-env-depth):not(#sh-live-panel):not(#sh-flow-end):not(.sys-phase-rail-wrap) {
+body.sh-page-entry:not(.sh-page-entry--reveal) > *:not(#page-transition):not(#sh-env-depth):not(#sh-live-panel):not(#sh-flow-end):not(.sys-phase-rail-wrap):not(#diag-lead-gate),
+body.sh-page-soft-entry:not(.sh-page-soft-entry--on) > *:not(#page-transition):not(#sh-env-depth):not(#sh-live-panel):not(#sh-flow-end):not(.sys-phase-rail-wrap):not(#diag-lead-gate) {
   transition: none;
 }
 
@@ -1553,7 +1557,7 @@ body.sh-mobile-depth #sh-env-depth .sh-depth-fg-wrap {
 body.sh-has-env-depth {
   isolation: isolate;
 }
-body.sh-has-env-depth > :not(#sh-env-depth):not(#page-transition):not(#sh-live-panel):not(#sh-flow-end):not(.sys-phase-rail-wrap):not(#starfield) {
+body.sh-has-env-depth > :not(#sh-env-depth):not(#page-transition):not(#sh-live-panel):not(#sh-flow-end):not(.sys-phase-rail-wrap):not(#starfield):not(#diag-lead-gate) {
   position: relative;
   z-index: 1;
 }

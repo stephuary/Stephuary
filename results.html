@@ -2224,45 +2224,6 @@
         font-size: 24px;
       }
     }
-
-    /* Subtle access line that sits below the diagnosis. It introduces
-       the idea of more access without presenting an offer. */
-    .results-signal-aside {
-      max-width: 760px;
-      margin: 56px auto 8px;
-      padding: 0 24px;
-      text-align: center;
-    }
-    .results-signal-aside__link {
-      display: inline-block;
-      font-family: 'JetBrains Mono', 'Courier New', monospace;
-      font-size: 11.5px;
-      font-weight: 500;
-      letter-spacing: 0.22em;
-      text-transform: uppercase;
-      color: rgba(232, 232, 245, 0.62);
-      text-decoration: none;
-      padding-bottom: 2px;
-      border-bottom: 1px solid rgba(200, 169, 110, 0.26);
-      transition: color 0.14s ease, border-color 0.14s ease;
-    }
-    .results-signal-aside__link:hover,
-    .results-signal-aside__link:focus-visible {
-      color: #C8A96E;
-      border-bottom-color: rgba(200, 169, 110, 0.75);
-      outline: none;
-    }
-    @media (max-width: 520px) {
-      .results-signal-aside {
-        margin-top: 40px;
-        padding: 0 20px;
-      }
-      .results-signal-aside__link {
-        font-size: 10.5px;
-        letter-spacing: 0.2em;
-      }
-    }
-
   </style>
   <link rel="stylesheet" href="/stephuary-a11y.css">
   <link rel="stylesheet" href="/stephuary-brand-polish.css">
@@ -2279,7 +2240,9 @@
     <button type="button" class="top-bar-nav__restart" id="results-nav-restart">Restart</button>
   </nav>
 
-  <main id="main">
+  <!-- Lead gate must sit OUTSIDE <main> so ancestor `transform` from
+       stephuary-interactive.css (body.sh-page-ready.sh-has-env-depth > *)
+       does not collapse its `position: fixed` into the main containing block. -->
   <div id="diag-lead-gate" role="dialog" aria-modal="true" aria-labelledby="diag-gate-h" aria-hidden="true">
     <form class="diag-gate__card" id="diag-gate-form" action="https://formsubmit.co/ajax/hello@stephuary.com" method="POST" novalidate>
       <p class="diag-gate__kicker">One step</p>
@@ -2306,6 +2269,7 @@
     </form>
   </div>
 
+  <main id="main">
   <div id="state-missing">
     <p class="missing-kicker">Result</p>
     <h1 class="missing-h1">No diagnostic result on file.</h1>
@@ -2473,10 +2437,6 @@
         </div>
       </div>
     </section>
-
-    <aside class="results-signal-aside" aria-label="Access note">
-      <a class="results-signal-aside__link" href="/access">Some paths require more access &rarr;</a>
-    </aside>
 
     <footer class="foot-close">
       <p class="foot-line">Clear next move beats more thinking.</p>
