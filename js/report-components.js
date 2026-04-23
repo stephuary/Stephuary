@@ -1,8 +1,8 @@
 /**
  * Report page UI shell — native custom elements (no Shadow DOM) so existing
  * document queries (#report-pattern-head, #rpt-nest-root, [data-rpt-item], …)
- * keep working. Maps to: HeroSection, DownloadBlock, StartHereBlock,
- * AccordionGroup, AccordionItem (diagnostic rows), ImpactBlock, FinalCTA.
+ * keep working. Maps to: HeroSection, StartHereBlock, AccordionGroup,
+ * AccordionItem (diagnostic rows), ImpactBlock, FinalCTA.
  */
 (function () {
   function define(name, Class) {
@@ -15,16 +15,6 @@
     class ReportHeroSection extends HTMLElement {
       connectedCallback() {
         this.setAttribute('role', 'banner');
-      }
-    }
-  );
-
-  define(
-    'report-download-block',
-    class ReportDownloadBlock extends HTMLElement {
-      connectedCallback() {
-        this.setAttribute('role', 'region');
-        this.setAttribute('aria-label', 'Download your full system');
       }
     }
   );
