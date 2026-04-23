@@ -583,28 +583,40 @@
 
     function renderAnalyzing() {
       /* Persist the read immediately so we never depend on a timer firing
-         before the redirect. If buildPayload or setItem throws, we still
-         attempt to route the user to /results. */
+         before the redirect. Track whether the payload actually landed in
+         localStorage so the fallback link points somewhere useful. If the
+         write failed, sending the user to /results would dead-end them on
+         the state-missing card. Restart is the honest fallback. */
+      var persisted = false;
       try {
-        const payload = buildPayload();
+        var payload = buildPayload();
         try {
           localStorage.setItem("diagnosticResults", JSON.stringify(payload));
+          persisted = localStorage.getItem("diagnosticResults") != null;
         } catch (eLs) {}
       } catch (ePl) {}
       try { clearProgress(); } catch (eCp) {}
+
+      var fallbackHref = persisted ? "/results" : "/capture";
+      var fallbackLabel = persisted
+        ? "Continue to your read &rarr;"
+        : "Restart the diagnostic &rarr;";
 
       transition(function () {
         app.innerHTML =
           '<section class="analyzing">' +
           '<div class="analyzing-tag">Result</div>' +
           '<p class="analyzing-copy">Locking in your read.</p>' +
-          '<p class="analyzing-fallback"><a href="/results" id="analyzing-fallback-link">Continue to your read &rarr;</a></p>' +
+          '<p class="analyzing-fallback"><a href="' + fallbackHref +
+          '" id="analyzing-fallback-link">' + fallbackLabel + '</a></p>' +
           "</section>";
       }, 32);
 
-      /* Fire the redirect on the next tick so the paint can flush, then
-         schedule a safety-net retry in case the first call is blocked by
-         a background/throttled tab or a slow network. */
+      /* Only auto-redirect if we have state to read. Otherwise let the
+         user choose to restart rather than bouncing them to an empty
+         results page. */
+      if (!persisted) return;
+
       var goToResults = function () {
         try { window.location.assign("/results"); }
         catch (eA) { window.location.href = "/results"; }
