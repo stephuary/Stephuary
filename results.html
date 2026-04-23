@@ -2329,7 +2329,7 @@
             <p class="diag-v2-body hero-sub" id="results-hero-sub"></p>
           </div>
         </div>
-        <section class="results-archetype-upsell" id="results-archetype-upsell" hidden aria-label="Archetype workspace upsell"></section>
+        <section class="results-archetype-upsell" id="results-archetype-upsell" hidden aria-label="Archetype report upsell"></section>
         <div class="type-pill" id="typePill" aria-label="Detected types"></div>
         <div id="results-cei-strip" class="cei-node-strip" aria-label="Pressure map"></div>
         <p class="sys-lead-note" style="margin:0 auto 16px;max-width:52ch;text-align:left"></p>
@@ -2349,8 +2349,8 @@
              All three hide together on paid state via JS in
              renderSevenQuestionV2Page + renderArchetypePanel. -->
         <p class="results-credibility" aria-label="Credibility" style="max-width:58ch;margin:0 auto 18px;text-align:center;font-family:'JetBrains Mono', monospace;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:rgba(216,208,196,0.7);">Built on 20 years of diagnosing hospitality, service, and creator businesses</p>
-        <section class="results-unlock-card" id="results-unlock-card" aria-label="What the full unlock includes">
-          <h2 class="results-unlock-card__h">What the full unlock includes</h2>
+        <section class="results-unlock-card" id="results-unlock-card" aria-label="What the full report unlocks">
+          <h2 class="results-unlock-card__h">What the full report unlocks</h2>
           <p class="results-unlock-card__lead">Your archetype, in 10 sections:</p>
           <ul class="results-unlock-card__list">
             <li>Where your last 3 deals actually broke</li>
@@ -2362,19 +2362,19 @@
             <li>What it will <em>not</em> fix</li>
           </ul>
           <p class="results-unlock-card__format">
-            Delivered as a Notion workspace you duplicate into your account — with prompts, templates, and the 0–90 day sequence. Access in the Notion app or in the browser.<br />
+            Delivered as a web report (open on any device) and a PDF you can download.<br />
             Written for your archetype, not a generic template.
           </p>
           <p class="results-unlock-card__disambiguate">
-            This is not the Snapshot. The Snapshot rewrites your live asset. The workspace shows you <em>what</em> to change and <em>why</em>.
+            This is not the Snapshot. The Snapshot rewrites your live asset. The report tells you <em>what</em> to rewrite and <em>why</em>.
           </p>
         </section>
 
-        <section class="results-unlock-preview" id="results-unlock-preview" aria-label="Locked workspace preview"></section>
+        <section class="results-unlock-preview" id="results-unlock-preview" aria-label="Locked report preview"></section>
 
         <div class="results-hero-cta-row">
-          <a class="results-cta-pri magnetic" id="results-primary-cta" href="#" data-sh-flow-primary>Unlock your archetype workspace</a>
-          <span class="results-cta-subnote" id="results-primary-sub">Instant access · Notion workspace · written for your archetype</span>
+          <a class="results-cta-pri magnetic" id="results-primary-cta" href="#" data-sh-flow-primary>Unlock your archetype report</a>
+          <span class="results-cta-subnote" id="results-primary-sub">Delivered instantly · PDF + web · written for your archetype</span>
         </div>
 
         <!-- Secondary route sits in its own distinct block below the $27
@@ -2382,7 +2382,7 @@
         <section class="results-snapshot-route" id="results-snapshot-route" aria-label="Skip to done-for-you">
           <p class="results-snapshot-route__or" aria-hidden="true"><span>or</span></p>
           <h3 class="results-snapshot-route__h" id="results-snapshot-route-h">Skip to done-for-you: Snapshot</h3>
-          <p class="results-snapshot-route__p" id="results-snapshot-route-p">We rewrite your live asset in 48 hours. The workspace first; then Snapshot when you want the rewrite executed for you.</p>
+          <p class="results-snapshot-route__p" id="results-snapshot-route-p">We rewrite your live asset in 48 hours. The report first; then Snapshot when you want the rewrite executed for you.</p>
           <a class="results-cta-sec" id="results-secondary-cta" href="/snapshot" data-sh-flow-secondary>See Snapshot →</a>
         </section>
         <div class="results-observable-body" id="results-observable-body" aria-live="polite" hidden style="display:none"></div>
@@ -2522,19 +2522,19 @@
        Stripe Payment Link, substituted at render time); secondary =
        quiet "See Snapshot →" link.
      - Unlocked/paid: primary swaps to "Open the execution system in
-       your workspace"; secondary remains the Snapshot link. */
+       your report"; secondary remains the Snapshot link. */
   function diagV2BundleFromType(resultType) {
     if (isFullReportUnlocked()) {
       return {
         primaryHref: '/report',
-        primaryLabel: 'Open the execution system in your workspace',
+        primaryLabel: 'Open the execution system in your report',
         secondaryHref: '/snapshot',
         secondaryLabel: 'Ready to fix it? See Snapshot →'
       };
     }
     return {
       primaryHref: STRIPE_FULL_REPORT_27,
-      primaryLabel: 'Unlock your archetype workspace',
+      primaryLabel: 'Unlock your archetype report',
       secondaryHref: '/snapshot',
       secondaryLabel: 'See Snapshot →'
     };
@@ -2796,6 +2796,7 @@
   }
 
   function renderSevenQuestionV2Page(dr) {
+    uncoverMainForResults();
     document.body.classList.add('results--diag-v2');
     document.getElementById('state-missing').classList.remove('visible');
     if (typeof removeEmailGate === 'function') removeEmailGate();
@@ -2882,7 +2883,7 @@
       } else {
         ctaSub.hidden = false;
         ctaSub.textContent =
-          'Instant access · Notion workspace · written for ' +
+          'Delivered instantly · PDF + web · written for ' +
           (AF && AF.displayName ? AF.displayName : 'your archetype');
       }
     }
@@ -2901,7 +2902,7 @@
     }
     if (routeP && paidNow) {
       routeP.textContent =
-        'Open the workspace above for the full breakdown. Come back here when you want the rewrite executed on your live asset.';
+        'Open the report above for the full breakdown. Come back here when you want the rewrite executed on your live asset.';
     }
     diagV2RunReveal();
   }
@@ -3368,6 +3369,7 @@
       renderSevenQuestionV2Page(dr);
       return;
     }
+    uncoverMainForResults();
     document.body.classList.add('results--diag-v2');
     document.getElementById('state-missing').classList.remove('visible');
     removeEmailGate();
@@ -3404,7 +3406,7 @@
     if (ctaPri) {
       if (isFullReportUnlocked()) {
         ctaPri.setAttribute('href', '/report?a=' + encodeURIComponent(archKey) + '#rpt-sys-details');
-        ctaPri.textContent = 'Open the execution system in your workspace';
+        ctaPri.textContent = 'Open the execution system in your report';
       } else {
         ctaPri.setAttribute('href', stripeReportHref(archKey));
         ctaPri.textContent = 'Get the full breakdown';
@@ -3924,13 +3926,13 @@
       esc(micro) +
       '</p>' +
       '<h3>What this leads to next</h3>' +
-      '<p class="results-archetype__mean">Run the execution system in your workspace until you have replies, saves, or booked calls from the first loop.</p>' +
+      '<p class="results-archetype__mean">Run the execution system in your full report until you have replies, saves, or booked calls from the first loop.</p>' +
       '<p class="results-archetype__h3">What you do not know yet</p>' +
       list +
       '<div class="results-archetype-next__actions">' +
       '<a class="results-archetype-next__cta results-archetype-next__cta--system" href="' +
       esc(reportExecHref) +
-      '">Open the execution system in your workspace</a>' +
+      '">Open the execution system in your report</a>' +
       '</div>' +
       '</div>'
     );
@@ -4244,13 +4246,20 @@
     if (gate && gate.parentNode) gate.parentNode.removeChild(gate);
   }
 
+  function uncoverMainForResults() {
+    var m = document.getElementById('main');
+    if (m) m.removeAttribute('aria-hidden');
+  }
+
   function showMissing() {
+    uncoverMainForResults();
     document.getElementById('state-missing').classList.add('visible');
     removeEmailGate();
     document.getElementById('state-result').classList.remove('visible');
   }
 
   function showResult(data, version) {
+    uncoverMainForResults();
     pageData = data;
     pageVersion = version;
     document.body.classList.add('results--diag-v2');
@@ -4537,7 +4546,7 @@
         var lk = normalizeArchetypeKeyFromLegacy(data);
         if (isFullReportUnlocked()) {
           ctaPriEl.setAttribute('href', '/report?a=' + encodeURIComponent(lk) + '#rpt-sys-details');
-          ctaPriEl.textContent = 'Open the execution system in your workspace';
+          ctaPriEl.textContent = 'Open the execution system in your report';
         } else {
           ctaPriEl.setAttribute('href', stripeReportHref(lk));
           ctaPriEl.textContent = 'Get the full breakdown';
@@ -4810,6 +4819,12 @@
     var gate = document.getElementById('diag-lead-gate');
     if (!gate) return false;
     document.body.classList.add('diag-locked');
+    var sm0 = document.getElementById('state-missing');
+    var sr0 = document.getElementById('state-result');
+    if (sm0) sm0.classList.remove('visible');
+    if (sr0) sr0.classList.remove('visible');
+    var mainBlock = document.getElementById('main');
+    if (mainBlock) mainBlock.setAttribute('aria-hidden', 'true');
     gate.classList.add('visible');
     gate.setAttribute('aria-hidden', 'false');
     var form = document.getElementById('diag-gate-form');
@@ -4854,18 +4869,7 @@
     return true;
   }
 
-  /* Lead gate: require name + email before results render. */
-  if (!hasDiagLead()) {
-    var __drProbe = readDiagnosticResultsSeven();
-    var __legacyProbe = null;
-    try { __legacyProbe = loadResult(); } catch (eLp) {}
-    var __hasAnyDiag = !!__drProbe || !!(__legacyProbe && __legacyProbe.data);
-    if (__hasAnyDiag && showDiagLeadGate()) return;
-  }
-
-  var drSeven = readDiagnosticResultsSeven();
-
-  if (drSeven) {
+  function runSevenQuestionResultFlow(drSeven) {
     window.__resultsVisualScores = buildSevenQuestionVisualScores(drSeven);
     var sevenHead = '';
     var sevenNext = '';
@@ -4905,42 +4909,75 @@
     } catch (eOSL7) {}
     initSnapshotActions();
     scheduleMagneticRefresh();
-    return;
   }
 
-  var loaded = loadResult();
-  var data = normalizeData(loaded.data);
-  if (!data) {
-    showMissing();
-    return;
-  }
-
-  document.body.classList.add('results--diag-v2');
-  try {
-    if (window.StephuaryResult && typeof window.StephuaryResult.computeResultsVisualScores === 'function') {
-      window.__resultsVisualScores = window.StephuaryResult.computeResultsVisualScores();
-    }
-  } catch (eVS) {}
-  if (loaded.fromLegacy) {
+  function runLegacyStoredResult(loaded, data) {
+    document.body.classList.add('results--diag-v2');
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-    } catch (e) {}
+      if (window.StephuaryResult && typeof window.StephuaryResult.computeResultsVisualScores === 'function') {
+        window.__resultsVisualScores = window.StephuaryResult.computeResultsVisualScores();
+      }
+    } catch (eVS) {}
+    if (loaded.fromLegacy) {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+      } catch (e) {}
+    }
+
+    var version = resolveVersion(data);
+    showResult(data, version);
+
+    try {
+      if (window.ResultsScoreReveal && typeof window.ResultsScoreReveal.init === 'function' && window.__resultsVisualScores) {
+        window.ResultsScoreReveal.init(window.__resultsVisualScores);
+      }
+    } catch (eSR) {}
+    try {
+      applyObservableScoreLine();
+    } catch (eOSL) {}
+
+    initSnapshotActions();
+    scheduleMagneticRefresh();
   }
 
-  var version = resolveVersion(data);
-  showResult(data, version);
-
-  try {
-    if (window.ResultsScoreReveal && typeof window.ResultsScoreReveal.init === 'function' && window.__resultsVisualScores) {
-      window.ResultsScoreReveal.init(window.__resultsVisualScores);
+  /* Lead gate + empty state: retry a few times so localStorage from a
+     just-finished /capture redirect is visible before we show state-missing
+     or skip the email gate. */
+  function attemptResultsBoot(tryIndex) {
+    tryIndex = tryIndex || 0;
+    var maxTries = 4;
+    if (!hasDiagLead()) {
+      var __drProbe = readDiagnosticResultsSeven();
+      var __legacyProbe = null;
+      try { __legacyProbe = loadResult(); } catch (eLp) {}
+      var __hasAnyDiag = !!__drProbe || !!(__legacyProbe && __legacyProbe.data);
+      if (__hasAnyDiag && showDiagLeadGate()) return;
     }
-  } catch (eSR) {}
-  try {
-    applyObservableScoreLine();
-  } catch (eOSL) {}
 
-  initSnapshotActions();
-  scheduleMagneticRefresh();
+    var drSeven = readDiagnosticResultsSeven();
+    if (drSeven) {
+      runSevenQuestionResultFlow(drSeven);
+      return;
+    }
+
+    var loaded = loadResult();
+    var data = normalizeData(loaded.data);
+    if (!data) {
+      if (tryIndex < maxTries - 1) {
+        var delay = tryIndex === 0 ? 0 : 55;
+        setTimeout(function () {
+          attemptResultsBoot(tryIndex + 1);
+        }, delay);
+        return;
+      }
+      showMissing();
+      return;
+    }
+
+    runLegacyStoredResult(loaded, data);
+  }
+
+  attemptResultsBoot(0);
 })();
   </script>
   <script src="/stephuary-progress.js"></script>
