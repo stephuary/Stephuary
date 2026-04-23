@@ -2801,6 +2801,7 @@
     document.getElementById('state-missing').classList.remove('visible');
     if (typeof removeEmailGate === 'function') removeEmailGate();
     document.getElementById('state-result').classList.add('visible');
+    syncStateShellA11y('result');
 
     var metrics = diagV2RecomputeFromAnswers(dr);
     var bundle = diagV2BundleFromType(metrics.resultType);
@@ -3374,6 +3375,7 @@
     document.getElementById('state-missing').classList.remove('visible');
     removeEmailGate();
     document.getElementById('state-result').classList.add('visible');
+    syncStateShellA11y('result');
 
     var archKey = archetypeFromSevenResult(dr);
     var AF = getArchetypeReportSpec(archKey);
@@ -4251,11 +4253,30 @@
     if (m) m.removeAttribute('aria-hidden');
   }
 
+  /* Only one of #state-missing / #state-result is visible; keep the hidden
+     shell out of the accessibility tree so we do not announce both. */
+  function syncStateShellA11y(which) {
+    var sm = document.getElementById('state-missing');
+    var sr = document.getElementById('state-result');
+    if (!sm || !sr) return;
+    if (which === 'result') {
+      sm.setAttribute('aria-hidden', 'true');
+      sr.removeAttribute('aria-hidden');
+    } else if (which === 'missing') {
+      sm.removeAttribute('aria-hidden');
+      sr.setAttribute('aria-hidden', 'true');
+    } else if (which === 'hidden') {
+      sm.setAttribute('aria-hidden', 'true');
+      sr.setAttribute('aria-hidden', 'true');
+    }
+  }
+
   function showMissing() {
     uncoverMainForResults();
     document.getElementById('state-missing').classList.add('visible');
     removeEmailGate();
     document.getElementById('state-result').classList.remove('visible');
+    syncStateShellA11y('missing');
   }
 
   function showResult(data, version) {
@@ -4266,6 +4287,7 @@
     document.getElementById('state-missing').classList.remove('visible');
     removeEmailGate();
     document.getElementById('state-result').classList.add('visible');
+    syncStateShellA11y('result');
 
     var diag = data.diagnostic;
     var st = data.structured;
@@ -4823,6 +4845,7 @@
     var sr0 = document.getElementById('state-result');
     if (sm0) sm0.classList.remove('visible');
     if (sr0) sr0.classList.remove('visible');
+    syncStateShellA11y('hidden');
     var mainBlock = document.getElementById('main');
     if (mainBlock) mainBlock.setAttribute('aria-hidden', 'true');
     gate.classList.add('visible');
