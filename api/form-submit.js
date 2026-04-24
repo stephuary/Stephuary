@@ -5,6 +5,13 @@
 const ALLOWED_TYPES = new Set(['contact', 'snapshot-interest', 'club-application', 'diagnostic']);
 
 function readJsonBody(req) {
+  if (req.body != null && typeof req.body === 'string') {
+    try {
+      return Promise.resolve(req.body ? JSON.parse(req.body) : {});
+    } catch (e) {
+      return Promise.reject(e);
+    }
+  }
   if (req.body && typeof req.body === 'object' && !Buffer.isBuffer(req.body)) {
     return Promise.resolve(req.body);
   }
@@ -299,6 +306,16 @@ module.exports = async function handler(req, res) {
 
     var sent = await sendResendEmail(subject, html);
     if (!sent.ok) {
+      /* Diagnostic unlock must never block the user: email is best-effort. */
+      if (d.formType === 'diagnostic') {
+        if (process.env.MAILERLITE_API_KEY) {
+          try {
+            await syncMailerLiteDiagnostic(d);
+          } catch (eMl) {}
+        }
+        res.setHeader('Cache-Control', 'private, max-age=0, no-store');
+        return res.status(200).json({ ok: true, notifySkipped: true });
+      }
       return res.status(503).json({ ok: false, error: 'Notification delivery failed' });
     }
 

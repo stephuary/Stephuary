@@ -4965,11 +4965,22 @@
       sourcePage: window.location.href,
       timestamp: new Date().toISOString()
     };
+    var payload;
+    try {
+      payload = JSON.stringify(body);
+    } catch (eStr) {
+      try {
+        body.answers = null;
+        payload = JSON.stringify(body);
+      } catch (e2) {
+        return Promise.reject(e2);
+      }
+    }
     try {
       return fetch('/api/form-submit', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-        body: JSON.stringify(body)
+        body: payload
       });
     } catch (eF) {
       return Promise.reject(eF);
@@ -5041,19 +5052,35 @@
         }
         window.setTimeout(done, 1400);
       }
+      /* Lead is already in localStorage; never strand the user if the API 404s,
+         Resend is down, or JSON parse fails — show a note and still reload. */
+      function proceedDespiteNotifyFailure() {
+        showDiagServerError();
+        window.setTimeout(done, 2200);
+      }
       var p = fireDiagLead(name, email, summary);
       if (p && typeof p.then === 'function') {
         p.then(function (res) {
           if (res && res.ok) {
             return res.json().then(function (data) {
-              if (data && data.ok) onDiagSubmitOk();
-              else showDiagServerError();
-            });
+              if (data && data.ok) {
+                if (data.notifySkipped) {
+                  if (statusEl) {
+                    statusEl.textContent = 'Showing your read…';
+                    statusEl.classList.add('show', 'diag-gate__status--success');
+                    statusEl.classList.remove('diag-gate__status--error');
+                  }
+                  window.setTimeout(done, 900);
+                } else {
+                  onDiagSubmitOk();
+                }
+              } else proceedDespiteNotifyFailure();
+            }).catch(proceedDespiteNotifyFailure);
           }
-          showDiagServerError();
-        }).catch(showDiagServerError);
+          proceedDespiteNotifyFailure();
+        }).catch(proceedDespiteNotifyFailure);
       } else {
-        showDiagServerError();
+        proceedDespiteNotifyFailure();
       }
     });
     return true;
