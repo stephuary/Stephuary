@@ -23,7 +23,7 @@
   <link rel="icon" type="image/png" href="/favicon.png" />
   <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
   <link rel="canonical" href="https://stephuary.com/results" />
-  <meta name="description" content="Your Stephuary score, weakest lever, and next move." />
+  <meta name="description" content="Your Stephuary diagnostic readout: score, archetype, and next move. Upgrade to Full Unlock ($27) for the report + Notion workspace, or route to Snapshot / Club when you need more." />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Stephuary" />
   <meta property="og:title" content="Your result · Stephuary" />
@@ -34,7 +34,7 @@
   <meta property="og:image:height" content="630" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="Your result · Stephuary" />
-  <meta name="twitter:description" content="Your Stephuary score, weakest lever, and next move." />
+  <meta name="twitter:description" content="Diagnostic readout: score, archetype, next move. Full Unlock, Snapshot, or Club—pick the lane that matches how you work." />
   <meta name="twitter:image" content="https://stephuary.com/og-default.png" />
   <link rel="stylesheet" href="/stephuary-interactive.css" />
   <link rel="stylesheet" href="/stephuary-founder-reveal.css" />
@@ -2238,6 +2238,53 @@
         font-size: 24px;
       }
     }
+    .results-route-compare {
+      max-width: 44rem;
+      margin: 0 auto 24px;
+      padding: 16px 18px;
+      border: 1px solid var(--line-soft);
+      border-radius: 8px;
+      background: rgba(13, 13, 30, 0.55);
+    }
+    .results-route-compare__h {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--gold-dim);
+      margin: 0 0 12px;
+    }
+    .results-route-compare__table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      line-height: 1.45;
+      color: var(--faint);
+    }
+    .results-route-compare__table th,
+    .results-route-compare__table td {
+      text-align: left;
+      vertical-align: top;
+      padding: 8px 10px 8px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+    .results-route-compare__table tbody th {
+      color: var(--white);
+      font-weight: 600;
+      width: 28%;
+    }
+    .results-route-compare__table td a {
+      color: var(--gold);
+    }
+    @media (max-width: 640px) {
+      .results-route-compare__table tbody th {
+        width: 34%;
+        font-size: 12px;
+      }
+      .results-route-compare__table td {
+        font-size: 12px;
+      }
+    }
   </style>
   <link rel="stylesheet" href="/stephuary-a11y.css">
   <link rel="stylesheet" href="/stephuary-brand-polish.css">
@@ -2289,6 +2336,7 @@
   </div>
 
   <main id="main">
+  <p id="results-status-live" class="sh-sr-only" aria-live="polite" aria-atomic="true"></p>
   <div id="state-missing">
     <p class="missing-kicker">Result</p>
     <h1 class="missing-h1">No diagnostic result on file.</h1>
@@ -2376,6 +2424,26 @@
         <p class="results-fu-tout" id="results-fu-tout" style="max-width:40rem;margin:0 auto 20px;padding:0 1.5rem;font-size:16px;line-height:1.5;color:rgba(255,255,255,0.88);text-align:center">
           <strong>Full Unlock</strong> is <strong>$27</strong> once: in-browser archetype report + Notion workspace duplicate link. <strong>No PDF</strong>, no file download.
         </p>
+        <section class="results-route-compare" aria-labelledby="results-compare-h">
+          <h2 class="results-route-compare__h" id="results-compare-h">Pick your lane</h2>
+          <table class="results-route-compare__table">
+            <caption class="sh-sr-only">Compare Full Unlock, Snapshot, and Club</caption>
+            <tbody>
+              <tr>
+                <th scope="row">Full Unlock · $27</th>
+                <td>You run the system yourself—in-browser report plus a Notion workspace you duplicate. <a href="/pricing">See pricing</a>.</td>
+              </tr>
+              <tr>
+                <th scope="row">Snapshot</th>
+                <td>Written pass on your live asset, one rewritten block, and a short call—after intake. <a href="/snapshot">Snapshot page</a>.</td>
+              </tr>
+              <tr>
+                <th scope="row">.5% Club</th>
+                <td>Private access layer for operator-to-operator matching; application only. <a href="/access">Apply</a>.</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
         <section class="results-unlock-card" id="results-unlock-card" aria-label="What Full Unlock includes">
           <h2 class="results-unlock-card__h">What Full Unlock includes</h2>
           <p class="results-unlock-card__lead">Your archetype report, in 10 sections (in the browser):</p>
@@ -2400,7 +2468,7 @@
         <section class="results-unlock-preview" id="results-unlock-preview" aria-label="Locked report preview"></section>
 
         <div class="results-hero-cta-row">
-          <a class="results-cta-pri magnetic" id="results-primary-cta" href="#" data-sh-flow-primary>Get Full Unlock — $27</a>
+          <a class="results-cta-pri magnetic" id="results-primary-cta" href="https://buy.stripe.com/00wcN500E5imd5WeWv33W03" data-sh-flow-primary>Get Full Unlock — $27</a>
           <span class="results-cta-subnote" id="results-primary-sub">Full Unlock: Notion workspace + archetype report. No PDF. No download.</span>
         </div>
 
@@ -3423,6 +3491,7 @@
     var AF = getArchetypeReportSpec(archKey);
     var h1el = document.getElementById('openingRead');
     if (h1el) h1el.textContent = AF.displayName;
+    announceResultsRoute('Diagnostic results ready. Archetype: ' + AF.displayName + '.');
 
     var vis = buildSevenQuestionVisualScores(dr);
     window.__observableScoreLine =
@@ -4295,6 +4364,15 @@
     if (m) m.removeAttribute('aria-hidden');
   }
 
+  function announceResultsRoute(msg) {
+    var el = document.getElementById('results-status-live');
+    if (!el || !msg) return;
+    el.textContent = '';
+    window.setTimeout(function () {
+      el.textContent = msg;
+    }, 50);
+  }
+
   /* Only one of #state-missing / #state-result is visible; keep the hidden
      shell out of the accessibility tree so we do not announce both. */
   function syncStateShellA11y(which) {
@@ -4319,6 +4397,7 @@
     removeEmailGate();
     document.getElementById('state-result').classList.remove('visible');
     syncStateShellA11y('missing');
+    announceResultsRoute('No diagnostic result on file. Start the diagnostic first.');
   }
 
   function showResult(data, version) {
@@ -4336,6 +4415,7 @@
     var legacyArch = normalizeArchetypeKeyFromLegacy(data);
     var legacyAf = getArchetypeReportSpec(legacyArch);
     document.getElementById('openingRead').textContent = legacyAf.displayName;
+    announceResultsRoute('Diagnostic results ready. Archetype: ' + legacyAf.displayName + '.');
     var bodyLegacy = document.getElementById('results-observable-body');
     if (bodyLegacy) bodyLegacy.innerHTML = '';
     renderArchetypePanel(legacyArch);
