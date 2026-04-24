@@ -2110,8 +2110,7 @@
         </div>
       </div>
       <div class="sticky-header__actions">
-        <a class="ghost-btn dashboard-btn" href="https://www.notion.so/Stephuary-Full-Unlock-34bcb378a6d880aaa2ebea40f65a5b3f?source=copy_link" target="_blank" rel="noopener" aria-label="Open Notion dashboard in a new tab">Dashboard ↗</a>
-        <button type="button" class="ghost-btn pdf-btn" id="report-download-pdf">Download PDF</button>
+        <a class="ghost-btn dashboard-btn" href="https://www.notion.so/Stephuary-Full-Unlock-34bcb378a6d880aaa2ebea40f65a5b3f?source=copy_link" target="_blank" rel="noopener" aria-label="Open Notion workspace (Full Unlock) in a new tab">Notion ↗</a>
         <button type="button" class="ghost-btn share-btn" id="report-share-btn">Share</button>
       </div>
     </header>
@@ -3232,7 +3231,7 @@ Back catalog depth:
       } else if (tier === 2) {
         head.textContent = 'Run the system, then buy precision';
         lead.innerHTML = esc(
-          'Run the execution system here first: one input, one publish cadence, signal inside 30 days. Snapshot is paid feedback on your live asset after that signal exists—not a parallel read of the same PDF.'
+          'Run the execution system here first: one input, one publish cadence, signal inside 30 days. Snapshot is paid feedback on your live asset after that signal exists—not a parallel read of the same archetype report.'
         );
       } else {
         head.textContent = 'Ship three public pieces first';
@@ -3571,146 +3570,6 @@ Back catalog depth:
         });
       });
     }
-
-    function snapshotReportPdfUi() {
-      return {
-        detailsWasOpen: false,
-        nestOpen: document.querySelector('#rpt-nest-root [data-nest-item].is-open'),
-        accOpen: null
-      };
-    }
-
-    function expandAllReportPanelsForPdfExport() {
-      Array.prototype.forEach.call(document.querySelectorAll('#rpt-nest-root [data-nest-item]'), function (item) {
-        item.classList.add('is-open');
-        var tr = item.querySelector('[data-nest-trigger]');
-        var panel = item.querySelector('[data-nest-panel]');
-        if (tr) tr.setAttribute('aria-expanded', 'true');
-        if (panel) {
-          panel.style.maxHeight = 'none';
-          panel.style.opacity = '1';
-        }
-      });
-    }
-
-    function closeAllNestPanelsForPdfRestore() {
-      Array.prototype.forEach.call(document.querySelectorAll('#rpt-nest-root [data-nest-item]'), function (item) {
-        item.classList.remove('is-open');
-        var tr = item.querySelector('[data-nest-trigger]');
-        var panel = item.querySelector('[data-nest-panel]');
-        if (tr) tr.setAttribute('aria-expanded', 'false');
-        if (panel) {
-          panel.style.maxHeight = '0px';
-          panel.style.opacity = '0';
-        }
-      });
-    }
-
-    function closeAllAccPanelsForPdfRestore() {}
-
-    function reopenNestItemForPdfRestore(item) {
-      if (!item || !item.parentNode) return;
-      var tr = item.querySelector('[data-nest-trigger]');
-      var panel = item.querySelector('[data-nest-panel]');
-      if (!tr || !panel) return;
-      item.classList.add('is-open');
-      tr.setAttribute('aria-expanded', 'true');
-      var inner = panel.querySelector('.rpt-nest-panel__inner');
-      var h = inner ? inner.scrollHeight + 18 : panel.scrollHeight;
-      panel.style.maxHeight = h + 'px';
-      panel.style.opacity = '1';
-    }
-
-    function restoreReportPdfUi(snap) {
-      closeAllNestPanelsForPdfRestore();
-      if (snap && snap.nestOpen && snap.nestOpen.parentNode) reopenNestItemForPdfRestore(snap.nestOpen);
-      closeAllAccPanelsForPdfRestore();
-    }
-
-    function reportPdfFilename() {
-      var h = document.getElementById('report-pattern-head');
-      var raw = h && h.textContent ? h.textContent.trim() : 'stephuary-report';
-      var safe = raw.replace(/[^a-zA-Z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'stephuary-report';
-      return safe + '.pdf';
-    }
-
-    function loadHtml2PdfOnce() {
-      if (window.html2pdf) return Promise.resolve();
-      return new Promise(function (resolve, reject) {
-        var s = document.createElement('script');
-        s.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js';
-        s.async = true;
-        s.onload = function () {
-          resolve();
-        };
-        s.onerror = function () {
-          reject(new Error('html2pdf load failed'));
-        };
-        document.head.appendChild(s);
-      });
-    }
-
-    function html2PdfIgnoreEl(el) {
-      if (!el || el.nodeType !== 1) return false;
-      if (el.tagName === 'SCRIPT') return true;
-      if (el.tagName === 'NOSCRIPT') return true;
-      if (el.closest && el.closest('.report-actions')) return true;
-      if (el.closest && el.closest('.sticky-header')) return true;
-      if (el.closest && el.closest('.sticky-cta-bar')) return true;
-      if (el.closest && el.closest('.progress-nav')) return true;
-      if (el.classList && el.classList.contains('rpt-prompt-copy-btn')) return true;
-      if (el.classList && el.classList.contains('rpt-nest-icon')) return true;
-      if (el.classList && el.classList.contains('report-acc-icon')) return true;
-      if (el.classList && el.classList.contains('share-btn')) return true;
-      if (el.classList && el.classList.contains('pdf-btn')) return true;
-      return false;
-    }
-
-    document.getElementById('report-download-pdf').addEventListener('click', function () {
-      var btn = this;
-      var prevLabel = btn.textContent;
-      var snap = snapshotReportPdfUi();
-      btn.disabled = true;
-      btn.textContent = 'Generating…';
-      window.scrollTo(0, 0);
-      expandAllReportPanelsForPdfExport();
-      loadHtml2PdfOnce()
-        .then(function () {
-          return new Promise(function (resolve) {
-            requestAnimationFrame(function () {
-              window.setTimeout(resolve, 200);
-            });
-          });
-        })
-        .then(function () {
-          var opt = {
-            margin: [0.45, 0.45, 0.45, 0.45],
-            filename: reportPdfFilename(),
-            image: { type: 'jpeg', quality: 0.92 },
-            html2canvas: {
-              scale: window.devicePixelRatio > 1 ? 1.45 : 1.85,
-              useCORS: true,
-              logging: false,
-              ignoreElements: html2PdfIgnoreEl,
-              windowWidth: document.documentElement.scrollWidth
-            },
-            jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' },
-            pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
-          };
-          return window.html2pdf().set(opt).from(document.body).save();
-        })
-        .then(function () {
-          restoreReportPdfUi(snap);
-          btn.disabled = false;
-          btn.textContent = prevLabel;
-        })
-        .catch(function () {
-          restoreReportPdfUi(snap);
-          btn.disabled = false;
-          btn.textContent = prevLabel;
-          window.print();
-        });
-    });
 
     (function bindReportCopyButtons() {
       var main = document.querySelector('.report-main');

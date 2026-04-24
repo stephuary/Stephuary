@@ -1,5 +1,5 @@
 /**
- * Full $27 report copy per archetype. Loaded by results.html before inline boot.
+ * Full Unlock ($27) archetype report copy per archetype. Loaded by results.html before inline boot.
  * @global
  */
 (function (global) {
