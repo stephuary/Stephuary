@@ -28,6 +28,7 @@
   <link rel="stylesheet" href="/stephuary-motion.css" />
   <link rel="stylesheet" href="/stephuary-a11y.css" />
   <link rel="stylesheet" href="/stephuary-brand-polish.css" />
+  <link rel="stylesheet" href="/stephuary-diagnostic-mobile.css" />
   <link rel="manifest" href="/site.webmanifest" />
   <style>
     :root {
@@ -330,6 +331,7 @@
   </style>
 </head>
 <body class="capture-page">
+  <a href="#main" class="skip-link">Skip to content</a>
   <nav class="site-nav" aria-label="Primary">
     <div class="site-nav__brand">
       <a href="/" class="site-nav__wordmark" aria-label="Stephuary — home">Stephuary</a>
@@ -338,7 +340,6 @@
       <li><a href="/" class="site-nav__link">Home</a></li>
     </ul>
   </nav>
-  <h1 class="sr-only">Stephuary Diagnostic &mdash; 7 questions</h1>
   <main class="app" id="main" aria-live="polite"></main>
 
   <!-- Minimal footer — diagnostic flow keeps chrome out of the user's way. -->
@@ -346,6 +347,13 @@
     <div class="sh-footer__inner">
       <a class="sh-footer__mark" id="sh-foot-mark" href="/" aria-label="Stephuary home">Stephuary</a>
       <p class="sh-footer__copy">© 2026 Stephuary · All rights reserved</p>
+      <div class="site-footer__legal" aria-label="Legal and contact">
+        <a href="/privacy">Privacy</a>
+        <span aria-hidden="true">·</span>
+        <a href="/terms">Terms</a>
+        <span aria-hidden="true">·</span>
+        <a href="mailto:hello@stephuary.com">hello@stephuary.com</a>
+      </div>
     </div>
   </footer>
 
@@ -523,24 +531,29 @@
           "</button>"
         );
       }).join("");
+      const reassure =
+        currentIndex === 0
+          ? '<p class="diag-reassure">No account needed. No signup before your result.</p>'
+          : "";
       app.innerHTML =
         '<div class="capture-layout">' +
         '<p class="capture-save-reassure" role="status">' +
         '<span class="capture-save-reassure__dot" aria-hidden="true"></span>' +
         '<span class="capture-save-reassure__text"><strong>Your progress saves automatically.</strong> Come back any time.</span>' +
         '</p>' +
-        '<div aria-live="polite">' +
-        '<div class="capture-progress-meta">Question ' +
+        '<div class="diag-progress" aria-live="polite">' +
+        '<span class="diag-progress__count" data-diag-progress-count>' +
         n +
-        " of 7</div>" +
-        '<div class="capture-progress-track" role="progressbar" aria-valuemin="0" aria-valuemax="7" aria-valuenow="' +
+        " of 7</span>" +
+        '<div class="diag-progress__bar" role="progressbar" aria-valuemin="0" aria-valuemax="7" aria-valuenow="' +
         n +
         '" aria-valuetext="Question ' +
         n +
         ' of 7">' +
-        '<div class="capture-progress-fill" style="width:' +
+        '<div class="diag-progress__fill" data-diag-progress-fill style="width:' +
         pct +
         '%"></div></div></div>' +
+        reassure +
         '<div class="capture-question-zone"><h1 class="question">' +
         q.text +
         "</h1></div>" +
@@ -631,5 +644,6 @@
 
     renderQuestion();
   </script>
+  <script src="/js/stephuary-consent.js" defer></script>
 </body>
 </html>
