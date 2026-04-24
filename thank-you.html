@@ -333,8 +333,24 @@
         amount: fallbackAmount && !isNaN(parseInt(fallbackAmount, 10)) ? parseInt(fallbackAmount, 10) : null,
         currency: 'usd',
         email: null,
-        shortId: sessionId ? String(sessionId).slice(-8) : null
+        shortId: sessionId ? String(sessionId).slice(-8) : null,
+        metadata: {}
       };
+
+      /* If Checkout success_url omits ?type=…, infer from amount (cents) or Stripe metadata on session. */
+      function inferOrderType() {
+        if (state.type && String(state.type).trim()) return;
+        var meta = state.metadata || {};
+        if (meta.type && String(meta.type).trim()) {
+          state.type = String(meta.type).toLowerCase();
+          return;
+        }
+        var cents = state.amount;
+        if (cents == null || isNaN(cents)) return;
+        if (cents === 150000) state.type = 'access';
+        else if (cents === 95000) state.type = 'snapshot';
+        else if (cents === 200000) state.type = 'snapshot-plus';
+      }
 
       function productLabel(t, raw) {
         if (raw && String(raw).trim()) return String(raw).trim();
@@ -388,7 +404,7 @@
         }
         if (t === 'access') {
           ol.innerHTML =
-            '<li><strong>Within 5 minutes</strong> — confirmation email lands in your inbox.</li>' +
+            '<li><strong>Right after purchase</strong> — confirmation email (typically within a few minutes).</li>' +
             '<li><strong>Application</strong> — decisions within 7 days. No fee if you are not approved.</li>' +
             '<li><strong>Questions</strong> — email <a href="mailto:hello@stephuary.com">hello@stephuary.com</a> with “.5% Club” in the subject line.</li>';
           var wc2 = document.getElementById('th-while-copy');
@@ -432,6 +448,7 @@
         renderSteps();
       }
 
+      inferOrderType();
       render();
 
       if (sessionId) {
@@ -445,9 +462,17 @@
             if (typeof data.amount_total === 'number') state.amount = data.amount_total;
             if (data.currency) state.currency = String(data.currency);
             if (data.customer_email) state.email = String(data.customer_email);
-            if (data.type) state.type = String(data.type).toLowerCase();
             if (data.product) state.product = String(data.product);
             if (data.id) state.shortId = String(data.id).slice(-8);
+            if (data.metadata && typeof data.metadata === 'object') {
+              state.metadata = data.metadata;
+              if (data.metadata.type) {
+                state.type = String(data.metadata.type).toLowerCase();
+              }
+            } else if (data.type) {
+              state.type = String(data.type).toLowerCase();
+            }
+            inferOrderType();
             render();
           })
           .catch(function () { /* silent fallback to URL params */ });
