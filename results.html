@@ -357,6 +357,15 @@
       display: none;
     }
     .diag-gate__error.show { display: block; }
+    .diag-gate__status {
+      margin: 12px 0 0;
+      font-size: 0.88rem;
+      line-height: 1.45;
+      display: none;
+    }
+    .diag-gate__status.show { display: block; }
+    .diag-gate__status--success { color: rgba(170, 205, 160, 0.95); }
+    .diag-gate__status--error { color: #e9a27f; }
     body.diag-locked #state-result,
     body.diag-locked #state-missing { display: none !important; }
     body.diag-locked { overflow: hidden; }
@@ -2309,7 +2318,7 @@
        stephuary-interactive.css (body.sh-page-ready.sh-has-env-depth > *)
        does not collapse its `position: fixed` into the main containing block. -->
   <div id="diag-lead-gate" role="dialog" aria-modal="true" aria-labelledby="diag-gate-h" aria-hidden="true">
-    <form class="diag-gate__card" id="diag-gate-form" action="https://formsubmit.co/ajax/hello@stephuary.com" method="POST" novalidate>
+    <form class="diag-gate__card" id="diag-gate-form" action="#" method="post" novalidate>
       <p class="diag-gate__kicker">One step</p>
       <h1 class="diag-gate__h" id="diag-gate-h">Email for your read &amp; Full Unlock</h1>
       <p class="diag-gate__p">We use this to deliver your free archetype read, Full Unlock (Notion + report) links if you buy, and receipts. No list mail unless you opt in elsewhere.</p>
@@ -2324,13 +2333,10 @@
         <input class="diag-gate__input" id="diag-gate-email" name="email" type="email" autocomplete="email" inputmode="email" placeholder="you@example.com" required>
       </div>
 
-      <input type="hidden" name="_subject" value="New diagnostic result">
-      <input type="hidden" name="_template" value="table">
-      <input type="hidden" name="_captcha" value="false">
-
       <button class="diag-gate__submit" id="diag-gate-submit" type="submit">Show my archetype &rarr;</button>
       <p class="diag-gate__fine">No marketing blasts. Transactional and delivery email only.</p>
       <p class="results-benefit">You'll see your archetype on the next screen. If you upgrade to Full Unlock, your Notion duplicate link and archetype report access arrive by email—typically within a few minutes; allow up to 24 hours if delivery is under load.</p>
+      <p class="diag-gate__status" id="diag-gate-status" role="status" aria-live="polite"></p>
       <p class="diag-gate__error" id="diag-gate-error" role="alert">Enter a valid name and email to continue.</p>
     </form>
   </div>
@@ -4936,28 +4942,40 @@
       };
     } catch (eR) { return {}; }
   }
-  function fireDiagLead(form, name, email, summary) {
-    var endpoint = (form && form.getAttribute && form.getAttribute('action')) ||
-      'https://formsubmit.co/ajax/hello@stephuary.com';
+  var DIAG_SUBMIT_OK = 'Submitted. Check your inbox for the next step.';
+  var DIAG_SUBMIT_ERR = "Something didn't submit. Please try again.";
+  function fireDiagLead(name, email, summary) {
+    var dr = readDiagnosticResultsSeven();
+    var phaseHint = '';
+    try {
+      if (dr && dr.phase) phaseHint = String(dr.phase);
+      else if (dr && dr.meta && dr.meta.phase) phaseHint = String(dr.meta.phase);
+    } catch (ePh) {}
     var body = {
+      formType: 'diagnostic',
       name: name,
       email: email,
+      answers: dr || null,
       archetype: (summary && summary.archetype) || '',
       archetype_name: (summary && summary.archetype_name) || '',
       result_type: (summary && summary.result_type) || '',
       score: (summary && summary.score) || '',
+      phase: phaseHint,
+      selectedResult: (summary && (summary.archetype_name || summary.archetype)) || '',
       source: 'diagnostic-results',
       referrer: document.referrer || '',
-      page: window.location.href,
-      _subject: 'New diagnostic result' + ((summary && summary.archetype_name) ? ' — ' + summary.archetype_name : '')
+      sourcePage: window.location.href,
+      timestamp: new Date().toISOString()
     };
     try {
-      return fetch(endpoint, {
+      return fetch('/api/form-submit', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
         body: JSON.stringify(body)
       });
-    } catch (eF) { return Promise.resolve(null); }
+    } catch (eF) {
+      return Promise.reject(eF);
+    }
   }
   function showDiagLeadGate() {
     var gate = document.getElementById('diag-lead-gate');
@@ -4976,6 +4994,7 @@
     var nameI = document.getElementById('diag-gate-name');
     var emailI = document.getElementById('diag-gate-email');
     var errEl = document.getElementById('diag-gate-error');
+    var statusEl = document.getElementById('diag-gate-status');
     var submitBtn = document.getElementById('diag-gate-submit');
     try { if (nameI) nameI.focus(); } catch (eFc) {}
     if (!form || form.__bound) return true;
@@ -4991,6 +5010,10 @@
         return;
       }
       if (errEl) errEl.classList.remove('show');
+      if (statusEl) {
+        statusEl.textContent = '';
+        statusEl.classList.remove('show', 'diag-gate__status--success', 'diag-gate__status--error');
+      }
       if (submitBtn) {
         submitBtn.disabled = true;
         submitBtn.textContent = 'Unlocking…';
@@ -5001,14 +5024,38 @@
         try { window.location.reload(); }
         catch (eRl) { window.location.href = window.location.href; }
       };
-      var settled = false;
-      var finish = function () { if (settled) return; settled = true; done(); };
-      var p = fireDiagLead(form, name, email, summary);
+      function showDiagServerError() {
+        if (statusEl) {
+          statusEl.textContent = DIAG_SUBMIT_ERR;
+          statusEl.classList.add('show', 'diag-gate__status--error');
+          statusEl.classList.remove('diag-gate__status--success');
+        }
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Show my archetype →';
+        }
+      }
+      function onDiagSubmitOk() {
+        if (statusEl) {
+          statusEl.textContent = DIAG_SUBMIT_OK;
+          statusEl.classList.add('show', 'diag-gate__status--success');
+          statusEl.classList.remove('diag-gate__status--error');
+        }
+        window.setTimeout(done, 1400);
+      }
+      var p = fireDiagLead(name, email, summary);
       if (p && typeof p.then === 'function') {
-        p.then(finish, finish);
-        setTimeout(finish, 3500);
+        p.then(function (res) {
+          if (res && res.ok) {
+            return res.json().then(function (data) {
+              if (data && data.ok) onDiagSubmitOk();
+              else showDiagServerError();
+            });
+          }
+          showDiagServerError();
+        }).catch(showDiagServerError);
       } else {
-        done();
+        showDiagServerError();
       }
     });
     return true;
