@@ -585,16 +585,23 @@
     }
     .collapsible-header {
       display: flex;
-      align-items: center;
+      align-items: flex-start;
       justify-content: space-between;
       gap: 14px;
       margin-bottom: 9px;
     }
-    .collapsible-header .section-heading {
-      margin: 0;
-      text-align: left;
+    .collapsible-header__text {
       flex: 1;
       min-width: 0;
+    }
+    .collapsible-header > .section-heading {
+      flex: 1;
+      min-width: 0;
+      margin: 0;
+      text-align: left;
+    }
+    .collapsible-header .collapsible-header__text .section-heading {
+      flex: none;
     }
     .collapsible-toggle {
       flex-shrink: 0;
@@ -878,6 +885,7 @@
     <ul class="site-nav__list">
       <li><a href="/pricing" class="site-nav__link">Pricing</a></li>
       <li><a href="/access" class="site-nav__link">Access</a></li>
+      <li><a href="/capture" class="site-nav__link">Diagnostic</a></li>
     </ul>
   </nav>
 
@@ -895,6 +903,10 @@
         <a class="btn btn--secondary" href="#snapshot-pricing">Pay $950 once or 3 &times; $350</a>
   </div>
       <p class="hero-proof reveal reveal-delay-2" style="margin-top:14px;font-family:'JetBrains Mono', monospace;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:rgba(216,208,196,0.7);">Built on 20 years of diagnosing hospitality, service, and creator businesses</p>
+      <p class="snapshot-sku-who reveal reveal-delay-2" style="margin-top:18px;max-width:46ch;text-align:center;font-size:15px;line-height:1.55;color:rgba(255,255,255,0.88)">
+        <strong>The paid SKU is fixed:</strong> 48-hour written breakdown + one rewritten block + 30-minute call.
+        <a href="#snapshot-glance" style="color:#C9A24A">Exact deliverables</a> (next).
+      </p>
       </div><!-- /.snapshot-hero-group -->
 
       <!-- Queue status -->
@@ -905,7 +917,7 @@
         <span class="queue-wait">Current wait: <strong>1-2 weeks</strong> from intake submission</span>
     </div>
 
-      <section class="snapshot-glance reveal" aria-label="What you are buying">
+      <section class="snapshot-glance reveal" id="snapshot-glance" aria-label="What you are buying">
         <h2 class="snapshot-glance__h">Exact deliverables</h2>
         <ul class="snapshot-glance__ul">
           <li>Written breakdown within 48 hours of completed intake (timer starts on intake submit, not checkout).</li>
@@ -926,7 +938,10 @@
       <!-- Immediate Value -->
       <section class="section-block reveal collapsible-section" data-collapsible="immediate-value">
         <div class="collapsible-header">
-          <h2 class="section-heading">Immediate Value</h2>
+          <div class="collapsible-header__text">
+            <h2 class="section-heading">Immediate Value</h2>
+            <p class="collapsible-optional" style="font-size:13px;opacity:0.82;margin:8px 0 0;max-width:48ch;font-weight:400;line-height:1.45">Optional context—expand only if you want more; the offer is still the exact deliverables block above.</p>
+          </div>
           <button type="button" class="collapsible-toggle" aria-expanded="false" aria-controls="immediate-value-body">Expand</button>
         </div>
         <div class="collapsible-body" id="immediate-value-body" hidden>
@@ -949,12 +964,15 @@
   </section>
 
       <!-- What you walk away knowing (primary "what you get" — defaults open) -->
-      <section class="deliverables-block reveal collapsible-section" data-collapsible="audit-covers" data-default-open="true">
+      <section class="deliverables-block reveal collapsible-section" data-collapsible="audit-covers" data-default-open="false">
         <div class="collapsible-header">
-          <h2 class="section-heading">What you walk away knowing in 48 hours</h2>
-          <button type="button" class="collapsible-toggle" aria-expanded="true" aria-controls="audit-covers-body">Collapse</button>
+          <div class="collapsible-header__text">
+            <h2 class="section-heading">What you walk away knowing in 48 hours</h2>
+            <p class="collapsible-optional" style="font-size:13px;opacity:0.82;margin:8px 0 0;max-width:48ch;font-weight:400;line-height:1.45">Optional deep dive—expand if you want the full rubric. Same snapshot SKU.</p>
+          </div>
+          <button type="button" class="collapsible-toggle" aria-expanded="false" aria-controls="audit-covers-body">Expand</button>
         </div>
-        <div class="collapsible-body" id="audit-covers-body">
+        <div class="collapsible-body" id="audit-covers-body" hidden>
           <ul class="walkaway-sub">
             <li>Where your revenue is breaking</li>
             <li>What to fix first</li>

@@ -273,6 +273,7 @@
     <ul class="site-nav__list">
       <li><a href="/pricing" class="site-nav__link">Pricing</a></li>
       <li><a href="/access" class="site-nav__link">Access</a></li>
+      <li><a href="/capture" class="site-nav__link">Diagnostic</a></li>
     </ul>
   </nav>
 
@@ -286,19 +287,11 @@
         <h1 class="thankyou__title" id="th-headline">You're in.</h1>
         <p class="thankyou__lede">Confirmed. Here's what happens next.</p>
 
-        <ol class="thankyou__steps">
-          <li><strong>Within 5 minutes</strong> — confirmation email lands in your inbox. Check spam if not seen.</li>
-          <li>
-            <strong>What you bought</strong> — follow that email for next steps. If you purchased
-            <strong>Full Unlock: Notion workspace + archetype report</strong>, you get the in-browser report
-            and a Notion duplicate link—no PDF or file download.
-          </li>
-          <li><strong>Next week</strong> — optional: if your purchase included the Notion workspace, open it and run the first sequence.</li>
-        </ol>
+        <ol class="thankyou__steps" id="th-steps"></ol>
 
-        <div class="thankyou__next">
+        <div class="thankyou__next" id="th-while">
           <h2>While you wait</h2>
-          <p>Read the 7 Archetypes overview. For Full Unlock, your detailed version is in the report and workspace—this map is public.</p>
+          <p id="th-while-copy">Read the 7 Archetypes overview. For Full Unlock, your detailed version is in the report and workspace—this map is public.</p>
           <a class="btn btn--secondary" href="/#home-archetypes-heading">See the 7 Archetypes →</a>
         </div>
 
@@ -377,6 +370,45 @@
         }
       }
 
+      function renderSteps() {
+        var ol = document.getElementById('th-steps');
+        if (!ol) return;
+        var t = (state.type || '').toLowerCase();
+        if (t === 'snapshot' || t === 'snapshot-plus' || t === 'snapshot+') {
+          ol.innerHTML =
+            '<li><strong>Within 5 minutes</strong> — Stripe confirmation in your inbox.</li>' +
+            '<li><strong>Next</strong> — submit intake from the link in that email. The 48-hour written pass starts when intake is submitted, not at checkout.</li>' +
+            '<li><strong>Include context</strong> — reply to the confirmation if something specific must be in the pass.</li>';
+          var wc = document.getElementById('th-while-copy');
+          if (wc) {
+            wc.textContent =
+              'Snapshot is about your live asset. While you wait, skim the diagnostic on /capture if you have not run it yet—it helps the pass land cleaner.';
+          }
+          return;
+        }
+        if (t === 'access') {
+          ol.innerHTML =
+            '<li><strong>Within 5 minutes</strong> — confirmation email lands in your inbox.</li>' +
+            '<li><strong>Application</strong> — decisions within 7 days. No fee if you are not approved.</li>' +
+            '<li><strong>Questions</strong> — email <a href="mailto:hello@stephuary.com">hello@stephuary.com</a> with “.5% Club” in the subject line.</li>';
+          var wc2 = document.getElementById('th-while-copy');
+          if (wc2) {
+            wc2.textContent =
+              'Only Sometimes Club is a separate product at onlysometimesclub.com if you meant that instead.';
+          }
+          return;
+        }
+        ol.innerHTML =
+          '<li><strong>Within 5 minutes</strong> — confirmation email lands in your inbox. Check spam if not seen.</li>' +
+          '<li><strong>What you bought</strong> — follow that email for next steps. If you purchased <strong>Full Unlock: Notion workspace + archetype report</strong>, you get the in-browser report and a Notion duplicate link—no PDF or file download.</li>' +
+          '<li><strong>Next week</strong> — optional: if your purchase included the Notion workspace, open it and run the first sequence.</li>';
+        var wc3 = document.getElementById('th-while-copy');
+        if (wc3) {
+          wc3.textContent =
+            'Read the 7 Archetypes overview. For Full Unlock, your detailed version is in the report and workspace—this map is public.';
+        }
+      }
+
       function renderReceipt() {
         var wrap = document.getElementById('th-receipt');
         if (!wrap) return;
@@ -397,6 +429,7 @@
       function render() {
         renderHeadline();
         renderReceipt();
+        renderSteps();
       }
 
       render();

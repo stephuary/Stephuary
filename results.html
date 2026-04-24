@@ -123,19 +123,27 @@
       text-decoration: none;
     }
     .top-bar-nav a:hover { color: var(--muted); }
-    .top-bar-nav__restart {
-      font: inherit;
-      font-size: 9px;
-      letter-spacing: 0.14em;
+    .site-nav--results { flex-wrap: wrap; }
+    .results-nav__restart {
+      display: inline-flex;
+      align-items: center;
+      min-height: 44px;
+      padding: 10px 12px;
+      font-family: Inter, system-ui, -apple-system, sans-serif;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.1em;
       text-transform: uppercase;
-      color: rgba(244, 237, 224, 0.45);
+      color: rgba(244, 237, 224, 0.62);
       background: none;
       border: none;
+      border-radius: 4px;
       cursor: pointer;
-      padding: 0;
     }
-    .top-bar-nav__restart:hover {
-      color: var(--muted);
+    .results-nav__restart:hover,
+    .results-nav__restart:focus-visible {
+      color: rgba(244, 237, 224, 0.95);
+      background: rgba(248, 243, 234, 0.06);
     }
     .results-flow-links--quiet {
       opacity: 0.72;
@@ -2238,12 +2246,16 @@
 <body data-sh-env="results">
   <a href="#main" class="skip-link">Skip to content</a>
 
-  <!-- Minimal top bar: Stephuary wordmark (return home) + Restart only. -->
-  <nav class="site-nav" id="main-nav" aria-label="Primary">
+  <nav class="site-nav site-nav--results" id="main-nav" aria-label="Primary">
     <div class="site-nav__brand">
       <a href="/" class="site-nav__wordmark" aria-label="Stephuary — return to homepage">Stephuary</a>
     </div>
-    <button type="button" class="top-bar-nav__restart" id="results-nav-restart">Restart</button>
+    <ul class="site-nav__list">
+      <li><a href="/pricing" class="site-nav__link">Pricing</a></li>
+      <li><a href="/access" class="site-nav__link">Access</a></li>
+      <li><a href="/capture" class="site-nav__link">Diagnostic</a></li>
+    </ul>
+    <button type="button" class="results-nav__restart" id="results-nav-restart" aria-label="Restart diagnostic and clear this read">Restart</button>
   </nav>
 
   <!-- Lead gate must sit OUTSIDE <main> so ancestor `transform` from
@@ -2252,8 +2264,8 @@
   <div id="diag-lead-gate" role="dialog" aria-modal="true" aria-labelledby="diag-gate-h" aria-hidden="true">
     <form class="diag-gate__card" id="diag-gate-form" action="https://formsubmit.co/ajax/hello@stephuary.com" method="POST" novalidate>
       <p class="diag-gate__kicker">One step</p>
-      <h1 class="diag-gate__h" id="diag-gate-h">Where should we send your read?</h1>
-      <p class="diag-gate__p">Enter your name and email to see your archetype. We'll also send a copy to your inbox so you can reopen it later.</p>
+      <h1 class="diag-gate__h" id="diag-gate-h">Email for your read &amp; Full Unlock</h1>
+      <p class="diag-gate__p">We use this to deliver your free archetype read, Full Unlock (Notion + report) links if you buy, and receipts. No list mail unless you opt in elsewhere.</p>
 
       <div class="diag-gate__field">
         <label class="diag-gate__label" for="diag-gate-name">Name</label>
@@ -2270,7 +2282,7 @@
       <input type="hidden" name="_captcha" value="false">
 
       <button class="diag-gate__submit" id="diag-gate-submit" type="submit">Show my archetype &rarr;</button>
-      <p class="diag-gate__fine">No spam. We use your email once to send you the read.</p>
+      <p class="diag-gate__fine">No marketing blasts. Transactional and delivery email only.</p>
       <p class="results-benefit">You'll see your archetype on the next screen. If you upgrade to Full Unlock, your Notion duplicate link and archetype report access follow by email—usually within 60 seconds.</p>
       <p class="diag-gate__error" id="diag-gate-error" role="alert">Enter a valid name and email to continue.</p>
     </form>
@@ -2282,6 +2294,11 @@
     <h1 class="missing-h1">No diagnostic result on file.</h1>
     <p class="missing-p">Finish the diagnostic first. Your read saves when the flow completes.</p>
     <a href="/capture" class="btn btn--primary" id="results-missing-cta">Start diagnostic</a>
+    <p class="missing-recover" style="margin-top:1.5rem;max-width:32rem;font-size:15px;line-height:1.55;color:rgba(255,255,255,0.72)">
+      Already paid for <strong>Full Unlock</strong>? Check your email for the archetype report and Notion link, or
+      <a href="mailto:hello@stephuary.com?subject=Full%20Unlock%20access" style="color:#C9A24A">email hello@stephuary.com</a>
+      with “Full Unlock access” in the subject line.
+    </p>
   </div>
 
   <section id="state-result">
@@ -2356,6 +2373,9 @@
              All three hide together on paid state via JS in
              renderSevenQuestionV2Page + renderArchetypePanel. -->
         <p class="results-credibility" aria-label="Credibility" style="max-width:58ch;margin:0 auto 18px;text-align:center;font-family:'JetBrains Mono', monospace;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:rgba(216,208,196,0.7);">Built on 20 years of diagnosing hospitality, service, and creator businesses</p>
+        <p class="results-fu-tout" id="results-fu-tout" style="max-width:40rem;margin:0 auto 20px;padding:0 1.5rem;font-size:16px;line-height:1.5;color:rgba(255,255,255,0.88);text-align:center">
+          <strong>Full Unlock</strong> is <strong>$27</strong> once: in-browser archetype report + Notion workspace duplicate link. <strong>No PDF</strong>, no file download.
+        </p>
         <section class="results-unlock-card" id="results-unlock-card" aria-label="What Full Unlock includes">
           <h2 class="results-unlock-card__h">What Full Unlock includes</h2>
           <p class="results-unlock-card__lead">Your archetype report, in 10 sections (in the browser):</p>
@@ -2912,8 +2932,10 @@
        them on paid since the primary CTA already points at /report. */
     var unlockCard = document.getElementById('results-unlock-card');
     var unlockPreview = document.getElementById('results-unlock-preview');
+    var fuTout = document.getElementById('results-fu-tout');
     if (unlockCard) unlockCard.hidden = paidNow;
     if (unlockPreview) unlockPreview.hidden = paidNow;
+    if (fuTout) fuTout.hidden = paidNow;
     /* Snapshot route headline reframes post-purchase: the $27 is no
        longer the fork; the next ladder step is Snapshot. */
     var routeH = document.getElementById('results-snapshot-route-h');
