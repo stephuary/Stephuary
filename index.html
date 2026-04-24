@@ -3305,6 +3305,36 @@
       color: var(--hr-gold);
     }
 
+    /* Collapsible regions — Alternatively + FAQs (closed by default). */
+    .home-collapse {
+      border: 0;
+      padding: 0;
+      margin: 0;
+    }
+    .home-collapse > summary {
+      list-style: none;
+      cursor: pointer;
+    }
+    .home-collapse > summary::-webkit-details-marker {
+      display: none;
+    }
+    .home-faq__section-summary {
+      text-align: center;
+    }
+    .home-faq__section-summary .home-section-title {
+      margin-bottom: 0;
+      display: inline-block;
+    }
+    .home-collapse--faq[open] .home-faq__section-summary .home-section-title {
+      margin-bottom: clamp(22px, 3vw, 32px);
+    }
+    .home-collapse--faq .faq-list {
+      margin-top: 0;
+    }
+    .home-collapse--faq[open] .faq-list {
+      margin-top: 4px;
+    }
+
     /* Archetype cards — hover brighten + symbol rotate. */
     body[data-sh-env="home"] .section-measured .measure-card {
       transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
@@ -4180,26 +4210,27 @@
       </section>
       <hr class="hr-divider" aria-hidden="true">
 
-      <!-- Fork divider: alternate path to Snapshot -->
-      <div class="hr-fork" aria-hidden="true"><span class="hr-fork__label">Alternatively</span></div>
-
-      <!-- ═══ Snapshot — bordered card with APPLICATION chip ═══ -->
-      <section class="section-repeat-cta" id="snapshot-offer" aria-labelledby="home-snapshot-heading">
-        <div class="container">
-          <div class="hr-snapshot-card">
-            <p class="home-section-kicker">Built with you</p>
-            <span class="hr-chip hr-snapshot-card__chip">APPLICATION</span>
-            <h2 class="home-section-title" id="home-snapshot-heading" style="margin-bottom:10px;">If you want it built with you</h2>
-            <p class="repeat-cta__sub" style="margin:0 auto 4px; max-width:520px;">Snapshot is a one-time paid session. We build the fix with you. Application based.</p>
-            <p class="hr-snapshot-price">$950</p>
-            <p class="hr-snapshot-price__note">ONE-TIME</p>
-            <p class="hr-snapshot-plan">or 3 payments of $350/mo</p>
-            <div class="hero-actions" style="justify-content:center;">
-              <a href="/snapshot" class="btn btn--secondary hr-btn-secondary">Apply &rarr;</a>
+      <!-- Alternatively — collapsed by default; expands to Snapshot offer -->
+      <details class="home-collapse home-collapse--alt">
+        <summary class="hr-fork"><span class="hr-fork__label">Alternatively</span></summary>
+        <!-- ═══ Snapshot — bordered card with APPLICATION chip ═══ -->
+        <section class="section-repeat-cta" id="snapshot-offer" aria-labelledby="home-snapshot-heading">
+          <div class="container">
+            <div class="hr-snapshot-card">
+              <p class="home-section-kicker">Built with you</p>
+              <span class="hr-chip hr-snapshot-card__chip">APPLICATION</span>
+              <h2 class="home-section-title" id="home-snapshot-heading" style="margin-bottom:10px;">If you want it built with you</h2>
+              <p class="repeat-cta__sub" style="margin:0 auto 4px; max-width:520px;">Snapshot is a one-time paid session. We build the fix with you. Application based.</p>
+              <p class="hr-snapshot-price">$950</p>
+              <p class="hr-snapshot-price__note">ONE-TIME</p>
+              <p class="hr-snapshot-plan">or 3 payments of $350/mo</p>
+              <div class="hero-actions" style="justify-content:center;">
+                <a href="/snapshot" class="btn btn--secondary hr-btn-secondary">Apply &rarr;</a>
+              </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+      </details>
       <hr class="hr-divider" aria-hidden="true">
 
       <!-- ═══ The 7 Archetypes — 4-over-3 grid with gold line icons ═══ -->
@@ -4275,8 +4306,11 @@
 
       <section class="home-faq" aria-labelledby="home-faqs-heading">
         <div class="container">
-          <h2 class="home-section-title" id="home-faqs-heading">FAQs</h2>
-          <div class="faq-list" role="list">
+          <details class="home-collapse home-collapse--faq">
+            <summary class="home-faq__section-summary">
+              <h2 class="home-section-title" id="home-faqs-heading">FAQs</h2>
+            </summary>
+            <div class="faq-list" role="list">
             <div class="faq-item" role="listitem">
               <details class="home-faq__details">
                 <summary class="home-faq__summary">Is the diagnostic really free?</summary>
@@ -4317,7 +4351,8 @@
                 </div>
               </details>
             </div>
-          </div>
+            </div>
+          </details>
         </div>
       </section>
     </main>
