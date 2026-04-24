@@ -1476,7 +1476,8 @@
 
   function initFlowEndBar() {
     var p = normPath(window.location.pathname);
-    var phaseOnly = ['/capture', '/monetize', '/structure', '/automation', '/sovereignty'];
+    /* Omit /capture: standalone 7-question page has its own nav + must not stack a second “Exit → /” bar. */
+    var phaseOnly = ['/monetize', '/structure', '/automation', '/sovereignty'];
     if (phaseOnly.indexOf(p) === -1) return;
     if (document.getElementById('sh-flow-end')) return;
     var next = StephuarySession.suggestNextHref(p);
