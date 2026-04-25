@@ -3287,12 +3287,19 @@
       grid-column: 9 / span 4 !important;
     }
     @media (max-width: 960px) {
+      /* Single column: avoids conflict with desktop 12-up + preview span-4
+         rules, which are more specific and were forcing overflow on 2-up grids. */
       body[data-sh-env="home"] #archetypes .card-grid {
-        grid-template-columns: repeat(2, 1fr) !important;
+        grid-template-columns: minmax(0, 1fr) !important;
         max-width: 100% !important;
+        width: 100% !important;
       }
-      /* Specificity tie with the desktop nth-child rules so source order
-         wins and every card collapses to a single auto-placed cell. */
+      /* Explicitly reset .home-archetypes-grid--preview (wins over rules above). */
+      body[data-sh-env="home"] #archetypes .card-grid.home-archetypes-grid--preview > .measure-card:nth-child(1),
+      body[data-sh-env="home"] #archetypes .card-grid.home-archetypes-grid--preview > .measure-card:nth-child(2),
+      body[data-sh-env="home"] #archetypes .card-grid.home-archetypes-grid--preview > .measure-card:nth-child(3) {
+        grid-column: 1 / -1 !important;
+      }
       body[data-sh-env="home"] #archetypes .card-grid > .measure-card:nth-child(1),
       body[data-sh-env="home"] #archetypes .card-grid > .measure-card:nth-child(2),
       body[data-sh-env="home"] #archetypes .card-grid > .measure-card:nth-child(3),
@@ -3300,12 +3307,11 @@
       body[data-sh-env="home"] #archetypes .card-grid > .measure-card:nth-child(5),
       body[data-sh-env="home"] #archetypes .card-grid > .measure-card:nth-child(6),
       body[data-sh-env="home"] #archetypes .card-grid > .measure-card:nth-child(7) {
-        grid-column: auto / span 1 !important;
+        grid-column: 1 / -1 !important;
       }
     }
     @media (max-width: 560px) {
       body[data-sh-env="home"] #archetypes .card-grid {
-        grid-template-columns: 1fr !important;
         gap: 14px !important;
       }
     }
@@ -3375,6 +3381,63 @@
         margin-left: auto !important;
         margin-right: auto !important;
         padding: 0 12px;
+      }
+    }
+    @media (max-width: 767px) {
+      body[data-sh-env="home"] #archetypes .container {
+        max-width: 100% !important;
+        padding-left: 20px !important;
+        padding-right: 20px !important;
+        box-sizing: border-box;
+      }
+      body[data-sh-env="home"] #archetypes .home-section-title {
+        max-width: 100% !important;
+        padding: 0 2px;
+        text-wrap: balance;
+      }
+      body[data-sh-env="home"] #archetypes p.fits-close,
+      body[data-sh-env="home"] #archetypes .home-archetypes__outcome {
+        max-width: 100% !important;
+        padding: 0 2px;
+        box-sizing: border-box;
+        width: 100%;
+      }
+      body[data-sh-env="home"] #archetypes .home-archetypes__outcome {
+        font-size: 14.5px !important;
+        line-height: 1.5 !important;
+      }
+      body[data-sh-env="home"] #archetypes .card-title {
+        font-size: clamp(16px, 4.4vw, 18px) !important;
+        word-break: break-word;
+        overflow-wrap: break-word;
+        hyphens: auto;
+        max-width: 100% !important;
+      }
+      body[data-sh-env="home"] #archetypes .card-body {
+        font-size: 13.5px !important;
+        line-height: 1.5 !important;
+        max-width: 100% !important;
+      }
+      body[data-sh-env="home"] #archetypes .home-archetypes__hint {
+        display: flex !important;
+        flex-direction: column;
+        flex-wrap: nowrap !important;
+        align-items: center !important;
+        justify-content: center !important;
+        gap: 10px !important;
+        text-align: center !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
+        padding: 0 4px;
+        box-sizing: border-box;
+      }
+      body[data-sh-env="home"] #archetypes .home-archetypes__hint .home-archetypes__reveal {
+        min-height: 44px;
+        padding: 10px 18px;
+        max-width: min(100%, 20rem);
+        text-align: center;
       }
     }
 
