@@ -5007,6 +5007,10 @@
          final grid position (--x, --y) and a randomised start offset (--dx,
          --dy) up to ±40vw / ±30vh, plus a small stagger (--d). */
       var field = document.getElementById('sh-intro-field');
+      if (!field) {
+        removeNow();
+        return;
+      }
       var cols = 6, rows = 4;
       var frag = document.createDocumentFragment();
       for (var r = 0; r < rows; r++) {
@@ -6167,90 +6171,94 @@
   <script src="/js/stephuary-consent.js" defer></script>
   <script>
     (function () {
-      var inner = document.getElementById('home-env-inner');
-      var sc = document.getElementById('home-env-scroll');
-      if (!inner || !sc) return;
+      try {
+        var inner = document.getElementById('home-env-inner');
+        var sc = document.getElementById('home-env-scroll');
+        if (!inner || !sc) return;
 
-      var N = 16;
-      var base = '/public/environments/img';
-      function addOne(i, dup) {
-        var fig = document.createElement('figure');
-        fig.className = 'home-env-strip__fig';
-        if (dup) fig.setAttribute('aria-hidden', 'true');
-        var im = document.createElement('img');
-        im.className = 'home-env-strip__img';
-        im.src = base + i + '.jpg';
-        im.alt = '';
-        im.width = 800;
-        im.height = 1000;
-        im.decoding = 'async';
-        im.loading = r === 1 || j > 3 ? 'lazy' : 'eager';
-        fig.appendChild(im);
-        inner.appendChild(fig);
-      }
-      var r;
-      for (r = 0; r < 2; r++) {
-        var j;
-        for (j = 1; j <= N; j++) {
-          addOne(j, r === 1);
+        var N = 16;
+        var base = '/environments/img';
+        function addOne(i, dup) {
+          var fig = document.createElement('figure');
+          fig.className = 'home-env-strip__fig';
+          if (dup) fig.setAttribute('aria-hidden', 'true');
+          var im = document.createElement('img');
+          im.className = 'home-env-strip__img';
+          im.src = base + i + '.jpg';
+          im.alt = '';
+          im.width = 800;
+          im.height = 1000;
+          im.decoding = 'async';
+          im.loading = dup || i > 3 ? 'lazy' : 'eager';
+          fig.appendChild(im);
+          inner.appendChild(fig);
         }
-      }
-
-      var reduced =
-        typeof window.matchMedia === 'function' &&
-        window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      if (reduced) return;
-
-      var paused = false;
-      var setW = 0;
-      var speed = 0.18;
-      var resumeTimer = null;
-
-      function measure() {
-        setW = inner.scrollWidth / 2;
-      }
-      measure();
-      if (typeof ResizeObserver === 'function') {
-        new ResizeObserver(function () {
-          measure();
-        }).observe(inner);
-      } else {
-        window.addEventListener('load', measure, { once: true });
-      }
-      window.addEventListener('resize', function () {
-        measure();
-      }, { passive: true });
-
-      sc.addEventListener('mouseenter', function () {
-        paused = true;
-      });
-      sc.addEventListener('mouseleave', function () {
-        paused = false;
-      });
-      function hold(ms) {
-        paused = true;
-        if (resumeTimer) clearTimeout(resumeTimer);
-        resumeTimer = setTimeout(function () {
-          paused = false;
-        }, ms);
-      }
-      sc.addEventListener('wheel', function () {
-        hold(3200);
-      }, { passive: true });
-      sc.addEventListener('touchstart', function () {
-        hold(4500);
-      }, { passive: true });
-
-      function tick() {
-        if (!document.hidden && !paused && setW > 0) {
-          sc.scrollLeft += speed;
-          if (sc.scrollLeft >= setW - 0.5) {
-            sc.scrollLeft -= setW;
+        var r;
+        for (r = 0; r < 2; r++) {
+          var j;
+          for (j = 1; j <= N; j++) {
+            addOne(j, r === 1);
           }
         }
+
+        var reduced =
+          typeof window.matchMedia === 'function' &&
+          window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (reduced) return;
+
+        var paused = false;
+        var setW = 0;
+        var speed = 0.18;
+        var resumeTimer = null;
+
+        function measure() {
+          setW = inner.scrollWidth / 2;
+        }
+        measure();
+        if (typeof ResizeObserver === 'function') {
+          new ResizeObserver(function () {
+            measure();
+          }).observe(inner);
+        } else {
+          window.addEventListener('load', measure, { once: true });
+        }
+        window.addEventListener('resize', function () {
+          measure();
+        }, { passive: true });
+
+        sc.addEventListener('mouseenter', function () {
+          paused = true;
+        });
+        sc.addEventListener('mouseleave', function () {
+          paused = false;
+        });
+        function hold(ms) {
+          paused = true;
+          if (resumeTimer) clearTimeout(resumeTimer);
+          resumeTimer = setTimeout(function () {
+            paused = false;
+          }, ms);
+        }
+        sc.addEventListener('wheel', function () {
+          hold(3200);
+        }, { passive: true });
+        sc.addEventListener('touchstart', function () {
+          hold(4500);
+        }, { passive: true });
+
+        function tick() {
+          if (!document.hidden && !paused && setW > 0) {
+            sc.scrollLeft += speed;
+            if (sc.scrollLeft >= setW - 0.5) {
+              sc.scrollLeft -= setW;
+            }
+          }
+          window.requestAnimationFrame(tick);
+        }
         window.requestAnimationFrame(tick);
+      } catch (e) {
+        /* Strip is non-critical; never block page load. */
       }
-      window.requestAnimationFrame(tick);
     })();
   </script>
 
