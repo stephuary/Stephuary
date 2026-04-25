@@ -2426,7 +2426,7 @@
              renderSevenQuestionV2Page + renderArchetypePanel. -->
         <p class="results-credibility" aria-label="Credibility" style="max-width:58ch;margin:0 auto 18px;text-align:center;font-family:'JetBrains Mono', monospace;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:rgba(216,208,196,0.7);">Built on 20 years of diagnosing hospitality, service, and creator businesses</p>
         <p class="results-fu-tout" id="results-fu-tout" style="max-width:40rem;margin:0 auto 20px;padding:0 1.5rem;font-size:16px;line-height:1.5;color:rgba(255,255,255,0.88);text-align:center">
-          <strong>Full Archetype Access</strong> is <strong>current phase access</strong> at the <strong>early access rate</strong>: full breakdown, operating system, and tools for your pattern, <strong>released in controlled drops</strong>, with <strong>access to future updates</strong>. <strong>No PDF</strong>, no file download.
+          <strong>Full Archetype Access</strong> is <strong>current phase access</strong> at the <strong>early access rate</strong>: full breakdown, operating system, and tools for your pattern, released in phases, with <strong>access to future updates</strong>. <strong>No PDF</strong>, no file download.
         </p>
         <section class="results-route-compare" aria-labelledby="results-compare-h">
           <h2 class="results-route-compare__h" id="results-compare-h">Pick your lane</h2>
@@ -2449,9 +2449,10 @@
           </table>
         </section>
         <section class="results-unlock-card" id="results-unlock-card" aria-label="Full Archetype Access">
+          <p class="results-unlock-card__format" style="margin:0 0 8px;opacity:0.72;">Early access (current phase)</p>
           <h2 class="results-unlock-card__h">Full Archetype Access</h2>
           <p class="results-unlock-card__lead">Your diagnostic result maps you to a specific operating pattern.</p>
-          <p class="results-unlock-card__lead" style="margin-top:8px">The full system for each archetype is released in controlled drops.</p>
+          <p class="results-unlock-card__lead" style="margin-top:8px">The full system for each archetype is delivered in phases.</p>
           <p class="results-unlock-card__format" style="margin-top:16px"><strong>Access includes:</strong></p>
           <ul class="results-unlock-card__list">
             <li>your full archetype breakdown</li>
@@ -2472,9 +2473,10 @@
         <section class="results-unlock-preview" id="results-unlock-preview" aria-label="Locked report preview"></section>
 
         <div class="results-hero-cta-row" id="results-hero-cta-block">
-          <a class="results-cta-pri magnetic" id="results-primary-cta" href="https://buy.stripe.com/00wcN500E5imd5WeWv33W03" data-sh-flow-primary>Get access — $27</a>
-          <span class="results-cta-subnote" id="results-primary-sub">Current phase access at the early access rate. Phased release; access includes future updates.</span>
-          <p class="results-cta-subnote" id="results-cta-pricing" style="display:block;margin-top:10px;max-width:40rem">This phase includes all future updates tied to your archetype. Pricing moves to $47 as systems go live.</p>
+          <p class="results-cta-subnote" id="results-primary-clarity" style="display:block;margin:0 auto 14px;max-width:40rem;font-size:15px;line-height:1.5;color:rgba(255,255,255,0.88)">This is early access pricing. Full system access is not live yet.<br>Your purchase locks in $27 and unlocks your archetype system as it is released.</p>
+          <a class="results-cta-pri magnetic" id="results-primary-cta" href="https://buy.stripe.com/00wcN500E5imd5WeWv33W03" data-sh-flow-primary>Secure early access — $27</a>
+          <span class="results-cta-subnote" id="results-primary-sub">No immediate unlock. Access is delivered in phases.</span>
+          <p class="results-cta-subnote" id="results-cta-pricing" style="display:block;margin-top:10px;max-width:40rem">Future updates tied to your archetype included. Pricing moves to $47 as systems go live.</p>
         </div>
 
         <!-- Secondary route sits in its own distinct block below the $27
@@ -2647,7 +2649,7 @@
     }
     return {
       primaryHref: STRIPE_FULL_REPORT_27,
-      primaryLabel: 'Get access — $27',
+      primaryLabel: 'Secure early access — $27',
       secondaryHref: '/snapshot',
       secondaryLabel: 'See Snapshot →'
     };
@@ -2964,6 +2966,7 @@
     var paidNow = isFullReportUnlocked();
     var ctaPri = document.getElementById('results-primary-cta');
     var ctaSec = document.getElementById('results-secondary-cta');
+    var ctaClarity = document.getElementById('results-primary-clarity');
     var ctaSub = document.getElementById('results-primary-sub');
     if (ctaPri) {
       /* Sub the archetype-specific Stripe Payment Link in for the
@@ -2989,15 +2992,17 @@
     }
     /* Sub-line under the primary CTA: phased access framing. On paid
        we clear it because the CTA already names the destination. */
+    if (ctaClarity) {
+      ctaClarity.hidden = paidNow;
+      ctaClarity.style.display = paidNow ? 'none' : 'block';
+    }
     if (ctaSub) {
       if (paidNow) {
         ctaSub.hidden = true;
         ctaSub.textContent = '';
       } else {
         ctaSub.hidden = false;
-        ctaSub.textContent =
-          'Current phase access at the early access rate. Phased release; access includes future updates. — ' +
-          (AF && AF.displayName ? AF.displayName : 'your archetype');
+        ctaSub.textContent = 'No immediate unlock. Access is delivered in phases.';
       }
     }
     var ctaPricing = document.getElementById('results-cta-pricing');
@@ -3525,19 +3530,24 @@
 
     var ctaPri = document.getElementById('results-primary-cta');
     var ctaSec = document.getElementById('results-secondary-cta');
+    var ctaClarity7 = document.getElementById('results-primary-clarity');
     if (ctaPri) {
       if (isFullReportUnlocked()) {
         ctaPri.setAttribute('href', '/report?a=' + encodeURIComponent(archKey) + '#rpt-sys-details');
         ctaPri.textContent = 'Open your archetype report';
       } else {
         ctaPri.setAttribute('href', stripeReportHref(archKey));
-        ctaPri.textContent = 'Get access — $27';
+        ctaPri.textContent = 'Secure early access — $27';
       }
     }
     if (ctaSec) {
       ctaSec.setAttribute('href', '/snapshot');
       ctaSec.textContent = 'Ready to fix it? See Snapshot →';
       ctaSec.hidden = false;
+    }
+    if (ctaClarity7) {
+      ctaClarity7.hidden = isFullReportUnlocked();
+      ctaClarity7.style.display = isFullReportUnlocked() ? 'none' : 'block';
     }
   }
 
@@ -4551,6 +4561,7 @@
     }
 
     var ctaPri = document.getElementById('results-primary-cta');
+    var ctaClarityLegacy = document.getElementById('results-primary-clarity');
     var ctaSub = document.getElementById('results-primary-sub');
     var flowLinks = document.getElementById('results-flow-links');
     var routesSec = document.getElementById('sh-results-routes');
@@ -4702,13 +4713,17 @@
           ctaPriEl.textContent = 'Open your archetype report';
         } else {
           ctaPriEl.setAttribute('href', stripeReportHref(lk));
-          ctaPriEl.textContent = 'Get access — $27';
+        ctaPriEl.textContent = 'Secure early access — $27';
         }
       }
       var ctaPricingLegacy = document.getElementById('results-cta-pricing');
       if (ctaPricingLegacy) {
         ctaPricingLegacy.hidden = isFullReportUnlocked();
         ctaPricingLegacy.style.display = isFullReportUnlocked() ? 'none' : 'block';
+      }
+      if (ctaClarityLegacy) {
+        ctaClarityLegacy.hidden = isFullReportUnlocked();
+        ctaClarityLegacy.style.display = isFullReportUnlocked() ? 'none' : 'block';
       }
       if (ctaSecEl) {
         ctaSecEl.setAttribute('href', '/snapshot');

@@ -44,7 +44,7 @@ Use this as a **PR-sized** gate before calling the site “production-clean.” 
 
 - [ ] **Snapshot pricing** — Remove or rewrite builder-facing line (“Buttons should match your live Stripe links”) once live links exist; replace with customer-facing next-step / security copy if needed.
 - [ ] **Responsive QA** — ~375px + desktop: Snapshot CTAs, Access apply, thank-you (all types), consent on **home + one deep page**, results Full Unlock path.
-- [ ] **Results CTA** — `results.html` primary CTA uses `href="#"` + JS; confirm acceptable or add noscript / static fallback for `Get Full Unlock — $27`.
+- [ ] **Results CTA** — `results.html` primary CTA uses `href="#"` + JS; confirm acceptable or add noscript / static fallback for `Secure early access — $27`.
 
 ---
 
