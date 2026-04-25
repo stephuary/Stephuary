@@ -131,7 +131,7 @@
     .page {
       position: relative; z-index: var(--z-content);
       min-height: 100vh;
-      padding: 24px 0 64px;
+      padding: 24px 0 max(6rem, 100px);
       display: flex; flex-direction: column; align-items: center;
     }
 
@@ -179,9 +179,66 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 14px;
+      gap: 10px;
       margin-bottom: 40px;
       width: 100%;
+    }
+    .snapshot-hero__price-line {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(200, 169, 110, 0.92);
+      text-align: center;
+      margin: 0 0 4px;
+      max-width: 36rem;
+    }
+    .snapshot-hero__price-line strong {
+      color: var(--text-primary);
+      font-weight: 600;
+    }
+    .snapshot-hero__pay3 {
+      font-size: 11px;
+      padding: 12px 22px;
+    }
+    .snapshot-sticky-cta {
+      position: fixed;
+      bottom: max(1rem, env(safe-area-inset-bottom, 0px));
+      right: max(0.75rem, env(safe-area-inset-right, 0px));
+      z-index: 200;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 8px;
+      max-width: min(20rem, calc(100vw - 1.5rem));
+    }
+    .snapshot-sticky-cta__primary {
+      text-align: center;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
+    }
+    .snapshot-sticky-cta__secondary {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      text-decoration: none;
+      color: var(--text-primary);
+      background: rgba(13, 13, 34, 0.92);
+      border: 1px solid rgba(139, 47, 201, 0.45);
+      border-radius: 2px;
+      padding: 10px 16px;
+      line-height: 1.2;
+    }
+    .snapshot-sticky-cta__secondary:hover {
+      border-color: rgba(200, 169, 110, 0.55);
+      color: #fff;
+    }
+    .snapshot-pricing-block .section-heading {
+      margin-bottom: 14px;
+    }
+    .snapshot-pricing-block .section-intro {
+      margin-bottom: 18px;
     }
     .hero-cta-alt {
       font-family: var(--font-mono);
@@ -916,8 +973,10 @@
       <div class="page-label reveal">Precision pass</div>
       <h1 class="page-headline snapshot-hero__promise reveal reveal-delay-1">Your next $10K+ move</h1>
       <p class="page-sub snapshot-hero__lede reveal reveal-delay-1" style="max-width: 34rem; margin-bottom: 8px">One action with the clearest near-term revenue lift. Written so you can run it this week.</p>
+      <p class="snapshot-hero__price-line reveal reveal-delay-1"><strong>$950</strong> pay in full · or <strong>3 &times; $350</strong> (installment plan)</p>
       <div class="hero-cta-wrap reveal reveal-delay-2">
-        <a class="btn btn--secondary" href="#snapshot-pricing">Pay $950 once or 3 &times; $350</a>
+        <a class="btn btn--primary" href="https://buy.stripe.com/9B63cv4gUcKO0ja29J33W00">Get the Snapshot — $950</a>
+        <a class="btn btn--secondary snapshot-hero__pay3" href="https://buy.stripe.com/4gM5kDfZCh140ja8y733W01">Pay in 3 &mdash; $350</a>
   </div>
       </div><!-- /.snapshot-hero-group -->
 
@@ -1083,21 +1142,14 @@
         </div>
       </section>
 
-      <!-- Pricing -->
-      <section class="section-block reveal reveal-delay-2 collapsible-section" id="snapshot-pricing" data-collapsible="pricing">
-        <div class="collapsible-header">
-          <div class="collapsible-header__text">
-            <h2 class="section-heading">Pricing &amp; checkout</h2>
-          </div>
-          <button type="button" class="collapsible-toggle" aria-expanded="false" aria-controls="pricing-body">Expand</button>
+      <!-- Pricing — always visible (not collapsible) -->
+      <section class="section-block reveal reveal-delay-2 snapshot-pricing-block" id="snapshot-pricing" aria-labelledby="snapshot-pricing-h">
+        <h2 class="section-heading" id="snapshot-pricing-h">Pricing &amp; checkout</h2>
+        <p class="section-intro">Choose your entry path. Both options include the full Snapshot delivery ($1,050 total for the installment plan).</p>
+        <div class="snapshot-pay">
+            <a class="btn btn--primary" href="https://buy.stripe.com/9B63cv4gUcKO0ja29J33W00">Get the Snapshot — $950</a>
+            <a class="btn btn--primary" href="https://buy.stripe.com/4gM5kDfZCh140ja8y733W01">Pay in 3 &mdash; $350</a>
         </div>
-        <div class="collapsible-body" id="pricing-body" hidden>
-          <p class="section-intro">Choose your entry path. Both options include the full Snapshot delivery ($1,050 total for the installment plan).</p>
-          <div class="snapshot-pay">
-            <a class="btn btn--primary" href="https://buy.stripe.com/9B63cv4gUcKO0ja29J33W00">Pay $950 once</a>
-            <a class="btn btn--primary" href="https://buy.stripe.com/4gM5kDfZCh140ja8y733W01">3 &times; $350</a>
-          </div>
-    </div>
   </section>
 
       <!-- Hybrid Bridge Offer -->
@@ -1233,6 +1285,11 @@
       </div>
     </div>
   </footer>
+
+  <aside class="snapshot-sticky-cta" aria-label="Snapshot checkout shortcuts">
+    <a class="btn btn--primary snapshot-sticky-cta__primary" href="https://buy.stripe.com/9B63cv4gUcKO0ja29J33W00">Get the Snapshot — $950</a>
+    <a class="snapshot-sticky-cta__secondary" href="https://buy.stripe.com/4gM5kDfZCh140ja8y733W01">Pay in 3 — $350</a>
+  </aside>
 
 <script>
 (function () {
