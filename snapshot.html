@@ -98,10 +98,59 @@
     }
     /* Mobile conversion blocks: off by default (desktop uses original hero copy + flow) */
     body.snapshot-page .page-sub--mobile-snap,
-    body.snapshot-page .snapshot-mobile-atf-bullets,
-    body.snapshot-page .snapshot-mobile-why-line,
-    body.snapshot-page .snapshot-mobile-cta-repeat {
+    body.snapshot-page .snapshot-mobile-atf-bullets {
       display: none;
+    }
+    .snapshot-hero__price-line {
+      font-family: var(--font-sans);
+      font-size: 1rem;
+      line-height: 1.4;
+      text-align: center;
+      color: var(--text-label, #E0CEB4);
+      margin: 0 auto 0.35rem;
+      max-width: 22rem;
+      letter-spacing: 0.03em;
+    }
+    .snapshot-hero__price-line .snapshot-hero__price-amount {
+      color: var(--text-primary);
+      font-weight: 600;
+    }
+    .snapshot-hero__pay-hint,
+    p.snapshot-pricing__pay-hint {
+      font-size: 0.75rem;
+      line-height: 1.4;
+      text-align: center;
+      color: var(--text-muted, #8B8BA5);
+      margin: 0 auto 0.9rem;
+      max-width: 22rem;
+    }
+    .snapshot-pricing__lead-price {
+      font-family: var(--font-sans);
+      font-size: 1.05rem;
+      text-align: center;
+      color: var(--text-label, #E0CEB4);
+      margin: 0 auto 0.5rem;
+      letter-spacing: 0.04em;
+    }
+    .snapshot-pricing__lead-price strong {
+      color: var(--text-primary);
+      font-weight: 600;
+    }
+    a.snapshot-soft-cta {
+      display: block;
+      text-align: center;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--snap-link, #C9A24A);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      padding: 6px 8px 8px;
+      margin: 0 auto;
+      max-width: 16rem;
+    }
+    a.snapshot-soft-cta:hover,
+    a.snapshot-soft-cta:focus-visible {
+      color: #E4C26A;
     }
 
     /* ── Reset ── */
@@ -1267,6 +1316,9 @@
     .snapshot-cta-mid .btn--secondary {
       order: 1;
     }
+    .snapshot-cta-mid--final a.snapshot-soft-cta {
+      order: 1;
+    }
     .snapshot-cta-mid .btn.btn--primary,
     a.btn.btn--primary.snapshot-mid-pri {
       font-size: 14px;
@@ -1662,21 +1714,7 @@
         color: rgba(200, 169, 110, 0.9);
         font-weight: 700;
       }
-      body.snapshot-page .snapshot-mobile-why-line {
-        display: block;
-        text-align: center;
-        font-size: 0.75rem;
-        line-height: 1.35;
-        color: rgba(220, 220, 235, 0.82);
-        max-width: 20rem;
-        margin: 0.35rem auto 0.75rem;
-      }
-      body.snapshot-page .snapshot-mobile-why-line__price {
-        color: #f0e6d2;
-        font-weight: 600;
-      }
-      /* First CTA: primary only (Pay in 3 + line moved to mobile repeat + sticky) */
-      body.snapshot-page .snapshot-hero-cta--atf .snapshot-hero__pay3,
+      /* Hero: single primary + optional support line (no price in button) */
       body.snapshot-page .snapshot-hero-cta--atf .hero-cta-alt {
         display: none;
       }
@@ -1692,18 +1730,7 @@
         margin-bottom: 0.45rem;
         line-height: 1.12;
       }
-      /* Mobile CTA block after “What you walk away with” */
-      body.snapshot-page .snapshot-mobile-cta-repeat {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        width: 100%;
-        max-width: 100%;
-        margin: 0 auto 0.25rem;
-        padding-bottom: 0.5rem;
-        gap: 8px;
-      }
-      /* Section order: ATF ? walkaway ? repeat CTA ? “how / analysis” (deferred) */
+      /* Section order: ATF ? walkaway ? “how / analysis” (deferred) */
       body.snapshot-page .snapshot-container {
         display: flex;
         flex-direction: column;
@@ -1712,19 +1739,18 @@
       }
       body.snapshot-page .snapshot-hero-group { order: 1; }
       body.snapshot-page #snapshot-walkaway { order: 2; }
-      body.snapshot-page .snapshot-mobile-cta-repeat { order: 3; }
-      body.snapshot-page #snapshot-what-i-do { order: 4; }
-      body.snapshot-page #snapshot-what-changes { order: 5; }
-      body.snapshot-page #snapshot-walkaway-analysis { order: 6; }
-      body.snapshot-page #snapshot-next-action { order: 7; }
-      body.snapshot-page #snapshot-fit-check { order: 8; }
-      body.snapshot-page #immediate-value { order: 9; }
-      body.snapshot-page .snapshot-ink--guarantee { order: 10; }
-      body.snapshot-page #snapshot-pricing { order: 11; }
-      body.snapshot-page .bridge-upgrade { order: 12; }
-      body.snapshot-page .secure-notice { order: 13; }
-      body.snapshot-page #snapshot-queue { order: 14; }
-      body.snapshot-page #snapshot-faq { order: 15; }
+      body.snapshot-page #snapshot-what-i-do { order: 3; }
+      body.snapshot-page #snapshot-what-changes { order: 4; }
+      body.snapshot-page #snapshot-walkaway-analysis { order: 5; }
+      body.snapshot-page #snapshot-next-action { order: 6; }
+      body.snapshot-page #snapshot-fit-check { order: 7; }
+      body.snapshot-page #immediate-value { order: 8; }
+      body.snapshot-page .snapshot-ink--guarantee { order: 9; }
+      body.snapshot-page #snapshot-pricing { order: 10; }
+      body.snapshot-page .bridge-upgrade { order: 11; }
+      body.snapshot-page .secure-notice { order: 12; }
+      body.snapshot-page #snapshot-queue { order: 13; }
+      body.snapshot-page #snapshot-faq { order: 14; }
       /* ~40% lighter density: smaller prose + shorter sections */
       body.snapshot-page .snapshot-ink .snapshot-glance__h,
       body.snapshot-page .snapshot-h2--plain,
@@ -1883,19 +1909,14 @@
         <li>Repositioned offer + one rewritten line</li>
         <li>45&ndash;min call to lock the first move</li>
       </ul>
-      <p class="snapshot-mobile-why-line"><span class="snapshot-mobile-why-line__price">$950</span> &mdash; done-with-you work, not a report.</p>
       <p class="snapshot-hero__delivery-guarantee snapshot-hero__delivery--desktop reveal reveal-delay-1">Delivered within 48 hours of completed intake</p>
+      <p class="snapshot-hero__price-line reveal reveal-delay-2">Snapshot <span class="snapshot-hero__price-amount">&mdash; $950</span></p>
+      <p class="snapshot-hero__pay-hint reveal reveal-delay-2">Payment plan available at checkout.</p>
       <div class="hero-cta-wrap snapshot-hero-cta--atf reveal reveal-delay-2">
-        <a class="btn btn--primary snapshot-cta-hero" href="https://buy.stripe.com/9B63cv4gUcKO0ja29J33W00">Fix this with me &mdash; $950</a>
-        <a class="btn btn--secondary snapshot-hero__pay3" href="https://buy.stripe.com/4gM5kDfZCh140ja8y733W01">Pay in 3 &mdash; $350</a>
+        <a class="btn btn--primary snapshot-cta-hero" href="https://buy.stripe.com/9B63cv4gUcKO0ja29J33W00">Fix this with me</a>
         <p class="hero-cta-alt">Not a report: live work on what makes you money.</p>
       </div>
       </div><!-- /.snapshot-hero-group -->
-
-      <div class="snapshot-mobile-cta-repeat hero-cta-wrap" role="group" aria-label="Snapshot checkout">
-        <a class="btn btn--primary snapshot-cta-hero" href="https://buy.stripe.com/9B63cv4gUcKO0ja29J33W00">Fix this with me &mdash; $950</a>
-        <a class="btn btn--secondary snapshot-hero__pay3" href="https://buy.stripe.com/4gM5kDfZCh140ja8y733W01">Pay in 3 &mdash; $350</a>
-      </div>
 
       <section class="snapshot-glance snapshot-ink reveal snap-sep" id="snapshot-what-i-do" aria-labelledby="snapshot-whatido-h">
         <h2 class="snapshot-glance__h" id="snapshot-whatido-h">What I do</h2>
@@ -1948,7 +1969,7 @@
           <li>want ongoing support</li>
           <li>want general advice</li>
         </ul>
-        <p class="snapshot-fit-check__outro">If you already know the exact one fix, <a href="/focused-fix">Focused Fix</a> may fit. If not, <a href="#snapshot-pricing">start here</a>.</p>
+        <p class="snapshot-fit-check__outro">If you already know the exact one fix, <a href="/focused-fix">Focused Fix</a> may fit. If not, <a href="#snapshot-pricing">see what&rsquo;s included and checkout</a>.</p>
       </section>
 
       <!-- Immediate Value: pre-audit signal (after deep deliverable list) -->
@@ -1977,11 +1998,12 @@
       <!-- Pricing — always visible (not collapsible) -->
       <section class="section-block reveal reveal-delay-2 snapshot-pricing-block snapshot-ink snap-sep" id="snapshot-pricing" aria-labelledby="snapshot-pricing-h">
         <h2 class="section-heading section-heading--tier2" id="snapshot-pricing-h">Pricing &amp; checkout</h2>
-        <p class="section-intro section-intro--pay-lede">Choose your entry path.</p>
+        <p class="section-intro section-intro--pay-lede">When you&rsquo;re ready, one pass. One decision.</p>
+        <p class="snapshot-pricing__lead-price" id="snapshot-price-anchor">Snapshot <strong>&mdash; $950</strong></p>
         <p class="snapshot-pricing__delivery snapshot-pricing__delivery--tight">Written work ships within 48 hours of a <em>complete</em> intake (timer starts on submit, not pay). <a href="#snapshot-queue">Queue wait</a> is on top of that.</p>
-        <div class="snapshot-pay snapshot-cta-mid" role="group" aria-label="Snapshot payment options">
-            <a class="btn btn--primary snapshot-mid-pri" href="https://buy.stripe.com/9B63cv4gUcKO0ja29J33W00">Fix this with me &mdash; $950</a>
-            <a class="btn btn--secondary" href="https://buy.stripe.com/4gM5kDfZCh140ja8y733W01">Pay in 3 &mdash; $350</a>
+        <div class="snapshot-pay snapshot-cta-mid snapshot-cta-mid--final" role="group" aria-label="Start Snapshot">
+            <a class="btn btn--primary snapshot-mid-pri" href="https://buy.stripe.com/9B63cv4gUcKO0ja29J33W00">Book the Snapshot</a>
+            <a class="snapshot-soft-cta" href="#snapshot-queue">Read the process</a>
         </div>
         <p class="hero-cta-alt">Not a report: live work on what makes you money.</p>
         <p class="snapshot-cta-promise">45-minute call included to walk the rewrite and lock what to run first.</p>
@@ -2100,9 +2122,8 @@
     </div>
   </footer>
 
-  <aside class="snapshot-sticky-cta" aria-label="Snapshot checkout shortcuts">
-    <a class="btn btn--primary snapshot-sticky-cta__primary snapshot-cta-hero" href="https://buy.stripe.com/9B63cv4gUcKO0ja29J33W00">Fix this with me &mdash; $950</a>
-    <a class="snapshot-sticky-cta__secondary" href="https://buy.stripe.com/4gM5kDfZCh140ja8y733W01">Pay in 3 — $350</a>
+  <aside class="snapshot-sticky-cta" aria-label="Start Snapshot">
+    <a class="btn btn--primary snapshot-sticky-cta__primary snapshot-cta-hero" href="https://buy.stripe.com/9B63cv4gUcKO0ja29J33W00">Start the Snapshot</a>
   </aside>
 
 <script>
