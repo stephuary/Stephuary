@@ -1730,7 +1730,6 @@
 
     /* ── Mobile ── */
     @media (max-width: 768px) {
-      nav { padding: 0 20px; height: 52px; }
       .page { padding: 80px 0 52px; }
       .container { padding: 0 20px; }
       .payment-grid {
@@ -1841,10 +1840,11 @@
       }
       body.snapshot-page .snapshot-hero-group {
         margin-bottom: 0.5rem;
+        box-sizing: border-box;
       }
       body.snapshot-page .snapshot-hero__promise {
-        font-size: clamp(1.65rem, 5.2vw, 2.1rem) !important;
-        margin-bottom: 0.45rem;
+        font-size: clamp(1.52rem, 4.8vw, 1.95rem) !important;
+        margin-bottom: 0.4rem;
         line-height: 1.12;
       }
       /* Section order: ATF ? walkaway ? “how / analysis” (deferred) */
@@ -1955,10 +1955,6 @@
         margin: 0 0 0.4rem;
         padding-left: 1.1rem;
       }
-      /* Slightly less top air so primary CTA lands within ~1–1.5 scrolls */
-      body.snapshot-page .page {
-        padding: 64px 0 48px;
-      }
     }
 
     /* ── Reduced motion ── */
@@ -1992,6 +1988,48 @@
     outline-offset: 3px !important;
     box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.6) !important;
   }
+
+  /* After a11y: mobile-only compact header + hero air (Snapshot). Desktop unchanged. */
+  @media (max-width: 768px) {
+    body.snapshot-page .hero-content,
+    body.snapshot-page .snapshot-hero-group {
+      box-sizing: border-box;
+    }
+    body.snapshot-page .snapshot-hero-group.hero-content {
+      padding-top: clamp(28px, 7vw, 48px);
+    }
+    body.snapshot-page nav.site-nav {
+      height: auto;
+      min-height: 0;
+      padding: 7px 14px;
+      gap: 4px 8px;
+    }
+    body.snapshot-page .site-nav__wordmark {
+      min-height: 40px;
+      padding: 2px 2px;
+      font-size: clamp(17px, 4.1vw, 20px);
+      gap: 8px;
+    }
+    body.snapshot-page .site-nav__mark {
+      width: 24px;
+      height: 24px;
+    }
+    body.snapshot-page .site-nav__list {
+      row-gap: 2px;
+      column-gap: 10px;
+    }
+    body.snapshot-page .site-nav__link {
+      min-height: 40px;
+      min-width: 40px;
+      padding: 6px 10px;
+      font-size: 14px;
+      letter-spacing: 0.07em;
+    }
+    /* Balanced: hero padding in group + calmer .page top so CTA stays in view */
+    body.snapshot-page .page {
+      padding: 50px 0 48px;
+    }
+  }
 </style>
 <link rel="manifest" href="/site.webmanifest">
 </head>
@@ -2016,7 +2054,7 @@
     <div class="container snapshot-container">
 
       <!-- Hero -->
-      <div class="snapshot-hero-group" data-sh-hero-intro>
+      <div class="snapshot-hero-group hero-content" data-sh-hero-intro>
       <div class="page-label reveal"><span class="page-label__text">Precision pass</span></div>
       <h1 class="page-headline snapshot-hero__promise reveal reveal-delay-1">I rebuild the part of your business that&rsquo;s blocking clients</h1>
       <p class="page-sub snapshot-hero__lede snapshot-hero__lede--desktop reveal reveal-delay-1">You send your site, offer, and links. I audit it, reposition it, and rewrite the piece that actually drives revenue.</p>
