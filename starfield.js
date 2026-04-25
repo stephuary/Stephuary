@@ -19,6 +19,15 @@
       return;
     }
 
+    var isSnapshot = false;
+    try {
+      isSnapshot = document.body && document.body.classList.contains('snapshot-page');
+    } catch (e) {}
+
+    /** Snapshot: ~30% lighter field (copy zones use slab underlay; gaps stay bright). */
+    var opacityMult = isSnapshot ? 0.7 : 1;
+    var particleCount = isSnapshot ? 120 : 180;
+
     var ctx = canvas.getContext('2d');
     if (!ctx) return;
 
@@ -52,7 +61,7 @@
     }
 
     function initParticles() {
-      particles = Array.from({ length: 180 }, createParticle);
+      particles = Array.from({ length: particleCount }, createParticle);
     }
 
     function draw() {
@@ -61,14 +70,15 @@
 
       particles.forEach(function (p) {
         var pulse = Math.sin(now + p.offset) * 0.3;
+        var op = Math.max(0, p.opacity + pulse) * opacityMult;
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-        ctx.fillStyle = p.color + Math.max(0, p.opacity + pulse) + ')';
+        ctx.fillStyle = p.color + op + ')';
         ctx.fill();
         if (p.opacity > 0.6) {
           ctx.beginPath();
           ctx.arc(p.x, p.y, p.r * 2.5, 0, Math.PI * 2);
-          ctx.fillStyle = p.color + '0.06)';
+          ctx.fillStyle = p.color + (isSnapshot ? 0.04 : 0.06) + ')';
           ctx.fill();
         }
 
