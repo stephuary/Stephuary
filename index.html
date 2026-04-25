@@ -689,6 +689,132 @@
       }
     }
 
+    /* Environment strip (hero) — local imagery, no social embeds */
+    body[data-sh-env="home"] .home-env-strip {
+      position: relative;
+      z-index: var(--z-content);
+      padding: 10px 0 4px;
+      border-top: 1px solid rgba(139, 47, 201, 0.1);
+      background: var(--hr-bg-flat, transparent);
+      opacity: 0;
+      animation: shHomeEnvIn 0.85s ease 0.12s forwards;
+    }
+    @keyframes shHomeEnvIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      body[data-sh-env="home"] .home-env-strip {
+        animation: none;
+        opacity: 1;
+      }
+    }
+    body[data-sh-env="home"] .home-env-strip__label {
+      font-family: var(--font-mono, "JetBrains Mono", monospace);
+      font-size: 10px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      font-weight: 500;
+      color: rgba(160, 162, 188, 0.68);
+      margin: 0 0 10px;
+    }
+    body[data-sh-env="home"] .home-env-strip__scroll {
+      overflow-x: auto;
+      overflow-y: hidden;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+      -webkit-overflow-scrolling: touch;
+      padding: 0 0 6px;
+    }
+    body[data-sh-env="home"] .home-env-strip__scroll::-webkit-scrollbar {
+      display: none;
+      width: 0;
+      height: 0;
+    }
+    @media (min-width: 1008px) {
+      body[data-sh-env="home"] .home-env-strip__scroll {
+        padding-left: calc((100vw - 960px) / 2);
+        padding-right: calc((100vw - 960px) / 2);
+      }
+    }
+    @media (max-width: 1007px) {
+      body[data-sh-env="home"] .home-env-strip__scroll {
+        padding-left: 20px;
+        padding-right: 20px;
+      }
+    }
+    body[data-sh-env="home"] .home-env-strip__inner {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: nowrap;
+      gap: 16px;
+      width: max-content;
+      min-height: 1px;
+    }
+    @media (min-width: 769px) {
+      body[data-sh-env="home"] .home-env-strip__inner {
+        gap: 24px;
+      }
+    }
+    body[data-sh-env="home"] .home-env-strip__fig {
+      flex: 0 0 auto;
+      position: relative;
+      margin: 0;
+      height: 180px;
+      width: auto;
+      aspect-ratio: 4 / 5;
+      border-radius: 14px;
+      overflow: hidden;
+      transform: scale(1);
+      transform-origin: center;
+      transition: transform 0.4s ease;
+    }
+    @media (min-width: 769px) {
+      body[data-sh-env="home"] .home-env-strip__fig {
+        height: 240px;
+        border-radius: 16px;
+      }
+    }
+    @media (min-width: 1200px) {
+      body[data-sh-env="home"] .home-env-strip__fig {
+        height: 256px;
+      }
+    }
+    body[data-sh-env="home"] .home-env-strip__fig:hover {
+      transform: scale(1.02);
+      z-index: 1;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      body[data-sh-env="home"] .home-env-strip__fig,
+      body[data-sh-env="home"] .home-env-strip__fig:hover {
+        transform: none;
+        transition: none;
+      }
+    }
+    body[data-sh-env="home"] .home-env-strip__img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    body[data-sh-env="home"] .home-env-strip__context-wrap {
+      margin-top: 4px;
+    }
+    body[data-sh-env="home"] a.home-env-strip__context {
+      display: inline-block;
+      font-family: var(--font-sans);
+      font-size: 12.5px;
+      font-weight: 400;
+      letter-spacing: 0.01em;
+      text-decoration: none;
+      text-underline-offset: 3px;
+      color: rgba(175, 176, 200, 0.72);
+    }
+    body[data-sh-env="home"] a.home-env-strip__context:hover,
+    body[data-sh-env="home"] a.home-env-strip__context:focus-visible {
+      text-decoration: underline;
+      color: rgba(200, 169, 110, 0.88);
+    }
     #hero.hero .btn-primary.home-diag-cta,
     #hero.hero .btn.btn--primary.home-diag-cta {
       display: inline-flex;
@@ -1089,6 +1215,16 @@
       letter-spacing: 0.005em;
       color: rgba(244, 244, 252, 0.94);
       line-height: 1.45;
+    }
+    .home-founder__context {
+      margin: 8px 0 0;
+      max-width: 48ch;
+      font-family: var(--font-sans);
+      font-size: 13px;
+      font-weight: 400;
+      letter-spacing: 0.01em;
+      line-height: 1.45;
+      color: rgba(180, 182, 200, 0.72);
     }
     .home-founder__sig {
       margin: 4px 0 0;
@@ -5001,6 +5137,18 @@
           </div>
         </div>
       </section>
+
+      <section class="home-env-strip" id="home-env-strip" aria-labelledby="home-env-strip-label">
+        <div class="container">
+          <p class="home-env-strip__label" id="home-env-strip-label">Selected environments</p>
+        </div>
+        <div class="home-env-strip__scroll" id="home-env-scroll" tabindex="0" role="region" aria-label="Curated environment imagery">
+          <div class="home-env-strip__inner" id="home-env-inner"></div>
+        </div>
+        <div class="container home-env-strip__context-wrap">
+          <a class="home-env-strip__context" href="https://www.instagram.com/grownspaghetti" target="_blank" rel="noopener noreferrer">See environments</a>
+        </div>
+      </section>
       <hr class="hr-divider" aria-hidden="true">
 
       <!-- WHAT YOU&rsquo;LL GET — compact value stack -->
@@ -5490,6 +5638,7 @@
             <figcaption class="home-founder__caption">
               <p class="home-founder__cred">Twenty years reading how revenue stalls in real businesses&mdash;named, ordered, and measurable here.</p>
               <p class="home-founder__line">Scattered ideas into structured revenue paths.</p>
+              <p class="home-founder__context">Work shaped across multiple environments and operating contexts.</p>
               <p class="home-founder__sig">STEPHANIE, FOUNDER</p>
               <a class="home-founder__substack" href="https://stephuary.substack.com" target="_blank" rel="noopener noreferrer" aria-label="Read Stephanie on Substack">
                 <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" width="13" height="13">
@@ -6016,6 +6165,94 @@
     })();
   </script>
   <script src="/js/stephuary-consent.js" defer></script>
+  <script>
+    (function () {
+      var inner = document.getElementById('home-env-inner');
+      var sc = document.getElementById('home-env-scroll');
+      if (!inner || !sc) return;
+
+      var N = 16;
+      var base = '/public/environments/img';
+      function addOne(i, dup) {
+        var fig = document.createElement('figure');
+        fig.className = 'home-env-strip__fig';
+        if (dup) fig.setAttribute('aria-hidden', 'true');
+        var im = document.createElement('img');
+        im.className = 'home-env-strip__img';
+        im.src = base + i + '.jpg';
+        im.alt = '';
+        im.width = 800;
+        im.height = 1000;
+        im.decoding = 'async';
+        im.loading = r === 1 || j > 3 ? 'lazy' : 'eager';
+        fig.appendChild(im);
+        inner.appendChild(fig);
+      }
+      var r;
+      for (r = 0; r < 2; r++) {
+        var j;
+        for (j = 1; j <= N; j++) {
+          addOne(j, r === 1);
+        }
+      }
+
+      var reduced =
+        typeof window.matchMedia === 'function' &&
+        window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (reduced) return;
+
+      var paused = false;
+      var setW = 0;
+      var speed = 0.18;
+      var resumeTimer = null;
+
+      function measure() {
+        setW = inner.scrollWidth / 2;
+      }
+      measure();
+      if (typeof ResizeObserver === 'function') {
+        new ResizeObserver(function () {
+          measure();
+        }).observe(inner);
+      } else {
+        window.addEventListener('load', measure, { once: true });
+      }
+      window.addEventListener('resize', function () {
+        measure();
+      }, { passive: true });
+
+      sc.addEventListener('mouseenter', function () {
+        paused = true;
+      });
+      sc.addEventListener('mouseleave', function () {
+        paused = false;
+      });
+      function hold(ms) {
+        paused = true;
+        if (resumeTimer) clearTimeout(resumeTimer);
+        resumeTimer = setTimeout(function () {
+          paused = false;
+        }, ms);
+      }
+      sc.addEventListener('wheel', function () {
+        hold(3200);
+      }, { passive: true });
+      sc.addEventListener('touchstart', function () {
+        hold(4500);
+      }, { passive: true });
+
+      function tick() {
+        if (!document.hidden && !paused && setW > 0) {
+          sc.scrollLeft += speed;
+          if (sc.scrollLeft >= setW - 0.5) {
+            sc.scrollLeft -= setW;
+          }
+        }
+        window.requestAnimationFrame(tick);
+      }
+      window.requestAnimationFrame(tick);
+    })();
+  </script>
 
 </body>
 </html>
