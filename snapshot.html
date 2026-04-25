@@ -115,20 +115,15 @@
       color: var(--text-primary);
       font-weight: 600;
     }
-    .snapshot-hero__pay-hint,
     p.snapshot-pricing__pay-hint {
       font-size: 0.75rem;
       line-height: 1.45;
       text-align: center;
       color: var(--text-muted, #8B8BA5);
-      margin: 0 auto 0.9rem;
+      margin: 0.5rem auto 0;
       max-width: 22rem;
     }
-    .snapshot-hero-cta--atf .snapshot-hero__pay-hint {
-      margin: 0.4rem auto 0;
-      order: 1;
-    }
-    .snapshot-hero-cta--atf .btn.snapshot-cta-hero {
+    .snapshot-hero-cta--atf .btn.snapshot-cta--primary {
       order: 0;
     }
     .snapshot-hero-cta--atf {
@@ -137,7 +132,7 @@
       align-items: center;
     }
     .snapshot-hero-cta--atf .hero-cta-alt {
-      order: 2;
+      order: 1;
     }
     .snapshot-pricing__lead-price {
       font-family: var(--font-sans);
@@ -247,6 +242,10 @@
       padding: clamp(1.25rem, 3vw, 1.75rem) 0 max(4.5rem, 5.5rem);
       display: flex; flex-direction: column; align-items: center;
     }
+    /* Space for fixed sticky CTA (Snapshot) without covering links */
+    body.snapshot-page .page {
+      padding-bottom: max(5.5rem, calc(2.75rem + 52px + env(safe-area-inset-bottom, 0px)));
+    }
 
     /* ── Header ── */
     .page-label {
@@ -343,10 +342,13 @@
       align-items: flex-end;
       gap: 8px;
       max-width: min(20rem, calc(100vw - 1.5rem));
+      transition: opacity 0.22s ease, transform 0.22s ease, visibility 0.22s ease;
     }
-    .snapshot-sticky-cta__primary {
-      text-align: center;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
+    .snapshot-sticky-cta--concealed {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transform: translateY(6px);
     }
     .snapshot-sticky-cta__secondary {
       font-family: var(--font-mono);
@@ -1296,58 +1298,100 @@
       line-height: 1.6;
     }
 
-    /* ── Conversion hierarchy: hero + sticky primary / mid-page quieter ── */
-    .snapshot-cta-hero.btn.btn--primary {
+    /* ── Conversion hierarchy: two primary (hero + final), mid + sticky quieter ── */
+    body.snapshot-page a.btn.snapshot-cta--primary {
+      width: 100%;
+      max-width: 400px;
+      min-height: 56px;
+      max-height: 56px;
+      padding: 0.65rem 1.35rem;
+      font-size: 15px;
+      font-weight: 600;
+      line-height: 1.1;
       box-shadow:
         0 4px 28px rgba(0, 0, 0, 0.4),
         0 0 0 1px rgba(201, 162, 74, 0.38),
         0 0 48px rgba(201, 162, 74, 0.22) !important;
     }
-    .snapshot-cta-hero.btn.btn--primary:hover {
+    body.snapshot-page a.btn.snapshot-cta--primary:hover {
       box-shadow:
         0 6px 32px rgba(0, 0, 0, 0.45),
         0 0 0 1px rgba(216, 180, 99, 0.45),
         0 0 56px rgba(201, 162, 74, 0.28) !important;
     }
-    .snapshot-sticky-cta .snapshot-cta-hero.btn.btn--primary {
-      font-size: 15px;
-      padding-inline: 22px;
-    }
-    .snapshot-cta-mid {
+    body.snapshot-page .snapshot-cta-midrow {
       display: flex;
       flex-direction: column;
-      align-items: stretch;
-      gap: 10px;
-      max-width: 420px;
-      margin-left: auto;
-      margin-right: auto;
+      align-items: center;
+      width: 100%;
+      max-width: 24rem;
+      margin: 0.4rem auto 0;
     }
-    .snapshot-cta-mid .btn {
+    body.snapshot-page a.btn.snapshot-cta--mid {
+      width: 100%;
+      max-width: 300px;
       min-height: 44px;
-    }
-    .snapshot-cta-mid .snapshot-mid-pri {
-      order: 0;
-    }
-    .snapshot-cta-mid .btn--secondary {
-      order: 1;
-    }
-    .snapshot-cta-mid--final a.snapshot-soft-cta {
-      order: 1;
-    }
-    .snapshot-cta-mid .btn.btn--primary,
-    a.btn.btn--primary.snapshot-mid-pri {
+      max-height: 48px;
+      padding: 0.4rem 1.1rem;
       font-size: 14px;
       font-weight: 600;
-      padding: 11px 20px;
-      box-shadow: 0 2px 16px rgba(0, 0, 0, 0.28) !important;
+      line-height: 1.1;
+      box-shadow: 0 1px 9px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(201, 162, 74, 0.18) !important;
     }
-    .snapshot-cta-mid .btn.btn--primary:hover,
-    a.btn.btn--primary.snapshot-mid-pri:hover {
-      box-shadow: 0 3px 22px rgba(0, 0, 0, 0.35) !important;
+    body.snapshot-page a.btn.snapshot-cta--mid:hover {
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.26), 0 0 0 1px rgba(201, 162, 74, 0.28) !important;
     }
-    .snapshot-cta-mid .btn.btn--secondary,
-    .bridge-upgrade .btn.btn--secondary {
+    body.snapshot-page .snapshot-cta-final {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      width: 100%;
+      max-width: 28rem;
+      margin: 1.1rem auto 0;
+    }
+    body.snapshot-page .snapshot-cta-final a.btn {
+      flex: 0 0 auto;
+    }
+    body.snapshot-page .snapshot-sticky-cta a.btn.snapshot-sticky-cta__btn {
+      width: auto;
+      max-width: 300px;
+      min-height: 46px;
+      max-height: 48px;
+      padding: 0.5rem 1.2rem;
+      font-size: 14px;
+      font-weight: 600;
+      line-height: 1.1;
+      text-align: center;
+      box-shadow: 0 4px 19px rgba(0, 0, 0, 0.22), 0 0 0 1px rgba(201, 162, 74, 0.2) !important;
+    }
+    body.snapshot-page .snapshot-sticky-cta a.btn.snapshot-sticky-cta__btn:hover {
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.28), 0 0 0 1px rgba(201, 162, 74, 0.3) !important;
+    }
+    body.snapshot-page .bridge-upgrade__pay {
+      max-width: 400px;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+    }
+    body.snapshot-page .bridge-upgrade__pay a.btn.snapshot-cta--plus {
+      flex: 1 1 160px;
+      min-width: 0;
+      min-height: 0;
+      max-height: 44px;
+      padding: 0.4rem 0.9rem;
       font-size: 13px;
+      line-height: 1.1;
+      box-shadow: 0 1px 8px rgba(0, 0, 0, 0.18) !important;
+    }
+    body.snapshot-page .bridge-upgrade__pay a.btn.snapshot-cta--plus:hover {
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.24) !important;
+    }
+    body.snapshot-page .bridge-upgrade__pay a.btn.btn--secondary.snapshot-cta--plus {
+      box-shadow: 0 0 0 1px rgba(201, 162, 74, 0.35) !important;
+    }
+    body.snapshot-page .bridge-upgrade .btn.btn--secondary {
+      font-size: 12px;
       font-weight: 500;
       opacity: 0.96;
     }
@@ -1376,6 +1420,14 @@
     .snap-sep {
       margin-top: clamp(1.25rem, 3.2vw, 2.25rem) !important;
       padding-top: clamp(1.25rem, 3.2vw, 2.25rem) !important;
+    }
+
+    @media (min-width: 769px) {
+      body.snapshot-page a.btn.snapshot-cta--mid {
+        max-width: 280px;
+        min-height: 44px;
+        max-height: 44px;
+      }
     }
 
     /* “Is Snapshot for you?”: contrast + list markers + phrase emphasis */
@@ -1737,6 +1789,25 @@
         margin-bottom: 0.5rem;
         gap: 6px;
       }
+      body.snapshot-page a.btn.snapshot-cta--primary {
+        min-height: 56px;
+        max-height: 64px;
+        max-width: 420px;
+      }
+      body.snapshot-page a.btn.snapshot-cta--mid {
+        min-height: 44px;
+        max-height: 48px;
+        max-width: 360px;
+      }
+      body.snapshot-page a.btn.snapshot-sticky-cta__btn {
+        min-height: 50px;
+        max-height: 52px;
+        max-width: 340px;
+        font-size: 13.5px;
+      }
+      body.snapshot-page .bridge-upgrade__pay a.btn.snapshot-cta--plus {
+        max-height: 48px;
+      }
       body.snapshot-page .snapshot-hero-group {
         margin-bottom: 0.5rem;
       }
@@ -1927,8 +1998,7 @@
       <p class="snapshot-hero__delivery-guarantee snapshot-hero__delivery--desktop reveal reveal-delay-1">Delivered within 48 hours of completed intake</p>
       <p class="snapshot-hero__price-line reveal reveal-delay-2">Snapshot <span class="snapshot-hero__price-amount">&mdash; $950</span></p>
       <div class="hero-cta-wrap snapshot-hero-cta--atf reveal reveal-delay-2">
-        <a class="btn btn--primary snapshot-cta-hero" href="https://buy.stripe.com/9B63cv4gUcKO0ja29J33W00">Fix this with me</a>
-        <p class="snapshot-hero__pay-hint">Or <strong>3 × $350</strong> at checkout (installment).</p>
+        <a class="btn btn--primary snapshot-cta--primary" href="https://buy.stripe.com/9B63cv4gUcKO0ja29J33W00">Fix this with me</a>
         <p class="hero-cta-alt">Not a report: live work on what makes you money.</p>
       </div>
       </div><!-- /.snapshot-hero-group -->
@@ -1947,6 +2017,9 @@
           <li>Clear direction (what to change / ignore)</li>
           <li>Live call to lock first move</li>
         </ul>
+        <div class="snapshot-cta-midrow reveal">
+          <a class="btn btn--primary snapshot-cta--mid" href="#snapshot-pricing">Start the Snapshot</a>
+        </div>
       </section>
 
       <section class="snapshot-glance snapshot-ink reveal snap-sep" id="snapshot-what-changes" aria-labelledby="snapshot-what-changes-h">
@@ -1985,6 +2058,9 @@
           <li>want general advice</li>
         </ul>
         <p class="snapshot-fit-check__outro">If you already know the exact one fix, <a href="/focused-fix">Focused Fix</a> may fit. If not, <a href="#snapshot-pricing">see what&rsquo;s included and checkout</a>.</p>
+        <div class="snapshot-cta-midrow reveal">
+          <a class="btn btn--primary snapshot-cta--mid" href="#snapshot-queue">See the process</a>
+        </div>
       </section>
 
       <!-- Immediate Value: pre-audit signal (after deep deliverable list) -->
@@ -2016,10 +2092,11 @@
         <p class="section-intro section-intro--pay-lede">When you&rsquo;re ready, one pass. One decision.</p>
         <p class="snapshot-pricing__lead-price" id="snapshot-price-anchor">Snapshot <strong>&mdash; $950</strong></p>
         <p class="snapshot-pricing__delivery snapshot-pricing__delivery--tight">Written work ships within 48 hours of a <em>complete</em> intake (timer starts on submit, not pay). <a href="#snapshot-queue">Queue wait</a> is on top of that.</p>
-        <div class="snapshot-pay snapshot-cta-mid snapshot-cta-mid--final" role="group" aria-label="Start Snapshot">
-            <a class="btn btn--primary snapshot-mid-pri" href="https://buy.stripe.com/9B63cv4gUcKO0ja29J33W00">Book the Snapshot</a>
+        <div class="snapshot-cta-final" role="group" aria-label="Book Snapshot">
+            <a class="btn btn--primary snapshot-cta--primary" href="https://buy.stripe.com/9B63cv4gUcKO0ja29J33W00">Book the Snapshot</a>
             <a class="snapshot-soft-cta" href="#snapshot-queue">Read the process</a>
         </div>
+        <p class="snapshot-pricing__pay-hint">Payment plan available at checkout.</p>
         <p class="hero-cta-alt">Not a report: live work on what makes you money.</p>
         <p class="snapshot-cta-promise">45-minute call included to walk the rewrite and lock what to run first.</p>
   </section>
@@ -2042,9 +2119,9 @@
             <li>Priority delivery with skip-the-queue access</li>
           </ul>
           <p class="bridge-upgrade__install-note">Same Snapshot+ scope. <strong>$2,000</strong> pay in full, or <strong>three payments of $700</strong> ($2,100 total) via the installment link.</p>
-          <div class="snapshot-pay bridge-upgrade__pay snapshot-cta-mid" role="group" aria-label="Snapshot+ checkout: 2,000 once or three 700 payments">
-            <a class="btn btn--primary snapshot-mid-pri" href="https://buy.stripe.com/dRmaEXdRu126c1SaGf33W09">Checkout &middot; $2,000</a>
-            <a class="btn btn--secondary" href="https://buy.stripe.com/cNi14nfZCh14fe43dN33W0a">3 &times; $700 &middot; Snapshot+</a>
+          <div class="snapshot-pay bridge-upgrade__pay" role="group" aria-label="Snapshot+ checkout: 2,000 once or three 700 payments">
+            <a class="btn btn--primary snapshot-cta--plus" href="https://buy.stripe.com/dRmaEXdRu126c1SaGf33W09">Checkout &middot; $2,000</a>
+            <a class="btn btn--secondary snapshot-cta--plus" href="https://buy.stripe.com/cNi14nfZCh14fe43dN33W0a">3 &times; $700 &middot; Snapshot+</a>
           </div>
     </div>
   </section>
@@ -2137,8 +2214,8 @@
     </div>
   </footer>
 
-  <aside class="snapshot-sticky-cta" aria-label="Start Snapshot">
-    <a class="btn btn--primary snapshot-sticky-cta__primary snapshot-cta-hero" href="https://buy.stripe.com/9B63cv4gUcKO0ja29J33W00">Start the Snapshot</a>
+  <aside class="snapshot-sticky-cta" aria-label="Start Snapshot" data-snapshot-sticky-cta>
+    <a class="btn btn--primary snapshot-sticky-cta__btn" href="https://buy.stripe.com/9B63cv4gUcKO0ja29J33W00">Start the Snapshot</a>
   </aside>
 
 <script>
@@ -2269,6 +2346,22 @@
 
       initCollapsibles();
       initStarfield();
+
+      var finalCheckout = document.getElementById('snapshot-pricing');
+      var stickyCta = document.querySelector('[data-snapshot-sticky-cta]');
+      if (finalCheckout && stickyCta) {
+        var stickyIo = new IntersectionObserver(
+          function (entries) {
+            entries.forEach(function (entry) {
+              var hide = entry.isIntersecting;
+              stickyCta.classList.toggle('snapshot-sticky-cta--concealed', hide);
+              stickyCta.setAttribute('aria-hidden', hide ? 'true' : 'false');
+            });
+          },
+          { root: null, rootMargin: '0px 0px -10% 0px', threshold: 0.12 }
+        );
+        stickyIo.observe(finalCheckout);
+      }
 
       var observer = new IntersectionObserver(function (entries) {
         entries.forEach(function (e) {
