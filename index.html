@@ -2211,14 +2211,15 @@
       /* Nav (~60px) + prior offset + 60–80px additional air below navbar */
       padding-top: calc(60px + 12px + 70px) !important;
       min-height: min(66svh, 540px) !important;
-      padding-bottom: 40px !important;
+      /* Tighter handoff to #what-youll-get (pair with that section’s padding) */
+      padding-bottom: 24px !important;
       /* Allow primary CTA under-glow to extend past the hero box */
       overflow: visible !important;
     }
     @media (max-width: 768px) {
       body[data-sh-env="home"] #hero.hero {
         padding-top: calc(64px + 12px + 36px) !important;
-        padding-bottom: 28px !important;
+        padding-bottom: 20px !important;
       }
     }
 
@@ -3532,6 +3533,10 @@
     /* Fits + founder blocks readability on flat dark. */
     body[data-sh-env="home"] #fits,
     body[data-sh-env="home"] #what-youll-get { background: var(--hr-bg-flat) !important; }
+    /* Softer hairline under hero: reads as a fade, not a hard edge */
+    body[data-sh-env="home"] #main > #hero + .hr-divider.is-in {
+      opacity: 0.2 !important;
+    }
     body[data-sh-env="home"] #main > section#fits.home-problem-checks {
       padding-top: clamp(52px, 5.5vw, 88px) !important;
       padding-bottom: clamp(52px, 5.5vw, 88px) !important;
@@ -3539,12 +3544,69 @@
     body[data-sh-env="home"] #fits.home-problem-checks .home-section-kicker {
       margin-bottom: 10px !important;
     }
+    /* Post-hero fold: much tighter to hero; gradient bridge in #what-youll-get rules */
     body[data-sh-env="home"] #main > section.home-fold--post-hero {
-      padding-top: clamp(56px, 7.5vw, 88px) !important;
-      padding-bottom: clamp(56px, 7.5vw, 88px) !important;
+      padding-top: clamp(20px, 2.6vw, 36px) !important;
+      padding-bottom: clamp(48px, 5.5vw, 80px) !important;
+    }
+    body[data-sh-env="home"] #what-youll-get {
+      position: relative;
+      z-index: var(--z-content);
+    }
+    /* Atmospheric blend from void → flat section (no hard cutoff) */
+    body[data-sh-env="home"] #what-youll-get::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 0;
+      height: min(18vh, 120px);
+      background: linear-gradient(
+        180deg,
+        rgba(5, 5, 15, 0) 0%,
+        rgba(5, 5, 15, 0.35) 18%,
+        rgba(8, 8, 15, 0.72) 55%,
+        var(--hr-bg-flat) 100%
+      );
+      pointer-events: none;
+      z-index: 0;
+    }
+    body[data-sh-env="home"] #what-youll-get > .container {
+      position: relative;
+      z-index: 1;
+    }
+    /* Lighter glass than “If this sounds like you” card: continuous with hero */
+    body[data-sh-env="home"] #what-youll-get .home-fold__tight.home-whatget-panel {
+      max-width: min(38rem, calc(100% - 0px));
+      margin-left: auto;
+      margin-right: auto;
+      padding: clamp(1.1rem, 2.4vw, 1.5rem) clamp(1.15rem, 3.2vw, 1.65rem);
+      border-radius: 14px;
+      background: rgba(10, 10, 26, 0.42);
+      border: 1px solid rgba(200, 169, 110, 0.14);
+      box-shadow:
+        0 0 0 1px rgba(255, 255, 255, 0.04) inset,
+        0 0 48px -28px rgba(200, 169, 110, 0.12),
+        0 12px 40px -24px rgba(0, 0, 0, 0.45);
+    }
+    /* Slightly larger / brighter kicker + list in this block only (copy unchanged) */
+    body[data-sh-env="home"] #what-youll-get .home-section-kicker#home-whatget-kicker {
+      font-size: 11.5px !important;
+      margin-bottom: 12px !important;
+      color: rgba(220, 195, 140, 0.98) !important;
     }
     body[data-sh-env="home"] #what-youll-get .home-whatget-list {
-      margin-top: 14px !important;
+      margin-top: 8px !important;
+    }
+    body[data-sh-env="home"] #what-youll-get .home-whatget-list .home-line-reveal {
+      font-size: 16px !important;
+      line-height: 1.48 !important;
+      letter-spacing: 0.012em;
+      color: rgba(250, 248, 255, 0.99) !important;
+      margin: 0 0 0.4rem;
+    }
+    body[data-sh-env="home"] #what-youll-get .home-whatget-list .home-line-reveal::before {
+      color: rgba(215, 185, 120, 0.92);
     }
     body[data-sh-env="home"] .home-founder { background: var(--hr-bg-flat) !important; }
 
@@ -4692,7 +4754,7 @@
         id="what-youll-get"
         aria-labelledby="home-whatget-kicker"
       >
-        <div class="container home-fold__tight">
+        <div class="container home-fold__tight home-whatget-panel">
           <p class="home-section-kicker" id="home-whatget-kicker">WHAT YOU&rsquo;LL GET</p>
           <ul class="home-whatget-list">
             <li class="home-line-reveal" style="--n:0">The exact problem</li>
