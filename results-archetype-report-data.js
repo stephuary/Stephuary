@@ -5,7 +5,7 @@
 (function (global) {
   var STRIPE_REPORT_27_BY_ARCH = {
     'ceiling-builder': 'https://buy.stripe.com/cNi6oHfZCfX0d5WbKj33W02',
-    commodity: 'https://buy.stripe.com/cNi14nfZCh14fe43dN33W0a',
+    commodity: 'https://buy.stripe.com/00wcN500E5imd5WeWv33W03',
     'wrong-room': 'https://buy.stripe.com/dRm6oH3cQ7quc1S8y733W04',
     untranslated: 'https://buy.stripe.com/00w7sLbJmbGKaXO15F33W05',
     underpriced: 'https://buy.stripe.com/cNifZh5kY26a6Hy4hR33W06',
