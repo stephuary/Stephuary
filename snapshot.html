@@ -390,6 +390,15 @@
     .queue-wait strong {
       color: var(--text-secondary);
     }
+    /* Queue bar when nested under #snapshot-queue (after purchase context) */
+    .process-section .queue-status {
+      margin: 0 auto 1.5rem;
+      max-width: 100%;
+    }
+    .process-section > .section-heading {
+      text-align: center;
+      width: 100%;
+    }
     .snapshot-glance {
       width: 100%;
       max-width: 40rem;
@@ -474,12 +483,6 @@
     }
     .snapshot-glance__fit strong {
       color: var(--text-primary);
-    }
-    .snapshot-glance__micro {
-      margin: 0;
-      font-size: 0.75rem;
-      line-height: 1.45;
-      color: var(--text-muted);
     }
     .snapshot-guarantee {
       font-size: 0.9375rem;
@@ -920,6 +923,7 @@
       line-height: 1.25;
     }
     /* One gold accent in walk-away: the H2 only. Subsection + card labels read neutral. */
+    .deliverables-block > .section-heading,
     .deliverables-block .collapsible-header .section-heading {
       color: var(--neon-gold, #c8a96e);
     }
@@ -945,7 +949,6 @@
     }
     /* Prose in ink: links (not UI buttons) */
     body.snapshot-page .snapshot-ink a:not([class*="btn"]):not([class^="btn"]),
-    body.snapshot-page .snapshot-path-hint-wrap a,
     body.snapshot-page .snapshot-pricing__delivery a {
       color: var(--snap-link);
       text-decoration: underline;
@@ -953,7 +956,6 @@
       text-decoration-color: rgba(201, 162, 74, 0.45);
     }
     body.snapshot-page .snapshot-ink a:not([class*="btn"]):not([class^="btn"]):hover,
-    body.snapshot-page .snapshot-path-hint-wrap a:hover,
     body.snapshot-page .snapshot-pricing__delivery a:hover {
       text-decoration-color: var(--snap-link);
     }
@@ -1316,34 +1318,6 @@
       padding-top: clamp(1.25rem, 3.2vw, 2.25rem) !important;
     }
 
-    /* Scannable path hint */
-    .snapshot-path-hint-wrap {
-      box-sizing: border-box;
-      max-width: 46rem;
-      margin: 0 auto var(--snap-32);
-      padding: 1.25rem var(--snap-ink-pad-x) 1.1rem;
-      text-align: center;
-    }
-    .snapshot-path-hint__line {
-      margin: 0;
-      font-size: 0.875rem;
-      line-height: 1.6;
-      color: var(--snap-tx-dim);
-    }
-    .snapshot-path-hint__line + .snapshot-path-hint__line {
-      margin-top: 0.65rem;
-    }
-    .snapshot-path-hint__line strong { color: var(--text-primary); }
-    .snapshot-path-hint__line a {
-      color: var(--snap-link);
-      text-decoration: underline;
-      text-underline-offset: 0.2em;
-      text-decoration-color: rgba(201, 162, 74, 0.4);
-    }
-    .snapshot-path-hint__line a:hover {
-      text-decoration-color: var(--snap-link);
-    }
-
     /* “Is Snapshot for you?”: contrast + list markers + phrase emphasis */
     body.snapshot-page .snapshot-fit-check.snapshot-ink {
       background: rgba(7, 7, 22, 0.88);
@@ -1697,14 +1671,6 @@
   </div>
       </div><!-- /.snapshot-hero-group -->
 
-      <!-- Queue status -->
-      <div class="queue-status reveal">
-        <span class="queue-dot"></span>
-        <span class="queue-text">Queue open</span>
-        <span class="queue-divider"></span>
-        <span class="queue-wait">Current wait: <strong>1-2 weeks</strong> from intake submission</span>
-    </div>
-
       <section class="snapshot-glance snapshot-ink reveal" id="snapshot-glance" aria-label="What you are buying">
         <h2 class="snapshot-glance__h">Exact deliverables</h2>
         <ul class="snapshot-glance__ul">
@@ -1716,7 +1682,6 @@
           <strong>For:</strong> You sell today with traffic or leads; stalls have a cash cost.<br />
           <strong>Not for:</strong> Skipping the free diagnostic, open-ended "fix everything," or building demand with no offer in market.
         </p>
-        <p class="snapshot-glance__micro">No working session before purchase. Checkout does not start the 48-hour clock—intake submission does.</p>
       </section>
 
       <section class="snapshot-fit-check snapshot-ink reveal snap-sep" id="snapshot-fit-check" aria-labelledby="snapshot-fit-h">
@@ -1731,21 +1696,74 @@
         <p class="snapshot-fit-check__outro">Not a fit if you have not run the free diagnostic, need demand built from zero with no offer in market, or want ongoing retainers.</p>
       </section>
 
-      <div class="snapshot-ink snapshot-ink--guarantee snapshot-ink--narrow snap-sep">
-      <p class="snapshot-guarantee">
-        <strong>After-delivery guarantee.</strong> If the 48-hour written breakdown doesn't name at least one change you'll ship, email me and I refund in full.
-      </p>
-      </div>
+      <!-- What you walk away knowing: always visible (not collapsed) after fit -->
+      <section class="deliverables-block snapshot-ink reveal snap-sep" id="snapshot-walkaway" aria-labelledby="snapshot-walkaway-h">
+        <h2 class="section-heading" id="snapshot-walkaway-h">What you walk away knowing in 48 hours</h2>
+        <p class="section-subhead">Deliverables you can ship from, not theory to file away.</p>
+        <p class="walkaway-sub--line" role="text">Where revenue breaks <span class="wdot" aria-hidden="true">·</span> what to fix first <span class="wdot" aria-hidden="true">·</span> what actually moves income</p>
+        <div class="audit-group">
+            <h3 class="audit-group__title">Where you're losing money</h3>
+            <div class="deliverables-grid">
+              <div class="deliverable-item">
+                <span class="deliverable-name">Clarity Score</span>
+                <p class="deliverable-desc">Cold readers bail where the story gets fuzzy or crowded.</p>
+                <p class="deliverable-ship">Ship: documented read with keep-or-change calls you can use the same week.</p>
+              </div>
+              <div class="deliverable-item">
+                <span class="deliverable-name">Structure &amp; Conversion Read</span>
+                <p class="deliverable-desc">Where trust drops between first touch and payment.</p>
+                <p class="deliverable-ship">Ship: attention-to-purchase path with the weak step marked.</p>
+              </div>
+              <div class="deliverable-item">
+                <span class="deliverable-name">Revenue Scenario Modeling</span>
+                <p class="deliverable-desc">Plain numbers showing what changes when clients, price, or close rate move.</p>
+                <p class="deliverable-ship">Ship: value framed before price, tied to the numbers in the pass.</p>
+              </div>
+            </div>
+        </div>
+        <div class="audit-group">
+            <h3 class="audit-group__title">Why it's happening</h3>
+            <div class="deliverables-grid">
+              <div class="deliverable-item">
+                <span class="deliverable-name">Positioning Audit</span>
+                <p class="deliverable-desc">Where buyers actually place you versus where you think you stand.</p>
+                <p class="deliverable-ship">Ship: one clear positioning line so buyers file you in the right box.</p>
+              </div>
+              <div class="deliverable-item">
+                <span class="deliverable-name">Energy <span class="deliverable-name__arrow" aria-hidden="true">→</span> Revenue Alignment</span>
+                <p class="deliverable-desc">Hours mapped against the work that actually pays.</p>
+                <p class="deliverable-ship">Ship: where hours leak vs. what actually pays (cut the hidden tax).</p>
+              </div>
+              <div class="deliverable-item">
+                <span class="deliverable-name">Positioning Edge</span>
+                <p class="deliverable-desc">Skill, interest, and demand tightened into one edge.</p>
+                <p class="deliverable-ship">Ship: one edge where skill, interest, and demand meet.</p>
+              </div>
+            </div>
+        </div>
+        <div class="audit-group">
+            <h3 class="audit-group__title">What to change</h3>
+            <div class="deliverables-grid deliverables-grid--2">
+              <div class="deliverable-item">
+                <span class="deliverable-name">Competitor Blindspot Analysis</span>
+                <p class="deliverable-desc">What rivals repeat and skip. That gap is the opening.</p>
+                <p class="deliverable-ship">Ship: the gap competitors skip. Your clean entry.</p>
+              </div>
+              <div class="deliverable-item">
+                <span class="deliverable-name">Market Position Simulation</span>
+                <p class="deliverable-desc">How a sharper line or offer reads before you publish.</p>
+                <p class="deliverable-ship">Ship: test a sharper line or offer before you waste a launch.</p>
+              </div>
+            </div>
+            <div class="deliverable-callout deliverable-callout--10k">
+              <span class="deliverable-callout__label">Your next <span class="deliverable-callout__cash"><span class="deliverable-callout__dollar">$</span>10K+</span> move</span>
+              <p class="deliverable-callout__lede">The single action with the clearest near-term revenue lift — written so you can run it this week.</p>
+              <p class="deliverable-ship">Ship: the one revenue move named in your pass, ordered so you can run it this week without another strategy deck.</p>
+            </div>
+        </div>
+      </section>
 
-      <div class="snapshot-path-hint-wrap snapshot-ink reveal snap-sep" role="note">
-        <p class="snapshot-path-hint__line"><strong>Reading order:</strong> exact deliverables above are the contract.</p>
-        <p class="snapshot-path-hint__line">Everything below is optional until you pay—jump to
-        <a href="#snapshot-pricing">checkout</a>,
-        <a href="#snapshot-queue">queue</a>, or
-        <a href="#snapshot-faq">FAQ</a>.</p>
-      </div>
-
-      <!-- Immediate Value: always open (no expand friction) -->
+      <!-- Immediate Value: pre-audit signal (after deep deliverable list) -->
       <section class="section-block section-block--iv snapshot-ink reveal snap-sep" id="immediate-value" aria-labelledby="snapshot-iv-h">
         <div class="section-iv-hero">
           <h2 class="section-heading section-heading--iv" id="snapshot-iv-h">Immediate Value</h2>
@@ -1767,95 +1785,11 @@
         </div>
       </section>
 
-      <!-- What you walk away knowing (primary "what you get" — defaults open) -->
-      <section class="deliverables-block snapshot-ink reveal collapsible-section snap-sep" data-collapsible="audit-covers" data-default-open="false">
-        <div class="collapsible-header">
-          <div class="collapsible-header__text">
-            <h2 class="section-heading">What you walk away knowing in 48 hours</h2>
-            <p class="section-subhead">Deliverables you can ship from, not theory to file away.</p>
-          </div>
-          <button type="button" class="collapsible-toggle" aria-expanded="false" aria-controls="audit-covers-body">Expand</button>
-        </div>
-        <div class="collapsible-body" id="audit-covers-body" hidden>
-          <p class="walkaway-sub--line" role="text">Where revenue breaks <span class="wdot" aria-hidden="true">·</span> what to fix first <span class="wdot" aria-hidden="true">·</span> what actually moves income</p>
-          <div class="audit-group">
-            <h3 class="audit-group__title">Where you're losing money</h3>
-            <div class="deliverables-grid">
-              <div class="deliverable-item">
-                <span class="deliverable-name">Clarity Score</span>
-                <p class="deliverable-desc">Cold readers bail where the story gets fuzzy or crowded.</p>
-                <p class="deliverable-ship">Ship: documented read with keep-or-change calls you can use the same week.</p>
-              </div>
-              <div class="deliverable-item">
-                <span class="deliverable-name">Structure &amp; Conversion Read</span>
-                <p class="deliverable-desc">Where trust drops between first touch and payment.</p>
-                <p class="deliverable-ship">Ship: attention-to-purchase path with the weak step marked.</p>
-              </div>
-              <div class="deliverable-item">
-                <span class="deliverable-name">Revenue Scenario Modeling</span>
-                <p class="deliverable-desc">Plain numbers showing what changes when clients, price, or close rate move.</p>
-                <p class="deliverable-ship">Ship: value framed before price, tied to the numbers in the pass.</p>
-              </div>
-            </div>
-          </div>
-          <div class="audit-group">
-            <h3 class="audit-group__title">Why it's happening</h3>
-            <div class="deliverables-grid">
-              <div class="deliverable-item">
-                <span class="deliverable-name">Positioning Audit</span>
-                <p class="deliverable-desc">Where buyers actually place you versus where you think you stand.</p>
-                <p class="deliverable-ship">Ship: one clear positioning line so buyers file you in the right box.</p>
-              </div>
-              <div class="deliverable-item">
-                <span class="deliverable-name">Energy <span class="deliverable-name__arrow" aria-hidden="true">→</span> Revenue Alignment</span>
-                <p class="deliverable-desc">Hours mapped against the work that actually pays.</p>
-                <p class="deliverable-ship">Ship: where hours leak vs. what actually pays (cut the hidden tax).</p>
-              </div>
-              <div class="deliverable-item">
-                <span class="deliverable-name">Positioning Edge</span>
-                <p class="deliverable-desc">Skill, interest, and demand tightened into one edge.</p>
-                <p class="deliverable-ship">Ship: one edge where skill, interest, and demand meet.</p>
-              </div>
-            </div>
-          </div>
-          <div class="audit-group">
-            <h3 class="audit-group__title">What to change</h3>
-            <div class="deliverables-grid deliverables-grid--2">
-              <div class="deliverable-item">
-                <span class="deliverable-name">Competitor Blindspot Analysis</span>
-                <p class="deliverable-desc">What rivals repeat and skip. That gap is the opening.</p>
-                <p class="deliverable-ship">Ship: the gap competitors skip. Your clean entry.</p>
-              </div>
-              <div class="deliverable-item">
-                <span class="deliverable-name">Market Position Simulation</span>
-                <p class="deliverable-desc">How a sharper line or offer reads before you publish.</p>
-                <p class="deliverable-ship">Ship: test a sharper line or offer before you waste a launch.</p>
-              </div>
-            </div>
-            <div class="deliverable-callout deliverable-callout--10k">
-              <span class="deliverable-callout__label">Your next <span class="deliverable-callout__cash"><span class="deliverable-callout__dollar">$</span>10K+</span> move</span>
-              <p class="deliverable-callout__lede">The single action with the clearest near-term revenue lift — written so you can run it this week.</p>
-              <p class="deliverable-ship">Ship: the one revenue move named in your pass, ordered so you can run it this week without another strategy deck.</p>
-            </div>
-          </div>
-        </div>
-  </section>
-
-      <!-- Delivery -->
-      <section class="section-block snapshot-ink reveal collapsible-section snap-sep" data-collapsible="delivery">
-        <div class="collapsible-header">
-          <div class="collapsible-header__text">
-            <h2 class="section-heading section-heading--tier2">Delivery</h2>
-          </div>
-          <button type="button" class="collapsible-toggle" aria-expanded="false" aria-controls="delivery-body">Expand</button>
-        </div>
-        <div class="collapsible-body" id="delivery-body" hidden>
-          <div class="delivery-card">
-            <h3>30-minute strategy call</h3>
-            <p>We walk through the findings together. You leave with answers and a clear next step.</p>
-          </div>
-        </div>
-      </section>
+      <div class="snapshot-ink snapshot-ink--guarantee snapshot-ink--narrow snap-sep">
+        <p class="snapshot-guarantee">
+          <strong>After-delivery guarantee.</strong> If the 48-hour written breakdown doesn't name at least one change you'll ship, email me and I refund in full.
+        </p>
+      </div>
 
       <!-- Pricing — always visible (not collapsible) -->
       <section class="section-block reveal reveal-delay-2 snapshot-pricing-block snapshot-ink snap-sep" id="snapshot-pricing" aria-labelledby="snapshot-pricing-h">
@@ -1905,16 +1839,16 @@
         <span class="stripe-badge">· Powered by Stripe</span>
       </div>
 
-      <!-- How it works -->
-      <section class="process-section snapshot-ink reveal collapsible-section snap-sep" id="snapshot-queue" data-collapsible="queue">
-        <div class="collapsible-header">
-          <div class="collapsible-header__text">
-            <h2 class="section-heading">How the Queue Works</h2>
-          </div>
-          <button type="button" class="collapsible-toggle" aria-expanded="false" aria-controls="queue-body">Expand</button>
+      <!-- Queue + how it works (logistics after checkout decision) -->
+      <section class="process-section snapshot-ink reveal snap-sep" id="snapshot-queue" aria-labelledby="snapshot-queue-h">
+        <h2 class="section-heading" id="snapshot-queue-h">How the Queue Works</h2>
+        <div class="queue-status reveal" role="status">
+          <span class="queue-dot" aria-hidden="true"></span>
+          <span class="queue-text">Queue open</span>
+          <span class="queue-divider" aria-hidden="true"></span>
+          <span class="queue-wait">Current wait: <strong>1-2 weeks</strong> from intake submission</span>
         </div>
-        <div class="collapsible-body" id="queue-body" hidden>
-          <div class="process-steps">
+        <div class="process-steps">
           <div class="process-step">
             <span class="process-num">01</span>
             <p class="process-title">Purchase secures your spot</p>
@@ -1931,8 +1865,7 @@
             <p class="process-desc">Current estimated wait is 1-2 weeks from intake submission. That window updates as volume changes.</p>
           </div>
         </div>
-    </div>
-  </section>
+      </section>
 
       <!-- FAQ -->
       <section class="faq-section snapshot-ink collapsible-section snap-sep" id="snapshot-faq" data-collapsible="faq">
