@@ -2635,6 +2635,19 @@
     body[data-sh-env="home"] #archetypes .card-grid > .measure-card:nth-child(5) { grid-column: 2 / span 3 !important; }
     body[data-sh-env="home"] #archetypes .card-grid > .measure-card:nth-child(6) { grid-column: 5 / span 3 !important; }
     body[data-sh-env="home"] #archetypes .card-grid > .measure-card:nth-child(7) { grid-column: 8 / span 3 !important; }
+    /* Preview: first 3 cards only; full 4+3 layout when .home-archetypes-grid--preview is removed. */
+    body[data-sh-env="home"] #archetypes .card-grid.home-archetypes-grid--preview > .measure-card:nth-child(n + 4) {
+      display: none !important;
+    }
+    body[data-sh-env="home"] #archetypes .card-grid.home-archetypes-grid--preview > .measure-card:nth-child(1) {
+      grid-column: 1 / span 4 !important;
+    }
+    body[data-sh-env="home"] #archetypes .card-grid.home-archetypes-grid--preview > .measure-card:nth-child(2) {
+      grid-column: 5 / span 4 !important;
+    }
+    body[data-sh-env="home"] #archetypes .card-grid.home-archetypes-grid--preview > .measure-card:nth-child(3) {
+      grid-column: 9 / span 4 !important;
+    }
     @media (max-width: 960px) {
       body[data-sh-env="home"] #archetypes .card-grid {
         grid-template-columns: repeat(2, 1fr) !important;
@@ -4136,7 +4149,10 @@
           <p class="home-section-kicker">The map</p>
           <h2 class="home-section-title" id="home-archetypes-heading">The 7 Archetypes</h2>
           <p class="fits-close" style="margin:0 auto 32px; max-width:660px; text-align:center;">The diagnostic routes you to one. Every slot in the report is rewritten for your archetype, not reshuffled.</p>
-          <div class="card-grid card-grid--wide">
+          <div
+            class="card-grid card-grid--wide home-archetypes-grid home-archetypes-grid--preview"
+            id="home-archetypes-grid"
+          >
             <div class="measure-card">
               <span class="hr-arch-icon" aria-hidden="true">
                 <svg viewBox="0 0 32 32"><path d="M4 8h24M8 8v18m16-18v18M12 26h8m-4-18v12"/><path d="M10 14l6-5 6 5"/></svg>
@@ -4188,7 +4204,19 @@
             </div>
           </div>
           <p class="home-archetypes__outcome">You walk away with a <strong>named pattern</strong> and <strong>what to do this week</strong>. It is a map, not a personality quiz, and not a one-size-fits-all tips list.</p>
-          <p class="home-archetypes__hint" id="home-archetypes-hint"><span class="home-archetypes__hint-txt">+4 more in your personalized read</span> <button type="button" class="home-archetypes__reveal" id="home-archetypes-reveal" aria-expanded="false" aria-label="Show all 7 archetypes on this page">Show all 7</button></p>
+          <p class="home-archetypes__hint" id="home-archetypes-hint">
+            <span class="home-archetypes__hint-txt" id="home-archetypes-hint-txt">+4 more in your personalized read</span>
+            <button
+              type="button"
+              class="home-archetypes__reveal"
+              id="home-archetypes-reveal"
+              aria-expanded="false"
+              aria-controls="home-archetypes-grid"
+              aria-label="Show all 7 archetypes"
+            >
+              Show all 7
+            </button>
+          </p>
         </div>
       </section>
       <hr class="hr-divider" aria-hidden="true">
@@ -4759,6 +4787,18 @@
           lrScenes.forEach(function (s) { lrio.observe(s); });
         } else {
           lrScenes.forEach(function (s) { s.classList.add('is-in-view'); });
+        }
+
+        /* The 7 Archetypes: default 3-up, button reveals full grid */
+        var archGrid = document.getElementById('home-archetypes-grid');
+        var archBtn = document.getElementById('home-archetypes-reveal');
+        if (archGrid && archBtn) {
+          archBtn.addEventListener('click', function () {
+            var previewOn = archGrid.classList.toggle('home-archetypes-grid--preview');
+            archBtn.setAttribute('aria-expanded', previewOn ? 'false' : 'true');
+            archBtn.textContent = previewOn ? 'Show all 7' : 'Show 3';
+            archBtn.setAttribute('aria-label', previewOn ? 'Show all 7 archetypes' : 'Show 3 archetypes');
+          });
         }
 
         /* Starfield on while #hero is in the viewport. */
