@@ -711,7 +711,8 @@ body.sh-atmosphere {
   display: flex;
   gap: 12px;
   flex-wrap: wrap;
-  margin: 20px 0;
+  /* Center the row when narrower than the section (e.g. desktop pricing) */
+  margin: 20px auto;
   width: 100%;
   max-width: 520px;
   justify-content: center;
@@ -787,59 +788,185 @@ body.sh-atmosphere {
   justify-content: center;
 }
 
-/* .5% Club — access page */
+/* .5% Club — access page (section shells match /pricing tier cards) */
 .club-main {
   color: var(--sh-fg, #f5f1e8);
 }
 .club-container {
-  max-width: 760px;
+  max-width: 960px;
   margin: 0 auto;
-  padding: 0 24px;
+  padding: 48px 24px 100px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+/* Tier-like slabs (see pricing.html .tier) */
+body.access-page .club-section {
+  position: relative;
+  background: #0d0d22;
+  border: 1px solid rgba(139, 47, 201, 0.22);
+  border-radius: 4px;
+  padding: 36px 32px 32px;
+  overflow: hidden;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+}
+body.access-page .club-section::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 32px;
+  width: 40px;
+  height: 2px;
+  background: #c8a96e;
+}
+body.access-page .club-section:hover {
+  transform: translateY(-4px);
+  border-color: rgba(191, 90, 242, 0.45);
+  box-shadow: 0 0 20px rgba(139, 47, 201, 0.35), 0 0 60px rgba(139, 47, 201, 0.12);
+}
+body.access-page .club-section--apply {
+  border-left: 2px solid rgba(200, 169, 110, 0.55);
 }
 .club-hero {
-  padding: 80px 0 40px;
-  text-align: left;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 32px 0 16px;
 }
 .club-eyebrow {
-  font-size: 13px;
-  letter-spacing: 0.14em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  width: 100%;
+  font-family: var(--font-mono, "JetBrains Mono", ui-monospace, monospace);
+  font-size: 10px;
+  letter-spacing: 0.35em;
   text-transform: uppercase;
-  color: var(--sh-accent, #c9a24a);
-  margin: 0 0 12px;
+  color: #c8a96e;
+  margin: 0 0 20px;
+}
+.club-eyebrow::before,
+.club-eyebrow::after {
+  content: "";
+  flex: none;
+  width: 40px;
+  height: 1px;
+  background: rgba(200, 169, 110, 0.55);
 }
 .club-title {
-  font-size: clamp(32px, 5vw, 48px);
-  line-height: 1.05;
-  margin: 0 0 16px;
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: var(--fs-h1, clamp(2rem, 4.5vw, 2.75rem));
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  margin: 0 0 12px;
+  color: #ffffff;
 }
 .club-lede {
-  font-size: 18px;
-  line-height: 1.5;
-  color: var(--sh-muted, rgba(255, 255, 255, 0.82));
-  margin: 0 0 20px;
-  max-width: 640px;
+  font-size: 1.05rem;
+  line-height: 1.6;
+  color: #a0a0c0;
+  margin: 0 0 1rem;
+  max-width: 40rem;
 }
 .club-price {
-  font-size: 15px;
-  letter-spacing: 0.06em;
+  font-size: 0.8125rem;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
-  margin: 0 0 28px;
+  color: #8b8ba5;
+  margin: 0 0 1.5rem;
 }
-.club-section {
-  padding: 48px 0;
-  border-top: 1px solid var(--sh-border, rgba(255, 255, 255, 0.1));
-}
-.club-section--apply {
-  border-top: 2px solid var(--sh-accent, #c9a24a);
+.club-hero .btn {
+  width: 100%;
+  max-width: 20rem;
 }
 .club-h2 {
-  font-size: clamp(22px, 3vw, 28px);
-  margin: 0 0 16px;
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: clamp(1.2rem, 2.2vw, 1.5rem);
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  color: #ffffff;
+  margin: 0 0 0.6rem;
+}
+.club-h3 {
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  line-height: 1.2;
+  margin: 0 0 0.6rem;
+  color: #ffffff;
 }
 .club-section p {
+  line-height: 1.6;
+  margin: 0 0 0.75rem;
+  max-width: 58ch;
+  color: #a0a0c0;
+  font-size: 0.9375rem;
+}
+.club-section p.club-column-lede {
+  color: rgba(230, 230, 240, 0.85);
+  font-size: 0.9375rem;
   line-height: 1.55;
-  margin: 0 0 12px;
-  max-width: 640px;
+  margin: 0 0 0.75rem;
+}
+.club-section > p:last-child,
+.club-section > ol:last-child,
+.club-section > ul:last-child,
+.club-section > dl:last-child {
+  margin-bottom: 0;
+}
+.club-section .club-sla {
+  margin-top: 0.5rem;
+}
+@media (max-width: 768px) {
+  .club-container {
+    padding: 32px 20px 72px;
+    gap: 16px;
+  }
+  body.access-page .club-section {
+    padding: 28px 22px 24px;
+  }
+  body.access-page .club-section::before {
+    left: 22px;
+  }
+  .club-eyebrow {
+    letter-spacing: 0.2em;
+  }
+  .club-eyebrow::before,
+  .club-eyebrow::after {
+    width: 28px;
+  }
+  body.access-page .club-section:hover {
+    transform: none;
+  }
+}
+body.access-page .club-section .club-steps li,
+body.access-page .club-section .club-bullets li,
+body.access-page .club-section .club-match-list li {
+  color: #a0a0c0;
+}
+body.access-page .club-section strong {
+  color: #e4e2ec;
+  font-weight: 600;
+}
+body.access-page .club-match-note {
+  color: #8b8ba5;
+}
+body.access-page .club-sla {
+  color: #8b8ba5;
+}
+body.access-page .club-faq__item:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+body.access-page .club-faq__body {
+  color: #a0a0c0;
+}
+body.access-page .club-details__row dd {
+  color: #a0a0c0;
 }
 .club-steps {
   padding-left: 20px;
