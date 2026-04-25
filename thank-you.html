@@ -269,8 +269,8 @@
       <a href="/" class="site-nav__wordmark" aria-label="Stephuary — home"><img src="/stephuary-mark.svg" alt="" class="site-nav__mark" width="28" height="28" decoding="async" />Stephuary</a>
     </div>
     <ul class="site-nav__list">
-      <li><a href="/pricing" class="site-nav__link">Offerings</a></li>
-      <li><a href="/access" class="site-nav__link">.5% CLUB</a></li>
+      <li><a href="/pricing" class="site-nav__link">Pricing</a></li>
+      <li><a href="/access" class="site-nav__link">Access</a></li>
       <li><a href="/capture" class="site-nav__link">Diagnostic</a></li>
     </ul>
   </nav>
@@ -283,13 +283,13 @@
 
       <section class="thankyou">
         <h1 class="thankyou__title" id="th-headline">You're in.</h1>
-        <p class="thankyou__lede">Confirmed. Here's what happens next.</p>
+        <p class="thankyou__lede" id="th-lede">Confirmed. Here's what happens next.</p>
 
         <ol class="thankyou__steps" id="th-steps"></ol>
 
         <div class="thankyou__next" id="th-while">
           <h2>While you wait</h2>
-          <p id="th-while-copy">Read the 7 Archetypes overview. For Full Unlock, your detailed version is in the report and workspace—this map is public.</p>
+          <p id="th-while-copy">Read the 7 Archetypes overview. Your diagnostic-specific path is in your report and access updates—this map is public context.</p>
           <a class="btn btn--secondary" href="/#home-archetypes-heading">See the 7 Archetypes →</a>
         </div>
 
@@ -340,7 +340,12 @@
         if (state.type && String(state.type).trim()) return;
         var meta = state.metadata || {};
         if (meta.type && String(meta.type).trim()) {
-          state.type = String(meta.type).toLowerCase();
+          var mt = String(meta.type).toLowerCase();
+          if (mt === 'full_unlock' || mt === 'unlock') {
+            state.type = 'archetype_access';
+          } else {
+            state.type = mt;
+          }
           return;
         }
         var cents = state.amount;
@@ -348,6 +353,7 @@
         if (cents === 150000) state.type = 'access';
         else if (cents === 95000) state.type = 'snapshot';
         else if (cents === 200000) state.type = 'snapshot-plus';
+        else if (cents === 2700) state.type = 'archetype_access';
       }
 
       function productLabel(t, raw) {
@@ -398,6 +404,8 @@
             wc.textContent =
               'Snapshot is about your live asset. While you wait, skim the diagnostic on /capture if you have not run it yet—it helps the pass land cleaner.';
           }
+          var ledeSnap = document.getElementById('th-lede');
+          if (ledeSnap) ledeSnap.textContent = "Confirmed. Here's what happens next.";
           return;
         }
         if (t === 'access') {
@@ -410,16 +418,39 @@
             wc2.textContent =
               'Only Sometimes Club is a separate product at onlysometimesclub.com if you meant that instead.';
           }
+          var ledeAcc = document.getElementById('th-lede');
+          if (ledeAcc) ledeAcc.textContent = "Confirmed. Here's what happens next.";
+          return;
+        }
+        if (t === 'archetype_access') {
+          ol.innerHTML =
+            '<li>Your access includes <strong>your full breakdown</strong>.</li>' +
+            '<li><strong>Structure and tools</strong> as they release for your archetype.</li>' +
+            '<li><strong>Future updates</strong> as your archetype system expands.</li>' +
+            '<li><strong>Watch your email</strong> for access updates.</li>';
+          var ledeA = document.getElementById('th-lede');
+          if (ledeA) {
+            ledeA.textContent =
+              'You entered during the initial release phase. Your archetype system is queued for release.';
+          }
+          var wcA = document.getElementById('th-while-copy');
+          if (wcA) {
+            wcA.textContent =
+              'The 7 Archetypes overview on the site is a public map—your path is specific to your diagnostic.';
+          }
           return;
         }
         ol.innerHTML =
           '<li><strong>Order email</strong> — confirmation typically within a few minutes. Check spam if not seen.</li>' +
-          '<li><strong>What you bought</strong> — follow that email for next steps. If you purchased <strong>Full Unlock: Notion workspace + archetype report</strong>, you get the in-browser report and a Notion duplicate link—no PDF or file download.</li>' +
-          '<li><strong>Next week</strong> — optional: if your purchase included the Notion workspace, open it and run the first sequence.</li>';
+          '<li><strong>What you bought</strong> — follow that email for next steps and access details for your purchase.</li>';
         var wc3 = document.getElementById('th-while-copy');
         if (wc3) {
           wc3.textContent =
-            'Read the 7 Archetypes overview. For Full Unlock, your detailed version is in the report and workspace—this map is public.';
+            'Read the 7 Archetypes overview on the site, or run the free diagnostic on /capture if you are tracing a different order.';
+        }
+        var ledeD = document.getElementById('th-lede');
+        if (ledeD) {
+          ledeD.textContent = "Confirmed. Here's what happens next.";
         }
       }
 
