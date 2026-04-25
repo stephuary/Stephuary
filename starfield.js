@@ -63,20 +63,23 @@
       refreshZone();
     }
 
-    /** Home: 60% blue, 30% amber/gold, 10% purple (soft accent, no hot magenta) */
+    /** Home: palette buckets — pickHomeColor enforces 60% blue / 30% amber / 10% purple */
+    var HOME_BLUE = [
+      'rgba(150, 188, 255,',
+      'rgba(120, 168, 245,',
+      'rgba(95, 150, 235,',
+      'rgba(175, 205, 255,',
+      'rgba(80, 135, 220,',
+      'rgba(65, 120, 210,'
+    ];
+    var HOME_AMBER = [
+      'rgba(255, 200, 130,',
+      'rgba(220, 175, 100,',
+      'rgba(200, 165, 95,'
+    ];
+    var HOME_PURPLE = ['rgba(150, 85, 175,'];
     var COLORS = isHome
-      ? [
-          'rgba(150, 188, 255,',
-          'rgba(120, 168, 245,',
-          'rgba(95, 150, 235,',
-          'rgba(175, 205, 255,',
-          'rgba(80, 135, 220,',
-          'rgba(65, 120, 210,',
-          'rgba(255, 200, 130,',
-          'rgba(220, 175, 100,',
-          'rgba(200, 165, 95,',
-          'rgba(150, 85, 175,'
-        ]
+      ? HOME_BLUE.concat(HOME_AMBER, HOME_PURPLE)
       : [
           'rgba(255,255,255,',
           'rgba(255,255,255,',
@@ -84,6 +87,13 @@
           'rgba(191,90,242,',
           'rgba(200,169,110,'
         ];
+
+    function pickHomeColor() {
+      var r = Math.random() * 100;
+      if (r < 60) return HOME_BLUE[Math.floor(Math.random() * HOME_BLUE.length)];
+      if (r < 90) return HOME_AMBER[Math.floor(Math.random() * HOME_AMBER.length)];
+      return HOME_PURPLE[0];
+    }
 
     function createParticle() {
       return {
@@ -93,7 +103,7 @@
         opacity: Math.random() * 0.6 + 0.4,
         /* Home: calmer, slower vertical drift and lateral motion */
         speed: isHome ? Math.random() * 0.09 + 0.016 : Math.random() * 0.15 + 0.03,
-        color: COLORS[Math.floor(Math.random() * COLORS.length)],
+        color: isHome ? pickHomeColor() : COLORS[Math.floor(Math.random() * COLORS.length)],
         offset: Math.random() * Math.PI * 2,
         drift: isHome ? (Math.random() - 0.5) * 0.048 : (Math.random() - 0.5) * 0.08
       };
