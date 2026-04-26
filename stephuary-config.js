@@ -50,7 +50,7 @@
     shouldBypassPhasePaymentGate: shouldBypassPhasePaymentGate,
     /**
      * Legacy: was FormSubmit for homepage monthly session capture. Site forms now POST to
-     * /api/form-submit (Resend + MailerLite). Keep null unless a legacy script still reads this.
+     * /api/form-submit. Keep null unless a legacy script still reads this.
      */
     MONTHLY_FREE_SESSION_FORM_ACTION: null,
     /** Cloudflare Stream — pricing staircase strip. */

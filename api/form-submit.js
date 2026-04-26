@@ -1,8 +1,8 @@
-// Vercel serverless: secure form intake → Resend notification + MailerLite (diagnostic).
-// Env: RESEND_API_KEY, RESEND_FROM_EMAIL, FORM_NOTIFICATION_EMAIL, MAILERLITE_API_KEY (optional for non-diagnostic),
-//      MAILERLITE_DIAGNOSTIC_GROUP_IDS (optional, comma-separated group ids for diagnostic subscribers).
+// Vercel serverless: secure form intake → Resend notification.
+// Diagnostic capture uses /api/diagnostic-capture so it never routes through Resend.
+// Env: RESEND_API_KEY, RESEND_FROM_EMAIL, FORM_NOTIFICATION_EMAIL.
 
-const ALLOWED_TYPES = new Set(['contact', 'snapshot-interest', 'club-application', 'diagnostic']);
+const ALLOWED_TYPES = new Set(['contact', 'snapshot-interest', 'club-application']);
 
 function readJsonBody(req) {
   if (req.body != null && typeof req.body === 'string') {
@@ -85,40 +85,7 @@ function validatePayload(body) {
       data: { formType: formType, name: name, email: email, application_p1: p1, application_p2: p2 }
     };
   }
-  /* diagnostic */
-  var answers = body.answers;
-  if (answers != null && typeof answers !== 'object') {
-    return { error: 'Invalid answers payload' };
-  }
-  return {
-    ok: true,
-    data: {
-      formType: 'diagnostic',
-      name: name,
-      email: email,
-      answers: answers || null,
-      archetype: isNonEmptyString(body.archetype) ? body.archetype.trim() : '',
-      archetype_name: isNonEmptyString(body.archetype_name) ? body.archetype_name.trim() : '',
-      result_type: isNonEmptyString(body.result_type) ? body.result_type.trim() : '',
-      score: isNonEmptyString(body.score) ? body.score.trim() : '',
-      phase: isNonEmptyString(body.phase) ? body.phase.trim() : '',
-      selectedResult:
-        isNonEmptyString(body.selectedResult) ? body.selectedResult.trim() : '',
-      source: isNonEmptyString(body.source) ? body.source.trim() : '',
-      referrer: isNonEmptyString(body.referrer) ? body.referrer.trim() : ''
-    }
-  };
-}
-
-function formatAnswersForEmail(answers) {
-  if (!answers) return '(none)';
-  try {
-    var s = JSON.stringify(answers, null, 2);
-    if (s.length > 12000) return s.slice(0, 12000) + '\n…(truncated)';
-    return s;
-  } catch (e) {
-    return String(answers);
-  }
+  return { error: 'Invalid form type' };
 }
 
 function buildEmailHtml(meta, fields) {
@@ -173,72 +140,6 @@ async function sendResendEmail(subject, html) {
   return { ok: true };
 }
 
-function parseGroupIds() {
-  var raw = process.env.MAILERLITE_DIAGNOSTIC_GROUP_IDS || '';
-  return raw
-    .split(',')
-    .map(function (s) {
-      return s.trim();
-    })
-    .filter(Boolean);
-}
-
-function buildMailerLiteFields(data) {
-  var fields = { name: data.name };
-  if (data.archetype_name) fields.archetype_name = data.archetype_name;
-  if (data.archetype) fields.archetype = data.archetype;
-  if (data.result_type) fields.result_type = data.result_type;
-  if (data.score) fields.diagnostic_score = data.score;
-  if (data.phase) fields.phase = data.phase;
-  var src = data.source || 'diagnostic-results';
-  fields.signup_source = src;
-  return fields;
-}
-
-async function syncMailerLiteDiagnostic(data) {
-  var token = process.env.MAILERLITE_API_KEY;
-  if (!token) return { skipped: true };
-
-  var groups = parseGroupIds();
-  var payload = {
-    email: normalizeEmail(data.email),
-    fields: buildMailerLiteFields(data),
-    status: 'active'
-  };
-  if (groups.length) payload.groups = groups;
-
-  var res = await fetch('https://connect.mailerlite.com/api/subscribers', {
-    method: 'POST',
-    headers: {
-      Authorization: 'Bearer ' + token,
-      'Content-Type': 'application/json',
-      Accept: 'application/json'
-    },
-    body: JSON.stringify(payload)
-  });
-
-  if (res.ok) return { ok: true };
-
-  /* Retry with minimal fields if custom field keys are wrong in the account. */
-  var retryPayload = {
-    email: normalizeEmail(data.email),
-    fields: { name: data.name },
-    status: 'active'
-  };
-  if (groups.length) retryPayload.groups = groups;
-  var res2 = await fetch('https://connect.mailerlite.com/api/subscribers', {
-    method: 'POST',
-    headers: {
-      Authorization: 'Bearer ' + token,
-      'Content-Type': 'application/json',
-      Accept: 'application/json'
-    },
-    body: JSON.stringify(retryPayload)
-  });
-  if (res2.ok) return { ok: true, minimal: true };
-  return { ok: false };
-}
-
 module.exports = async function handler(req, res) {
   try {
     if (req.method !== 'POST') {
@@ -270,8 +171,7 @@ module.exports = async function handler(req, res) {
     var typeLabel = {
       contact: 'Contact',
       'snapshot-interest': 'Snapshot interest',
-      'club-application': '.5% Club application',
-      diagnostic: 'Diagnostic email capture'
+      'club-application': '.5% Club application'
     }[d.formType];
 
     var fields = {
@@ -289,16 +189,6 @@ module.exports = async function handler(req, res) {
     } else if (d.formType === 'club-application') {
       fields['Application paragraph 1'] = d.application_p1;
       fields['Application paragraph 2'] = d.application_p2;
-    } else if (d.formType === 'diagnostic') {
-      fields['Selected result'] = d.selectedResult || d.archetype_name || d.archetype || '(n/a)';
-      if (d.archetype) fields.Archetype = d.archetype;
-      if (d.archetype_name) fields['Archetype display name'] = d.archetype_name;
-      if (d.result_type) fields['Result type'] = d.result_type;
-      if (d.score) fields.Score = d.score;
-      if (d.phase) fields.Phase = d.phase;
-      if (d.source) fields['Client source'] = d.source;
-      if (d.referrer) fields.Referrer = d.referrer;
-      fields.Answers = formatAnswersForEmail(d.answers);
     }
 
     var subject = '[Stephuary] ' + typeLabel + ' — ' + d.name;
@@ -306,21 +196,7 @@ module.exports = async function handler(req, res) {
 
     var sent = await sendResendEmail(subject, html);
     if (!sent.ok) {
-      /* Diagnostic unlock must never block the user: email is best-effort. */
-      if (d.formType === 'diagnostic') {
-        if (process.env.MAILERLITE_API_KEY) {
-          try {
-            await syncMailerLiteDiagnostic(d);
-          } catch (eMl) {}
-        }
-        res.setHeader('Cache-Control', 'private, max-age=0, no-store');
-        return res.status(200).json({ ok: true, notifySkipped: true });
-      }
       return res.status(503).json({ ok: false, error: 'Notification delivery failed' });
-    }
-
-    if (d.formType === 'diagnostic' && process.env.MAILERLITE_API_KEY) {
-      await syncMailerLiteDiagnostic(d);
     }
 
     res.setHeader('Cache-Control', 'private, max-age=0, no-store');

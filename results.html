@@ -2318,12 +2318,12 @@
   <div id="diag-lead-gate" role="dialog" aria-modal="true" aria-labelledby="diag-gate-h" aria-hidden="true">
     <form class="diag-gate__card" id="diag-gate-form" action="#" method="post" novalidate>
       <p class="diag-gate__kicker">One step</p>
-      <h1 class="diag-gate__h" id="diag-gate-h">Email for your read &amp; Full Archetype Access</h1>
-      <p class="diag-gate__p">We use this to deliver your free archetype read, Full Archetype Access confirmations and access updates if you buy, and receipts. No list mail unless you opt in elsewhere.</p>
+      <h1 class="diag-gate__h" id="diag-gate-h">Enter your email to unlock your diagnostic result.</h1>
+      <p class="diag-gate__p">Your result appears on the next screen. Your email saves your diagnostic profile and gives you access to future Stephuary tools.</p>
 
       <div class="diag-gate__field">
         <label class="diag-gate__label" for="diag-gate-name">Name</label>
-        <input class="diag-gate__input" id="diag-gate-name" name="name" type="text" autocomplete="name" placeholder="First name" required>
+        <input class="diag-gate__input" id="diag-gate-name" name="name" type="text" autocomplete="name" placeholder="First name">
       </div>
 
       <div class="diag-gate__field">
@@ -2331,11 +2331,10 @@
         <input class="diag-gate__input" id="diag-gate-email" name="email" type="email" autocomplete="email" inputmode="email" placeholder="you@example.com" required>
       </div>
 
-      <button class="diag-gate__submit" id="diag-gate-submit" type="submit">Show my archetype &rarr;</button>
-      <p class="diag-gate__fine">No marketing blasts. Transactional and delivery email only.</p>
-          <p class="results-benefit">You&rsquo;ll see your archetype on the next screen. If you add Full Archetype Access, confirmation and access updates for your archetype system arrive by email as releases roll out—typically within a few minutes for confirmation; allow up to 24 hours if delivery is under load.</p>
+      <button class="diag-gate__submit" id="diag-gate-submit" type="submit">Unlock my result</button>
+      <p class="diag-gate__fine">No marketing blasts.</p>
       <p class="diag-gate__status" id="diag-gate-status" role="status" aria-live="polite"></p>
-      <p class="diag-gate__error" id="diag-gate-error" role="alert">Enter a valid name and email to continue.</p>
+      <p class="diag-gate__error" id="diag-gate-error" role="alert">Enter a valid email to continue.</p>
     </form>
   </div>
 
@@ -2347,7 +2346,7 @@
     <p class="missing-p">Finish the diagnostic first. Your read saves when the flow completes.</p>
     <a href="/capture" class="btn btn--primary" id="results-missing-cta">Start diagnostic</a>
     <p class="missing-recover" style="margin-top:1.5rem;max-width:32rem;font-size:15px;line-height:1.55;color:rgba(255,255,255,0.72)">
-          Already paid for <strong>Full Archetype Access</strong>? Check your email for your archetype report and access updates, or
+          Already paid for <strong>Full Archetype Access</strong>? Need help accessing your order?
           <a href="mailto:hello@stephuary.com?subject=Full%20Archetype%20Access" style="color:#C9A24A">email hello@stephuary.com</a>
           with &ldquo;Full Archetype Access&rdquo; in the subject line.
     </p>
@@ -4965,8 +4964,8 @@
       };
     } catch (eR) { return {}; }
   }
-  var DIAG_SUBMIT_OK = 'Submitted. Check your inbox for the next step.';
-  var DIAG_SUBMIT_ERR = "Something didn't submit. Please try again.";
+  var DIAG_SUBMIT_OK = 'Showing your result...';
+  var DIAG_SUBMIT_ERR = 'Something went wrong saving your result. Try again.';
   function fireDiagLead(name, email, summary) {
     var dr = readDiagnosticResultsSeven();
     var phaseHint = '';
@@ -4975,17 +4974,20 @@
       else if (dr && dr.meta && dr.meta.phase) phaseHint = String(dr.meta.phase);
     } catch (ePh) {}
     var body = {
-      formType: 'diagnostic',
       name: name,
       email: email,
       answers: dr || null,
+      first_name: name,
+      diagnostic_phase: phaseHint,
       archetype: (summary && summary.archetype) || '',
       archetype_name: (summary && summary.archetype_name) || '',
       result_type: (summary && summary.result_type) || '',
       score: (summary && summary.score) || '',
       phase: phaseHint,
+      result_summary: (summary && (summary.archetype_name || summary.archetype || summary.result_type)) || '',
       selectedResult: (summary && (summary.archetype_name || summary.archetype)) || '',
-      source: 'diagnostic-results',
+      completed_at: new Date().toISOString(),
+      source: 'diagnostic',
       referrer: document.referrer || '',
       sourcePage: window.location.href,
       timestamp: new Date().toISOString()
@@ -5002,7 +5004,7 @@
       }
     }
     try {
-      return fetch('/api/form-submit', {
+      return fetch('/api/diagnostic-capture', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
         body: payload
@@ -5038,9 +5040,9 @@
       var name = (nameI && nameI.value || '').trim();
       var email = (emailI && emailI.value || '').trim();
       var emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-      if (!name || !emailOk) {
+      if (!emailOk) {
         if (errEl) errEl.classList.add('show');
-        try { if (!name && nameI) nameI.focus(); else if (emailI) emailI.focus(); } catch (eFE) {}
+        try { if (emailI) emailI.focus(); } catch (eFE) {}
         return;
       }
       if (errEl) errEl.classList.remove('show');
@@ -5050,13 +5052,17 @@
       }
       if (submitBtn) {
         submitBtn.disabled = true;
-        submitBtn.textContent = 'Unlocking…';
+        submitBtn.textContent = 'Unlocking...';
       }
-      persistDiagLead(name, email);
       var summary = readLeadArchetypeSummary();
       var done = function () {
-        try { window.location.reload(); }
-        catch (eRl) { window.location.href = window.location.href; }
+        persistDiagLead(name, email);
+        document.body.classList.remove('diag-locked');
+        gate.classList.remove('visible');
+        gate.setAttribute('aria-hidden', 'true');
+        if (mainBlock) mainBlock.removeAttribute('aria-hidden');
+        try { attemptResultsBoot(0); }
+        catch (eRl) { window.location.reload(); }
       };
       function showDiagServerError() {
         if (statusEl) {
@@ -5066,7 +5072,7 @@
         }
         if (submitBtn) {
           submitBtn.disabled = false;
-          submitBtn.textContent = 'Show my archetype →';
+          submitBtn.textContent = 'Unlock my result';
         }
       }
       function onDiagSubmitOk() {
@@ -5075,13 +5081,7 @@
           statusEl.classList.add('show', 'diag-gate__status--success');
           statusEl.classList.remove('diag-gate__status--error');
         }
-        window.setTimeout(done, 1400);
-      }
-      /* Lead is already in localStorage; never strand the user if the API 404s,
-         Resend is down, or JSON parse fails — show a note and still reload. */
-      function proceedDespiteNotifyFailure() {
-        showDiagServerError();
-        window.setTimeout(done, 2200);
+        done();
       }
       var p = fireDiagLead(name, email, summary);
       if (p && typeof p.then === 'function') {
@@ -5089,23 +5089,14 @@
           if (res && res.ok) {
             return res.json().then(function (data) {
               if (data && data.ok) {
-                if (data.notifySkipped) {
-                  if (statusEl) {
-                    statusEl.textContent = 'Showing your read…';
-                    statusEl.classList.add('show', 'diag-gate__status--success');
-                    statusEl.classList.remove('diag-gate__status--error');
-                  }
-                  window.setTimeout(done, 900);
-                } else {
-                  onDiagSubmitOk();
-                }
-              } else proceedDespiteNotifyFailure();
-            }).catch(proceedDespiteNotifyFailure);
+                onDiagSubmitOk();
+              } else showDiagServerError();
+            }).catch(showDiagServerError);
           }
-          proceedDespiteNotifyFailure();
-        }).catch(proceedDespiteNotifyFailure);
+          showDiagServerError();
+        }).catch(showDiagServerError);
       } else {
-        proceedDespiteNotifyFailure();
+        showDiagServerError();
       }
     });
     return true;

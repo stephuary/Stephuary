@@ -3,7 +3,7 @@
  */
 (function (global) {
   var ENDPOINT = '/api/form-submit';
-  var MSG_OK = 'Submitted. Check your inbox for the next step.';
+  var MSG_OK = 'Submitted.';
   var MSG_ERR = "Something didn't submit. Please try again.";
 
   function postForm(formType, data) {
