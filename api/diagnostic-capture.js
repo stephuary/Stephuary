@@ -53,8 +53,39 @@ function fieldValue(v) {
   }
 }
 
-function buildFields(body) {
-  var fields = {
+function mailerLiteHeaders(token, includeJson) {
+  var headers = {
+    Authorization: 'Bearer ' + token,
+    Accept: 'application/json'
+  };
+  if (includeJson) headers['Content-Type'] = 'application/json';
+  return headers;
+}
+
+async function loadAvailableFieldKeys(token) {
+  var response = await fetch('https://connect.mailerlite.com/api/fields', {
+    method: 'GET',
+    headers: mailerLiteHeaders(token, false)
+  });
+  if (!response.ok) return null;
+
+  var data = null;
+  try {
+    data = await response.json();
+  } catch (e) {
+    return null;
+  }
+
+  var list = data && Array.isArray(data.data) ? data.data : [];
+  var keys = {};
+  list.forEach(function (field) {
+    if (field && field.key) keys[String(field.key)] = true;
+  });
+  return keys;
+}
+
+function buildFields(body, availableKeys) {
+  var candidateFields = {
     first_name: firstNameFrom(body.name || body.first_name),
     diagnostic_phase: fieldValue(body.diagnostic_phase || body.phase),
     archetype: fieldValue(body.archetype_name || body.archetype),
@@ -63,12 +94,32 @@ function buildFields(body) {
     completed_at: fieldValue(body.completed_at || body.timestamp) || new Date().toISOString(),
     source: 'diagnostic'
   };
+  var fields = {};
 
-  Object.keys(fields).forEach(function (key) {
-    if (!fields[key]) delete fields[key];
+  var name = stringValue(body.name);
+  if (name) fields.name = name;
+
+  Object.keys(candidateFields).forEach(function (key) {
+    if (!candidateFields[key]) return;
+    if (availableKeys && !availableKeys[key]) return;
+    fields[key] = candidateFields[key];
   });
-  fields.source = 'diagnostic';
   return fields;
+}
+
+async function postSubscriber(token, payload) {
+  var response = await fetch('https://connect.mailerlite.com/api/subscribers', {
+    method: 'POST',
+    headers: mailerLiteHeaders(token, true),
+    body: JSON.stringify(payload)
+  });
+
+  var data = null;
+  try {
+    data = await response.json();
+  } catch (e) {}
+
+  return { ok: response.ok, status: response.status, data: data };
 }
 
 async function addOrUpdateSubscriber(body) {
@@ -78,50 +129,55 @@ async function addOrUpdateSubscriber(body) {
     return { ok: false, status: 500, error: 'MailerLite is not configured' };
   }
 
+  var availableKeys = null;
+  try {
+    availableKeys = await loadAvailableFieldKeys(token);
+  } catch (eFields) {}
+
   var payload = {
     email: normalizeEmail(body.email),
-    fields: buildFields(body),
+    fields: buildFields(body, availableKeys),
     groups: [String(groupId)],
     status: 'active'
   };
 
-  var response = await fetch('https://connect.mailerlite.com/api/subscribers', {
-    method: 'POST',
-    headers: {
-      Authorization: 'Bearer ' + token,
-      'Content-Type': 'application/json',
-      Accept: 'application/json'
-    },
-    body: JSON.stringify(payload)
-  });
-
-  var data = null;
-  try {
-    data = await response.json();
-  } catch (e) {}
-
-  if (!response.ok) {
-    return { ok: false, status: response.status, error: 'MailerLite subscriber request failed' };
+  var result = await postSubscriber(token, payload);
+  if (!result.ok) {
+    var minimalPayload = {
+      email: normalizeEmail(body.email),
+      groups: [String(groupId)],
+      status: 'active'
+    };
+    var name = stringValue(body.name);
+    if (name) minimalPayload.fields = { name: name };
+    result = await postSubscriber(token, minimalPayload);
+  }
+  if (!result.ok && payload.fields && payload.fields.name) {
+    result = await postSubscriber(token, {
+      email: normalizeEmail(body.email),
+      groups: [String(groupId)],
+      status: 'active'
+    });
+  }
+  if (!result.ok) {
+    return { ok: false, status: result.status, error: 'MailerLite subscriber request failed' };
   }
 
+  var data = result.data;
   var subscriberId = data && data.data && data.data.id;
   if (subscriberId) {
-    var groupResponse = await fetch(
-      'https://connect.mailerlite.com/api/subscribers/' +
-        encodeURIComponent(subscriberId) +
-        '/groups/' +
-        encodeURIComponent(String(groupId)),
-      {
-        method: 'POST',
-        headers: {
-          Authorization: 'Bearer ' + token,
-          Accept: 'application/json'
+    try {
+      await fetch(
+        'https://connect.mailerlite.com/api/subscribers/' +
+          encodeURIComponent(subscriberId) +
+          '/groups/' +
+          encodeURIComponent(String(groupId)),
+        {
+          method: 'POST',
+          headers: mailerLiteHeaders(token, false)
         }
-      }
-    );
-    if (!groupResponse.ok && groupResponse.status !== 409) {
-      return { ok: false, status: groupResponse.status, error: 'MailerLite group request failed' };
-    }
+      );
+    } catch (eGroup) {}
   }
 
   return { ok: true };
